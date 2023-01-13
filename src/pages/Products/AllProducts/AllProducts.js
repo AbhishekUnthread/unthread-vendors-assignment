@@ -46,6 +46,20 @@ import deleteRed from "../../../assets/icons/delete.svg";
 import Popover from "@mui/material/Popover";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
+import {
+  Autocomplete,
+  FormControl,
+  FormGroup,
+  FormLabel,
+  InputAdornment,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
+import { AccountCircle } from "@mui/icons-material";
+
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -78,7 +92,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
+    padding: theme.spacing(0.5, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
@@ -482,7 +496,111 @@ const AllProducts = () => {
   const idActions = openActions ? "simple-popover" : undefined;
   // * ACTION POPOVERS ENDS
 
+  // * COLUMNS POPOVERS STARTS
+  const [anchorColumnsEl, setAnchorColumnsEl] = React.useState(null);
+
+  const handleColumnsClick = (event) => {
+    setAnchorColumnsEl(event.currentTarget);
+  };
+
+  const handleColumnsClose = () => {
+    setAnchorColumnsEl(null);
+  };
+
+  const openColumns = Boolean(anchorColumnsEl);
+  const idColumns = openColumns ? "simple-popover" : undefined;
+  // * COLUMNS POPOVERS ENDS
+
+  // * SORT POPOVERS STARTS
+  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+
+  const handleSortClick = (event) => {
+    setAnchorSortEl(event.currentTarget);
+  };
+
+  const handleSortClose = () => {
+    setAnchorSortEl(null);
+  };
+
+  const openSort = Boolean(anchorSortEl);
+  const idSort = openSort ? "simple-popover" : undefined;
+  // * SORT POPOVERS ENDS
+
+  // * VENDOR POPOVERS STARTS
+  const [anchorVendorEl, setAnchorVendorEl] = React.useState(null);
+
+  const handleVendorClick = (event) => {
+    setAnchorVendorEl(event.currentTarget);
+  };
+
+  const handleVendorClose = () => {
+    setAnchorVendorEl(null);
+  };
+
+  const openVendor = Boolean(anchorVendorEl);
+  const idVendor = openVendor ? "simple-popover" : undefined;
+  // * VENDOR POPOVERS ENDS
+
+  // * CATEGORY POPOVERS STARTS
+  const [anchorCategoryEl, setAnchorCategoryEl] = React.useState(null);
+
+  const handleCategoryClick = (event) => {
+    setAnchorCategoryEl(event.currentTarget);
+  };
+
+  const handleCategoryClose = () => {
+    setAnchorCategoryEl(null);
+  };
+
+  const openCategory = Boolean(anchorCategoryEl);
+  const idCategory = openCategory ? "simple-popover" : undefined;
+  // * CATEGORY POPOVERS ENDS
+
+  // * TAGGED WITH POPOVERS STARTS
+  const [anchorTaggedWithEl, setAnchorTaggedWithEl] = React.useState(null);
+
+  const handleTaggedWithClick = (event) => {
+    setAnchorTaggedWithEl(event.currentTarget);
+  };
+
+  const handleTaggedWithClose = () => {
+    setAnchorTaggedWithEl(null);
+  };
+
+  const openTaggedWith = Boolean(anchorTaggedWithEl);
+  const idTaggedWith = openTaggedWith ? "simple-popover" : undefined;
+  // * TAGGED WITH POPOVERS ENDS
+
   // ? POPOVERS ENDS HERE
+
+  const vendorData = [
+    { title: "Content 1", value: "content1" },
+    { title: "Content 2", value: "content2" },
+    { title: "Content 3", value: "content3" },
+    { title: "Content 4", value: "content4" },
+    { title: "Content 5", value: "content5" },
+    { title: "Content 6", value: "content6" },
+    { title: "Content 7", value: "content7" },
+    { title: "Content 8", value: "content8" },
+    { title: "Content 9", value: "content9" },
+    { title: "Content 10", value: "content10" },
+    { title: "Content 11", value: "content11" },
+    { title: "Content 12", value: "content12" },
+  ];
+  const taggedWithData = [
+    { title: "Tag 1", value: "tag1" },
+    { title: "Tag 2", value: "tag2" },
+    { title: "Tag 3", value: "tag3" },
+    { title: "Tag 4", value: "tag4" },
+    { title: "Tag 5", value: "tag5" },
+    { title: "Tag 6", value: "tag6" },
+    { title: "Tag 7", value: "tag7" },
+    { title: "Tag 8", value: "tag8" },
+    { title: "Tag 9", value: "tag9" },
+    { title: "Tag 10", value: "tag10" },
+    { title: "Tag 11", value: "tag11" },
+    { title: "Tag 12", value: "tag12" },
+  ];
 
   return (
     <div className="container-fluid">
@@ -569,31 +687,301 @@ const AllProducts = () => {
             </Search>
             <div className="d-flex">
               <div className="d-flex product-button__box ms-2">
-                <button className="button-grey py-1 px-3">
-                  <p>Category</p>
-                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
-                </button>
-                <button className="button-grey py-1 px-3">
+                <button
+                  className="button-grey py-1 px-3"
+                  aria-describedby={idVendor}
+                  variant="contained"
+                  onClick={handleVendorClick}
+                >
                   <p>Vendor</p>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
-                <button className="button-grey py-1 px-3">
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  id={idVendor}
+                  open={openVendor}
+                  anchorEl={anchorVendorEl}
+                  onClose={handleVendorClose}
+                >
+                  <Autocomplete
+                    id="free-solo-demo"
+                    freeSolo
+                    size="small"
+                    sx={{ width: 200 }}
+                    options={vendorData.map((option) => option.title)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="Search"
+                        // InputProps={{
+                        //   startAdornment: (
+                        //     <InputAdornment position="start">
+                        //       <AccountCircle />
+                        //     </InputAdornment>
+                        //   ),
+                        // }}
+                      />
+                    )}
+                  />
+                </Popover>
+                <button
+                  className="button-grey py-1 px-3"
+                  aria-describedby={idCategory}
+                  variant="contained"
+                  onClick={handleCategoryClick}
+                >
+                  <p>Category</p>
+                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                </button>
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  id={idCategory}
+                  open={openCategory}
+                  anchorEl={anchorCategoryEl}
+                  onClose={handleCategoryClose}
+                >
+                  <Autocomplete
+                    id="free-solo-demo"
+                    freeSolo
+                    size="small"
+                    sx={{ width: 200 }}
+                    options={vendorData.map((option) => option.title)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="Search"
+                        // InputProps={{
+                        //   startAdornment: (
+                        //     <InputAdornment position="start">
+                        //       <AccountCircle />
+                        //     </InputAdornment>
+                        //   ),
+                        // }}
+                      />
+                    )}
+                  />
+                </Popover>
+
+                <button
+                  className="button-grey py-1 px-3"
+                  aria-describedby={idTaggedWith}
+                  variant="contained"
+                  onClick={handleTaggedWithClick}
+                >
                   <p>Tagged with</p>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
+
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  id={idTaggedWith}
+                  open={openTaggedWith}
+                  anchorEl={anchorTaggedWithEl}
+                  onClose={handleTaggedWithClose}
+                >
+                  <Autocomplete
+                    multiple
+                    id="checkboxes-tags-demo"
+                    sx={{ width: 300 }}
+                    options={taggedWithData}
+                    disableCloseOnSelect
+                    getOptionLabel={(option) => option.title}
+                    size="small"
+                    renderOption={(props, option, { selected }) => (
+                      <li {...props}>
+                        <Checkbox
+                          icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                          checkedIcon={<CheckBoxIcon fontSize="small" />}
+                          style={{ marginRight: 0 }}
+                          checked={selected}
+                          size="small"
+                        />
+                        {option.title}
+                      </li>
+                    )}
+                    renderInput={(params) => (
+                      <TextField
+                        size="small"
+                        {...params}
+                        placeholder="Search"
+                      />
+                    )}
+                  />
+                </Popover>
                 <button className="button-grey py-1 px-3">
                   <p>More Filters</p>
                   <img src={filter} alt="filter" className="ms-2" />
                 </button>
               </div>
-              <button className="button-grey py-1 px-3 ms-2">
+              <button
+                className="button-grey py-1 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
                 <img src={sort} alt="sort" className="me-2" />
                 <p>Sort</p>
               </button>
-              <button className="button-grey py-1 px-3 ms-2">
+              <button
+                className="button-grey py-1 px-3 ms-2"
+                aria-describedby={idColumns}
+                variant="contained"
+                onClick={handleColumnsClick}
+              >
                 <p>Columns</p>
                 <img src={columns} alt="columns" className="ms-2" />
               </button>
+
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortEl}
+                onClose={handleSortClose}
+                className="columns"
+              >
+                <FormControl>
+                  <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    // value={value}
+                    // onChange={handleRadioChange}
+                  >
+                    <FormControlLabel
+                      value="productName"
+                      control={<Radio size="small" />}
+                      label="Product Name"
+                    />
+                    <FormControlLabel
+                      value="category"
+                      control={<Radio size="small" />}
+                      label="Category"
+                    />
+                    <FormControlLabel
+                      value="subCategory"
+                      control={<Radio size="small" />}
+                      label="Sub Category"
+                    />
+                    <FormControlLabel
+                      value="vendor"
+                      control={<Radio size="small" />}
+                      label="Vendor"
+                    />
+                    <FormControlLabel
+                      value="uploadDate"
+                      control={<Radio size="small" />}
+                      label="Upload Date"
+                    />
+                    <FormControlLabel
+                      value="alphabeticalAtoZ"
+                      control={<Radio size="small" />}
+                      label="Alphabetical (A-Z)"
+                    />
+                    <FormControlLabel
+                      value="alphabeticalZtoA"
+                      control={<Radio size="small" />}
+                      label="Alphabetical (Z-A)"
+                    />
+                    <FormControlLabel
+                      value="oldestToNewest"
+                      control={<Radio size="small" />}
+                      label="Oldest to Newest"
+                    />
+                    <FormControlLabel
+                      value="newestToOldest"
+                      control={<Radio size="small" />}
+                      label="Newest to Oldest"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Popover>
+
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idColumns}
+                open={openColumns}
+                anchorEl={anchorColumnsEl}
+                onClose={handleColumnsClose}
+                className="columns"
+              >
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked size="small" />}
+                    label="Catgory"
+                    className="me-0"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox size="small" />}
+                    label="Sub Catgory"
+                    className="me-0"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox size="small" />}
+                    label="Collection"
+                    className="me-0"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox size="small" />}
+                    label="Vendor"
+                    className="me-0"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox size="small" />}
+                    label="Price"
+                    className="me-0"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox size="small" />}
+                    label="Activity"
+                    className="me-0"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox size="small" />}
+                    label="Status"
+                    className="me-0"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox size="small" />}
+                    label="Action"
+                    className="me-0"
+                  />
+                </FormGroup>
+              </Popover>
             </div>
           </div>
           {/* <Box> */}

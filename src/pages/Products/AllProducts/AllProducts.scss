@@ -19,3 +19,10 @@
     border-radius: 5px;
   }
 }
+
+.columns {
+  .MuiTypography-root {
+    font-size: $font2;
+    color: $lightBlue;
+  }
+}
