@@ -40,6 +40,7 @@ import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
 import sort from "../../../assets/icons/sort.svg";
 import filter from "../../../assets/icons/filter.svg";
 import editButton from "../../../assets/icons/editButton.svg";
+import editProductsButton from "../../../assets/icons/editProductsButton.svg";
 import duplicateButton from "../../../assets/icons/duplicateButton.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import Popover from "@mui/material/Popover";
@@ -414,18 +415,56 @@ const AllProducts = () => {
   };
 
   // ? POPOVERS STARTS HERE
-  const [anchorFlagEl, setAnchorFlagEl] = React.useState(null);
 
+  // * FLAG POPOVERS STARTS
+  const [anchorFlagEl, setAnchorFlagEl] = React.useState(null);
   const handleFlagClick = (event) => {
     setAnchorFlagEl(event.currentTarget);
   };
-
   const handleFlagClose = () => {
     setAnchorFlagEl(null);
   };
-
   const openFlag = Boolean(anchorFlagEl);
   const idFlag = openFlag ? "simple-popover" : undefined;
+  // * FLAG POPOVERS ENDS
+
+  // * EDIT STATUS POPOVERS STARTS
+  const [anchorEditStatusEl, setAnchorEditStatusEl] = React.useState(null);
+  const handleEditStatusClick = (event) => {
+    setAnchorEditStatusEl(event.currentTarget);
+  };
+  const handleEditStatusClose = () => {
+    setAnchorEditStatusEl(null);
+  };
+  const openEditStatus = Boolean(anchorEditStatusEl);
+  const idEditStatus = openEditStatus ? "simple-popover" : undefined;
+  // * EDIT STATUS POPOVERS ENDS
+
+  // * MASS ACTION POPOVERS STARTS
+  const [anchorMassActionEl, setAnchorMassActionEl] = React.useState(null);
+  const handleMassActionClick = (event) => {
+    setAnchorMassActionEl(event.currentTarget);
+  };
+  const handleMassActionClose = () => {
+    setAnchorMassActionEl(null);
+  };
+  const openMassAction = Boolean(anchorMassActionEl);
+  const idMassAction = openMassAction ? "simple-popover" : undefined;
+  // * MASS ACTION POPOVERS ENDS
+
+  // * PRICE POPOVERS STARTS
+  const [anchorPriceEl, setAnchorPriceEl] = React.useState(null);
+  const handlePriceClick = (event) => {
+    setAnchorPriceEl(event.currentTarget);
+  };
+
+  const handlePriceClose = () => {
+    setAnchorPriceEl(null);
+  };
+
+  const openPrice = Boolean(anchorPriceEl);
+  const idPrice = openPrice ? "simple-popover" : undefined;
+  // * PRICE POPOVERS ENDS
 
   // * ACTION POPOVERS STARTS
 
@@ -576,14 +615,92 @@ const AllProducts = () => {
                 <button className="button-grey py-1 px-3 ms-2">
                   <p>Edit Product</p>
                 </button>
-                <button className="button-grey py-1 px-3 ms-2">
+                <button
+                  className="button-grey py-1 px-3 ms-2"
+                  aria-describedby={idEditStatus}
+                  variant="contained"
+                  onClick={handleEditStatusClick}
+                >
                   <p>Edit Status</p>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
-                <button className="button-grey py-1 px-3 ms-2">
+                <button
+                  className="button-grey py-1 px-3 ms-2"
+                  aria-describedby={idMassAction}
+                  variant="contained"
+                  onClick={handleMassActionClick}
+                >
                   <p>Mass Action</p>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
+
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  id={idEditStatus}
+                  open={openEditStatus}
+                  anchorEl={anchorEditStatusEl}
+                  onClose={handleEditStatusClose}
+                >
+                  <p className="mb-3 text-blue-1 c-pointer">Set as Active</p>
+                  <p className="text-blue-1 c-pointer">Set as Draft</p>
+                </Popover>
+
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  id={idMassAction}
+                  open={openMassAction}
+                  anchorEl={anchorMassActionEl}
+                  onClose={handleMassActionClose}
+                >
+                  <small className="text-grey-7">ACTION</small>
+                  <hr className="hr-grey-6 my-2" />
+                  <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
+                    <img
+                      src={editProductsButton}
+                      alt="editProductsButton"
+                      height={36}
+                      className="c-pointer"
+                    />
+                    {/* <img
+                      src={duplicateButton}
+                      alt="duplicateButton"
+                      height={36}
+                      className="c-pointer"
+                    /> */}
+                  </div>
+                  <p className="my-3 text-lightBlue c-pointer">
+                    Make it Active
+                  </p>
+                  <p className="my-3 text-lightBlue c-pointer">Make it Draft</p>
+                  <p className="my-2 text-lightBlue c-pointer">Edit Quantity</p>
+                  <p className="my-2 text-lightBlue c-pointer">Set up Price</p>
+                  <small className="text-grey-7">Tags & Collection</small>
+                  <hr className="hr-grey-6 my-2" />
+                  <p className="my-2 text-lightBlue c-pointer">
+                    Add or Remove Tags
+                  </p>
+                  <p className="my-2 text-lightBlue c-pointer">
+                    Add or Remove Collections
+                  </p>
+                  <div className="d-flex justify-content-between mt-4">
+                    <p className="text-lightBlue c-pointer">Archived Product</p>
+                    <img src={deleteRed} alt="delete" className="c-pointer" />
+                  </div>
+                </Popover>
               </div>
               <p
                 className=" d-flex text-primary c-pointer"
@@ -670,9 +787,9 @@ const AllProducts = () => {
                           <TableCell>
                             <div
                               className="d-flex align-items-center c-pointer "
-                              aria-describedby={idFlag}
+                              aria-describedby={idPrice}
                               variant="contained"
-                              onClick={handleFlagClick}
+                              onClick={handlePriceClick}
                             >
                               <p>{row.price}</p>
                               <img
@@ -690,10 +807,10 @@ const AllProducts = () => {
                                 vertical: "top",
                                 horizontal: "center",
                               }}
-                              id={idFlag}
-                              open={openFlag}
-                              anchorEl={anchorFlagEl}
-                              onClose={handleFlagClose}
+                              id={idPrice}
+                              open={openPrice}
+                              anchorEl={anchorPriceEl}
+                              onClose={handlePriceClose}
                             >
                               <small className="text-lightBlue">
                                 Default : 12KT • Yellow • Gold • IJ-SI
@@ -765,7 +882,7 @@ const AllProducts = () => {
                                 anchorEl={anchorActionEl}
                                 onClose={handleActionClose}
                               >
-                                <small className="text-lightBlue">ACTION</small>
+                                <small className="text-grey-7">ACTION</small>
                                 <hr className="hr-grey-6 my-2" />
                                 <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
                                   <img
@@ -781,27 +898,37 @@ const AllProducts = () => {
                                     className="c-pointer"
                                   />
                                 </div>
-                                <p className="my-3 text-lightBlue">
+                                <p className="my-3 text-lightBlue c-pointer">
                                   Make it Active
                                 </p>
-                                <p className="my-3 text-lightBlue">
+                                <p className="my-3 text-lightBlue c-pointer">
                                   Make it Draft
                                 </p>
-                                <p className="my-3 text-lightBlue">Edit SKU</p>
-                                <p className="my-2 text-lightBlue">
+                                <p className="my-3 text-lightBlue c-pointer">
+                                  Edit SKU
+                                </p>
+                                <p className="my-2 text-lightBlue c-pointer">
                                   Edit Quantity
                                 </p>
-                                <small className="text-lightBlue">ACTION</small>
+                                <small className="text-grey-7">
+                                  Tags & Collection
+                                </small>
                                 <hr className="hr-grey-6 my-2" />
-                                <p className="my-2 text-lightBlue">
+                                <p className="my-2 text-lightBlue c-pointer">
                                   Add or Remove Tags
                                 </p>
-                                <p className="my-2 text-lightBlue">
+                                <p className="my-2 text-lightBlue c-pointer">
                                   Add or Remove Collections
                                 </p>
                                 <div className="d-flex justify-content-between mt-4">
-                                  <p>Archived Product</p>
-                                  <img src={deleteRed} alt="delete" />
+                                  <p className="text-lightBlue c-pointer">
+                                    Archived Product
+                                  </p>
+                                  <img
+                                    src={deleteRed}
+                                    alt="delete"
+                                    className="c-pointer"
+                                  />
                                 </div>
                               </Popover>
                             </div>
