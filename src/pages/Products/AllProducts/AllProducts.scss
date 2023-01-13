@@ -1,0 +1,21 @@
+@import "../../../styles/global";
+
+.row-selected-chip {
+  background: $black6;
+  width: auto;
+  border-radius: 5px;
+}
+
+.table {
+  &-status {
+    background: $green1;
+    font-weight: 600;
+  }
+}
+
+.product {
+  &-button__box {
+    background: $black6;
+    border-radius: 5px;
+  }
+}

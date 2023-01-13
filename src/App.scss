@@ -1,0 +1,13 @@
+@import "./styles/global";
+
+.main-box {
+  min-height: 100vh;
+  background: $black3;
+}
+
+.app-sidenav {
+  .MuiPaper-root {
+    background: $black2 !important;
+    border: 0 !important;
+  }
+}

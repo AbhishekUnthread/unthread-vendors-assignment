@@ -1,0 +1,57 @@
+@import "../../styles/global";
+
+.sidenav {
+  .logo {
+    margin: 20px 0;
+  }
+  .list {
+    &-icon {
+      min-width: auto;
+      padding: 8px;
+      img {
+        height: 22px;
+      }
+    }
+    transition: all 0.1s ease-in;
+    &-item {
+      border-radius: 10px;
+      padding: 0 8px;
+      margin-bottom: 6px;
+      background: transparent;
+      color: $grey3;
+      transition: all 0.1s ease-in;
+      &:hover {
+        transition: all 0.1s ease-in;
+        background: linear-gradient(
+          303.01deg,
+          rgba(89, 97, 248, 0.25) -4.4%,
+          rgba(242, 217, 247, 0.25) 111.29%
+        );
+        color: $white1;
+      }
+    }
+    &-text {
+      span {
+        font-weight: 600;
+        font-size: $font4;
+      }
+    }
+  }
+  a {
+    text-decoration: none;
+    color: $white1;
+  }
+
+  .active {
+    .list {
+      &-item {
+        background: linear-gradient(
+          303.01deg,
+          rgba(89, 97, 248, 0.25) -4.4%,
+          rgba(242, 217, 247, 0.25) 111.29%
+        );
+        color: $white1;
+      }
+    }
+  }
+}

@@ -1,0 +1,162 @@
+@import "./variables";
+@import "./text";
+
+.textrarea {
+  background: transparent !important;
+}
+
+.button {
+  &-dark {
+    border: 1px solid $black3;
+    background: $black3;
+    border-radius: 100px;
+    color: $white1;
+    &:hover {
+      background: $black2;
+    }
+    &:disabled {
+      background: $grey1;
+      cursor: not-allowed;
+    }
+  }
+  &-grey {
+    border: 1px solid $black6;
+    background: $black6;
+    border-radius: 5px;
+    color: $white1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+      background: $black5;
+    }
+    &:disabled {
+      background: $grey1;
+      cursor: not-allowed;
+    }
+  }
+  &-gradient {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 30px;
+    background: linear-gradient(
+      165.69deg,
+      rgba(104, 108, 248, 0.7) 4.49%,
+      rgba(236, 171, 241, 0.7) 113.71%
+    );
+    border-radius: 5px;
+    border: 0;
+    color: $white1;
+    &:hover {
+      background: $grey4;
+      color: $white1;
+    }
+    &:disabled {
+      background: $grey1;
+      cursor: not-allowed;
+    }
+  }
+  &-transparent {
+    border: 1px solid transparent;
+    color: $black2;
+    border-radius: 5px;
+    background: transparent;
+    // font-size: $font2;
+    // letter-spacing: $letter1;
+    // font-weight: 500;
+  }
+  &-border {
+    background-color: transparent;
+    border: 1px solid $black1;
+    border-radius: 5px;
+    // font-size: $font2;
+    // font-weight: 500;
+  }
+}
+
+.text-lightBlue {
+  color: $lightBlue;
+}
+
+.text-blue-gradient {
+  background: linear-gradient(303.01deg, #5961f8 -4.4%, #f2d9f7 111.29%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.MuiPaper-root {
+  background: $black2 !important;
+}
+
+.tabs {
+  .MuiTabs-indicator {
+    background: linear-gradient(
+      303.01deg,
+      #5961f8 -4.4%,
+      #f2d9f7 111.29%
+    ) !important;
+    border-radius: 6px 6px 0px 0px !important;
+    height: 5px !important;
+  }
+  .MuiTab-root {
+    font-size: $font3 !important;
+    text-transform: capitalize !important;
+    color: $grey4;
+  }
+  &-country {
+    background: $black7;
+    width: 140px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 5px 0 0;
+    border-left: 1px solid $grey5;
+    // border-bottom: 1px solid $grey5;
+  }
+  &-header-box {
+    border-bottom: 1px solid $grey5;
+  }
+}
+
+.border-grey-5 {
+  border: 1px solid $grey5;
+}
+
+.text-grey-6 {
+  color: #5c6d8e;
+}
+.text-lightBlue {
+  color: $lightBlue;
+}
+.text-blue-1 {
+  color: $blue1;
+}
+
+.MuiPopover-paper {
+  background: $black8;
+  border: 1px solid $grey5;
+  padding: 0.6rem 1.5rem;
+  margin-top: 0.3rem;
+}
+
+.MuiTableHead-root {
+  background: $black9;
+}
+
+.MuiTableCell-root {
+  border-bottom: 0 !important;
+  margin-bottom: 1rem;
+}
+
+.hr-grey-6 {
+  border: 0;
+  border-bottom: 1px solid $grey6;
+}
+
+.text-red-1 {
+  color: $red1;
+}
