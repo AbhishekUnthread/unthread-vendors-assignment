@@ -30,6 +30,7 @@ import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 import teamMember2 from "../../../assets/images/products/teamMember2.svg";
 import teamMember3 from "../../../assets/images/products/teamMember3.svg";
 import columns from "../../../assets/icons/columns.svg";
+import cancel from "../../../assets/icons/cancel.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import allFlag from "../../../assets/images/products/allFlag.svg";
 import usaFlag from "../../../assets/images/products/usaFlag.svg";
@@ -47,6 +48,9 @@ import Popover from "@mui/material/Popover";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import {
+  // Accordion,
+  // AccordionDetails,
+  // AccordionSummary,
   Autocomplete,
   FormControl,
   FormGroup,
@@ -54,9 +58,15 @@ import {
   InputAdornment,
   Radio,
   RadioGroup,
+  SwipeableDrawer,
   TextField,
 } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
 
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -365,6 +375,48 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
+// ? FILTER ACCORDIAN STARTS HERE
+const Accordion = styled((props) => (
+  <MuiAccordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+  // border: `1px solid ${theme.palette.divider}`,
+  "&:not(:last-child)": {
+    borderBottom: 0,
+  },
+  "&:before": {
+    display: "none",
+  },
+}));
+
+const AccordionSummary = styled((props) => (
+  <MuiAccordionSummary
+    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+    {...props}
+  />
+))(({ theme }) => ({
+  // backgroundColor:
+  //   theme.palette.mode === "dark"
+  //     ? "rgba(255, 255, 255, .05)"
+  //     : "rgba(0, 0, 0, .03)",
+  // flexDirection: "row-reverse",
+  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+    transform: "rotate(90deg)",
+    // marginRight: theme.spacing(1),
+  },
+  "& .MuiAccordionSummary-content": {
+    // marginLeft: theme.spacing(1),
+    padding: "0px",
+  },
+}));
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+  // padding: theme.spacing(2),
+
+  padding: "0 16px ",
+  borderTop: "1px solid rgba(0, 0, 0, .125)",
+}));
+// ? FILTER ACCORDIAN ENDS HERE
+
 const AllProducts = () => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -427,6 +479,27 @@ const AllProducts = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  // ? FILTER DRAWER STARTS HERE
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+  // ? FILTER DRAWER ENDS HERE
 
   // ? POPOVERS STARTS HERE
 
@@ -601,6 +674,14 @@ const AllProducts = () => {
     { title: "Tag 11", value: "tag11" },
     { title: "Tag 12", value: "tag12" },
   ];
+
+  // ? FILTER ACCORDIAN STARTS HERE
+  const [expanded, setExpanded] = React.useState("panel1");
+
+  const handleAccordianChange = (panel) => (event, newExpanded) => {
+    setExpanded(newExpanded ? panel : false);
+  };
+  // ? FILTER ACCORDIAN ENDS HERE
 
   return (
     <div className="container-fluid">
@@ -829,10 +910,162 @@ const AllProducts = () => {
                     )}
                   />
                 </Popover>
-                <button className="button-grey py-1 px-3">
-                  <p>More Filters</p>
-                  <img src={filter} alt="filter" className="ms-2" />
-                </button>
+
+                <React.Fragment key="right">
+                  <button
+                    className="button-grey py-1 px-3"
+                    onClick={toggleDrawer("right", true)}
+                  >
+                    <p>More Filters</p>
+                    <img src={filter} alt="filter" className="ms-2" />
+                  </button>
+                  <SwipeableDrawer
+                    anchor="right"
+                    open={state["right"]}
+                    onClose={toggleDrawer("right", false)}
+                    onOpen={toggleDrawer("right", true)}
+                  >
+                    {/* {list()} */}
+                    <div className="d-flex justify-content-between py-3 ps-3 pe-2 me-1">
+                      <h6 className="me-5 pe-5">Filters</h6>
+                      <img
+                        src={cancel}
+                        alt="cancel"
+                        className="ms-5 c-pointer ps-5"
+                        onClick={toggleDrawer("right", false)}
+                      />
+                    </div>
+
+                    <Accordion
+                      expanded={expanded === "panel1"}
+                      onChange={handleAccordianChange("panel1")}
+                    >
+                      <AccordionSummary
+                        aria-controls="panel1d-content"
+                        id="panel1d-header"
+                      >
+                        <p className="text-lightBlue">Product Category</p>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <p className="mb-2 text-grey-6">Content 1</p>
+                        <p className="mb-2 text-grey-6">Content 2</p>
+                        <p className="mb-2 text-grey-6">Content 3</p>
+                      </AccordionDetails>
+                    </Accordion>
+                    <Accordion
+                      expanded={expanded === "panel2"}
+                      onChange={handleAccordianChange("panel2")}
+                    >
+                      <AccordionSummary
+                        aria-controls="panel2d-content"
+                        id="panel2d-header"
+                      >
+                        <p className="text-lightBlue">Sub Category</p>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <p className="mb-2 text-grey-6">Content 1</p>
+                        <p className="mb-2 text-grey-6">Content 2</p>
+                        <p className="mb-2 text-grey-6">Content 3</p>
+                      </AccordionDetails>
+                    </Accordion>
+                    <Accordion
+                      expanded={expanded === "panel3"}
+                      onChange={handleAccordianChange("panel3")}
+                    >
+                      <AccordionSummary
+                        aria-controls="panel3d-content"
+                        id="panel3d-header"
+                      >
+                        <p className="text-lightBlue">Vendor</p>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <p className="mb-2 text-grey-6">Content 1</p>
+                        <p className="mb-2 text-grey-6">Content 2</p>
+                        <p className="mb-2 text-grey-6">Content 3</p>
+                      </AccordionDetails>
+                    </Accordion>
+                    <Accordion
+                      expanded={expanded === "panel4"}
+                      onChange={handleAccordianChange("panel4")}
+                    >
+                      <AccordionSummary
+                        aria-controls="panel4d-content"
+                        id="panel4d-header"
+                      >
+                        <p className="text-lightBlue">Collection</p>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <p className="mb-2 text-grey-6">Content 1</p>
+                        <p className="mb-2 text-grey-6">Content 2</p>
+                        <p className="mb-2 text-grey-6">Content 3</p>
+                      </AccordionDetails>
+                    </Accordion>
+                    <Accordion
+                      expanded={expanded === "panel5"}
+                      onChange={handleAccordianChange("panel5")}
+                    >
+                      <AccordionSummary
+                        aria-controls="panel5d-content"
+                        id="panel5d-header"
+                      >
+                        <p className="text-lightBlue">Tagged With</p>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <p className="mb-2 text-grey-6">Content 1</p>
+                        <p className="mb-2 text-grey-6">Content 2</p>
+                        <p className="mb-2 text-grey-6">Content 3</p>
+                      </AccordionDetails>
+                    </Accordion>
+                    <Accordion
+                      expanded={expanded === "panel6"}
+                      onChange={handleAccordianChange("panel6")}
+                    >
+                      <AccordionSummary
+                        aria-controls="panel6d-content"
+                        id="panel6d-header"
+                      >
+                        <p className="text-lightBlue">Product Status</p>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <p className="mb-2 text-grey-6">Content 1</p>
+                        <p className="mb-2 text-grey-6">Content 2</p>
+                        <p className="mb-2 text-grey-6">Content 3</p>
+                      </AccordionDetails>
+                    </Accordion>
+                    <Accordion
+                      expanded={expanded === "panel7"}
+                      onChange={handleAccordianChange("panel7")}
+                    >
+                      <AccordionSummary
+                        aria-controls="panel7d-content"
+                        id="panel7d-header"
+                      >
+                        <p className="text-lightBlue">Inventory</p>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <p className="mb-2 text-grey-6">Content 1</p>
+                        <p className="mb-2 text-grey-6">Content 2</p>
+                        <p className="mb-2 text-grey-6">Content 3</p>
+                      </AccordionDetails>
+                    </Accordion>
+                    <Accordion
+                      expanded={expanded === "panel8"}
+                      onChange={handleAccordianChange("panel8")}
+                    >
+                      <AccordionSummary
+                        aria-controls="panel8d-content"
+                        id="panel8d-header"
+                      >
+                        <p className="text-lightBlue">Labels</p>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <p className="mb-2 text-grey-6">Content 1</p>
+                        <p className="mb-2 text-grey-6">Content 2</p>
+                        <p className="mb-2 text-grey-6">Content 3</p>
+                      </AccordionDetails>
+                    </Accordion>
+                  </SwipeableDrawer>
+                </React.Fragment>
               </div>
               <button
                 className="button-grey py-1 px-3 ms-2"
