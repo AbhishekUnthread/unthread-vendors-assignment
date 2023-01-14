@@ -52,12 +52,18 @@ import {
   // AccordionDetails,
   // AccordionSummary,
   Autocomplete,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormGroup,
   FormLabel,
   InputAdornment,
   Radio,
   RadioGroup,
+  Slide,
   SwipeableDrawer,
   TextField,
 } from "@mui/material";
@@ -417,6 +423,10 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 // ? FILTER ACCORDIAN ENDS HERE
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const AllProducts = () => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -475,6 +485,16 @@ const AllProducts = () => {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const [value, setValue] = React.useState(0);
+  const [importValue, setImportValue] = React.useState("importProducts");
+  const [importSecondValue, setImportSecondValue] =
+    React.useState("uploadLineSheet");
+
+  const handleImportChange = (event, newValue) => {
+    setImportValue(newValue);
+  };
+  const handleImportSecondChange = (event, newValue) => {
+    setImportSecondValue(newValue);
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -683,17 +703,384 @@ const AllProducts = () => {
   };
   // ? FILTER ACCORDIAN ENDS HERE
 
+  // ? EXPORT DIALOG STARTS HERE
+  const [openExport, setOpenExport] = React.useState(false);
+
+  const handleExportOpen = () => {
+    setOpenExport(true);
+  };
+
+  const handleExportClose = () => {
+    setOpenExport(false);
+  };
+  // ? EXPORT DIALOG ENDS HERE
+
+  // ? IMPORT DIALOG STARTS HERE
+  const [openImport, setOpenImport] = React.useState(false);
+
+  const handleImportOpen = () => {
+    setOpenImport(true);
+  };
+
+  const handleImportClose = () => {
+    setOpenImport(false);
+  };
+  // ? IMPORT DIALOG ENDS HERE
+
+  // ? IMPORT SECOND DIALOG STARTS HERE
+  const [openImportSecond, setOpenImportSecond] = React.useState(false);
+
+  const handleImportSecondOpen = () => {
+    setOpenImport(false);
+    setOpenImportSecond(true);
+  };
+
+  const handleImportSecondClose = () => {
+    setOpenImportSecond(false);
+  };
+  // ? IMPORT SECOND DIALOG ENDS HERE
+
   return (
     <div className="container-fluid">
       <div className="page">
         <h4 className="">All Products</h4>
         <div className="d-flex align-items-center">
-          <p className="me-4 c-pointer">Export</p>
-          <p className="me-4 c-pointer">Import</p>
+          <p className="me-4 c-pointer" onClick={handleExportOpen}>
+            Export
+          </p>
+          <p className="me-4 c-pointer" onClick={handleImportOpen}>
+            Import
+          </p>
           <button className="button-gradient py-2 px-4">
             <p>+ Add Product</p>
           </button>
         </div>
+        <Dialog
+          open={openExport}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleExportClose}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+          fullWidth="true"
+        >
+          <DialogTitle>
+            <div className="d-flex justify-content-between align-items-center">
+              <h5 className="text-lightBlue">Export Products</h5>
+              <img
+                src={cancel}
+                alt="cancel"
+                width={30}
+                onClick={handleExportClose}
+                className="c-pointer"
+              />
+            </div>
+          </DialogTitle>
+          <hr className="hr-grey-6 my-2" />
+          <DialogContent className="py-2 px-4">
+            <p className="text-lightBlue mb-2">Export</p>
+            <FormControl>
+              <RadioGroup
+                aria-labelledby="demo-controlled-radio-buttons-group"
+                name="controlled-radio-buttons-group"
+                value={value}
+                onChange={handleChange}
+              >
+                <FormControlLabel
+                  value="currentPage"
+                  control={<Radio size="small" />}
+                  label="Current Page"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+                <FormControlLabel
+                  value="allProducts"
+                  control={<Radio size="small" />}
+                  label="All Products"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+              </RadioGroup>
+            </FormControl>
+            <p className="text-lightBlue mb-2 mt-3">Export as</p>
+            <FormControl>
+              <RadioGroup
+                aria-labelledby="demo-controlled-radio-buttons-group"
+                name="controlled-radio-buttons-group"
+                value={value}
+                onChange={handleChange}
+              >
+                <FormControlLabel
+                  value="csvForExcel"
+                  control={<Radio size="small" />}
+                  label="CSV for Excel, Number or other Spreadsheet program"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+                <FormControlLabel
+                  value="plainCsvFile"
+                  control={<Radio size="small" />}
+                  label="Plain CSV File"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+              </RadioGroup>
+            </FormControl>
+            <p className="text-lightBlue mb-2 mt-3">HTML format</p>
+            <FormControl>
+              <RadioGroup
+                aria-labelledby="demo-controlled-radio-buttons-group"
+                name="controlled-radio-buttons-group"
+                value={value}
+                onChange={handleChange}
+              >
+                <FormControlLabel
+                  value="normalText"
+                  control={<Radio size="small" />}
+                  label="Normal Text"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+                <FormControlLabel
+                  value="htmlCodedText"
+                  control={<Radio size="small" />}
+                  label="HTML Coded Text"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+              </RadioGroup>
+            </FormControl>
+          </DialogContent>
+          <hr className="hr-grey-6 mt-2 mb-1" />
+          <DialogActions className="d-flex justify-content-between px-4 pb-2">
+            <button
+              className="button-grey py-2 px-5"
+              onClick={handleExportClose}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-5"
+              onClick={handleExportClose}
+            >
+              <p>Continue</p>
+            </button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={openImport}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleImportClose}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+          fullWidth="true"
+        >
+          <DialogTitle>
+            <div className="d-flex justify-content-between align-items-center">
+              <h5 className="text-lightBlue">Import Products</h5>
+              <img
+                src={cancel}
+                alt="cancel"
+                width={30}
+                onClick={handleImportClose}
+                className="c-pointer"
+              />
+            </div>
+          </DialogTitle>
+          <hr className="hr-grey-6 my-2" />
+          <DialogContent className="py-2 px-4">
+            <FormControl>
+              <RadioGroup
+                aria-labelledby="demo-controlled-radio-buttons-group"
+                name="controlled-radio-buttons-group"
+                value={importValue}
+                onChange={handleImportChange}
+              >
+                <FormControlLabel
+                  value="importProducts"
+                  control={<Radio size="small" />}
+                  label="Import Products from Existing Site"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+                <FormControlLabel
+                  value="bulkImportProducts"
+                  control={<Radio size="small" />}
+                  label="Bulk Import Products"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+              </RadioGroup>
+            </FormControl>
+          </DialogContent>
+          <hr className="hr-grey-6 mt-2 mb-1" />
+          <DialogActions className="d-flex justify-content-between px-4 pb-2">
+            <button
+              className="button-grey py-2 px-5"
+              onClick={handleImportClose}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-5"
+              onClick={handleImportSecondOpen}
+            >
+              <p>Continue</p>
+            </button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={openImportSecond}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleImportSecondClose}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+          fullWidth="true"
+        >
+          <DialogTitle>
+            <div className="d-flex justify-content-between align-items-center">
+              <h5 className="text-lightBlue">Import Products</h5>
+              <img
+                src={cancel}
+                alt="cancel"
+                width={30}
+                onClick={handleImportSecondClose}
+                className="c-pointer"
+              />
+            </div>
+          </DialogTitle>
+          <hr className="hr-grey-6 my-2" />
+          <DialogContent className="py-2 px-4">
+            <FormControl>
+              <RadioGroup
+                aria-labelledby="demo-controlled-radio-buttons-group"
+                name="controlled-radio-buttons-group"
+                value={importSecondValue}
+                onChange={handleImportSecondChange}
+              >
+                <FormControlLabel
+                  value="uploadCompanySheet"
+                  control={<Radio size="small" />}
+                  label="Upload Company line sheet"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+                <FormControlLabel
+                  value="uploadLineSheet"
+                  control={<Radio size="small" />}
+                  label="Upload your own line sheet"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+              </RadioGroup>
+            </FormControl>
+            {importSecondValue === "uploadCompanySheet" && (
+              <div className="d-flex flex-column">
+                <small className="text-grey-6"> Note :</small>
+                <small className="text-grey-6">
+                  1. Upload the skeleton file and Map it with the Company Data.
+                </small>
+                <small className="text-grey-6">
+                  2. You can watch the Tutorial on how to do it.&nbsp;
+                  <span className="text-blue-gradient c-pointer">
+                    Watch here
+                  </span>
+                </small>
+                <small className="text-grey-6">
+                  3. Do not upload more than 50 products at a time.
+                </small>
+                <small className="text-grey-6">
+                  4. Select the folder containing Product Images with Product
+                  folder name equal to SKU
+                </small>
+                <small className="text-grey-6">
+                  5. Products should be uploaded successfully.
+                </small>
+              </div>
+            )}
+            {importSecondValue === "uploadLineSheet" && (
+              <div className="d-flex flex-column">
+                <small className="text-grey-6"> Note :</small>
+                <small className="text-grey-6">
+                  1. Upload the skeleton file and Map it with the Company Data.
+                </small>
+                <small className="text-grey-6">
+                  2. You can watch the Tutorial on how to do it.&nbsp;
+                  <span className="text-blue-gradient c-pointer">
+                    Watch here
+                  </span>
+                </small>
+                <small className="text-grey-6">
+                  3. Do not upload more than 50 products at a time.
+                </small>
+                <small className="text-grey-6">
+                  4. Select the folder containing Product Images with Product
+                  folder name equal to SKU
+                </small>
+                <small className="text-grey-6">
+                  5. Products should be uploaded successfully.
+                </small>
+              </div>
+            )}
+          </DialogContent>
+          <hr className="hr-grey-6 mt-2 mb-1" />
+          <DialogActions className="d-flex justify-content-between px-4 pb-2">
+            <button
+              className="button-grey py-2 px-5"
+              onClick={handleImportSecondClose}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-5"
+              onClick={handleImportSecondClose}
+            >
+              <p>Continue</p>
+            </button>
+          </DialogActions>
+        </Dialog>
       </div>
       <div className="row">
         <Paper
@@ -927,11 +1314,11 @@ const AllProducts = () => {
                   >
                     {/* {list()} */}
                     <div className="d-flex justify-content-between py-3 ps-3 pe-2 me-1">
-                      <h6 className="me-5 pe-5">Filters</h6>
+                      <h6 className="">Filters</h6>
                       <img
                         src={cancel}
                         alt="cancel"
-                        className="ms-5 c-pointer ps-5"
+                        className="c-pointer filter-padding"
                         onClick={toggleDrawer("right", false)}
                       />
                     </div>
