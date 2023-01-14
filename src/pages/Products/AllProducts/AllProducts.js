@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import "./AllProducts.scss";
 import { alpha, styled } from "@mui/material/styles";
@@ -39,6 +39,9 @@ import ringSmall from "../../../assets/images/ringSmall.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
 import sort from "../../../assets/icons/sort.svg";
+import uploadLineSheet from "../../../assets/images/products/uploadLineSheet.svg";
+import uploadCompanySheet1 from "../../../assets/images/products/uploadCompanySheet1.svg";
+import uploadCompanySheet2 from "../../../assets/images/products/uploadCompanySheet2.svg";
 import filter from "../../../assets/icons/filter.svg";
 import editButton from "../../../assets/icons/editButton.svg";
 import editProductsButton from "../../../assets/icons/editProductsButton.svg";
@@ -76,6 +79,7 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import { useDropzone } from "react-dropzone";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -427,6 +431,38 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+// ? FILE UPLOAD STARTS HERE
+
+const baseStyle = {
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  padding: "0",
+  borderWidth: 2,
+  borderRadius: 2,
+  borderColor: "#5C6D8E",
+  borderStyle: "dashed",
+  //   backgroundColor: "",
+  color: "#bdbdbd",
+  outline: "none",
+  transition: "border .24s ease-in-out",
+  cursor: "pointer",
+};
+
+const focusedStyle = {
+  borderColor: "#2196f3",
+};
+
+const acceptStyle = {
+  borderColor: "#00e676",
+};
+
+const rejectStyle = {
+  borderColor: "#ff1744",
+};
+// ? FILE UPLOAD ENDS HERE
+
 const AllProducts = () => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -740,6 +776,21 @@ const AllProducts = () => {
   };
   // ? IMPORT SECOND DIALOG ENDS HERE
 
+  // ? FILE UPLOAD ENDS HERE
+  const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
+    useDropzone({ accept: "image/*" });
+
+  const style = useMemo(
+    () => ({
+      ...baseStyle,
+      ...(isFocused ? focusedStyle : {}),
+      ...(isDragAccept ? acceptStyle : {}),
+      ...(isDragReject ? rejectStyle : {}),
+    }),
+    [isFocused, isDragAccept, isDragReject]
+  );
+  // ? FILE UPLOAD ENDS HERE
+
   return (
     <div className="container-fluid">
       <div className="page">
@@ -1003,6 +1054,60 @@ const AllProducts = () => {
                     },
                   }}
                 />
+
+                {importSecondValue === "uploadCompanySheet" && (
+                  <div className="d-flex flex-column">
+                    <small className="text-grey-6"> Note :</small>
+                    <small className="text-grey-6">
+                      1. Upload the skeleton file and Map it with the Company
+                      Data.
+                    </small>
+                    <small className="text-grey-6">
+                      2. You can watch the Tutorial on how to do it.&nbsp;
+                      <span className="text-blue-gradient c-pointer">
+                        Watch here
+                      </span>
+                    </small>
+                    <small className="text-grey-6">
+                      3. Do not upload more than 50 products at a time.
+                    </small>
+                    <small className="text-grey-6">
+                      4. Select the folder containing Product Images with
+                      Product folder name equal to SKU
+                    </small>
+                    <small className="text-grey-6">
+                      5. Products should be uploaded successfully.
+                    </small>
+                    <div {...getRootProps({ style })} className="mt-3">
+                      <input
+                        id="primary"
+                        {...getInputProps()}
+                        // onChange={(event) => {
+                        //   uploadFileToCloud(event, "primary");
+                        //   event.target.value = null;
+                        // }}
+                      />
+                      <img src={uploadCompanySheet1} className="w-100" alt="" />
+                    </div>
+                    <small className="mt-2 text-lightBlue">
+                      Don't have our line sheet?&nbsp;
+                      <span className="text blue-gradient c-pointer">
+                        Download here
+                      </span>
+                    </small>
+                    <div {...getRootProps({ style })} className="mt-3 mb-3">
+                      <input
+                        id="primary"
+                        {...getInputProps()}
+                        // onChange={(event) => {
+                        //   uploadFileToCloud(event, "primary");
+                        //   event.target.value = null;
+                        // }}
+                      />
+                      <img src={uploadCompanySheet2} className="w-100" alt="" />
+                    </div>
+                  </div>
+                )}
                 <FormControlLabel
                   value="uploadLineSheet"
                   control={<Radio size="small" />}
@@ -1016,30 +1121,6 @@ const AllProducts = () => {
                 />
               </RadioGroup>
             </FormControl>
-            {importSecondValue === "uploadCompanySheet" && (
-              <div className="d-flex flex-column">
-                <small className="text-grey-6"> Note :</small>
-                <small className="text-grey-6">
-                  1. Upload the skeleton file and Map it with the Company Data.
-                </small>
-                <small className="text-grey-6">
-                  2. You can watch the Tutorial on how to do it.&nbsp;
-                  <span className="text-blue-gradient c-pointer">
-                    Watch here
-                  </span>
-                </small>
-                <small className="text-grey-6">
-                  3. Do not upload more than 50 products at a time.
-                </small>
-                <small className="text-grey-6">
-                  4. Select the folder containing Product Images with Product
-                  folder name equal to SKU
-                </small>
-                <small className="text-grey-6">
-                  5. Products should be uploaded successfully.
-                </small>
-              </div>
-            )}
             {importSecondValue === "uploadLineSheet" && (
               <div className="d-flex flex-column">
                 <small className="text-grey-6"> Note :</small>
@@ -1062,6 +1143,22 @@ const AllProducts = () => {
                 <small className="text-grey-6">
                   5. Products should be uploaded successfully.
                 </small>
+                {/* <div className="col-3 col-md-2 d-flex justify-content-center align-items-center"> */}
+                <div {...getRootProps({ style })} className="mt-3">
+                  <input
+                    id="primary"
+                    {...getInputProps()}
+                    // onChange={(event) => {
+                    //   uploadFileToCloud(event, "primary");
+                    //   event.target.value = null;
+                    // }}
+                  />
+                  <img src={uploadLineSheet} className="w-100" alt="" />
+                </div>
+                <small className="mt-2 text-lightBlue">
+                  Please make sure to leave a single row at the top of the Sheet
+                </small>
+                {/* </div> */}
               </div>
             )}
           </DialogContent>
