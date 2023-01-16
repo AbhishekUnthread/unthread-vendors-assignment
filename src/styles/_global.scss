@@ -94,7 +94,7 @@
 }
 
 .MuiPaper-root {
-  background: $black2 !important;
+  background: $black3 !important;
 }
 .bg-black-2 {
   background: $black2 !important;
@@ -133,6 +133,9 @@
 .border-grey-5 {
   border: 1px solid $grey5;
 }
+.border-grey-8 {
+  border: 1px solid $grey8;
+}
 
 .text-grey-6 {
   color: $grey6;
@@ -150,7 +153,7 @@
 .MuiPopover-paper {
   background: $black8;
   border: 1px solid $grey5;
-  padding: 0.6rem 1.5rem;
+  padding: 0.6rem 0.3rem;
   margin-top: 0.3rem;
 }
 
@@ -170,4 +173,50 @@
 
 .text-red-1 {
   color: $red1;
+}
+
+.custom-radio-buttons {
+  //   .MuiFormControlLabel-root {
+  //     border: 1px solid $black1;
+  //     padding: 4px 12px;
+  //   }
+
+  .chips {
+    .MuiChip-root {
+      border-radius: 0 !important;
+    }
+  }
+  .MuiRadio-root {
+    display: none !important;
+  }
+
+  .radio-buttons {
+    // width: 45px;
+    // height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    margin-left: 4px !important;
+    margin-right: 4px !important;
+    border: 1px solid $grey6 !important;
+    color: $grey6 !important;
+    transition: 0.1s all ease-in;
+    padding: 4px;
+    .MuiFormControlLabel-label {
+      font-size: $font2 !important;
+    }
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+  .active {
+    background-color: $grey6 !important;
+    color: $black2 !important;
+    border: 1px solid $grey6 !important;
+  }
+}
+
+.text-blue-2 {
+  color: $blue2;
 }
