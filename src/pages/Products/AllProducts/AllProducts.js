@@ -80,6 +80,7 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { useDropzone } from "react-dropzone";
+import { Link } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -792,19 +793,19 @@ const AllProducts = () => {
   // ? FILE UPLOAD ENDS HERE
 
   return (
-    <div className="container-fluid">
-      <div className="page">
-        <h4 className="">All Products</h4>
-        <div className="d-flex align-items-center">
+    <div className="container-fluid page">
+      <div className="row justify-content-between align-items-center">
+        <h4 className="page-heading w-auto ps-0">All Products</h4>
+        <div className="d-flex align-items-center w-auto pe-0">
           <p className="me-4 c-pointer" onClick={handleExportOpen}>
             Export
           </p>
           <p className="me-4 c-pointer" onClick={handleImportOpen}>
             Import
           </p>
-          <button className="button-gradient py-2 px-4">
+          <Link to="/addProduct" className="button-gradient py-2 px-4">
             <p>+ Add Product</p>
-          </button>
+          </Link>
         </div>
         <Dialog
           open={openExport}

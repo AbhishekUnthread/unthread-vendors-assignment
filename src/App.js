@@ -23,6 +23,7 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 // import Login from "./pages/Login/Login";
 import { useEffect } from "react";
 import AllProducts from "./pages/Products/AllProducts/AllProducts";
+import AddProduct from "./pages/Products/AddProduct/AddProduct";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -179,9 +180,10 @@ function App(props) {
           <Routes>
             {/* {admin ? ( */}
             <React.Fragment>
-              <Route path="/" element={<Navigate to="/dashboard" />} />
-              <Route path="/dashboard" element={<Dashboard />} exact />
-              <Route path="/allProducts" element={<AllProducts />} exact />
+              <Route path="/" element={<Navigate to="/allProducts" />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/allProducts" element={<AllProducts />} />
+              <Route path="/addProduct" element={<AddProduct />} />
               {/* <Route path="/orders" element={<Orders />} exact />
               <Route path="/add-product" element={<AddProduct />} exact />
               <Route path="/products" element={<Products />} exact />
