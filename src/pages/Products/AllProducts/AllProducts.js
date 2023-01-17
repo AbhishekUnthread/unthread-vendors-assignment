@@ -1,28 +1,9 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import "./AllProducts.scss";
-import { alpha, styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { visuallyHidden } from "@mui/utils";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+import { useDropzone } from "react-dropzone";
+import { Link } from "react-router-dom";
+// ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 import teamMember2 from "../../../assets/images/products/teamMember2.svg";
@@ -45,32 +26,49 @@ import editButton from "../../../assets/icons/editButton.svg";
 import editProductsButton from "../../../assets/icons/editProductsButton.svg";
 import duplicateButton from "../../../assets/icons/duplicateButton.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
-import Popover from "@mui/material/Popover";
-import InputBase from "@mui/material/InputBase";
-import SearchIcon from "@mui/icons-material/Search";
+// ! MATERIAL IMPORTS
 import {
   Autocomplete,
+  Box,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   FormGroup,
+  Paper,
+  Popover,
   Radio,
   RadioGroup,
   Slide,
   SwipeableDrawer,
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Tabs,
   TextField,
 } from "@mui/material";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import { styled } from "@mui/material/styles";
+import { visuallyHidden } from "@mui/utils";
+import InputBase from "@mui/material/InputBase";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
+// ! MATERIAL ICONS IMPORT
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import { useDropzone } from "react-dropzone";
-import { Link } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 
+// ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -116,7 +114,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     // },
   },
 }));
+// ? SEARCH INPUT ENDS HERE
 
+// ? TABS STARTS HERE
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -142,7 +142,9 @@ TabPanel.propTypes = {
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
 };
+// ? TABS ENDS HERE
 
+// ? TABLE STARTS HERE
 function createData(pId, productName, category, qty, price, activity, status) {
   return { pId, productName, category, qty, price, activity, status };
 }
@@ -232,10 +234,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -309,64 +307,7 @@ EnhancedTableHead.propTypes = {
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
 };
-
-function EnhancedTableToolbar(props) {
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Nutrition
-        </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
-}
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
+// ? TABLE ENDS HERE
 
 // ? FILTER ACCORDIAN STARTS HERE
 const Accordion = styled((props) => (
@@ -410,12 +351,13 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 // ? FILTER ACCORDIAN ENDS HERE
 
+// ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+// ? DIALOG TRANSITION ENDS HERE
 
 // ? FILE UPLOAD STARTS HERE
-
 const baseStyle = {
   flex: 1,
   display: "flex",
@@ -448,7 +390,7 @@ const rejectStyle = {
 
 const AllProducts = () => {
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("calories");
+  const [orderBy, setOrderBy] = React.useState("productName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -499,7 +441,6 @@ const AllProducts = () => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
@@ -1799,7 +1740,6 @@ const AllProducts = () => {
             </div>
           )}
           <TabPanel value={value} index={0}>
-            {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
             <TableContainer>
               <Table
                 sx={{ minWidth: 750 }}
