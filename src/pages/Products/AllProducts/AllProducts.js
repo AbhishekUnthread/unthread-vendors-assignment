@@ -18,13 +18,11 @@ import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 import teamMember2 from "../../../assets/images/products/teamMember2.svg";
@@ -51,32 +49,23 @@ import Popover from "@mui/material/Popover";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import {
-  // Accordion,
-  // AccordionDetails,
-  // AccordionSummary,
   Autocomplete,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   FormControl,
   FormGroup,
-  FormLabel,
-  InputAdornment,
   Radio,
   RadioGroup,
   Slide,
   SwipeableDrawer,
   TextField,
 } from "@mui/material";
-import { AccountCircle } from "@mui/icons-material";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
-
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { useDropzone } from "react-dropzone";
@@ -153,13 +142,6 @@ TabPanel.propTypes = {
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
 };
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
 
 function createData(pId, productName, category, qty, price, activity, status) {
   return { pId, productName, category, qty, price, activity, status };

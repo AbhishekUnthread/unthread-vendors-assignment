@@ -8,7 +8,6 @@ import InputBase from "@mui/material/InputBase";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
@@ -18,8 +17,8 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import user from "../../assets/icons/user.svg";
 import "./Navbar.scss";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
+// import LightModeIcon from "@mui/icons-material/LightMode";
+// import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -62,7 +61,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
-  const [lightTheme, setLightTheme] = React.useState(false);
+  // const [lightTheme, setLightTheme] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -73,9 +72,9 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleTheme = () => {
-    setLightTheme(!lightTheme);
-  };
+  // const handleTheme = () => {
+  //   setLightTheme(!lightTheme);
+  // };
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -205,14 +204,14 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
             sx={{ display: { xs: "none", md: "flex" } }}
             className="align-items-center"
           >
-            <IconButton
+            {/* <IconButton
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
               onClick={handleTheme}
             >
               {lightTheme ? <LightModeIcon /> : <DarkModeIcon />}
-            </IconButton>
+            </IconButton> */}
             <IconButton
               size="large"
               aria-label="show 4 new mails"

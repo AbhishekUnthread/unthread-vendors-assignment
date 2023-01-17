@@ -14,13 +14,9 @@ import {
   Box,
   FormControl,
   MenuItem,
-  Paper,
   Select,
   Tab,
   Tabs,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
   TextField,
   Checkbox,
   Autocomplete,
@@ -62,26 +58,7 @@ TabPanel.propTypes = {
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
 };
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
 // ? TABS ENDS HERE
-
-const productMetal = [
-  { name: "Gold" },
-  { name: "Silver" },
-  { name: "Platinum" },
-];
-const productDiamond = [
-  { name: "IJ-SI" },
-  { name: "JK-VSSI" },
-  { name: "GH-VSSI" },
-  { name: "EL-VVS" },
-];
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -109,47 +86,41 @@ const AddProduct = () => {
 
   // ? SIZE SELECT STARTS HERE
   const [size, setSize] = React.useState("");
-  const [metal, setMetal] = React.useState("");
-  const [diamond, setDiamond] = React.useState("");
+  // const [metal, setMetal] = React.useState("");
+  // const [diamond, setDiamond] = React.useState("");
 
   const handleSizeChange = (event) => {
     setSize(event.target.value);
   };
   // ? SIZE SELECT ENDS HERE
 
-  const handleMetalChange = (e) => {
-    // const newData = e.target.value;
-    // console.log(e.target.value);
-    if (e.target.value) {
-      setMetal(e.target.value);
-      // setErr(false);
-      var elems = document
-        .querySelector(".metal-radio")
-        .querySelectorAll(".MuiFormControlLabel-root.active");
-      [].forEach.call(elems, function (el) {
-        el.classList.remove("active");
-      });
-      e.target.closest("label").classList.toggle("active");
-    }
-    // setRadioValue(newData);
-  };
+  // const handleMetalChange = (e) => {
+  //   // const newData = e.target.value;
+  //   // console.log(e.target.value);
+  //   if (e.target.value) {
+  //     setMetal(e.target.value);
+  //     var elems = document
+  //       .querySelector(".metal-radio")
+  //       .querySelectorAll(".MuiFormControlLabel-root.active");
+  //     [].forEach.call(elems, function (el) {
+  //       el.classList.remove("active");
+  //     });
+  //     e.target.closest("label").classList.toggle("active");
+  //   }
+  // };
 
-  const handleDiamondChange = (e) => {
-    // const newData = e.target.value;
-    // console.log(e.target.value);
-    if (e.target.value) {
-      setMetal(e.target.value);
-      // setErr(false);
-      var elems = document
-        .querySelector(".diamond-radio")
-        .querySelectorAll(".MuiFormControlLabel-root.active");
-      [].forEach.call(elems, function (el) {
-        el.classList.remove("active");
-      });
-      e.target.closest("label").classList.toggle("active");
-    }
-    // setRadioValue(newData);
-  };
+  // const handleDiamondChange = (e) => {
+  //   if (e.target.value) {
+  //     setMetal(e.target.value);
+  //     var elems = document
+  //       .querySelector(".diamond-radio")
+  //       .querySelectorAll(".MuiFormControlLabel-root.active");
+  //     [].forEach.call(elems, function (el) {
+  //       el.classList.remove("active");
+  //     });
+  //     e.target.closest("label").classList.toggle("active");
+  //   }
+  // };
 
   return (
     <div className="page container-fluid position-relative">

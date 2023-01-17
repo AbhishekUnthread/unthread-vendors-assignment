@@ -3,10 +3,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  InputBase,
   OutlinedInput,
-  Paper,
-  Switch,
   TextareaAutosize,
   TextField,
 } from "@mui/material";
@@ -32,10 +29,10 @@ const taggedWithData = [
 ];
 
 const SEO = () => {
-  const [dense, setDense] = React.useState(false);
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
+  // const [dense, setDense] = React.useState(false);
+  // const handleChangeDense = (event) => {
+  //   setDense(event.target.checked);
+  // };
 
   // ? CHECKBOX STARTS HERE
   const [checked, setChecked] = React.useState(false);
