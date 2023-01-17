@@ -1,13 +1,20 @@
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
+import "./Navbar.scss";
+// ! IMAGES IMPORTS
+import user from "../../assets/icons/user.svg";
+// ! MATERIAL IMPORTS
+import {
+  AppBar,
+  Badge,
+  Box,
+  IconButton,
+  InputBase,
+  Menu,
+  MenuItem,
+  Toolbar,
+} from "@mui/material";
+// ! MATERIAL ICONS IMPORT
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
@@ -15,8 +22,6 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import user from "../../assets/icons/user.svg";
-import "./Navbar.scss";
 // import LightModeIcon from "@mui/icons-material/LightMode";
 // import DarkModeIcon from "@mui/icons-material/DarkMode";
 
@@ -182,14 +187,6 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               <KeyboardArrowRightIcon />
             )}
           </IconButton>
-          {/* <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            MUI
-          </Typography> */}
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -240,7 +237,6 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               color="inherit"
               className="profile-button ms-4"
             >
-              {/* <AccountCircle /> */}
               <div className="d-flex flex-column justify-content-end align-items-end me-2">
                 <h6 className="text-lighBlue">Saniya Shaikh</h6>
                 <p className="text-blue-gradient">Super Admin</p>

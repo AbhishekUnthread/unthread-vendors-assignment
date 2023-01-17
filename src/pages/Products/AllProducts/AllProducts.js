@@ -1625,7 +1625,6 @@ const AllProducts = () => {
               </Popover>
             </div>
           </div>
-          {/* <Box> */}
           {selected.length > 0 && (
             <div className="d-flex justify-content-between align-items-center px-2 mb-3">
               <div className="d-flex">
@@ -1995,7 +1994,6 @@ const AllProducts = () => {
           <TabPanel value={value} index={3}>
             Item Four
           </TabPanel>
-          {/* </Box> */}
         </Paper>
       </div>
     </div>

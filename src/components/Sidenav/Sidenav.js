@@ -1,12 +1,8 @@
 import React from "react";
 import "./Sidenav.scss";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-// import Divider from "@mui/material/Divider";
-import logo from "../../assets/icons/logo.svg";
 import { NavLink } from "react-router-dom";
+// ! IMAGES IMPORTS
+import logo from "../../assets/icons/logo.svg";
 import dashboard from "../../assets/icons/sidenav/dashboard.svg";
 import orders from "../../assets/icons/sidenav/orders.svg";
 import products from "../../assets/icons/sidenav/products.svg";
@@ -21,6 +17,8 @@ import teams from "../../assets/icons/sidenav/teams.svg";
 import helpCenter from "../../assets/icons/sidenav/helpCenter.svg";
 import newFeatures from "../../assets/icons/sidenav/newFeatures.svg";
 import settings from "../../assets/icons/sidenav/settings.svg";
+// ! MATERIAL IMPORTS
+import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
 const Sidenav = () => {
   return (
@@ -28,7 +26,6 @@ const Sidenav = () => {
       <div className="d-flex align-items-center justify-content-center logo">
         <img src={logo} alt="Company Logo" width={80} />
       </div>
-      {/* <Divider /> */}
       <List>
         <NavLink to="/dashboard">
           <ListItem button key="Dashboard" className="list-item">
