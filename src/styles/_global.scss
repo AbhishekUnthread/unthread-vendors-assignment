@@ -275,9 +275,18 @@ textarea {
   }
 }
 
-.MuiInputAdornment-outlined {
+.toggle {
+  .Mui-selected {
+    background: linear-gradient(
+      303.01deg,
+      rgba(89, 97, 248, 0.2) -4.4%,
+      rgba(242, 217, 247, 0.2) 111.29%
+    );
+    p {
+      color: $lightBlue !important;
+    }
+  }
   p {
-    font-size: 13px;
-    color: $grey6 !important;
+    text-transform: capitalize !important;
   }
 }

@@ -198,15 +198,15 @@ const rejectStyle = {
 // ? FILE UPLOAD ENDS HERE
 
 const Variants = () => {
+  // ? TOGGLE BUTTONS STARTS HERE
   const [country, setCountry] = React.useState("india");
 
   const handleCountry = (event, newCountry) => {
-    // if (newCountry !== null) {
     if (newCountry !== "add" && newCountry !== "markets") {
       setCountry(newCountry);
     }
-    // }
   };
+  // ? TOGGLE BUTTONS ENDS HERE
 
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("variantName");
