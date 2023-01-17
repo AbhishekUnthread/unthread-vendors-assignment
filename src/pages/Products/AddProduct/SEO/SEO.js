@@ -38,7 +38,7 @@ const SEO = () => {
   };
 
   // ? CHECKBOX STARTS HERE
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = React.useState(false);
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
@@ -66,7 +66,7 @@ const SEO = () => {
           onChange={handleSwitchChange}
         />
       </div>
-      {!checkedSwitch && (
+      {checkedSwitch && (
         <React.Fragment>
           <div className="d-flex align-items-center mt-3 col-12 px-0">
             <FormControlLabel

@@ -152,7 +152,7 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="page container-fluid">
+    <div className="page container-fluid position-relative">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
           <Link to="/allProducts">
@@ -389,6 +389,15 @@ const AddProduct = () => {
             />
           </div>
         </div>
+      </div>
+      <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
+        <div className="d-flex w-auto">
+          <button className="button-red-outline py-2 px-4">Discard</button>
+          <button className="button-lightBlue-outline py-2 px-4 ms-3">
+            Save as Draft
+          </button>
+        </div>
+        <button className="button-gradient py-2 px-4 w-auto ">Continue</button>
       </div>
     </div>
   );

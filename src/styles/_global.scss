@@ -61,6 +61,46 @@
       cursor: not-allowed;
     }
   }
+  &-red-outline {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 30px;
+    background: transparent;
+    border-radius: 5px;
+    border: 1px solid $red2;
+    color: $red2;
+    text-decoration: none;
+    &:hover {
+      background: $red2;
+      color: $black1;
+    }
+    &:disabled {
+      background: $grey1;
+      cursor: not-allowed;
+    }
+  }
+  &-lightBlue-outline {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 30px;
+    background: transparent;
+    border-radius: 5px;
+    border: 1px solid $lightBlue;
+    color: $lightBlue;
+    text-decoration: none;
+    &:hover {
+      background: $lightBlue;
+      color: $black1;
+    }
+    &:disabled {
+      background: $grey1;
+      cursor: not-allowed;
+    }
+  }
   &-transparent {
     border: 1px solid transparent;
     color: $black2;
@@ -219,4 +259,25 @@
 
 .text-blue-2 {
   color: $blue2;
+}
+
+input,
+textarea {
+  font-size: 13px !important;
+  color: $lightBlue !important;
+  &::placeholder {
+    font-size: 13px;
+    color: $grey6 !important;
+  }
+  &:focus {
+    // border-color: #719ece;
+    // box-shadow: 0 0 10px #719ece;
+  }
+}
+
+.MuiInputAdornment-outlined {
+  p {
+    font-size: 13px;
+    color: $grey6 !important;
+  }
 }
