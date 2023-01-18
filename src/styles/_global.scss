@@ -61,6 +61,30 @@
       cursor: not-allowed;
     }
   }
+  &-grey-gradient {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 30px;
+    background: linear-gradient(
+      303.01deg,
+      rgba(89, 97, 248, 0.2) -4.4%,
+      rgba(242, 217, 247, 0.2) 111.29%
+    );
+    border-radius: 5px;
+    border: 0;
+    color: $white1;
+    text-decoration: none;
+    &:hover {
+      background: $grey4;
+      color: $white1;
+    }
+    &:disabled {
+      background: $grey1;
+      cursor: not-allowed;
+    }
+  }
   &-red-outline {
     display: flex;
     flex-direction: row;
@@ -262,7 +286,8 @@
 }
 
 input,
-textarea {
+textarea,
+.MuiSelect-select {
   font-size: 13px !important;
   color: $lightBlue !important;
   &::placeholder {
@@ -289,4 +314,8 @@ textarea {
   p {
     text-transform: capitalize !important;
   }
+}
+
+.MuiSelect-select {
+  padding: 6.5px 14px !important;
 }

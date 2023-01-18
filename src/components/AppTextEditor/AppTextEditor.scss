@@ -1,0 +1,32 @@
+.editor-class {
+  background: "#15142A";
+  border: 1px solid #343e50;
+  //   border: 1px solid #5c6d8e;
+  border-top: 0;
+}
+.toolbar-class {
+  background: #27283f;
+  margin-bottom: 0;
+  border: 1px solid #343e50;
+  //   border: 1px solid #5c6d8e;
+  border-bottom: 0;
+  border-radius: 2px 2px 0 0;
+  .rdw-option-wrapper,
+  .rdw-dropdown-selectedtext {
+    background: #c8d8ff;
+    text-decoration: none;
+    padding: 4px;
+    min-width: 20px;
+    height: 18px;
+    border-radius: 2px;
+    span {
+      color: black;
+    }
+  }
+  .rdw-dropdown-wrapper {
+    background: none;
+    height: auto;
+    border: 0;
+    border-radius: 2px;
+  }
+}
