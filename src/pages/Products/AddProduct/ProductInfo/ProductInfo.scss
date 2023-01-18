@@ -1,0 +1,36 @@
+@import "../../../../styles/global";
+
+.productInfo {
+  .MuiInputAdornment-outlined {
+    p {
+      font-size: 13px !important;
+      color: $lightBlue !important;
+      background: $black10 !important;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+  }
+  &-inputs {
+    .MuiOutlinedInput-root {
+      padding-right: 8px !important;
+    }
+  }
+
+  &-toggle {
+    &__active.Mui-selected {
+      background: $green2 !important;
+      p {
+        color: $black9 !important;
+      }
+    }
+    &__draft.Mui-selected {
+      background: $red3 !important;
+      p {
+        color: $white1 !important;
+      }
+    }
+    p {
+      text-transform: capitalize !important;
+    }
+  }
+}
