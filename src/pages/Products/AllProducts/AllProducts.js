@@ -62,7 +62,7 @@ import InputBase from "@mui/material/InputBase";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
-// ! MATERIAL ICONS IMPORT
+// ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import SearchIcon from "@mui/icons-material/Search";
@@ -100,7 +100,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
-    padding: theme.spacing(0.5, 1, 1, 0),
+    padding: theme.spacing(0.8, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
@@ -700,9 +700,13 @@ const AllProducts = () => {
   };
   // ? IMPORT SECOND DIALOG ENDS HERE
 
-  // ? FILE UPLOAD ENDS HERE
+  // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
-    useDropzone({ accept: "image/*" });
+    useDropzone({
+      accept: {
+        "image/*": [".jpeg", ".jpg", ".png"],
+      },
+    });
 
   const style = useMemo(
     () => ({
@@ -737,7 +741,7 @@ const AllProducts = () => {
           onClose={handleExportClose}
           aria-describedby="alert-dialog-slide-description"
           maxWidth="sm"
-          fullWidth="true"
+          // fullWidth="true"
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
@@ -873,7 +877,7 @@ const AllProducts = () => {
           onClose={handleImportClose}
           aria-describedby="alert-dialog-slide-description"
           maxWidth="sm"
-          fullWidth="true"
+          // fullWidth="true"
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
@@ -944,7 +948,7 @@ const AllProducts = () => {
           onClose={handleImportSecondClose}
           aria-describedby="alert-dialog-slide-description"
           maxWidth="sm"
-          fullWidth="true"
+          // fullWidth="true"
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
@@ -1801,7 +1805,9 @@ const AllProducts = () => {
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell>{row.category}</TableCell>
+                          <TableCell>
+                            <p>{row.category}</p>
+                          </TableCell>
                           <TableCell>
                             <div className="d-flex align-items-center">
                               <p className="text-decoration-underline text-primary">

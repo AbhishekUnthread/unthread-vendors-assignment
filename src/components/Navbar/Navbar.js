@@ -14,7 +14,7 @@ import {
   MenuItem,
   Toolbar,
 } from "@mui/material";
-// ! MATERIAL ICONS IMPORT
+// ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";

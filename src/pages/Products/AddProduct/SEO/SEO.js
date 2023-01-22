@@ -1,3 +1,8 @@
+import React from "react";
+import "./SEO.scss";
+// ! COMPONENT IMPORTS
+import { AntSwitch } from "../../../../components/AntSwitch/AntSwitch";
+// ! MATERIAL IMPORTS
 import {
   Autocomplete,
   Checkbox,
@@ -7,9 +12,7 @@ import {
   TextareaAutosize,
   TextField,
 } from "@mui/material";
-import React from "react";
-import { AntSwitch } from "../../../../components/AntSwitch/AntSwitch";
-import "./SEO.scss";
+// ! MATERIAL ICONS IMPORT
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
@@ -29,11 +32,6 @@ const taggedWithData = [
 ];
 
 const SEO = () => {
-  // const [dense, setDense] = React.useState(false);
-  // const handleChangeDense = (event) => {
-  //   setDense(event.target.checked);
-  // };
-
   // ? CHECKBOX STARTS HERE
   const [checked, setChecked] = React.useState(false);
 

@@ -22,7 +22,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
-// ! MATERIAL ICONS IMPORT
+// ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
@@ -119,7 +119,11 @@ const ProductInfo = () => {
 
   // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
-    useDropzone({ accept: "image/*" });
+    useDropzone({
+      accept: {
+        "image/*": [".jpeg", ".jpg", ".png"],
+      },
+    });
 
   const style = useMemo(
     () => ({
@@ -174,6 +178,26 @@ const ProductInfo = () => {
   };
 
   // ? RADIO BUTTON ENDS HERE
+
+  // ?DYNAMIC TEXT EDITOR STARTS HERE
+  const [openDynamicTextEditor, setOpenDynamicTextEditor] =
+    React.useState(false);
+
+  const handleDynamicTextEditor = () => {
+    !openDynamicTextEditor
+      ? setOpenDynamicTextEditor(true)
+      : setOpenDynamicTextEditor(false);
+  };
+  // ? DYNAMIC TEXT EDITOR ENDS HERE
+
+  // ? TOGGLE BUTTON STARTS HERE
+  const [productDetails, setProductDetails] =
+    React.useState("productInformation");
+
+  const handleProductDetails = (event, newProduct) => {
+    setProductDetails(newProduct);
+  };
+  // ? TOGGLE BUTTON ENDS HERE
 
   return (
     <React.Fragment>
@@ -230,11 +254,52 @@ const ProductInfo = () => {
             </div>
           </div>
         </div>
-        <div className="col-12 px-0 mt-2">
-          <div className="d-flex">
+        <div className="col-12 px-0 mt-3">
+          <div className="d-flex justify-content-between mb-1">
             <p className="text-lightBlue mb-1">Description</p>
+            <button
+              className="py-0 px-3 button-gradient"
+              onClick={handleDynamicTextEditor}
+            >
+              <p>Add Dynamic Fields</p>
+            </button>
           </div>
           <AppTextEditor />
+
+          {openDynamicTextEditor && (
+            <div className="mt-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <ToggleButtonGroup
+                  value={productDetails}
+                  exclusive
+                  onChange={handleProductDetails}
+                  aria-label="text alignment"
+                >
+                  <ToggleButton
+                    value="productInformation"
+                    aria-label="productInformation"
+                  >
+                    <p className="text-capitalize text-lightBlue">
+                      Product Information
+                    </p>
+                  </ToggleButton>
+                  <ToggleButton value="inspiration" aria-label="inspiration">
+                    <p className="text-capitalize text-lightBlue">
+                      Inspiration
+                    </p>
+                  </ToggleButton>
+                  <ToggleButton value="careGuide" aria-label="careGuide">
+                    <p className="text-capitalize text-lightBlue">Care Guide</p>
+                  </ToggleButton>
+                  <ToggleButton value="shipping" aria-label="shipping">
+                    <p className="text-capitalize text-lightBlue">Shipping</p>
+                  </ToggleButton>
+                </ToggleButtonGroup>
+                <p className="text-blue-2">Customise</p>
+              </div>
+              <AppTextEditor />
+            </div>
+          )}
         </div>
 
         <hr className="hr-grey-6 my-3" />
@@ -299,9 +364,7 @@ const ProductInfo = () => {
                   onChange={handleCategory}
                   sx={{ background: "#15142A" }}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
+                  <MenuItem value="">None</MenuItem>
                   <MenuItem value={"productTitle"}>Product Title</MenuItem>
                   <MenuItem value={"sku"}>SKU</MenuItem>
                   <MenuItem value={"vendorName"}>Vendor Name</MenuItem>
@@ -329,9 +392,7 @@ const ProductInfo = () => {
                   onChange={handleSubCategory}
                   sx={{ background: "#15142A" }}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
+                  <MenuItem value="">None</MenuItem>
                   <MenuItem value={"productTitle"}>Product Title</MenuItem>
                   <MenuItem value={"sku"}>SKU</MenuItem>
                   <MenuItem value={"vendorName"}>Vendor Name</MenuItem>
@@ -359,9 +420,7 @@ const ProductInfo = () => {
                   onChange={handleVendorName}
                   sx={{ background: "#15142A" }}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
+                  <MenuItem value="">None</MenuItem>
                   <MenuItem value={"productTitle"}>Product Title</MenuItem>
                   <MenuItem value={"sku"}>SKU</MenuItem>
                   <MenuItem value={"vendorName"}>Vendor Name</MenuItem>
@@ -379,7 +438,7 @@ const ProductInfo = () => {
               <Autocomplete
                 multiple
                 id="checkboxes-tags-demo"
-                sx={{ width: "100%" }}
+                sx={{ width: "100%", background: "#15142A" }}
                 options={collectionsData}
                 disableCloseOnSelect
                 getOptionLabel={(option) => option.title}
@@ -434,7 +493,7 @@ const ProductInfo = () => {
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
               <FormControl
-                sx={{ m: 0, minWidth: 120 }}
+                sx={{ m: 0, minWidth: 120, background: "#15142A" }}
                 size="small"
                 className="w-100"
               >
@@ -446,9 +505,7 @@ const ProductInfo = () => {
                   onChange={handleDiscount}
                   disabled={checkedDynamic}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
+                  <MenuItem value="">None</MenuItem>
                   <MenuItem value={5}>5%</MenuItem>
                   <MenuItem value={10}>10%</MenuItem>
                   <MenuItem value={20}>20%</MenuItem>
@@ -559,9 +616,7 @@ const ProductInfo = () => {
                       placeholder="Rings"
                       onChange={handleDynamicDiscount}
                     >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
+                      <MenuItem value="">None</MenuItem>
                       <MenuItem value={5}>5%</MenuItem>
                       <MenuItem value={10}>10%</MenuItem>
                       <MenuItem value={20}>20%</MenuItem>

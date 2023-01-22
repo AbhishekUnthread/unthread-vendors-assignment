@@ -1,3 +1,8 @@
+import React from "react";
+import "./Shipping.scss";
+// ! COMPONENT IMPORTS
+import AppCountrySelect from "../../../../components/AppCountrySelect/AppCountrySelect";
+// ! MATERIAL IMPORTS
 import {
   Checkbox,
   FormControl,
@@ -7,9 +12,6 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
-import React from "react";
-import AppCountrySelect from "../../../../components/AppCountrySelect/AppCountrySelect";
-import "./Shipping.scss";
 
 const Shipping = () => {
   // ? TOGGLE BUTTONS STARTS HERE

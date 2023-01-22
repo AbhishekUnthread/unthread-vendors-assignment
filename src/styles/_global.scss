@@ -227,6 +227,10 @@
   margin-top: 0.3rem;
 }
 
+.popover-large {
+  padding: 2rem !important;
+}
+
 .MuiTableHead-root {
   background: $black9;
 }
@@ -293,7 +297,8 @@
 
 input,
 textarea,
-.MuiSelect-select {
+.MuiSelect-select,
+.MuiMenuItem-root {
   font-size: 13px !important;
   color: $lightBlue !important;
   &::placeholder {

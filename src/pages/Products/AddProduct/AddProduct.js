@@ -1,6 +1,17 @@
 import React from "react";
 import "./AddProduct.scss";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+// ! COMPONENT IMPORTS
+import ProductInfo from "./ProductInfo/ProductInfo";
+import MoreFeatures from "./MoreFeatures/MoreFeatures";
+import SEO from "./SEO/SEO";
+import Shipping from "./Shipping/Shipping";
+import Variants from "./Variants/Variants";
+import Options from "./Options/Options";
+import Attributes from "./Attributes/Attributes";
+import AppReactImageGallery from "../../../components/AppReactImageGallery/AppReactImageGallery";
+// ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import info from "../../../assets/icons/info.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
@@ -8,9 +19,10 @@ import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import gold from "../../../assets/images/products/gold.svg";
 import silver from "../../../assets/images/products/silver.svg";
 import platinum from "../../../assets/images/products/platinum.svg";
-import { Link } from "react-router-dom";
+import cancel from "../../../assets/icons/cancel.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
+// ! MATERIAL IMPORTS
 import {
-  InputLabel,
   Box,
   FormControl,
   MenuItem,
@@ -20,17 +32,71 @@ import {
   TextField,
   Checkbox,
   Autocomplete,
+  DialogActions,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Slide,
+  styled,
+  InputBase,
+  FormControlLabel,
+  FormGroup,
+  Popover,
+  OutlinedInput,
 } from "@mui/material";
-import ProductInfo from "./ProductInfo/ProductInfo";
-import MoreFeatures from "./MoreFeatures/MoreFeatures";
-import SEO from "./SEO/SEO";
-import Shipping from "./Shipping/Shipping";
-import Variants from "./Variants/Variants";
-import Options from "./Options/Options";
-import Attributes from "./Attributes/Attributes";
-import AppReactImageGallery from "../../../components/AppReactImageGallery/AppReactImageGallery";
+// ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import SearchIcon from "@mui/icons-material/Search";
+
+// ? SEARCH INPUT STARTS HERE
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  // backgroundColor: alpha(theme.palette.common.white, 0.15),
+  "&:hover": {
+    // backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: "#1c1b33",
+  },
+  marginLeft: 0,
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: 0,
+    width: "auto",
+  },
+  backgroundColor: "#1c1b33",
+  height: "30.6px",
+  border: "1px solid #5c6d8e",
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "inherit",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(0.7, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    borderRadius: "5px",
+    // [theme.breakpoints.up("sm")]: {
+    //   width: "12ch",
+    //   "&:focus": {
+    //     width: "20ch",
+    //   },
+    // },
+  },
+}));
+// ? SEARCH INPUT ENDS HERE
 
 // ? TABS STARTS HERE
 function TabPanel(props) {
@@ -59,6 +125,12 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 // ? TABS ENDS HERE
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -121,6 +193,33 @@ const AddProduct = () => {
   //     e.target.closest("label").classList.toggle("active");
   //   }
   // };
+
+  // ? TAGS DIALOG STARTS HERE
+  const [openTags, setOpenTags] = React.useState(false);
+
+  const handleTagsOpen = () => {
+    setOpenTags(true);
+  };
+
+  const handleTagsClose = () => {
+    setOpenTags(false);
+  };
+  // ? TAGS DIALOG ENDS HERE
+
+  // * SORT POPOVERS STARTS
+  const [anchorTagEl, setAnchorTagEl] = React.useState(null);
+
+  const handleTagClick = (event) => {
+    setAnchorTagEl(event.currentTarget);
+  };
+
+  const handleTagClose = () => {
+    setAnchorTagEl(null);
+  };
+
+  const openTag = Boolean(anchorTagEl);
+  const idTag = openTag ? "simple-popover" : undefined;
+  // * SORT POPOVERS ENDS
 
   return (
     <div className="page container-fluid position-relative">
@@ -212,7 +311,7 @@ const AddProduct = () => {
           </div>
           {/* </Paper> */}
         </div>
-        <div className="col-lg-3 mt-3 pe-0">
+        <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
           <div className="bg-black-2 border-grey-5 rounded-3 p-3">
             <h6 className="text-grey-6 mb-3">Preview:</h6>
             <AppReactImageGallery />
@@ -223,32 +322,41 @@ const AddProduct = () => {
             <div>
               <small className="text-grey-6">Diamond Ring</small>
             </div>
-            <div className="d-flex my-4">
+            <div className="d-flex my-4 flex-wrap">
               <h6 className="text-lightBlue">₹ 85,000</h6>
               <small className="ms-2 me-3 text-grey-6 ">
                 <s>₹ 100,000</s>
               </small>
               <small className="text-lightBlue">15%&nbsp;OFF</small>
             </div>
+            <p className="text-lightBlue mb-2">Size:</p>
             <FormControl
-              sx={{ m: 0, minWidth: 120, width: "100%" }}
+              sx={{ m: 0, minWidth: 120, width: "100%", background: "#15142A" }}
               size="small"
             >
-              <InputLabel id="demo-select-small">Select Size</InputLabel>
+              {/* <InputLabel id="demo-select-small">Select Size</InputLabel> */}
               <Select
                 labelId="demo-select-small"
                 id="demo-select-small"
                 value={size}
-                label="Age"
                 onChange={handleSizeChange}
+                size="small"
               >
-                <MenuItem value="">
-                  <em>None</em>
+                <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  None
                 </MenuItem>
-                <MenuItem value={10}>S</MenuItem>
-                <MenuItem value={20}>M</MenuItem>
-                <MenuItem value={30}>L</MenuItem>
-                <MenuItem value={30}>XL</MenuItem>
+                <MenuItem value={10} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  S
+                </MenuItem>
+                <MenuItem value={20} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  M
+                </MenuItem>
+                <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  L
+                </MenuItem>
+                <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  XL
+                </MenuItem>
               </Select>
             </FormControl>
             <p className="text-lightBlue mt-3">Metal</p>
@@ -273,32 +381,32 @@ const AddProduct = () => {
                 ))}
               </RadioGroup>
             </FormControl> */}
-            <div className="d-flex align-items-center mt-2">
-              <div className="d-flex border-grey-5 p-1 rounded-3">
+            <div className="d-flex align-items-center flex-wrap">
+              <div className="d-flex border-grey-5 p-1 mt-2 rounded-3 me-2">
                 <img src={gold} alt="gold" width={15} />
                 <small className="text-grey-6 ms-2">Gold</small>
               </div>
-              <div className="d-flex border-grey-5 p-1 rounded-3 ms-2">
+              <div className="d-flex border-grey-5 p-1 mt-2 rounded-3 me-2">
                 <img src={silver} alt="silver" width={15} />
                 <small className="text-grey-6 ms-2">Silver</small>
               </div>
-              <div className="d-flex border-grey-5 p-1 rounded-3 ms-2">
+              <div className="d-flex border-grey-5 p-1 mt-2 rounded-3 me-2">
                 <img src={platinum} alt="platinum" width={15} />
                 <small className="text-grey-6 ms-2">Platinum</small>
               </div>
             </div>
             <p className="text-lightBlue mt-3">Diamond</p>
-            <div className="d-flex align-items-center mt-2">
-              <div className="d-flex border-grey-5 p-1 rounded-3">
+            <div className="d-flex align-items-center flex-wrap">
+              <div className="d-flex border-grey-5 p-1 rounded-3 me-2 mt-2">
                 <small className="text-grey-6">IJ-SI</small>
               </div>
-              <div className="d-flex border-grey-5 p-1 rounded-3 ms-2">
+              <div className="d-flex border-grey-5 p-1 rounded-3 me-2 mt-2">
                 <small className="text-grey-6">JK-VSSI</small>
               </div>
-              <div className="d-flex border-grey-5 p-1 rounded-3 ms-2">
+              <div className="d-flex border-grey-5 p-1 rounded-3 me-2 mt-2">
                 <small className="text-grey-6">GH-VSSI</small>
               </div>
-              <div className="d-flex border-grey-5 p-1 rounded-3 ms-2">
+              <div className="d-flex border-grey-5 p-1 rounded-3 me-2 mt-2">
                 <small className="text-grey-6">EF-VVS</small>
               </div>
             </div>
@@ -329,15 +437,165 @@ const AddProduct = () => {
             <div className="d-flex justify-content-between align-items-center">
               <div className="d-flex align-items-center">
                 <h6 className="text-grey-6">Tags </h6>
-                <img src={info} alt="info" className="ms-2 c-pointer" />
+                <img
+                  src={info}
+                  alt="info"
+                  className="ms-2 c-pointer"
+                  width={14}
+                />
               </div>
-              <small className="text-blue-2">View all Tags</small>
+              <small className="text-blue-2 c-pointer" onClick={handleTagsOpen}>
+                View all Tags
+              </small>
+
+              <Dialog
+                open={openTags}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleTagsClose}
+                aria-describedby="alert-dialog-slide-description"
+                maxWidth="md"
+                // fullWidth="true"
+              >
+                <DialogTitle>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="text-lightBlue">Tags</h5>
+                    <img
+                      src={cancel}
+                      alt="cancel"
+                      width={30}
+                      onClick={handleTagsClose}
+                      className="c-pointer"
+                    />
+                  </div>
+                </DialogTitle>
+                <hr className="hr-grey-6 mt-2 mb-0" />
+                <DialogContent className="py-2 px-4">
+                  <div className="row">
+                    <div className="col-md-6 mt-2">
+                      <Search>
+                        <SearchIconWrapper>
+                          <SearchIcon />
+                        </SearchIconWrapper>
+                        <StyledInputBase
+                          placeholder="Search…"
+                          inputProps={{ "aria-label": "search" }}
+                        />
+                      </Search>
+                    </div>
+                    <div className="col-md-3 col-6 ps-md-0 pe-0 mt-2">
+                      <button
+                        className="button-grey py-1 px-3 w-100"
+                        // aria-describedby={idVendor}
+                        variant="contained"
+                        // onClick={handleVendorClick}
+                      >
+                        <p>Alphabetical (A-Z)</p>
+                        <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                      </button>
+                    </div>
+                    <div className="col-md-3 col-6 mt-2">
+                      <button
+                        className="button-gradient py-1 px-3 w-100"
+                        onClick={handleTagClick}
+                      >
+                        <p>Create a New Tag</p>
+                      </button>
+                      <Popover
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "center",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "center",
+                        }}
+                        id={idTag}
+                        open={openTag}
+                        anchorEl={anchorTagEl}
+                        onClose={handleTagClose}
+                        className="columns"
+                      >
+                        <div className="d-flex mb-2">
+                          <small className="text-grey-6">Enter Tag Name</small>
+                          <img
+                            src={info}
+                            alt="info"
+                            className="ms-2 c-pointer"
+                            width={14}
+                          />
+                        </div>
+                        <FormControl
+                          sx={{ background: "#15142A" }}
+                          // className="col-7 px-0"
+                        >
+                          <OutlinedInput
+                            placeholder="Enter Tag Name"
+                            size="small"
+                          />
+                        </FormControl>
+                      </Popover>
+                    </div>
+                  </div>
+                  <p className="text-lightBlue mt-3 mb-2">
+                    458 Tags are listed below
+                  </p>
+
+                  <FormGroup className="tags-checkbox">
+                    <FormControlLabel
+                      control={<Checkbox size="small" />}
+                      label="Tags 1"
+                      className="me-0"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox size="small" />}
+                      label="Tags 2"
+                      className="me-0"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox size="small" />}
+                      label="Tags 3"
+                      className="me-0"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox size="small" />}
+                      label="Tags 4"
+                      className="me-0"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox size="small" />}
+                      label="Tags 5"
+                      className="me-0"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox size="small" />}
+                      label="Tags 6"
+                      className="me-0"
+                    />
+                  </FormGroup>
+                </DialogContent>
+                <hr className="hr-grey-6 mt-2 mb-1" />
+                <DialogActions className="d-flex justify-content-between px-4 pb-2">
+                  <button
+                    className="button-grey py-2 px-5"
+                    onClick={handleTagsClose}
+                  >
+                    <p>Cancel</p>
+                  </button>
+                  <button
+                    className="button-gradient py-2 px-5"
+                    onClick={handleTagsClose}
+                  >
+                    <p>Continue</p>
+                  </button>
+                </DialogActions>
+              </Dialog>
             </div>
 
             <Autocomplete
               multiple
               id="checkboxes-tags-demo"
-              sx={{ width: "100%", mt: 2 }}
+              sx={{ width: "100%", mt: 2, background: "#15142A" }}
               options={taggedWithData}
               disableCloseOnSelect
               getOptionLabel={(option) => option.title}

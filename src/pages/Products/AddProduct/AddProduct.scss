@@ -7,3 +7,10 @@
   left: 0;
   margin-bottom: -24px;
 }
+
+.tags-checkbox {
+  .MuiTypography-root {
+    font-size: $font1 !important;
+    color: $lightBlue !important;
+  }
+}

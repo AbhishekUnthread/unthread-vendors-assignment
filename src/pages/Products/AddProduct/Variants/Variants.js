@@ -262,10 +262,13 @@ const Variants = () => {
     setSelected(newSelected);
   };
 
-  // ? FILE UPLOAD ENDS HERE
+  // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
-    useDropzone({ accept: "image/*" });
-
+    useDropzone({
+      accept: {
+        "image/*": [".jpeg", ".jpg", ".png"],
+      },
+    });
   const style = useMemo(
     () => ({
       ...baseStyle,
