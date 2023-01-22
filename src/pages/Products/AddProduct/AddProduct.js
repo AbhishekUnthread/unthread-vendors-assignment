@@ -354,7 +354,7 @@ const AddProduct = () => {
                 <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
                   L
                 </MenuItem>
-                <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                <MenuItem value={40} sx={{ fontSize: 13, color: "#5c6d8e" }}>
                   XL
                 </MenuItem>
               </Select>
@@ -455,7 +455,7 @@ const AddProduct = () => {
                 onClose={handleTagsClose}
                 aria-describedby="alert-dialog-slide-description"
                 maxWidth="md"
-                // fullWidth="true"
+                fullWidth={true}
               >
                 <DialogTitle>
                   <div className="d-flex justify-content-between align-items-center">

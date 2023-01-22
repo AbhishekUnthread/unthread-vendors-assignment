@@ -12,6 +12,7 @@
     border-radius: 100px;
     color: $white1;
     text-decoration: none;
+    min-width: max-content;
     &:hover {
       background: $black2;
     }
@@ -29,6 +30,7 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
+    min-width: max-content;
     &:hover {
       background: $black5;
     }
@@ -42,7 +44,6 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 15px 30px;
     background: linear-gradient(
       165.69deg,
       rgba(104, 108, 248, 0.7) 4.49%,
@@ -52,6 +53,7 @@
     border: 0;
     color: $white1;
     text-decoration: none;
+    min-width: max-content;
     &:hover {
       background: $grey4;
       color: $white1;
@@ -66,7 +68,6 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 15px 30px;
     background: linear-gradient(
       303.01deg,
       rgba(89, 97, 248, 0.2) -4.4%,
@@ -76,6 +77,7 @@
     border: 0;
     color: $white1;
     text-decoration: none;
+    min-width: max-content;
     &:hover {
       background: $grey4;
       color: $white1;
@@ -90,12 +92,12 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 15px 30px;
     background: transparent;
     border-radius: 5px;
     border: 1px solid $red2;
     color: $red2;
     text-decoration: none;
+    min-width: max-content;
     &:hover {
       background: $red2;
       color: $black1;
@@ -116,6 +118,7 @@
     border: 1px solid $lightBlue;
     color: $lightBlue;
     text-decoration: none;
+    min-width: max-content;
     &:hover {
       background: $lightBlue;
       color: $black1;

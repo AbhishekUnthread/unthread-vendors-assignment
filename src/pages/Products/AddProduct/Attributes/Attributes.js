@@ -57,11 +57,7 @@ const Attributes = () => {
           </h6>
           <img src={info} alt="info" className="ms-2" />
         </div>
-        <p
-          className="c-pointer"
-          style={{ color: "#6E8DD7" }}
-          onClick={handleAdditionalFields}
-        >
+        <p className="c-pointer text-blue-2" onClick={handleAdditionalFields}>
           Manage Additional Fields
         </p>
 
@@ -72,7 +68,7 @@ const Attributes = () => {
           onClose={handleAdditionalFieldsClose}
           aria-describedby="alert-dialog-slide-description"
           maxWidth="sm"
-          // fullWidth="true"
+          fullWidth={true}
         >
           {/* <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
@@ -131,7 +127,7 @@ const Attributes = () => {
           onClose={handelFieldSetsClose}
           aria-describedby="alert-dialog-slide-description"
           maxWidth="sm"
-          // fullWidth="true"
+          fullWidth={true}
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
@@ -146,11 +142,11 @@ const Attributes = () => {
             </div>
           </DialogTitle>
           <hr className="hr-grey-6 mt-2 mb-0" />
-          <DialogContent className="py-2 px-4">
+          <DialogContent className="py-3 px-4">
             <p className="text-lightBlue mb-2">Select Field Sets</p>
 
             <FormControl sx={{ background: "#15142A" }} className="col-7 px-0">
-              <OutlinedInput placeholder="Enter Content" size="small" />
+              <OutlinedInput placeholder="Enter Field Sets" size="small" />
             </FormControl>
           </DialogContent>
           <hr className="hr-grey-6 mt-2 mb-0" />

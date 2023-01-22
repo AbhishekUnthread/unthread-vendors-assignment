@@ -741,7 +741,7 @@ const AllProducts = () => {
           onClose={handleExportClose}
           aria-describedby="alert-dialog-slide-description"
           maxWidth="sm"
-          // fullWidth="true"
+          fullWidth={true}
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
@@ -877,7 +877,7 @@ const AllProducts = () => {
           onClose={handleImportClose}
           aria-describedby="alert-dialog-slide-description"
           maxWidth="sm"
-          // fullWidth="true"
+          fullWidth={true}
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
@@ -948,7 +948,7 @@ const AllProducts = () => {
           onClose={handleImportSecondClose}
           aria-describedby="alert-dialog-slide-description"
           maxWidth="sm"
-          // fullWidth="true"
+          fullWidth={true}
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
