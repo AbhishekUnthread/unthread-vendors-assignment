@@ -115,7 +115,8 @@
     padding: 15px 30px;
     background: transparent;
     border-radius: 5px;
-    border: 1px solid $lightBlue;
+    border: 0;
+    outline: 1px solid $lightBlue;
     color: $lightBlue;
     text-decoration: none;
     min-width: max-content;
