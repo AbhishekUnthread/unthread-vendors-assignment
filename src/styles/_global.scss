@@ -22,8 +22,8 @@
     }
   }
   &-grey {
-    border: 1px solid $black6;
-    background: $black6;
+    border: 1px solid $black13;
+    background: $black13;
     border-radius: 5px;
     color: $white1;
     display: flex;
@@ -163,6 +163,7 @@
 
 .MuiPaper-root {
   background: $black3 !important;
+  border-radius: 8px !important;
 }
 .bg-black-2 {
   background: $black2 !important;
@@ -229,6 +230,9 @@
   border: 1px solid $grey5;
   padding: 0.6rem 0.3rem;
   margin-top: 0.3rem;
+  background-color: $black13 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
 }
 
 .popover-large {
@@ -333,4 +337,17 @@ textarea,
 
 .MuiSelect-select {
   padding: 6.5px 14px !important;
+}
+
+.MuiAppBar-root {
+  box-shadow: none !important;
+  background: $black2 !important;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+.font2 {
+  font-size: $font2;
 }

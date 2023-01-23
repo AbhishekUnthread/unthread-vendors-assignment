@@ -2,7 +2,13 @@
 
 .main-box {
   min-height: 100vh;
-  background: $black3;
+  margin-top: 3.4rem;
+  // background: radial-gradient(
+  //   circle,
+  //   rgba(52, 29, 96, 1) 16%,
+  //   RGBA(17, 15, 38, 1) 100%
+  // );
+  background: $black2;
 }
 
 .app-sidenav {

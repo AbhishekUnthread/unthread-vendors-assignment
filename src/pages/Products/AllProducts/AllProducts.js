@@ -84,7 +84,7 @@ const Search = styled("div")(({ theme }) => ({
     width: "auto",
   },
   backgroundColor: "#1c1b33",
-  height: "30.6px",
+  height: "37.6px",
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -95,12 +95,13 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  paddingLeft: theme.spacing(1.5),
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
-    padding: theme.spacing(0.8, 1, 1, 0),
+    padding: theme.spacing(1.2, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
@@ -161,7 +162,7 @@ const rows = [
   ),
   createData(
     2,
-    "The Fringe Diamond Ring",
+    "Fringe Diamond Ring",
     "Gold Products",
     "in 14 Variants",
     "₹ 20,600 - ₹ 50,000",
@@ -285,7 +286,7 @@ function EnhancedTableHead(props) {
               direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
-              {headCell.label}
+              <p className="text-lightBlue">{headCell.label}</p>
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
@@ -724,10 +725,16 @@ const AllProducts = () => {
       <div className="row justify-content-between align-items-center">
         <h4 className="page-heading w-auto ps-0">All Products</h4>
         <div className="d-flex align-items-center w-auto pe-0">
-          <p className="me-4 c-pointer" onClick={handleExportOpen}>
+          <p
+            className="me-4 c-pointer text-lightBlue"
+            onClick={handleExportOpen}
+          >
             Export
           </p>
-          <p className="me-4 c-pointer" onClick={handleImportOpen}>
+          <p
+            className="me-4 c-pointer text-lightBlue"
+            onClick={handleImportOpen}
+          >
             Import
           </p>
           <Link to="/addProduct" className="button-gradient py-2 px-4">
@@ -1123,7 +1130,7 @@ const AllProducts = () => {
               value={value}
               onChange={handleChange}
               aria-label="scrollable force tabs example"
-              className="tabs"
+              className="tabs px-2"
             >
               <Tab label="All" className="tabs-head" />
               <Tab label="Live" className="tabs-head" />
@@ -1137,7 +1144,7 @@ const AllProducts = () => {
               onClick={handleFlagClick}
             >
               <img src={indiaFlag} alt="indiaFlag" height={15} />
-              <p className="mx-2">India</p>
+              <p className="mx-2 text-lightBlue">India</p>
               <img src={arrowDown} alt="arrowDown" />
             </div>
             <Popover
@@ -1156,22 +1163,22 @@ const AllProducts = () => {
             >
               <div className="d-flex align-items-center mb-2 c-pointer">
                 <img src={allFlag} alt="allFlag" height={20} />
-                <p className="ms-2">All</p>
+                <p className="ms-2 text-lightBlue">All</p>
               </div>
               <div className="d-flex align-items-center mb-2 c-pointer">
                 <img src={ukFlag} alt="usaFlag" height={15} />
-                <p className="ms-2">UK</p>
+                <p className="ms-2 text-lightBlue">UK</p>
               </div>
               <div className="d-flex align-items-center mb-2 c-pointer">
                 <img src={usaFlag} alt="usaFlag" height={15} />
-                <p className="ms-2">USA</p>
+                <p className="ms-2 text-lightBlue">USA</p>
               </div>
             </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 pe-2 justify-content-between">
             <Search>
               <SearchIconWrapper>
-                <SearchIcon />
+                <SearchIcon sx={{ color: "#c8d8ff" }} />
               </SearchIconWrapper>
               <StyledInputBase
                 placeholder="Search…"
@@ -1181,12 +1188,12 @@ const AllProducts = () => {
             <div className="d-flex">
               <div className="d-flex product-button__box ms-2">
                 <button
-                  className="button-grey py-1 px-3"
+                  className="button-grey py-2 px-3 d-none d-md-block"
                   aria-describedby={idVendor}
                   variant="contained"
                   onClick={handleVendorClick}
                 >
-                  <p>Vendor</p>
+                  <small className="text-lightBlue">Vendor</small>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
                 <Popover
@@ -1225,12 +1232,12 @@ const AllProducts = () => {
                   />
                 </Popover>
                 <button
-                  className="button-grey py-1 px-3"
+                  className="button-grey py-2 px-3 d-none d-md-block"
                   aria-describedby={idCategory}
                   variant="contained"
                   onClick={handleCategoryClick}
                 >
-                  <p>Category</p>
+                  <small className="text-lightBlue">Category</small>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
                 <Popover
@@ -1270,12 +1277,12 @@ const AllProducts = () => {
                 </Popover>
 
                 <button
-                  className="button-grey py-1 px-3"
+                  className="button-grey py-2 px-3 d-none d-md-block"
                   aria-describedby={idTaggedWith}
                   variant="contained"
                   onClick={handleTaggedWithClick}
                 >
-                  <p>Tagged with</p>
+                  <small className="text-lightBlue">Tageed With</small>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
 
@@ -1325,10 +1332,10 @@ const AllProducts = () => {
 
                 <React.Fragment key="right">
                   <button
-                    className="button-grey py-1 px-3"
+                    className="button-grey py-2 px-3"
                     onClick={toggleDrawer("right", true)}
                   >
-                    <p>More Filters</p>
+                    <small className="text-lightBlue">More Filters</small>
                     <img src={filter} alt="filter" className="ms-2" />
                   </button>
                   <SwipeableDrawer
@@ -1480,21 +1487,21 @@ const AllProducts = () => {
                 </React.Fragment>
               </div>
               <button
-                className="button-grey py-1 px-3 ms-2"
+                className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idSort}
                 variant="contained"
                 onClick={handleSortClick}
               >
                 <img src={sort} alt="sort" className="me-2" />
-                <p>Sort</p>
+                <small className="text-lightBlue">Sort</small>
               </button>
               <button
-                className="button-grey py-1 px-3 ms-2"
+                className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idColumns}
                 variant="contained"
                 onClick={handleColumnsClick}
               >
-                <p>Columns</p>
+                <small className="text-lightBlue">Columns</small>
                 <img src={columns} alt="columns" className="ms-2" />
               </button>
 
@@ -1632,8 +1639,8 @@ const AllProducts = () => {
           {selected.length > 0 && (
             <div className="d-flex justify-content-between align-items-center px-2 mb-3">
               <div className="d-flex">
-                <button className="button-grey py-1 px-3">
-                  <p>
+                <button className="button-grey py-2 px-3">
+                  <small className="text-lightBlue">
                     {selected.length} products are selected&nbsp;
                     <span
                       className="text-primary c-pointer"
@@ -1641,23 +1648,23 @@ const AllProducts = () => {
                     >
                       (Clear Selection)
                     </span>
-                  </p>
+                  </small>
                 </button>
 
-                <button className="button-grey py-1 px-3 ms-2">
-                  <p>Edit Product</p>
+                <button className="button-grey py-2 px-3 ms-2">
+                  <small className="text-lightBlue">Edit Product</small>
                 </button>
                 <button
-                  className="button-grey py-1 px-3 ms-2"
+                  className="button-grey py-2 px-3 ms-2"
                   aria-describedby={idEditStatus}
                   variant="contained"
                   onClick={handleEditStatusClick}
                 >
-                  <p>Edit Status</p>
+                  <small className="text-lightBlue">Edit Status</small>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
                 <button
-                  className="button-grey py-1 px-3 ms-2"
+                  className="button-grey py-2 px-3 ms-2"
                   aria-describedby={idMassAction}
                   variant="contained"
                   onClick={handleMassActionClick}
@@ -1772,6 +1779,7 @@ const AllProducts = () => {
                           tabIndex={-1}
                           key={row.pId}
                           selected={isItemSelected}
+                          className="table-rows"
                         >
                           <TableCell padding="checkbox">
                             <Checkbox
@@ -1798,7 +1806,9 @@ const AllProducts = () => {
                                 width={45}
                               />
                               <div>
-                                <p>{row.productName}</p>
+                                <p className="text-lightBlue fw-600">
+                                  {row.productName}
+                                </p>
                                 <small className="mt-2 text-grey-6">
                                   SKU: TFDR012345
                                 </small>
@@ -1806,7 +1816,7 @@ const AllProducts = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <p>{row.category}</p>
+                            <p className="text-lightBlue">{row.category}</p>
                           </TableCell>
                           <TableCell>
                             <div className="d-flex align-items-center">
@@ -1814,7 +1824,7 @@ const AllProducts = () => {
                                 1452
                               </p>
                               &nbsp;
-                              <p> {row.qty}</p>
+                              <p className="text-lightBlue"> {row.qty}</p>
                             </div>
                           </TableCell>
                           <TableCell>
@@ -1824,7 +1834,7 @@ const AllProducts = () => {
                               variant="contained"
                               onClick={handlePriceClick}
                             >
-                              <p>{row.price}</p>
+                              <p className="text-lightBlue">{row.price}</p>
                               <img
                                 className="ms-3"
                                 src={arrowDown}
@@ -1845,30 +1855,34 @@ const AllProducts = () => {
                               anchorEl={anchorPriceEl}
                               onClose={handlePriceClose}
                             >
-                              <small className="text-lightBlue">
-                                Default : 12KT • Yellow • Gold • IJ-SI
-                              </small>
-                              <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                                <small>Metal Price</small>
-                                <small className="ms-2">Rs 15,000</small>
-                              </div>
-                              <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                                <small>Diamond Price</small>
-                                <small className="ms-2">Rs&nbsp;4,000</small>
-                              </div>
-                              <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                                <small>Making Charges</small>
-                                <small className="ms-2">Rs&nbsp;1,000</small>
-                              </div>
-                              <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                                <small>GST</small>
-                                <small className="ms-2">
-                                  Rs&nbsp;&nbsp;600
+                              <div className="px-3">
+                                <small className="text-lightBlue">
+                                  Default : 12KT • Yellow • Gold • IJ-SI
                                 </small>
-                              </div>
-                              <div className="d-flex align-items-center justify-content-between mb-2 mt-2">
-                                <h6>Total</h6>
-                                <h6 className="ms-2">Rs&nbsp;20,600</h6>
+                                <div className="d-flex align-items-center justify-content-between mb-2 mt-3 text-grey-6">
+                                  <small>Metal Price</small>
+                                  <small className="ms-2">Rs 15,000</small>
+                                </div>
+                                <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
+                                  <small>Diamond Price</small>
+                                  <small className="ms-2">Rs&nbsp;4,000</small>
+                                </div>
+                                <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
+                                  <small>Making Charges</small>
+                                  <small className="ms-2">Rs&nbsp;1,000</small>
+                                </div>
+                                <div className="d-flex align-items-center justify-content-between mb-3 mt-2 text-grey-6">
+                                  <small>GST</small>
+                                  <small className="ms-2">
+                                    Rs&nbsp;&nbsp;600
+                                  </small>
+                                </div>
+                                <div className="d-flex align-items-center justify-content-between mb-2 mt-2">
+                                  <p className="text-lightBlue">Total</p>
+                                  <p className="ms-2 text-lightBlue fw-600">
+                                    Rs&nbsp;20,600
+                                  </p>
+                                </div>
                               </div>
                             </Popover>
                           </TableCell>
@@ -1915,53 +1929,55 @@ const AllProducts = () => {
                                 anchorEl={anchorActionEl}
                                 onClose={handleActionClose}
                               >
-                                <small className="text-grey-7">ACTION</small>
-                                <hr className="hr-grey-6 my-2" />
-                                <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                                  <img
-                                    src={editButton}
-                                    alt="editButton"
-                                    height={36}
-                                    className="c-pointer"
-                                  />
-                                  <img
-                                    src={duplicateButton}
-                                    alt="duplicateButton"
-                                    height={36}
-                                    className="c-pointer"
-                                  />
-                                </div>
-                                <p className="my-3 text-lightBlue c-pointer">
-                                  Make it Active
-                                </p>
-                                <p className="my-3 text-lightBlue c-pointer">
-                                  Make it Draft
-                                </p>
-                                <p className="my-3 text-lightBlue c-pointer">
-                                  Edit SKU
-                                </p>
-                                <p className="my-2 text-lightBlue c-pointer">
-                                  Edit Quantity
-                                </p>
-                                <small className="text-grey-7">
-                                  Tags & Collection
-                                </small>
-                                <hr className="hr-grey-6 my-2" />
-                                <p className="my-2 text-lightBlue c-pointer">
-                                  Add or Remove Tags
-                                </p>
-                                <p className="my-2 text-lightBlue c-pointer">
-                                  Add or Remove Collections
-                                </p>
-                                <div className="d-flex justify-content-between mt-4">
-                                  <p className="text-lightBlue c-pointer">
-                                    Archived Product
+                                <div className="px-3">
+                                  <small className="text-grey-7">ACTION</small>
+                                  <hr className="hr-grey-6 my-2" />
+                                  <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
+                                    <img
+                                      src={editButton}
+                                      alt="editButton"
+                                      height={36}
+                                      className="c-pointer"
+                                    />
+                                    <img
+                                      src={duplicateButton}
+                                      alt="duplicateButton"
+                                      height={36}
+                                      className="c-pointer"
+                                    />
+                                  </div>
+                                  <p className="my-3 text-lightBlue c-pointer font2">
+                                    Make it Active
                                   </p>
-                                  <img
-                                    src={deleteRed}
-                                    alt="delete"
-                                    className="c-pointer"
-                                  />
+                                  <p className="my-3 text-lightBlue c-pointer font2">
+                                    Make it Draft
+                                  </p>
+                                  <p className="my-3 text-lightBlue c-pointer font2">
+                                    Edit SKU
+                                  </p>
+                                  <p className="my-2 text-lightBlue c-pointer font2">
+                                    Edit Quantity
+                                  </p>
+                                  <small className="text-grey-7">
+                                    Tags & Collection
+                                  </small>
+                                  <hr className="hr-grey-6 my-2" />
+                                  <p className="my-2 text-lightBlue c-pointer font2">
+                                    Add or Remove Tags
+                                  </p>
+                                  <p className="my-2 text-lightBlue c-pointer font2">
+                                    Add or Remove Collections
+                                  </p>
+                                  <div className="d-flex justify-content-between mt-4">
+                                    <p className="text-lightBlue c-pointer font2">
+                                      Archived Product
+                                    </p>
+                                    <img
+                                      src={deleteRed}
+                                      alt="delete"
+                                      className="c-pointer"
+                                    />
+                                  </div>
                                 </div>
                               </Popover>
                             </div>

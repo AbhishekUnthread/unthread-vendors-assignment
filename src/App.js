@@ -176,7 +176,7 @@ function App(props) {
           }}
           className="main-box"
         >
-          {showNavs && <Toolbar />}
+          {/* {showNavs && <Toolbar />} */}
           <Routes>
             {/* {admin ? ( */}
             <React.Fragment>

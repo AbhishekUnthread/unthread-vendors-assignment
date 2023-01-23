@@ -25,20 +25,23 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 // import LightModeIcon from "@mui/icons-material/LightMode";
 // import DarkModeIcon from "@mui/icons-material/DarkMode";
 
+// ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  // backgroundColor: alpha(theme.palette.common.white, 0.15),
   "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    // backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: "#1c1b33",
   },
-  marginRight: theme.spacing(2),
   marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     width: "auto",
   },
+  backgroundColor: "#1c1b33",
+  height: "37.6px",
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -49,21 +52,27 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  paddingLeft: theme.spacing(1.5),
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
+    padding: theme.spacing(1.2, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
+    borderRadius: "5px",
+    // [theme.breakpoints.up("sm")]: {
+    //   width: "12ch",
+    //   "&:focus": {
+    //     width: "20ch",
+    //   },
+    // },
   },
 }));
+// ? SEARCH INPUT ENDS HERE
 
 const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
   // const [lightTheme, setLightTheme] = React.useState(false);
@@ -189,10 +198,10 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
           </IconButton>
           <Search>
             <SearchIconWrapper>
-              <SearchIcon />
+              <SearchIcon sx={{ color: "#c8d8ff" }} />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Global Search"
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
@@ -215,7 +224,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               color="inherit"
             >
               <Badge badgeContent={4} color="error">
-                <MailIcon />
+                <MailIcon sx={{ color: "#c8d8ff" }} size="small" />
               </Badge>
             </IconButton>
             <IconButton
@@ -224,7 +233,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               color="inherit"
             >
               <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
+                <NotificationsIcon sx={{ color: "#c8d8ff" }} size="small" />
               </Badge>
             </IconButton>
             <IconButton
@@ -238,8 +247,8 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               className="profile-button ms-4"
             >
               <div className="d-flex flex-column justify-content-end align-items-end me-2">
-                <h6 className="text-lighBlue">Saniya Shaikh</h6>
-                <p className="text-blue-gradient">Super Admin</p>
+                <p className="text-lightBlue">Saniya Shaikh</p>
+                <small className="text-blue-gradient">Super Admin</small>
               </div>
               <img src={user} alt="user" width={40} />
             </IconButton>
@@ -253,7 +262,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               onClick={handleMobileMenuOpen}
               color="inherit"
             >
-              <MoreIcon />
+              <MoreIcon sx={{ color: "#c8d8ff" }} />
             </IconButton>
           </Box>
         </Toolbar>

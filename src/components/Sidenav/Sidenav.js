@@ -23,8 +23,8 @@ import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 const Sidenav = () => {
   return (
     <div className="sidenav px-2">
-      <div className="d-flex align-items-center justify-content-center logo">
-        <img src={logo} alt="Company Logo" width={80} />
+      <div className="d-flex align-items-center logo ps-3">
+        <img src={logo} alt="Company Logo" width={70} className="ms-1" />
       </div>
       <List>
         <NavLink to="/dashboard">
