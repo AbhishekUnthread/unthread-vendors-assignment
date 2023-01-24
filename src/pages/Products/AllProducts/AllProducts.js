@@ -1231,6 +1231,7 @@ const AllProducts = () => {
                       <TextField
                         {...params}
                         placeholder="Search"
+                        inputRef={(input) => input?.focus()}
                         // InputProps={{
                         //   startAdornment: (
                         //     <InputAdornment position="start">
@@ -1283,6 +1284,7 @@ const AllProducts = () => {
                       <TextField
                         {...params}
                         placeholder="Search"
+                        inputRef={(input) => input?.focus()}
                         // InputProps={{
                         //   startAdornment: (
                         //     <InputAdornment position="start">
@@ -1347,6 +1349,7 @@ const AllProducts = () => {
                         size="small"
                         {...params}
                         placeholder="Search"
+                        inputRef={(input) => input?.focus()}
                       />
                     )}
                   />
