@@ -2099,6 +2099,7 @@ const AllProducts = () => {
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
+              className="table-pagination"
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
