@@ -1505,6 +1505,18 @@ const AllProducts = () => {
                         <p className="mb-2 text-grey-6">Content 3</p>
                       </AccordionDetails>
                     </Accordion>
+
+                    <div className="d-flex flex-column py-3 px-3 filter-buttons">
+                      <hr className="hr-grey-6 my-3 w-100" />
+                      <div className="d-flex justify-content-between">
+                        <button className="button-lightBlue-outline py-2 px-3">
+                          <p>Clear all Filters</p>
+                        </button>
+                        <button className="button-gradient py-2 px-4 w-auto ">
+                          <p>Done</p>
+                        </button>
+                      </div>
+                    </div>
                   </SwipeableDrawer>
                 </React.Fragment>
               </div>
@@ -1969,7 +1981,7 @@ const AllProducts = () => {
                             </Popover>
                           </TableCell>
                           <TableCell>
-                            <div className="d-flex">
+                            <div className="d-flex c-pointer">
                               <img src={teamMember1} alt="teamMember1" />
                               <img src={teamMember3} alt="teamMember2" />
                               <img src={teamMember2} alt="teamMember3" />

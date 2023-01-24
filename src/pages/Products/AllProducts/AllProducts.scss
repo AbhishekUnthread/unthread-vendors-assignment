@@ -36,3 +36,12 @@
     font-size: $font2 !important;
   }
 }
+
+.filter-buttons {
+  // background: linear-gradient(180deg, rgba(17, 15, 38, 0) 0%, #110f26 47.98%);
+  position: absolute;
+  bottom: 0;
+  // left: 0;
+  width: 100%;
+  // margin-bottom: -24px;
+}
