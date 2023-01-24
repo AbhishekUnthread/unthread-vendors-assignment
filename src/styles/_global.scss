@@ -58,6 +58,11 @@
     &:hover {
       background: $grey4;
       color: $white1;
+      background: linear-gradient(
+        165.69deg,
+        rgba(104, 108, 248, 0.9) 4.49%,
+        rgba(236, 171, 241, 0.9) 113.71%
+      );
     }
     &:disabled {
       background: $grey1;

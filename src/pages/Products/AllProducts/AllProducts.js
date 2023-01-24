@@ -369,7 +369,7 @@ const baseStyle = {
   alignItems: "center",
   padding: "0",
   borderWidth: 2,
-  borderRadius: 2,
+  borderRadius: 8,
   borderColor: "#5C6D8E",
   borderStyle: "dashed",
   //   backgroundColor: "",
@@ -765,7 +765,7 @@ const AllProducts = () => {
               />
             </div>
           </DialogTitle>
-          <hr className="hr-grey-6 my-2" />
+          <hr className="hr-grey-6 mt-0 mb-2" />
           <DialogContent className="py-2 px-4">
             <p className="text-lightBlue mb-2">Export</p>
             <FormControl>
@@ -870,13 +870,13 @@ const AllProducts = () => {
               className="button-grey py-2 px-5"
               onClick={handleExportClose}
             >
-              <p>Cancel</p>
+              <p className="text-lightBlue">Cancel</p>
             </button>
             <button
               className="button-gradient py-2 px-5"
               onClick={handleExportClose}
             >
-              <p>Continue</p>
+              <p className="">Continue</p>
             </button>
           </DialogActions>
         </Dialog>
@@ -901,7 +901,7 @@ const AllProducts = () => {
               />
             </div>
           </DialogTitle>
-          <hr className="hr-grey-6 my-2" />
+          <hr className="hr-grey-6 mt-0 mb-2" />
           <DialogContent className="py-2 px-4">
             <FormControl>
               <RadioGroup
@@ -972,7 +972,7 @@ const AllProducts = () => {
               />
             </div>
           </DialogTitle>
-          <hr className="hr-grey-6 my-2" />
+          <hr className="hr-grey-6 mt-0 mb-2" />
           <DialogContent className="py-2 px-4">
             <FormControl>
               <RadioGroup
