@@ -351,3 +351,12 @@ textarea,
 .font2 {
   font-size: $font2;
 }
+
+.hover-back {
+  transition: 0.1s all ease-in;
+  &:hover {
+    background: $grey5;
+
+    transition: 0.1s all ease-in;
+  }
+}

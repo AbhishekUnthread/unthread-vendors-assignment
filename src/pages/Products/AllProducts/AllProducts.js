@@ -265,12 +265,15 @@ function EnhancedTableHead(props) {
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
-            color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
               "aria-label": "select all desserts",
+            }}
+            size="small"
+            style={{
+              color: "#5C6D8E",
             }}
           />
         </TableCell>
@@ -1130,7 +1133,7 @@ const AllProducts = () => {
               value={value}
               onChange={handleChange}
               aria-label="scrollable force tabs example"
-              className="tabs px-2"
+              className="tabs"
             >
               <Tab label="All" className="tabs-head" />
               <Tab label="Live" className="tabs-head" />
@@ -1161,15 +1164,15 @@ const AllProducts = () => {
               anchorEl={anchorFlagEl}
               onClose={handleFlagClose}
             >
-              <div className="d-flex align-items-center mb-2 c-pointer">
+              <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
                 <img src={allFlag} alt="allFlag" height={20} />
                 <p className="ms-2 text-lightBlue">All</p>
               </div>
-              <div className="d-flex align-items-center mb-2 c-pointer">
+              <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
                 <img src={ukFlag} alt="usaFlag" height={15} />
                 <p className="ms-2 text-lightBlue">UK</p>
               </div>
-              <div className="d-flex align-items-center mb-2 c-pointer">
+              <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
                 <img src={usaFlag} alt="usaFlag" height={15} />
                 <p className="ms-2 text-lightBlue">USA</p>
               </div>
@@ -1215,7 +1218,15 @@ const AllProducts = () => {
                     freeSolo
                     size="small"
                     sx={{ width: 200 }}
-                    options={vendorData.map((option) => option.title)}
+                    options={vendorData}
+                    getOptionLabel={(option) => option.title}
+                    renderOption={(props, option) => (
+                      <li {...props}>
+                        <small className="text-lightBlue my-1">
+                          {option.title}
+                        </small>
+                      </li>
+                    )}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -1259,7 +1270,15 @@ const AllProducts = () => {
                     freeSolo
                     size="small"
                     sx={{ width: 200 }}
-                    options={vendorData.map((option) => option.title)}
+                    options={vendorData}
+                    getOptionLabel={(option) => option.title}
+                    renderOption={(props, option) => (
+                      <li {...props}>
+                        <small className="text-lightBlue my-1">
+                          {option.title}
+                        </small>
+                      </li>
+                    )}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -1313,11 +1332,14 @@ const AllProducts = () => {
                         <Checkbox
                           icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                           checkedIcon={<CheckBoxIcon fontSize="small" />}
-                          style={{ marginRight: 0 }}
                           checked={selected}
                           size="small"
+                          style={{
+                            color: "#5C6D8E",
+                            marginRight: 0,
+                          }}
                         />
-                        {option.title}
+                        <small className="text-lightBlue">{option.title}</small>
                       </li>
                     )}
                     renderInput={(params) => (
@@ -1520,7 +1542,7 @@ const AllProducts = () => {
                 onClose={handleSortClose}
                 className="columns"
               >
-                <FormControl>
+                <FormControl className="px-3">
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
@@ -1591,44 +1613,101 @@ const AllProducts = () => {
                 onClose={handleColumnsClose}
                 className="columns"
               >
-                <FormGroup>
+                <FormGroup className="px-3">
                   <FormControlLabel
-                    control={<Checkbox defaultChecked size="small" />}
+                    control={
+                      <Checkbox
+                        defaultChecked
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
                     label="Catgory"
                     className="me-0"
                   />
                   <FormControlLabel
-                    control={<Checkbox size="small" />}
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
                     label="Sub Catgory"
                     className="me-0"
                   />
                   <FormControlLabel
-                    control={<Checkbox size="small" />}
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
                     label="Collection"
                     className="me-0"
                   />
                   <FormControlLabel
-                    control={<Checkbox size="small" />}
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
                     label="Vendor"
                     className="me-0"
                   />
                   <FormControlLabel
-                    control={<Checkbox size="small" />}
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
                     label="Price"
                     className="me-0"
                   />
                   <FormControlLabel
-                    control={<Checkbox size="small" />}
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
                     label="Activity"
                     className="me-0"
                   />
                   <FormControlLabel
-                    control={<Checkbox size="small" />}
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
                     label="Status"
                     className="me-0"
                   />
                   <FormControlLabel
-                    control={<Checkbox size="small" />}
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
                     label="Action"
                     className="me-0"
                   />
@@ -1643,7 +1722,7 @@ const AllProducts = () => {
                   <small className="text-lightBlue">
                     {selected.length} products are selected&nbsp;
                     <span
-                      className="text-primary c-pointer"
+                      className="text-blue-2 c-pointer"
                       onClick={() => setSelected([])}
                     >
                       (Clear Selection)
@@ -1669,7 +1748,7 @@ const AllProducts = () => {
                   variant="contained"
                   onClick={handleMassActionClick}
                 >
-                  <p>Mass Action</p>
+                  <small className="text-lightBlue">Mass Action</small>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
 
@@ -1742,7 +1821,7 @@ const AllProducts = () => {
                 </Popover>
               </div>
               <p
-                className=" d-flex text-primary c-pointer"
+                className=" d-flex text-blue-2 c-pointer"
                 onClick={() => setSelected([])}
               >
                 Clear Selection
@@ -1783,12 +1862,15 @@ const AllProducts = () => {
                         >
                           <TableCell padding="checkbox">
                             <Checkbox
-                              color="primary"
                               checked={isItemSelected}
                               inputProps={{
                                 "aria-labelledby": labelId,
                               }}
                               onClick={(event) => handleClick(event, row.pId)}
+                              size="small"
+                              style={{
+                                color: "#5C6D8E",
+                              }}
                             />
                           </TableCell>
                           <TableCell
@@ -1820,7 +1902,7 @@ const AllProducts = () => {
                           </TableCell>
                           <TableCell>
                             <div className="d-flex align-items-center">
-                              <p className="text-decoration-underline text-primary">
+                              <p className="text-decoration-underline text-blue-2">
                                 1452
                               </p>
                               &nbsp;
