@@ -40,6 +40,9 @@ function App(props) {
         main: "#FFF",
         // main: "#FFF2DE",
       },
+      purple: {
+        main: "#8f5fe8",
+      },
       // greyLight: {
       //   main: "#f2f2f2",
       // },

@@ -32,7 +32,8 @@
     text-decoration: none;
     min-width: max-content;
     &:hover {
-      background: $black5;
+      background: $black16;
+      border: 1px solid $black16;
     }
     &:disabled {
       background: $grey1;
@@ -162,7 +163,7 @@
 }
 
 .MuiPaper-root {
-  background: $black3 !important;
+  background: $black15 !important;
   border-radius: 8px !important;
 }
 .bg-black-2 {
@@ -240,7 +241,7 @@
 }
 
 .MuiTableHead-root {
-  background: $black9;
+  background: $black13;
 }
 
 .MuiTableCell-root {
@@ -251,6 +252,10 @@
 .hr-grey-6 {
   border: 0;
   border-bottom: 1px solid $grey6;
+  height: 0;
+}
+.hr-grey-6:not([size]) {
+  height: 0 !important;
 }
 
 .text-red-1 {
@@ -355,7 +360,7 @@ textarea,
 .hover-back {
   transition: 0.1s all ease-in;
   &:hover {
-    background: $grey5;
+    background: $black16;
 
     transition: 0.1s all ease-in;
   }
@@ -369,4 +374,45 @@ textarea,
     color: $lightBlue;
     font-size: $font2;
   }
+}
+
+.bg-black-13 {
+  background: $black13;
+}
+
+.MuiTableRow-root.Mui-selected {
+  background-color: $black16 !important;
+}
+
+.MuiTableRow-hover:hover {
+  background-color: $black16 !important;
+}
+
+.MuiCheckbox-root.Mui-checked {
+  color: $lightBlue !important;
+}
+.MuiCheckbox-indeterminate {
+  color: $lightBlue !important;
+}
+
+.MuiAutocomplete-root {
+  border-radius: 4px;
+}
+// .MuiAutocomplete-root.Mui-focused {
+//   fieldset {
+//     bordercolor: red;
+//   }
+//   // outline: 5px solid red;
+// }
+
+// .Mui-focused.MuiOutlinedInput-notchedOutline {
+//   border: "1px solid #c8d8ff";
+// }
+
+.autocomplete-padding {
+  padding: 0.1rem 0.3rem;
+}
+
+.MuiFormControl-root {
+  border-radius: 4px;
 }

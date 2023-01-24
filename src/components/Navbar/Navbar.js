@@ -18,10 +18,13 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import NoteOutlinedIcon from "@mui/icons-material/NoteOutlined";
 // import LightModeIcon from "@mui/icons-material/LightMode";
 // import DarkModeIcon from "@mui/icons-material/DarkMode";
 
@@ -144,8 +147,8 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
     >
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
+          <Badge badgeContent={4} color="purple" size="small">
+            <DescriptionOutlinedIcon sx={{ color: "#c8d8ff" }} size="small" />
           </Badge>
         </IconButton>
         <p>Messages</p>
@@ -156,8 +159,8 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
           aria-label="show 17 new notifications"
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
+          <Badge badgeContent={17} color="purple" size="small">
+            <NotificationsNoneIcon size="small" sx={{ color: "#c8d8ff" }} />
           </Badge>
         </IconButton>
         <p>Notifications</p>
@@ -223,8 +226,11 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               aria-label="show 4 new mails"
               color="inherit"
             >
-              <Badge badgeContent={4} color="error">
-                <MailIcon sx={{ color: "#c8d8ff" }} size="small" />
+              <Badge badgeContent={4} color="purple" size="small">
+                <DescriptionOutlinedIcon
+                  sx={{ color: "#c8d8ff" }}
+                  size="small"
+                />
               </Badge>
             </IconButton>
             <IconButton
@@ -232,8 +238,8 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               aria-label="show 17 new notifications"
               color="inherit"
             >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon sx={{ color: "#c8d8ff" }} size="small" />
+              <Badge badgeContent={7} color="purple" size="small">
+                <NotificationsNoneIcon size="small" sx={{ color: "#c8d8ff" }} />
               </Badge>
             </IconButton>
             <IconButton

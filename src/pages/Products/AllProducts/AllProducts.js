@@ -1202,46 +1202,66 @@ const AllProducts = () => {
                 <Popover
                   anchorOrigin={{
                     vertical: "bottom",
-                    horizontal: "center",
+                    horizontal: "left",
                   }}
                   transformOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
+                    vertical: "left",
+                    horizontal: "left",
                   }}
                   id={idVendor}
                   open={openVendor}
                   anchorEl={anchorVendorEl}
                   onClose={handleVendorClose}
                 >
-                  <Autocomplete
-                    id="free-solo-demo"
-                    freeSolo
-                    size="small"
-                    sx={{ width: 200 }}
-                    options={vendorData}
-                    getOptionLabel={(option) => option.title}
-                    renderOption={(props, option) => (
-                      <li {...props}>
-                        <small className="text-lightBlue my-1">
-                          {option.title}
-                        </small>
-                      </li>
-                    )}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        placeholder="Search"
-                        inputRef={(input) => input?.focus()}
-                        // InputProps={{
-                        //   startAdornment: (
-                        //     <InputAdornment position="start">
-                        //       <AccountCircle />
-                        //     </InputAdornment>
-                        //   ),
-                        // }}
-                      />
-                    )}
-                  />
+                  <div className="autocomplete-padding">
+                    <Autocomplete
+                      id="free-solo-demo"
+                      freeSolo
+                      size="small"
+                      // sx={{ width: 200 }}
+                      options={vendorData}
+                      getOptionLabel={(option) => option.title}
+                      renderOption={(props, option) => (
+                        <li {...props}>
+                          <small className="text-lightBlue my-1">
+                            {option.title}
+                          </small>
+                        </li>
+                      )}
+                      sx={{
+                        background: "#15142A",
+                        width: 200,
+                        // border: "1px solid blue",
+                        "& .MuiOutlinedInput-root": {
+                          // border: "1px solid yellow",
+                          // borderRadius: "4px",
+                          // padding: "0",
+                        },
+                        // "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        //   {
+                        //     border: "1px solid red",
+                        //   },
+
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          border: "1px solid #c8d8ff",
+                        },
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder="Search"
+                          inputRef={(input) => input?.focus()}
+                          // InputProps={{
+                          //   startAdornment: (
+                          //     <InputAdornment position="start">
+                          //       <AccountCircle />
+                          //     </InputAdornment>
+                          //   ),
+                          // }}
+                        />
+                      )}
+                    />
+                  </div>
                 </Popover>
                 <button
                   className="button-grey py-2 px-3 d-none d-md-block"
@@ -1255,11 +1275,11 @@ const AllProducts = () => {
                 <Popover
                   anchorOrigin={{
                     vertical: "bottom",
-                    horizontal: "center",
+                    horizontal: "left",
                   }}
                   transformOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
+                    vertical: "left",
+                    horizontal: "left",
                   }}
                   id={idCategory}
                   open={openCategory}
@@ -1303,18 +1323,18 @@ const AllProducts = () => {
                   variant="contained"
                   onClick={handleTaggedWithClick}
                 >
-                  <small className="text-lightBlue">Tageed With</small>
+                  <small className="text-lightBlue">Tagged With</small>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
 
                 <Popover
                   anchorOrigin={{
                     vertical: "bottom",
-                    horizontal: "center",
+                    horizontal: "left",
                   }}
                   transformOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
+                    vertical: "left",
+                    horizontal: "left",
                   }}
                   id={idTaggedWith}
                   open={openTaggedWith}
@@ -1370,152 +1390,154 @@ const AllProducts = () => {
                     onOpen={toggleDrawer("right", true)}
                   >
                     {/* {list()} */}
-                    <div className="d-flex justify-content-between py-3 ps-3 pe-2 me-1">
+                    <div className="d-flex justify-content-between py-3 px-3 ms-3 me-2">
                       <h6 className="">Filters</h6>
                       <img
                         src={cancel}
                         alt="cancel"
-                        className="c-pointer filter-padding"
+                        className="c-pointer filter-padding me-1"
                         onClick={toggleDrawer("right", false)}
                       />
                     </div>
 
-                    <Accordion
-                      expanded={expanded === "panel1"}
-                      onChange={handleAccordianChange("panel1")}
-                    >
-                      <AccordionSummary
-                        aria-controls="panel1d-content"
-                        id="panel1d-header"
+                    <div className="px-3">
+                      <Accordion
+                        expanded={expanded === "panel1"}
+                        onChange={handleAccordianChange("panel1")}
                       >
-                        <p className="text-lightBlue">Product Category</p>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <p className="mb-2 text-grey-6">Content 1</p>
-                        <p className="mb-2 text-grey-6">Content 2</p>
-                        <p className="mb-2 text-grey-6">Content 3</p>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Accordion
-                      expanded={expanded === "panel2"}
-                      onChange={handleAccordianChange("panel2")}
-                    >
-                      <AccordionSummary
-                        aria-controls="panel2d-content"
-                        id="panel2d-header"
+                        <AccordionSummary
+                          aria-controls="panel1d-content"
+                          id="panel1d-header"
+                        >
+                          <p className="text-lightBlue">Product Category</p>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <p className="mb-2 text-grey-6">Content 1</p>
+                          <p className="mb-2 text-grey-6">Content 2</p>
+                          <p className="mb-2 text-grey-6">Content 3</p>
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion
+                        expanded={expanded === "panel2"}
+                        onChange={handleAccordianChange("panel2")}
                       >
-                        <p className="text-lightBlue">Sub Category</p>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <p className="mb-2 text-grey-6">Content 1</p>
-                        <p className="mb-2 text-grey-6">Content 2</p>
-                        <p className="mb-2 text-grey-6">Content 3</p>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Accordion
-                      expanded={expanded === "panel3"}
-                      onChange={handleAccordianChange("panel3")}
-                    >
-                      <AccordionSummary
-                        aria-controls="panel3d-content"
-                        id="panel3d-header"
+                        <AccordionSummary
+                          aria-controls="panel2d-content"
+                          id="panel2d-header"
+                        >
+                          <p className="text-lightBlue">Sub Category</p>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <p className="mb-2 text-grey-6">Content 1</p>
+                          <p className="mb-2 text-grey-6">Content 2</p>
+                          <p className="mb-2 text-grey-6">Content 3</p>
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion
+                        expanded={expanded === "panel3"}
+                        onChange={handleAccordianChange("panel3")}
                       >
-                        <p className="text-lightBlue">Vendor</p>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <p className="mb-2 text-grey-6">Content 1</p>
-                        <p className="mb-2 text-grey-6">Content 2</p>
-                        <p className="mb-2 text-grey-6">Content 3</p>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Accordion
-                      expanded={expanded === "panel4"}
-                      onChange={handleAccordianChange("panel4")}
-                    >
-                      <AccordionSummary
-                        aria-controls="panel4d-content"
-                        id="panel4d-header"
+                        <AccordionSummary
+                          aria-controls="panel3d-content"
+                          id="panel3d-header"
+                        >
+                          <p className="text-lightBlue">Vendor</p>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <p className="mb-2 text-grey-6">Content 1</p>
+                          <p className="mb-2 text-grey-6">Content 2</p>
+                          <p className="mb-2 text-grey-6">Content 3</p>
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion
+                        expanded={expanded === "panel4"}
+                        onChange={handleAccordianChange("panel4")}
                       >
-                        <p className="text-lightBlue">Collection</p>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <p className="mb-2 text-grey-6">Content 1</p>
-                        <p className="mb-2 text-grey-6">Content 2</p>
-                        <p className="mb-2 text-grey-6">Content 3</p>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Accordion
-                      expanded={expanded === "panel5"}
-                      onChange={handleAccordianChange("panel5")}
-                    >
-                      <AccordionSummary
-                        aria-controls="panel5d-content"
-                        id="panel5d-header"
+                        <AccordionSummary
+                          aria-controls="panel4d-content"
+                          id="panel4d-header"
+                        >
+                          <p className="text-lightBlue">Collection</p>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <p className="mb-2 text-grey-6">Content 1</p>
+                          <p className="mb-2 text-grey-6">Content 2</p>
+                          <p className="mb-2 text-grey-6">Content 3</p>
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion
+                        expanded={expanded === "panel5"}
+                        onChange={handleAccordianChange("panel5")}
                       >
-                        <p className="text-lightBlue">Tagged With</p>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <p className="mb-2 text-grey-6">Content 1</p>
-                        <p className="mb-2 text-grey-6">Content 2</p>
-                        <p className="mb-2 text-grey-6">Content 3</p>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Accordion
-                      expanded={expanded === "panel6"}
-                      onChange={handleAccordianChange("panel6")}
-                    >
-                      <AccordionSummary
-                        aria-controls="panel6d-content"
-                        id="panel6d-header"
+                        <AccordionSummary
+                          aria-controls="panel5d-content"
+                          id="panel5d-header"
+                        >
+                          <p className="text-lightBlue">Tagged With</p>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <p className="mb-2 text-grey-6">Content 1</p>
+                          <p className="mb-2 text-grey-6">Content 2</p>
+                          <p className="mb-2 text-grey-6">Content 3</p>
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion
+                        expanded={expanded === "panel6"}
+                        onChange={handleAccordianChange("panel6")}
                       >
-                        <p className="text-lightBlue">Product Status</p>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <p className="mb-2 text-grey-6">Content 1</p>
-                        <p className="mb-2 text-grey-6">Content 2</p>
-                        <p className="mb-2 text-grey-6">Content 3</p>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Accordion
-                      expanded={expanded === "panel7"}
-                      onChange={handleAccordianChange("panel7")}
-                    >
-                      <AccordionSummary
-                        aria-controls="panel7d-content"
-                        id="panel7d-header"
+                        <AccordionSummary
+                          aria-controls="panel6d-content"
+                          id="panel6d-header"
+                        >
+                          <p className="text-lightBlue">Product Status</p>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <p className="mb-2 text-grey-6">Content 1</p>
+                          <p className="mb-2 text-grey-6">Content 2</p>
+                          <p className="mb-2 text-grey-6">Content 3</p>
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion
+                        expanded={expanded === "panel7"}
+                        onChange={handleAccordianChange("panel7")}
                       >
-                        <p className="text-lightBlue">Inventory</p>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <p className="mb-2 text-grey-6">Content 1</p>
-                        <p className="mb-2 text-grey-6">Content 2</p>
-                        <p className="mb-2 text-grey-6">Content 3</p>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Accordion
-                      expanded={expanded === "panel8"}
-                      onChange={handleAccordianChange("panel8")}
-                    >
-                      <AccordionSummary
-                        aria-controls="panel8d-content"
-                        id="panel8d-header"
+                        <AccordionSummary
+                          aria-controls="panel7d-content"
+                          id="panel7d-header"
+                        >
+                          <p className="text-lightBlue">Inventory</p>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <p className="mb-2 text-grey-6">Content 1</p>
+                          <p className="mb-2 text-grey-6">Content 2</p>
+                          <p className="mb-2 text-grey-6">Content 3</p>
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion
+                        expanded={expanded === "panel8"}
+                        onChange={handleAccordianChange("panel8")}
                       >
-                        <p className="text-lightBlue">Labels</p>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <p className="mb-2 text-grey-6">Content 1</p>
-                        <p className="mb-2 text-grey-6">Content 2</p>
-                        <p className="mb-2 text-grey-6">Content 3</p>
-                      </AccordionDetails>
-                    </Accordion>
+                        <AccordionSummary
+                          aria-controls="panel8d-content"
+                          id="panel8d-header"
+                        >
+                          <p className="text-lightBlue">Labels</p>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <p className="mb-2 text-grey-6">Content 1</p>
+                          <p className="mb-2 text-grey-6">Content 2</p>
+                          <p className="mb-2 text-grey-6">Content 3</p>
+                        </AccordionDetails>
+                      </Accordion>
+                    </div>
 
-                    <div className="d-flex flex-column py-3 px-3 filter-buttons">
+                    <div className="d-flex flex-column py-3 px-4 filter-buttons">
                       <hr className="hr-grey-6 my-3 w-100" />
                       <div className="d-flex justify-content-between">
                         <button className="button-lightBlue-outline py-2 px-3">
                           <p>Clear all Filters</p>
                         </button>
-                        <button className="button-gradient py-2 px-4 w-auto ">
+                        <button className="button-gradient py-2 px-5 w-auto ">
                           <p>Done</p>
                         </button>
                       </div>
@@ -1529,8 +1551,8 @@ const AllProducts = () => {
                 variant="contained"
                 onClick={handleSortClick}
               >
-                <img src={sort} alt="sort" className="me-2" />
-                <small className="text-lightBlue">Sort</small>
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
               </button>
               <button
                 className="button-grey py-2 px-3 ms-2"
@@ -1835,12 +1857,12 @@ const AllProducts = () => {
                   </div>
                 </Popover>
               </div>
-              <p
+              <small
                 className=" d-flex text-blue-2 c-pointer"
                 onClick={() => setSelected([])}
               >
                 Clear Selection
-              </p>
+              </small>
             </div>
           )}
           <TabPanel value={value} index={0}>
@@ -2034,7 +2056,7 @@ const AllProducts = () => {
                                       src={editButton}
                                       alt="editButton"
                                       height={36}
-                                      className="c-pointer"
+                                      className="c-pointer me-2"
                                     />
                                     <img
                                       src={duplicateButton}
@@ -2043,32 +2065,32 @@ const AllProducts = () => {
                                       className="c-pointer"
                                     />
                                   </div>
-                                  <p className="my-3 text-lightBlue c-pointer font2">
+                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
                                     Make it Active
-                                  </p>
-                                  <p className="my-3 text-lightBlue c-pointer font2">
+                                  </small>
+                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
                                     Make it Draft
-                                  </p>
-                                  <p className="my-3 text-lightBlue c-pointer font2">
+                                  </small>
+                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
                                     Edit SKU
-                                  </p>
-                                  <p className="my-2 text-lightBlue c-pointer font2">
+                                  </small>
+                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
                                     Edit Quantity
-                                  </p>
-                                  <small className="text-grey-7">
+                                  </small>
+                                  <small className="text-grey-7 mt-4">
                                     Tags & Collection
                                   </small>
                                   <hr className="hr-grey-6 my-2" />
-                                  <p className="my-2 text-lightBlue c-pointer font2">
+                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
                                     Add or Remove Tags
-                                  </p>
-                                  <p className="my-2 text-lightBlue c-pointer font2">
+                                  </small>
+                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
                                     Add or Remove Collections
-                                  </p>
-                                  <div className="d-flex justify-content-between mt-4">
-                                    <p className="text-lightBlue c-pointer font2">
+                                  </small>
+                                  <div className="d-flex justify-content-between mt-3">
+                                    <small className="text-lightBlue c-pointer font2 d-block">
                                       Archived Product
-                                    </p>
+                                    </small>
                                     <img
                                       src={deleteRed}
                                       alt="delete"
