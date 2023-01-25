@@ -30,7 +30,7 @@ const Shipping = () => {
   // ? CHECKBOX ENDS HERE
 
   return (
-    <div className="bg-black-2 border-grey-5 rounded-3 p-3 row shipping">
+    <div className="bg-black-15 border-grey-5 rounded-3 p-3 row shipping">
       <div className="d-flex col-12 px-0 justify-content-between">
         <div className="d-flex align-items-center">
           <h6 className="text-lightBlue me-auto text-lightBlue">Shipping</h6>

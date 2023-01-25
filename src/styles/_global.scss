@@ -467,3 +467,20 @@ textarea,
 .MuiRadio-root.Mui-checked {
   color: $lightBlue !important;
 }
+
+// * MENU ITEM STYLES
+.MuiMenuItem-root.Mui-selected,
+.MuiMenuItem-root:hover {
+  background: $black15 !important;
+}
+// * FIELD INPUT STYLES
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: $lightBlue !important;
+}
+.MuiOutlinedInput-notchedOutline:hover {
+  border-color: $lightBlue !important;
+}
+
+.MuiOutlinedInput-root {
+  background: $black9 !important;
+}

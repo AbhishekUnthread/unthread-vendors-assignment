@@ -796,7 +796,7 @@ const MoreFeatures = () => {
 
       <div className="row features">
         <div className="col-4 ps-0">
-          <div className="bg-black-2 border-grey-5 rounded-3 p-3 ">
+          <div className="bg-black-15 border-grey-5 rounded-3 p-3 ">
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-lightBlue fw-bold">Labels</h5>
               <img src={label} alt="label" className="" width={75} />
@@ -811,7 +811,7 @@ const MoreFeatures = () => {
           </div>
         </div>
         <div className="col-4">
-          <div className="bg-black-2 border-grey-5 rounded-3 p-3 ">
+          <div className="bg-black-15 border-grey-5 rounded-3 p-3 ">
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-lightBlue fw-bold">Size Chart</h5>
               <img src={sizeChart} alt="label" className="" width={90} />
@@ -826,7 +826,7 @@ const MoreFeatures = () => {
           </div>
         </div>
         <div className="col-4 pe-0">
-          <div className="bg-black-2 border-grey-5 rounded-3 p-3 ">
+          <div className="bg-black-15 border-grey-5 rounded-3 p-3 ">
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-lightBlue fw-bold">Pre Order</h5>
               <img src={preOrder} alt="label" className="" width={85} />

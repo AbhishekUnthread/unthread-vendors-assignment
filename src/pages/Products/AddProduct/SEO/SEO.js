@@ -48,7 +48,7 @@ const SEO = () => {
   // ? SWITCH ENDS HERE
 
   return (
-    <div className="bg-black-2 border-grey-5 rounded-3 p-3 row">
+    <div className="bg-black-15 border-grey-5 rounded-3 p-3 row">
       <div className="d-flex col-12 px-0">
         <h6 className="text-lightBlue me-auto">Search Engine Optimisation</h6>
         {/* <FormControlLabel

@@ -1233,22 +1233,7 @@ const AllProducts = () => {
                         </li>
                       )}
                       sx={{
-                        background: "#15142A",
                         width: 200,
-                        // border: "1px solid blue",
-                        "& .MuiOutlinedInput-root": {
-                          // border: "1px solid yellow",
-                          // borderRadius: "4px",
-                          // padding: "0",
-                        },
-                        // "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                        //   {
-                        //     border: "1px solid red",
-                        //   },
-
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          border: "1px solid #c8d8ff",
-                        },
                       }}
                       renderInput={(params) => (
                         <TextField

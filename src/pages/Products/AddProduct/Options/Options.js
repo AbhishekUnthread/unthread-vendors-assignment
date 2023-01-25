@@ -164,7 +164,7 @@ const Options = () => {
   // ? CONDITION ACCORDIAN ENDS HERE
 
   return (
-    <div className="bg-black-2 border-grey-5 rounded-3 p-3 row attributes">
+    <div className="bg-black-15 border-grey-5 rounded-3 p-3 row attributes">
       <div className="d-flex col-12 px-0 justify-content-between align-items-center">
         <div className="d-flex flex-column">
           <div className="d-flex align-items-center">
@@ -415,7 +415,7 @@ const Options = () => {
                   expanded={expanded === "panel1"}
                   onChange={handleAccordianChange("panel1")}
                   className="rounded-3 row"
-                  // className="rounded-3 bg-black-2 row"
+                  // className="rounded-3 bg-black-15 row"
                 >
                   <AccordionSummary
                     aria-controls="panel1d-content"

@@ -201,7 +201,7 @@ const ProductInfo = () => {
 
   return (
     <React.Fragment>
-      <div className="bg-black-2 border-grey-5 rounded-3 p-3 row productInfo">
+      <div className="bg-black-15 border-grey-5 rounded-3 p-3 row productInfo">
         <div className="col-12 px-0">
           <div className="row">
             <div className="col-8">
@@ -340,7 +340,7 @@ const ProductInfo = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black-2 border-grey-5 rounded-3 p-3 row productInfo mt-4">
+      <div className="bg-black-15 border-grey-5 rounded-3 p-3 row productInfo mt-4">
         <div className="col-12">
           <div className="row mb-3">
             <h6 className="text-lightBlue col-12 px-0">Product Type</h6>
@@ -452,7 +452,7 @@ const ProductInfo = () => {
                       checked={selected}
                       size="small"
                     />
-                    {option.title}
+                    <p className="text-lightBlue">{option.title}</p>
                   </li>
                 )}
                 renderInput={(params) => (
@@ -463,7 +463,7 @@ const ProductInfo = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black-2 border-grey-5 rounded-3 p-3 row productInfo mt-4">
+      <div className="bg-black-15 border-grey-5 rounded-3 p-3 row productInfo mt-4">
         <div className="col-12 px-0">
           <div className="d-flex mb-3">
             <h6 className="text-lightBlue px-0">Price</h6>
@@ -634,7 +634,7 @@ const ProductInfo = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black-2 border-grey-5 rounded-3 p-3 row productInfo mt-4">
+      <div className="bg-black-15 border-grey-5 rounded-3 p-3 row productInfo mt-4">
         <div className="col-12 px-0">
           <div className="d-flex mb-3">
             <h6 className="text-lightBlue px-0">Inventory</h6>

@@ -262,7 +262,7 @@ const AddProduct = () => {
             sx={{ width: "100%", mb: 2, mt: 3, p: 0 }}
             className="border-grey-5"
           > */}
-          {/* <div className="row flex-column mt-3 mb-2 border-grey-5 bg-black-2 rounded-3"> */}
+          {/* <div className="row flex-column mt-3 mb-2 border-grey-5 bg-black-15 rounded-3"> */}
           <div className="row flex-column mb-2">
             <Box
               sx={{ width: "100%" }}
@@ -312,7 +312,7 @@ const AddProduct = () => {
           {/* </Paper> */}
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <div className="bg-black-2 border-grey-5 rounded-3 p-3">
+          <div className="bg-black-15 border-grey-5 rounded-3 p-3">
             <h6 className="text-grey-6 mb-3">Preview:</h6>
             <AppReactImageGallery />
             <p className="mt-3 text-lightBlue">The Fringe Diamond Ring</p>
@@ -433,7 +433,7 @@ const AddProduct = () => {
             </FormControl> */}
           </div>
 
-          <div className="bg-black-2 border-grey-5 rounded-3 p-3 mt-3 mb-3">
+          <div className="bg-black-15 border-grey-5 rounded-3 p-3 mt-3 mb-3">
             <div className="d-flex justify-content-between align-items-center">
               <div className="d-flex align-items-center">
                 <h6 className="text-grey-6">Tags </h6>
