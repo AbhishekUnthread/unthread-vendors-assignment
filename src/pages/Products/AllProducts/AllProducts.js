@@ -80,7 +80,8 @@ const Search = styled("div")(({ theme }) => ({
   marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
+    // marginLeft: theme.spacing(1),
+    marginLeft: 0,
     width: "auto",
   },
   backgroundColor: "#1c1b33",
@@ -328,7 +329,9 @@ const Accordion = styled((props) => (
 
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+    expandIcon={
+      <ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem", color: "#c8d8ff" }} />
+    }
     {...props}
   />
 ))(({ theme }) => ({
@@ -351,7 +354,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   // padding: theme.spacing(2),
 
   padding: "0 16px ",
-  borderTop: "1px solid rgba(0, 0, 0, .125)",
+  // borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 // ? FILTER ACCORDIAN ENDS HERE
 
@@ -728,18 +731,19 @@ const AllProducts = () => {
       <div className="row justify-content-between align-items-center">
         <h4 className="page-heading w-auto ps-0">All Products</h4>
         <div className="d-flex align-items-center w-auto pe-0">
-          <p
-            className="me-4 c-pointer text-lightBlue"
+          <button
+            className="button-transparent me-1 py-2 px-3"
             onClick={handleExportOpen}
           >
-            Export
-          </p>
-          <p
-            className="me-4 c-pointer text-lightBlue"
+            <p className="text-lightBlue">Export</p>
+          </button>
+
+          <button
+            className="button-transparent me-3 py-2 px-3 me-3"
             onClick={handleImportOpen}
           >
-            Import
-          </p>
+            <p className="text-lightBlue">Import</p>
+          </button>
           <Link to="/addProduct" className="button-gradient py-2 px-4">
             <p>+ Add Product</p>
           </Link>
@@ -765,7 +769,7 @@ const AllProducts = () => {
               />
             </div>
           </DialogTitle>
-          <hr className="hr-grey-6 mt-0 mb-2" />
+          <hr className="hr-grey-6 my-0" />
           <DialogContent className="py-2 px-4">
             <p className="text-lightBlue mb-2">Export</p>
             <FormControl>
@@ -864,8 +868,8 @@ const AllProducts = () => {
               </RadioGroup>
             </FormControl>
           </DialogContent>
-          <hr className="hr-grey-6 mt-2 mb-1" />
-          <DialogActions className="d-flex justify-content-between px-4 pb-2">
+          <hr className="hr-grey-6 my-0" />
+          <DialogActions className="d-flex justify-content-between px-4 py-3">
             <button
               className="button-grey py-2 px-5"
               onClick={handleExportClose}
@@ -901,7 +905,7 @@ const AllProducts = () => {
               />
             </div>
           </DialogTitle>
-          <hr className="hr-grey-6 mt-0 mb-2" />
+          <hr className="hr-grey-6 my-0" />
           <DialogContent className="py-2 px-4">
             <FormControl>
               <RadioGroup
@@ -935,8 +939,8 @@ const AllProducts = () => {
               </RadioGroup>
             </FormControl>
           </DialogContent>
-          <hr className="hr-grey-6 mt-2 mb-1" />
-          <DialogActions className="d-flex justify-content-between px-4 pb-2">
+          <hr className="hr-grey-6 my-0" />
+          <DialogActions className="d-flex justify-content-between px-4 py-3">
             <button
               className="button-grey py-2 px-5"
               onClick={handleImportClose}
@@ -972,7 +976,7 @@ const AllProducts = () => {
               />
             </div>
           </DialogTitle>
-          <hr className="hr-grey-6 mt-0 mb-2" />
+          <hr className="hr-grey-6 my-0" />
           <DialogContent className="py-2 px-4">
             <FormControl>
               <RadioGroup
@@ -1100,8 +1104,8 @@ const AllProducts = () => {
               </div>
             )}
           </DialogContent>
-          <hr className="hr-grey-6 mt-2 mb-1" />
-          <DialogActions className="d-flex justify-content-between px-4 pb-2">
+          <hr className="hr-grey-6 my-0" />
+          <DialogActions className="d-flex justify-content-between px-4 py-3">
             <button
               className="button-grey py-2 px-5"
               onClick={handleImportSecondClose}
@@ -1120,7 +1124,7 @@ const AllProducts = () => {
       <div className="row">
         <Paper
           sx={{ width: "100%", mb: 2, mt: 3, p: 0 }}
-          className="border-grey-5"
+          className="border-grey-5 bg-black-15"
         >
           <Box
             sx={{ width: "100%" }}
@@ -1178,7 +1182,7 @@ const AllProducts = () => {
               </div>
             </Popover>
           </Box>
-          <div className="d-flex align-items-center mt-3 mb-3 pe-2 justify-content-between">
+          <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <Search>
               <SearchIconWrapper>
                 <SearchIcon sx={{ color: "#c8d8ff" }} />

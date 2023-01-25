@@ -118,7 +118,6 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 15px 30px;
     background: transparent;
     border-radius: 5px;
     border: 0;
@@ -136,14 +135,25 @@
     }
   }
   &-transparent {
-    border: 1px solid transparent;
-    color: $black2;
-    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     background: transparent;
+    border-radius: 5px;
+    border: 0;
+    outline: 1px solid transparent;
+    color: $lightBlue;
     text-decoration: none;
-    // font-size: $font2;
-    // letter-spacing: $letter1;
-    // font-weight: 500;
+    min-width: max-content;
+    &:hover {
+      background: rgba(200, 216, 255, 0.05);
+      color: $black1;
+    }
+    &:disabled {
+      background: $grey1;
+      cursor: not-allowed;
+    }
   }
   &-border {
     background-color: transparent;
@@ -168,8 +178,9 @@
 }
 
 .MuiPaper-root {
-  background: $black15 !important;
+  background: $black13 !important;
   border-radius: 8px !important;
+  // border: 1px solid $grey5;
 }
 .bg-black-2 {
   background: $black2 !important;
@@ -179,6 +190,9 @@
 }
 .bg-black-11 {
   background: $black11 !important;
+}
+.bg-black-15 {
+  background: $black15 !important;
 }
 
 .tabs {
@@ -197,12 +211,12 @@
     color: $grey4;
   }
   &-country {
-    background: $black7;
+    background: $black13;
     width: 140px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 0 5px 0 0;
+    border-radius: 0 7.5px 0 0;
     border-left: 1px solid $grey5;
     // border-bottom: 1px solid $grey5;
   }
@@ -420,4 +434,36 @@ textarea,
 
 .MuiFormControl-root {
   border-radius: 4px;
+}
+
+// * TABLE ICONS
+.MuiTableSortLabel-icon {
+  color: $lightBlue !important;
+}
+
+.MuiTablePagination-actions {
+  svg {
+    color: $lightBlue !important;
+  }
+}
+
+// * ICON BUTTON HOVER
+.MuiIconButton-root:hover {
+  background-color: $black16 !important;
+}
+
+// * DIALOG STYLES
+.MuiDialog-container {
+  .MuiPaper-root {
+    border: 1px solid $grey5 !important;
+    background: $black15 !important;
+  }
+}
+
+// * RADIO ICON
+.MuiRadio-root {
+  color: $grey6 !important;
+}
+.MuiRadio-root.Mui-checked {
+  color: $lightBlue !important;
 }
