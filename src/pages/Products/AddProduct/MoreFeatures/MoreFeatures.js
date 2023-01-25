@@ -194,6 +194,7 @@ function EnhancedTableHead(props) {
             inputProps={{
               "aria-label": "select all desserts",
             }}
+            size="small"
           />
         </TableCell>
         {headCells.map((headCell) => (
@@ -356,16 +357,20 @@ const MoreFeatures = () => {
 
   return (
     <React.Fragment>
-      <div className="row justify-content-between mb-3">
+      {/* <div className="row justify-content-between mb-3">
         <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0">
           You may also like
         </h6>
         <p className="text-blue-2 col-auto pe-0">Customise</p>
-      </div>
+      </div> */}
       <div className="bg-black-9 border-grey-5 rounded-3 p-3 row features mb-4">
-        <h6 className="text-lightBlue col-12 text-lightBlue mb-2">
-          Add Product
-        </h6>
+        <div className="d-flex justify-content-between mb-4">
+          <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0">
+            You may also like
+          </h6>
+          <p className="text-blue-2 col-auto pe-0">Customise</p>
+        </div>
+        <p className="text-lightBlue col-12 text-lightBlue mb-2">Add Product</p>
         <RadioGroup
           row
           aria-labelledby="demo-row-radio-buttons-group-label"
@@ -490,12 +495,12 @@ const MoreFeatures = () => {
           </React.Fragment>
         )}
       </div>
-      <div className="row justify-content-between mb-3">
+      {/* <div className="row justify-content-between mb-3">
         <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0">
           Recommended Products
         </h6>
         <p className="text-blue-2 col-auto pe-0">Customise</p>
-      </div>
+      </div> */}
 
       <SwipeableDrawer
         anchor="right"
@@ -504,7 +509,7 @@ const MoreFeatures = () => {
         onOpen={toggleAddProductDrawer("right", true)}
       >
         {/* {list()} */}
-        <div className="d-flex justify-content-between py-3 ps-3 pe-2 me-1">
+        <div className="d-flex justify-content-between py-3 ps-3 pe-2 me-1 align-items-center">
           <h6 className="">Add Products</h6>
           <img
             src={cancel}
@@ -561,6 +566,7 @@ const MoreFeatures = () => {
                           inputProps={{
                             "aria-labelledby": labelId,
                           }}
+                          size="small"
                           onClick={(event) => handleClick(event, row.pId)}
                         />
                       </TableCell>
@@ -570,16 +576,18 @@ const MoreFeatures = () => {
                         scope="row"
                         padding="none"
                       >
-                        <div className="d-flex align-items-center">
+                        <div className="d-flex align-items-center my-2">
                           <img
                             src={ringSmall}
                             alt="ringSmall"
-                            className="me-2 my-2"
+                            className="me-2"
                             height={45}
                             width={45}
                           />
                           <div>
-                            <p>{row.productName}</p>
+                            <p className="text-lightBlue fw-600">
+                              {row.productName}
+                            </p>
                             <small className="mt-2 text-grey-6">
                               SKU: TFDR012345
                             </small>
@@ -587,7 +595,7 @@ const MoreFeatures = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <p>{row.category}</p>
+                        <p className="text-lightBlue">{row.category}</p>
                       </TableCell>
                       <TableCell>
                         <div
@@ -596,7 +604,7 @@ const MoreFeatures = () => {
                           variant="contained"
                           onClick={handlePriceClick}
                         >
-                          <p>{row.price}</p>
+                          <p className="text-lightBlue">{row.price}</p>
                           <img
                             className="ms-3"
                             src={arrowDown}
@@ -617,28 +625,32 @@ const MoreFeatures = () => {
                           anchorEl={anchorPriceEl}
                           onClose={handlePriceClose}
                         >
-                          <small className="text-lightBlue">
-                            Default : 12KT • Yellow • Gold • IJ-SI
-                          </small>
-                          <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                            <small>Metal Price</small>
-                            <small className="ms-2">Rs 15,000</small>
-                          </div>
-                          <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                            <small>Diamond Price</small>
-                            <small className="ms-2">Rs&nbsp;4,000</small>
-                          </div>
-                          <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                            <small>Making Charges</small>
-                            <small className="ms-2">Rs&nbsp;1,000</small>
-                          </div>
-                          <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                            <small>GST</small>
-                            <small className="ms-2">Rs&nbsp;&nbsp;600</small>
-                          </div>
-                          <div className="d-flex align-items-center justify-content-between mb-2 mt-2">
-                            <h6>Total</h6>
-                            <h6 className="ms-2">Rs&nbsp;20,600</h6>
+                          <div className="px-3">
+                            <small className="text-lightBlue">
+                              Default : 12KT • Yellow • Gold • IJ-SI
+                            </small>
+                            <div className="d-flex align-items-center justify-content-between mb-2 mt-3 text-grey-6">
+                              <small>Metal Price</small>
+                              <small className="ms-2">Rs 15,000</small>
+                            </div>
+                            <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
+                              <small>Diamond Price</small>
+                              <small className="ms-2">Rs&nbsp;4,000</small>
+                            </div>
+                            <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
+                              <small>Making Charges</small>
+                              <small className="ms-2">Rs&nbsp;1,000</small>
+                            </div>
+                            <div className="d-flex align-items-center justify-content-between mb-3 mt-2 text-grey-6">
+                              <small>GST</small>
+                              <small className="ms-2">Rs&nbsp;&nbsp;600</small>
+                            </div>
+                            <div className="d-flex align-items-center justify-content-between mb-2 mt-2">
+                              <p className="text-lightBlue">Total</p>
+                              <p className="ms-2 text-lightBlue fw-600">
+                                Rs&nbsp;20,600
+                              </p>
+                            </div>
                           </div>
                         </Popover>
                       </TableCell>
@@ -665,12 +677,28 @@ const MoreFeatures = () => {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          className="table-pagination"
         />
+        <div className="d-flex flex-column py-3 px-4 feature-buttons">
+          <hr className="hr-grey-6 my-3 w-100" />
+          <div className="d-flex justify-content-between">
+            <button className="button-lightBlue-outline py-2 px-3">
+              <p>Clear all Filters</p>
+            </button>
+            <button className="button-gradient py-2 px-5 w-auto ">
+              <p>Done</p>
+            </button>
+          </div>
+        </div>
       </SwipeableDrawer>
       <div className="bg-black-9 border-grey-5 rounded-3 p-3 row features mb-3">
-        <h6 className="text-lightBlue col-12 text-lightBlue mb-2">
-          Add Product
-        </h6>
+        <div className="d-flex justify-content-between mb-4">
+          <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0">
+            Recommended Products
+          </h6>
+          <p className="text-blue-2 col-auto pe-0">Customise</p>
+        </div>
+        <p className="text-lightBlue col-12 text-lightBlue mb-2">Add Product</p>
         <RadioGroup
           row
           aria-labelledby="demo-row-radio-buttons-group-label"

@@ -92,10 +92,7 @@ const SEO = () => {
           {!checked && (
             <React.Fragment>
               <p className="text-lightBlue mb-2 mt-3 col-12 px-0">Page Title</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-12 px-0"
-              >
+              <FormControl className="col-12 px-0">
                 <OutlinedInput
                   placeholder="Please enter page title"
                   size="small"
@@ -114,7 +111,7 @@ const SEO = () => {
                 placeholder="Please enter meta description"
                 style={{
                   background: "#15142A",
-                  color: "white",
+                  color: "#c8d8ff",
                   borderRadius: 5,
                 }}
                 minRows={5}
@@ -126,10 +123,7 @@ const SEO = () => {
                 200 of 500 characters Used
               </small>
               <p className="text-lightBlue mb-2 mt-3 col-12 px-0">URL Handle</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-12 px-0"
-              >
+              <FormControl className="col-12 px-0">
                 <OutlinedInput
                   placeholder="Please enter page title"
                   size="small"
@@ -150,7 +144,6 @@ const SEO = () => {
                 getOptionLabel={(option) => option.title}
                 size="small"
                 className="col-12 px-0 mb-2"
-                sx={{ background: "#15142A" }}
                 renderOption={(props, option, { selected }) => (
                   <li {...props}>
                     <Checkbox
@@ -160,7 +153,9 @@ const SEO = () => {
                       checked={selected}
                       size="small"
                     />
-                    {option.title}
+                    <small className="text-lightBlue my-1">
+                      {option.title}
+                    </small>
                   </li>
                 )}
                 renderInput={(params) => (

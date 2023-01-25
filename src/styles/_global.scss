@@ -382,8 +382,21 @@ textarea,
   font-weight: 400;
 }
 
+.rounded-8 {
+  border-radius: 8px;
+}
+.rounded-4 {
+  border-radius: 4px;
+}
+
 .font2 {
   font-size: $font2;
+}
+
+textarea {
+  border: 0 !important;
+  border: 1px solid $lightBlue !important;
+  outline: none !important;
 }
 
 .hover-back {

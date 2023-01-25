@@ -312,7 +312,7 @@ const AddProduct = () => {
           {/* </Paper> */}
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <div className="bg-black-15 border-grey-5 rounded-3 p-3">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3">
             <h6 className="text-grey-6 mb-3">Preview:</h6>
             <AppReactImageGallery />
             <p className="mt-3 text-lightBlue">The Fringe Diamond Ring</p>
@@ -331,7 +331,7 @@ const AddProduct = () => {
             </div>
             <p className="text-lightBlue mb-2">Size:</p>
             <FormControl
-              sx={{ m: 0, minWidth: 120, width: "100%", background: "#15142A" }}
+              sx={{ m: 0, minWidth: 120, width: "100%" }}
               size="small"
             >
               {/* <InputLabel id="demo-select-small">Select Size</InputLabel> */}
@@ -433,7 +433,7 @@ const AddProduct = () => {
             </FormControl> */}
           </div>
 
-          <div className="bg-black-15 border-grey-5 rounded-3 p-3 mt-3 mb-3">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-3 mb-3">
             <div className="d-flex justify-content-between align-items-center">
               <div className="d-flex align-items-center">
                 <h6 className="text-grey-6">Tags </h6>
@@ -526,8 +526,7 @@ const AddProduct = () => {
                           />
                         </div>
                         <FormControl
-                          sx={{ background: "#15142A" }}
-                          // className="col-7 px-0"
+                        // className="col-7 px-0"
                         >
                           <OutlinedInput
                             placeholder="Enter Tag Name"
@@ -595,7 +594,7 @@ const AddProduct = () => {
             <Autocomplete
               multiple
               id="checkboxes-tags-demo"
-              sx={{ width: "100%", mt: 2, background: "#15142A" }}
+              sx={{ width: "100%", mt: 2 }}
               options={taggedWithData}
               disableCloseOnSelect
               getOptionLabel={(option) => option.title}
@@ -609,7 +608,7 @@ const AddProduct = () => {
                     checked={selected}
                     size="small"
                   />
-                  {option.title}
+                  <small className="text-lightBlue my-1">{option.title}</small>
                 </li>
               )}
               renderInput={(params) => (

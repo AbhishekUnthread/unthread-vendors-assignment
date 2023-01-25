@@ -201,7 +201,7 @@ const ProductInfo = () => {
 
   return (
     <React.Fragment>
-      <div className="bg-black-15 border-grey-5 rounded-3 p-3 row productInfo">
+      <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo">
         <div className="col-12 px-0">
           <div className="row">
             <div className="col-8">
@@ -209,10 +209,7 @@ const ProductInfo = () => {
                 <p className="text-lightBlue">Title</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Title" size="small" />
               </FormControl>
             </div>
@@ -340,7 +337,7 @@ const ProductInfo = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 rounded-3 p-3 row productInfo mt-4">
+      <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
         <div className="col-12">
           <div className="row mb-3">
             <h6 className="text-lightBlue col-12 px-0">Product Type</h6>
@@ -362,7 +359,6 @@ const ProductInfo = () => {
                   value={category}
                   placeholder="Rings"
                   onChange={handleCategory}
-                  sx={{ background: "#15142A" }}
                 >
                   <MenuItem value="">None</MenuItem>
                   <MenuItem value={"productTitle"}>Product Title</MenuItem>
@@ -390,7 +386,6 @@ const ProductInfo = () => {
                   value={subCategory}
                   placeholder="Rings"
                   onChange={handleSubCategory}
-                  sx={{ background: "#15142A" }}
                 >
                   <MenuItem value="">None</MenuItem>
                   <MenuItem value={"productTitle"}>Product Title</MenuItem>
@@ -418,7 +413,6 @@ const ProductInfo = () => {
                   value={vendorName}
                   placeholder="Rings"
                   onChange={handleVendorName}
-                  sx={{ background: "#15142A" }}
                 >
                   <MenuItem value="">None</MenuItem>
                   <MenuItem value={"productTitle"}>Product Title</MenuItem>
@@ -438,7 +432,7 @@ const ProductInfo = () => {
               <Autocomplete
                 multiple
                 id="checkboxes-tags-demo"
-                sx={{ width: "100%", background: "#15142A" }}
+                sx={{ width: "100%" }}
                 options={collectionsData}
                 disableCloseOnSelect
                 getOptionLabel={(option) => option.title}
@@ -463,7 +457,7 @@ const ProductInfo = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 rounded-3 p-3 row productInfo mt-4">
+      <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
         <div className="col-12 px-0">
           <div className="d-flex mb-3">
             <h6 className="text-lightBlue px-0">Price</h6>
@@ -476,10 +470,7 @@ const ProductInfo = () => {
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
 
-              <FormControl
-                sx={{ background: "#15142A", width: "100%" }}
-                className="col-7 px-0"
-              >
+              <FormControl sx={{ width: "100%" }} className="col-7 px-0">
                 <OutlinedInput
                   placeholder="Enter Price"
                   size="small"
@@ -493,7 +484,7 @@ const ProductInfo = () => {
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
               <FormControl
-                sx={{ m: 0, minWidth: 120, background: "#15142A" }}
+                sx={{ m: 0, minWidth: 120 }}
                 size="small"
                 className="w-100"
               >
@@ -541,7 +532,7 @@ const ProductInfo = () => {
             </div>
             {checkedPrice && (
               <div className="col-12 mt-1 mb-3">
-                <button className="button-gradient w-auto py-2">
+                <button className="button-gradient w-auto py-2 px-4">
                   <p>Edit Price on Request Setting</p>
                 </button>
               </div>
@@ -570,7 +561,7 @@ const ProductInfo = () => {
             {checkedDynamic && (
               <React.Fragment>
                 <div className="col-12 mt-1 mb-3">
-                  <button className="button-gradient w-auto py-2">
+                  <button className="button-gradient w-auto py-2 px-4">
                     <p>Edit Price Master</p>
                   </button>
                 </div>
@@ -634,7 +625,7 @@ const ProductInfo = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 rounded-3 p-3 row productInfo mt-4">
+      <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
         <div className="col-12 px-0">
           <div className="d-flex mb-3">
             <h6 className="text-lightBlue px-0">Inventory</h6>
@@ -647,10 +638,7 @@ const ProductInfo = () => {
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
 
-              <FormControl
-                sx={{ background: "#15142A", width: "100%" }}
-                className="col-7 px-0"
-              >
+              <FormControl sx={{ width: "100%" }} className="col-7 px-0">
                 <OutlinedInput placeholder="DSERFC12540" size="small" />
               </FormControl>
             </div>
@@ -660,10 +648,7 @@ const ProductInfo = () => {
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
 
-              <FormControl
-                sx={{ background: "#15142A", width: "100%" }}
-                className="col-7 px-0"
-              >
+              <FormControl sx={{ width: "100%" }} className="col-7 px-0">
                 <OutlinedInput placeholder="" size="small" />
               </FormControl>
             </div>
@@ -777,10 +762,7 @@ const ProductInfo = () => {
                       />
                     </div>
                     <div className="col-12 d-flex">
-                      <FormControl
-                        sx={{ background: "#15142A" }}
-                        className="me-3"
-                      >
+                      <FormControl className="me-3">
                         <OutlinedInput
                           placeholder="Enter Quantity"
                           size="small"
@@ -791,7 +773,7 @@ const ProductInfo = () => {
                           }
                         />
                       </FormControl>
-                      <button className="button-gradient py-1">
+                      <button className="button-gradient py-2 px-4">
                         <p>Apply to all</p>
                       </button>
                     </div>
@@ -813,10 +795,7 @@ const ProductInfo = () => {
                         JWL - JWL Bagh, New Delhi-110005, India
                       </p>
 
-                      <FormControl
-                        sx={{ background: "#15142A", width: 80 }}
-                        className="col-7 px-0"
-                      >
+                      <FormControl sx={{ width: 80 }} className="col-7 px-0">
                         <OutlinedInput
                           placeholder="Enter Qty"
                           size="small"
@@ -829,10 +808,7 @@ const ProductInfo = () => {
                         JWL - JWL Bagh, New Delhi-110005, India
                       </p>
 
-                      <FormControl
-                        sx={{ background: "#15142A", width: 80 }}
-                        className="col-7 px-0"
-                      >
+                      <FormControl sx={{ width: 80 }} className="col-7 px-0">
                         <OutlinedInput
                           placeholder="Enter Qty"
                           size="small"
@@ -845,10 +821,7 @@ const ProductInfo = () => {
                         JWL - JWL Bagh, New Delhi-110005, India
                       </p>
 
-                      <FormControl
-                        sx={{ background: "#15142A", width: 80 }}
-                        className="col-7 px-0"
-                      >
+                      <FormControl sx={{ width: 80 }} className="col-7 px-0">
                         <OutlinedInput
                           placeholder="Enter Qty"
                           size="small"

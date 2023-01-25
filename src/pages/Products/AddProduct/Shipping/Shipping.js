@@ -80,7 +80,7 @@ const Shipping = () => {
             <span className="text-blue-2">Regional settings</span>
           </small>
           <div className="d-flex my-3 align-items-center shipping-inputs col-12 px-0">
-            <FormControl sx={{ background: "#15142A" }} className="me-5">
+            <FormControl className="me-5">
               <OutlinedInput
                 placeholder="Enter Weight"
                 size="small"
@@ -89,7 +89,7 @@ const Shipping = () => {
                 }
               />
             </FormControl>
-            <FormControl sx={{ background: "#15142A" }} className="">
+            <FormControl className="">
               <OutlinedInput
                 placeholder="Enter Length"
                 size="small"
@@ -99,7 +99,7 @@ const Shipping = () => {
               />
             </FormControl>
             <p className="text-lightBlue mx-2">x</p>
-            <FormControl sx={{ background: "#15142A" }} className="">
+            <FormControl className="">
               <OutlinedInput
                 placeholder="Enter Height"
                 size="small"
@@ -109,7 +109,7 @@ const Shipping = () => {
               />
             </FormControl>
             <p className="text-lightBlue mx-2">x</p>
-            <FormControl sx={{ background: "#15142A" }} className="">
+            <FormControl className="">
               <OutlinedInput
                 placeholder="Enter Width"
                 size="small"

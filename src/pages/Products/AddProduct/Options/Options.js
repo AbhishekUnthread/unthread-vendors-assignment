@@ -173,7 +173,7 @@ const Options = () => {
             </h6>
             <img src={info} alt="info" className="ms-2" />
           </div>
-          <small className="text-lightBlue mt-1">
+          <small className="text-grey-6 mt-1">
             If this product has options, like size or color then add options
           </small>
         </div>
@@ -206,12 +206,11 @@ const Options = () => {
                 />
               </div>
             </DialogTitle>
-            <hr className="hr-grey-6 mt-2 mb-0" />
+            <hr className="hr-grey-6 my-0" />
             <DialogContent className="py-3 px-4">
               <p className="text-lightBlue mb-2">Select Variant Sets</p>
 
               {/* <FormControl
-                sx={{ background: "#15142A" }}
                 className="col-7 px-0"
               >
                 <OutlinedInput placeholder="Enter Field Sets" size="small" />
@@ -221,7 +220,6 @@ const Options = () => {
                   sx={{
                     m: 0,
                     minWidth: 120,
-                    background: "#15142A",
                   }}
                   size="small"
                   className="col-md-6"
@@ -265,8 +263,8 @@ const Options = () => {
                 </FormControl>
               </div>
             </DialogContent>
-            <hr className="hr-grey-6 mt-2 mb-0" />
-            <DialogActions className="d-flex justify-content-between px-4 pb-2">
+            <hr className="hr-grey-6 my-0" />
+            <DialogActions className="d-flex justify-content-between px-4 py-3">
               <button
                 className="button-lightBlue-outline py-2 px-4"
                 onClick={handleImportOptionsClose}
@@ -306,11 +304,18 @@ const Options = () => {
                   m: 0,
                   minWidth: 120,
                   width: "100%",
-                  background: "#15142A",
+                }}
+              >
+                <OutlinedInput placeholder="Enter Option Name" size="small" />
+              </FormControl>
+              {/* <FormControl
+                sx={{
+                  m: 0,
+                  minWidth: 120,
+                  width: "100%",
                 }}
                 size="small"
               >
-                {/* <InputLabel id="demo-select-small">Select Size</InputLabel> */}
                 <Select
                   labelId="demo-select-small"
                   id="demo-select-small"
@@ -334,7 +339,7 @@ const Options = () => {
                     XL
                   </MenuItem>
                 </Select>
-              </FormControl>
+              </FormControl> */}
             </div>
             <div className="col-md-6 mb-3">
               <div className="d-flex align-item-center mb-2">
@@ -346,7 +351,6 @@ const Options = () => {
                   m: 0,
                   minWidth: 120,
                   width: "100%",
-                  background: "#15142A",
                 }}
                 size="small"
               >
@@ -445,7 +449,6 @@ const Options = () => {
                             m: 0,
                             minWidth: 120,
                             width: "100%",
-                            background: "#15142A",
                           }}
                           size="small"
                         >
@@ -483,7 +486,6 @@ const Options = () => {
                             m: 0,
                             minWidth: 120,
                             width: "100%",
-                            background: "#15142A",
                           }}
                           size="small"
                         >
@@ -515,7 +517,6 @@ const Options = () => {
                             m: 0,
                             minWidth: 120,
                             width: "100%",
-                            background: "#15142A",
                           }}
                           size="small"
                         >
@@ -556,7 +557,6 @@ const Options = () => {
                             m: 0,
                             minWidth: 120,
                             width: "100%",
-                            background: "#15142A",
                           }}
                           size="small"
                         >

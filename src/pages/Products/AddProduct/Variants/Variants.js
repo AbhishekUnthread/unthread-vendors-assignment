@@ -350,10 +350,7 @@ const Variants = () => {
       <div className="d-flex col-12 px-0 align-items-center justify-content-between my-4">
         <div className="d-flex align-items-center">
           <p className="text-lightBlue">Store Address:</p>
-          <FormControl
-            sx={{ background: "#15142A", width: 400 }}
-            className="px-0 ms-3"
-          >
+          <FormControl sx={{ width: 400 }} className="px-0 ms-3">
             <OutlinedInput
               placeholder="Enter store address"
               size="small"
@@ -443,10 +440,7 @@ const Variants = () => {
                         {/* <p className="d-flex align-items-center text-lightBlue">
                           {row.price}
                         </p> */}
-                        <FormControl
-                          sx={{ background: "#15142A", width: 150 }}
-                          className="px-0"
-                        >
+                        <FormControl sx={{ idth: 150 }} className="px-0">
                           <OutlinedInput
                             placeholder="Enter SKU"
                             size="small"
@@ -456,10 +450,7 @@ const Variants = () => {
                       </TableCell>
                       <TableCell>
                         {/* <p className="d-flex text-lightBlue">{row.quantity}</p> */}
-                        <FormControl
-                          sx={{ background: "#15142A", width: 80 }}
-                          className="px-0"
-                        >
+                        <FormControl sx={{ width: 80 }} className="px-0">
                           <OutlinedInput
                             placeholder="Enter SKU"
                             size="small"
@@ -469,10 +460,7 @@ const Variants = () => {
                       </TableCell>
                       <TableCell>
                         {/* <p className="d-flex text-lightBlue">{row.sku}</p> */}
-                        <FormControl
-                          sx={{ background: "#15142A" }}
-                          className="px-0"
-                        >
+                        <FormControl className="px-0">
                           <OutlinedInput
                             placeholder="Enter SKU"
                             size="small"

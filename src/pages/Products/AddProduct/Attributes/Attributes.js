@@ -49,7 +49,7 @@ const Attributes = () => {
   // ? FIELD SETS DIALOG ENDS HERE
 
   return (
-    <div className="bg-black-15 border-grey-5 rounded-3 p-3 row attributes">
+    <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
       <div className="d-flex col-12 px-0 justify-content-between">
         <div className="d-flex align-items-center">
           <h6 className="text-lightBlue me-auto text-lightBlue">
@@ -114,8 +114,8 @@ const Attributes = () => {
       </div>
       <hr className="hr-grey-6 my-3" />
       <div className="d-flex col-12 px-0">
-        <p className="text-grey-5">Field Type :</p>
-        <p className="mx-1">Metal Field Sets</p>
+        <p className="text-lightBlue">Field Type :</p>
+        <p className="mx-1 text-lightBlue">Metal Field Sets</p>
         <p className="text-blue-2 c-pointer" onClick={handelFieldSets}>
           (Change field sets)
         </p>
@@ -141,16 +141,16 @@ const Attributes = () => {
               />
             </div>
           </DialogTitle>
-          <hr className="hr-grey-6 mt-2 mb-0" />
+          <hr className="hr-grey-6 my-0" />
           <DialogContent className="py-3 px-4">
             <p className="text-lightBlue mb-2">Select Field Sets</p>
 
-            <FormControl sx={{ background: "#15142A" }} className="col-7 px-0">
+            <FormControl className="col-7 px-0">
               <OutlinedInput placeholder="Enter Field Sets" size="small" />
             </FormControl>
           </DialogContent>
-          <hr className="hr-grey-6 mt-2 mb-0" />
-          <DialogActions className="d-flex justify-content-between px-4 pb-2">
+          <hr className="hr-grey-6 my-0" />
+          <DialogActions className="d-flex justify-content-between px-4 py-3">
             <button
               className="button-red-outline py-2 px-5"
               onClick={handelFieldSetsClose}
@@ -176,7 +176,7 @@ const Attributes = () => {
               <small className="text-grey-6 ms-2">Customer wont see this</small>
             </div>
           </div>
-          <FormControl sx={{ background: "#15142A" }} className="col-7 px-0">
+          <FormControl className="col-7 px-0">
             <OutlinedInput placeholder="Enter Content" size="small" />
           </FormControl>
         </div>
@@ -184,7 +184,7 @@ const Attributes = () => {
       <div className="col-12 mt-1 mb-2 pb-2">
         <div className="row align-items-start">
           <p className="text-lightBlue col-4">Labour Code</p>
-          <FormControl sx={{ background: "#15142A" }} className="col-7 px-0">
+          <FormControl className="col-7 px-0">
             <OutlinedInput placeholder="Enter Content" size="small" />
           </FormControl>
         </div>
@@ -192,7 +192,7 @@ const Attributes = () => {
       <div className="col-12 mt-1 mb-2 pb-2">
         <div className="row align-items-start">
           <p className="text-lightBlue col-4">Labour Charge</p>
-          <FormControl sx={{ background: "#15142A" }} className="col-7 px-0">
+          <FormControl className="col-7 px-0">
             <OutlinedInput placeholder="Enter Content" size="small" />
           </FormControl>
         </div>
@@ -200,7 +200,7 @@ const Attributes = () => {
       <div className="col-12 mt-1 mb-2 pb-2">
         <div className="row align-items-start">
           <p className="text-lightBlue col-4">Metal Certification</p>
-          <FormControl sx={{ background: "#15142A" }} className="col-7 px-0">
+          <FormControl className="col-7 px-0">
             <OutlinedInput placeholder="Enter Content" size="small" />
           </FormControl>
         </div>
@@ -208,7 +208,7 @@ const Attributes = () => {
       <div className="col-12 mt-1 mb-2 pb-2">
         <div className="row align-items-start">
           <p className="text-lightBlue col-4">Metal Weight</p>
-          <FormControl sx={{ background: "#15142A" }} className="col-8 px-0">
+          <FormControl className="col-8 px-0">
             <OutlinedInput
               placeholder="Enter Content"
               size="small"
@@ -223,7 +223,7 @@ const Attributes = () => {
       </div>
       <div className="col-12">
         <div
-          className="row py-3 mb-3"
+          className="row py-3 mb-3 rounded-4"
           style={{ background: "rgba(39, 40, 63, 0.5)" }}
         >
           <div className="col-12 mb-3">
@@ -232,10 +232,7 @@ const Attributes = () => {
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">Diamond Name</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
               </FormControl>
             </div>
@@ -243,10 +240,7 @@ const Attributes = () => {
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">Size (mm)</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
               </FormControl>
             </div>
@@ -254,10 +248,7 @@ const Attributes = () => {
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">Setting Type</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
               </FormControl>
             </div>
@@ -265,10 +256,7 @@ const Attributes = () => {
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">No of Pieces</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
               </FormControl>
             </div>
@@ -276,17 +264,14 @@ const Attributes = () => {
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">Carat Weight</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
               </FormControl>
             </div>
           </div>
         </div>
         <div
-          className="row py-3"
+          className="row py-3 rounded-4"
           style={{ background: "rgba(39, 40, 63, 0.5)" }}
         >
           <div className="col-12 mb-3">
@@ -295,10 +280,7 @@ const Attributes = () => {
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">Diamond Name</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
               </FormControl>
             </div>
@@ -306,10 +288,7 @@ const Attributes = () => {
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">Size (mm)</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
               </FormControl>
             </div>
@@ -317,10 +296,7 @@ const Attributes = () => {
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">Setting Type</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
               </FormControl>
             </div>
@@ -328,10 +304,7 @@ const Attributes = () => {
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">No of Pieces</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
               </FormControl>
             </div>
@@ -339,14 +312,16 @@ const Attributes = () => {
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">Carat Weight</p>
-              <FormControl
-                sx={{ background: "#15142A" }}
-                className="col-7 px-0"
-              >
+              <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
               </FormControl>
             </div>
           </div>
+        </div>
+        <div className="row">
+          <small className="col-12 text-blue-2 mt-2 px-0">
+            + Add more Diamond Info
+          </small>
         </div>
       </div>
     </div>
