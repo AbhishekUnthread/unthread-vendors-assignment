@@ -40,7 +40,7 @@ const Search = styled("div")(({ theme }) => ({
   // backgroundColor: alpha(theme.palette.common.white, 0.15),
   "&:hover": {
     // backgroundColor: alpha(theme.palette.common.white, 0.25),
-    backgroundColor: "#1c1b33",
+    backgroundColor: "#15142a",
   },
   marginLeft: 0,
   width: "100%",
@@ -49,7 +49,7 @@ const Search = styled("div")(({ theme }) => ({
     marginRight: theme.spacing(2),
     width: "auto",
   },
-  backgroundColor: "#1c1b33",
+  backgroundColor: "#15142a",
   height: "30.6px",
 }));
 
@@ -195,6 +195,10 @@ function EnhancedTableHead(props) {
               "aria-label": "select all desserts",
             }}
             size="small"
+            style={{
+              color: "#5C6D8E",
+              marginRight: 0,
+            }}
           />
         </TableCell>
         {headCells.map((headCell) => (
@@ -209,7 +213,7 @@ function EnhancedTableHead(props) {
               direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
-              {headCell.label}
+              <p className="text-lightBlue">{headCell.label}</p>
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
@@ -363,68 +367,69 @@ const MoreFeatures = () => {
         </h6>
         <p className="text-blue-2 col-auto pe-0">Customise</p>
       </div> */}
-      <div className="bg-black-9 border-grey-5 rounded-3 p-3 row features mb-4">
-        <div className="d-flex justify-content-between mb-4">
-          <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0">
+      <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mb-4">
+        <div className="d-flex justify-content-between mb-2 px-0">
+          <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
             You may also like
           </h6>
           <p className="text-blue-2 col-auto pe-0">Customise</p>
         </div>
-        <p className="text-lightBlue col-12 text-lightBlue mb-2">Add Product</p>
-        <RadioGroup
-          row
-          aria-labelledby="demo-row-radio-buttons-group-label"
-          name="row-radio-buttons-group"
-          value={likeProductRadio}
-          onChange={handleLikeProductRadio}
-          className="features-radio"
-        >
-          <FormControlLabel
-            value="companyIntelligence"
-            control={<Radio size="small" />}
-            label="Company Intelligence"
-            sx={{
-              "& .MuiTypography-root": {
-                fontSize: 13,
-                color: "#c8d8ff",
-              },
-            }}
-          />
-          <FormControlLabel
-            value="automated"
-            control={<Radio size="small" />}
-            label="Automated"
-            sx={{
-              "& .MuiTypography-root": {
-                fontSize: 13,
-                color: "#c8d8ff",
-              },
-            }}
-          />
-          <FormControlLabel
-            value="manual"
-            control={<Radio size="small" />}
-            label="Manual"
-            sx={{
-              "& .MuiTypography-root": {
-                fontSize: 13,
-                color: "#c8d8ff",
-              },
-            }}
-          />
-        </RadioGroup>
-
+        <div className="d-flex align-items-center col-12 px-0 mb-2">
+          <p className="text-grey-6 me-4 px-0">Select Products Through</p>
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            name="row-radio-buttons-group"
+            value={likeProductRadio}
+            onChange={handleLikeProductRadio}
+            className="features-radio px-0"
+          >
+            <FormControlLabel
+              value="companyIntelligence"
+              control={<Radio size="small" />}
+              label="Company Intelligence"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#c8d8ff",
+                  marginRight: 1,
+                },
+              }}
+            />
+            <FormControlLabel
+              value="automated"
+              control={<Radio size="small" />}
+              label="Automated"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#c8d8ff",
+                  marginRight: 1,
+                },
+              }}
+            />
+            <FormControlLabel
+              value="manual"
+              control={<Radio size="small" />}
+              label="Manual"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#c8d8ff",
+                  marginRight: 1,
+                },
+              }}
+            />
+          </RadioGroup>
+        </div>
         {likeProductRadio !== "manual" && (
-          <div className="bg-black-11 rounded-3 p-3 shadow-sm">
+          <div className="bg-black-11 rounded-8 p-3 shadow-sm">
             {likeProductRadio === "companyIntelligence" && (
               <React.Fragment>
-                <p
-                  className="text-blue-gradient fw-bold"
-                  style={{ width: 160 }}
-                >
+                <p className="text-blue-gradient fw-500" style={{ width: 160 }}>
                   Company Intelligence
                 </p>
-                <p className="text-grey-6 mt-2">
+                <small className="text-grey-6 mt-2 d-block">
                   Company Intelligence is a tool that uses a series of
                   algorithms, data analysis and even artificial intelligence
                   (AI) to make online recommendations for products, content
@@ -432,7 +437,7 @@ const MoreFeatures = () => {
                   for each user or not, depending on the purpose of each
                   platform, the amount of data obtained and even the type of
                   technology used
-                </p>
+                </small>
               </React.Fragment>
             )}
             {likeProductRadio === "automated" && (
@@ -476,7 +481,7 @@ const MoreFeatures = () => {
                     <p>Add Condition</p>
                   </button>
                 </div>
-                <div className="bg-black-9 rounded-3 py-2 px-3 d-flex justify-content-between mt-3 shadow-lg">
+                <div className="bg-black-9 rounded-8 py-2 px-3 d-flex justify-content-between mt-3 shadow-lg">
                   <p className="text-lightBlue c-pointer">Summary</p>
                   <p className="text-lightBlue c-pointer">Action</p>
                 </div>
@@ -510,7 +515,7 @@ const MoreFeatures = () => {
       >
         {/* {list()} */}
         <div className="d-flex justify-content-between py-3 ps-3 pe-2 me-1 align-items-center">
-          <h6 className="">Add Products</h6>
+          <h6 className="text-lightBlue">Select Products</h6>
           <img
             src={cancel}
             alt="cancel"
@@ -521,7 +526,7 @@ const MoreFeatures = () => {
         <hr className="hr-grey-6 mt-3 mb-3" />
         <Search>
           <SearchIconWrapper>
-            <SearchIcon />
+            <SearchIcon sx={{ color: "#c8d8ff" }} />
           </SearchIconWrapper>
           <StyledInputBase
             placeholder="Search…"
@@ -568,6 +573,10 @@ const MoreFeatures = () => {
                           }}
                           size="small"
                           onClick={(event) => handleClick(event, row.pId)}
+                          style={{
+                            color: "#5C6D8E",
+                            marginRight: 0,
+                          }}
                         />
                       </TableCell>
                       <TableCell
@@ -683,75 +692,78 @@ const MoreFeatures = () => {
           <hr className="hr-grey-6 my-3 w-100" />
           <div className="d-flex justify-content-between">
             <button className="button-lightBlue-outline py-2 px-3">
-              <p>Clear all Filters</p>
+              <p>Cancel</p>
             </button>
             <button className="button-gradient py-2 px-5 w-auto ">
-              <p>Done</p>
+              <p>Add 4 Products</p>
             </button>
           </div>
         </div>
       </SwipeableDrawer>
-      <div className="bg-black-9 border-grey-5 rounded-3 p-3 row features mb-3">
-        <div className="d-flex justify-content-between mb-4">
-          <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0">
+      <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mb-4">
+        <div className="d-flex justify-content-between mb-2 px-0">
+          <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
             Recommended Products
           </h6>
           <p className="text-blue-2 col-auto pe-0">Customise</p>
         </div>
-        <p className="text-lightBlue col-12 text-lightBlue mb-2">Add Product</p>
-        <RadioGroup
-          row
-          aria-labelledby="demo-row-radio-buttons-group-label"
-          name="row-radio-buttons-group"
-          value={recommendedProductRadio}
-          onChange={handleRecommendedProductRadio}
-          className="features-radio"
-        >
-          <FormControlLabel
-            value="companyIntelligence"
-            control={<Radio size="small" />}
-            label="Company Intelligence"
-            sx={{
-              "& .MuiTypography-root": {
-                fontSize: 13,
-                color: "#c8d8ff",
-              },
-            }}
-          />
-          <FormControlLabel
-            value="automated"
-            control={<Radio size="small" />}
-            label="Automated"
-            sx={{
-              "& .MuiTypography-root": {
-                fontSize: 13,
-                color: "#c8d8ff",
-              },
-            }}
-          />
-          <FormControlLabel
-            value="manual"
-            control={<Radio size="small" />}
-            label="Manual"
-            sx={{
-              "& .MuiTypography-root": {
-                fontSize: 13,
-                color: "#c8d8ff",
-              },
-            }}
-          />
-        </RadioGroup>
+
+        <div className="d-flex align-items-center col-12 px-0 mb-2">
+          <p className="text-grey-6 me-4 px-0">Select Products Through</p>
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            name="row-radio-buttons-group"
+            value={recommendedProductRadio}
+            onChange={handleRecommendedProductRadio}
+            className="features-radio"
+          >
+            <FormControlLabel
+              value="companyIntelligence"
+              control={<Radio size="small" />}
+              label="Company Intelligence"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#c8d8ff",
+                  marginRight: 1,
+                },
+              }}
+            />
+            <FormControlLabel
+              value="automated"
+              control={<Radio size="small" />}
+              label="Automated"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#c8d8ff",
+                  marginRight: 1,
+                },
+              }}
+            />
+            <FormControlLabel
+              value="manual"
+              control={<Radio size="small" />}
+              label="Manual"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#c8d8ff",
+                  marginRight: 1,
+                },
+              }}
+            />
+          </RadioGroup>
+        </div>
         {recommendedProductRadio !== "manual" && (
-          <div className="bg-black-11 rounded-3 p-3 shadow-sm">
+          <div className="bg-black-11 rounded-8 p-3 shadow-sm">
             {recommendedProductRadio === "companyIntelligence" && (
               <React.Fragment>
-                <p
-                  className="text-blue-gradient fw-bold"
-                  style={{ width: 160 }}
-                >
+                <p className="text-blue-gradient fw-500" style={{ width: 160 }}>
                   Company Intelligence
                 </p>
-                <p className="text-grey-6 mt-2">
+                <small className="text-grey-6 mt-2 d-block">
                   Company Intelligence is a tool that uses a series of
                   algorithms, data analysis and even artificial intelligence
                   (AI) to make online recommendations for products, content
@@ -759,7 +771,7 @@ const MoreFeatures = () => {
                   for each user or not, depending on the purpose of each
                   platform, the amount of data obtained and even the type of
                   technology used
-                </p>
+                </small>
               </React.Fragment>
             )}
             {recommendedProductRadio === "automated" && (
@@ -803,7 +815,7 @@ const MoreFeatures = () => {
                     <p>Add Condition</p>
                   </button>
                 </div>
-                <div className="bg-black-9 rounded-3 py-2 px-3 d-flex justify-content-between mt-3 shadow-lg">
+                <div className="bg-black-9 rounded-8 py-2 px-3 d-flex justify-content-between mt-3 shadow-lg">
                   <p className="text-lightBlue c-pointer">Summary</p>
                   <p className="text-lightBlue c-pointer">Action</p>
                 </div>
@@ -824,45 +836,45 @@ const MoreFeatures = () => {
 
       <div className="row features">
         <div className="col-4 ps-0">
-          <div className="bg-black-15 border-grey-5 rounded-3 p-3 ">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 ">
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-lightBlue fw-bold">Labels</h5>
               <img src={label} alt="label" className="" width={75} />
             </div>
-            <p className="text-grey-6 my-2">
+            <small className="text-grey-6 my-3 d-block">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus
               pellentes
-            </p>
+            </small>
             <button className="button-gradient py-1 px-3 mt-2">
               <p>Explore</p>
             </button>
           </div>
         </div>
         <div className="col-4">
-          <div className="bg-black-15 border-grey-5 rounded-3 p-3 ">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 ">
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-lightBlue fw-bold">Size Chart</h5>
               <img src={sizeChart} alt="label" className="" width={90} />
             </div>
-            <p className="text-grey-6 my-2">
+            <small className="text-grey-6 my-3 d-block">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus
               pellentes
-            </p>
+            </small>
             <button className="button-gradient py-1 px-3 mt-2">
               <p>Explore</p>
             </button>
           </div>
         </div>
         <div className="col-4 pe-0">
-          <div className="bg-black-15 border-grey-5 rounded-3 p-3 ">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 ">
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-lightBlue fw-bold">Pre Order</h5>
               <img src={preOrder} alt="label" className="" width={85} />
             </div>
-            <p className="text-grey-6 my-2">
+            <small className="text-grey-6 my-3 d-block">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus
               pellentes
-            </p>
+            </small>
             <button className="button-gradient py-1 px-3 mt-2">
               <p>Explore</p>
             </button>

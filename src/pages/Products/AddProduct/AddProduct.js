@@ -620,12 +620,16 @@ const AddProduct = () => {
       </div>
       <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto">
-          <button className="button-red-outline py-2 px-4">Discard</button>
+          <button className="button-red-outline py-2 px-4">
+            <p>Discard</p>
+          </button>
           <button className="button-lightBlue-outline py-2 px-4 ms-3">
-            Save as Draft
+            <p>Save as Draft</p>
           </button>
         </div>
-        <button className="button-gradient py-2 px-4 w-auto ">Continue</button>
+        <button className="button-gradient py-2 px-4 w-auto ">
+          <p>Continue</p>
+        </button>
       </div>
     </div>
   );

@@ -56,7 +56,7 @@
     text-decoration: none;
     min-width: max-content;
     &:hover {
-      background: $grey4;
+      background: $grey6;
       color: $white1;
       background: linear-gradient(
         165.69deg,
@@ -85,7 +85,7 @@
     text-decoration: none;
     min-width: max-content;
     &:hover {
-      background: $grey4;
+      background: $grey6;
       color: $white1;
     }
     &:disabled {
@@ -208,7 +208,10 @@
   .MuiTab-root {
     font-size: $font3 !important;
     text-transform: capitalize !important;
-    color: $grey4;
+    color: $grey6;
+  }
+  .MuiTab-root.Mui-selected {
+    color: $lightBlue !important;
   }
   &-country {
     background: $black13;
@@ -246,7 +249,6 @@
 }
 
 .MuiPopover-paper {
-  background: $black8;
   border: 1px solid $grey5;
   padding: 0.6rem 0.3rem;
   margin-top: 0.3rem;
@@ -278,10 +280,20 @@
 }
 
 .border-grey-bottom {
-  border-bottom: 1px solid $grey6;
+  border-bottom: 1px solid #36425a;
+  opacity: 50%;
 }
 .border-grey-top {
-  border-top: 1px solid $grey6;
+  border-top: 1px solid #36425a;
+  // opacity: 50%;
+}
+
+.table-grey-bottom {
+  border-bottom: 1px solid #36425a;
+  // opacity: 10%;
+}
+.table-grey-top {
+  border-top: 1px solid #36425a;
 }
 
 .text-red-1 {
@@ -376,10 +388,13 @@ textarea,
 }
 
 .fw-600 {
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 .fw-400 {
-  font-weight: 400;
+  font-weight: 400 !important;
+}
+.fw-500 {
+  font-weight: 500 !important;
 }
 
 .rounded-8 {
@@ -395,7 +410,7 @@ textarea,
 
 textarea {
   border: 0 !important;
-  border: 1px solid $lightBlue !important;
+  border: 1px solid $grey5 !important;
   outline: none !important;
 }
 
@@ -497,6 +512,9 @@ textarea {
   background: $black15 !important;
 }
 // * FIELD INPUT STYLES
+.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: $grey5 !important;
+}
 .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
   border-color: $lightBlue !important;
 }

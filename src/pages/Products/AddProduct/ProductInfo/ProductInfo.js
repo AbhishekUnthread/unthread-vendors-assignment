@@ -206,7 +206,7 @@ const ProductInfo = () => {
           <div className="row">
             <div className="col-8">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue">Title</p>
+                <small className="text-lightBlue">Title</small>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
               <FormControl className="col-7 px-0">
@@ -215,7 +215,7 @@ const ProductInfo = () => {
             </div>
             <div className="col-4">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue">Product Status</p>
+                <small className="text-lightBlue">Product Status</small>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
               <ToggleButtonGroup

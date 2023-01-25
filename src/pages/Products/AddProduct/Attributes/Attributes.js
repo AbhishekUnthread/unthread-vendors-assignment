@@ -13,7 +13,9 @@ import {
   DialogTitle,
   FormControl,
   InputAdornment,
+  MenuItem,
   OutlinedInput,
+  Select,
   Slide,
 } from "@mui/material";
 
@@ -48,11 +50,21 @@ const Attributes = () => {
   };
   // ? FIELD SETS DIALOG ENDS HERE
 
+  // ? SIZE SELECT STARTS HERE
+  const [size, setSize] = React.useState("");
+  // const [metal, setMetal] = React.useState("");
+  // const [diamond, setDiamond] = React.useState("");
+
+  const handleSizeChange = (event) => {
+    setSize(event.target.value);
+  };
+  // ? SIZE SELECT ENDS HERE
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
       <div className="d-flex col-12 px-0 justify-content-between">
         <div className="d-flex align-items-center">
-          <h6 className="text-lightBlue me-auto text-lightBlue">
+          <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
             Additional Fields
           </h6>
           <img src={info} alt="info" className="ms-2" />
@@ -68,7 +80,6 @@ const Attributes = () => {
           onClose={handleAdditionalFieldsClose}
           aria-describedby="alert-dialog-slide-description"
           maxWidth="sm"
-          fullWidth={true}
         >
           {/* <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
@@ -84,27 +95,27 @@ const Attributes = () => {
           </DialogTitle> */}
           {/* <hr className="hr-grey-6 mt-2 mb-0" /> */}
           <DialogContent className="py-2 px-4 text-center">
-            <img src={question} alt="question" />
+            <img src={question} alt="question" width={200} />
             <div className="row"></div>
-            <h5 className="text-lightBlue mt-3 mb-2">
+            <h6 className="text-lightBlue mt-3 mb-2">
               You have unsaved changes.
-            </h5>
-            <h5 className="text-lightBlue mt-3 mb-2">
+            </h6>
+            <h6 className="text-lightBlue mt-2 mb-2">
               Are you sure you want to leave this page?
-            </h5>
+            </h6>
             <div className="d-flex justify-content-center mt-4">
-              <hr className="hr-grey-6 w-50" />
+              <hr className="hr-grey-6 w-100" />
             </div>
           </DialogContent>
           <DialogActions className="d-flex justify-content-between px-4 pb-4">
             <button
-              className="button-red-outline py-2 px-5"
+              className="button-red-outline py-2 px-3 me-5"
               onClick={handleAdditionalFieldsClose}
             >
               <p>Leave this page</p>
             </button>
             <button
-              className="button-gradient py-2 px-5"
+              className="button-gradient py-2 px-3 ms-5"
               onClick={handleAdditionalFieldsClose}
             >
               <p>Stay on this page</p>
@@ -114,7 +125,7 @@ const Attributes = () => {
       </div>
       <hr className="hr-grey-6 my-3" />
       <div className="d-flex col-12 px-0">
-        <p className="text-lightBlue">Field Type :</p>
+        <p className="text-grey-6">Field Type :</p>
         <p className="mx-1 text-lightBlue">Metal Field Sets</p>
         <p className="text-blue-2 c-pointer" onClick={handelFieldSets}>
           (Change field sets)
@@ -145,17 +156,44 @@ const Attributes = () => {
           <DialogContent className="py-3 px-4">
             <p className="text-lightBlue mb-2">Select Field Sets</p>
 
-            <FormControl className="col-7 px-0">
-              <OutlinedInput placeholder="Enter Field Sets" size="small" />
+            <FormControl
+              className="col-7 px-0"
+              // sx={{ m: 0, minWidth: 120, width: "100%" }}
+              size="small"
+            >
+              {/* <InputLabel id="demo-select-small">Select Size</InputLabel> */}
+              <Select
+                labelId="demo-select-small"
+                id="demo-select-small"
+                value={size}
+                onChange={handleSizeChange}
+                size="small"
+              >
+                <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  None
+                </MenuItem>
+                <MenuItem value={10} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  S
+                </MenuItem>
+                <MenuItem value={20} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  M
+                </MenuItem>
+                <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  L
+                </MenuItem>
+                <MenuItem value={40} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  XL
+                </MenuItem>
+              </Select>
             </FormControl>
           </DialogContent>
           <hr className="hr-grey-6 my-0" />
           <DialogActions className="d-flex justify-content-between px-4 py-3">
             <button
-              className="button-red-outline py-2 px-5"
+              className="button-grey py-2 px-5"
               onClick={handelFieldSetsClose}
             >
-              <p>Cancel</p>
+              <p className="text-lightBlue">Cancel</p>
             </button>
             <button
               className="button-gradient py-2 px-5"
@@ -223,11 +261,11 @@ const Attributes = () => {
       </div>
       <div className="col-12">
         <div
-          className="row py-3 mb-3 rounded-4"
+          className="row py-3 mb-3 rounded-8"
           style={{ background: "rgba(39, 40, 63, 0.5)" }}
         >
           <div className="col-12 mb-3">
-            <p className="text-lightBlue">Diamond Information 1</p>
+            <p className="text-lightBlue fw-500">Diamond Information 1</p>
           </div>
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
@@ -271,11 +309,12 @@ const Attributes = () => {
           </div>
         </div>
         <div
-          className="row py-3 rounded-4"
-          style={{ background: "rgba(39, 40, 63, 0.5)" }}
+          className="row py-3 rounded-8"
+          // style={{ background: "rgba(39, 40, 63, 0.5)" }}
+          style={{ background: "#1c1b33" }}
         >
           <div className="col-12 mb-3">
-            <p className="text-lightBlue">Diamond Information 2</p>
+            <p className="text-lightBlue fw-500">Diamond Information 2</p>
           </div>
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">

@@ -1,7 +1,7 @@
 // * COLORS
 
 $black1: #000000;
-$black2: #0e0d21;
+$black2: #0e0d21; // * SURFACE DARK BLUE ( BACKGROUND COLOR)
 $black3: #110f26;
 $black4: #191c24;
 $black5: #0f1015;
@@ -13,28 +13,35 @@ $black9: #15142a;
 $black10: #27283f;
 $black11: #100f24;
 $black12: #14112a;
-$black13: #1a1932;
+$black13: #1a1932; // * SURFACE 2 COLOR (POPOVERS & PAPERS) & BUTTON GREY COLOR
 $black14: #1c1b33;
-$black15: #14122b;
-$black16: #211f3c;
+$black15: #14122b; // * SURFACE 1 COLOR (CARDS & TABLES)
+$black16: #211f3c; // * HOVER COLOR & SECONDARY COLOR
+$black17: #252442;
 
 $white1: #ffffff;
 $grey1: #5b607c;
 $grey2: #292d3a;
 $grey3: rgb(108, 114, 147);
-$grey4: #414c65;
+$grey4: #414c65; // ! DISABLED COLOR 2  NOT USED
 $grey5: #38395c;
-$grey6: #5c6d8e;
+$grey6: #5c6d8e; // * DISABLED COLOR
 $grey7: #717898;
 $grey8: #343e50;
-$lightBlue: #c8d8ff;
+$lightBlue: #c8d8ff; // * Primary Text Color
 $blue1: #96abde;
-$blue2: #6e8dd7;
+$blue2: #6e8dd7; // * LINK COLORS
 $green1: #a6faaf;
 $green2: #1ad598;
 $red1: #f67e80;
 $red2: #ff6c6f;
 $red3: #df6264;
+
+$gradient1: linear-gradient(
+  303.01deg,
+  #5961f8 -4.4%,
+  #f2d9f7 111.29%
+) !important; //* PRIMARY GRADIENT
 
 $purple1: #8f5fe8;
 $yellow1: #ffab00;

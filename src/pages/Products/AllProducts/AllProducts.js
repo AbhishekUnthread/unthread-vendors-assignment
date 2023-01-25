@@ -10,6 +10,7 @@ import teamMember2 from "../../../assets/images/products/teamMember2.svg";
 import teamMember3 from "../../../assets/images/products/teamMember3.svg";
 import columns from "../../../assets/icons/columns.svg";
 import cancel from "../../../assets/icons/cancel.svg";
+import tutorial from "../../../assets/icons/tutorial.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import allFlag from "../../../assets/images/products/allFlag.svg";
 import usaFlag from "../../../assets/images/products/usaFlag.svg";
@@ -655,18 +656,18 @@ const AllProducts = () => {
   // * TAGGED WITH POPOVERS ENDS
 
   // * ACTIVITY POPOVERS STARTS
-  const [anchorActivityEl, setAnchorActivityEl] = React.useState(null);
+  // const [anchorActivityEl, setAnchorActivityEl] = React.useState(null);
 
-  const handleActivityPopoverOpen = (event) => {
-    setAnchorActivityEl(event.currentTarget);
-  };
+  // const handleActivityPopoverOpen = (event) => {
+  //   setAnchorActivityEl(event.currentTarget);
+  // };
 
-  const handleActivityPopoverClose = () => {
-    setAnchorActivityEl(null);
-  };
+  // const handleActivityPopoverClose = () => {
+  //   setAnchorActivityEl(null);
+  // };
 
-  const openActivity = Boolean(anchorActivityEl);
-  const idActivity = openActivity ? "simple-popover" : undefined;
+  // const openActivity = Boolean(anchorActivityEl);
+  // const idActivity = openActivity ? "simple-popover" : undefined;
   // * ACTIVITY POPOVERS ENDS
 
   // ? POPOVERS ENDS HERE
@@ -897,6 +898,10 @@ const AllProducts = () => {
       <div className="row justify-content-between align-items-center">
         <h4 className="page-heading w-auto ps-0">All Products</h4>
         <div className="d-flex align-items-center w-auto pe-0">
+          <button className="button-transparent me-1 py-2 px-3">
+            <img src={tutorial} alt="tutorial" className="me-2" width={20} />
+            <p className="text-blue-gradient">Tutorial</p>
+          </button>
           <button
             className="button-transparent me-1 py-2 px-3"
             onClick={handleExportOpen}
@@ -1546,7 +1551,7 @@ const AllProducts = () => {
                   >
                     {/* {list()} */}
                     <div className="d-flex justify-content-between py-3 px-3 ms-3 me-2">
-                      <h6 className="">Filters</h6>
+                      <h6 className="text-lightBlue">Filters</h6>
                       <img
                         src={cancel}
                         alt="cancel"
@@ -2171,27 +2176,6 @@ const AllProducts = () => {
                               <img src={teamMember3} alt="teamMember2" />
                               <img src={teamMember2} alt="teamMember3" />
                             </div>
-
-                            <Popover
-                              id="activity-popover"
-                              // sx={{
-                              //   pointerEvents: "none",
-                              // }}
-                              open={openActivity}
-                              anchorEl={anchorActionEl}
-                              anchorOrigin={{
-                                vertical: "bottom",
-                                horizontal: "center",
-                              }}
-                              transformOrigin={{
-                                vertical: "top",
-                                horizontal: "center",
-                              }}
-                              onClose={handleActivityPopoverClose}
-                              // disableRestoreFocus
-                            >
-                              <p className="text-lightBlue">Hiten</p>
-                            </Popover>
                           </TableCell>
                           <TableCell>
                             <div className="d-flex align-items-center">
@@ -2316,7 +2300,7 @@ const AllProducts = () => {
             >
               {/* {list()} */}
               <div className="d-flex justify-content-between py-3 px-3">
-                <h6 className="">Activity Of</h6>
+                <h6 className="text-lightBlue">Activity Of</h6>
                 <img
                   src={cancel}
                   alt="cancel"
@@ -2357,7 +2341,7 @@ const AllProducts = () => {
                 </div>
                 <table class="table table-borderless mt-4">
                   <thead>
-                    <tr className="border-grey-bottom border-grey-top">
+                    <tr className="table-grey-bottom table-grey-top">
                       <th scope="col">
                         <small className="text-lightBlue fw-400">User</small>
                       </th>

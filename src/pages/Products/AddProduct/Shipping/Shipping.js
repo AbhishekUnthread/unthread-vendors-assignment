@@ -30,10 +30,12 @@ const Shipping = () => {
   // ? CHECKBOX ENDS HERE
 
   return (
-    <div className="bg-black-15 border-grey-5 rounded-3 p-3 row shipping">
+    <div className="bg-black-15 border-grey-5 rounded-8 p-3 row shipping">
       <div className="d-flex col-12 px-0 justify-content-between">
         <div className="d-flex align-items-center">
-          <h6 className="text-lightBlue me-auto text-lightBlue">Shipping</h6>
+          <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
+            Shipping
+          </h6>
         </div>
         <p className="text-blue-2">Settings</p>
       </div>
@@ -90,6 +92,13 @@ const Shipping = () => {
               />
             </FormControl>
             <FormControl className="">
+              {/* <OutlinedInput
+                placeholder="Enter Length"
+                size="small"
+                endAdornment={
+                  <InputAdornment position="end">cm</InputAdornment>
+                }
+              /> */}
               <OutlinedInput
                 placeholder="Enter Length"
                 size="small"
@@ -127,6 +136,10 @@ const Shipping = () => {
                 onChange={handleCheckboxChange}
                 inputProps={{ "aria-label": "controlled" }}
                 size="small"
+                style={{
+                  color: "#5C6D8E",
+                  marginRight: 0,
+                }}
               />
             }
             label="Is this item available for shipping abroad?"

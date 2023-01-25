@@ -1,5 +1,7 @@
 import React from "react";
 import "./SEO.scss";
+// ! IMAGES IMPORTS
+import info from "../../../../assets/icons/info.svg";
 // ! COMPONENT IMPORTS
 import { AntSwitch } from "../../../../components/AntSwitch/AntSwitch";
 // ! MATERIAL IMPORTS
@@ -33,7 +35,7 @@ const taggedWithData = [
 
 const SEO = () => {
   // ? CHECKBOX STARTS HERE
-  const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = React.useState(true);
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
@@ -48,9 +50,17 @@ const SEO = () => {
   // ? SWITCH ENDS HERE
 
   return (
-    <div className="bg-black-15 border-grey-5 rounded-3 p-3 row">
-      <div className="d-flex col-12 px-0">
-        <h6 className="text-lightBlue me-auto">Search Engine Optimisation</h6>
+    <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
+      <div className="d-flex col-12 px-0 justifu-content-between">
+        {/* <h6 className="text-lightBlue me-auto fw-500">
+          Search Engine Optimisation
+        </h6> */}
+        <div className="d-flex align-items-center me-auto">
+          <h6 className="text-lightBlue me-auto fw-500">
+            Search Engine Optimisation
+          </h6>
+          <img src={info} alt="info" className="ms-2" />
+        </div>
         {/* <FormControlLabel
           control={<Switch checked={dense} onChange={handleChangeDense} />}
           label="Dense padding"
@@ -72,6 +82,10 @@ const SEO = () => {
                   onChange={handleCheckboxChange}
                   inputProps={{ "aria-label": "controlled" }}
                   size="small"
+                  style={{
+                    color: "#5C6D8E",
+                    marginRight: 0,
+                  }}
                 />
               }
               label="Auto Generate SEO "
@@ -85,13 +99,15 @@ const SEO = () => {
             <p>
               <i className="text-grey-6">Powered by Kepler</i>
             </p>
-            <button className="button-gradient py-2 px-3 ms-4">
+            {/* <button className="button-gradient py-2 px-3 ms-4">
               <p>Apply to all Products</p>
-            </button>
+            </button> */}
           </div>
           {!checked && (
             <React.Fragment>
-              <p className="text-lightBlue mb-2 mt-3 col-12 px-0">Page Title</p>
+              <small className="text-lightBlue mb-2 mt-3 col-12 px-0">
+                Page Title
+              </small>
               <FormControl className="col-12 px-0">
                 <OutlinedInput
                   placeholder="Please enter page title"
@@ -103,9 +119,9 @@ const SEO = () => {
               <small className="mt-1 text-grey-6 col-12 px-0">
                 20 of 50 characters Used
               </small>
-              <p className="text-lightBlue mb-2 mt-3 col-12 px-0">
+              <small className="text-lightBlue mb-2 mt-3 col-12 px-0">
                 Meta Description
-              </p>
+              </small>
               <TextareaAutosize
                 aria-label="meta description"
                 placeholder="Please enter meta description"
@@ -122,7 +138,9 @@ const SEO = () => {
               <small className="mt-1 text-grey-6 col-12 px-0">
                 200 of 500 characters Used
               </small>
-              <p className="text-lightBlue mb-2 mt-3 col-12 px-0">URL Handle</p>
+              <small className="text-lightBlue mb-2 mt-3 col-12 px-0">
+                URL Handle
+              </small>
               <FormControl className="col-12 px-0">
                 <OutlinedInput
                   placeholder="Please enter page title"
@@ -132,10 +150,10 @@ const SEO = () => {
                 {/* <MyFormHelperText /> */}
               </FormControl>
 
-              <p className="text-lightBlue mb-2 mt-3 col-12 px-0">
+              <small className="text-lightBlue mb-2 mt-3 col-12 px-0">
                 Meta Keywords
-              </p>
-              <Autocomplete
+              </small>
+              {/* <Autocomplete
                 multiple
                 id="checkboxes-tags-demo"
                 // sx={{ width: 300 }}
@@ -161,23 +179,34 @@ const SEO = () => {
                 renderInput={(params) => (
                   <TextField size="small" {...params} placeholder="Search" />
                 )}
-              />
+              /> */}
+
+              <FormControl className="col-12 px-0">
+                <OutlinedInput
+                  placeholder="Enter keywords"
+                  size="small"
+                  // defaultValue="Rings by JWL"
+                />
+                {/* <MyFormHelperText /> */}
+              </FormControl>
             </React.Fragment>
           )}
 
-          <div className="col-12 px-0 bg-black-9 border-grey-8 mt-3 rounded-3">
+          <div className="col-12 px-0 bg-black-13 border-grey-5 mt-3 rounded-8">
             <div className="d-flex flex-column p-3">
-              <h6 className="text-lightBlue">Metadata Preview</h6>
-              <p className="text-lightBlue mt-3 mb-2">Rings by JWL</p>
-              <p className="text-blue-1">
+              <p className="text-lightBlue">Metadata Preview</p>
+              <small className="text-lightBlue mt-3 mb-2 fw-500">
+                Rings by JWL
+              </small>
+              <small className="text-blue-2">
                 http://JWLewellers.com/rings-by-JWLewellers
-              </p>
-              <p className="mt-2 text-grey-6">
+              </small>
+              <small className="mt-2 text-grey-6">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque
                 sapiente officiis incidunt voluptas amet. Explicabo eaque ipsam
                 neque ut deserunt libero, culpa doloribus aut debitis obcaecati
                 cupiditate. Doloribus, odit facere.
-              </p>
+              </small>
             </div>
           </div>
         </React.Fragment>
