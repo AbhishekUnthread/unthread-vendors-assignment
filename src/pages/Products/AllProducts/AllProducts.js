@@ -17,6 +17,8 @@ import ukFlag from "../../../assets/images/products/ukFlag.svg";
 import ringSmall from "../../../assets/images/ringSmall.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
+import sortBy from "../../../assets/icons/sortBy.svg";
+import activity from "../../../assets/icons/activity.svg";
 import sort from "../../../assets/icons/sort.svg";
 import uploadLineSheet from "../../../assets/images/products/uploadLineSheet.svg";
 import uploadCompanySheet1 from "../../../assets/images/products/uploadCompanySheet1.svg";
@@ -488,6 +490,27 @@ const AllProducts = () => {
   };
   // ? FILTER DRAWER ENDS HERE
 
+  // ? ACTIVITY DRAWER STARTS HERE
+  const [activityDrawer, setActivityDrawer] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+
+  const toggleActivityDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setActivityDrawer({ ...state, [anchor]: open });
+  };
+  // ? ACTIVITY DRAWER ENDS HERE
+
   // ? POPOVERS STARTS HERE
 
   // * FLAG POPOVERS STARTS
@@ -631,6 +654,21 @@ const AllProducts = () => {
   const idTaggedWith = openTaggedWith ? "simple-popover" : undefined;
   // * TAGGED WITH POPOVERS ENDS
 
+  // * ACTIVITY POPOVERS STARTS
+  const [anchorActivityEl, setAnchorActivityEl] = React.useState(null);
+
+  const handleActivityPopoverOpen = (event) => {
+    setAnchorActivityEl(event.currentTarget);
+  };
+
+  const handleActivityPopoverClose = () => {
+    setAnchorActivityEl(null);
+  };
+
+  const openActivity = Boolean(anchorActivityEl);
+  const idActivity = openActivity ? "simple-popover" : undefined;
+  // * ACTIVITY POPOVERS ENDS
+
   // ? POPOVERS ENDS HERE
 
   const vendorData = [
@@ -660,6 +698,134 @@ const AllProducts = () => {
     { title: "Tag 10", value: "tag10" },
     { title: "Tag 11", value: "tag11" },
     { title: "Tag 12", value: "tag12" },
+  ];
+  const activityData = [
+    {
+      id: 1,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 2,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 3,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 4,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 5,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 6,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 7,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 8,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 9,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 10,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 11,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 12,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 13,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 14,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 15,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 16,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 17,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 18,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 19,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 20,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
+    {
+      id: 21,
+      dateAndTime: "25 July, 2022 at 12:00 pm",
+      user: "Saniya Shaikh",
+      activity: "Changed Images",
+    },
   ];
 
   // ? FILTER ACCORDIAN STARTS HERE
@@ -1995,11 +2161,37 @@ const AllProducts = () => {
                             </Popover>
                           </TableCell>
                           <TableCell>
-                            <div className="d-flex c-pointer">
+                            <div
+                              className="d-flex c-pointer"
+                              onClick={toggleActivityDrawer("right", true)}
+                              // onMouseEnter={handleActivityPopoverOpen}
+                              // onMouseLeave={handleActivityPopoverClose}
+                            >
                               <img src={teamMember1} alt="teamMember1" />
                               <img src={teamMember3} alt="teamMember2" />
                               <img src={teamMember2} alt="teamMember3" />
                             </div>
+
+                            <Popover
+                              id="activity-popover"
+                              // sx={{
+                              //   pointerEvents: "none",
+                              // }}
+                              open={openActivity}
+                              anchorEl={anchorActionEl}
+                              anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "center",
+                              }}
+                              transformOrigin={{
+                                vertical: "top",
+                                horizontal: "center",
+                              }}
+                              onClose={handleActivityPopoverClose}
+                              // disableRestoreFocus
+                            >
+                              <p className="text-lightBlue">Hiten</p>
+                            </Popover>
                           </TableCell>
                           <TableCell>
                             <div className="d-flex align-items-center">
@@ -2115,6 +2307,115 @@ const AllProducts = () => {
               onRowsPerPageChange={handleChangeRowsPerPage}
               className="table-pagination"
             />
+
+            <SwipeableDrawer
+              anchor="right"
+              open={activityDrawer["right"]}
+              onClose={toggleActivityDrawer("right", false)}
+              onOpen={toggleActivityDrawer("right", true)}
+            >
+              {/* {list()} */}
+              <div className="d-flex justify-content-between py-3 px-3">
+                <h6 className="">Activity Of</h6>
+                <img
+                  src={cancel}
+                  alt="cancel"
+                  className="c-pointer filter-padding me-1"
+                  onClick={toggleActivityDrawer("right", false)}
+                />
+              </div>
+
+              <div className="px-3">
+                <div className="d-flex align-items-center">
+                  <div className="d-flex align-items-center">
+                    <img
+                      src={ringSmall}
+                      alt="ringSmall"
+                      className="me-2"
+                      height={45}
+                      width={45}
+                    />
+                    <div>
+                      <p className="text-lightBlue fw-600">
+                        The Fringe Diamond Ring
+                      </p>
+                      <small className="mt-2 text-grey-6">
+                        SKU: TFDR012345
+                      </small>
+                    </div>
+                  </div>
+                  <div className="d-flex ms-5">
+                    <button className="button-grey py-2 px-3 ms-5">
+                      <small className="text-lightBlue">Sort By Date</small>
+                      <img src={sortBy} alt="sortBy" className="ms-2" />
+                    </button>
+                    <button className="button-grey py-2 px-3">
+                      <small className="text-lightBlue">Activity</small>
+                      <img src={activity} alt="activity" className="ms-2" />
+                    </button>
+                  </div>
+                </div>
+                <table class="table table-borderless mt-4">
+                  <thead>
+                    <tr className="border-grey-bottom border-grey-top">
+                      <th scope="col">
+                        <small className="text-lightBlue fw-400">User</small>
+                      </th>
+                      <th scope="col">
+                        <small className="text-lightBlue fw-400">
+                          Activity
+                        </small>
+                      </th>
+                      <th scope="col">
+                        <small className="text-lightBlue fw-400">
+                          Date and Time
+                        </small>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activityData.map((data) => (
+                      <tr>
+                        <th scope="row">
+                          <div className="d-flex align-items-center">
+                            <img
+                              src={teamMember1}
+                              alt="teamMember1"
+                              className="me-2"
+                            />
+                            <small className="text-lightBlue fw-400">
+                              {data.user}
+                            </small>
+                          </div>
+                        </th>
+                        <td>
+                          <small className="text-lightBlue">
+                            {data.activity}
+                          </small>
+                        </td>
+                        <td>
+                          <small className="text-grey-6 fw-400">
+                            {data.dateAndTime}
+                          </small>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* <div className="d-flex flex-column py-3 px-4 filter-buttons">
+                <hr className="hr-grey-6 my-3 w-100" />
+                <div className="d-flex justify-content-between">
+                  <button className="button-lightBlue-outline py-2 px-3">
+                    <p>Clear all Filters</p>
+                  </button>
+                  <button className="button-gradient py-2 px-5 w-auto ">
+                    <p>Done</p>
+                  </button>
+                </div>
+              </div> */}
+            </SwipeableDrawer>
           </TabPanel>
           <TabPanel value={value} index={1}>
             Item Two
