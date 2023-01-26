@@ -454,6 +454,14 @@ textarea {
     transition: 0.1s all ease-in;
   }
 }
+.hover-back-transparent {
+  transition: 0.1s all ease-in;
+  &:hover {
+    background: rgba(200, 216, 255, 0.05);
+
+    transition: 0.1s all ease-in;
+  }
+}
 
 .table-pagination {
   .MuiTablePagination-select {

@@ -20,6 +20,7 @@ import {
   InputAdornment,
   MenuItem,
   Select,
+  Popover,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 // ! IMAGES IMPORTS
@@ -297,6 +298,18 @@ const Variants = () => {
   };
   // ? SIZE SELECT ENDS HERE
 
+  // * METAL FILTER POPOVERS STARTS
+  const [anchorMetalFilterEl, setAnchorMetalFilterEl] = React.useState(null);
+  const handleMetalFilter = (event) => {
+    setAnchorMetalFilterEl(event.currentTarget);
+  };
+  const handleMetalFilterClose = () => {
+    setAnchorMetalFilterEl(null);
+  };
+  const openMetalFilter = Boolean(anchorMetalFilterEl);
+  const idMetalFilter = openMetalFilter ? "simple-popover" : undefined;
+  // * METAL FILTER POPOVERS ENDS
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-3 p-3 row">
       <div className="d-flex col-12 px-0 justify-content-between">
@@ -307,13 +320,74 @@ const Variants = () => {
         </div>
         <p className="text-blue-2">Add Variant</p>
       </div>
-      <div className="d-flex col-12 px-0 mt-3">
-        <p className="text-lightBlue me-4">Filter:</p>
-        <p className="text-blue-2 me-3">Size</p>
-        <p className="text-blue-2 me-3">Metal</p>
-        <p className="text-blue-2 me-3">Metal Purity</p>
-        <p className="text-blue-2 me-3">Diamond</p>
+      <div className="d-flex col-12 px-0 mt-2">
+        <p
+          className="text-blue-2 py-1 me-2"
+          aria-describedby={idMetalFilter}
+          variant="contained"
+          onClick={handleMetalFilter}
+        >
+          Filter:
+        </p>
+        <p
+          className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
+          aria-describedby={idMetalFilter}
+          variant="contained"
+          onClick={handleMetalFilter}
+        >
+          Size
+        </p>
+        <p
+          className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
+          aria-describedby={idMetalFilter}
+          variant="contained"
+          onClick={handleMetalFilter}
+        >
+          Metal
+        </p>
+        <p
+          className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
+          aria-describedby={idMetalFilter}
+          variant="contained"
+          onClick={handleMetalFilter}
+        >
+          Metal Purity
+        </p>
+        <p
+          className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
+          aria-describedby={idMetalFilter}
+          variant="contained"
+          onClick={handleMetalFilter}
+        >
+          Diamond
+        </p>
+
+        <Popover
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          id={idMetalFilter}
+          open={openMetalFilter}
+          anchorEl={anchorMetalFilterEl}
+          onClose={handleMetalFilterClose}
+        >
+          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+            <p className="text-lightBlue">1</p>
+          </div>
+          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+            <p className="text-lightBlue">2</p>
+          </div>
+          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+            <p className="text-lightBlue">3</p>
+          </div>
+        </Popover>
       </div>
+
       <div className="col-12">
         <ToggleButtonGroup
           value={country}
