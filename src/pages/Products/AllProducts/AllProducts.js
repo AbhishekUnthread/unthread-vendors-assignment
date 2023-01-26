@@ -1380,7 +1380,7 @@ const AllProducts = () => {
                     horizontal: "left",
                   }}
                   transformOrigin={{
-                    vertical: "left",
+                    vertical: "top",
                     horizontal: "left",
                   }}
                   id={idVendor}
@@ -1438,7 +1438,7 @@ const AllProducts = () => {
                     horizontal: "left",
                   }}
                   transformOrigin={{
-                    vertical: "left",
+                    vertical: "top",
                     horizontal: "left",
                   }}
                   id={idCategory}
@@ -1493,7 +1493,7 @@ const AllProducts = () => {
                     horizontal: "left",
                   }}
                   transformOrigin={{
-                    vertical: "left",
+                    vertical: "top",
                     horizontal: "left",
                   }}
                   id={idTaggedWith}
@@ -1550,17 +1550,17 @@ const AllProducts = () => {
                     onOpen={toggleDrawer("right", true)}
                   >
                     {/* {list()} */}
-                    <div className="d-flex justify-content-between py-3 px-3 ms-3 me-2">
+                    <div className="d-flex justify-content-between py-3 px-3 ms-2 me-1">
                       <h6 className="text-lightBlue">Filters</h6>
                       <img
                         src={cancel}
                         alt="cancel"
-                        className="c-pointer filter-padding me-1"
+                        className="c-pointer filter-padding"
                         onClick={toggleDrawer("right", false)}
                       />
                     </div>
 
-                    <div className="px-3">
+                    <div className="px-2">
                       <Accordion
                         expanded={expanded === "panel1"}
                         onChange={handleAccordianChange("panel1")}
@@ -2339,7 +2339,7 @@ const AllProducts = () => {
                     </button>
                   </div>
                 </div>
-                <table class="table table-borderless mt-4">
+                <table className="table table-borderless mt-4">
                   <thead>
                     <tr className="table-grey-bottom table-grey-top">
                       <th scope="col">
@@ -2359,7 +2359,7 @@ const AllProducts = () => {
                   </thead>
                   <tbody>
                     {activityData.map((data) => (
-                      <tr>
+                      <tr key={data.id}>
                         <th scope="row">
                           <div className="d-flex align-items-center">
                             <img

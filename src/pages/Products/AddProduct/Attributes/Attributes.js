@@ -155,13 +155,11 @@ const Attributes = () => {
           <hr className="hr-grey-6 my-0" />
           <DialogContent className="py-3 px-4">
             <p className="text-lightBlue mb-2">Select Field Sets</p>
-
             <FormControl
               className="col-7 px-0"
               // sx={{ m: 0, minWidth: 120, width: "100%" }}
               size="small"
             >
-              {/* <InputLabel id="demo-select-small">Select Size</InputLabel> */}
               <Select
                 labelId="demo-select-small"
                 id="demo-select-small"

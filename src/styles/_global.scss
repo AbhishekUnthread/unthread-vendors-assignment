@@ -120,8 +120,8 @@
     align-items: center;
     background: transparent;
     border-radius: 5px;
-    border: 0;
-    outline: 1px solid $lightBlue;
+    // border: 0;
+    border: 1px solid $lightBlue;
     color: $lightBlue;
     text-decoration: none;
     min-width: max-content;
@@ -524,4 +524,30 @@ textarea {
 
 .MuiOutlinedInput-root {
   background: $black9 !important;
+}
+
+// * AUTOCOMPLETE LIST ON HOVER STYLE
+.MuiAutocomplete-listbox {
+  // background: $black9 !important;
+  li:hover {
+    background: $black15 !important;
+  }
+}
+
+// * CHIPS COLORS
+.MuiChip-filled {
+  background: $black13 !important;
+  border: 1px solid $grey6 !important;
+  .MuiChip-label {
+    color: $lightBlue;
+  }
+  .MuiChip-deleteIcon {
+    color: $lightBlue !important;
+  }
+}
+
+.MuiAutocomplete-endAdornment {
+  svg {
+    color: $lightBlue !important;
+  }
 }

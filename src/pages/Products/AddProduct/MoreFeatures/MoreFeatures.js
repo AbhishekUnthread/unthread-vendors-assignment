@@ -9,15 +9,23 @@ import featureUpload from "../../../../assets/images/products/featureUpload.svg"
 import cancel from "../../../../assets/icons/cancel.svg";
 import ringSmall from "../../../../assets/images/ringSmall.svg";
 import arrowDown from "../../../../assets/icons/arrowDown.svg";
+import deleteWhite from "../../../../assets/icons/deleteWhite.svg";
+import editWhite from "../../../../assets/icons/editWhite.svg";
+import deleteButton from "../../../../assets/icons/deleteButton.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
   Checkbox,
+  FormControl,
   FormControlLabel,
+  InputAdornment,
   InputBase,
+  MenuItem,
+  OutlinedInput,
   Popover,
   Radio,
   RadioGroup,
+  Select,
   styled,
   SwipeableDrawer,
   Table,
@@ -237,6 +245,122 @@ EnhancedTableHead.propTypes = {
 };
 // ? TABLE ENDS HERE
 
+// ? LIKE PRODUCTS TABLE STARTS HERE
+function createLikeProductData(pId, productName, category, price) {
+  return { pId, productName, category, price };
+}
+
+const likeProductRows = [
+  createLikeProductData(
+    1,
+    "The Fringe Diamond Ring",
+    "Gold Products",
+    "₹ 20,600 "
+  ),
+  createLikeProductData(2, "Fringe Diamond Ring", "Gold Products", "₹ 20,600 "),
+  createLikeProductData(
+    3,
+    "The Fringe Diamond Ring",
+    "Gold Products",
+    "₹ 20,600 "
+  ),
+];
+
+const likeHeadCells = [
+  {
+    id: "productName",
+    numeric: false,
+    disablePadding: true,
+    label: "Product Name",
+  },
+  {
+    id: "category",
+    numeric: false,
+    disablePadding: false,
+    label: "Category",
+  },
+  {
+    id: "price",
+    numeric: false,
+    disablePadding: false,
+    label: "Price",
+  },
+  {
+    id: "action",
+    numeric: false,
+    disablePadding: false,
+    label: "Action",
+  },
+];
+
+function LikeProductTableHead(props) {
+  const {
+    onSelectAllClick,
+    order,
+    orderBy,
+    numSelected,
+    rowCount,
+    onRequestSort,
+  } = props;
+  const createSortHandler = (property) => (event) => {
+    onRequestSort(event, property);
+  };
+
+  return (
+    <TableHead>
+      <TableRow>
+        <TableCell padding="checkbox">
+          <Checkbox
+            color="primary"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{
+              "aria-label": "select all desserts",
+            }}
+            size="small"
+            style={{
+              color: "#5C6D8E",
+              marginRight: 0,
+            }}
+          />
+        </TableCell>
+        {likeHeadCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.numeric ? "right" : "left"}
+            padding={headCell.disablePadding ? "none" : "normal"}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : "asc"}
+              onClick={createSortHandler(headCell.id)}
+            >
+              <p className="text-lightBlue">{headCell.label}</p>
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+}
+
+LikeProductTableHead.propTypes = {
+  numSelected: PropTypes.number.isRequired,
+  onRequestSort: PropTypes.func.isRequired,
+  onSelectAllClick: PropTypes.func.isRequired,
+  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
+  orderBy: PropTypes.string.isRequired,
+  rowCount: PropTypes.number.isRequired,
+};
+// ? TABLE ENDS HERE
+
 const MoreFeatures = () => {
   // ? RADIO BUTTON STARTS HERE
   const [likeProductRadio, setLikeProductRadio] = React.useState(
@@ -324,6 +448,15 @@ const MoreFeatures = () => {
     setSelected([]);
   };
 
+  const handleLikeSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelected = likeProductRows.map((n) => n.pId);
+      setSelected(newSelected);
+      return;
+    }
+    setSelected([]);
+  };
+
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
@@ -358,6 +491,78 @@ const MoreFeatures = () => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   // * TABLE ENDS HERE
+
+  // ? SIZE SELECT STARTS HERE
+  const [field, setField] = React.useState("price");
+  // const [metal, setMetal] = React.useState("");
+  // const [diamond, setDiamond] = React.useState("");
+
+  const handleFieldChange = (event) => {
+    setField(event.target.value);
+  };
+  // ? SIZE SELECT ENDS HERE
+
+  // ? OPERATOR SELECT STARTS HERE
+  const [operator, setOperator] = React.useState("equals");
+  // const [metal, setMetal] = React.useState("");
+  // const [diamond, setDiamond] = React.useState("");
+
+  const handleOperatorChange = (event) => {
+    setOperator(event.target.value);
+  };
+  // ? OPERATOR SELECT ENDS HERE
+
+  // ? CHECKBOX STARTS HERE
+  const [checked, setChecked] = React.useState(false);
+
+  const handleCheckboxChange = (event) => {
+    setChecked(event.target.checked);
+  };
+  // ? CHECKBOX ENDS HERE
+
+  // ? LIKE ADD CONDITION STARTS HERE
+  const [likeAddCondition, setLikeAddCondition] = React.useState(false);
+  const handleLikeAddCondition = () => {
+    if (!likeAddCondition) {
+      setLikeAddCondition(true);
+    } else {
+      setLikeAddCondition(false);
+      setLikeApplyCondition(false);
+    }
+  };
+  // ? LIKE ADD CONDITION ENDS HERE
+
+  // ? LIKE APPLY CONDITION STARTS HERE
+  const [likeApplyCondition, setLikeApplyCondition] = React.useState(false);
+  const handleLikeApplyCondition = () => {
+    likeApplyCondition
+      ? setLikeApplyCondition(false)
+      : setLikeApplyCondition(true);
+  };
+  // ? LIKE APPLY CONDITION ENDS HERE
+
+  // ? RECOMMENDED ADD CONDITION STARTS HERE
+  const [recommendedAddCondition, setRecommendedAddCondition] =
+    React.useState(false);
+  const handleRecommendedAddCondition = () => {
+    if (!recommendedAddCondition) {
+      setRecommendedAddCondition(true);
+    } else {
+      setRecommendedAddCondition(false);
+      setRecommendedApplyCondition(false);
+    }
+  };
+  // ? RECOMMENDED ADD CONDITION ENDS HERE
+
+  // ? RECOMMENDED APPLY CONDITION STARTS HERE
+  const [recommendedApplyCondition, setRecommendedApplyCondition] =
+    React.useState(false);
+  const handleRecommendedApplyCondition = () => {
+    recommendedApplyCondition
+      ? setRecommendedApplyCondition(false)
+      : setRecommendedApplyCondition(true);
+  };
+  // ? RECOMMENDED APPLY CONDITION ENDS HERE
 
   return (
     <React.Fragment>
@@ -477,18 +682,349 @@ const MoreFeatures = () => {
                       />
                     </RadioGroup>
                   </div>
-                  <button className="button-gradient py-1 px-4">
+                  <button
+                    className="button-gradient py-1 px-4"
+                    onClick={handleLikeAddCondition}
+                  >
                     <p>Add Condition</p>
                   </button>
                 </div>
-                <div className="bg-black-9 rounded-8 py-2 px-3 d-flex justify-content-between mt-3 shadow-lg">
-                  <p className="text-lightBlue c-pointer">Summary</p>
+                <div className="bg-black-9 align-items-center rounded-8 py-2 px-3 d-flex justify-content-between mt-3 shadow-lg">
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={checked}
+                        onChange={handleCheckboxChange}
+                        inputProps={{ "aria-label": "controlled" }}
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                          marginRight: 0,
+                          width: "auto",
+                        }}
+                      />
+                    }
+                    label="Summary"
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontSize: "0.875rem",
+                        color: "#c8d8ff",
+                      },
+                    }}
+                    className=" px-0"
+                  />
                   <p className="text-lightBlue c-pointer">Action</p>
                 </div>
+                {likeApplyCondition && likeAddCondition && (
+                  <div className="d-flex px-3 justify-content-between align-items-center">
+                    <div className="d-flex align-items-center">
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={checked}
+                            onChange={handleCheckboxChange}
+                            inputProps={{ "aria-label": "controlled" }}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                              width: "auto",
+                            }}
+                          />
+                        }
+                        sx={{
+                          "& .MuiTypography-root": {
+                            fontSize: "0.875rem",
+                            color: "#c8d8ff",
+                          },
+                        }}
+                        className="px-0 me-0"
+                      />
+                      <small className="ms-0 text-lightBlue">
+                        <span className="text-blue-2">Price</span>&nbsp;is equal
+                        to&nbsp;
+                        <span className="text-blue-2">Rs&nbsp;25,000</span>
+                      </small>
+                    </div>
+                    <div className="d-flex align-items-center">
+                      <img
+                        src={editWhite}
+                        alt="editWhite"
+                        width={30}
+                        className="me-1"
+                      />
+                      <img src={deleteWhite} alt="deleteWhite" width={30} />
+                    </div>
+                  </div>
+                )}
+                {likeAddCondition && (
+                  <div className="row">
+                    <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                      <p className="text-lightBlue mb-1">Field</p>
+
+                      <FormControl className="w-100 px-0" size="small">
+                        <Select
+                          labelId="demo-select-small"
+                          id="demo-select-small"
+                          value={field}
+                          onChange={handleFieldChange}
+                          size="small"
+                        >
+                          <MenuItem
+                            value="price"
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Price
+                          </MenuItem>
+                          <MenuItem
+                            value={"collection"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Collection
+                          </MenuItem>
+                          <MenuItem
+                            value={"tags"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Tags
+                          </MenuItem>
+                          <MenuItem
+                            value={"category"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Catagory
+                          </MenuItem>
+                          <MenuItem
+                            value={"subCategory"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Sub Category
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                      <p className="text-lightBlue mb-1">Operator</p>
+
+                      <FormControl className="w-100 px-0" size="small">
+                        <Select
+                          labelId="demo-select-small"
+                          id="demo-select-small"
+                          value={operator}
+                          onChange={handleOperatorChange}
+                          size="small"
+                        >
+                          <MenuItem
+                            value="equals"
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Equals
+                          </MenuItem>
+                          <MenuItem
+                            value={"notEquals"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Not Equals
+                          </MenuItem>
+                          <MenuItem
+                            value={"greaterThan"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Greater Than
+                          </MenuItem>
+                          <MenuItem
+                            value={"less"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Less
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                      <p className="text-lightBlue mb-1">Value</p>
+
+                      <FormControl className="w-100 px-0">
+                        <OutlinedInput
+                          placeholder="Enter Value"
+                          size="small"
+                          defaultValue="1000"
+                          startAdornment={
+                            <InputAdornment position="start">
+                              <p className="text-lightBlue">$</p>
+                            </InputAdornment>
+                          }
+                        />
+                      </FormControl>
+                    </div>
+                    <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                      <button
+                        className="button-gradient py-1 px-3 w-100 mb-2"
+                        onClick={handleLikeApplyCondition}
+                      >
+                        <p>Apply</p>
+                      </button>
+                      <button
+                        className="button-lightBlue-outline py-1 px-3 w-100"
+                        onClick={handleLikeApplyCondition}
+                      >
+                        <p>Cancel</p>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </React.Fragment>
             )}
           </div>
         )}
+        {likeProductRadio === "automated" &&
+          likeApplyCondition &&
+          likeAddCondition && (
+            <React.Fragment>
+              <div className="col-12 mt-3">
+                <div className="row">
+                  <div className="col-md-9 px-md-0">
+                    <Search sx={{ background: "#1a1932" }} className="mx-0">
+                      <SearchIconWrapper>
+                        <SearchIcon sx={{ color: "#c8d8ff" }} />
+                      </SearchIconWrapper>
+                      <StyledInputBase
+                        placeholder="Search…"
+                        inputProps={{ "aria-label": "search" }}
+                      />
+                    </Search>
+                  </div>
+                  <div className="col-md-3 pe-md-0">
+                    <button className="button-gradient w-100 py-1 px-3">
+                      <p>Add Products</p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="col-12 px-0">
+                <TableContainer className="mt-3">
+                  <Table
+                    sx={{ minWidth: 750 }}
+                    aria-labelledby="tableTitle"
+                    size="medium"
+                  >
+                    <LikeProductTableHead
+                      numSelected={selected.length}
+                      order={order}
+                      orderBy={orderBy}
+                      onSelectAllClick={handleLikeSelectAllClick}
+                      onRequestSort={handleRequestSort}
+                      rowCount={likeProductRows.length}
+                    />
+                    <TableBody>
+                      {stableSort(
+                        likeProductRows,
+                        getComparator(order, orderBy)
+                      )
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((row, index) => {
+                          const isItemSelected = isSelected(row.pId);
+                          const labelId = `enhanced-table-checkbox-${index}`;
+
+                          return (
+                            <TableRow
+                              hover
+                              role="checkbox"
+                              aria-checked={isItemSelected}
+                              tabIndex={-1}
+                              key={row.pId}
+                              selected={isItemSelected}
+                            >
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  color="primary"
+                                  checked={isItemSelected}
+                                  inputProps={{
+                                    "aria-labelledby": labelId,
+                                  }}
+                                  size="small"
+                                  onClick={(event) =>
+                                    handleClick(event, row.pId)
+                                  }
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell
+                                component="th"
+                                id={labelId}
+                                scope="row"
+                                padding="none"
+                              >
+                                <div className="d-flex align-items-center my-2">
+                                  <img
+                                    src={ringSmall}
+                                    alt="ringSmall"
+                                    className="me-2"
+                                    height={45}
+                                    width={45}
+                                  />
+                                  <div>
+                                    <p className="text-lightBlue fw-600">
+                                      {row.productName}
+                                    </p>
+                                    <small className="mt-2 text-grey-6">
+                                      SKU: TFDR012345
+                                    </small>
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <p className="text-lightBlue">{row.category}</p>
+                              </TableCell>
+                              <TableCell>
+                                <div className="d-flex align-items-center c-pointer ">
+                                  <p className="text-lightBlue">{row.price}</p>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="d-flex align-items-center c-pointer ">
+                                  <img
+                                    src={deleteButton}
+                                    alt="deleteButton"
+                                    width={75}
+                                    className="c-pointer"
+                                  />
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      {emptyRows > 0 && (
+                        <TableRow
+                          style={{
+                            height: 53 * emptyRows,
+                          }}
+                        >
+                          <TableCell colSpan={6} />
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={rows.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  className="table-pagination"
+                />
+              </div>
+            </React.Fragment>
+          )}
         {likeProductRadio === "manual" && (
           <React.Fragment>
             <img
@@ -811,7 +1347,10 @@ const MoreFeatures = () => {
                       />
                     </RadioGroup>
                   </div>
-                  <button className="button-gradient py-1 px-4">
+                  <button
+                    className="button-gradient py-1 px-4"
+                    onClick={handleRecommendedAddCondition}
+                  >
                     <p>Add Condition</p>
                   </button>
                 </div>
@@ -819,10 +1358,317 @@ const MoreFeatures = () => {
                   <p className="text-lightBlue c-pointer">Summary</p>
                   <p className="text-lightBlue c-pointer">Action</p>
                 </div>
+
+                {recommendedApplyCondition && recommendedAddCondition && (
+                  <div className="d-flex px-3 justify-content-between align-items-center">
+                    <div className="d-flex align-items-center">
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={checked}
+                            onChange={handleCheckboxChange}
+                            inputProps={{ "aria-label": "controlled" }}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                              width: "auto",
+                            }}
+                          />
+                        }
+                        sx={{
+                          "& .MuiTypography-root": {
+                            fontSize: "0.875rem",
+                            color: "#c8d8ff",
+                          },
+                        }}
+                        className="px-0 me-0"
+                      />
+                      <small className="ms-0 text-lightBlue">
+                        <span className="text-blue-2">Price</span>&nbsp;is equal
+                        to&nbsp;
+                        <span className="text-blue-2">Rs&nbsp;25,000</span>
+                      </small>
+                    </div>
+                    <div className="d-flex align-items-center">
+                      <img
+                        src={editWhite}
+                        alt="editWhite"
+                        width={30}
+                        className="me-1"
+                      />
+                      <img src={deleteWhite} alt="deleteWhite" width={30} />
+                    </div>
+                  </div>
+                )}
+                {recommendedAddCondition && (
+                  <div className="row">
+                    <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                      <p className="text-lightBlue mb-1">Field</p>
+
+                      <FormControl className="w-100 px-0" size="small">
+                        <Select
+                          labelId="demo-select-small"
+                          id="demo-select-small"
+                          value={field}
+                          onChange={handleFieldChange}
+                          size="small"
+                        >
+                          <MenuItem
+                            value="price"
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Price
+                          </MenuItem>
+                          <MenuItem
+                            value={"collection"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Collection
+                          </MenuItem>
+                          <MenuItem
+                            value={"tags"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Tags
+                          </MenuItem>
+                          <MenuItem
+                            value={"category"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Catagory
+                          </MenuItem>
+                          <MenuItem
+                            value={"subCategory"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Sub Category
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                      <p className="text-lightBlue mb-1">Operator</p>
+
+                      <FormControl className="w-100 px-0" size="small">
+                        <Select
+                          labelId="demo-select-small"
+                          id="demo-select-small"
+                          value={operator}
+                          onChange={handleOperatorChange}
+                          size="small"
+                        >
+                          <MenuItem
+                            value="equals"
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Equals
+                          </MenuItem>
+                          <MenuItem
+                            value={"notEquals"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Not Equals
+                          </MenuItem>
+                          <MenuItem
+                            value={"greaterThan"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Greater Than
+                          </MenuItem>
+                          <MenuItem
+                            value={"less"}
+                            sx={{ fontSize: 13, color: "#5c6d8e" }}
+                          >
+                            Less
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                      <p className="text-lightBlue mb-1">Value</p>
+
+                      <FormControl className="w-100 px-0">
+                        <OutlinedInput
+                          placeholder="Enter Value"
+                          size="small"
+                          defaultValue="1000"
+                          startAdornment={
+                            <InputAdornment position="start">
+                              <p className="text-lightBlue">$</p>
+                            </InputAdornment>
+                          }
+                        />
+                      </FormControl>
+                    </div>
+                    <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                      <button
+                        className="button-gradient py-1 px-3 w-100 mb-2"
+                        onClick={handleRecommendedApplyCondition}
+                      >
+                        <p>Apply</p>
+                      </button>
+                      <button
+                        className="button-lightBlue-outline py-1 px-3 w-100"
+                        onClick={handleRecommendedApplyCondition}
+                      >
+                        <p>Cancel</p>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </React.Fragment>
             )}
           </div>
         )}
+        {recommendedProductRadio === "automated" &&
+          recommendedApplyCondition &&
+          recommendedAddCondition && (
+            <React.Fragment>
+              <div className="col-12 mt-3">
+                <div className="row">
+                  <div className="col-md-9 px-md-0">
+                    <Search sx={{ background: "#1a1932" }} className="mx-0">
+                      <SearchIconWrapper>
+                        <SearchIcon sx={{ color: "#c8d8ff" }} />
+                      </SearchIconWrapper>
+                      <StyledInputBase
+                        placeholder="Search…"
+                        inputProps={{ "aria-label": "search" }}
+                      />
+                    </Search>
+                  </div>
+                  <div className="col-md-3 pe-md-0">
+                    <button className="button-gradient w-100 py-1 px-3">
+                      <p>Add Products</p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="col-12 px-0">
+                <TableContainer className="mt-3">
+                  <Table
+                    sx={{ minWidth: 750 }}
+                    aria-labelledby="tableTitle"
+                    size="medium"
+                  >
+                    <LikeProductTableHead
+                      numSelected={selected.length}
+                      order={order}
+                      orderBy={orderBy}
+                      onSelectAllClick={handleLikeSelectAllClick}
+                      onRequestSort={handleRequestSort}
+                      rowCount={likeProductRows.length}
+                    />
+                    <TableBody>
+                      {stableSort(
+                        likeProductRows,
+                        getComparator(order, orderBy)
+                      )
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((row, index) => {
+                          const isItemSelected = isSelected(row.pId);
+                          const labelId = `enhanced-table-checkbox-${index}`;
+
+                          return (
+                            <TableRow
+                              hover
+                              role="checkbox"
+                              aria-checked={isItemSelected}
+                              tabIndex={-1}
+                              key={row.pId}
+                              selected={isItemSelected}
+                            >
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  color="primary"
+                                  checked={isItemSelected}
+                                  inputProps={{
+                                    "aria-labelledby": labelId,
+                                  }}
+                                  size="small"
+                                  onClick={(event) =>
+                                    handleClick(event, row.pId)
+                                  }
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell
+                                component="th"
+                                id={labelId}
+                                scope="row"
+                                padding="none"
+                              >
+                                <div className="d-flex align-items-center my-2">
+                                  <img
+                                    src={ringSmall}
+                                    alt="ringSmall"
+                                    className="me-2"
+                                    height={45}
+                                    width={45}
+                                  />
+                                  <div>
+                                    <p className="text-lightBlue fw-600">
+                                      {row.productName}
+                                    </p>
+                                    <small className="mt-2 text-grey-6">
+                                      SKU: TFDR012345
+                                    </small>
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <p className="text-lightBlue">{row.category}</p>
+                              </TableCell>
+                              <TableCell>
+                                <div className="d-flex align-items-center c-pointer ">
+                                  <p className="text-lightBlue">{row.price}</p>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="d-flex align-items-center c-pointer ">
+                                  <img
+                                    src={deleteButton}
+                                    alt="deleteButton"
+                                    width={75}
+                                    className="c-pointer"
+                                  />
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      {emptyRows > 0 && (
+                        <TableRow
+                          style={{
+                            height: 53 * emptyRows,
+                          }}
+                        >
+                          <TableCell colSpan={6} />
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={rows.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  className="table-pagination"
+                />
+              </div>
+            </React.Fragment>
+          )}
 
         {recommendedProductRadio === "manual" && (
           <img

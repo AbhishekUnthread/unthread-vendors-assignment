@@ -17,6 +17,7 @@ import {
   TablePagination,
   TableRow,
   TableSortLabel,
+  InputAdornment,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 // ! IMAGES IMPORTS
@@ -33,9 +34,9 @@ function createData(vId, variantName, price, quantity, sku) {
 }
 
 const rows = [
-  createData(1, "12-Gold-18KT-Rose-IJSI", "Rs 1,15,000", "2", "ABCD1234"),
-  createData(2, "12-Gold-18KT-Rose-IJSI", "Rs 1,15,000", "2", "ABCD1234"),
-  createData(3, "12-Gold-18KT-Rose-IJSI", "Rs 1,15,000", "2", "ABCD1234"),
+  createData(1, "12-Gold-18KT-Rose-IJSI", "1,15,000", "2", "ABCD1234"),
+  createData(2, "12-Gold-18KT-Rose-IJSI", "1,15,000", "2", "ABCD1234"),
+  createData(3, "12-Gold-18KT-Rose-IJSI", "1,15,000", "2", "ABCD1234"),
 ];
 
 const headCells = [
@@ -117,6 +118,10 @@ function EnhancedTableHead(props) {
             onChange={onSelectAllClick}
             inputProps={{
               "aria-label": "select all desserts",
+            }}
+            size="small"
+            style={{
+              color: "#5C6D8E",
             }}
           />
         </TableCell>
@@ -402,6 +407,10 @@ const Variants = () => {
                             "aria-labelledby": labelId,
                           }}
                           onClick={(event) => handleClick(event, row.vId)}
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                          }}
                         />
                       </TableCell>
                       <TableCell
@@ -431,20 +440,25 @@ const Variants = () => {
                               height={50}
                             />
                           </div>
-                          <p className="d-flex align-items-center text-lightBlue">
+                          <small className="d-flex align-items-center text-lightBlue">
                             {row.variantName}
-                          </p>
+                          </small>
                         </div>
                       </TableCell>
                       <TableCell>
                         {/* <p className="d-flex align-items-center text-lightBlue">
                           {row.price}
                         </p> */}
-                        <FormControl sx={{ idth: 150 }} className="px-0">
+                        <FormControl sx={{ width: 150 }} className="px-0">
                           <OutlinedInput
-                            placeholder="Enter SKU"
+                            placeholder="Enter Price"
                             size="small"
                             defaultValue={row.price}
+                            startAdornment={
+                              <InputAdornment position="start">
+                                <p className="text-lightBlue">Rs</p>
+                              </InputAdornment>
+                            }
                           />
                         </FormControl>
                       </TableCell>
@@ -452,7 +466,7 @@ const Variants = () => {
                         {/* <p className="d-flex text-lightBlue">{row.quantity}</p> */}
                         <FormControl sx={{ width: 80 }} className="px-0">
                           <OutlinedInput
-                            placeholder="Enter SKU"
+                            placeholder="Enter Qty"
                             size="small"
                             defaultValue={row.quantity}
                           />
@@ -460,7 +474,7 @@ const Variants = () => {
                       </TableCell>
                       <TableCell>
                         {/* <p className="d-flex text-lightBlue">{row.sku}</p> */}
-                        <FormControl className="px-0">
+                        <FormControl sx={{ width: 150 }} className="px-0">
                           <OutlinedInput
                             placeholder="Enter SKU"
                             size="small"
@@ -491,6 +505,7 @@ const Variants = () => {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          className="table-pagination"
         />
       </div>
     </div>
