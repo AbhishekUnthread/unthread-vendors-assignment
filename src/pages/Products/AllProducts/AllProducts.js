@@ -1576,9 +1576,46 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Product Category</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <p className="mb-2 text-grey-6">Content 1</p>
-                          <p className="mb-2 text-grey-6">Content 2</p>
-                          <p className="mb-2 text-grey-6">Content 3</p>
+                          <RadioGroup
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="row-radio-buttons-group"
+                            // value={recommendedProductRadio}
+                            // onChange={handleRecommendedProductRadio}
+                          >
+                            <FormControlLabel
+                              value="1"
+                              control={<Radio size="small" />}
+                              label="Content 1"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="2"
+                              control={<Radio size="small" />}
+                              label="Content 2"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="3"
+                              control={<Radio size="small" />}
+                              label="Content 3"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                          </RadioGroup>
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1592,9 +1629,46 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Sub Category</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <p className="mb-2 text-grey-6">Content 1</p>
-                          <p className="mb-2 text-grey-6">Content 2</p>
-                          <p className="mb-2 text-grey-6">Content 3</p>
+                          <RadioGroup
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="row-radio-buttons-group"
+                            // value={recommendedProductRadio}
+                            // onChange={handleRecommendedProductRadio}
+                          >
+                            <FormControlLabel
+                              value="1"
+                              control={<Radio size="small" />}
+                              label="Content 1"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="2"
+                              control={<Radio size="small" />}
+                              label="Content 2"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="3"
+                              control={<Radio size="small" />}
+                              label="Content 3"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                          </RadioGroup>
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1608,9 +1682,46 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Vendor</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <p className="mb-2 text-grey-6">Content 1</p>
-                          <p className="mb-2 text-grey-6">Content 2</p>
-                          <p className="mb-2 text-grey-6">Content 3</p>
+                          <RadioGroup
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="row-radio-buttons-group"
+                            // value={recommendedProductRadio}
+                            // onChange={handleRecommendedProductRadio}
+                          >
+                            <FormControlLabel
+                              value="1"
+                              control={<Radio size="small" />}
+                              label="Content 1"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="2"
+                              control={<Radio size="small" />}
+                              label="Content 2"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="3"
+                              control={<Radio size="small" />}
+                              label="Content 3"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                          </RadioGroup>
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1624,9 +1735,44 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Collection</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <p className="mb-2 text-grey-6">Content 1</p>
-                          <p className="mb-2 text-grey-6">Content 2</p>
-                          <p className="mb-2 text-grey-6">Content 3</p>
+                          <FormGroup className="tags-checkbox">
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                  }}
+                                />
+                              }
+                              label="Content 1"
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                  }}
+                                />
+                              }
+                              label="Content 2"
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                  }}
+                                />
+                              }
+                              label="Content 3"
+                            />
+                          </FormGroup>
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1640,9 +1786,44 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Tagged With</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <p className="mb-2 text-grey-6">Content 1</p>
-                          <p className="mb-2 text-grey-6">Content 2</p>
-                          <p className="mb-2 text-grey-6">Content 3</p>
+                          <Autocomplete
+                            multiple
+                            id="checkboxes-tags-demo"
+                            sx={{ width: "100%" }}
+                            options={taggedWithData}
+                            disableCloseOnSelect
+                            getOptionLabel={(option) => option.title}
+                            size="small"
+                            renderOption={(props, option, { selected }) => (
+                              <li {...props}>
+                                <Checkbox
+                                  icon={
+                                    <CheckBoxOutlineBlankIcon fontSize="small" />
+                                  }
+                                  checkedIcon={
+                                    <CheckBoxIcon fontSize="small" />
+                                  }
+                                  checked={selected}
+                                  size="small"
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                  }}
+                                />
+                                <small className="text-lightBlue">
+                                  {option.title}
+                                </small>
+                              </li>
+                            )}
+                            renderInput={(params) => (
+                              <TextField
+                                size="small"
+                                {...params}
+                                placeholder="Search"
+                                inputRef={(input) => input?.focus()}
+                              />
+                            )}
+                          />
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1656,9 +1837,46 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Product Status</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <p className="mb-2 text-grey-6">Content 1</p>
-                          <p className="mb-2 text-grey-6">Content 2</p>
-                          <p className="mb-2 text-grey-6">Content 3</p>
+                          <RadioGroup
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="row-radio-buttons-group"
+                            // value={recommendedProductRadio}
+                            // onChange={handleRecommendedProductRadio}
+                          >
+                            <FormControlLabel
+                              value="1"
+                              control={<Radio size="small" />}
+                              label="Content 1"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="2"
+                              control={<Radio size="small" />}
+                              label="Content 2"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="3"
+                              control={<Radio size="small" />}
+                              label="Content 3"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                          </RadioGroup>
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1672,9 +1890,46 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Inventory</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <p className="mb-2 text-grey-6">Content 1</p>
-                          <p className="mb-2 text-grey-6">Content 2</p>
-                          <p className="mb-2 text-grey-6">Content 3</p>
+                          <RadioGroup
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="row-radio-buttons-group"
+                            // value={recommendedProductRadio}
+                            // onChange={handleRecommendedProductRadio}
+                          >
+                            <FormControlLabel
+                              value="1"
+                              control={<Radio size="small" />}
+                              label="Content 1"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="2"
+                              control={<Radio size="small" />}
+                              label="Content 2"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="3"
+                              control={<Radio size="small" />}
+                              label="Content 3"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                          </RadioGroup>
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1688,9 +1943,44 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Labels</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <p className="mb-2 text-grey-6">Content 1</p>
-                          <p className="mb-2 text-grey-6">Content 2</p>
-                          <p className="mb-2 text-grey-6">Content 3</p>
+                          <FormGroup className="tags-checkbox">
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                  }}
+                                />
+                              }
+                              label="Content 1"
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                  }}
+                                />
+                              }
+                              label="Content 2"
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                  }}
+                                />
+                              }
+                              label="Content 3"
+                            />
+                          </FormGroup>
                         </AccordionDetails>
                       </Accordion>
                     </div>

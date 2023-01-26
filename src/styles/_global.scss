@@ -577,14 +577,42 @@ textarea {
 }
 .MuiAutocomplete-listbox {
   // background: $black9 !important;
+  box-shadow: none !important;
   li {
     border-radius: 4px !important;
     padding: 3px 12px !important;
+    box-shadow: none !important;
+    border: 0 !important;
     // font-size: 20px !important;
   }
   li:hover {
     background: $black18 !important;
   }
+  // .MuiMenuItem-root.Mui-selected {
+  //   background: red !important;
+  // }
+  // .Mui-selected {
+  //   background-color: red !important;
+  // }
+  // .MuiAutocomplete-popper.MuiAutocomplete-option[aria-selected="true"].Mui-focused {
+  //   background-color: #4396e6 !important;
+  // }
+
+  // Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-1cxn8hw-MuiButtonBase-root-MuiMenuItem-root
+  //  MuiMenuItem-root MuiMenuItem-gutters css-1cxn8hw-MuiButtonBase-root-MuiMenuItem-root
+  // li[data-focus="true"] {
+  //   background: red !important;
+  // }
+  // .Mui-selected {
+  //   background-color: $black16 !important;
+  // }
+  // .MuiAutocomplete-option.Mui-focused {
+  //   background: blue !important;
+  // }
+
+  // .MuiAutocomplete-option[data-focus="true"] {
+  //   background: blue !important;
+  // }
 }
 
 // * CHIPS COLORS
