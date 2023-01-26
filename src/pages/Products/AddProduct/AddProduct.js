@@ -435,7 +435,7 @@ const AddProduct = () => {
               </RadioGroup>
             </FormControl> */}
           </div>
-
+          {/* 
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-3 mb-3">
             <div className="d-flex justify-content-between align-items-center">
               <div className="d-flex align-items-center">
@@ -618,11 +618,11 @@ const AddProduct = () => {
                 <TextField size="small" {...params} placeholder="Search Tags" />
               )}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
-        <div className="d-flex w-auto">
+        <div className="d-flex w-auto px-0">
           <button className="button-red-outline py-2 px-4">
             <p>Discard</p>
           </button>

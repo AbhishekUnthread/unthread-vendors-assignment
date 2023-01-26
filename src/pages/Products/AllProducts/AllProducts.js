@@ -376,7 +376,7 @@ const baseStyle = {
   padding: "0",
   borderWidth: 2,
   borderRadius: 8,
-  borderColor: "#5C6D8E",
+  borderColor: "#38395c",
   borderStyle: "dashed",
   //   backgroundColor: "",
   color: "#bdbdbd",
@@ -930,7 +930,7 @@ const AllProducts = () => {
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
-              <h5 className="text-lightBlue">Export Products</h5>
+              <h5 className="text-lightBlue fw-500">Export Products</h5>
               <img
                 src={cancel}
                 alt="cancel"
@@ -1066,7 +1066,7 @@ const AllProducts = () => {
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
-              <h5 className="text-lightBlue">Import Products</h5>
+              <h5 className="text-lightBlue fw-500">Import Products</h5>
               <img
                 src={cancel}
                 alt="cancel"
@@ -1137,7 +1137,7 @@ const AllProducts = () => {
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
-              <h5 className="text-lightBlue">Import Products</h5>
+              <h5 className="text-lightBlue fw-500">Import Products</h5>
               <img
                 src={cancel}
                 alt="cancel"
@@ -1398,9 +1398,7 @@ const AllProducts = () => {
                       getOptionLabel={(option) => option.title}
                       renderOption={(props, option) => (
                         <li {...props}>
-                          <small className="text-lightBlue my-1">
-                            {option.title}
-                          </small>
+                          <p className="text-lightBlue my-1">{option.title}</p>
                         </li>
                       )}
                       sx={{

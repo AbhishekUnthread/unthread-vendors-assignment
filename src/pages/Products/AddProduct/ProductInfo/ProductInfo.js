@@ -5,20 +5,31 @@ import { useDropzone } from "react-dropzone";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
 import clock from "../../../../assets/icons/clock.svg";
+import cancel from "../../../../assets/icons/cancel.svg";
+import arrowDown from "../../../../assets/icons/arrowDown.svg";
 import productInfoMedia1 from "../../../../assets/images/products/productInfoMedia1.svg";
 import productInfoMedia2 from "../../../../assets/images/products/productInfoMedia2.svg";
 // ! MATERIAL IMPORTS
 import {
   Autocomplete,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   FormControlLabel,
+  FormGroup,
   InputAdornment,
+  InputBase,
   MenuItem,
   OutlinedInput,
+  Popover,
   Radio,
   RadioGroup,
   Select,
+  Slide,
+  styled,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -26,6 +37,82 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+// import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import SearchIcon from "@mui/icons-material/Search";
+import Box from "@mui/material/Box";
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
+
+// ? SEARCH INPUT STARTS HERE
+const Search = styled("div")(({ theme }) => ({
+  // position: "relative",
+  // borderRadius: theme.shape.borderRadius,
+  // // backgroundColor: alpha(theme.palette.common.white, 0.15),
+  // "&:hover": {
+  //   // backgroundColor: alpha(theme.palette.common.white, 0.25),
+  //   // backgroundColor: "#1c1b33",
+  // },
+  // marginLeft: 0,
+  // width: "100%",
+  // [theme.breakpoints.up("sm")]: {
+  //   marginLeft: 0,
+  //   width: "auto",
+  // },
+  // // backgroundColor: "#1c1b33",
+  // height: "30.6px",
+  // border: "1px solid #5c6d8e",
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  // backgroundColor: alpha(theme.palette.common.white, 0.15),
+  "&:hover": {
+    // backgroundColor: alpha(theme.palette.common.white, 0.25),
+    // backgroundColor: "#2b2a46",
+  },
+  marginLeft: 0,
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
+    width: "auto",
+  },
+  // backgroundColor: "#2b2a46",
+  height: "30.6px",
+  border: "1px solid #38395c",
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 1.5),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "inherit",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(0.8, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    borderRadius: "5px",
+    // [theme.breakpoints.up("sm")]: {
+    //   width: "12ch",
+    //   "&:focus": {
+    //     width: "20ch",
+    //   },
+    // },
+  },
+}));
+// ? SEARCH INPUT ENDS HERE
 
 // ? FILE UPLOAD STARTS HERE
 const baseStyle = {
@@ -35,14 +122,16 @@ const baseStyle = {
   alignItems: "center",
   padding: "0",
   borderWidth: 2,
-  borderRadius: 2,
-  borderColor: "#5C6D8E",
+  borderRadius: 8,
+  borderColor: "#38395c",
   borderStyle: "dashed",
   //   backgroundColor: "",
   color: "#bdbdbd",
   outline: "none",
   transition: "border .24s ease-in-out",
   cursor: "pointer",
+  justifyContent: "center",
+  backgroundColor: "#1a1932",
 };
 
 const focusedStyle = {
@@ -72,6 +161,36 @@ const collectionsData = [
   { title: "Collection 10", value: "Collection10" },
   { title: "Collection 11", value: "Collection11" },
   { title: "Collection 12", value: "Collection12" },
+];
+
+const vendorData = [
+  { title: "Content 1", value: "content1" },
+  { title: "Content 2", value: "content2" },
+  { title: "Content 3", value: "content3" },
+  { title: "Content 4", value: "content4" },
+  { title: "Content 5", value: "content5" },
+  { title: "Content 6", value: "content6" },
+  { title: "Content 7", value: "content7" },
+  { title: "Content 8", value: "content8" },
+  { title: "Content 9", value: "content9" },
+  { title: "Content 10", value: "content10" },
+  { title: "Content 11", value: "content11" },
+  { title: "Content 12", value: "content12" },
+];
+
+const taggedWithData = [
+  { title: "Tag 1", value: "tag1" },
+  { title: "Tag 2", value: "tag2" },
+  { title: "Tag 3", value: "tag3" },
+  { title: "Tag 4", value: "tag4" },
+  { title: "Tag 5", value: "tag5" },
+  { title: "Tag 6", value: "tag6" },
+  { title: "Tag 7", value: "tag7" },
+  { title: "Tag 8", value: "tag8" },
+  { title: "Tag 9", value: "tag9" },
+  { title: "Tag 10", value: "tag10" },
+  { title: "Tag 11", value: "tag11" },
+  { title: "Tag 12", value: "tag12" },
 ];
 // ? COLLECTIONS AUTOCOMPLETE ENDS HERE
 
@@ -200,6 +319,49 @@ const ProductInfo = () => {
   };
   // ? TOGGLE BUTTON ENDS HERE
 
+  // ? SCHEDULE PRODUCT DIALOG STARTS HERE
+  const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
+
+  const handelScheduleProduct = () => {
+    setOpenScheduleProduct(true);
+  };
+
+  const handelScheduleProductClose = () => {
+    setOpenScheduleProduct(false);
+  };
+  // ? SCHEDULE PRODUCT DIALOG ENDS HERE
+
+  // ? DATE PICKER STARTS HERE
+  const [dateStartValue, setDateStartValue] = React.useState(new Date());
+  // ? DATE PICKER ENDS HERE
+
+  // ? TAGS DIALOG STARTS HERE
+  const [openTags, setOpenTags] = React.useState(false);
+
+  const handleTagsOpen = () => {
+    setOpenTags(true);
+  };
+
+  const handleTagsClose = () => {
+    setOpenTags(false);
+  };
+  // ? TAGS DIALOG ENDS HERE
+
+  // * SORT POPOVERS STARTS
+  const [anchorTagEl, setAnchorTagEl] = React.useState(null);
+
+  const handleTagClick = (event) => {
+    setAnchorTagEl(event.currentTarget);
+  };
+
+  const handleTagClose = () => {
+    setAnchorTagEl(null);
+  };
+
+  const openTag = Boolean(anchorTagEl);
+  const idTag = openTag ? "simple-popover" : undefined;
+  // * SORT POPOVERS ENDS
+
   return (
     <React.Fragment>
       <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo">
@@ -207,7 +369,7 @@ const ProductInfo = () => {
           <div className="row">
             <div className="col-8">
               <div className="d-flex mb-1">
-                <small className="text-lightBlue">Title</small>
+                <p className="text-lightBlue px-0">Title</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
               <FormControl className="w-100 px-0">
@@ -216,7 +378,7 @@ const ProductInfo = () => {
             </div>
             <div className="col-4">
               <div className="d-flex mb-1">
-                <small className="text-lightBlue">Product Status</small>
+                <p className="text-lightBlue">Product Status</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
               <ToggleButtonGroup
@@ -250,22 +412,99 @@ const ProductInfo = () => {
               </ToggleButtonGroup>
               <div className="d-flex align-items-center mt-1">
                 <img src={clock} alt="clock" className="me-1" width={12} />
-                <small className="text-blue-2">Schedule Product</small>
+                <small className="text-blue-2" onClick={handelScheduleProduct}>
+                  Schedule Product
+                </small>
               </div>
             </div>
+
+            <Dialog
+              open={openScheduleProduct}
+              TransitionComponent={Transition}
+              keepMounted
+              onClose={handelScheduleProductClose}
+              aria-describedby="alert-dialog-slide-description"
+              maxWidth="sm"
+              fullWidth={true}
+            >
+              <DialogTitle>
+                <div className="d-flex justify-content-between align-items-center">
+                  <h5 className="text-lightBlue fw-500">
+                    Select Additional Field Sets
+                  </h5>
+                  <img
+                    src={cancel}
+                    alt="cancel"
+                    width={30}
+                    onClick={handelScheduleProductClose}
+                    className="c-pointer"
+                  />
+                </div>
+              </DialogTitle>
+              <hr className="hr-grey-6 my-0" />
+              <DialogContent className="py-3 px-4">
+                {/* <p className="text-lightBlue mb-2">Select Field Sets</p> */}
+                <LocalizationProvider dateAdapter={AdapterMoment}>
+                  <DatePicker
+                    label="Custom input"
+                    value={dateStartValue}
+                    onChange={(newValue) => {
+                      setDateStartValue(newValue);
+                    }}
+                    renderInput={({ inputRef, inputProps, InputProps }) => (
+                      // <Box sx={{ display: "flex", alignItems: "center" }}>
+                      //   <input ref={inputRef} {...inputProps} />
+                      //   {InputProps?.endAdornment}
+                      // </Box>
+                      <OutlinedInput
+                        // placeholder="Enter Content"
+                        size="small"
+                        ref={inputRef}
+                        {...inputProps}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+              </DialogContent>
+              <hr className="hr-grey-6 my-0" />
+              <DialogActions className="d-flex justify-content-between px-4 py-3">
+                <button
+                  className="button-grey py-2 px-5"
+                  onClick={handelScheduleProductClose}
+                >
+                  <p className="text-lightBlue">Cancel</p>
+                </button>
+                <button
+                  className="button-gradient py-2 px-5"
+                  onClick={handelScheduleProductClose}
+                >
+                  <p>Add</p>
+                </button>
+              </DialogActions>
+            </Dialog>
           </div>
         </div>
         <div className="col-12 px-0 mt-3">
           <div className="d-flex justify-content-between mb-1">
             <p className="text-lightBlue mb-1">Description</p>
-            <button
-              className="py-0 px-3 button-gradient"
-              onClick={handleDynamicTextEditor}
-            >
-              <p>Add Dynamic Fields</p>
-            </button>
+            <div className="d-flex">
+              <button
+                className="py-0 px-3 button-gradient me-2"
+                // onClick={handleDynamicTextEditor}
+              >
+                <p>Add Dynamic Fields</p>
+              </button>
+              <button
+                className="py-0 px-3 button-gradient"
+                onClick={handleDynamicTextEditor}
+              >
+                <p>Tabs</p>
+              </button>
+            </div>
           </div>
-          <AppTextEditor />
+          <div className="d-none">
+            <AppTextEditor />
+          </div>
 
           {openDynamicTextEditor && (
             <div className="mt-3">
@@ -275,6 +514,8 @@ const ProductInfo = () => {
                   exclusive
                   onChange={handleProductDetails}
                   aria-label="text alignment"
+                  className="productDetails-toggle"
+                  // orientation="vertical"
                 >
                   <ToggleButton
                     value="productInformation"
@@ -309,7 +550,7 @@ const ProductInfo = () => {
             <p className="text-lightBlue col-12 px-0">Media</p>
           </div>
           <div className="row">
-            <div className="col-3 ps-0">
+            <div className="col-3 ps-0 d-flex flex-column justify-content-between">
               <div {...getRootProps({ style })} className="mt-3">
                 <input
                   id="primary"
@@ -321,7 +562,7 @@ const ProductInfo = () => {
                 />
                 <img src={productInfoMedia1} className="w-100" alt="" />
               </div>
-              <button className="button-grey-gradient py-2 w-100 mt-4">
+              <button className="button-grey-gradient py-2 w-100 mt-3">
                 <p>Primary Image</p>
               </button>
             </div>
@@ -344,15 +585,15 @@ const ProductInfo = () => {
       <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
         <div className="col-12">
           <div className="row mb-3">
-            <h6 className="text-lightBlue col-12 px-0">Product Type</h6>
+            <h6 className="text-lightBlue col-12 px-0 fw-500">Product Type</h6>
           </div>
           <div className="row">
-            <div className="col-4 ps-0">
+            <div className="col-4 ps-0 mt-2">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Category</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
-              <FormControl
+              {/* <FormControl
                 sx={{ m: 0, minWidth: 120 }}
                 size="small"
                 className="w-100"
@@ -372,14 +613,46 @@ const ProductInfo = () => {
                   <MenuItem value={"subCategory"}>Sub Category</MenuItem>
                   <MenuItem value={"collection"}>Collection</MenuItem>
                 </Select>
-              </FormControl>
+              </FormControl> */}
+
+              <Autocomplete
+                id="free-solo-demo"
+                freeSolo
+                size="small"
+                // sx={{ width: 200 }}
+                options={vendorData}
+                getOptionLabel={(option) => option.title}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <small className="text-lightBlue my-1">
+                      {option.title}
+                    </small>
+                  </li>
+                )}
+                sx={{
+                  width: "100%",
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Search"
+                    // InputProps={{
+                    //   startAdornment: (
+                    //     <InputAdornment position="start">
+                    //       <AccountCircle />
+                    //     </InputAdornment>
+                    //   ),
+                    // }}
+                  />
+                )}
+              />
             </div>
-            <div className="col-4 ps-0">
+            <div className="col-4 ps-0 mt-2">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Sub-Category</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
-              <FormControl
+              {/* <FormControl
                 sx={{ m: 0, minWidth: 120 }}
                 size="small"
                 className="w-100"
@@ -399,14 +672,46 @@ const ProductInfo = () => {
                   <MenuItem value={"subCategory"}>Sub Category</MenuItem>
                   <MenuItem value={"collection"}>Collection</MenuItem>
                 </Select>
-              </FormControl>
+              </FormControl> */}
+
+              <Autocomplete
+                id="free-solo-demo"
+                freeSolo
+                size="small"
+                // sx={{ width: 200 }}
+                options={vendorData}
+                getOptionLabel={(option) => option.title}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <small className="text-lightBlue my-1">
+                      {option.title}
+                    </small>
+                  </li>
+                )}
+                sx={{
+                  width: "100%",
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Search"
+                    // InputProps={{
+                    //   startAdornment: (
+                    //     <InputAdornment position="start">
+                    //       <AccountCircle />
+                    //     </InputAdornment>
+                    //   ),
+                    // }}
+                  />
+                )}
+              />
             </div>
-            <div className="col-4 px-0">
+            <div className="col-4 px-0 mt-2">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Vendor Name</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
-              <FormControl
+              {/* <FormControl
                 sx={{ m: 0, minWidth: 120 }}
                 size="small"
                 className="w-100"
@@ -426,9 +731,41 @@ const ProductInfo = () => {
                   <MenuItem value={"subCategory"}>Sub Category</MenuItem>
                   <MenuItem value={"collection"}>Collection</MenuItem>
                 </Select>
-              </FormControl>
+              </FormControl> */}
+
+              <Autocomplete
+                id="free-solo-demo"
+                freeSolo
+                size="small"
+                // sx={{ width: 200 }}
+                options={vendorData}
+                getOptionLabel={(option) => option.title}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <small className="text-lightBlue my-1">
+                      {option.title}
+                    </small>
+                  </li>
+                )}
+                sx={{
+                  width: "100%",
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Search"
+                    // InputProps={{
+                    //   startAdornment: (
+                    //     <InputAdornment position="start">
+                    //       <AccountCircle />
+                    //     </InputAdornment>
+                    //   ),
+                    // }}
+                  />
+                )}
+              />
             </div>
-            <div className="col-12 px-0 mt-3">
+            <div className="col-12 px-0 mt-4">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Collections</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
@@ -446,11 +783,245 @@ const ProductInfo = () => {
                     <Checkbox
                       icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                       checkedIcon={<CheckBoxIcon fontSize="small" />}
-                      style={{ marginRight: 0 }}
                       checked={selected}
                       size="small"
+                      style={{
+                        color: "#5C6D8E",
+                        marginRight: 0,
+                      }}
                     />
-                    <p className="text-lightBlue">{option.title}</p>
+                    <small className="text-lightBlue">{option.title}</small>
+                  </li>
+                )}
+                renderInput={(params) => (
+                  <TextField size="small" {...params} placeholder="Search" />
+                )}
+              />
+            </div>
+            <div className="col-12 px-0 mt-4">
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex mb-1">
+                  <p className="text-lightBlue">Tags</p>
+                  <img src={info} alt="info" className="ms-2" width={13.5} />
+                </div>
+                <small
+                  className="text-blue-2 c-pointer"
+                  onClick={handleTagsOpen}
+                >
+                  View all Tags
+                </small>
+
+                <Dialog
+                  open={openTags}
+                  TransitionComponent={Transition}
+                  keepMounted
+                  onClose={handleTagsClose}
+                  aria-describedby="alert-dialog-slide-description"
+                  maxWidth="md"
+                  fullWidth={true}
+                >
+                  <DialogTitle>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <h5 className="text-lightBlue fw-500">Tags</h5>
+                      <img
+                        src={cancel}
+                        alt="cancel"
+                        width={30}
+                        onClick={handleTagsClose}
+                        className="c-pointer"
+                      />
+                    </div>
+                  </DialogTitle>
+                  <hr className="hr-grey-6 my-0" />
+                  <DialogContent className="py-2 px-4">
+                    <div className="row">
+                      <div className="col-md-6 mt-2">
+                        <Search>
+                          <SearchIconWrapper>
+                            <SearchIcon sx={{ color: "#c8d8ff" }} />
+                          </SearchIconWrapper>
+                          <StyledInputBase
+                            placeholder="Search…"
+                            inputProps={{ "aria-label": "search" }}
+                          />
+                        </Search>
+                      </div>
+                      <div className="col-md-3 col-6 ps-md-0 pe-0 mt-2">
+                        <button
+                          className="button-grey py-1 px-3 w-100"
+                          // aria-describedby={idVendor}
+                          variant="contained"
+                          // onClick={handleVendorClick}
+                        >
+                          <p className="text-lightBlue">Alphabetical (A-Z)</p>
+                          <img
+                            src={arrowDown}
+                            alt="arrowDown"
+                            className="ms-2"
+                          />
+                        </button>
+                      </div>
+                      <div className="col-md-3 col-6 mt-2">
+                        <button
+                          className="button-gradient py-1 px-3 w-100"
+                          onClick={handleTagClick}
+                        >
+                          <p>Create a New Tag</p>
+                        </button>
+                        <Popover
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                          }}
+                          id={idTag}
+                          open={openTag}
+                          anchorEl={anchorTagEl}
+                          onClose={handleTagClose}
+                          className="columns"
+                        >
+                          <div className="d-flex mb-2">
+                            <small className="text-grey-6">
+                              Enter Tag Name
+                            </small>
+                            <img
+                              src={info}
+                              alt="info"
+                              className="ms-2 c-pointer"
+                              width={14}
+                            />
+                          </div>
+                          <FormControl
+                          // className="col-7 px-0"
+                          >
+                            <OutlinedInput
+                              placeholder="Enter Tag Name"
+                              size="small"
+                            />
+                          </FormControl>
+                        </Popover>
+                      </div>
+                    </div>
+                    <p className="text-lightBlue mt-3 mb-2">
+                      458 Tags are listed below
+                    </p>
+
+                    <FormGroup className="tags-checkbox">
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                            }}
+                          />
+                        }
+                        label="Tags 1"
+                        className="me-0"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                            }}
+                          />
+                        }
+                        label="Tags 2"
+                        className="me-0"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                            }}
+                          />
+                        }
+                        label="Tags 3"
+                        className="me-0"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                            }}
+                          />
+                        }
+                        label="Tags 4"
+                        className="me-0"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                            }}
+                          />
+                        }
+                        label="Tags 5"
+                        className="me-0"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                            }}
+                          />
+                        }
+                        label="Tags 6"
+                        className="me-0"
+                      />
+                    </FormGroup>
+                  </DialogContent>
+                  <hr className="hr-grey-6 my-0" />
+                  <DialogActions className="d-flex justify-content-between px-4 py-3">
+                    <button
+                      className="button-grey py-2 px-5"
+                      onClick={handleTagsClose}
+                    >
+                      <p>Cancel</p>
+                    </button>
+                    <button
+                      className="button-gradient py-2 px-5"
+                      onClick={handleTagsClose}
+                    >
+                      <p>Add 5 Tags</p>
+                    </button>
+                  </DialogActions>
+                </Dialog>
+              </div>
+              <Autocomplete
+                multiple
+                id="checkboxes-tags-demo"
+                sx={{ width: "100%" }}
+                options={taggedWithData}
+                disableCloseOnSelect
+                getOptionLabel={(option) => option.title}
+                size="small"
+                renderOption={(props, option, { selected }) => (
+                  <li {...props}>
+                    <Checkbox
+                      icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                      checkedIcon={<CheckBoxIcon fontSize="small" />}
+                      checked={selected}
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                        marginRight: 0,
+                      }}
+                    />
+                    <small className="text-lightBlue">{option.title}</small>
                   </li>
                 )}
                 renderInput={(params) => (
@@ -464,11 +1035,11 @@ const ProductInfo = () => {
       <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
         <div className="col-12 px-0">
           <div className="d-flex mb-3">
-            <h6 className="text-lightBlue px-0">Price</h6>
+            <h6 className="text-lightBlue px-0 fw-500">Price</h6>
             <img src={info} alt="info" className="ms-2" width={15} />
           </div>
           <div className="row">
-            <div className="col-8">
+            <div className="col-8 mt-2">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Enter Price of the product</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
@@ -479,12 +1050,17 @@ const ProductInfo = () => {
                   placeholder="Enter Price"
                   size="small"
                   disabled={checkedDynamic}
+                  // startAdornment={
+                  //   <InputAdornment position="start">
+                  //     <p className="text-lightBlue">₹</p>
+                  //   </InputAdornment>
+                  // }
                 />
               </FormControl>
             </div>
-            <div className="col-4 ps-0">
+            <div className="col-4 ps-0 mt-2">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue">Select Discount</p>
+                <p className="text-lightBlue ">Select Discount</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
               <FormControl
@@ -513,7 +1089,7 @@ const ProductInfo = () => {
                 </Select>
               </FormControl>
             </div>
-            <div className="col-12 mt-3">
+            <div className="col-12 mt-2">
               <FormControlLabel
                 // control={<Checkbox size="small" />}
                 control={
@@ -522,6 +1098,9 @@ const ProductInfo = () => {
                     onChange={handlePriceRequest}
                     inputProps={{ "aria-label": "controlled" }}
                     size="small"
+                    style={{
+                      color: "#5C6D8E",
+                    }}
                   />
                 }
                 label="Price on Request"
@@ -550,6 +1129,9 @@ const ProductInfo = () => {
                     onChange={handleDynamicPrice}
                     inputProps={{ "aria-label": "controlled" }}
                     size="small"
+                    style={{
+                      color: "#5C6D8E",
+                    }}
                   />
                 }
                 label="Enable Dynamic Pricing"
@@ -632,11 +1214,11 @@ const ProductInfo = () => {
       <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
         <div className="col-12 px-0">
           <div className="d-flex mb-3">
-            <h6 className="text-lightBlue px-0">Inventory</h6>
+            <h6 className="text-lightBlue px-0 fw-500">Inventory</h6>
             <img src={info} alt="info" className="ms-2" width={15} />
           </div>
           <div className="row">
-            <div className="col-6">
+            <div className="col-6 mt-2">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">SKU</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
@@ -646,17 +1228,17 @@ const ProductInfo = () => {
                 <OutlinedInput placeholder="DSERFC12540" size="small" />
               </FormControl>
             </div>
-            <div className="col-6">
+            <div className="col-6 mt-2">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Barcode (ISBN, UPC, GTIN etc.)</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
 
               <FormControl sx={{ width: "100%" }} className="col-7 px-0">
-                <OutlinedInput placeholder="" size="small" />
+                <OutlinedInput placeholder="Enter Barcode" size="small" />
               </FormControl>
             </div>
-            <div className="col-12 mt-3">
+            <div className="col-12 mt-2 d-flex align-items-center">
               <FormControlLabel
                 // control={<Checkbox size="small" />}
                 control={
@@ -665,6 +1247,9 @@ const ProductInfo = () => {
                     onChange={handleInventory}
                     inputProps={{ "aria-label": "controlled" }}
                     size="small"
+                    style={{
+                      color: "#5C6D8E",
+                    }}
                   />
                 }
                 label="Track Inventory"
@@ -688,6 +1273,9 @@ const ProductInfo = () => {
                         onChange={handleSellOutofStock}
                         inputProps={{ "aria-label": "controlled" }}
                         size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
                       />
                     }
                     label="Continue to sell when out of stock"
@@ -705,7 +1293,7 @@ const ProductInfo = () => {
                 </div>
                 <div className="col-12 d-flex">
                   <div className="d-flex align-items-center me-4">
-                    <p className="text-lightBlue">Track Inventory on</p>
+                    <h6 className="text-lightBlue">Track Inventory on</h6>
                     <img src={info} alt="info" className="ms-2" width={13.5} />
                   </div>
                   <RadioGroup
@@ -740,7 +1328,7 @@ const ProductInfo = () => {
                   </RadioGroup>
                 </div>
                 {trackInventory === "variantLevel" && (
-                  <p className="text-lightBlue">
+                  <p className="text-lightBlue mt-2">
                     Add Variant options to create variants and manage inventory{" "}
                     <span className="text-blue-2 c-pointer">
                       (Add Variants)
@@ -750,14 +1338,14 @@ const ProductInfo = () => {
                 {trackInventory === "productLevel" && (
                   <React.Fragment>
                     <div className="col-12 d-flex justify-content-between mt-3">
-                      <h6 className="text-lightBlue">Manage Inventory</h6>
+                      <h6 className="text-grey-6">Manage Inventory</h6>
                       <p className="text-blue-2">Edit Store</p>
                     </div>
                     <div className="col-12 d-flex align-items-center mt-3 mb-2">
                       {/* <div className=""> */}
-                      <small className="text-lightBlue">
+                      <p className="text-lightBlue">
                         Apply Quantity to all stores
-                      </small>
+                      </p>
                       <img
                         src={info}
                         alt="info"

@@ -196,7 +196,9 @@ const Options = () => {
           >
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
-                <h5 className="text-lightBlue">Import Variant Sets Sets</h5>
+                <h5 className="text-lightBlue fw-500">
+                  Import Variant Sets Sets
+                </h5>
                 <img
                   src={cancel}
                   alt="cancel"
@@ -291,8 +293,8 @@ const Options = () => {
       {addOptions && (
         <div className="col-12 mt-1 mb-2 pb-2 ">
           <div
-            className="row py-3 mb-3 border-grey-5 rounded-3"
-            style={{ background: "rgba(39, 40, 63, 0.5)" }}
+            className="row py-3 mb-3 border-grey-5 rounded-3 bg-black-13"
+            // style={{ background: "rgba(39, 40, 63, 0.5)" }}
           >
             <div className="col-md-6 mb-3">
               <div className="d-flex align-item-center mb-2">

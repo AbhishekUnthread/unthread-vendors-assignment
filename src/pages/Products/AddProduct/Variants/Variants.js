@@ -182,7 +182,7 @@ const baseStyle = {
   padding: "0",
   borderWidth: 2,
   borderRadius: 2,
-  borderColor: "#5C6D8E",
+  borderColor: "#38395c",
   borderStyle: "dashed",
   //   backgroundColor: "",
   color: "#bdbdbd",

@@ -142,7 +142,9 @@ const Attributes = () => {
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
-              <h5 className="text-lightBlue">Select Additional Field Sets</h5>
+              <h5 className="text-lightBlue fw-500">
+                Select Additional Field Sets
+              </h5>
               <img
                 src={cancel}
                 alt="cancel"
