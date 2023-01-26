@@ -338,7 +338,6 @@ const AddProduct = () => {
               sx={{ m: 0, minWidth: 120, width: "100%" }}
               size="small"
             >
-              {/* <InputLabel id="demo-select-small">Select Size</InputLabel> */}
               <Select
                 labelId="demo-select-small"
                 id="demo-select-small"

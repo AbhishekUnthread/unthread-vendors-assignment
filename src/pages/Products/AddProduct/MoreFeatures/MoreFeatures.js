@@ -48,7 +48,7 @@ const Search = styled("div")(({ theme }) => ({
   // backgroundColor: alpha(theme.palette.common.white, 0.15),
   "&:hover": {
     // backgroundColor: alpha(theme.palette.common.white, 0.25),
-    backgroundColor: "#15142a",
+    // backgroundColor: "#2b2a46",
   },
   marginLeft: 0,
   width: "100%",
@@ -57,8 +57,9 @@ const Search = styled("div")(({ theme }) => ({
     marginRight: theme.spacing(2),
     width: "auto",
   },
-  backgroundColor: "#15142a",
+  // backgroundColor: "#2b2a46",
   height: "30.6px",
+  border: "1px solid #38395c",
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -255,14 +256,14 @@ const likeProductRows = [
     1,
     "The Fringe Diamond Ring",
     "Gold Products",
-    "₹ 20,600 "
+    "₹ 25,000"
   ),
-  createLikeProductData(2, "Fringe Diamond Ring", "Gold Products", "₹ 20,600 "),
+  createLikeProductData(2, "Fringe Diamond Ring", "Gold Products", "₹ 25,000"),
   createLikeProductData(
     3,
     "The Fringe Diamond Ring",
     "Gold Products",
-    "₹ 20,600 "
+    "₹ 25,000"
   ),
 ];
 
@@ -535,9 +536,12 @@ const MoreFeatures = () => {
   // ? LIKE APPLY CONDITION STARTS HERE
   const [likeApplyCondition, setLikeApplyCondition] = React.useState(false);
   const handleLikeApplyCondition = () => {
-    likeApplyCondition
-      ? setLikeApplyCondition(false)
-      : setLikeApplyCondition(true);
+    if (likeApplyCondition) {
+      setLikeApplyCondition(false);
+    } else {
+      setLikeApplyCondition(true);
+      setLikeAddCondition(false);
+    }
   };
   // ? LIKE APPLY CONDITION ENDS HERE
 
@@ -558,9 +562,12 @@ const MoreFeatures = () => {
   const [recommendedApplyCondition, setRecommendedApplyCondition] =
     React.useState(false);
   const handleRecommendedApplyCondition = () => {
-    recommendedApplyCondition
-      ? setRecommendedApplyCondition(false)
-      : setRecommendedApplyCondition(true);
+    if (recommendedApplyCondition) {
+      setRecommendedApplyCondition(false);
+    } else {
+      setRecommendedApplyCondition(true);
+      setRecommendedAddCondition(false);
+    }
   };
   // ? RECOMMENDED APPLY CONDITION ENDS HERE
 
@@ -715,7 +722,7 @@ const MoreFeatures = () => {
                   />
                   <p className="text-lightBlue c-pointer">Action</p>
                 </div>
-                {likeApplyCondition && likeAddCondition && (
+                {likeApplyCondition && (
                   <div className="d-flex px-3 justify-content-between align-items-center">
                     <div className="d-flex align-items-center">
                       <FormControlLabel
@@ -743,7 +750,7 @@ const MoreFeatures = () => {
                       <small className="ms-0 text-lightBlue">
                         <span className="text-blue-2">Price</span>&nbsp;is equal
                         to&nbsp;
-                        <span className="text-blue-2">Rs&nbsp;25,000</span>
+                        <span className="text-blue-2">₹&nbsp;25,000</span>
                       </small>
                     </div>
                     <div className="d-flex align-items-center">
@@ -848,10 +855,10 @@ const MoreFeatures = () => {
                         <OutlinedInput
                           placeholder="Enter Value"
                           size="small"
-                          defaultValue="1000"
+                          defaultValue="25000"
                           startAdornment={
                             <InputAdornment position="start">
-                              <p className="text-lightBlue">$</p>
+                              <p className="text-lightBlue">₹</p>
                             </InputAdornment>
                           }
                         />
@@ -877,159 +884,155 @@ const MoreFeatures = () => {
             )}
           </div>
         )}
-        {likeProductRadio === "automated" &&
-          likeApplyCondition &&
-          likeAddCondition && (
-            <React.Fragment>
-              <div className="col-12 mt-3">
-                <div className="row">
-                  <div className="col-md-9 px-md-0">
-                    <Search sx={{ background: "#1a1932" }} className="mx-0">
-                      <SearchIconWrapper>
-                        <SearchIcon sx={{ color: "#c8d8ff" }} />
-                      </SearchIconWrapper>
-                      <StyledInputBase
-                        placeholder="Search…"
-                        inputProps={{ "aria-label": "search" }}
-                      />
-                    </Search>
-                  </div>
-                  <div className="col-md-3 pe-md-0">
-                    <button className="button-gradient w-100 py-1 px-3">
-                      <p>Add Products</p>
-                    </button>
-                  </div>
+        {likeProductRadio === "automated" && likeApplyCondition && (
+          <React.Fragment>
+            <div className="col-12 mt-3">
+              <div className="row align-items-center">
+                <div className="col-md-9 px-md-0 py-2">
+                  <Search className="mx-0">
+                    <SearchIconWrapper>
+                      <SearchIcon sx={{ color: "#c8d8ff" }} />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                      placeholder="Search…"
+                      inputProps={{ "aria-label": "search" }}
+                    />
+                  </Search>
+                </div>
+                <div className="col-md-3 pe-md-0 py-2">
+                  <button
+                    className="button-gradient w-100 py-1 px-3"
+                    onClick={toggleAddProductDrawer("right", true)}
+                  >
+                    <p>Add Products</p>
+                  </button>
                 </div>
               </div>
-              <div className="col-12 px-0">
-                <TableContainer className="mt-3">
-                  <Table
-                    sx={{ minWidth: 750 }}
-                    aria-labelledby="tableTitle"
-                    size="medium"
-                  >
-                    <LikeProductTableHead
-                      numSelected={selected.length}
-                      order={order}
-                      orderBy={orderBy}
-                      onSelectAllClick={handleLikeSelectAllClick}
-                      onRequestSort={handleRequestSort}
-                      rowCount={likeProductRows.length}
-                    />
-                    <TableBody>
-                      {stableSort(
-                        likeProductRows,
-                        getComparator(order, orderBy)
+            </div>
+            <div className="col-12 px-0">
+              <TableContainer className="mt-3">
+                <Table
+                  sx={{ minWidth: 750 }}
+                  aria-labelledby="tableTitle"
+                  size="medium"
+                >
+                  <LikeProductTableHead
+                    numSelected={selected.length}
+                    order={order}
+                    orderBy={orderBy}
+                    onSelectAllClick={handleLikeSelectAllClick}
+                    onRequestSort={handleRequestSort}
+                    rowCount={likeProductRows.length}
+                  />
+                  <TableBody>
+                    {stableSort(likeProductRows, getComparator(order, orderBy))
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
                       )
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((row, index) => {
-                          const isItemSelected = isSelected(row.pId);
-                          const labelId = `enhanced-table-checkbox-${index}`;
+                      .map((row, index) => {
+                        const isItemSelected = isSelected(row.pId);
+                        const labelId = `enhanced-table-checkbox-${index}`;
 
-                          return (
-                            <TableRow
-                              hover
-                              role="checkbox"
-                              aria-checked={isItemSelected}
-                              tabIndex={-1}
-                              key={row.pId}
-                              selected={isItemSelected}
+                        return (
+                          <TableRow
+                            hover
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={row.pId}
+                            selected={isItemSelected}
+                          >
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                color="primary"
+                                checked={isItemSelected}
+                                inputProps={{
+                                  "aria-labelledby": labelId,
+                                }}
+                                size="small"
+                                onClick={(event) => handleClick(event, row.pId)}
+                                style={{
+                                  color: "#5C6D8E",
+                                  marginRight: 0,
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell
+                              component="th"
+                              id={labelId}
+                              scope="row"
+                              padding="none"
                             >
-                              <TableCell padding="checkbox">
-                                <Checkbox
-                                  color="primary"
-                                  checked={isItemSelected}
-                                  inputProps={{
-                                    "aria-labelledby": labelId,
-                                  }}
-                                  size="small"
-                                  onClick={(event) =>
-                                    handleClick(event, row.pId)
-                                  }
-                                  style={{
-                                    color: "#5C6D8E",
-                                    marginRight: 0,
-                                  }}
+                              <div className="d-flex align-items-center my-2">
+                                <img
+                                  src={ringSmall}
+                                  alt="ringSmall"
+                                  className="me-2"
+                                  height={45}
+                                  width={45}
                                 />
-                              </TableCell>
-                              <TableCell
-                                component="th"
-                                id={labelId}
-                                scope="row"
-                                padding="none"
-                              >
-                                <div className="d-flex align-items-center my-2">
-                                  <img
-                                    src={ringSmall}
-                                    alt="ringSmall"
-                                    className="me-2"
-                                    height={45}
-                                    width={45}
-                                  />
-                                  <div>
-                                    <p className="text-lightBlue fw-600">
-                                      {row.productName}
-                                    </p>
-                                    <small className="mt-2 text-grey-6">
-                                      SKU: TFDR012345
-                                    </small>
-                                  </div>
+                                <div>
+                                  <p className="text-lightBlue fw-600">
+                                    {row.productName}
+                                  </p>
+                                  <small className="mt-2 text-grey-6">
+                                    SKU: TFDR012345
+                                  </small>
                                 </div>
-                              </TableCell>
-                              <TableCell>
-                                <p className="text-lightBlue">{row.category}</p>
-                              </TableCell>
-                              <TableCell>
-                                <div className="d-flex align-items-center c-pointer ">
-                                  <p className="text-lightBlue">{row.price}</p>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <div className="d-flex align-items-center c-pointer ">
-                                  <img
-                                    src={deleteButton}
-                                    alt="deleteButton"
-                                    width={75}
-                                    className="c-pointer"
-                                  />
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      {emptyRows > 0 && (
-                        <TableRow
-                          style={{
-                            height: 53 * emptyRows,
-                          }}
-                        >
-                          <TableCell colSpan={6} />
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25]}
-                  component="div"
-                  count={rows.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  className="table-pagination"
-                />
-              </div>
-            </React.Fragment>
-          )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <p className="text-lightBlue">{row.category}</p>
+                            </TableCell>
+                            <TableCell>
+                              <div className="d-flex align-items-center c-pointer ">
+                                <p className="text-lightBlue">{row.price}</p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="d-flex align-items-center c-pointer ">
+                                <img
+                                  src={deleteButton}
+                                  alt="deleteButton"
+                                  width={75}
+                                  className="c-pointer"
+                                />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    {emptyRows > 0 && (
+                      <TableRow
+                        style={{
+                          height: 53 * emptyRows,
+                        }}
+                      >
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                className="table-pagination"
+              />
+            </div>
+          </React.Fragment>
+        )}
         {likeProductRadio === "manual" && (
           <React.Fragment>
             <img
               src={featureUpload}
-              className="w-100 c-pointer"
+              className="w-100 c-pointer px-0"
               alt=""
               onClick={toggleAddProductDrawer("right", true)}
             />
@@ -1176,24 +1179,24 @@ const MoreFeatures = () => {
                             </small>
                             <div className="d-flex align-items-center justify-content-between mb-2 mt-3 text-grey-6">
                               <small>Metal Price</small>
-                              <small className="ms-2">Rs 15,000</small>
+                              <small className="ms-2">₹&nbsp;15,000</small>
                             </div>
                             <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
                               <small>Diamond Price</small>
-                              <small className="ms-2">Rs&nbsp;4,000</small>
+                              <small className="ms-2">₹&nbsp;4,000</small>
                             </div>
                             <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
                               <small>Making Charges</small>
-                              <small className="ms-2">Rs&nbsp;1,000</small>
+                              <small className="ms-2">₹&nbsp;1,000</small>
                             </div>
                             <div className="d-flex align-items-center justify-content-between mb-3 mt-2 text-grey-6">
                               <small>GST</small>
-                              <small className="ms-2">Rs&nbsp;&nbsp;600</small>
+                              <small className="ms-2">₹&nbsp;&nbsp;600</small>
                             </div>
                             <div className="d-flex align-items-center justify-content-between mb-2 mt-2">
                               <p className="text-lightBlue">Total</p>
                               <p className="ms-2 text-lightBlue fw-600">
-                                Rs&nbsp;20,600
+                                ₹&nbsp;20,600
                               </p>
                             </div>
                           </div>
@@ -1227,11 +1230,11 @@ const MoreFeatures = () => {
         <div className="d-flex flex-column py-3 px-4 feature-buttons">
           <hr className="hr-grey-6 my-3 w-100" />
           <div className="d-flex justify-content-between">
-            <button className="button-lightBlue-outline py-2 px-3">
-              <p>Cancel</p>
-            </button>
             <button className="button-gradient py-2 px-5 w-auto ">
               <p>Add 4 Products</p>
+            </button>
+            <button className="button-lightBlue-outline py-2 px-4">
+              <p>Cancel</p>
             </button>
           </div>
         </div>
@@ -1359,7 +1362,7 @@ const MoreFeatures = () => {
                   <p className="text-lightBlue c-pointer">Action</p>
                 </div>
 
-                {recommendedApplyCondition && recommendedAddCondition && (
+                {recommendedApplyCondition && (
                   <div className="d-flex px-3 justify-content-between align-items-center">
                     <div className="d-flex align-items-center">
                       <FormControlLabel
@@ -1387,7 +1390,7 @@ const MoreFeatures = () => {
                       <small className="ms-0 text-lightBlue">
                         <span className="text-blue-2">Price</span>&nbsp;is equal
                         to&nbsp;
-                        <span className="text-blue-2">Rs&nbsp;25,000</span>
+                        <span className="text-blue-2">₹&nbsp;25,000</span>
                       </small>
                     </div>
                     <div className="d-flex align-items-center">
@@ -1522,13 +1525,12 @@ const MoreFeatures = () => {
           </div>
         )}
         {recommendedProductRadio === "automated" &&
-          recommendedApplyCondition &&
-          recommendedAddCondition && (
+          recommendedApplyCondition && (
             <React.Fragment>
               <div className="col-12 mt-3">
-                <div className="row">
-                  <div className="col-md-9 px-md-0">
-                    <Search sx={{ background: "#1a1932" }} className="mx-0">
+                <div className="row align-items-center">
+                  <div className="col-md-9 px-md-0 py-2">
+                    <Search className="mx-0">
                       <SearchIconWrapper>
                         <SearchIcon sx={{ color: "#c8d8ff" }} />
                       </SearchIconWrapper>
@@ -1538,8 +1540,11 @@ const MoreFeatures = () => {
                       />
                     </Search>
                   </div>
-                  <div className="col-md-3 pe-md-0">
-                    <button className="button-gradient w-100 py-1 px-3">
+                  <div className="col-md-3 pe-md-0 py-2">
+                    <button
+                      className="button-gradient w-100 py-1 px-3"
+                      onClick={toggleAddProductDrawer("right", true)}
+                    >
                       <p>Add Products</p>
                     </button>
                   </div>
@@ -1673,7 +1678,7 @@ const MoreFeatures = () => {
         {recommendedProductRadio === "manual" && (
           <img
             src={featureUpload}
-            className="w-100 c-pointer"
+            className="w-100 c-pointer px-0"
             alt=""
             onClick={toggleAddProductDrawer("right", true)}
           />
@@ -1685,7 +1690,7 @@ const MoreFeatures = () => {
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 ">
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-lightBlue fw-bold">Labels</h5>
-              <img src={label} alt="label" className="" width={75} />
+              <img src={label} alt="label" className="" width={90} />
             </div>
             <small className="text-grey-6 my-3 d-block">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus
@@ -1700,7 +1705,7 @@ const MoreFeatures = () => {
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 ">
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-lightBlue fw-bold">Size Chart</h5>
-              <img src={sizeChart} alt="label" className="" width={90} />
+              <img src={sizeChart} alt="label" className="" width={93} />
             </div>
             <small className="text-grey-6 my-3 d-block">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus
@@ -1715,7 +1720,7 @@ const MoreFeatures = () => {
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 ">
             <div className="d-flex justify-content-between align-items-end">
               <h5 className="text-lightBlue fw-bold">Pre Order</h5>
-              <img src={preOrder} alt="label" className="" width={85} />
+              <img src={preOrder} alt="label" className="" width={97} />
             </div>
             <small className="text-grey-6 my-3 d-block">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus

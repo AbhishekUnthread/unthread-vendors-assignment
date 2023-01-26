@@ -2146,26 +2146,26 @@ const AllProducts = () => {
                                 </small>
                                 <div className="d-flex align-items-center justify-content-between mb-2 mt-3 text-grey-6">
                                   <small>Metal Price</small>
-                                  <small className="ms-2">Rs 15,000</small>
+                                  <small className="ms-2">₹&nbsp;15,000</small>
                                 </div>
                                 <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
                                   <small>Diamond Price</small>
-                                  <small className="ms-2">Rs&nbsp;4,000</small>
+                                  <small className="ms-2">₹&nbsp;4,000</small>
                                 </div>
                                 <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
                                   <small>Making Charges</small>
-                                  <small className="ms-2">Rs&nbsp;1,000</small>
+                                  <small className="ms-2">₹&nbsp;1,000</small>
                                 </div>
                                 <div className="d-flex align-items-center justify-content-between mb-3 mt-2 text-grey-6">
                                   <small>GST</small>
                                   <small className="ms-2">
-                                    Rs&nbsp;&nbsp;600
+                                    ₹&nbsp;&nbsp;600
                                   </small>
                                 </div>
                                 <div className="d-flex align-items-center justify-content-between mb-2 mt-2">
                                   <p className="text-lightBlue">Total</p>
                                   <p className="ms-2 text-lightBlue fw-600">
-                                    Rs&nbsp;20,600
+                                    ₹&nbsp;20,600
                                   </p>
                                 </div>
                               </div>

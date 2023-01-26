@@ -18,6 +18,8 @@ import {
   TableRow,
   TableSortLabel,
   InputAdornment,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 // ! IMAGES IMPORTS
@@ -147,7 +149,7 @@ function EnhancedTableHead(props) {
                   className="me-2"
                 />
               )}
-              {headCell.label}
+              <p className="text-lightBlue">{headCell.label}</p>
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
@@ -285,11 +287,23 @@ const Variants = () => {
   );
   // ? FILE UPLOAD ENDS HERE
 
+  // ? SIZE SELECT STARTS HERE
+  const [storeAddress, setStoreAddress] = React.useState("");
+  // const [metal, setMetal] = React.useState("");
+  // const [diamond, setDiamond] = React.useState("");
+
+  const handleStoreAddress = (event) => {
+    setStoreAddress(event.target.value);
+  };
+  // ? SIZE SELECT ENDS HERE
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-3 p-3 row">
       <div className="d-flex col-12 px-0 justify-content-between">
         <div className="d-flex align-items-center">
-          <h6 className="text-lightBlue me-auto text-lightBlue">Variants</h6>
+          <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
+            Variants
+          </h6>
         </div>
         <p className="text-blue-2">Add Variant</p>
       </div>
@@ -352,21 +366,55 @@ const Variants = () => {
         </ToggleButtonGroup>
         {/* </div> */}
       </div>
-      <div className="d-flex col-12 px-0 align-items-center justify-content-between my-4">
-        <div className="d-flex align-items-center">
-          <p className="text-lightBlue">Store Address:</p>
-          <FormControl sx={{ width: 400 }} className="px-0 ms-3">
+      <div className="col-12 px-0 my-4">
+        <div className="row align-items-center justify-content-between">
+          <div className="d-flex align-items-center col-8 pe-0">
+            <p className="text-lightBlue" style={{ width: "135px" }}>
+              Store Address:
+            </p>
+            {/* <FormControl sx={{ width: 400 }} className="px-0 ms-3">
             <OutlinedInput
               placeholder="Enter store address"
               size="small"
               defaultValue="JWL Bhaugh, Delhi 110001"
             />
-          </FormControl>
+          </FormControl> */}
+            <FormControl
+              sx={{ m: 0, minWidth: 120, width: "100%" }}
+              size="small"
+            >
+              <Select
+                labelId="demo-select-small"
+                id="demo-select-small"
+                value={storeAddress}
+                onChange={handleStoreAddress}
+                size="small"
+              >
+                <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  None
+                </MenuItem>
+                <MenuItem value={10} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  JWL Bhaugh, Delhi 110001
+                </MenuItem>
+                <MenuItem value={20} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  JWL Bhaugh, Delhi 110001
+                </MenuItem>
+                <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  JWL Bhaugh, Delhi 110001
+                </MenuItem>
+                <MenuItem value={40} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  JWL Bhaugh, Delhi 110001
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+          <div className="col-4">
+            <button className="button-grey py-2 px-3 w-100">
+              <img src={convert} alt="convert" className="me-2" width={15} />
+              <p>Auto Convert Price</p>
+            </button>
+          </div>
         </div>
-        <button className="button-grey py-2 px-3">
-          <img src={convert} alt="convert" className="me-2" width={15} />
-          <p>Auto Convert Price</p>
-        </button>
       </div>
       <div className="col-12 px-0">
         <TableContainer>
@@ -456,7 +504,7 @@ const Variants = () => {
                             defaultValue={row.price}
                             startAdornment={
                               <InputAdornment position="start">
-                                <p className="text-lightBlue">Rs</p>
+                                <p className="text-lightBlue">₹</p>
                               </InputAdornment>
                             }
                           />

@@ -365,11 +365,12 @@ textarea,
 
 .toggle {
   .Mui-selected {
-    background: linear-gradient(
-      303.01deg,
-      rgba(89, 97, 248, 0.2) -4.4%,
-      rgba(242, 217, 247, 0.2) 111.29%
-    );
+    background: linear-gradient(303.01deg, #3d3f92 -4.4%, #7a6e91 111.29%);
+    // background: linear-gradient(
+    //   303.01deg,
+    //   rgba(89, 97, 248, 0.2) -4.4%,
+    //   rgba(242, 217, 247, 0.2) 111.29%
+    // );
     p {
       color: $lightBlue !important;
     }
@@ -377,6 +378,13 @@ textarea,
   p {
     text-transform: capitalize !important;
   }
+  // .MuiToggleButton-root:hover {
+  //   background: linear-gradient(
+  //     303.01deg,
+  //     #2f2e69 -4.4%,
+  //     #514969 111.29%
+  //   ) !important;
+  // }
 }
 
 .MuiSelect-select {

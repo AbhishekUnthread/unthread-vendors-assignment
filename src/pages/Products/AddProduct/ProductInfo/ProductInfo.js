@@ -4,6 +4,7 @@ import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import { useDropzone } from "react-dropzone";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
+import clock from "../../../../assets/icons/clock.svg";
 import productInfoMedia1 from "../../../../assets/images/products/productInfoMedia1.svg";
 import productInfoMedia2 from "../../../../assets/images/products/productInfoMedia2.svg";
 // ! MATERIAL IMPORTS
@@ -209,7 +210,7 @@ const ProductInfo = () => {
                 <small className="text-lightBlue">Title</small>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
-              <FormControl className="col-7 px-0">
+              <FormControl className="w-100 px-0">
                 <OutlinedInput placeholder="Enter Title" size="small" />
               </FormControl>
             </div>
@@ -247,7 +248,10 @@ const ProductInfo = () => {
                   </div>
                 </ToggleButton>
               </ToggleButtonGroup>
-              <small className="text-grey-6 mt-1">ⓘ Schedule Product</small>
+              <div className="d-flex align-items-center mt-1">
+                <img src={clock} alt="clock" className="me-1" width={12} />
+                <small className="text-blue-2">Schedule Product</small>
+              </div>
             </div>
           </div>
         </div>
@@ -570,23 +574,23 @@ const ProductInfo = () => {
                     <small className="text-lightBlue">
                       Calculated Total Price
                     </small>
-                    <small className="text-lightBlue">Rs&nbsp;20,600</small>
+                    <small className="text-lightBlue">₹&nbsp;20,600</small>
                   </div>
                   <div className="d-flex justify-content-between mb-2">
                     <small className="text-grey-6">Metal Price</small>
-                    <small className="text-grey-6">Rs&nbsp;15,000</small>
+                    <small className="text-grey-6">₹&nbsp;15,000</small>
                   </div>
                   <div className="d-flex justify-content-between mb-2">
                     <small className="text-grey-6">Diamond Price</small>
-                    <small className="text-grey-6">Rs&nbsp;4,000</small>
+                    <small className="text-grey-6">₹&nbsp;4,000</small>
                   </div>
                   <div className="d-flex justify-content-between mb-2">
                     <small className="text-grey-6">Making Charges</small>
-                    <small className="text-grey-6">Rs&nbsp;1,000</small>
+                    <small className="text-grey-6">₹&nbsp;1,000</small>
                   </div>
                   <div className="d-flex justify-content-between">
                     <small className="text-grey-6">GST</small>
-                    <small className="text-grey-6">Rs&nbsp;600</small>
+                    <small className="text-grey-6">₹&nbsp;600</small>
                   </div>
                 </div>
 
