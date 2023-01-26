@@ -13,90 +13,13 @@ import Attributes from "./Attributes/Attributes";
 import AppReactImageGallery from "../../../components/AppReactImageGallery/AppReactImageGallery";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
-import info from "../../../assets/icons/info.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import gold from "../../../assets/images/products/gold.svg";
 import silver from "../../../assets/images/products/silver.svg";
 import platinum from "../../../assets/images/products/platinum.svg";
-import cancel from "../../../assets/icons/cancel.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
-import {
-  Box,
-  FormControl,
-  MenuItem,
-  Select,
-  Tab,
-  Tabs,
-  TextField,
-  Checkbox,
-  Autocomplete,
-  DialogActions,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Slide,
-  styled,
-  InputBase,
-  FormControlLabel,
-  FormGroup,
-  Popover,
-  OutlinedInput,
-} from "@mui/material";
-// ! MATERIAL ICONS IMPORTS
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import SearchIcon from "@mui/icons-material/Search";
-
-// ? SEARCH INPUT STARTS HERE
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  // backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    // backgroundColor: alpha(theme.palette.common.white, 0.25),
-    backgroundColor: "#1c1b33",
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: 0,
-    width: "auto",
-  },
-  backgroundColor: "#1c1b33",
-  height: "30.6px",
-  border: "1px solid #5c6d8e",
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(0.7, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    borderRadius: "5px",
-    // [theme.breakpoints.up("sm")]: {
-    //   width: "12ch",
-    //   "&:focus": {
-    //     width: "20ch",
-    //   },
-    // },
-  },
-}));
-// ? SEARCH INPUT ENDS HERE
+import { Box, FormControl, MenuItem, Select, Tab, Tabs } from "@mui/material";
 
 // ? TABS STARTS HERE
 function TabPanel(props) {
@@ -126,33 +49,16 @@ TabPanel.propTypes = {
 };
 // ? TABS ENDS HERE
 
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-// ? DIALOG TRANSITION ENDS HERE
-
-const taggedWithData = [
-  { title: "Tag 1", value: "tag1" },
-  { title: "Tag 2", value: "tag2" },
-  { title: "Tag 3", value: "tag3" },
-  { title: "Tag 4", value: "tag4" },
-  { title: "Tag 5", value: "tag5" },
-  { title: "Tag 6", value: "tag6" },
-  { title: "Tag 7", value: "tag7" },
-  { title: "Tag 8", value: "tag8" },
-  { title: "Tag 9", value: "tag9" },
-  { title: "Tag 10", value: "tag10" },
-  { title: "Tag 11", value: "tag11" },
-  { title: "Tag 12", value: "tag12" },
-];
-
 const AddProduct = () => {
   const [value, setValue] = React.useState(0);
 
   // ? TABS STARTS HERE
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+  const handleTabChange = () => {
+    // console.log("asdf");
+    value < 6 && setValue(value + 1);
   };
   // ? TABS ENDS HERE
 
@@ -193,33 +99,6 @@ const AddProduct = () => {
   //     e.target.closest("label").classList.toggle("active");
   //   }
   // };
-
-  // ? TAGS DIALOG STARTS HERE
-  const [openTags, setOpenTags] = React.useState(false);
-
-  const handleTagsOpen = () => {
-    setOpenTags(true);
-  };
-
-  const handleTagsClose = () => {
-    setOpenTags(false);
-  };
-  // ? TAGS DIALOG ENDS HERE
-
-  // * SORT POPOVERS STARTS
-  const [anchorTagEl, setAnchorTagEl] = React.useState(null);
-
-  const handleTagClick = (event) => {
-    setAnchorTagEl(event.currentTarget);
-  };
-
-  const handleTagClose = () => {
-    setAnchorTagEl(null);
-  };
-
-  const openTag = Boolean(anchorTagEl);
-  const idTag = openTag ? "simple-popover" : undefined;
-  // * SORT POPOVERS ENDS
 
   return (
     <div className="page container-fluid position-relative">
@@ -594,30 +473,6 @@ const AddProduct = () => {
               </Dialog>
             </div>
 
-            <Autocomplete
-              multiple
-              id="checkboxes-tags-demo"
-              sx={{ width: "100%", mt: 2 }}
-              options={taggedWithData}
-              disableCloseOnSelect
-              getOptionLabel={(option) => option.title}
-              size="small"
-              renderOption={(props, option, { selected }) => (
-                <li {...props}>
-                  <Checkbox
-                    icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                    checkedIcon={<CheckBoxIcon fontSize="small" />}
-                    style={{ marginRight: 0 }}
-                    checked={selected}
-                    size="small"
-                  />
-                  <small className="text-lightBlue my-1">{option.title}</small>
-                </li>
-              )}
-              renderInput={(params) => (
-                <TextField size="small" {...params} placeholder="Search Tags" />
-              )}
-            />
           </div> */}
         </div>
       </div>
@@ -630,8 +485,11 @@ const AddProduct = () => {
             <p>Save as Draft</p>
           </button>
         </div>
-        <button className="button-gradient py-2 px-4 w-auto ">
-          <p>Continue</p>
+        <button
+          className="button-gradient py-2 px-4 w-auto"
+          onClick={handleTabChange}
+        >
+          <p>{value === 6 ? "Save" : "Continue"}</p>
         </button>
       </div>
     </div>
