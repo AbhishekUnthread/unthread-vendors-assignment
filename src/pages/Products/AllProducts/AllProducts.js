@@ -1388,7 +1388,7 @@ const AllProducts = () => {
                   anchorEl={anchorVendorEl}
                   onClose={handleVendorClose}
                 >
-                  <div className="autocomplete-padding">
+                  <div className="py-2">
                     <Autocomplete
                       id="free-solo-demo"
                       freeSolo
@@ -1446,35 +1446,37 @@ const AllProducts = () => {
                   anchorEl={anchorCategoryEl}
                   onClose={handleCategoryClose}
                 >
-                  <Autocomplete
-                    id="free-solo-demo"
-                    freeSolo
-                    size="small"
-                    sx={{ width: 200 }}
-                    options={vendorData}
-                    getOptionLabel={(option) => option.title}
-                    renderOption={(props, option) => (
-                      <li {...props}>
-                        <small className="text-lightBlue my-1">
-                          {option.title}
-                        </small>
-                      </li>
-                    )}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        placeholder="Search"
-                        inputRef={(input) => input?.focus()}
-                        // InputProps={{
-                        //   startAdornment: (
-                        //     <InputAdornment position="start">
-                        //       <AccountCircle />
-                        //     </InputAdornment>
-                        //   ),
-                        // }}
-                      />
-                    )}
-                  />
+                  <div className="py-2">
+                    <Autocomplete
+                      id="free-solo-demo"
+                      freeSolo
+                      size="small"
+                      sx={{ width: 200 }}
+                      options={vendorData}
+                      getOptionLabel={(option) => option.title}
+                      renderOption={(props, option) => (
+                        <li {...props}>
+                          <small className="text-lightBlue my-1">
+                            {option.title}
+                          </small>
+                        </li>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder="Search"
+                          inputRef={(input) => input?.focus()}
+                          // InputProps={{
+                          //   startAdornment: (
+                          //     <InputAdornment position="start">
+                          //       <AccountCircle />
+                          //     </InputAdornment>
+                          //   ),
+                          // }}
+                        />
+                      )}
+                    />
+                  </div>
                 </Popover>
 
                 <button
@@ -1501,38 +1503,42 @@ const AllProducts = () => {
                   anchorEl={anchorTaggedWithEl}
                   onClose={handleTaggedWithClose}
                 >
-                  <Autocomplete
-                    multiple
-                    id="checkboxes-tags-demo"
-                    sx={{ width: 300 }}
-                    options={taggedWithData}
-                    disableCloseOnSelect
-                    getOptionLabel={(option) => option.title}
-                    size="small"
-                    renderOption={(props, option, { selected }) => (
-                      <li {...props}>
-                        <Checkbox
-                          icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                          checkedIcon={<CheckBoxIcon fontSize="small" />}
-                          checked={selected}
+                  <div className="py-2">
+                    <Autocomplete
+                      multiple
+                      id="checkboxes-tags-demo"
+                      sx={{ width: 300 }}
+                      options={taggedWithData}
+                      disableCloseOnSelect
+                      getOptionLabel={(option) => option.title}
+                      size="small"
+                      renderOption={(props, option, { selected }) => (
+                        <li {...props}>
+                          <Checkbox
+                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                            checkedIcon={<CheckBoxIcon fontSize="small" />}
+                            checked={selected}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                            }}
+                          />
+                          <small className="text-lightBlue">
+                            {option.title}
+                          </small>
+                        </li>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
                           size="small"
-                          style={{
-                            color: "#5C6D8E",
-                            marginRight: 0,
-                          }}
+                          {...params}
+                          placeholder="Search"
+                          inputRef={(input) => input?.focus()}
                         />
-                        <small className="text-lightBlue">{option.title}</small>
-                      </li>
-                    )}
-                    renderInput={(params) => (
-                      <TextField
-                        size="small"
-                        {...params}
-                        placeholder="Search"
-                        inputRef={(input) => input?.focus()}
-                      />
-                    )}
-                  />
+                      )}
+                    />
+                  </div>
                 </Popover>
 
                 <React.Fragment key="right">

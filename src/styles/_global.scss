@@ -250,7 +250,7 @@
 
 .MuiPopover-paper {
   border: 1px solid $grey5;
-  padding: 0.6rem 0.3rem;
+  padding: 0 0.4rem;
   margin-top: 0.3rem;
   background-color: $black13 !important;
   border-radius: 8px !important;
@@ -352,6 +352,7 @@ textarea,
 .MuiMenuItem-root {
   font-size: 13px !important;
   color: $lightBlue !important;
+  border-radius: 4px !important;
   &::placeholder {
     font-size: 13px;
     color: $grey6 !important;
@@ -466,9 +467,9 @@ textarea {
 //   border: "1px solid #c8d8ff";
 // }
 
-.autocomplete-padding {
-  padding: 0.1rem 0.3rem;
-}
+// .autocomplete-padding {
+//   padding: 0.1rem 0.3rem;
+// }
 
 .MuiFormControl-root {
   border-radius: 4px;
@@ -509,7 +510,7 @@ textarea {
 // * MENU ITEM STYLES
 .MuiMenuItem-root.Mui-selected,
 .MuiMenuItem-root:hover {
-  background: $black15 !important;
+  background: $black18 !important;
 }
 // * FIELD INPUT STYLES
 .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
@@ -527,10 +528,21 @@ textarea {
 }
 
 // * AUTOCOMPLETE LIST ON HOVER STYLE
+.MuiAutocomplete-popper {
+  border: 1px solid $grey5;
+  padding: 0 0.4rem !important;
+  margin-top: 0.3rem !important;
+  background-color: $black13 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
 .MuiAutocomplete-listbox {
   // background: $black9 !important;
+  li {
+    border-radius: 4px !important;
+  }
   li:hover {
-    background: $black15 !important;
+    background: $black18 !important;
   }
 }
 
