@@ -221,6 +221,12 @@ const headCells = [
     disablePadding: false,
     label: "Status",
   },
+  {
+    id: "actions",
+    numeric: false,
+    disablePadding: true,
+    label: "",
+  },
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -288,18 +294,22 @@ function EnhancedTableHead(props) {
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              <p className="text-lightBlue">{headCell.label}</p>
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+            {headCell.id !== "actions" && (
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : "asc"}
+                onClick={createSortHandler(headCell.id)}
+              >
+                <p className="text-lightBlue">{headCell.label}</p>
+                {orderBy === headCell.id ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === "desc"
+                      ? "sorted descending"
+                      : "sorted ascending"}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            )}
           </TableCell>
         ))}
       </TableRow>
@@ -2320,7 +2330,11 @@ const AllProducts = () => {
                       <p className="text-lightBlue c-pointer">
                         Archived Product
                       </p>
-                      <img src={deleteRed} alt="delete" className="c-pointer" />
+                      <img
+                        src={deleteRed}
+                        alt="delete"
+                        className="c-pointer mb-1"
+                      />
                     </div>
                   </div>
                 </Popover>
@@ -2498,81 +2512,83 @@ const AllProducts = () => {
                                 />
                               </div>
                               {/* <MoreVertIcon className="ms-4" /> */}
-                              <img
-                                src={verticalDots}
-                                alt="verticalDots"
-                                className="ms-4 c-pointer"
-                                aria-describedby={idActions}
-                                variant="contained"
-                                onClick={handleActionClick}
-                              />
-
-                              <Popover
-                                anchorOrigin={{
-                                  vertical: "bottom",
-                                  horizontal: "center",
-                                }}
-                                transformOrigin={{
-                                  vertical: "top",
-                                  horizontal: "center",
-                                }}
-                                id={idActions}
-                                open={openActions}
-                                anchorEl={anchorActionEl}
-                                onClose={handleActionClose}
-                              >
-                                <div className="py-2 px-2">
-                                  <small className="text-grey-7">ACTION</small>
-                                  <hr className="hr-grey-6 my-2" />
-                                  <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                                    <img
-                                      src={editButton}
-                                      alt="editButton"
-                                      height={36}
-                                      className="c-pointer me-2"
-                                    />
-                                    <img
-                                      src={duplicateButton}
-                                      alt="duplicateButton"
-                                      height={36}
-                                      className="c-pointer"
-                                    />
-                                  </div>
-                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
-                                    Make it Active
-                                  </small>
-                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
-                                    Make it Draft
-                                  </small>
-                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
-                                    Edit SKU
-                                  </small>
-                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
-                                    Edit Quantity
-                                  </small>
-                                  <small className="text-grey-7 mt-4">
-                                    Tags & Collection
-                                  </small>
-                                  <hr className="hr-grey-6 my-2" />
-                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
-                                    Add or Remove Tags
-                                  </small>
-                                  <small className="my-3 text-lightBlue c-pointer font2 d-block">
-                                    Add or Remove Collections
-                                  </small>
-                                  <div className="d-flex justify-content-between mt-3">
-                                    <small className="text-lightBlue c-pointer font2 d-block">
-                                      Archived Product
-                                    </small>
-                                    <img
-                                      src={deleteRed}
-                                      alt="delete"
-                                      className="c-pointer"
-                                    />
-                                  </div>
-                                </div>
-                              </Popover>
                             </div>
+                          </TableCell>
+                          <TableCell>
+                            <img
+                              src={verticalDots}
+                              alt="verticalDots"
+                              className="c-pointer"
+                              aria-describedby={idActions}
+                              variant="contained"
+                              onClick={handleActionClick}
+                            />
+
+                            <Popover
+                              anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "center",
+                              }}
+                              transformOrigin={{
+                                vertical: "top",
+                                horizontal: "center",
+                              }}
+                              id={idActions}
+                              open={openActions}
+                              anchorEl={anchorActionEl}
+                              onClose={handleActionClose}
+                            >
+                              <div className="py-2 px-2">
+                                <small className="text-grey-7">ACTION</small>
+                                <hr className="hr-grey-6 my-2" />
+                                <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
+                                  <img
+                                    src={editButton}
+                                    alt="editButton"
+                                    height={36}
+                                    className="c-pointer me-2"
+                                  />
+                                  <img
+                                    src={duplicateButton}
+                                    alt="duplicateButton"
+                                    height={36}
+                                    className="c-pointer"
+                                  />
+                                </div>
+                                <small className="my-3 text-lightBlue c-pointer font2 d-block">
+                                  Make it Active
+                                </small>
+                                <small className="my-3 text-lightBlue c-pointer font2 d-block">
+                                  Make it Draft
+                                </small>
+                                <small className="my-3 text-lightBlue c-pointer font2 d-block">
+                                  Edit SKU
+                                </small>
+                                <small className="my-3 text-lightBlue c-pointer font2 d-block">
+                                  Edit Quantity
+                                </small>
+                                <small className="text-grey-7 mt-4">
+                                  Tags & Collection
+                                </small>
+                                <hr className="hr-grey-6 my-2" />
+                                <small className="my-3 text-lightBlue c-pointer font2 d-block">
+                                  Add or Remove Tags
+                                </small>
+                                <small className="my-3 text-lightBlue c-pointer font2 d-block">
+                                  Add or Remove Collections
+                                </small>
+                                <div className="d-flex justify-content-between mt-3">
+                                  <small className="text-lightBlue c-pointer font2 d-block">
+                                    Archived Product
+                                  </small>
+                                  <img
+                                    src={deleteRed}
+                                    alt="delete"
+                                    className="c-pointer"
+                                  />
+                                </div>
+                              </div>
+                            </Popover>
                           </TableCell>
                         </TableRow>
                       );
