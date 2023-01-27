@@ -578,9 +578,8 @@ textarea {
   border-radius: 8px !important;
   box-shadow: none !important;
   .MuiCheckbox-root {
-    padding-left: 0 !important;
-    padding-top: 5px !important;
-    padding-bottom: 5px !important;
+    padding: 5px !important;
+    margin-left: -8px !important;
   }
 }
 .MuiAutocomplete-listbox {
