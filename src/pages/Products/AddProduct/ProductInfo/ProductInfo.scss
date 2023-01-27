@@ -1,15 +1,6 @@
 @import "../../../../styles/global";
 
 .productInfo {
-  .MuiInputAdornment-outlined {
-    p {
-      font-size: 13px !important;
-      color: $lightBlue !important;
-      background: $black10 !important;
-      padding: 3px 8px;
-      border-radius: 4px;
-    }
-  }
   &-inputs {
     .MuiOutlinedInput-root {
       padding-right: 8px !important;
@@ -33,6 +24,20 @@
     }
     .MuiToggleButton-root {
       line-height: 1.45 !important;
+    }
+  }
+  &-inputs {
+    .MuiOutlinedInput-root {
+      padding-right: 6px !important;
+    }
+    .MuiInputAdornment-outlined {
+      p {
+        font-size: 13px !important;
+        color: $lightBlue !important;
+        background: $black10 !important;
+        padding: 3px 8px;
+        border-radius: 4px;
+      }
     }
   }
 }

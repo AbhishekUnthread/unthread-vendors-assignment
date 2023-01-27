@@ -377,13 +377,13 @@ const Variants = () => {
           onClose={handleMetalFilterClose}
         >
           <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-            <p className="text-lightBlue">1</p>
+            <small className="text-lightBlue">1</small>
           </div>
           <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-            <p className="text-lightBlue">2</p>
+            <small className="text-lightBlue">2</small>
           </div>
           <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-            <p className="text-lightBlue">3</p>
+            <small className="text-lightBlue">3</small>
           </div>
         </Popover>
       </div>

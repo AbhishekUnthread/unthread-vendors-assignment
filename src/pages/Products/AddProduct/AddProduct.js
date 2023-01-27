@@ -13,6 +13,7 @@ import Attributes from "./Attributes/Attributes";
 import AppReactImageGallery from "../../../components/AppReactImageGallery/AppReactImageGallery";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
+import info from "../../../assets/icons/info.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import gold from "../../../assets/images/products/gold.svg";
@@ -20,6 +21,8 @@ import silver from "../../../assets/images/products/silver.svg";
 import platinum from "../../../assets/images/products/platinum.svg";
 // ! MATERIAL IMPORTS
 import { Box, FormControl, MenuItem, Select, Tab, Tabs } from "@mui/material";
+import DoneIcon from "@mui/icons-material/Done";
+import CloseIcon from "@mui/icons-material/Close";
 
 // ? TABS STARTS HERE
 function TabPanel(props) {
@@ -313,6 +316,53 @@ const AddProduct = () => {
                 ))}
               </RadioGroup>
             </FormControl> */}
+          </div>
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row mx-0 mt-3">
+            <div className="col-12 px-0">
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex mb-3">
+                  <h6 className="text-lightBlue px-0 fw-500">
+                    Product Applicable For
+                  </h6>
+                  <img src={info} alt="info" className="ms-2" width={15} />
+                </div>
+                <small className="mb-3 c-pointer text-blue-2">Edit</small>
+              </div>
+              <div className="d-flex align-items-center mb-2">
+                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+                <p className="text-lightBlue ms-2">Price Breakdown</p>
+              </div>
+              <div className="d-flex align-items-center mb-2">
+                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+                <p className="text-lightBlue ms-2">Returnable</p>
+              </div>
+              <div className="d-flex align-items-center mb-2">
+                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+                <p className="text-lightBlue ms-2">COD</p>
+              </div>
+              <div className="d-flex align-items-center mb-2">
+                <CloseIcon sx={{ color: "#EA3A3D", fontSize: 20 }} />
+                <p className="text-lightBlue ms-2">Lifetime Exchange</p>
+              </div>
+              <div className="d-flex align-items-center mb-2">
+                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+                <p className="text-lightBlue ms-2">Lifetime Buyback</p>
+              </div>
+              <div className="d-flex align-items-center mb-2">
+                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+                <p className="text-lightBlue ms-2">Next Day Shipping</p>
+              </div>
+              <div className="d-flex align-items-center mb-2">
+                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+                <p className="text-lightBlue ms-2">Enable Try On</p>
+              </div>
+              <div className="d-flex align-items-center mb-2">
+                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+                <p className="text-lightBlue ms-2">
+                  Enable to View Similar Items
+                </p>
+              </div>
+            </div>
           </div>
           {/* 
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-3 mb-3">

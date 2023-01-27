@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
 import clock from "../../../../assets/icons/clock.svg";
+import editWhite from "../../../../assets/icons/editWhite.svg";
 import cancel from "../../../../assets/icons/cancel.svg";
 import arrowDown from "../../../../assets/icons/arrowDown.svg";
 import productInfoMedia1 from "../../../../assets/images/products/productInfoMedia1.svg";
@@ -33,6 +34,8 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
+  TextFieldProps,
+  Input,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -43,6 +46,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import SearchIcon from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
+import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -176,6 +180,18 @@ const vendorData = [
   { title: "Content 10", value: "content10" },
   { title: "Content 11", value: "content11" },
   { title: "Content 12", value: "content12" },
+];
+
+const discountData = [
+  { title: "5%", value: "5" },
+  { title: "10%", value: "10" },
+  { title: "20%", value: "20" },
+  { title: "30%", value: "30" },
+  { title: "40%", value: "40" },
+  { title: "50%", value: "50" },
+  { title: "60%", value: "60" },
+  { title: "70%", value: "70" },
+  { title: "80%", value: "80" },
 ];
 
 const taggedWithData = [
@@ -347,6 +363,18 @@ const ProductInfo = () => {
   };
   // ? TAGS DIALOG ENDS HERE
 
+  // ? TAGS DIALOG STARTS HERE
+  const [openStore, setOpenStore] = React.useState(false);
+
+  const handleStoreOpen = () => {
+    setOpenStore(true);
+  };
+
+  const handleStoreClose = () => {
+    setOpenStore(false);
+  };
+  // ? TAGS DIALOG ENDS HERE
+
   // * SORT POPOVERS STARTS
   const [anchorTagEl, setAnchorTagEl] = React.useState(null);
 
@@ -361,6 +389,45 @@ const ProductInfo = () => {
   const openTag = Boolean(anchorTagEl);
   const idTag = openTag ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
+
+  // * DYNAMIC FIELD POPOVERS STARTS
+  const [anchorDynamicEl, setAnchorDynamicEl] = React.useState(null);
+
+  const handleDynamicClick = (event) => {
+    setAnchorDynamicEl(event.currentTarget);
+  };
+
+  const handleDynamicClose = () => {
+    setAnchorDynamicEl(null);
+  };
+
+  const openDynamic = Boolean(anchorDynamicEl);
+  const idDynamic = openDynamic ? "simple-popover" : undefined;
+  // * DYNAMIC FIELD POPOVERS ENDS
+
+  // * QUANTITY POPOVERS STARTS
+  const [anchorQuantityEl, setAnchorQuantityEl] = React.useState(null);
+  const handleQuantity = (event) => {
+    setAnchorQuantityEl(event.currentTarget);
+  };
+  const handleQuantityClose = () => {
+    setAnchorQuantityEl(null);
+  };
+  const openQuantity = Boolean(anchorQuantityEl);
+  const idQuantity = openQuantity ? "simple-popover" : undefined;
+  // * QUANTITY POPOVERS ENDS
+
+  // * METAL FILTER POPOVERS STARTS
+  const [anchorMetalFilterEl, setAnchorMetalFilterEl] = React.useState(null);
+  const handleMetalFilter = (event) => {
+    setAnchorMetalFilterEl(event.currentTarget);
+  };
+  const handleMetalFilterClose = () => {
+    setAnchorMetalFilterEl(null);
+  };
+  const openMetalFilter = Boolean(anchorMetalFilterEl);
+  const idMetalFilter = openMetalFilter ? "simple-popover" : undefined;
+  // * METAL FILTER POPOVERS ENDS
 
   return (
     <React.Fragment>
@@ -410,7 +477,7 @@ const ProductInfo = () => {
                   </div>
                 </ToggleButton>
               </ToggleButtonGroup>
-              <div className="d-flex align-items-center mt-1">
+              <div className="d-flex align-items-center mt-1 c-pointer">
                 <img src={clock} alt="clock" className="me-1" width={12} />
                 <small className="text-blue-2" onClick={handelScheduleProduct}>
                   Schedule Product
@@ -443,43 +510,56 @@ const ProductInfo = () => {
               </DialogTitle>
               <hr className="hr-grey-6 my-0" />
               <DialogContent className="py-3 px-4">
-                {/* <p className="text-lightBlue mb-2">Select Field Sets</p> */}
+                <div className="d-flex mb-1">
+                  <p className="text-lightBlue">Start Date</p>
+                  <img src={info} alt="info" className="ms-2" width={13.5} />
+                </div>
                 <LocalizationProvider dateAdapter={AdapterMoment}>
-                  <DatePicker
-                    label="Custom input"
+                  <DesktopDateTimePicker
                     value={dateStartValue}
                     onChange={(newValue) => {
                       setDateStartValue(newValue);
                     }}
-                    renderInput={({ inputRef, inputProps, InputProps }) => (
-                      // <Box sx={{ display: "flex", alignItems: "center" }}>
-                      //   <input ref={inputRef} {...inputProps} />
-                      //   {InputProps?.endAdornment}
-                      // </Box>
-                      <OutlinedInput
-                        // placeholder="Enter Content"
-                        size="small"
-                        ref={inputRef}
-                        {...inputProps}
-                      />
+                    renderInput={(params) => (
+                      <TextField {...params} size="small" />
+                    )}
+                  />
+                </LocalizationProvider>
+                <div className="d-flex mb-1 mt-3">
+                  <p className="text-lightBlue">End Date</p>
+                  <img src={info} alt="info" className="ms-2" width={13.5} />
+                </div>
+                <LocalizationProvider dateAdapter={AdapterMoment}>
+                  <DesktopDateTimePicker
+                    value={dateStartValue}
+                    onChange={(newValue) => {
+                      setDateStartValue(newValue);
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} size="small" />
                     )}
                   />
                 </LocalizationProvider>
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
-              <DialogActions className="d-flex justify-content-between px-4 py-3">
-                <button
-                  className="button-grey py-2 px-5"
-                  onClick={handelScheduleProductClose}
-                >
-                  <p className="text-lightBlue">Cancel</p>
-                </button>
-                <button
-                  className="button-gradient py-2 px-5"
-                  onClick={handelScheduleProductClose}
-                >
-                  <p>Add</p>
-                </button>
+              <DialogActions className="d-flex flex-column justify-content-start px-4 py-3">
+                <div className="d-flex justify-content-between w-100">
+                  <button
+                    className="button-grey py-2 px-5"
+                    onClick={handelScheduleProductClose}
+                  >
+                    <p className="text-lightBlue">Cancel</p>
+                  </button>
+                  <button
+                    className="button-gradient py-2 px-5"
+                    onClick={handelScheduleProductClose}
+                  >
+                    <p>Schedule</p>
+                  </button>
+                </div>
+                <div className="d-flex w-100">
+                  <img src={editWhite} alt="editWhite" className="mt-2 ms-0" />
+                </div>
               </DialogActions>
             </Dialog>
           </div>
@@ -490,10 +570,45 @@ const ProductInfo = () => {
             <div className="d-flex">
               <button
                 className="py-0 px-3 button-gradient me-2"
-                // onClick={handleDynamicTextEditor}
+                onClick={handleDynamicClick}
+                aria-describedby={idDynamic}
+                variant="contained"
               >
                 <p>Add Dynamic Fields</p>
               </button>
+
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id="idTaggedWith"
+                open={openDynamic}
+                anchorEl={anchorDynamicEl}
+                onClose={handleDynamicClose}
+              >
+                <div className="py-2 px-1">
+                  <div className="d-flex mb-2">
+                    <small className="text-lightBlue">Add Dynamic Fields</small>
+                  </div>
+                  <FormControl className="mb-2">
+                    <OutlinedInput placeholder="Search" size="small" />
+                  </FormControl>
+                  <small className="text-lightBlue py-1 d-block">
+                    Variant&nbsp;:&nbsp;Metal
+                  </small>
+                  <small className="text-lightBlue py-1 d-block">
+                    Variant&nbsp;:&nbsp;Gold/Purity
+                  </small>
+                  <small className="text-lightBlue py-1 d-block">
+                    Variant&nbsp;:&nbsp;Diamond
+                  </small>
+                </div>
+              </Popover>
               <button
                 className="py-0 px-3 button-gradient"
                 onClick={handleDynamicTextEditor}
@@ -1055,6 +1170,11 @@ const ProductInfo = () => {
                   //     <p className="text-lightBlue">₹</p>
                   //   </InputAdornment>
                   // }
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <p className="text-lightBlue">₹</p>
+                    </InputAdornment>
+                  }
                 />
               </FormControl>
             </div>
@@ -1063,7 +1183,29 @@ const ProductInfo = () => {
                 <p className="text-lightBlue ">Select Discount</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
-              <FormControl
+
+              <Autocomplete
+                id="free-solo-demo"
+                freeSolo
+                size="small"
+                // sx={{ width: 200 }}
+                options={discountData}
+                getOptionLabel={(option) => option.title}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <small className="text-lightBlue my-1">
+                      {option.title}
+                    </small>
+                  </li>
+                )}
+                sx={{
+                  width: "100%",
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} placeholder="Search" />
+                )}
+              />
+              {/* <FormControl
                 sx={{ m: 0, minWidth: 120 }}
                 size="small"
                 className="w-100"
@@ -1087,7 +1229,7 @@ const ProductInfo = () => {
                   <MenuItem value={70}>70%</MenuItem>
                   <MenuItem value={80}>80%</MenuItem>
                 </Select>
-              </FormControl>
+              </FormControl> */}
             </div>
             <div className="col-12 mt-2">
               <FormControlLabel
@@ -1181,30 +1323,27 @@ const ProductInfo = () => {
                     <p className="text-lightBlue">Select Discount</p>
                     <img src={info} alt="info" className="ms-2" width={13.5} />
                   </div>
-                  <FormControl
-                    sx={{ m: 0, minWidth: 120 }}
+                  <Autocomplete
+                    id="free-solo-demo"
+                    freeSolo
                     size="small"
-                    className="w-100"
-                  >
-                    <Select
-                      labelId="demo-select-small"
-                      id="demo-select-small"
-                      value={dynamicDiscount}
-                      placeholder="Rings"
-                      onChange={handleDynamicDiscount}
-                    >
-                      <MenuItem value="">None</MenuItem>
-                      <MenuItem value={5}>5%</MenuItem>
-                      <MenuItem value={10}>10%</MenuItem>
-                      <MenuItem value={20}>20%</MenuItem>
-                      <MenuItem value={30}>30%</MenuItem>
-                      <MenuItem value={40}>40%</MenuItem>
-                      <MenuItem value={50}>50%</MenuItem>
-                      <MenuItem value={60}>60%</MenuItem>
-                      <MenuItem value={70}>70%</MenuItem>
-                      <MenuItem value={80}>80%</MenuItem>
-                    </Select>
-                  </FormControl>
+                    // sx={{ width: 200 }}
+                    options={discountData}
+                    getOptionLabel={(option) => option.title}
+                    renderOption={(props, option) => (
+                      <li {...props}>
+                        <small className="text-lightBlue my-1">
+                          {option.title}
+                        </small>
+                      </li>
+                    )}
+                    sx={{
+                      width: "100%",
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} placeholder="Search" />
+                    )}
+                  />
                 </div>
               </React.Fragment>
             )}
@@ -1339,8 +1478,141 @@ const ProductInfo = () => {
                   <React.Fragment>
                     <div className="col-12 d-flex justify-content-between mt-3">
                       <h6 className="text-grey-6">Manage Inventory</h6>
-                      <p className="text-blue-2">Edit Store</p>
+                      <p
+                        className="text-blue-2 c-pointer"
+                        onClick={handleStoreOpen}
+                      >
+                        Edit Store
+                      </p>
                     </div>
+
+                    <Dialog
+                      open={openStore}
+                      TransitionComponent={Transition}
+                      keepMounted
+                      onClose={handleStoreClose}
+                      aria-describedby="alert-dialog-slide-description"
+                      maxWidth="sm"
+                      fullWidth={true}
+                    >
+                      <DialogTitle>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h5 className="text-lightBlue fw-500">Edit Store</h5>
+                          <img
+                            src={cancel}
+                            alt="cancel"
+                            width={30}
+                            onClick={handleStoreClose}
+                            className="c-pointer"
+                          />
+                        </div>
+                      </DialogTitle>
+                      <hr className="hr-grey-6 my-0" />
+                      <DialogContent className="py-2 px-4">
+                        <div className="row">
+                          <div className="col-md-12 mt-2">
+                            <Search>
+                              <SearchIconWrapper>
+                                <SearchIcon sx={{ color: "#c8d8ff" }} />
+                              </SearchIconWrapper>
+                              <StyledInputBase
+                                placeholder="Search…"
+                                inputProps={{ "aria-label": "search" }}
+                              />
+                            </Search>
+                          </div>
+                        </div>
+                        <FormGroup className="tags-checkbox mt-2">
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                size="small"
+                                style={{
+                                  color: "#5C6D8E",
+                                }}
+                              />
+                            }
+                            label="Tags 1"
+                            className="me-0"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                size="small"
+                                style={{
+                                  color: "#5C6D8E",
+                                }}
+                              />
+                            }
+                            label="Tags 2"
+                            className="me-0"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                size="small"
+                                style={{
+                                  color: "#5C6D8E",
+                                }}
+                              />
+                            }
+                            label="Tags 3"
+                            className="me-0"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                size="small"
+                                style={{
+                                  color: "#5C6D8E",
+                                }}
+                              />
+                            }
+                            label="Tags 4"
+                            className="me-0"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                size="small"
+                                style={{
+                                  color: "#5C6D8E",
+                                }}
+                              />
+                            }
+                            label="Tags 5"
+                            className="me-0"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                size="small"
+                                style={{
+                                  color: "#5C6D8E",
+                                }}
+                              />
+                            }
+                            label="Tags 6"
+                            className="me-0"
+                          />
+                        </FormGroup>
+                      </DialogContent>
+                      <hr className="hr-grey-6 my-0" />
+                      <DialogActions className="d-flex justify-content-between px-4 py-3">
+                        <button
+                          className="button-grey py-2 px-5"
+                          onClick={handleStoreClose}
+                        >
+                          <p>Cancel</p>
+                        </button>
+                        <button
+                          className="button-gradient py-2 px-5"
+                          onClick={handleStoreClose}
+                        >
+                          <p>Done</p>
+                        </button>
+                      </DialogActions>
+                    </Dialog>
                     <div className="col-12 d-flex align-items-center mt-3 mb-2">
                       {/* <div className=""> */}
                       <p className="text-lightBlue">
@@ -1353,18 +1625,51 @@ const ProductInfo = () => {
                         width={13.5}
                       />
                     </div>
-                    <div className="col-12 d-flex">
+                    <div className="col-12 d-flex productInfo-inputs">
                       <FormControl className="me-3">
                         <OutlinedInput
                           placeholder="Enter Quantity"
                           size="small"
-                          endAdornment={
-                            <InputAdornment position="end">
-                              Fixed
-                            </InputAdornment>
-                          }
+                          // endAdornment={
+                          //   <InputAdornment position="end">
+                          //     Fixed
+                          //   </InputAdornment>
+                          // }
                         />
                       </FormControl>
+                      <p
+                        className="rounded-3 py-2 px-4 hover-back bg-black-10 me-2"
+                        aria-describedby={idQuantity}
+                        variant="contained"
+                        onClick={handleQuantity}
+                      >
+                        Fixed
+                      </p>
+
+                      <Popover
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "center",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "center",
+                        }}
+                        id={idQuantity}
+                        open={openQuantity}
+                        anchorEl={anchorQuantityEl}
+                        onClose={handleQuantityClose}
+                      >
+                        <div className="d-flex align-items-center c-pointer hover-back px-2 py-1 my-1 rounded-3">
+                          <small className="text-lightBlue">Fixed</small>
+                        </div>
+                        <div className="d-flex align-items-center c-pointer hover-back px-2 py-1 my-1 rounded-3">
+                          <small className="text-lightBlue">Increase</small>
+                        </div>
+                        <div className="d-flex align-items-center c-pointer hover-back px-2 py-1 my-1 rounded-3">
+                          <small className="text-lightBlue">Decrease</small>
+                        </div>
+                      </Popover>
                       <button className="button-gradient py-2 px-4">
                         <p>Apply to all</p>
                       </button>
@@ -1372,13 +1677,60 @@ const ProductInfo = () => {
                     <div className="col-12 mt-4 mb-3">
                       <div
                         style={{ background: " rgba(39, 40, 63, 0.5) " }}
-                        className="d-flex justify-content-between py-2 px-3 rounded-3"
+                        className="d-flex justify-content-between align-items-center py-2 px-3 rounded-3"
                       >
                         <div className="d-flex">
-                          <p className="text-lightBlue">Filter :</p>
-                          <p className="text-blue-2 ms-4">Country</p>
-                          <p className="text-blue-2 ms-4">State</p>
+                          {/* <p className="text-lightBlue">Filter :</p> */}
+                          <p
+                            className="text-blue-2 py-1 me-2"
+                            aria-describedby={idMetalFilter}
+                            variant="contained"
+                            onClick={handleMetalFilter}
+                          >
+                            Filter:
+                          </p>
+                          <p
+                            className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
+                            aria-describedby={idMetalFilter}
+                            variant="contained"
+                            onClick={handleMetalFilter}
+                          >
+                            Country
+                          </p>
+                          <p
+                            className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
+                            aria-describedby={idMetalFilter}
+                            variant="contained"
+                            onClick={handleMetalFilter}
+                          >
+                            State
+                          </p>
                         </div>
+
+                        <Popover
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                          }}
+                          id={idMetalFilter}
+                          open={openMetalFilter}
+                          anchorEl={anchorMetalFilterEl}
+                          onClose={handleMetalFilterClose}
+                        >
+                          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+                            <small className="text-lightBlue">1</small>
+                          </div>
+                          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+                            <small className="text-lightBlue">2</small>
+                          </div>
+                          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+                            <small className="text-lightBlue">3</small>
+                          </div>
+                        </Popover>
                         <p className="text-lightBlue">10 stores</p>
                       </div>
                     </div>
@@ -1394,6 +1746,16 @@ const ProductInfo = () => {
                           defaultValue={1}
                         />
                       </FormControl>
+                      {/* <TextField
+                        id="outlined-number"
+                        // label="Number"
+                        type="number"
+                        // InputLabelProps={{
+                        //   shrink: true,
+                        // }}
+                        width={80}
+                        size="small"
+                      /> */}
                     </div>
                     <div className="col-12 d-flex justify-content-between my-2 align-items-center px-4">
                       <p className="text-lightBlue">
@@ -1427,6 +1789,110 @@ const ProductInfo = () => {
             )}
           </div>
         </div>
+      </div>
+      <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
+        <div className="d-flex mb-3 px-0">
+          <h6 className="text-lightBlue px-0 fw-500">Product Applicable For</h6>
+          <img src={info} alt="info" className="ms-2" width={15} />
+        </div>
+        <FormGroup className="tags-checkbox px-0">
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                style={{
+                  color: "#5C6D8E",
+                }}
+              />
+            }
+            label="Price Breakup"
+            className="me-0"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                style={{
+                  color: "#5C6D8E",
+                }}
+              />
+            }
+            label="Returnable"
+            className="me-0"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                style={{
+                  color: "#5C6D8E",
+                }}
+              />
+            }
+            label="COD Available"
+            className="me-0"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                style={{
+                  color: "#5C6D8E",
+                }}
+              />
+            }
+            label="Lifetime Exchange"
+            className="me-0"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                style={{
+                  color: "#5C6D8E",
+                }}
+              />
+            }
+            label="Lifetime Buyback"
+            className="me-0"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                style={{
+                  color: "#5C6D8E",
+                }}
+              />
+            }
+            label="Next Day Shipping"
+            className="me-0"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                style={{
+                  color: "#5C6D8E",
+                }}
+              />
+            }
+            label="Enable Try On"
+            className="me-0"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                style={{
+                  color: "#5C6D8E",
+                }}
+              />
+            }
+            label="Enable to View Similar Items"
+            className="me-0"
+          />
+        </FormGroup>
       </div>
     </React.Fragment>
   );

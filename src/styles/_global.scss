@@ -191,6 +191,9 @@
 .bg-black-11 {
   background: $black11 !important;
 }
+.bg-black-10 {
+  background: $black10 !important;
+}
 .bg-black-15 {
   background: $black15 !important;
 }
@@ -574,6 +577,11 @@ textarea {
   background-color: $black13 !important;
   border-radius: 8px !important;
   box-shadow: none !important;
+  .MuiCheckbox-root {
+    padding-left: 0 !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+  }
 }
 .MuiAutocomplete-listbox {
   // background: $black9 !important;
@@ -587,6 +595,9 @@ textarea {
   }
   li:hover {
     background: $black18 !important;
+  }
+  .MuiCheckbox-root {
+    // padding-left: 0 !important;
   }
   // .MuiMenuItem-root.Mui-selected {
   //   background: red !important;
