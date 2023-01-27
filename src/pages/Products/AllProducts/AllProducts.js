@@ -1339,17 +1339,19 @@ const AllProducts = () => {
               anchorEl={anchorFlagEl}
               onClose={handleFlagClose}
             >
-              <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-                <img src={allFlag} alt="allFlag" height={20} />
-                <p className="ms-2 text-lightBlue">All</p>
-              </div>
-              <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-                <img src={ukFlag} alt="usaFlag" height={15} />
-                <p className="ms-2 text-lightBlue">UK</p>
-              </div>
-              <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-                <img src={usaFlag} alt="usaFlag" height={15} />
-                <p className="ms-2 text-lightBlue">USA</p>
+              <div className="px-1 py-2">
+                <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+                  <img src={allFlag} alt="allFlag" height={20} />
+                  <p className="ms-2 text-lightBlue">All</p>
+                </div>
+                <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+                  <img src={ukFlag} alt="usaFlag" height={15} />
+                  <p className="ms-2 text-lightBlue">UK</p>
+                </div>
+                <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+                  <img src={usaFlag} alt="usaFlag" height={15} />
+                  <p className="ms-2 text-lightBlue">USA</p>
+                </div>
               </div>
             </Popover>
           </Box>
@@ -2033,7 +2035,7 @@ const AllProducts = () => {
                 onClose={handleSortClose}
                 className="columns"
               >
-                <FormControl className="px-3">
+                <FormControl className="px-2 py-1">
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
@@ -2104,7 +2106,7 @@ const AllProducts = () => {
                 onClose={handleColumnsClose}
                 className="columns"
               >
-                <FormGroup className="px-3">
+                <FormGroup className="px-2 py-1">
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -2257,8 +2259,10 @@ const AllProducts = () => {
                   anchorEl={anchorEditStatusEl}
                   onClose={handleEditStatusClose}
                 >
-                  <p className="mb-3 text-blue-1 c-pointer">Set as Active</p>
-                  <p className="text-blue-1 c-pointer">Set as Draft</p>
+                  <div className="py-2 px-2">
+                    <p className="mb-2 text-blue-1 c-pointer">Set as Active</p>
+                    <p className="text-blue-1 c-pointer">Set as Draft</p>
+                  </div>
                 </Popover>
 
                 <Popover
@@ -2275,48 +2279,58 @@ const AllProducts = () => {
                   anchorEl={anchorMassActionEl}
                   onClose={handleMassActionClose}
                 >
-                  <small className="text-grey-7">ACTION</small>
-                  <hr className="hr-grey-6 my-2" />
-                  <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                    <img
-                      src={editProductsButton}
-                      alt="editProductsButton"
-                      height={36}
-                      className="c-pointer"
-                    />
-                    {/* <img
+                  <div className="py-2 px-2">
+                    <small className="text-grey-7">ACTION</small>
+                    <hr className="hr-grey-6 my-2" />
+                    <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
+                      <img
+                        src={editProductsButton}
+                        alt="editProductsButton"
+                        height={36}
+                        className="c-pointer"
+                      />
+                      {/* <img
                       src={duplicateButton}
                       alt="duplicateButton"
                       height={36}
                       className="c-pointer"
                     /> */}
-                  </div>
-                  <p className="my-3 text-lightBlue c-pointer">
-                    Make it Active
-                  </p>
-                  <p className="my-3 text-lightBlue c-pointer">Make it Draft</p>
-                  <p className="my-2 text-lightBlue c-pointer">Edit Quantity</p>
-                  <p className="my-2 text-lightBlue c-pointer">Set up Price</p>
-                  <small className="text-grey-7">Tags & Collection</small>
-                  <hr className="hr-grey-6 my-2" />
-                  <p className="my-2 text-lightBlue c-pointer">
-                    Add or Remove Tags
-                  </p>
-                  <p className="my-2 text-lightBlue c-pointer">
-                    Add or Remove Collections
-                  </p>
-                  <div className="d-flex justify-content-between mt-4">
-                    <p className="text-lightBlue c-pointer">Archived Product</p>
-                    <img src={deleteRed} alt="delete" className="c-pointer" />
+                    </div>
+                    <p className="my-3 text-lightBlue c-pointer">
+                      Make it Active
+                    </p>
+                    <p className="my-3 text-lightBlue c-pointer">
+                      Make it Draft
+                    </p>
+                    <p className="my-2 text-lightBlue c-pointer">
+                      Edit Quantity
+                    </p>
+                    <p className="my-2 text-lightBlue c-pointer">
+                      Set up Price
+                    </p>
+                    <small className="text-grey-7">Tags & Collection</small>
+                    <hr className="hr-grey-6 my-2" />
+                    <p className="my-2 text-lightBlue c-pointer">
+                      Add or Remove Tags
+                    </p>
+                    <p className="my-2 text-lightBlue c-pointer">
+                      Add or Remove Collections
+                    </p>
+                    <div className="d-flex justify-content-between mt-3">
+                      <p className="text-lightBlue c-pointer">
+                        Archived Product
+                      </p>
+                      <img src={deleteRed} alt="delete" className="c-pointer" />
+                    </div>
                   </div>
                 </Popover>
               </div>
-              <small
+              {/* <small
                 className=" d-flex text-blue-2 c-pointer"
                 onClick={() => setSelected([])}
               >
                 Clear Selection
-              </small>
+              </small> */}
             </div>
           )}
           <TabPanel value={value} index={0}>
@@ -2428,7 +2442,7 @@ const AllProducts = () => {
                               anchorEl={anchorPriceEl}
                               onClose={handlePriceClose}
                             >
-                              <div className="px-3">
+                              <div className="py-2 px-2">
                                 <small className="text-lightBlue">
                                   Default : 12KT • Yellow • Gold • IJ-SI
                                 </small>
@@ -2450,7 +2464,7 @@ const AllProducts = () => {
                                     ₹&nbsp;&nbsp;600
                                   </small>
                                 </div>
-                                <div className="d-flex align-items-center justify-content-between mb-2 mt-2">
+                                <div className="d-flex align-items-center justify-content-between mt-2">
                                   <p className="text-lightBlue">Total</p>
                                   <p className="ms-2 text-lightBlue fw-600">
                                     ₹&nbsp;20,600
@@ -2507,7 +2521,7 @@ const AllProducts = () => {
                                 anchorEl={anchorActionEl}
                                 onClose={handleActionClose}
                               >
-                                <div className="px-3">
+                                <div className="py-2 px-2">
                                   <small className="text-grey-7">ACTION</small>
                                   <hr className="hr-grey-6 my-2" />
                                   <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">

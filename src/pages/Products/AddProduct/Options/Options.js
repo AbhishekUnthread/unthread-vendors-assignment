@@ -84,7 +84,7 @@ const Options = () => {
   // ? IMPORT VARIANT ENDS HERE
 
   // ? VARIANT SETS SELECT STARTS HERE
-  const [variantSets, setVariantSets] = React.useState("");
+  const [variantSets, setVariantSets] = React.useState(10);
 
   const handleVariantSetsChange = (event) => {
     setVariantSets(event.target.value);
@@ -589,6 +589,16 @@ const Options = () => {
                 </Accordion>
               </div>
             )}
+            {/* <div className="col-12 options-table">
+              <div className="row mx-0 bg-black-18 p-3 rounded-8">
+                <p className="text-lightBlue col">Option Name</p>
+                <p className="text-lightBlue options-table__price">
+                  Price Modifier
+                </p>
+                <p className="text-lightBlue options-table__action">Default</p>
+                <p className="text-lightBlue options-table__action">Action</p>
+              </div>
+            </div> */}
             <div className="col-12 text-end d-flex justify-content-end">
               <button className="button-lightBlue-outline py-2 px-4 me-2">
                 <p>Discard</p>

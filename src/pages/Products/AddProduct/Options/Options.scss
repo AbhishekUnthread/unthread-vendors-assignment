@@ -1,0 +1,10 @@
+@import "../../../../styles/global";
+
+.options-table {
+  &__action {
+    width: 100px;
+  }
+  &__price {
+    width: 200px;
+  }
+}
