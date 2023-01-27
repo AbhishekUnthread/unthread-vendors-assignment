@@ -246,7 +246,7 @@ const Attributes = () => {
       <div className="col-12 mt-1 mb-2 pb-2">
         <div className="row align-items-start">
           <p className="text-lightBlue col-4">Metal Weight</p>
-          <FormControl className="col-8 px-0">
+          <FormControl className="col-7 px-0">
             <OutlinedInput
               placeholder="Enter Content"
               size="small"
@@ -285,6 +285,14 @@ const Attributes = () => {
           </div>
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
+              <p className="text-lightBlue col-4">Shape</p>
+              <FormControl className="col-7 px-0">
+                <OutlinedInput placeholder="Enter Content" size="small" />
+              </FormControl>
+            </div>
+          </div>
+          <div className="col-12 mt-1 mb-2 pb-2">
+            <div className="row align-items-start">
               <p className="text-lightBlue col-4">Setting Type</p>
               <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
@@ -303,7 +311,15 @@ const Attributes = () => {
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">Carat Weight</p>
               <FormControl className="col-7 px-0">
-                <OutlinedInput placeholder="Enter Content" size="small" />
+                <OutlinedInput
+                  placeholder="Enter Content"
+                  size="small"
+                  endAdornment={
+                    <InputAdornment position="end">
+                      |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gm
+                    </InputAdornment>
+                  }
+                />
               </FormControl>
             </div>
           </div>
@@ -334,6 +350,14 @@ const Attributes = () => {
           </div>
           <div className="col-12 mt-1 mb-2 pb-2">
             <div className="row align-items-start">
+              <p className="text-lightBlue col-4">Shape</p>
+              <FormControl className="col-7 px-0">
+                <OutlinedInput placeholder="Enter Content" size="small" />
+              </FormControl>
+            </div>
+          </div>
+          <div className="col-12 mt-1 mb-2 pb-2">
+            <div className="row align-items-start">
               <p className="text-lightBlue col-4">Setting Type</p>
               <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Content" size="small" />
@@ -352,7 +376,15 @@ const Attributes = () => {
             <div className="row align-items-start">
               <p className="text-lightBlue col-4">Carat Weight</p>
               <FormControl className="col-7 px-0">
-                <OutlinedInput placeholder="Enter Content" size="small" />
+                <OutlinedInput
+                  placeholder="Enter Content"
+                  size="small"
+                  endAdornment={
+                    <InputAdornment position="end">
+                      |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gm
+                    </InputAdornment>
+                  }
+                />
               </FormControl>
             </div>
           </div>

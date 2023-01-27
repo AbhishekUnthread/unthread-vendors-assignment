@@ -164,16 +164,14 @@ const Options = () => {
   // ? CONDITION ACCORDIAN ENDS HERE
 
   return (
-    <div className="bg-black-15 border-grey-5 rounded-3 p-3 row attributes">
+    <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
       <div className="d-flex col-12 px-0 justify-content-between align-items-center">
         <div className="d-flex flex-column">
           <div className="d-flex align-items-center">
-            <h6 className="text-lightBlue text-lightBlue">
-              Options & Variants
-            </h6>
+            <h6 className="text-lightBlue fw-500">Options & Variants</h6>
             <img src={info} alt="info" className="ms-2" />
           </div>
-          <small className="text-grey-6 mt-1">
+          <small className="text-grey-6 mt-2">
             If this product has options, like size or color then add options
           </small>
         </div>
@@ -268,10 +266,10 @@ const Options = () => {
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
               <button
-                className="button-lightBlue-outline py-2 px-4"
+                className="button-grey py-2 px-5"
                 onClick={handleImportOptionsClose}
               >
-                <p>Cancel</p>
+                <p className="text-lightBlue">Cancel</p>
               </button>
               <button
                 className="button-gradient py-2 px-4"
@@ -282,10 +280,10 @@ const Options = () => {
             </DialogActions>
           </Dialog>
           <button
-            className="button-gradient py-2 px-3"
+            className="button-gradient py-2 px-4"
             onClick={handleAddOptions}
           >
-            <p>Import Variant Options</p>
+            <p>+ Add Options</p>
           </button>
         </div>
       </div>
@@ -420,7 +418,7 @@ const Options = () => {
                 <Accordion
                   expanded={expanded === "panel1"}
                   onChange={handleAccordianChange("panel1")}
-                  className="rounded-3 row"
+                  className="rounded-3 row bg-black-9"
                   // className="rounded-3 bg-black-15 row"
                 >
                   <AccordionSummary

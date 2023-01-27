@@ -267,31 +267,31 @@ const AddProduct = () => {
               </RadioGroup>
             </FormControl> */}
             <div className="d-flex align-items-center flex-wrap">
-              <div className="d-flex border-grey-5 p-1 mt-2 rounded-3 me-2">
+              <div className="d-flex border-grey-5 py-1 px-2 mt-2 rounded-3 me-2">
                 <img src={gold} alt="gold" width={15} />
                 <small className="text-grey-6 ms-2">Gold</small>
               </div>
-              <div className="d-flex border-grey-5 p-1 mt-2 rounded-3 me-2">
+              <div className="d-flex border-grey-5 py-1 px-2 mt-2 rounded-3 me-2">
                 <img src={silver} alt="silver" width={15} />
                 <small className="text-grey-6 ms-2">Silver</small>
               </div>
-              <div className="d-flex border-grey-5 p-1 mt-2 rounded-3 me-2">
+              <div className="d-flex border-grey-5 py-1 px-2 mt-2 rounded-3 me-2">
                 <img src={platinum} alt="platinum" width={15} />
                 <small className="text-grey-6 ms-2">Platinum</small>
               </div>
             </div>
             <p className="text-lightBlue mt-3">Diamond</p>
             <div className="d-flex align-items-center flex-wrap">
-              <div className="d-flex border-grey-5 p-1 rounded-3 me-2 mt-2">
+              <div className="d-flex border-grey-5 py-1 px-2 rounded-3 me-2 mt-2">
                 <small className="text-grey-6">IJ-SI</small>
               </div>
-              <div className="d-flex border-grey-5 p-1 rounded-3 me-2 mt-2">
+              <div className="d-flex border-grey-5 py-1 px-2 rounded-3 me-2 mt-2">
                 <small className="text-grey-6">JK-VSSI</small>
               </div>
-              <div className="d-flex border-grey-5 p-1 rounded-3 me-2 mt-2">
+              <div className="d-flex border-grey-5 py-1 px-2 rounded-3 me-2 mt-2">
                 <small className="text-grey-6">GH-VSSI</small>
               </div>
-              <div className="d-flex border-grey-5 p-1 rounded-3 me-2 mt-2">
+              <div className="d-flex border-grey-5 py-1 px-2 rounded-3 me-2 mt-2">
                 <small className="text-grey-6">EF-VVS</small>
               </div>
             </div>
@@ -528,19 +528,37 @@ const AddProduct = () => {
       </div>
       <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
-          <button className="button-red-outline py-2 px-4">
+          {/* <button className="button-red-outline py-2 px-4">
             <p>Discard</p>
           </button>
           <button className="button-lightBlue-outline py-2 px-4 ms-3">
             <p>Save as Draft</p>
-          </button>
+          </button> */}
+
+          <Link to="/allProducts" className="button-red-outline py-2 px-4">
+            <p>Discard</p>
+          </Link>
+
+          <Link
+            to="/allProducts"
+            className="button-lightBlue-outline py-2 px-4 ms-3"
+          >
+            <p>Save as Draft</p>
+          </Link>
         </div>
-        <button
-          className="button-gradient py-2 px-4 w-auto"
-          onClick={handleTabChange}
-        >
-          <p>{value === 6 ? "Save" : "Continue"}</p>
-        </button>
+
+        {value === 6 ? (
+          <Link to="/allProducts" className="button-gradient py-2 px-4 w-auto">
+            <p>Save</p>
+          </Link>
+        ) : (
+          <button
+            className="button-gradient py-2 px-4 w-auto"
+            onClick={handleTabChange}
+          >
+            <p>Continue</p>
+          </button>
+        )}
       </div>
     </div>
   );

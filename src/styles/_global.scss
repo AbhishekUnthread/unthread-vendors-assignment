@@ -253,6 +253,9 @@
 .text-blue-1 {
   color: $blue1;
 }
+.text-black-18 {
+  color: $black18;
+}
 
 .MuiPopover-paper {
   border: 1px solid $grey5;
@@ -395,7 +398,14 @@ textarea,
 
 .productDetails-toggle {
   .Mui-selected {
-    background: $black18 !important; // background: linear-gradient(
+    background: linear-gradient(
+      303.01deg,
+      #2f2e69 -4.4%,
+      #514969 111.29%
+    ) !important;
+    // background: $grey9 !important;
+    // background: $black18 !important;
+    // background: linear-gradient(
     //   303.01deg,
     //   rgba(89, 97, 248, 0.2) -4.4%,
     //   rgba(242, 217, 247, 0.2) 111.29%
@@ -479,6 +489,17 @@ textarea {
   }
 }
 
+// * TABLE ICONS
+.MuiTableSortLabel-icon {
+  color: $lightBlue !important;
+}
+
+.MuiTablePagination-actions {
+  svg {
+    color: $lightBlue !important;
+  }
+}
+
 .bg-black-13 {
   background: $black13;
 }
@@ -518,17 +539,6 @@ textarea {
 
 .MuiFormControl-root {
   border-radius: 4px;
-}
-
-// * TABLE ICONS
-.MuiTableSortLabel-icon {
-  color: $lightBlue !important;
-}
-
-.MuiTablePagination-actions {
-  svg {
-    color: $lightBlue !important;
-  }
 }
 
 // * ICON BUTTON HOVER
@@ -653,4 +663,10 @@ textarea {
 
 .MuiSelect-icon {
   color: $lightBlue !important;
+}
+
+.schedule-product {
+  .MuiSvgIcon-root {
+    color: $lightBlue !important;
+  }
 }

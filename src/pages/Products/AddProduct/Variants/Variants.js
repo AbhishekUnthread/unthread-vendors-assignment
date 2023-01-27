@@ -21,6 +21,8 @@ import {
   MenuItem,
   Select,
   Popover,
+  FormGroup,
+  FormControlLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 // ! IMAGES IMPORTS
@@ -311,7 +313,7 @@ const Variants = () => {
   // * METAL FILTER POPOVERS ENDS
 
   return (
-    <div className="bg-black-15 border-grey-5 rounded-3 p-3 row">
+    <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
       <div className="d-flex col-12 px-0 justify-content-between">
         <div className="d-flex align-items-center">
           <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
@@ -321,14 +323,7 @@ const Variants = () => {
         <p className="text-blue-2">Add Variant</p>
       </div>
       <div className="d-flex col-12 px-0 mt-2">
-        <p
-          className="text-blue-2 py-1 me-2"
-          aria-describedby={idMetalFilter}
-          variant="contained"
-          onClick={handleMetalFilter}
-        >
-          Filter:
-        </p>
+        <p className="text-lightBlue py-1 me-2">Filter:</p>
         <p
           className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
           aria-describedby={idMetalFilter}
@@ -365,26 +360,55 @@ const Variants = () => {
         <Popover
           anchorOrigin={{
             vertical: "bottom",
-            horizontal: "center",
+            horizontal: "left",
           }}
           transformOrigin={{
             vertical: "top",
-            horizontal: "center",
+            horizontal: "left",
           }}
           id={idMetalFilter}
           open={openMetalFilter}
           anchorEl={anchorMetalFilterEl}
           onClose={handleMetalFilterClose}
         >
-          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-            <small className="text-lightBlue">1</small>
-          </div>
-          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-            <small className="text-lightBlue">2</small>
-          </div>
-          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-            <small className="text-lightBlue">3</small>
-          </div>
+          <FormGroup className="tags-checkbox py-2">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  style={{
+                    color: "#5C6D8E",
+                  }}
+                />
+              }
+              label="Content 1"
+              className="hover-back rounded-3 mx-0 pe-2"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  style={{
+                    color: "#5C6D8E",
+                  }}
+                />
+              }
+              label="Content 2"
+              className="hover-back rounded-3 mx-0 pe-2"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  style={{
+                    color: "#5C6D8E",
+                  }}
+                />
+              }
+              label="Content 3"
+              className="hover-back rounded-3 mx-0 pe-2"
+            />
+          </FormGroup>
         </Popover>
       </div>
 

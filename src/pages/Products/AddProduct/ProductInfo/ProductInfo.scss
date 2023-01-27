@@ -40,4 +40,20 @@
       }
     }
   }
+  .primary-image {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(
+      303.01deg,
+      rgba(89, 97, 248, 0.2) -4.4%,
+      rgba(242, 217, 247, 0.2) 111.29%
+    );
+    border-radius: 5px;
+    border: 0;
+    color: $white1;
+    text-decoration: none;
+    min-width: max-content;
+  }
 }

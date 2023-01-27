@@ -25,9 +25,9 @@ export default function AppCountrySelect() {
             srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
             alt=""
           />
-          <p className="text-grey-6">
+          <small className="text-lightBlue my-1">
             {option.label} ({option.code}) +{option.phone}
-          </p>
+          </small>
         </Box>
       )}
       renderInput={(params) => (

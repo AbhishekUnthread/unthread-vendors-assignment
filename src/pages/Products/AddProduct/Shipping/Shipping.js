@@ -171,8 +171,11 @@ const Shipping = () => {
                 <p className="text-lightBlue mb-2">
                   HS (Harmonized System) code
                 </p>
-                <AppCountrySelect />
-                <small className="text-grey-6 mt-1">
+                {/* <AppCountrySelect /> */}
+                <FormControl className="px-0" sx={{ width: 300 }}>
+                  <OutlinedInput placeholder="Enter HS Code" size="small" />
+                </FormControl>
+                <small className="text-grey-6 mt-1 d-block">
                   ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 </small>
               </div>

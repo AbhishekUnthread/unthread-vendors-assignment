@@ -1,24 +1,35 @@
 .editor-class {
-  background: #15142a;
+  // background: #15142a;
+  background: #1a1932;
   border: 1px solid #343e50;
   //   border: 1px solid #5c6d8e;
   border-top: 0;
+  height: 150px;
+  border-radius: 0 0 6px 6px;
+  padding: 0 12px;
 }
 .toolbar-class {
-  background: #27283f;
+  // background: #27283f;
+
+  // background: #c8d8ff;
+  background: #7879a9;
   margin-bottom: 0;
   border: 1px solid #343e50;
   //   border: 1px solid #5c6d8e;
   border-bottom: 0;
-  border-radius: 2px 2px 0 0;
+  border-radius: 6px 6px 0 0;
   .rdw-option-wrapper,
   .rdw-dropdown-selectedtext {
-    background: #c8d8ff;
+    // background: #c8d8ff;
+    background: none;
     text-decoration: none;
-    padding: 4px;
+    border: 0;
+    padding: 2px 0;
     min-width: 20px;
     height: 18px;
-    border-radius: 2px;
+    border-radius: 4px;
+    margin: 0 2px;
+    box-shadow: none !important;
     span {
       color: black;
     }
@@ -27,6 +38,11 @@
     background: none;
     height: auto;
     border: 0;
-    border-radius: 2px;
+    border-radius: 4px;
+  }
+  .public-DraftStyleDefault-block {
+    height: 150px !important;
+    // color: red !important;
+    // color: #c8d8ff !important;
   }
 }
