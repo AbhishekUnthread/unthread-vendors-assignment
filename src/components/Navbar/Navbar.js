@@ -191,7 +191,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
             aria-label="open drawer"
             sx={{ mr: 0 }}
             onClick={() => handleDrawerToggle()}
-            className="toggle-icon"
+            className="app-navbar__toggle"
           >
             {!mobileOpen ? (
               <KeyboardArrowLeftIcon />
@@ -250,7 +250,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
               color="inherit"
-              className="profile-button ms-4"
+              className="app-navbar__profile ms-4"
             >
               <div className="d-flex flex-column justify-content-end align-items-end me-2">
                 <p className="text-lightBlue">Saniya Shaikh</p>

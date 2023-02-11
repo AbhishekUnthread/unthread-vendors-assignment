@@ -1,17 +1,4 @@
-@import "../../../styles/global";
-
-.row-selected-chip {
-  background: $black6;
-  width: auto;
-  border-radius: 5px;
-}
-
-.table {
-  &-status {
-    background: $green1;
-    font-weight: 600;
-  }
-}
+@import "../../../styles/variables";
 
 .product {
   &-button__box {
@@ -20,28 +7,25 @@
   }
 }
 
-.columns {
-  .MuiTypography-root {
-    font-size: $font2;
-    color: $lightBlue;
+.filter {
+  &-icon {
+    margin-left: 20rem;
+  }
+  &-buttons {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
   }
 }
 
-.filter-padding {
-  margin-left: 20rem;
-}
-
-.table-rows {
-  p {
-    font-size: $font2 !important;
+.table {
+  &-status {
+    background: $green1;
+    font-weight: 600;
   }
-}
-
-.filter-buttons {
-  // background: linear-gradient(180deg, rgba(17, 15, 38, 0) 0%, #110f26 47.98%);
-  position: absolute;
-  bottom: 0;
-  // left: 0;
-  width: 100%;
-  // margin-bottom: -24px;
+  &-rows {
+    p {
+      font-size: $font2 !important;
+    }
+  }
 }

@@ -75,15 +75,12 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
-  // backgroundColor: alpha(theme.palette.common.white, 0.15),
   "&:hover": {
-    // backgroundColor: alpha(theme.palette.common.white, 0.25),
     backgroundColor: "#1c1b33",
   },
   marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
-    // marginLeft: theme.spacing(1),
     marginLeft: 0,
     width: "auto",
   },
@@ -106,17 +103,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1.2, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
     borderRadius: "5px",
-    // [theme.breakpoints.up("sm")]: {
-    //   width: "12ch",
-    //   "&:focus": {
-    //     width: "20ch",
-    //   },
-    // },
   },
 }));
 // ? SEARCH INPUT ENDS HERE
@@ -348,26 +338,16 @@ const AccordionSummary = styled((props) => (
     {...props}
   />
 ))(({ theme }) => ({
-  // backgroundColor:
-  //   theme.palette.mode === "dark"
-  //     ? "rgba(255, 255, 255, .05)"
-  //     : "rgba(0, 0, 0, .03)",
-  // flexDirection: "row-reverse",
   "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
     transform: "rotate(90deg)",
-    // marginRight: theme.spacing(1),
   },
   "& .MuiAccordionSummary-content": {
-    // marginLeft: theme.spacing(1),
     padding: "0px",
   },
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  // padding: theme.spacing(2),
-
   padding: "0 16px ",
-  // borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 // ? FILTER ACCORDIAN ENDS HERE
 
@@ -388,7 +368,6 @@ const baseStyle = {
   borderRadius: 8,
   borderColor: "#38395c",
   borderStyle: "dashed",
-  //   backgroundColor: "",
   color: "#bdbdbd",
   outline: "none",
   transition: "border .24s ease-in-out",
@@ -1278,7 +1257,6 @@ const AllProducts = () => {
                 <small className="text-grey-6">
                   5. Products should be uploaded successfully.
                 </small>
-                {/* <div className="col-3 col-md-2 d-flex justify-content-center align-items-center"> */}
                 <div {...getRootProps({ style })} className="mt-3">
                   <input
                     id="primary"
@@ -1293,7 +1271,6 @@ const AllProducts = () => {
                 <small className="mt-2 text-lightBlue">
                   Please make sure to leave a single row at the top of the Sheet
                 </small>
-                {/* </div> */}
               </div>
             )}
           </DialogContent>
@@ -1435,13 +1412,6 @@ const AllProducts = () => {
                           {...params}
                           placeholder="Search"
                           inputRef={(input) => input?.focus()}
-                          // InputProps={{
-                          //   startAdornment: (
-                          //     <InputAdornment position="start">
-                          //       <AccountCircle />
-                          //     </InputAdornment>
-                          //   ),
-                          // }}
                         />
                       )}
                     />
@@ -1490,13 +1460,6 @@ const AllProducts = () => {
                           {...params}
                           placeholder="Search"
                           inputRef={(input) => input?.focus()}
-                          // InputProps={{
-                          //   startAdornment: (
-                          //     <InputAdornment position="start">
-                          //       <AccountCircle />
-                          //     </InputAdornment>
-                          //   ),
-                          // }}
                         />
                       )}
                     />
@@ -1585,7 +1548,7 @@ const AllProducts = () => {
                       <img
                         src={cancel}
                         alt="cancel"
-                        className="c-pointer filter-padding"
+                        className="c-pointer filter-icon"
                         onClick={toggleDrawer("right", false)}
                       />
                     </div>
@@ -2310,20 +2273,6 @@ const AllProducts = () => {
                   <div className="py-2 px-2">
                     <small className="text-grey-7 px-2">ACTIONS</small>
                     <hr className="hr-grey-6 my-2" />
-                    {/* <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                      <img
-                        src={editButton}
-                        alt="editButton"
-                        height={36}
-                        className="c-pointer me-2"
-                      />
-                      <img
-                        src={duplicateButton}
-                        alt="duplicateButton"
-                        height={36}
-                        className="c-pointer"
-                      />
-                    </div> */}
                     <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                       Make it Active
                     </small>
@@ -2339,10 +2288,6 @@ const AllProducts = () => {
                     <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                       Schedule Product
                     </small>
-                    {/* <small className="text-grey-7 mt-4">
-                                  Tags & Collection
-                                </small>
-                                <hr className="hr-grey-6 my-2" /> */}
                     <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                       Add or Remove Tags
                     </small>
@@ -2358,12 +2303,6 @@ const AllProducts = () => {
                   </div>
                 </Popover>
               </div>
-              {/* <small
-                className=" d-flex text-blue-2 c-pointer"
-                onClick={() => setSelected([])}
-              >
-                Clear Selection
-              </small> */}
             </div>
           )}
           <TabPanel value={value} index={0}>
@@ -2521,7 +2460,7 @@ const AllProducts = () => {
                           <TableCell>
                             <div className="d-flex align-items-center">
                               <div
-                                className="rounded-pill table-status px-2 py-1"
+                                className="rounded-pill d-flex table-status px-2 py-1"
                                 aria-describedby={idMetalFilter}
                                 variant="contained"
                                 onClick={handleMetalFilter}
@@ -2550,9 +2489,6 @@ const AllProducts = () => {
                                 onClose={handleMetalFilterClose}
                               >
                                 <div className="py-2 px-1">
-                                  {/* <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                                    Active
-                                  </small> */}
                                   <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
                                     Draft
                                   </small>
@@ -2561,7 +2497,6 @@ const AllProducts = () => {
                                   </small>
                                 </div>
                               </Popover>
-                              {/* <MoreVertIcon className="ms-4" /> */}
                             </div>
                           </TableCell>
                           <TableCell>
@@ -2619,10 +2554,6 @@ const AllProducts = () => {
                                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                                   Edit Quantity
                                 </small>
-                                {/* <small className="text-grey-7 mt-4">
-                                  Tags & Collection
-                                </small>
-                                <hr className="hr-grey-6 my-2" /> */}
                                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                                   Add or Remove Tags
                                 </small>
@@ -2674,13 +2605,12 @@ const AllProducts = () => {
               onClose={toggleActivityDrawer("right", false)}
               onOpen={toggleActivityDrawer("right", true)}
             >
-              {/* {list()} */}
               <div className="d-flex justify-content-between py-3 px-3">
                 <h6 className="text-lightBlue">Activity Of</h6>
                 <img
                   src={cancel}
                   alt="cancel"
-                  className="c-pointer filter-padding me-1"
+                  className="c-pointer filter-icon me-1"
                   onClick={toggleActivityDrawer("right", false)}
                 />
               </div>
@@ -2763,18 +2693,6 @@ const AllProducts = () => {
                   </tbody>
                 </table>
               </div>
-
-              {/* <div className="d-flex flex-column py-3 px-4 filter-buttons">
-                <hr className="hr-grey-6 my-3 w-100" />
-                <div className="d-flex justify-content-between">
-                  <button className="button-lightBlue-outline py-2 px-3">
-                    <p>Clear all Filters</p>
-                  </button>
-                  <button className="button-gradient py-2 px-5 w-auto ">
-                    <p>Done</p>
-                  </button>
-                </div>
-              </div> */}
             </SwipeableDrawer>
           </TabPanel>
           <TabPanel value={value} index={1}>
