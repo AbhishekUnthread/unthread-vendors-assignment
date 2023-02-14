@@ -99,14 +99,6 @@ const Options = () => {
   };
   // ? ADD OPTIONS SELECT ENDS HERE
 
-  // ? SIZE SELECT STARTS HERE
-  const [size, setSize] = React.useState("");
-
-  const handleSizeChange = (event) => {
-    setSize(event.target.value);
-  };
-  // ? SIZE SELECT ENDS HERE
-
   // ? INPUT FIELD TYPE SELECT STARTS HERE
   const [inputFieldType, setInputFieldType] = React.useState("");
 

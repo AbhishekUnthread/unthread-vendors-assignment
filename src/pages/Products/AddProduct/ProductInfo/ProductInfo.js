@@ -5,7 +5,6 @@ import { useDropzone } from "react-dropzone";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
 import clock from "../../../../assets/icons/clock.svg";
-import editWhite from "../../../../assets/icons/editWhite.svg";
 import cancel from "../../../../assets/icons/cancel.svg";
 import arrowDown from "../../../../assets/icons/arrowDown.svg";
 import productInfoMedia1 from "../../../../assets/images/products/productInfoMedia1.svg";
@@ -34,18 +33,13 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
-  TextFieldProps,
-  Input,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-// import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import SearchIcon from "@mui/icons-material/Search";
-import Box from "@mui/material/Box";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 
 // ? DIALOG TRANSITION STARTS HERE
@@ -56,35 +50,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
-  // position: "relative",
-  // borderRadius: theme.shape.borderRadius,
-  // // backgroundColor: alpha(theme.palette.common.white, 0.15),
-  // "&:hover": {
-  //   // backgroundColor: alpha(theme.palette.common.white, 0.25),
-  //   // backgroundColor: "#1c1b33",
-  // },
-  // marginLeft: 0,
-  // width: "100%",
-  // [theme.breakpoints.up("sm")]: {
-  //   marginLeft: 0,
-  //   width: "auto",
-  // },
-  // // backgroundColor: "#1c1b33",
-  // height: "30.6px",
-  // border: "1px solid #5c6d8e",
   position: "relative",
   borderRadius: theme.shape.borderRadius,
-  // backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    // backgroundColor: alpha(theme.palette.common.white, 0.25),
-    // backgroundColor: "#2b2a46",
-  },
+  "&:hover": {},
   marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
     width: "auto",
   },
-  // backgroundColor: "#2b2a46",
   height: "30.6px",
   border: "1px solid #38395c",
 }));
@@ -108,12 +81,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     transition: theme.transitions.create("width"),
     width: "100%",
     borderRadius: "5px",
-    // [theme.breakpoints.up("sm")]: {
-    //   width: "12ch",
-    //   "&:focus": {
-    //     width: "20ch",
-    //   },
-    // },
   },
 }));
 // ? SEARCH INPUT ENDS HERE
@@ -211,41 +178,6 @@ const taggedWithData = [
 // ? COLLECTIONS AUTOCOMPLETE ENDS HERE
 
 const ProductInfo = () => {
-  // ? CATEGORY DROPDOWN STARTS HERE
-  const [category, setCategory] = React.useState("");
-  const handleCategory = (event) => {
-    setCategory(event.target.value);
-  };
-  // ? CATEGORY DROPDOWN ENDS HERE
-
-  // ? SUB-CATEGORY DROPDOWN STARTS HERE
-  const [subCategory, setSubCategory] = React.useState("");
-  const handleSubCategory = (event) => {
-    setSubCategory(event.target.value);
-  };
-  // ? SUB-CATEGORY DROPDOWN ENDS HERE
-
-  // ? VENDOR NAME DROPDOWN STARTS HERE
-  const [vendorName, setVendorName] = React.useState("");
-  const handleVendorName = (event) => {
-    setVendorName(event.target.value);
-  };
-  // ? VENDOR NAME DROPDOWN ENDS HERE
-
-  // ? DISCOUNT DROPDOWN STARTS HERE
-  const [discount, setDiscount] = React.useState("");
-  const handleDiscount = (event) => {
-    setDiscount(event.target.value);
-  };
-  // ? DISCOUNT DROPDOWN ENDS HERE
-
-  // ? DYNAMIC DISCOUNT DROPDOWN STARTS HERE
-  const [dynamicDiscount, setDynamicDiscount] = React.useState("");
-  const handleDynamicDiscount = (event) => {
-    setDynamicDiscount(event.target.value);
-  };
-  // ? DISCOUNT DROPDOWN ENDS HERE
-
   // ? TOGGLE BUTTONS STARTS HERE
   const [productStatus, setPoductStatus] = React.useState("active");
   const handleProductStatus = (event, newProductStatus) => {
@@ -413,18 +345,6 @@ const ProductInfo = () => {
   const openDynamic = Boolean(anchorDynamicEl);
   const idDynamic = openDynamic ? "simple-popover" : undefined;
   // * DYNAMIC FIELD POPOVERS ENDS
-
-  // * QUANTITY POPOVERS STARTS
-  const [anchorQuantityEl, setAnchorQuantityEl] = React.useState(null);
-  const handleQuantity = (event) => {
-    setAnchorQuantityEl(event.currentTarget);
-  };
-  const handleQuantityClose = () => {
-    setAnchorQuantityEl(null);
-  };
-  const openQuantity = Boolean(anchorQuantityEl);
-  const idQuantity = openQuantity ? "simple-popover" : undefined;
-  // * QUANTITY POPOVERS ENDS
 
   // * METAL FILTER POPOVERS STARTS
   const [anchorMetalFilterEl, setAnchorMetalFilterEl] = React.useState(null);

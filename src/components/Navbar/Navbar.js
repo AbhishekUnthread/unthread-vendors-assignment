@@ -1,5 +1,5 @@
 import * as React from "react";
-import { styled, alpha } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import "./Navbar.scss";
 // ! IMAGES IMPORTS
 import user from "../../assets/icons/user.svg";
@@ -17,14 +17,11 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import NoteOutlinedIcon from "@mui/icons-material/NoteOutlined";
 // import LightModeIcon from "@mui/icons-material/LightMode";
 // import DarkModeIcon from "@mui/icons-material/DarkMode";
 
@@ -67,12 +64,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     transition: theme.transitions.create("width"),
     width: "100%",
     borderRadius: "5px",
-    // [theme.breakpoints.up("sm")]: {
-    //   width: "12ch",
-    //   "&:focus": {
-    //     width: "20ch",
-    //   },
-    // },
   },
 }));
 // ? SEARCH INPUT ENDS HERE
