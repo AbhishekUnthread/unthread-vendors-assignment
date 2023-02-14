@@ -29,11 +29,43 @@
   }
   .rdw-dropdown-wrapper {
     background: none;
-    height: auto;
+    // height: auto;
     border: 0;
     border-radius: 4px;
   }
   .public-DraftStyleDefault-block {
     height: 150px !important;
+  }
+  .rdw-dropdown-optionwrapper {
+    background: #7879a9;
+    border: 1px solid #343e50;
+    // border-top: 0;
+    margin-top: 1px;
+    &:hover {
+      box-shadow: none;
+    }
+  }
+  .rdw-dropdown-wrapper {
+    border: 1px solid #343e50;
+    width: auto;
+    height: 22px;
+    &:hover {
+      box-shadow: none;
+    }
+  }
+  .rdw-dropdownoption-active {
+    background: #343e50;
+  }
+  .rdw-dropdownoption-highlighted {
+    background: #343e50;
+  }
+  .rdw-block-dropdown {
+    min-width: 110px;
+  }
+  .rdw-fontfamily-dropdown {
+    min-width: 115px;
+  }
+  .rdw-fontSize-dropdown {
+    min-width: 40px;
   }
 }
