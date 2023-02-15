@@ -21,6 +21,8 @@ import uploadLineSheet from "../../../assets/images/products/uploadLineSheet.svg
 import uploadCompanySheet1 from "../../../assets/images/products/uploadCompanySheet1.svg";
 import uploadCompanySheet2 from "../../../assets/images/products/uploadCompanySheet2.svg";
 import filter from "../../../assets/icons/filter.svg";
+import analyticsUp from "../../../assets/icons/analyticsUp.svg";
+import analyticsDown from "../../../assets/icons/analyticsDown.svg";
 // ! MATERIAL IMPORTS
 import {
   Autocomplete,
@@ -55,6 +57,17 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import AllUsersTable from "../AllUsersTable/AllUsersTable";
+
+// import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import moment from "moment/moment";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -339,6 +352,19 @@ const AllUsers = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  // ? DATE PICKER STARTS
+
+  const [activityDateValue, setActivityDateValue] = React.useState(
+    // moment()
+    new Date()
+  );
+
+  const handleActivityDateChange = (newValue) => {
+    setActivityDateValue(newValue);
+  };
+
+  // ? DATE PICKER ENDS
 
   // ? FILTER DRAWER STARTS HERE
   const [state, setState] = React.useState({
@@ -1001,10 +1027,26 @@ const AllUsers = () => {
                 </div>
               </div>
               <div className="d-flex ms-5">
-                <button className="button-grey py-2 px-3 ms-5">
+                {/* <button className="button-grey py-2 px-3 ms-5">
                   <small className="text-lightBlue">Sort By Date</small>
                   <img src={sortBy} alt="sortBy" className="ms-2" />
-                </button>
+                </button> */}
+
+                <LocalizationProvider dateAdapter={AdapterMoment}>
+                  <DateTimePicker
+                    // label="Sort By Date"
+                    value={activityDateValue}
+                    onChange={handleActivityDateChange}
+                    renderInput={(params) => (
+                      <OutlinedInput
+                        {...params}
+                        placeholder="Enter Date & Time"
+                        size="small"
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+
                 <button
                   className="button-grey py-2 px-3"
                   aria-describedby={idActivity}
@@ -1097,8 +1139,87 @@ const AllUsers = () => {
       </div>
 
       <div className="row">
+        <div className="col-md-3 col-6 ps-0 my-3">
+          <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
+            <div className="d-flex justify-content-between align-items-end">
+              <div className="d-flex flex-column">
+                <h2>50</h2>
+                <small className="text-grey-6 mt-2">Active</small>
+              </div>
+              <div className="d-flex flex-column align-items-end">
+                <img
+                  src={analyticsUp}
+                  alt="analyticsUp"
+                  className=""
+                  width={25}
+                />
+                <small className="text-green-2 mt-2">+10.78 %</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-3 col-6 ps-0 my-3">
+          <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
+            <div className="d-flex justify-content-between align-items-end">
+              <div className="d-flex flex-column">
+                <h2>50</h2>
+                <small className="text-grey-6 mt-2">In-Active</small>
+              </div>
+              <div className="d-flex flex-column align-items-end">
+                <img
+                  src={analyticsDown}
+                  alt="analyticsDown"
+                  className=""
+                  width={25}
+                />
+                <small className="text-red-4 mt-2">-10.78 %</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-3 col-6 ps-0 my-3">
+          <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
+            <div className="d-flex justify-content-between align-items-end">
+              <div className="d-flex flex-column">
+                <h2>50</h2>
+                <small className="text-grey-6 mt-2">Returning Customers</small>
+              </div>
+              <div className="d-flex flex-column align-items-end">
+                <img
+                  src={analyticsUp}
+                  alt="analyticsUp"
+                  className=""
+                  width={25}
+                />
+                <small className="text-green-2 mt-2">+10.78 %</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-3 col-6 ps-0 pe-0 my-3">
+          <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
+            <div className="d-flex justify-content-between align-items-end">
+              <div className="d-flex flex-column">
+                <h2>50</h2>
+                <small className="text-grey-6 mt-2">Abandoned Checkout</small>
+              </div>
+              <div className="d-flex flex-column align-items-end">
+                <img
+                  src={analyticsDown}
+                  alt="analyticsDown"
+                  className=""
+                  width={25}
+                />
+                <small className="text-red-4 mt-2">-10.78 %</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
         <Paper
-          sx={{ width: "100%", mb: 2, mt: 3, p: 0 }}
+          sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
           className="border-grey-5 bg-black-15"
         >
           <Box
