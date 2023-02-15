@@ -5,6 +5,10 @@ import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
+import user from "../../../assets/images/users/user.svg";
+import sortBy from "../../../assets/icons/sortBy.svg";
+import activity from "../../../assets/icons/activity.svg";
+import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 import columns from "../../../assets/icons/columns.svg";
 import cancel from "../../../assets/icons/cancel.svg";
 import tutorial from "../../../assets/icons/tutorial.svg";
@@ -190,6 +194,135 @@ const rejectStyle = {
 };
 // ? FILE UPLOAD ENDS HERE
 
+const activityData = [
+  {
+    id: 1,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 2,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 3,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 4,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 5,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 6,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 7,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 8,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 9,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 10,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 11,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 12,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 13,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 14,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 15,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 16,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 17,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 18,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 19,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 20,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+  {
+    id: 21,
+    dateAndTime: "25 July, 2022 at 12:00 pm",
+    user: "Saniya Shaikh",
+    activity: "Updated Saniys's status to inactive",
+  },
+];
+
 const AllUsers = () => {
   const [value, setValue] = React.useState(0);
   const [importValue, setImportValue] = React.useState("importUsers");
@@ -227,6 +360,27 @@ const AllUsers = () => {
     setState({ ...state, [anchor]: open });
   };
   // ? FILTER DRAWER ENDS HERE
+
+  // ? ACTIVITY DRAWER STARTS HERE
+  const [activityDrawer, setActivityDrawer] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+
+  const toggleActivityDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setActivityDrawer({ ...activityDrawer, [anchor]: open });
+  };
+  // ? ACTIVITY DRAWER ENDS HERE
 
   // ? POPOVERS STARTS HERE
 
@@ -301,6 +455,18 @@ const AllUsers = () => {
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
   // * STATUS POPOVERS ENDS
+
+  // * ACTIVITY POPOVERS STARTS
+  const [anchorActivityEl, setAnchorActivityEl] = React.useState(null);
+  const handleActivityClick = (event) => {
+    setAnchorActivityEl(event.currentTarget);
+  };
+  const handleActivityClose = () => {
+    setAnchorActivityEl(null);
+  };
+  const openActivity = Boolean(anchorActivityEl);
+  const idActivity = openActivity ? "simple-popover" : undefined;
+  // * ACTIVITY POPOVERS ENDS
 
   // ? POPOVERS ENDS HERE
 
@@ -408,6 +574,7 @@ const AllUsers = () => {
           </button>
           <button
             className="button-transparent me-1 py-2 px-3"
+            onClick={toggleActivityDrawer("right", true)}
             // onClick={handleExportOpen}
           >
             <p className="text-lightBlue">View Logs</p>
@@ -799,6 +966,134 @@ const AllUsers = () => {
             </button>
           </DialogActions>
         </Dialog>
+
+        <SwipeableDrawer
+          anchor="right"
+          open={activityDrawer["right"]}
+          onClose={toggleActivityDrawer("right", false)}
+          onOpen={toggleActivityDrawer("right", true)}
+        >
+          <div className="d-flex justify-content-between py-3 px-3">
+            <h6 className="text-lightBlue">View Logs</h6>
+            <img
+              src={cancel}
+              alt="cancel"
+              className="c-pointer filter-icon me-1"
+              onClick={toggleActivityDrawer("right", false)}
+            />
+          </div>
+
+          <div className="px-3">
+            <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center">
+                <img
+                  src={user}
+                  alt="user"
+                  className="me-2"
+                  height={45}
+                  width={45}
+                />
+                <div>
+                  <p className="text-lightBlue fw-600">User Module</p>
+                  <small className="mt-2 text-grey-6">
+                    Last modified on 10 Dec, 2022 by Saniya Shaikh
+                  </small>
+                </div>
+              </div>
+              <div className="d-flex ms-5">
+                <button className="button-grey py-2 px-3 ms-5">
+                  <small className="text-lightBlue">Sort By Date</small>
+                  <img src={sortBy} alt="sortBy" className="ms-2" />
+                </button>
+                <button
+                  className="button-grey py-2 px-3"
+                  aria-describedby={idActivity}
+                  variant="contained"
+                  onClick={handleActivityClick}
+                >
+                  <small className="text-lightBlue">Activity</small>
+                  <img src={activity} alt="activity" className="ms-2" />
+                </button>
+
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  id={idActivity}
+                  open={openActivity}
+                  anchorEl={anchorActivityEl}
+                  onClose={handleActivityClose}
+                >
+                  <div className="py-2 px-1">
+                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                      Viewed User
+                    </small>
+                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                      Edited User
+                    </small>
+                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                      Updated User Status
+                    </small>
+                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                      Archived User
+                    </small>
+                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                      Added Comments
+                    </small>
+                  </div>
+                </Popover>
+              </div>
+            </div>
+            <table className="table table-borderless mt-4">
+              <thead>
+                <tr className="table-grey-bottom table-grey-top">
+                  <th scope="col">
+                    <small className="text-lightBlue fw-400">User</small>
+                  </th>
+                  <th scope="col">
+                    <small className="text-lightBlue fw-400">Activity</small>
+                  </th>
+                  <th scope="col">
+                    <small className="text-lightBlue fw-400">
+                      Date and Time
+                    </small>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {activityData.map((data) => (
+                  <tr key={data.id}>
+                    <th scope="row">
+                      <div className="d-flex align-items-center">
+                        <img
+                          src={teamMember1}
+                          alt="teamMember1"
+                          className="me-2"
+                        />
+                        <small className="text-lightBlue fw-400">
+                          {data.user}
+                        </small>
+                      </div>
+                    </th>
+                    <td>
+                      <small className="text-lightBlue">{data.activity}</small>
+                    </td>
+                    <td>
+                      <small className="text-grey-6 fw-400">
+                        {data.dateAndTime}
+                      </small>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </SwipeableDrawer>
       </div>
 
       <div className="row">

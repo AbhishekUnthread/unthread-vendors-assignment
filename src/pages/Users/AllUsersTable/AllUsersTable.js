@@ -10,8 +10,6 @@ import verticalDots from "../../../assets/icons/verticalDots.svg";
 import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
-import sortBy from "../../../assets/icons/sortBy.svg";
-import activity from "../../../assets/icons/activity.svg";
 import editButton from "../../../assets/icons/editButton.svg";
 import duplicateButton from "../../../assets/icons/duplicateButton.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
@@ -36,135 +34,6 @@ import { visuallyHidden } from "@mui/utils";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-
-const activityData = [
-  {
-    id: 1,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 2,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 3,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 4,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 5,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 6,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 7,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 8,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 9,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 10,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 11,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 12,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 13,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 14,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 15,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 16,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 17,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 18,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 19,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 20,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 21,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-];
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -422,27 +291,6 @@ const AllUsersTable = () => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  // ? ACTIVITY DRAWER STARTS HERE
-  const [activityDrawer, setActivityDrawer] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
-
-  const toggleActivityDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setActivityDrawer({ ...activityDrawer, [anchor]: open });
-  };
-  // ? ACTIVITY DRAWER ENDS HERE
 
   // * EDIT STATUS POPOVERS STARTS
   const [anchorEditStatusEl, setAnchorEditStatusEl] = React.useState(null);
@@ -771,7 +619,6 @@ const AllUsersTable = () => {
                     <TableCell>
                       <div
                         className="d-flex c-pointer"
-                        onClick={toggleActivityDrawer("right", true)}
                         // onMouseEnter={handleActivityPopoverOpen}
                         // onMouseLeave={handleActivityPopoverClose}
                       >
@@ -893,94 +740,6 @@ const AllUsersTable = () => {
         onRowsPerPageChange={handleChangeRowsPerPage}
         className="table-pagination"
       />
-
-      <SwipeableDrawer
-        anchor="right"
-        open={activityDrawer["right"]}
-        onClose={toggleActivityDrawer("right", false)}
-        onOpen={toggleActivityDrawer("right", true)}
-      >
-        <div className="d-flex justify-content-between py-3 px-3">
-          <h6 className="text-lightBlue">Activity Of</h6>
-          <img
-            src={cancel}
-            alt="cancel"
-            className="c-pointer filter-icon me-1"
-            onClick={toggleActivityDrawer("right", false)}
-          />
-        </div>
-
-        <div className="px-3">
-          <div className="d-flex align-items-center">
-            <div className="d-flex align-items-center">
-              <img
-                src={user}
-                alt="user"
-                className="me-2"
-                height={45}
-                width={45}
-              />
-              <div>
-                <p className="text-lightBlue fw-600">Saniya Shaikh</p>
-                <small className="mt-2 text-grey-6">
-                  saniya@mydesignar.com
-                </small>
-              </div>
-            </div>
-            <div className="d-flex ms-5">
-              <button className="button-grey py-2 px-3 ms-5">
-                <small className="text-lightBlue">Sort By Date</small>
-                <img src={sortBy} alt="sortBy" className="ms-2" />
-              </button>
-              <button className="button-grey py-2 px-3">
-                <small className="text-lightBlue">Activity</small>
-                <img src={activity} alt="activity" className="ms-2" />
-              </button>
-            </div>
-          </div>
-          <table className="table table-borderless mt-4">
-            <thead>
-              <tr className="table-grey-bottom table-grey-top">
-                <th scope="col">
-                  <small className="text-lightBlue fw-400">User</small>
-                </th>
-                <th scope="col">
-                  <small className="text-lightBlue fw-400">Activity</small>
-                </th>
-                <th scope="col">
-                  <small className="text-lightBlue fw-400">Date and Time</small>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {activityData.map((data) => (
-                <tr key={data.id}>
-                  <th scope="row">
-                    <div className="d-flex align-items-center">
-                      <img
-                        src={teamMember1}
-                        alt="teamMember1"
-                        className="me-2"
-                      />
-                      <small className="text-lightBlue fw-400">
-                        {data.user}
-                      </small>
-                    </div>
-                  </th>
-                  <td>
-                    <small className="text-lightBlue">{data.activity}</small>
-                  </td>
-                  <td>
-                    <small className="text-grey-6 fw-400">
-                      {data.dateAndTime}
-                    </small>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </SwipeableDrawer>
     </React.Fragment>
   );
 };
