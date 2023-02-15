@@ -1,19 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
 // ! IMAGES IMPORTS
-import teamMember1 from "../../assets/images/products/teamMember1.svg";
-import teamMember2 from "../../assets/images/products/teamMember2.svg";
-import teamMember3 from "../../assets/images/products/teamMember3.svg";
-import cancel from "../../assets/icons/cancel.svg";
-import verticalDots from "../../assets/icons/verticalDots.svg";
-import ringSmall from "../../assets/images/ringSmall.svg";
-import arrowDown from "../../assets/icons/arrowDown.svg";
-import arrowDownBlack from "../../assets/icons/arrowDownBlack.svg";
-import sortBy from "../../assets/icons/sortBy.svg";
-import activity from "../../assets/icons/activity.svg";
-import editButton from "../../assets/icons/editButton.svg";
-import duplicateButton from "../../assets/icons/duplicateButton.svg";
-import deleteRed from "../../assets/icons/delete.svg";
+import teamMember1 from "../../../assets/images/products/teamMember1.svg";
+import teamMember2 from "../../../assets/images/products/teamMember2.svg";
+import teamMember3 from "../../../assets/images/products/teamMember3.svg";
+import cancel from "../../../assets/icons/cancel.svg";
+import verticalDots from "../../../assets/icons/verticalDots.svg";
+import ringSmall from "../../../assets/images/ringSmall.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
+import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
+import sortBy from "../../../assets/icons/sortBy.svg";
+import activity from "../../../assets/icons/activity.svg";
+import editButton from "../../../assets/icons/editButton.svg";
+import duplicateButton from "../../../assets/icons/duplicateButton.svg";
+import deleteRed from "../../../assets/icons/delete.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -740,7 +740,7 @@ const AllProductsTable = () => {
                     <TableCell>
                       <div className="d-flex align-items-center">
                         <div
-                          className="rounded-pill d-flex table-status px-2 py-1"
+                          className="rounded-pill d-flex table-status px-2 py-1 c-pointer"
                           aria-describedby={idMetalFilter}
                           variant="contained"
                           onClick={handleMetalFilter}

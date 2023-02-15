@@ -4,7 +4,7 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
-import Toolbar from "@mui/material/Toolbar";
+// import Toolbar from "@mui/material/Toolbar";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Navbar from "./components/Navbar/Navbar";
 import {
@@ -24,6 +24,8 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import { useEffect } from "react";
 import AllProducts from "./pages/Products/AllProducts/AllProducts";
 import AddProduct from "./pages/Products/AddProduct/AddProduct";
+import AllUsers from "./pages/Users/AllUsers/AllUsers";
+import AddUser from "./pages/Users/AddUser/AddUser";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -187,6 +189,8 @@ function App(props) {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/allProducts" element={<AllProducts />} />
               <Route path="/addProduct" element={<AddProduct />} />
+              <Route path="/allUsers" element={<AllUsers />} />
+              <Route path="/addUser" element={<AddUser />} />
               {/* <Route path="/orders" element={<Orders />} exact />
               <Route path="/add-product" element={<AddProduct />} exact />
               <Route path="/products" element={<Products />} exact />

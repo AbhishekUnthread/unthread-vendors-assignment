@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
-import "./AllProducts.scss";
+import "../../Products/AllProducts/AllProducts.scss";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
 // ! IMAGES IMPORTS
@@ -29,6 +29,7 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
+  OutlinedInput,
   Paper,
   Popover,
   Radio,
@@ -49,7 +50,7 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import AllProductsTable from "../AllProductsTable/AllProductsTable";
+import AllUsersTable from "../AllUsersTable/AllUsersTable";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -189,9 +190,9 @@ const rejectStyle = {
 };
 // ? FILE UPLOAD ENDS HERE
 
-const AllProducts = () => {
+const AllUsers = () => {
   const [value, setValue] = React.useState(0);
-  const [importValue, setImportValue] = React.useState("importProducts");
+  const [importValue, setImportValue] = React.useState("importUsers");
   const [importSecondValue, setImportSecondValue] =
     React.useState("uploadLineSheet");
 
@@ -241,21 +242,6 @@ const AllProducts = () => {
   const idFlag = openFlag ? "simple-popover" : undefined;
   // * FLAG POPOVERS ENDS
 
-  // * COLUMNS POPOVERS STARTS
-  const [anchorColumnsEl, setAnchorColumnsEl] = React.useState(null);
-
-  const handleColumnsClick = (event) => {
-    setAnchorColumnsEl(event.currentTarget);
-  };
-
-  const handleColumnsClose = () => {
-    setAnchorColumnsEl(null);
-  };
-
-  const openColumns = Boolean(anchorColumnsEl);
-  const idColumns = openColumns ? "simple-popover" : undefined;
-  // * COLUMNS POPOVERS ENDS
-
   // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
@@ -271,54 +257,54 @@ const AllProducts = () => {
   const idSort = openSort ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
 
-  // * VENDOR POPOVERS STARTS
-  const [anchorVendorEl, setAnchorVendorEl] = React.useState(null);
+  // * LOCATION POPOVERS STARTS
+  const [anchorLocationEl, setAnchorLocationEl] = React.useState(null);
 
-  const handleVendorClick = (event) => {
-    setAnchorVendorEl(event.currentTarget);
+  const handleLocationClick = (event) => {
+    setAnchorLocationEl(event.currentTarget);
   };
 
-  const handleVendorClose = () => {
-    setAnchorVendorEl(null);
+  const handleLocationClose = () => {
+    setAnchorLocationEl(null);
   };
 
-  const openVendor = Boolean(anchorVendorEl);
-  const idVendor = openVendor ? "simple-popover" : undefined;
-  // * VENDOR POPOVERS ENDS
+  const openLocation = Boolean(anchorLocationEl);
+  const idLocation = openLocation ? "simple-popover" : undefined;
+  // * LOCATION POPOVERS ENDS
 
-  // * CATEGORY POPOVERS STARTS
-  const [anchorCategoryEl, setAnchorCategoryEl] = React.useState(null);
+  // * NO OF ORDERS POPOVERS STARTS
+  const [anchorOrdersEl, setAnchorOrdersEl] = React.useState(null);
 
-  const handleCategoryClick = (event) => {
-    setAnchorCategoryEl(event.currentTarget);
+  const handleOrdersClick = (event) => {
+    setAnchorOrdersEl(event.currentTarget);
   };
 
-  const handleCategoryClose = () => {
-    setAnchorCategoryEl(null);
+  const handleOrdersClose = () => {
+    setAnchorOrdersEl(null);
   };
 
-  const openCategory = Boolean(anchorCategoryEl);
-  const idCategory = openCategory ? "simple-popover" : undefined;
-  // * CATEGORY POPOVERS ENDS
+  const openOrders = Boolean(anchorOrdersEl);
+  const idOrders = openOrders ? "simple-popover" : undefined;
+  // * NO OF ORDERS POPOVERS ENDS
 
-  // * TAGGED WITH POPOVERS STARTS
-  const [anchorTaggedWithEl, setAnchorTaggedWithEl] = React.useState(null);
+  // * STATUS POPOVERS STARTS
+  const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
 
-  const handleTaggedWithClick = (event) => {
-    setAnchorTaggedWithEl(event.currentTarget);
+  const handleStatusClick = (event) => {
+    setAnchorStatusEl(event.currentTarget);
   };
 
-  const handleTaggedWithClose = () => {
-    setAnchorTaggedWithEl(null);
+  const handleStatusClose = () => {
+    setAnchorStatusEl(null);
   };
 
-  const openTaggedWith = Boolean(anchorTaggedWithEl);
-  const idTaggedWith = openTaggedWith ? "simple-popover" : undefined;
-  // * TAGGED WITH POPOVERS ENDS
+  const openStatus = Boolean(anchorStatusEl);
+  const idStatus = openStatus ? "simple-popover" : undefined;
+  // * STATUS POPOVERS ENDS
 
   // ? POPOVERS ENDS HERE
 
-  const vendorData = [
+  const locationData = [
     { title: "Content 1", value: "content1" },
     { title: "Content 2", value: "content2" },
     { title: "Content 3", value: "content3" },
@@ -414,11 +400,17 @@ const AllProducts = () => {
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
-        <h4 className="page-heading w-auto ps-0">All Products</h4>
+        <h4 className="page-heading w-auto ps-0">All Users</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <button className="button-transparent me-1 py-2 px-3">
             <img src={tutorial} alt="tutorial" className="me-2" width={20} />
             <p className="text-blue-gradient">Tutorial</p>
+          </button>
+          <button
+            className="button-transparent me-1 py-2 px-3"
+            // onClick={handleExportOpen}
+          >
+            <p className="text-lightBlue">View Logs</p>
           </button>
           <button
             className="button-transparent me-1 py-2 px-3"
@@ -433,8 +425,8 @@ const AllProducts = () => {
           >
             <p className="text-lightBlue">Import</p>
           </button>
-          <Link to="/addProduct" className="button-gradient py-2 px-4">
-            <p>+ Add Product</p>
+          <Link to="/addUser" className="button-gradient py-2 px-4">
+            <p>+ Add New</p>
           </Link>
         </div>
         <Dialog
@@ -448,7 +440,7 @@ const AllProducts = () => {
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
-              <h5 className="text-lightBlue fw-500">Export Products</h5>
+              <h5 className="text-lightBlue fw-500">Export Users</h5>
               <img
                 src={cancel}
                 alt="cancel"
@@ -480,9 +472,9 @@ const AllProducts = () => {
                   }}
                 />
                 <FormControlLabel
-                  value="allProducts"
+                  value="allUsers"
                   control={<Radio size="small" />}
-                  label="All Products"
+                  label="All Users"
                   sx={{
                     "& .MuiTypography-root": {
                       fontSize: 13,
@@ -584,7 +576,7 @@ const AllProducts = () => {
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
-              <h5 className="text-lightBlue fw-500">Import Products</h5>
+              <h5 className="text-lightBlue fw-500">Import Users</h5>
               <img
                 src={cancel}
                 alt="cancel"
@@ -604,9 +596,9 @@ const AllProducts = () => {
                 onChange={handleImportChange}
               >
                 <FormControlLabel
-                  value="importProducts"
+                  value="importUsers"
                   control={<Radio size="small" />}
-                  label="Import Products from Existing Site"
+                  label="Import Users from Existing Site"
                   sx={{
                     "& .MuiTypography-root": {
                       fontSize: 13,
@@ -615,9 +607,9 @@ const AllProducts = () => {
                   }}
                 />
                 <FormControlLabel
-                  value="bulkImportProducts"
+                  value="bulkImportUsers"
                   control={<Radio size="small" />}
-                  label="Bulk Import Products"
+                  label="Bulk Import Users"
                   sx={{
                     "& .MuiTypography-root": {
                       fontSize: 13,
@@ -655,7 +647,7 @@ const AllProducts = () => {
         >
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
-              <h5 className="text-lightBlue fw-500">Import Products</h5>
+              <h5 className="text-lightBlue fw-500">Import Users</h5>
               <img
                 src={cancel}
                 alt="cancel"
@@ -700,14 +692,14 @@ const AllProducts = () => {
                       </span>
                     </small>
                     <small className="text-grey-6">
-                      3. Do not upload more than 50 products at a time.
+                      3. Do not upload more than 50 users at a time.
                     </small>
                     <small className="text-grey-6">
-                      4. Select the folder containing Product Images with
-                      Product folder name equal to SKU
+                      4. Select the folder containing User Images with User
+                      folder name equal to SKU
                     </small>
                     <small className="text-grey-6">
-                      5. Products should be uploaded successfully.
+                      5. Users should be uploaded successfully.
                     </small>
                     <div {...getRootProps({ style })} className="mt-3">
                       <input
@@ -765,14 +757,14 @@ const AllProducts = () => {
                   </span>
                 </small>
                 <small className="text-grey-6">
-                  3. Do not upload more than 50 products at a time.
+                  3. Do not upload more than 50 users at a time.
                 </small>
                 <small className="text-grey-6">
-                  4. Select the folder containing Product Images with Product
-                  folder name equal to SKU
+                  4. Select the folder containing User Images with User folder
+                  name equal to SKU
                 </small>
                 <small className="text-grey-6">
-                  5. Products should be uploaded successfully.
+                  5. Users should be uploaded successfully.
                 </small>
                 <div {...getRootProps({ style })} className="mt-3">
                   <input
@@ -808,6 +800,7 @@ const AllProducts = () => {
           </DialogActions>
         </Dialog>
       </div>
+
       <div className="row">
         <Paper
           sx={{ width: "100%", mb: 2, mt: 3, p: 0 }}
@@ -827,8 +820,9 @@ const AllProducts = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
-              <Tab label="Live" className="tabs-head" />
-              <Tab label="Draft" className="tabs-head" />
+              <Tab label="Active" className="tabs-head" />
+              <Tab label="New" className="tabs-head" />
+              <Tab label="In-Active" className="tabs-head" />
               <Tab label="Archived" className="tabs-head" />
             </Tabs>
             <div
@@ -885,11 +879,11 @@ const AllProducts = () => {
               <div className="d-flex product-button__box ms-2">
                 <button
                   className="button-grey py-2 px-3 d-none d-md-block"
-                  aria-describedby={idVendor}
+                  aria-describedby={idLocation}
                   variant="contained"
-                  onClick={handleVendorClick}
+                  onClick={handleLocationClick}
                 >
-                  <small className="text-lightBlue">Vendor</small>
+                  <small className="text-lightBlue">Location</small>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
                 <Popover
@@ -901,10 +895,10 @@ const AllProducts = () => {
                     vertical: "top",
                     horizontal: "left",
                   }}
-                  id={idVendor}
-                  open={openVendor}
-                  anchorEl={anchorVendorEl}
-                  onClose={handleVendorClose}
+                  id={idLocation}
+                  open={openLocation}
+                  anchorEl={anchorLocationEl}
+                  onClose={handleLocationClose}
                 >
                   <div className="py-2">
                     <Autocomplete
@@ -912,7 +906,7 @@ const AllProducts = () => {
                       freeSolo
                       size="small"
                       // sx={{ width: 200 }}
-                      options={vendorData}
+                      options={locationData}
                       getOptionLabel={(option) => option.title}
                       renderOption={(props, option) => (
                         <li {...props}>
@@ -936,11 +930,11 @@ const AllProducts = () => {
                 </Popover>
                 <button
                   className="button-grey py-2 px-3 d-none d-md-block"
-                  aria-describedby={idCategory}
+                  aria-describedby={idOrders}
                   variant="contained"
-                  onClick={handleCategoryClick}
+                  onClick={handleOrdersClick}
                 >
-                  <small className="text-lightBlue">Category</small>
+                  <small className="text-lightBlue">No of Orders</small>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
                 <Popover
@@ -952,44 +946,34 @@ const AllProducts = () => {
                     vertical: "top",
                     horizontal: "left",
                   }}
-                  id={idCategory}
-                  open={openCategory}
-                  anchorEl={anchorCategoryEl}
-                  onClose={handleCategoryClose}
+                  id={idOrders}
+                  open={openOrders}
+                  anchorEl={anchorOrdersEl}
+                  onClose={handleOrdersClose}
                 >
-                  <div className="py-2">
-                    <Autocomplete
-                      id="free-solo-demo"
-                      freeSolo
-                      size="small"
-                      sx={{ width: 200 }}
-                      options={vendorData}
-                      getOptionLabel={(option) => option.title}
-                      renderOption={(props, option) => (
-                        <li {...props}>
-                          <small className="text-lightBlue my-1">
-                            {option.title}
-                          </small>
-                        </li>
-                      )}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          placeholder="Search"
-                          inputRef={(input) => input?.focus()}
-                        />
-                      )}
-                    />
+                  <div className="py-2 px-1">
+                    <small className="d-block text-lightBlue">
+                      Min No. of Order
+                    </small>
+                    <FormControl className="px-0 mt-1">
+                      <OutlinedInput placeholder="Enter Min" size="small" />
+                    </FormControl>
+                    <small className="d-block text-lightBlue mt-2">
+                      Max No. of Order
+                    </small>
+                    <FormControl className="px-0 mt-1">
+                      <OutlinedInput placeholder="Enter Max" size="small" />
+                    </FormControl>
                   </div>
                 </Popover>
 
                 <button
                   className="button-grey py-2 px-3 d-none d-md-block"
-                  aria-describedby={idTaggedWith}
+                  aria-describedby={idStatus}
                   variant="contained"
-                  onClick={handleTaggedWithClick}
+                  onClick={handleStatusClick}
                 >
-                  <small className="text-lightBlue">Tagged With</small>
+                  <small className="text-lightBlue">Status</small>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
 
@@ -1002,46 +986,62 @@ const AllProducts = () => {
                     vertical: "top",
                     horizontal: "left",
                   }}
-                  id={idTaggedWith}
-                  open={openTaggedWith}
-                  anchorEl={anchorTaggedWithEl}
-                  onClose={handleTaggedWithClose}
+                  id={idStatus}
+                  open={openStatus}
+                  anchorEl={anchorStatusEl}
+                  onClose={handleStatusClose}
                 >
-                  <div className="py-2">
-                    <Autocomplete
-                      multiple
-                      id="checkboxes-tags-demo"
-                      sx={{ width: 300 }}
-                      options={taggedWithData}
-                      disableCloseOnSelect
-                      getOptionLabel={(option) => option.title}
-                      size="small"
-                      renderOption={(props, option, { selected }) => (
-                        <li {...props}>
+                  <div className="py-2 px-1">
+                    <FormGroup className="tags-checkbox">
+                      <FormControlLabel
+                        control={
                           <Checkbox
-                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                            checkedIcon={<CheckBoxIcon fontSize="small" />}
-                            checked={selected}
                             size="small"
                             style={{
                               color: "#5C6D8E",
                               marginRight: 0,
                             }}
                           />
-                          <small className="text-lightBlue">
-                            {option.title}
-                          </small>
-                        </li>
-                      )}
-                      renderInput={(params) => (
-                        <TextField
-                          size="small"
-                          {...params}
-                          placeholder="Search"
-                          inputRef={(input) => input?.focus()}
-                        />
-                      )}
-                    />
+                        }
+                        label="Active"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                            }}
+                          />
+                        }
+                        label="In-Active"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                            }}
+                          />
+                        }
+                        label="Blocked"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                            }}
+                          />
+                        }
+                        label="Archived"
+                      />
+                    </FormGroup>
                   </div>
                 </Popover>
 
@@ -1059,7 +1059,6 @@ const AllProducts = () => {
                     onClose={toggleDrawer("right", false)}
                     onOpen={toggleDrawer("right", true)}
                   >
-                    {/* {list()} */}
                     <div className="d-flex justify-content-between py-3 px-3 ms-2 me-1">
                       <h6 className="text-lightBlue">Filters</h6>
                       <img
@@ -1079,7 +1078,7 @@ const AllProducts = () => {
                           aria-controls="panel1d-content"
                           id="panel1d-header"
                         >
-                          <p className="text-lightBlue">Product Category</p>
+                          <p className="text-lightBlue">Location</p>
                         </AccordionSummary>
                         <AccordionDetails>
                           <RadioGroup
@@ -1132,7 +1131,7 @@ const AllProducts = () => {
                           aria-controls="panel2d-content"
                           id="panel2d-header"
                         >
-                          <p className="text-lightBlue">Sub Category</p>
+                          <p className="text-lightBlue">Email Subscription</p>
                         </AccordionSummary>
                         <AccordionDetails>
                           <RadioGroup
@@ -1175,110 +1174,6 @@ const AllProducts = () => {
                               }}
                             />
                           </RadioGroup>
-                        </AccordionDetails>
-                      </Accordion>
-                      <Accordion
-                        expanded={expanded === "panel3"}
-                        onChange={handleAccordianChange("panel3")}
-                      >
-                        <AccordionSummary
-                          aria-controls="panel3d-content"
-                          id="panel3d-header"
-                        >
-                          <p className="text-lightBlue">Vendor</p>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <RadioGroup
-                            aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
-                            // value={recommendedProductRadio}
-                            // onChange={handleRecommendedProductRadio}
-                          >
-                            <FormControlLabel
-                              value="1"
-                              control={<Radio size="small" />}
-                              label="Content 1"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                            <FormControlLabel
-                              value="2"
-                              control={<Radio size="small" />}
-                              label="Content 2"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                            <FormControlLabel
-                              value="3"
-                              control={<Radio size="small" />}
-                              label="Content 3"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                          </RadioGroup>
-                        </AccordionDetails>
-                      </Accordion>
-                      <Accordion
-                        expanded={expanded === "panel4"}
-                        onChange={handleAccordianChange("panel4")}
-                      >
-                        <AccordionSummary
-                          aria-controls="panel4d-content"
-                          id="panel4d-header"
-                        >
-                          <p className="text-lightBlue">Collection</p>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <FormGroup className="tags-checkbox">
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  style={{
-                                    color: "#5C6D8E",
-                                    marginRight: 0,
-                                  }}
-                                />
-                              }
-                              label="Content 1"
-                            />
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  style={{
-                                    color: "#5C6D8E",
-                                    marginRight: 0,
-                                  }}
-                                />
-                              }
-                              label="Content 2"
-                            />
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  style={{
-                                    color: "#5C6D8E",
-                                    marginRight: 0,
-                                  }}
-                                />
-                              }
-                              label="Content 3"
-                            />
-                          </FormGroup>
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1333,6 +1228,114 @@ const AllProducts = () => {
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
+                        expanded={expanded === "panel3"}
+                        onChange={handleAccordianChange("panel3")}
+                      >
+                        <AccordionSummary
+                          aria-controls="panel3d-content"
+                          id="panel3d-header"
+                        >
+                          <p className="text-lightBlue">
+                            Customer Account Status
+                          </p>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <RadioGroup
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="row-radio-buttons-group"
+                            // value={recommendedProductRadio}
+                            // onChange={handleRecommendedProductRadio}
+                          >
+                            <FormControlLabel
+                              value="1"
+                              control={<Radio size="small" />}
+                              label="Content 1"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="2"
+                              control={<Radio size="small" />}
+                              label="Content 2"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="3"
+                              control={<Radio size="small" />}
+                              label="Content 3"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                          </RadioGroup>
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion
+                        expanded={expanded === "panel4"}
+                        onChange={handleAccordianChange("panel4")}
+                      >
+                        <AccordionSummary
+                          aria-controls="panel4d-content"
+                          id="panel4d-header"
+                        >
+                          <p className="text-lightBlue">Amount Spent</p>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <RadioGroup
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="row-radio-buttons-group"
+                            // value={recommendedProductRadio}
+                            // onChange={handleRecommendedProductRadio}
+                          >
+                            <FormControlLabel
+                              value="1"
+                              control={<Radio size="small" />}
+                              label="Content 1"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="2"
+                              control={<Radio size="small" />}
+                              label="Content 2"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                            <FormControlLabel
+                              value="3"
+                              control={<Radio size="small" />}
+                              label="Content 3"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: 13,
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                            />
+                          </RadioGroup>
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion
                         expanded={expanded === "panel6"}
                         onChange={handleAccordianChange("panel6")}
                       >
@@ -1340,7 +1343,7 @@ const AllProducts = () => {
                           aria-controls="panel6d-content"
                           id="panel6d-header"
                         >
-                          <p className="text-lightBlue">Product Status</p>
+                          <p className="text-lightBlue">Number of Orders</p>
                         </AccordionSummary>
                         <AccordionDetails>
                           <RadioGroup
@@ -1393,7 +1396,7 @@ const AllProducts = () => {
                           aria-controls="panel7d-content"
                           id="panel7d-header"
                         >
-                          <p className="text-lightBlue">Inventory</p>
+                          <p className="text-lightBlue">Date of Orders</p>
                         </AccordionSummary>
                         <AccordionDetails>
                           <RadioGroup
@@ -1446,7 +1449,7 @@ const AllProducts = () => {
                           aria-controls="panel8d-content"
                           id="panel8d-header"
                         >
-                          <p className="text-lightBlue">Labels</p>
+                          <p className="text-lightBlue">Abandoned Checkouts</p>
                         </AccordionSummary>
                         <AccordionDetails>
                           <FormGroup className="tags-checkbox">
@@ -1514,15 +1517,6 @@ const AllProducts = () => {
                 <small className="text-lightBlue me-2">Sort</small>
                 <img src={sort} alt="sort" className="" />
               </button>
-              <button
-                className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idColumns}
-                variant="contained"
-                onClick={handleColumnsClick}
-              >
-                <small className="text-lightBlue">Columns</small>
-                <img src={columns} alt="columns" className="ms-2" />
-              </button>
 
               <Popover
                 anchorOrigin={{
@@ -1547,29 +1541,29 @@ const AllProducts = () => {
                     // onChange={handleRadioChange}
                   >
                     <FormControlLabel
-                      value="productName"
+                      value="customerName"
                       control={<Radio size="small" />}
-                      label="Product Name"
+                      label="Customer Name"
                     />
                     <FormControlLabel
-                      value="category"
+                      value="location"
                       control={<Radio size="small" />}
-                      label="Category"
+                      label="Location"
                     />
                     <FormControlLabel
-                      value="subCategory"
+                      value="totalSpent"
                       control={<Radio size="small" />}
-                      label="Sub Category"
+                      label="Total Spent"
                     />
                     <FormControlLabel
-                      value="vendor"
+                      value="noOfOrders"
                       control={<Radio size="small" />}
-                      label="Vendor"
+                      label="No of Orders"
                     />
                     <FormControlLabel
-                      value="uploadDate"
+                      value="uploadTime"
                       control={<Radio size="small" />}
-                      label="Upload Date"
+                      label="Upload Time"
                     />
                     <FormControlLabel
                       value="alphabeticalAtoZ"
@@ -1594,135 +1588,22 @@ const AllProducts = () => {
                   </RadioGroup>
                 </FormControl>
               </Popover>
-
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idColumns}
-                open={openColumns}
-                anchorEl={anchorColumnsEl}
-                onClose={handleColumnsClose}
-                className="columns"
-              >
-                <FormGroup className="px-2 py-1">
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        defaultChecked
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Catgory"
-                    className="me-0"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Sub Catgory"
-                    className="me-0"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Collection"
-                    className="me-0"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Vendor"
-                    className="me-0"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Price"
-                    className="me-0"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Activity"
-                    className="me-0"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Status"
-                    className="me-0"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Action"
-                    className="me-0"
-                  />
-                </FormGroup>
-              </Popover>
             </div>
           </div>
           <TabPanel value={value} index={0}>
-            <AllProductsTable />
+            <AllUsersTable />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <AllProductsTable />
+            <AllUsersTable />
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <AllProductsTable />
+            <AllUsersTable />
           </TabPanel>
           <TabPanel value={value} index={3}>
-            <AllProductsTable />
+            <AllUsersTable />
+          </TabPanel>
+          <TabPanel value={value} index={4}>
+            <AllUsersTable />
           </TabPanel>
         </Paper>
       </div>
@@ -1730,4 +1611,4 @@ const AllProducts = () => {
   );
 };
 
-export default AllProducts;
+export default AllUsers;
