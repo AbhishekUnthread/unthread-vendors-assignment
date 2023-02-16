@@ -1,0 +1,21 @@
+@import "../../../styles/variables";
+
+.bottom-buttons {
+  background: linear-gradient(180deg, rgba(17, 15, 38, 0) 0%, #110f26 47.98%);
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  margin-bottom: -24px;
+}
+
+.tags-checkbox {
+  .MuiTypography-root {
+    font-size: $font2 !important;
+    color: $lightBlue !important;
+  }
+}
+.add-user-country {
+  .MuiAutocomplete-root {
+    width: 100%;
+  }
+}

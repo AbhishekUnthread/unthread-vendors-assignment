@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import "./Variants.scss";
+import { useDropzone } from "react-dropzone";
 // ! MATERIAL IMPORTS
 import {
   OutlinedInput,
@@ -31,7 +32,6 @@ import variantUpload from "../../../../assets/images/products/variantUpload.svg"
 import usaFlagRectangle from "../../../../assets/images/products/usaFlagRectangle.svg";
 import ukFlagRectangle from "../../../../assets/images/products/ukFlagRectangle.svg";
 import indiaFlagRectangle from "../../../../assets/images/products/indiaFlagRectangle.svg";
-import { useDropzone } from "react-dropzone";
 
 // ? TABLE STARTS HERE
 function createData(vId, variantName, price, quantity, sku) {
@@ -292,9 +292,6 @@ const Variants = () => {
 
   // ? SIZE SELECT STARTS HERE
   const [storeAddress, setStoreAddress] = React.useState("");
-  // const [metal, setMetal] = React.useState("");
-  // const [diamond, setDiamond] = React.useState("");
-
   const handleStoreAddress = (event) => {
     setStoreAddress(event.target.value);
   };
@@ -462,7 +459,6 @@ const Variants = () => {
             <p>+ Add Market</p>
           </ToggleButton>
         </ToggleButtonGroup>
-        {/* </div> */}
       </div>
       <div className="col-12 px-0 my-4">
         <div className="row align-items-center justify-content-between">
@@ -470,13 +466,6 @@ const Variants = () => {
             <p className="text-lightBlue" style={{ width: "135px" }}>
               Store Address:
             </p>
-            {/* <FormControl sx={{ width: 400 }} className="px-0 ms-3">
-            <OutlinedInput
-              placeholder="Enter store address"
-              size="small"
-              defaultValue="JWL Bhaugh, Delhi 110001"
-            />
-          </FormControl> */}
             <FormControl
               sx={{ m: 0, minWidth: 120, width: "100%" }}
               size="small"
@@ -592,9 +581,6 @@ const Variants = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {/* <p className="d-flex align-items-center text-lightBlue">
-                          {row.price}
-                        </p> */}
                         <FormControl sx={{ width: 150 }} className="px-0">
                           <OutlinedInput
                             placeholder="Enter Price"
@@ -609,7 +595,6 @@ const Variants = () => {
                         </FormControl>
                       </TableCell>
                       <TableCell>
-                        {/* <p className="d-flex text-lightBlue">{row.quantity}</p> */}
                         <FormControl sx={{ width: 80 }} className="px-0">
                           <OutlinedInput
                             placeholder="Enter Qty"
@@ -619,7 +604,6 @@ const Variants = () => {
                         </FormControl>
                       </TableCell>
                       <TableCell>
-                        {/* <p className="d-flex text-lightBlue">{row.sku}</p> */}
                         <FormControl sx={{ width: 150 }} className="px-0">
                           <OutlinedInput
                             placeholder="Enter SKU"

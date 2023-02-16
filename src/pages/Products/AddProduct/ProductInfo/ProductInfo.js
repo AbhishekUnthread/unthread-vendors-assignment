@@ -34,13 +34,13 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
+import { DesktopDateTimePicker } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import SearchIcon from "@mui/icons-material/Search";
-import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -484,9 +484,6 @@ const ProductInfo = () => {
                     <p>Schedule</p>
                   </button>
                 </div>
-                {/* <div className="d-flex w-100">
-                  <img src={editWhite} alt="editWhite" className="mt-2 ms-0" />
-                </div> */}
               </DialogActions>
             </Dialog>
           </div>
@@ -495,15 +492,6 @@ const ProductInfo = () => {
           <div className="d-flex justify-content-between mb-2 align-items-center">
             <p className="text-lightBlue mb-1">Description</p>
             <div className="d-flex">
-              {/* <button
-                className="py-0 px-3 button-gradient me-2"
-                onClick={handleDynamicClick}
-                aria-describedby={idDynamic}
-                variant="contained"
-              >
-                <p>Add Dynamic Fields</p>
-              </button> */}
-
               <button
                 className="button-transparent me-1 py-2 px-3"
                 onClick={handleDynamicClick}
@@ -550,42 +538,11 @@ const ProductInfo = () => {
                         {...params}
                         placeholder="Search"
                         inputRef={(input) => input?.focus()}
-                        // InputProps={{
-                        //   startAdornment: (
-                        //     <InputAdornment position="start">
-                        //       <AccountCircle />
-                        //     </InputAdornment>
-                        //   ),
-                        // }}
                       />
                     )}
                   />
                 </div>
-                {/* <div className="py-2 px-1">
-                  <div className="d-flex mb-2">
-                    <small className="text-lightBlue">Add Dynamic Fields</small>
-                  </div>
-                  <FormControl className="mb-2">
-                    <OutlinedInput placeholder="Search" size="small" />
-                  </FormControl>
-                  <small className="text-lightBlue py-1 d-block">
-                    Variant&nbsp;:&nbsp;Metal
-                  </small>
-                  <small className="text-lightBlue py-1 d-block">
-                    Variant&nbsp;:&nbsp;Gold/Purity
-                  </small>
-                  <small className="text-lightBlue py-1 d-block">
-                    Variant&nbsp;:&nbsp;Diamond
-                  </small>
-                </div> */}
               </Popover>
-              {/* <button
-                className="py-0 px-3 button-gradient"
-                onClick={handleDynamicTextEditor}
-              >
-                <p>Tabs</p>
-              </button> */}
-
               <button
                 className="button-transparent me-1 py-2 px-3"
                 onClick={handleDynamicTextEditor}
@@ -594,10 +551,7 @@ const ProductInfo = () => {
               </button>
             </div>
           </div>
-          {/* <div className="mt-2"> */}
           <AppTextEditor />
-          {/* </div> */}
-
           {openDynamicTextEditor && (
             <div className="mt-3">
               <div className="d-flex justify-content-between align-items-center">
@@ -607,7 +561,6 @@ const ProductInfo = () => {
                   onChange={handleProductDetails}
                   aria-label="text alignment"
                   className="productDetails-toggle"
-                  // orientation="vertical"
                 >
                   <ToggleButton
                     value="productInformation"
@@ -685,33 +638,10 @@ const ProductInfo = () => {
                 <p className="text-lightBlue">Category</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
-              {/* <FormControl
-                sx={{ m: 0, minWidth: 120 }}
-                size="small"
-                className="w-100"
-              >
-                <Select
-                  labelId="demo-select-small"
-                  id="demo-select-small"
-                  value={category}
-                  placeholder="Rings"
-                  onChange={handleCategory}
-                >
-                  <MenuItem value="">None</MenuItem>
-                  <MenuItem value={"productTitle"}>Product Title</MenuItem>
-                  <MenuItem value={"sku"}>SKU</MenuItem>
-                  <MenuItem value={"vendorName"}>Vendor Name</MenuItem>
-                  <MenuItem value={"category"}>Category</MenuItem>
-                  <MenuItem value={"subCategory"}>Sub Category</MenuItem>
-                  <MenuItem value={"collection"}>Collection</MenuItem>
-                </Select>
-              </FormControl> */}
-
               <Autocomplete
                 id="free-solo-demo"
                 freeSolo
                 size="small"
-                // sx={{ width: 200 }}
                 options={vendorData}
                 getOptionLabel={(option) => option.title}
                 renderOption={(props, option) => (
@@ -734,28 +664,6 @@ const ProductInfo = () => {
                 <p className="text-lightBlue">Sub-Category</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
-              {/* <FormControl
-                sx={{ m: 0, minWidth: 120 }}
-                size="small"
-                className="w-100"
-              >
-                <Select
-                  labelId="demo-select-small"
-                  id="demo-select-small"
-                  value={subCategory}
-                  placeholder="Rings"
-                  onChange={handleSubCategory}
-                >
-                  <MenuItem value="">None</MenuItem>
-                  <MenuItem value={"productTitle"}>Product Title</MenuItem>
-                  <MenuItem value={"sku"}>SKU</MenuItem>
-                  <MenuItem value={"vendorName"}>Vendor Name</MenuItem>
-                  <MenuItem value={"category"}>Category</MenuItem>
-                  <MenuItem value={"subCategory"}>Sub Category</MenuItem>
-                  <MenuItem value={"collection"}>Collection</MenuItem>
-                </Select>
-              </FormControl> */}
-
               <Autocomplete
                 id="free-solo-demo"
                 freeSolo
@@ -774,17 +682,7 @@ const ProductInfo = () => {
                   width: "100%",
                 }}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder="Search"
-                    // InputProps={{
-                    //   startAdornment: (
-                    //     <InputAdornment position="start">
-                    //       <AccountCircle />
-                    //     </InputAdornment>
-                    //   ),
-                    // }}
-                  />
+                  <TextField {...params} placeholder="Search" />
                 )}
               />
             </div>
@@ -793,28 +691,6 @@ const ProductInfo = () => {
                 <p className="text-lightBlue">Vendor Name</p>
                 <img src={info} alt="info" className="ms-2" width={13.5} />
               </div>
-              {/* <FormControl
-                sx={{ m: 0, minWidth: 120 }}
-                size="small"
-                className="w-100"
-              >
-                <Select
-                  labelId="demo-select-small"
-                  id="demo-select-small"
-                  value={vendorName}
-                  placeholder="Rings"
-                  onChange={handleVendorName}
-                >
-                  <MenuItem value="">None</MenuItem>
-                  <MenuItem value={"productTitle"}>Product Title</MenuItem>
-                  <MenuItem value={"sku"}>SKU</MenuItem>
-                  <MenuItem value={"vendorName"}>Vendor Name</MenuItem>
-                  <MenuItem value={"category"}>Category</MenuItem>
-                  <MenuItem value={"subCategory"}>Sub Category</MenuItem>
-                  <MenuItem value={"collection"}>Collection</MenuItem>
-                </Select>
-              </FormControl> */}
-
               <Autocomplete
                 id="free-solo-demo"
                 freeSolo
@@ -833,17 +709,7 @@ const ProductInfo = () => {
                   width: "100%",
                 }}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder="Search"
-                    // InputProps={{
-                    //   startAdornment: (
-                    //     <InputAdornment position="start">
-                    //       <AccountCircle />
-                    //     </InputAdornment>
-                    //   ),
-                    // }}
-                  />
+                  <TextField {...params} placeholder="Search" />
                 )}
               />
             </div>
@@ -931,9 +797,7 @@ const ProductInfo = () => {
                       <div className="col-md-3 col-6 ps-md-0 pe-0 mt-2">
                         <button
                           className="button-grey py-1 px-3 w-100"
-                          // aria-describedby={idVendor}
                           variant="contained"
-                          // onClick={handleVendorClick}
                         >
                           <p className="text-lightBlue">Alphabetical (A-Z)</p>
                           <img
@@ -1132,11 +996,6 @@ const ProductInfo = () => {
                   placeholder="Enter Price"
                   size="small"
                   disabled={checkedDynamic}
-                  // startAdornment={
-                  //   <InputAdornment position="start">
-                  //     <p className="text-lightBlue">₹</p>
-                  //   </InputAdornment>
-                  // }
                   startAdornment={
                     <InputAdornment position="start">
                       <p className="text-lightBlue">₹</p>
@@ -1171,31 +1030,6 @@ const ProductInfo = () => {
                   <TextField {...params} placeholder="Search" />
                 )}
               />
-              {/* <FormControl
-                sx={{ m: 0, minWidth: 120 }}
-                size="small"
-                className="w-100"
-              >
-                <Select
-                  labelId="demo-select-small"
-                  id="demo-select-small"
-                  value={discount}
-                  placeholder="Rings"
-                  onChange={handleDiscount}
-                  disabled={checkedDynamic}
-                >
-                  <MenuItem value="">None</MenuItem>
-                  <MenuItem value={5}>5%</MenuItem>
-                  <MenuItem value={10}>10%</MenuItem>
-                  <MenuItem value={20}>20%</MenuItem>
-                  <MenuItem value={30}>30%</MenuItem>
-                  <MenuItem value={40}>40%</MenuItem>
-                  <MenuItem value={50}>50%</MenuItem>
-                  <MenuItem value={60}>60%</MenuItem>
-                  <MenuItem value={70}>70%</MenuItem>
-                  <MenuItem value={80}>80%</MenuItem>
-                </Select>
-              </FormControl> */}
             </div>
             <div className="col-4 mt-2">
               <div className="d-flex mb-1">
@@ -1204,16 +1038,11 @@ const ProductInfo = () => {
               </div>
 
               <FormControl sx={{ width: "100%" }} className="col-7 px-0">
-                <OutlinedInput
-                  placeholder="4000"
-                  size="small"
-                  // disabled
-                />
+                <OutlinedInput placeholder="4000" size="small" />
               </FormControl>
             </div>
             <div className="col-12 mt-2">
               <FormControlLabel
-                // control={<Checkbox size="small" />}
                 control={
                   <Checkbox
                     checked={checkedPrice}
@@ -1244,7 +1073,6 @@ const ProductInfo = () => {
             )}
             <div className="col-12">
               <FormControlLabel
-                // control={<Checkbox size="small" />}
                 control={
                   <Checkbox
                     checked={checkedDynamic}
@@ -1307,7 +1135,6 @@ const ProductInfo = () => {
                     id="free-solo-demo"
                     freeSolo
                     size="small"
-                    // sx={{ width: 200 }}
                     options={discountData}
                     getOptionLabel={(option) => option.title}
                     renderOption={(props, option) => (
@@ -1332,11 +1159,7 @@ const ProductInfo = () => {
                   </div>
 
                   <FormControl sx={{ width: "100%" }} className="col-7 px-0">
-                    <OutlinedInput
-                      placeholder="4000"
-                      size="small"
-                      // disabled
-                    />
+                    <OutlinedInput placeholder="4000" size="small" />
                   </FormControl>
                 </div>
               </React.Fragment>
@@ -1373,7 +1196,6 @@ const ProductInfo = () => {
             </div>
             <div className="col-12 mt-2 d-flex align-items-center">
               <FormControlLabel
-                // control={<Checkbox size="small" />}
                 control={
                   <Checkbox
                     checked={checkedTrackInventory}
@@ -1399,7 +1221,6 @@ const ProductInfo = () => {
               <React.Fragment>
                 <div className="col-12">
                   <FormControlLabel
-                    // control={<Checkbox size="small" />}
                     control={
                       <Checkbox
                         checked={checkedSellOutofStock}
@@ -1608,7 +1429,6 @@ const ProductInfo = () => {
                       </DialogActions>
                     </Dialog>
                     <div className="col-12 d-flex align-items-center mt-3 mb-2">
-                      {/* <div className=""> */}
                       <p className="text-lightBlue">
                         Apply Quantity to all stores
                       </p>
@@ -1626,21 +1446,11 @@ const ProductInfo = () => {
                             <OutlinedInput
                               placeholder="Enter Quantity"
                               size="small"
-                              // className="col-md-4"
-                              // endAdornment={
-                              //   <InputAdornment position="end">
-                              //     Fixed
-                              //   </InputAdornment>
-                              // }
                             />
                           </FormControl>
                         </div>
                         <div className="col-auto px-md-0">
-                          <FormControl
-                            sx={{ m: 0, width: 120 }}
-                            size="small"
-                            // className="w-100"
-                          >
+                          <FormControl sx={{ m: 0, width: 120 }} size="small">
                             <Select
                               labelId="demo-select-small"
                               id="demo-select-small"
@@ -1664,7 +1474,6 @@ const ProductInfo = () => {
                     <div className="col-12 mt-4 mb-3">
                       <div className="d-flex justify-content-between align-items-center py-2 px-3 rounded-3 bg-black-13">
                         <div className="d-flex">
-                          {/* <p className="text-lightBlue">Filter :</p> */}
                           <p className="text-lightBlue py-1 me-2">Filter:</p>
                           <p
                             className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
@@ -1698,16 +1507,6 @@ const ProductInfo = () => {
                           anchorEl={anchorMetalFilterEl}
                           onClose={handleMetalFilterClose}
                         >
-                          {/* <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-                            <small className="text-lightBlue">1</small>
-                          </div>
-                          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-                            <small className="text-lightBlue">2</small>
-                          </div>
-                          <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
-                            <small className="text-lightBlue">3</small>
-                          </div> */}
-
                           <FormGroup className="tags-checkbox py-2">
                             <FormControlLabel
                               control={
@@ -1762,16 +1561,6 @@ const ProductInfo = () => {
                           defaultValue={1}
                         />
                       </FormControl>
-                      {/* <TextField
-                        id="outlined-number"
-                        // label="Number"
-                        type="number"
-                        // InputLabelProps={{
-                        //   shrink: true,
-                        // }}
-                        width={80}
-                        size="small"
-                      /> */}
                     </div>
                     <div className="col-12 d-flex justify-content-between my-2 align-items-center px-4">
                       <p className="text-lightBlue">

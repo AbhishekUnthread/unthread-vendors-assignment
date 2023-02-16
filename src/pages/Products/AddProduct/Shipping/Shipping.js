@@ -68,8 +68,6 @@ const Shipping = () => {
             </div>
           </ToggleButton>
         </ToggleButtonGroup>
-
-        {/* </div> */}
       </div>
       <hr className="hr-grey-6 mt-4 mb-3 col-12" />
       {productType === "physical" && (
@@ -92,13 +90,6 @@ const Shipping = () => {
               />
             </FormControl>
             <FormControl className="">
-              {/* <OutlinedInput
-                placeholder="Enter Length"
-                size="small"
-                endAdornment={
-                  <InputAdornment position="end">cm</InputAdornment>
-                }
-              /> */}
               <OutlinedInput
                 placeholder="Enter Length"
                 size="small"
@@ -129,7 +120,6 @@ const Shipping = () => {
             </FormControl>
           </div>
           <FormControlLabel
-            // control={<Checkbox size="small" />}
             control={
               <Checkbox
                 checked={checked}
@@ -171,7 +161,6 @@ const Shipping = () => {
                 <p className="text-lightBlue mb-2">
                   HS (Harmonized System) code
                 </p>
-                {/* <AppCountrySelect /> */}
                 <FormControl className="px-0" sx={{ width: 300 }}>
                   <OutlinedInput placeholder="Enter HS Code" size="small" />
                 </FormControl>

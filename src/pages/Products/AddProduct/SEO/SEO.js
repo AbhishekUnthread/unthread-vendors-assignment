@@ -6,32 +6,12 @@ import info from "../../../../assets/icons/info.svg";
 import { AntSwitch } from "../../../../components/AntSwitch/AntSwitch";
 // ! MATERIAL IMPORTS
 import {
-  Autocomplete,
   Checkbox,
   FormControl,
   FormControlLabel,
   OutlinedInput,
   TextareaAutosize,
-  TextField,
 } from "@mui/material";
-// ! MATERIAL ICONS IMPORT
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-
-const taggedWithData = [
-  { title: "Tag 1", value: "tag1" },
-  { title: "Tag 2", value: "tag2" },
-  { title: "Tag 3", value: "tag3" },
-  { title: "Tag 4", value: "tag4" },
-  { title: "Tag 5", value: "tag5" },
-  { title: "Tag 6", value: "tag6" },
-  { title: "Tag 7", value: "tag7" },
-  { title: "Tag 8", value: "tag8" },
-  { title: "Tag 9", value: "tag9" },
-  { title: "Tag 10", value: "tag10" },
-  { title: "Tag 11", value: "tag11" },
-  { title: "Tag 12", value: "tag12" },
-];
 
 const SEO = () => {
   // ? CHECKBOX STARTS HERE
@@ -52,19 +32,12 @@ const SEO = () => {
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
       <div className="d-flex col-12 px-0 justifu-content-between">
-        {/* <h6 className="text-lightBlue me-auto fw-500">
-          Search Engine Optimisation
-        </h6> */}
         <div className="d-flex align-items-center me-auto">
           <h6 className="text-lightBlue me-auto fw-500">
             Search Engine Optimisation
           </h6>
           <img src={info} alt="info" className="ms-2" />
         </div>
-        {/* <FormControlLabel
-          control={<Switch checked={dense} onChange={handleChangeDense} />}
-          label="Dense padding"
-        /> */}
         <AntSwitch
           inputProps={{ "aria-label": "ant design" }}
           checked={checkedSwitch}
@@ -75,7 +48,6 @@ const SEO = () => {
         <React.Fragment>
           <div className="d-flex align-items-center mt-3 col-12 px-0">
             <FormControlLabel
-              // control={<Checkbox size="small" />}
               control={
                 <Checkbox
                   checked={checked}
@@ -99,9 +71,6 @@ const SEO = () => {
             <p>
               <i className="text-grey-6">Powered by Kepler</i>
             </p>
-            {/* <button className="button-gradient py-2 px-3 ms-4">
-              <p>Apply to all Products</p>
-            </button> */}
           </div>
           {!checked && (
             <React.Fragment>
@@ -114,7 +83,6 @@ const SEO = () => {
                   size="small"
                   defaultValue="Rings by JWL"
                 />
-                {/* <MyFormHelperText /> */}
               </FormControl>
               <small className="mt-1 text-grey-6 col-12 px-0">
                 20 of 50 characters Used
@@ -147,47 +115,13 @@ const SEO = () => {
                   size="small"
                   defaultValue="http://JWLewellers.com/rings-by-JWLewellers"
                 />
-                {/* <MyFormHelperText /> */}
               </FormControl>
 
               <small className="text-lightBlue mb-2 mt-3 col-12 px-0">
                 Meta Keywords
               </small>
-              {/* <Autocomplete
-                multiple
-                id="checkboxes-tags-demo"
-                // sx={{ width: 300 }}
-                options={taggedWithData}
-                disableCloseOnSelect
-                getOptionLabel={(option) => option.title}
-                size="small"
-                className="col-12 px-0 mb-2"
-                renderOption={(props, option, { selected }) => (
-                  <li {...props}>
-                    <Checkbox
-                      icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                      checkedIcon={<CheckBoxIcon fontSize="small" />}
-                      style={{ marginRight: 0 }}
-                      checked={selected}
-                      size="small"
-                    />
-                    <small className="text-lightBlue my-1">
-                      {option.title}
-                    </small>
-                  </li>
-                )}
-                renderInput={(params) => (
-                  <TextField size="small" {...params} placeholder="Search" />
-                )}
-              /> */}
-
               <FormControl className="col-12 px-0">
-                <OutlinedInput
-                  placeholder="Enter keywords"
-                  size="small"
-                  // defaultValue="Rings by JWL"
-                />
-                {/* <MyFormHelperText /> */}
+                <OutlinedInput placeholder="Enter keywords" size="small" />
               </FormControl>
             </React.Fragment>
           )}

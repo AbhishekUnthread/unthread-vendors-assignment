@@ -52,8 +52,6 @@ const Attributes = () => {
 
   // ? SIZE SELECT STARTS HERE
   const [size, setSize] = React.useState("");
-  // const [metal, setMetal] = React.useState("");
-  // const [diamond, setDiamond] = React.useState("");
 
   const handleSizeChange = (event) => {
     setSize(event.target.value);
@@ -81,19 +79,6 @@ const Attributes = () => {
           aria-describedby="alert-dialog-slide-description"
           maxWidth="sm"
         >
-          {/* <DialogTitle>
-            <div className="d-flex justify-content-between align-items-center">
-              <h5 className="text-lightBlue">Tags</h5>
-              <img
-                src={cancel}
-                alt="cancel"
-                width={30}
-                onClick={handleAdditionalFieldsClose}
-                className="c-pointer"
-              />
-            </div>
-          </DialogTitle> */}
-          {/* <hr className="hr-grey-6 mt-2 mb-0" /> */}
           <DialogContent className="py-2 px-4 text-center">
             <img src={question} alt="question" width={200} />
             <div className="row"></div>
@@ -157,11 +142,7 @@ const Attributes = () => {
           <hr className="hr-grey-6 my-0" />
           <DialogContent className="py-3 px-4">
             <p className="text-lightBlue mb-2">Select Field Sets</p>
-            <FormControl
-              className="col-7 px-0"
-              // sx={{ m: 0, minWidth: 120, width: "100%" }}
-              size="small"
-            >
+            <FormControl className="col-7 px-0" size="small">
               <Select
                 labelId="demo-select-small"
                 id="demo-select-small"
@@ -324,11 +305,7 @@ const Attributes = () => {
             </div>
           </div>
         </div>
-        <div
-          className="row py-3 rounded-8"
-          // style={{ background: "rgba(39, 40, 63, 0.5)" }}
-          style={{ background: "#1c1b33" }}
-        >
+        <div className="row py-3 rounded-8" style={{ background: "#1c1b33" }}>
           <div className="col-12 mb-3">
             <p className="text-lightBlue fw-500">Diamond Information 2</p>
           </div>

@@ -1,17 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 // ! IMAGES IMPORTS
-import teamMember1 from "../../../assets/images/products/teamMember1.svg";
-import teamMember2 from "../../../assets/images/products/teamMember2.svg";
-import teamMember3 from "../../../assets/images/products/teamMember3.svg";
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
-import cancel from "../../../assets/icons/cancel.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
-import editButton from "../../../assets/icons/editButton.svg";
-import duplicateButton from "../../../assets/icons/duplicateButton.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 // ! MATERIAL IMPORTS
 import {
@@ -19,7 +13,6 @@ import {
   Box,
   Checkbox,
   Popover,
-  SwipeableDrawer,
   Table,
   TableBody,
   TableCell,
@@ -316,20 +309,6 @@ const AllUsersTable = () => {
   const idMassAction = openMassAction ? "simple-popover" : undefined;
   // * MASS ACTION POPOVERS ENDS
 
-  // * PRICE POPOVERS STARTS
-  const [anchorPriceEl, setAnchorPriceEl] = React.useState(null);
-  const handlePriceClick = (event) => {
-    setAnchorPriceEl(event.currentTarget);
-  };
-
-  const handlePriceClose = () => {
-    setAnchorPriceEl(null);
-  };
-
-  const openPrice = Boolean(anchorPriceEl);
-  const idPrice = openPrice ? "simple-popover" : undefined;
-  // * PRICE POPOVERS ENDS
-
   // * ACTION POPOVERS STARTS
   const [anchorActionEl, setAnchorActionEl] = React.useState(null);
 
@@ -617,14 +596,7 @@ const AllUsersTable = () => {
                       <p className="text-lightBlue">{row.orders}</p>
                     </TableCell>
                     <TableCell>
-                      <div
-                        className="d-flex c-pointer"
-                        // onMouseEnter={handleActivityPopoverOpen}
-                        // onMouseLeave={handleActivityPopoverClose}
-                      >
-                        {/* <img src={teamMember1} alt="teamMember1" />
-                        <img src={teamMember3} alt="teamMember2" />
-                        <img src={teamMember2} alt="teamMember3" /> */}
+                      <div className="d-flex c-pointer">
                         <p className="text-lightBlue">{row.totalSpent}</p>
                       </div>
                     </TableCell>

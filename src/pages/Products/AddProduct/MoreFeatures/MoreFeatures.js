@@ -45,11 +45,6 @@ import SearchIcon from "@mui/icons-material/Search";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
-  // backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    // backgroundColor: alpha(theme.palette.common.white, 0.25),
-    // backgroundColor: "#2b2a46",
-  },
   marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
@@ -57,7 +52,6 @@ const Search = styled("div")(({ theme }) => ({
     marginRight: theme.spacing(2),
     width: "auto",
   },
-  // backgroundColor: "#2b2a46",
   height: "30.6px",
   border: "1px solid #38395c",
 }));
@@ -76,17 +70,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(0.8, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
     borderRadius: "5px",
-    // [theme.breakpoints.up("sm")]: {
-    //   width: "12ch",
-    //   "&:focus": {
-    //     width: "20ch",
-    //   },
-    // },
   },
 }));
 // ? SEARCH INPUT ENDS HERE
@@ -495,8 +482,6 @@ const MoreFeatures = () => {
 
   // ? SIZE SELECT STARTS HERE
   const [field, setField] = React.useState("price");
-  // const [metal, setMetal] = React.useState("");
-  // const [diamond, setDiamond] = React.useState("");
 
   const handleFieldChange = (event) => {
     setField(event.target.value);
@@ -505,8 +490,6 @@ const MoreFeatures = () => {
 
   // ? OPERATOR SELECT STARTS HERE
   const [operator, setOperator] = React.useState("equals");
-  // const [metal, setMetal] = React.useState("");
-  // const [diamond, setDiamond] = React.useState("");
 
   const handleOperatorChange = (event) => {
     setOperator(event.target.value);
@@ -573,12 +556,6 @@ const MoreFeatures = () => {
 
   return (
     <React.Fragment>
-      {/* <div className="row justify-content-between mb-3">
-        <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0">
-          You may also like
-        </h6>
-        <p className="text-blue-2 col-auto pe-0">Customise</p>
-      </div> */}
       <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mb-4">
         <div className="d-flex justify-content-between mb-2 px-0">
           <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
@@ -1039,12 +1016,6 @@ const MoreFeatures = () => {
           </React.Fragment>
         )}
       </div>
-      {/* <div className="row justify-content-between mb-3">
-        <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0">
-          Recommended Products
-        </h6>
-        <p className="text-blue-2 col-auto pe-0">Customise</p>
-      </div> */}
 
       <SwipeableDrawer
         anchor="right"

@@ -17,6 +17,8 @@ import uploadLineSheet from "../../../assets/images/products/uploadLineSheet.svg
 import uploadCompanySheet1 from "../../../assets/images/products/uploadCompanySheet1.svg";
 import uploadCompanySheet2 from "../../../assets/images/products/uploadCompanySheet2.svg";
 import filter from "../../../assets/icons/filter.svg";
+// ! COMPONENT IMPORTS
+import AllProductsTable from "../AllProductsTable/AllProductsTable";
 // ! MATERIAL IMPORTS
 import {
   Autocomplete,
@@ -49,7 +51,6 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import AllProductsTable from "../AllProductsTable/AllProductsTable";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -189,6 +190,35 @@ const rejectStyle = {
 };
 // ? FILE UPLOAD ENDS HERE
 
+const vendorData = [
+  { title: "Content 1", value: "content1" },
+  { title: "Content 2", value: "content2" },
+  { title: "Content 3", value: "content3" },
+  { title: "Content 4", value: "content4" },
+  { title: "Content 5", value: "content5" },
+  { title: "Content 6", value: "content6" },
+  { title: "Content 7", value: "content7" },
+  { title: "Content 8", value: "content8" },
+  { title: "Content 9", value: "content9" },
+  { title: "Content 10", value: "content10" },
+  { title: "Content 11", value: "content11" },
+  { title: "Content 12", value: "content12" },
+];
+const taggedWithData = [
+  { title: "Tag 1", value: "tag1" },
+  { title: "Tag 2", value: "tag2" },
+  { title: "Tag 3", value: "tag3" },
+  { title: "Tag 4", value: "tag4" },
+  { title: "Tag 5", value: "tag5" },
+  { title: "Tag 6", value: "tag6" },
+  { title: "Tag 7", value: "tag7" },
+  { title: "Tag 8", value: "tag8" },
+  { title: "Tag 9", value: "tag9" },
+  { title: "Tag 10", value: "tag10" },
+  { title: "Tag 11", value: "tag11" },
+  { title: "Tag 12", value: "tag12" },
+];
+
 const AllProducts = () => {
   const [value, setValue] = React.useState(0);
   const [importValue, setImportValue] = React.useState("importProducts");
@@ -317,35 +347,6 @@ const AllProducts = () => {
   // * TAGGED WITH POPOVERS ENDS
 
   // ? POPOVERS ENDS HERE
-
-  const vendorData = [
-    { title: "Content 1", value: "content1" },
-    { title: "Content 2", value: "content2" },
-    { title: "Content 3", value: "content3" },
-    { title: "Content 4", value: "content4" },
-    { title: "Content 5", value: "content5" },
-    { title: "Content 6", value: "content6" },
-    { title: "Content 7", value: "content7" },
-    { title: "Content 8", value: "content8" },
-    { title: "Content 9", value: "content9" },
-    { title: "Content 10", value: "content10" },
-    { title: "Content 11", value: "content11" },
-    { title: "Content 12", value: "content12" },
-  ];
-  const taggedWithData = [
-    { title: "Tag 1", value: "tag1" },
-    { title: "Tag 2", value: "tag2" },
-    { title: "Tag 3", value: "tag3" },
-    { title: "Tag 4", value: "tag4" },
-    { title: "Tag 5", value: "tag5" },
-    { title: "Tag 6", value: "tag6" },
-    { title: "Tag 7", value: "tag7" },
-    { title: "Tag 8", value: "tag8" },
-    { title: "Tag 9", value: "tag9" },
-    { title: "Tag 10", value: "tag10" },
-    { title: "Tag 11", value: "tag11" },
-    { title: "Tag 12", value: "tag12" },
-  ];
 
   // ? FILTER ACCORDIAN STARTS HERE
   const [expanded, setExpanded] = React.useState("panel1");
@@ -911,7 +912,6 @@ const AllProducts = () => {
                       id="free-solo-demo"
                       freeSolo
                       size="small"
-                      // sx={{ width: 200 }}
                       options={vendorData}
                       getOptionLabel={(option) => option.title}
                       renderOption={(props, option) => (
@@ -1059,7 +1059,6 @@ const AllProducts = () => {
                     onClose={toggleDrawer("right", false)}
                     onOpen={toggleDrawer("right", true)}
                   >
-                    {/* {list()} */}
                     <div className="d-flex justify-content-between py-3 px-3 ms-2 me-1">
                       <h6 className="text-lightBlue">Filters</h6>
                       <img

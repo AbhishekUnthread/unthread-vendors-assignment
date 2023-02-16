@@ -60,7 +60,6 @@ const AddProduct = () => {
     setValue(newValue);
   };
   const handleTabChange = () => {
-    // console.log("asdf");
     value < 6 && setValue(value + 1);
   };
   // ? TABS ENDS HERE
@@ -125,9 +124,6 @@ const AddProduct = () => {
           <button className="button-transparent me-1 py-2 px-3">
             <p className="text-lightBlue">Preview</p>
           </button>
-          {/* <button className="button-gradient py-2 px-4">
-            <p>+ Add Product</p>
-          </button> */}
           <img
             src={paginationLeft}
             alt="paginationLeft"
@@ -144,11 +140,6 @@ const AddProduct = () => {
       </div>
       <div className="row">
         <div className="col-lg-9 mt-3">
-          {/* <Paper
-            sx={{ width: "100%", mb: 2, mt: 3, p: 0 }}
-            className="border-grey-5"
-          > */}
-          {/* <div className="row flex-column mt-3 mb-2 border-grey-5 bg-black-15 rounded-3"> */}
           <div className="row flex-column mb-2">
             <Box
               sx={{ width: "100%" }}
@@ -195,7 +186,6 @@ const AddProduct = () => {
               <MoreFeatures />
             </TabPanel>
           </div>
-          {/* </Paper> */}
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3">
@@ -364,177 +354,10 @@ const AddProduct = () => {
               </div>
             </div>
           </div>
-          {/* 
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-3 mb-3">
-            <div className="d-flex justify-content-between align-items-center">
-              <div className="d-flex align-items-center">
-                <h6 className="text-grey-6">Tags </h6>
-                <img
-                  src={info}
-                  alt="info"
-                  className="ms-2 c-pointer"
-                  width={14}
-                />
-              </div>
-              <small className="text-blue-2 c-pointer" onClick={handleTagsOpen}>
-                View all Tags
-              </small>
-
-              <Dialog
-                open={openTags}
-                TransitionComponent={Transition}
-                keepMounted
-                onClose={handleTagsClose}
-                aria-describedby="alert-dialog-slide-description"
-                maxWidth="md"
-                fullWidth={true}
-              >
-                <DialogTitle>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h5 className="text-lightBlue">Tags</h5>
-                    <img
-                      src={cancel}
-                      alt="cancel"
-                      width={30}
-                      onClick={handleTagsClose}
-                      className="c-pointer"
-                    />
-                  </div>
-                </DialogTitle>
-                <hr className="hr-grey-6 mt-2 mb-0" />
-                <DialogContent className="py-2 px-4">
-                  <div className="row">
-                    <div className="col-md-6 mt-2">
-                      <Search>
-                        <SearchIconWrapper>
-                          <SearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                          placeholder="Search…"
-                          inputProps={{ "aria-label": "search" }}
-                        />
-                      </Search>
-                    </div>
-                    <div className="col-md-3 col-6 ps-md-0 pe-0 mt-2">
-                      <button
-                        className="button-grey py-1 px-3 w-100"
-                        // aria-describedby={idVendor}
-                        variant="contained"
-                        // onClick={handleVendorClick}
-                      >
-                        <p>Alphabetical (A-Z)</p>
-                        <img src={arrowDown} alt="arrowDown" className="ms-2" />
-                      </button>
-                    </div>
-                    <div className="col-md-3 col-6 mt-2">
-                      <button
-                        className="button-gradient py-1 px-3 w-100"
-                        onClick={handleTagClick}
-                      >
-                        <p>Create a New Tag</p>
-                      </button>
-                      <Popover
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "center",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "center",
-                        }}
-                        id={idTag}
-                        open={openTag}
-                        anchorEl={anchorTagEl}
-                        onClose={handleTagClose}
-                        className="columns"
-                      >
-                        <div className="d-flex mb-2">
-                          <small className="text-grey-6">Enter Tag Name</small>
-                          <img
-                            src={info}
-                            alt="info"
-                            className="ms-2 c-pointer"
-                            width={14}
-                          />
-                        </div>
-                        <FormControl
-                        // className="col-7 px-0"
-                        >
-                          <OutlinedInput
-                            placeholder="Enter Tag Name"
-                            size="small"
-                          />
-                        </FormControl>
-                      </Popover>
-                    </div>
-                  </div>
-                  <p className="text-lightBlue mt-3 mb-2">
-                    458 Tags are listed below
-                  </p>
-
-                  <FormGroup className="tags-checkbox">
-                    <FormControlLabel
-                      control={<Checkbox size="small" />}
-                      label="Tags 1"
-                      className="me-0"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox size="small" />}
-                      label="Tags 2"
-                      className="me-0"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox size="small" />}
-                      label="Tags 3"
-                      className="me-0"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox size="small" />}
-                      label="Tags 4"
-                      className="me-0"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox size="small" />}
-                      label="Tags 5"
-                      className="me-0"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox size="small" />}
-                      label="Tags 6"
-                      className="me-0"
-                    />
-                  </FormGroup>
-                </DialogContent>
-                <hr className="hr-grey-6 mt-2 mb-1" />
-                <DialogActions className="d-flex justify-content-between px-4 pb-2">
-                  <button
-                    className="button-grey py-2 px-5"
-                    onClick={handleTagsClose}
-                  >
-                    <p>Cancel</p>
-                  </button>
-                  <button
-                    className="button-gradient py-2 px-5"
-                    onClick={handleTagsClose}
-                  >
-                    <p>Continue</p>
-                  </button>
-                </DialogActions>
-              </Dialog>
-            </div>
-
-          </div> */}
         </div>
       </div>
       <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
-          {/* <button className="button-red-outline py-2 px-4">
-            <p>Discard</p>
-          </button>
-          <button className="button-lightBlue-outline py-2 px-4 ms-3">
-            <p>Save as Draft</p>
-          </button> */}
-
           <Link to="/allProducts" className="button-red-outline py-2 px-4">
             <p>Discard</p>
           </Link>

@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import "../../Products/AllProducts/AllProducts.scss";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
+// ! COMPONENT IMPORTS
+import AllUsersTable from "../AllUsersTable/AllUsersTable";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import user from "../../../assets/images/users/user.svg";
-import sortBy from "../../../assets/icons/sortBy.svg";
 import activity from "../../../assets/icons/activity.svg";
 import teamMember1 from "../../../assets/images/products/teamMember1.svg";
-import columns from "../../../assets/icons/columns.svg";
 import cancel from "../../../assets/icons/cancel.svg";
 import tutorial from "../../../assets/icons/tutorial.svg";
 import allFlag from "../../../assets/images/products/allFlag.svg";
@@ -45,29 +45,20 @@ import {
   Tab,
   Tabs,
   TextField,
+  styled,
+  InputBase,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import AllUsersTable from "../AllUsersTable/AllUsersTable";
-
-// import dayjs from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
-import moment from "moment/moment";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -1027,11 +1018,6 @@ const AllUsers = () => {
                 </div>
               </div>
               <div className="d-flex ms-5">
-                {/* <button className="button-grey py-2 px-3 ms-5">
-                  <small className="text-lightBlue">Sort By Date</small>
-                  <img src={sortBy} alt="sortBy" className="ms-2" />
-                </button> */}
-
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                   <DateTimePicker
                     // label="Sort By Date"
@@ -1143,7 +1129,7 @@ const AllUsers = () => {
           <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2>50</h2>
+                <h2 className="text-lightBlue">50</h2>
                 <small className="text-grey-6 mt-2">Active</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -1162,7 +1148,7 @@ const AllUsers = () => {
           <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2>50</h2>
+                <h2 className="text-lightBlue">50</h2>
                 <small className="text-grey-6 mt-2">In-Active</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -1181,7 +1167,7 @@ const AllUsers = () => {
           <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2>50</h2>
+                <h2 className="text-lightBlue">50</h2>
                 <small className="text-grey-6 mt-2">Returning Customers</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -1200,7 +1186,7 @@ const AllUsers = () => {
           <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2>50</h2>
+                <h2 className="text-lightBlue">50</h2>
                 <small className="text-grey-6 mt-2">Abandoned Checkout</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -1321,7 +1307,6 @@ const AllUsers = () => {
                       id="free-solo-demo"
                       freeSolo
                       size="small"
-                      // sx={{ width: 200 }}
                       options={locationData}
                       getOptionLabel={(option) => option.title}
                       renderOption={(props, option) => (
