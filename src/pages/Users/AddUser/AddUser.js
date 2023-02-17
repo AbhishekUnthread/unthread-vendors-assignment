@@ -41,6 +41,7 @@ import {
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import SearchIcon from "@mui/icons-material/Search";
+import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -167,14 +168,6 @@ const AddUser = () => {
     setGender(event.target.value);
   };
   // ? GENDER SELECT ENDS HERE
-
-  // ? STATE SELECT STARTS HERE
-  const [state, setState] = React.useState("");
-
-  const handleStateChange = (event) => {
-    setState(event.target.value);
-  };
-  // ? STATE SELECT ENDS HERE
 
   // ? USER ROLE SELECT STARTS HERE
   const [userRole, setUserRole] = React.useState("");
@@ -693,78 +686,12 @@ const AddUser = () => {
                     </FormControl>
                   </div>
 
-                  <div className="col-md-12 mt-3">
+                  <div className="col-md-12 mt-3  add-user-country">
                     <div className="d-flex align-items-center justify-content-between">
                       <p className="text-lightBlue mb-1">State or Region</p>
                       <small className="text-grey-6 mb-1">(Optional)</small>
                     </div>
-                    <FormControl
-                      sx={{ m: 0, minWidth: 120, width: "100%" }}
-                      size="small"
-                    >
-                      <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        value={state}
-                        onChange={handleStateChange}
-                        size="small"
-                      >
-                        <MenuItem
-                          value=""
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          None
-                        </MenuItem>
-                        <MenuItem
-                          value={10}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Maharashtra
-                        </MenuItem>
-                        <MenuItem
-                          value={20}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Karnataka
-                        </MenuItem>
-                        <MenuItem
-                          value={30}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Kerala
-                        </MenuItem>
-                        <MenuItem
-                          value={40}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Assam
-                        </MenuItem>
-                        <MenuItem
-                          value={50}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Rajasthan
-                        </MenuItem>
-                        <MenuItem
-                          value={60}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Haryana
-                        </MenuItem>
-                        <MenuItem
-                          value={70}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Punjab
-                        </MenuItem>
-                        <MenuItem
-                          value={80}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Himachal Pradesh
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
+                    <AppStateSelect />
                   </div>
                   <div className="col-12 mt-3 d-flex justify-content-between">
                     <Link
