@@ -67,6 +67,14 @@ const Sidenav = () => {
             <ListItemText primary="Users" className="list-text" />
           </ListItem>
         </NavLink>
+        <NavLink to="/userGroups">
+          <ListItem button key="User Groups" className="list-item">
+            <ListItemIcon className="me-2 list-icon">
+              <img src={customers} alt="customers" />
+            </ListItemIcon>
+            <ListItemText primary="UserGroups" className="list-text" />
+          </ListItem>
+        </NavLink>
         <NavLink to="/analytics">
           <ListItem button key="Analytics" className="list-item">
             <ListItemIcon className="me-2 list-icon">
