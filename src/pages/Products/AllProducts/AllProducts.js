@@ -221,6 +221,7 @@ const taggedWithData = [
 
 const AllProducts = () => {
   const [value, setValue] = React.useState(0);
+  const [valueExport, setExportValue] = React.useState(0);
   const [importValue, setImportValue] = React.useState("importProducts");
   const [importSecondValue, setImportSecondValue] =
     React.useState("uploadLineSheet");
@@ -234,6 +235,9 @@ const AllProducts = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+  const handleExportChange = (event, newValue) => {
+    setExportValue(newValue);
   };
 
   // ? FILTER DRAWER STARTS HERE
@@ -466,8 +470,8 @@ const AllProducts = () => {
               <RadioGroup
                 aria-labelledby="demo-controlled-radio-buttons-group"
                 name="controlled-radio-buttons-group"
-                value={value}
-                onChange={handleChange}
+                value={valueExport}
+                onChange={handleExportChange}
               >
                 <FormControlLabel
                   value="currentPage"
@@ -498,8 +502,8 @@ const AllProducts = () => {
               <RadioGroup
                 aria-labelledby="demo-controlled-radio-buttons-group"
                 name="controlled-radio-buttons-group"
-                value={value}
-                onChange={handleChange}
+                value={valueExport}
+                onChange={handleExportChange}
               >
                 <FormControlLabel
                   value="csvForExcel"
@@ -530,8 +534,8 @@ const AllProducts = () => {
               <RadioGroup
                 aria-labelledby="demo-controlled-radio-buttons-group"
                 name="controlled-radio-buttons-group"
-                value={value}
-                onChange={handleChange}
+                value={valueExport}
+                onChange={handleExportChange}
               >
                 <FormControlLabel
                   value="normalText"

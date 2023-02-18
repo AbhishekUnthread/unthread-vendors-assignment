@@ -329,6 +329,7 @@ const activityData = [
 
 const AllUsers = () => {
   const [value, setValue] = React.useState(0);
+  const [valueExport, setExportValue] = React.useState(0);
   const [importValue, setImportValue] = React.useState("importUsers");
   const [importSecondValue, setImportSecondValue] =
     React.useState("uploadLineSheet");
@@ -342,6 +343,9 @@ const AllUsers = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+  const handleExportChange = (event, newValue) => {
+    setExportValue(newValue);
   };
 
   // ? DATE PICKER STARTS
@@ -580,11 +584,59 @@ const AllUsers = () => {
   );
   // ? FILE UPLOAD ENDS HERE
 
+  // * DAYS POPOVERS STARTS
+  const [anchorDaysEl, setDaysEl] = React.useState(null);
+
+  const handleDaysClick = (event) => {
+    setDaysEl(event.currentTarget);
+  };
+
+  const handleDaysClose = () => {
+    setDaysEl(null);
+  };
+
+  const openDays = Boolean(anchorDaysEl);
+  const idDays = openDays ? "simple-popover" : undefined;
+  // * DAYS POPOVERS ENDS
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
         <h4 className="page-heading w-auto ps-0">All Users</h4>
         <div className="d-flex align-items-center w-auto pe-0">
+          <button
+            className="button-transparent me-1 py-2 px-3"
+            onClick={handleDaysClick}
+          >
+            <p className="text-lightBlue">30 Days</p>
+          </button>
+
+          <Popover
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            id={idDays}
+            open={openDays}
+            anchorEl={anchorDaysEl}
+            onClose={handleDaysClose}
+          >
+            <div className="py-2 px-1">
+              <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                Last 7 Days
+              </small>
+              <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                Last 15 Days
+              </small>
+              <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                Last 30 Days
+              </small>
+            </div>
+          </Popover>
           <button className="button-transparent me-1 py-2 px-3">
             <img src={tutorial} alt="tutorial" className="me-2" width={20} />
             <p className="text-blue-gradient">Tutorial</p>
@@ -641,13 +693,24 @@ const AllUsers = () => {
               <RadioGroup
                 aria-labelledby="demo-controlled-radio-buttons-group"
                 name="controlled-radio-buttons-group"
-                value={value}
-                onChange={handleChange}
+                value={valueExport}
+                onChange={handleExportChange}
               >
                 <FormControlLabel
                   value="currentPage"
                   control={<Radio size="small" />}
                   label="Current Page"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+                <FormControlLabel
+                  value="currentSelection"
+                  control={<Radio size="small" />}
+                  label="Current Selection"
                   sx={{
                     "& .MuiTypography-root": {
                       fontSize: 13,
@@ -673,8 +736,8 @@ const AllUsers = () => {
               <RadioGroup
                 aria-labelledby="demo-controlled-radio-buttons-group"
                 name="controlled-radio-buttons-group"
-                value={value}
-                onChange={handleChange}
+                value={valueExport}
+                onChange={handleExportChange}
               >
                 <FormControlLabel
                   value="csvForExcel"
@@ -700,38 +763,6 @@ const AllUsers = () => {
                 />
               </RadioGroup>
             </FormControl>
-            <p className="text-lightBlue mb-2 mt-3">HTML format</p>
-            <FormControl>
-              <RadioGroup
-                aria-labelledby="demo-controlled-radio-buttons-group"
-                name="controlled-radio-buttons-group"
-                value={value}
-                onChange={handleChange}
-              >
-                <FormControlLabel
-                  value="normalText"
-                  control={<Radio size="small" />}
-                  label="Normal Text"
-                  sx={{
-                    "& .MuiTypography-root": {
-                      fontSize: 13,
-                      color: "#c8d8ff",
-                    },
-                  }}
-                />
-                <FormControlLabel
-                  value="htmlCodedText"
-                  control={<Radio size="small" />}
-                  label="HTML Coded Text"
-                  sx={{
-                    "& .MuiTypography-root": {
-                      fontSize: 13,
-                      color: "#c8d8ff",
-                    },
-                  }}
-                />
-              </RadioGroup>
-            </FormControl>
           </DialogContent>
           <hr className="hr-grey-6 my-0" />
           <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -745,7 +776,7 @@ const AllUsers = () => {
               className="button-gradient py-2 px-5"
               onClick={handleExportClose}
             >
-              <p className="">Continue</p>
+              <p className="">Export</p>
             </button>
           </DialogActions>
         </Dialog>
@@ -1126,10 +1157,10 @@ const AllUsers = () => {
 
       <div className="row">
         <div className="col-md-3 col-6 ps-0 my-3">
-          <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
+          <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2 className="text-lightBlue">50</h2>
+                <h2 className="text-lightBlue fw-400">50</h2>
                 <small className="text-grey-6 mt-2">Active</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -1145,10 +1176,10 @@ const AllUsers = () => {
           </div>
         </div>
         <div className="col-md-3 col-6 ps-0 my-3">
-          <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
+          <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2 className="text-lightBlue">50</h2>
+                <h2 className="text-lightBlue fw-400">50</h2>
                 <small className="text-grey-6 mt-2">In-Active</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -1164,11 +1195,11 @@ const AllUsers = () => {
           </div>
         </div>
         <div className="col-md-3 col-6 ps-0 my-3">
-          <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
+          <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2 className="text-lightBlue">50</h2>
-                <small className="text-grey-6 mt-2">Returning Customers</small>
+                <h2 className="text-lightBlue fw-400">50</h2>
+                <small className="text-grey-6 mt-2">Returning Users</small>
               </div>
               <div className="d-flex flex-column align-items-end">
                 <img
@@ -1183,10 +1214,10 @@ const AllUsers = () => {
           </div>
         </div>
         <div className="col-md-3 col-6 ps-0 pe-0 my-3">
-          <div className="border-grey-5 bg-black-15 rounded-4 py-3 px-3">
+          <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2 className="text-lightBlue">50</h2>
+                <h2 className="text-lightBlue fw-400">50</h2>
                 <small className="text-grey-6 mt-2">Abandoned Checkout</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -1392,7 +1423,7 @@ const AllUsers = () => {
                   anchorEl={anchorStatusEl}
                   onClose={handleStatusClose}
                 >
-                  <div className="py-2 px-1">
+                  <div className=" px-1">
                     <FormGroup className="tags-checkbox">
                       <FormControlLabel
                         control={
@@ -1636,9 +1667,7 @@ const AllUsers = () => {
                           aria-controls="panel3d-content"
                           id="panel3d-header"
                         >
-                          <p className="text-lightBlue">
-                            Customer Account Status
-                          </p>
+                          <p className="text-lightBlue">User Account Status</p>
                         </AccordionSummary>
                         <AccordionDetails>
                           <RadioGroup
@@ -1942,9 +1971,9 @@ const AllUsers = () => {
                     // onChange={handleRadioChange}
                   >
                     <FormControlLabel
-                      value="customerName"
+                      value="userName"
                       control={<Radio size="small" />}
-                      label="Customer Name"
+                      label="User Name"
                     />
                     <FormControlLabel
                       value="location"

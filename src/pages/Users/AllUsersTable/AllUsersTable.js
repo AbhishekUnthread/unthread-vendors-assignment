@@ -47,14 +47,14 @@ const taggedWithData = [
 // ? TABLE STARTS HERE
 function createData(
   cId,
-  customerName,
+  userName,
   groups,
   location,
   orders,
   totalSpent,
   status
 ) {
-  return { cId, customerName, groups, location, orders, totalSpent, status };
+  return { cId, userName, groups, location, orders, totalSpent, status };
 }
 
 const rows = [
@@ -89,10 +89,10 @@ const rows = [
 
 const headCells = [
   {
-    id: "customerName",
+    id: "userName",
     numeric: false,
     disablePadding: true,
-    label: "Customer Name",
+    label: "User Name",
   },
   {
     id: "groups",
@@ -232,7 +232,7 @@ EnhancedTableHead.propTypes = {
 
 const AllUsersTable = () => {
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("customerName");
+  const [orderBy, setOrderBy] = React.useState("userName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -359,7 +359,7 @@ const AllUsersTable = () => {
           <div className="d-flex">
             <button className="button-grey py-2 px-3">
               <small className="text-lightBlue">
-                {selected.length} products are selected&nbsp;
+                {selected.length} users are selected&nbsp;
                 <span
                   className="text-blue-2 c-pointer"
                   onClick={() => setSelected([])}
@@ -370,7 +370,7 @@ const AllUsersTable = () => {
             </button>
 
             <button className="button-grey py-2 px-3 ms-2">
-              <small className="text-lightBlue">Edit Products</small>
+              <small className="text-lightBlue">Edit Users</small>
             </button>
             <button
               className="button-grey py-2 px-3 ms-2"
@@ -433,13 +433,16 @@ const AllUsersTable = () => {
                 <small className="text-grey-7 px-2">ACTIONS</small>
                 <hr className="hr-grey-6 my-2" />
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit Customer
+                  Edit User
+                </small>
+                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                  Edit User Group
                 </small>
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                   Add or Remove Tags
                 </small>
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add to Customer Groups
+                  Add to User Groups
                 </small>
                 <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                   <small className="text-lightBlue font2 d-block">
@@ -516,7 +519,7 @@ const AllUsersTable = () => {
                             className=" text-decoration-none"
                           >
                             <p className="text-lightBlue rounded-circle fw-600">
-                              {row.customerName}
+                              {row.userName}
                             </p>
                           </Link>
                           <small className="mt-2 text-grey-6">
@@ -676,13 +679,16 @@ const AllUsersTable = () => {
                           <small className="text-grey-7 px-2">ACTIONS</small>
                           <hr className="hr-grey-6 my-2" />
                           <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                            Edit Customer
+                            Edit User
+                          </small>
+                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                            Edit User Group
                           </small>
                           <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                             Add or Remove Tags
                           </small>
                           <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                            Add to Customer Groups
+                            Add to User Groups
                           </small>
                           <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                             <small className="text-lightBlue font2 d-block">
