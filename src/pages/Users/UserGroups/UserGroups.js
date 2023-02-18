@@ -361,7 +361,10 @@ const UserGroups = () => {
           >
             <p>Manage Default Group</p>
           </button>
-          <Link to="/addUser" className="button-gradient py-2 px-4 ms-3">
+          <Link
+            to="/createUserGroup"
+            className="button-gradient py-2 px-4 ms-3"
+          >
             <p>Create Group</p>
           </Link>
 

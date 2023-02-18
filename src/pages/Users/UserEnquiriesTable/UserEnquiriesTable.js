@@ -1,14 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 // ! IMAGES IMPORTS
-import verticalDots from "../../../assets/icons/verticalDots.svg";
-import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
-import deleteRed from "../../../assets/icons/delete.svg";
+import replyActionButton from "../../../assets/icons/replyActionButton.svg";
+import cancel from "../../../assets/icons/cancel.svg";
+import copy from "../../../assets/icons/copy.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
   Checkbox,
-  Popover,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Slide,
   Table,
   TableBody,
   TableCell,
@@ -19,42 +23,70 @@ import {
   TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
+import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
 
 // ? TABLE STARTS HERE
-function createData(uId, groupName, usersInGroup, status) {
-  return { uId, groupName, usersInGroup, status };
+function createData(eId, date, customerName, subject) {
+  return { eId, date, customerName, subject };
 }
 
 const rows = [
-  createData(1, "VIP", "100", "Active"),
-  createData(2, "VVIP", "50", "Active"),
-  createData(3, "Wholesalers", "20", "Active"),
+  createData(
+    "#12345",
+    "Today at 09:23am",
+    "Saniya Shaikh",
+    "Book an Appointment"
+  ),
+  createData(
+    "#67789",
+    "Today at 09:23am",
+    "Saniya Shaikh",
+    "Book an Appointment"
+  ),
+  createData(
+    "#23443",
+    "Today at 09:23am",
+    "Saniya Shaikh",
+    "Book an Appointment"
+  ),
 ];
 
 const headCells = [
   {
-    id: "groupName",
+    id: "eId",
     numeric: false,
     disablePadding: true,
-    label: "Group Name",
+    label: "Enquiry ID",
   },
   {
-    id: "usersInGroup",
+    id: "date",
     numeric: false,
     disablePadding: false,
-    label: "Users InGroup",
+    label: "Date",
   },
   {
-    id: "status",
+    id: "customerName",
     numeric: false,
     disablePadding: false,
-    label: "Group Status",
+    label: "Customer",
   },
   {
-    id: "actions",
+    id: "subject",
     numeric: false,
-    disablePadding: true,
-    label: "",
+    disablePadding: false,
+    label: "Subject",
+  },
+  {
+    id: "comments",
+    numeric: false,
+    disablePadding: false,
+    label: "Comments",
+  },
+  {
+    id: "replyAction",
+    numeric: false,
+    disablePadding: false,
+    label: "Reply Action",
   },
 ];
 
@@ -156,9 +188,15 @@ EnhancedTableHead.propTypes = {
 };
 // ? TABLE ENDS HERE
 
-const UserGroupsTable = () => {
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
+
+const UserEnquiriesTable = () => {
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("customerName");
+  const [orderBy, setOrderBy] = React.useState("eId");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -178,7 +216,7 @@ const UserGroupsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.uId);
+      const newSelected = rows.map((n) => n.eId);
       setSelected(newSelected);
       return;
     }
@@ -212,32 +250,17 @@ const UserGroupsTable = () => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  // * ACTION POPOVERS STARTS
-  const [anchorActionEl, setAnchorActionEl] = React.useState(null);
+  // ? COMMENT DIALOG STARTS HERE
+  const [openComment, setOpenComment] = React.useState(false);
 
-  const handleActionClick = (event) => {
-    setAnchorActionEl(event.currentTarget);
+  const handleOpenComment = () => {
+    setOpenComment(true);
   };
 
-  const handleActionClose = () => {
-    setAnchorActionEl(null);
+  const handleOpenCommentClose = () => {
+    setOpenComment(false);
   };
-
-  const openActions = Boolean(anchorActionEl);
-  const idActions = openActions ? "simple-popover" : undefined;
-  // * ACTION POPOVERS ENDS
-
-  // * METAL FILTER POPOVERS STARTS
-  const [anchorMetalFilterEl, setAnchorMetalFilterEl] = React.useState(null);
-  const handleMetalFilter = (event) => {
-    setAnchorMetalFilterEl(event.currentTarget);
-  };
-  const handleMetalFilterClose = () => {
-    setAnchorMetalFilterEl(null);
-  };
-  const openMetalFilter = Boolean(anchorMetalFilterEl);
-  const idMetalFilter = openMetalFilter ? "simple-popover" : undefined;
-  // * METAL FILTER POPOVERS ENDS
+  // ? COMMENT DIALOG ENDS HERE
 
   return (
     <React.Fragment>
@@ -357,7 +380,7 @@ const UserGroupsTable = () => {
             {stableSort(rows, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const isItemSelected = isSelected(row.uId);
+                const isItemSelected = isSelected(row.eId);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -366,7 +389,7 @@ const UserGroupsTable = () => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.uId}
+                    key={row.eId}
                     selected={isItemSelected}
                     className="table-rows"
                   >
@@ -376,7 +399,7 @@ const UserGroupsTable = () => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.uId)}
+                        onClick={(event) => handleClick(event, row.eId)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -391,93 +414,135 @@ const UserGroupsTable = () => {
                     >
                       <div className="d-flex align-items-center">
                         <p className="text-lightBlue rounded-circle fw-600">
-                          {row.groupName}
+                          {row.eId}
                         </p>
                       </div>
                     </TableCell>
-                    <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.usersInGroup}</p>
-                    </TableCell>
-                    <TableCell style={{ width: 180 }}>
-                      <div className="d-flex align-items-center">
-                        <div
-                          className="rounded-pill d-flex table-status px-2 py-1 c-pointer"
-                          aria-describedby={idMetalFilter}
-                          variant="contained"
-                          onClick={handleMetalFilter}
-                        >
-                          <small className="text-black fw-light">
-                            {row.status}
-                          </small>
-                          <img
-                            src={arrowDownBlack}
-                            alt="arrowDownBlack"
-                            className="ms-2"
-                          />
-                        </div>
-                        <Popover
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "left",
-                          }}
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "left",
-                          }}
-                          id={idMetalFilter}
-                          open={openMetalFilter}
-                          anchorEl={anchorMetalFilterEl}
-                          onClose={handleMetalFilterClose}
-                        >
-                          <div className="py-2 px-1">
-                            <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                              Draft
-                            </small>
-                            <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                              Archived
-                            </small>
-                          </div>
-                        </Popover>
+                    <TableCell>
+                      <div className="d-flex align-items-center c-pointer">
+                        <p className="text-lightBlue">{row.date}</p>
                       </div>
                     </TableCell>
-                    <TableCell style={{ width: 60 }}>
-                      <img
-                        src={verticalDots}
-                        alt="verticalDots"
-                        className="c-pointer"
-                        aria-describedby={idActions}
-                        variant="contained"
-                        onClick={handleActionClick}
-                      />
-
-                      <Popover
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "center",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "center",
-                        }}
-                        id={idActions}
-                        open={openActions}
-                        anchorEl={anchorActionEl}
-                        onClose={handleActionClose}
+                    <TableCell>
+                      <div className="d-flex align-items-center">
+                        <p className="text-blue-2 text-decoration-underline">
+                          {" "}
+                          {row.customerName}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <p className="text-lightBlue">{row.subject}</p>
+                    </TableCell>
+                    <TableCell>
+                      <div
+                        className="d-flex c-pointer"
+                        onClick={handleOpenComment}
                       >
-                        <div className="py-2 px-2">
-                          <small className="text-grey-7 px-2">ACTIONS</small>
-                          <hr className="hr-grey-6 my-2" />
-                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                            Edit Customer Groups
-                          </small>
-                          <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                            <small className="text-lightBlue font2 d-block">
-                              Delete Groups
-                            </small>
-                            <img src={deleteRed} alt="delete" className="" />
+                        <p className="text-blue-2">View</p>
+                      </div>
+
+                      <Dialog
+                        open={openComment}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={handleOpenCommentClose}
+                        aria-describedby="alert-dialog-slide-description"
+                        maxWidth="lg"
+                        fullWidth={true}
+                      >
+                        <DialogTitle>
+                          <div className="d-flex justify-content-between align-items-center">
+                            <div className="d-flex flex-column ">
+                              <h5 className="text-lightBlue fw-500">
+                                Enquiry:&nbsp;Saniya Shaikh
+                              </h5>
+
+                              <small className="text-grey-6 mt-1 d-block">
+                                #ENB12
+                              </small>
+                            </div>
+                            <img
+                              src={cancel}
+                              alt="cancel"
+                              width={30}
+                              onClick={handleOpenCommentClose}
+                              className="c-pointer"
+                            />
                           </div>
-                        </div>
-                      </Popover>
+                        </DialogTitle>
+                        <hr className="hr-grey-6 my-0" />
+                        <DialogContent className="py-3 px-4">
+                          <div className="row">
+                            <div className="col-5 col-md-4">
+                              <small className="text-grey-6">
+                                User Information
+                              </small>
+                            </div>
+                            <div className="col-7 col-md-8">
+                              <p className="text-lightBlue">Saniya Shaikh</p>
+                              <p className="text-blue-2">
+                                saniya@mydesignar.com
+                              </p>
+                              <div className="d-flex mt-1">
+                                <p className="text-grey-6">+91 9876543210</p>
+                                <img src={copy} alt="copy" className="ms-2" />
+                              </div>
+                            </div>
+                            <div className="col-5 col-md-4 mt-3">
+                              <small className="text-grey-6">Subject</small>
+                            </div>
+                            <div className="col-7 col-md-8 mt-3">
+                              <p className="text-lightBlue">
+                                Book an Appointment
+                              </p>
+                            </div>
+                            <div className="col-5 col-md-4 mt-3">
+                              <small className="text-grey-6">Message</small>
+                            </div>
+                            <div className="col-7 col-md-8 mt-3">
+                              <p className="text-lightBlue">
+                                Lorem ipsum dolor sit amet consectetur
+                                adipisicing elit. Maiores, ducimus id ea et illo
+                                eveniet obcaecati architecto. Deserunt
+                                cupiditate doloremque voluptatum autem nisi,
+                                aliquid eveniet, illum adipisci vitae
+                                dignissimos iusto!
+                              </p>
+                            </div>
+                            <div className="col-12">
+                              <p className="text-lightBlue">Reply</p>
+                            </div>
+                            <div className="col-12 mt-2">
+                              <AppTextEditor />
+                            </div>
+                          </div>
+                        </DialogContent>
+                        <hr className="hr-grey-6 my-0" />
+                        <DialogActions className="d-flex justify-content-between px-4 py-3">
+                          <button
+                            className="button-grey py-2 px-5"
+                            onClick={handleOpenCommentClose}
+                          >
+                            <p className="text-lightBlue">Cancel</p>
+                          </button>
+                          <button
+                            className="button-gradient py-2 px-5"
+                            onClick={handleOpenCommentClose}
+                          >
+                            <p>Send</p>
+                          </button>
+                        </DialogActions>
+                      </Dialog>
+                    </TableCell>
+                    <TableCell style={{ width: 160 }}>
+                      <div className="d-flex align-items-center">
+                        <img
+                          src={replyActionButton}
+                          alt="replyActionButton"
+                          height={30}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -508,4 +573,4 @@ const UserGroupsTable = () => {
   );
 };
 
-export default UserGroupsTable;
+export default UserEnquiriesTable;
