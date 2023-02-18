@@ -1562,7 +1562,7 @@ const CreateUserGroup = () => {
           </div>
         </div>
       </div>
-      <div className="row mx-0 create-buttons pt-5 pb-3 justify-content-between">
+      <div className="row create-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
           <Link to="/allUsers" className="button-red-outline py-2 px-4">
             <p>Discard</p>
