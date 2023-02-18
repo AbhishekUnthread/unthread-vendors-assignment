@@ -29,6 +29,7 @@ import AddUser from "./pages/Users/AddUser/AddUser";
 import UserGroups from "./pages/Users/UserGroups/UserGroups";
 import UserEnquiries from "./pages/Users/UserEnquiries/UserEnquiries";
 import CreateUserGroup from "./pages/Users/CreateUserGroup/CreateUserGroup";
+import UserDetails from "./pages/Users/UserDetails/UserDetails";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -197,6 +198,7 @@ function App(props) {
               <Route path="/userGroups" element={<UserGroups />} />
               <Route path="/userEnquiries" element={<UserEnquiries />} />
               <Route path="/createUserGroup" element={<CreateUserGroup />} />
+              <Route path="/userDetails" element={<UserDetails />} />
               {/* <Route path="/orders" element={<Orders />} exact />
               <Route path="/add-product" element={<AddProduct />} exact />
               <Route path="/products" element={<Products />} exact />

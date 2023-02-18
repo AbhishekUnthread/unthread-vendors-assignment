@@ -27,6 +27,7 @@ import { visuallyHidden } from "@mui/utils";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import { Link } from "react-router-dom";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -510,9 +511,14 @@ const AllUsersTable = () => {
                           width={45}
                         />
                         <div>
-                          <p className="text-lightBlue rounded-circle fw-600">
-                            {row.customerName}
-                          </p>
+                          <Link
+                            to="/userDetails"
+                            className=" text-decoration-none"
+                          >
+                            <p className="text-lightBlue rounded-circle fw-600">
+                              {row.customerName}
+                            </p>
+                          </Link>
                           <small className="mt-2 text-grey-6">
                             saniya@mydesignar.com
                           </small>
