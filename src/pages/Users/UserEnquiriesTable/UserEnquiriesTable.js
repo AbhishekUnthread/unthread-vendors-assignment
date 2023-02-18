@@ -26,8 +26,8 @@ import { visuallyHidden } from "@mui/utils";
 import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
 
 // ? TABLE STARTS HERE
-function createData(eId, date, customerName, subject) {
-  return { eId, date, customerName, subject };
+function createData(eId, date, userName, subject) {
+  return { eId, date, userName, subject };
 }
 
 const rows = [
@@ -65,10 +65,10 @@ const headCells = [
     label: "Date",
   },
   {
-    id: "customerName",
+    id: "userName",
     numeric: false,
     disablePadding: false,
-    label: "Customer",
+    label: "User",
   },
   {
     id: "subject",
@@ -343,13 +343,13 @@ const UserEnquiriesTable = () => {
                 <small className="text-grey-7 px-2">ACTIONS</small>
                 <hr className="hr-grey-6 my-2" />
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit Customer
+                  Edit User
                 </small>
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                   Add or Remove Tags
                 </small>
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add to Customer Groups
+                  Add to User Groups
                 </small>
                 <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                   <small className="text-lightBlue font2 d-block">
@@ -427,7 +427,7 @@ const UserEnquiriesTable = () => {
                       <div className="d-flex align-items-center">
                         <p className="text-blue-2 text-decoration-underline">
                           {" "}
-                          {row.customerName}
+                          {row.userName}
                         </p>
                       </div>
                     </TableCell>

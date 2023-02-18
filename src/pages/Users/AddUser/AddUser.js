@@ -260,7 +260,7 @@ const AddUser = () => {
             />
           </Link>
 
-          <h5 className="page-heading ms-2 ps-1">Add New Customers</h5>
+          <h5 className="page-heading ms-2 ps-1">Add New Users</h5>
         </div>
       </div>
       <div className="row">
@@ -274,7 +274,7 @@ const AddUser = () => {
               </div>
             </div>
             <hr className="hr-grey-6 mt-3 mb-0" />
-            <div className="col-12 mb-2 pb-2">
+            <div className="col-12 mb-2 pb-2 px-0">
               <div className="row align-items-start">
                 <div className="col-md-6 mt-3">
                   <p className="text-lightBlue mb-1">First Name</p>
@@ -351,7 +351,7 @@ const AddUser = () => {
                         }}
                       />
                     }
-                    label="Customer agreed to receive marketing emails."
+                    label="User agreed to receive marketing emails."
                     sx={{
                       "& .MuiTypography-root": {
                         fontSize: 13,
@@ -386,7 +386,7 @@ const AddUser = () => {
                         }}
                       />
                     }
-                    label="Customer agreed to receive SMS marketing text messages."
+                    label="User agreed to receive SMS marketing text messages."
                     sx={{
                       "& .MuiTypography-root": {
                         fontSize: 13,
@@ -433,80 +433,88 @@ const AddUser = () => {
               </div>
             </div>
             <hr className="hr-grey-6 mt-3 mb-0" />
-            <div className="row">
-              <div className="col-md-12 mt-3">
-                <p className="text-lightBlue mb-1">User Role</p>
-                <FormControl
-                  sx={{ m: 0, minWidth: 120, width: "100%" }}
-                  size="small"
-                >
-                  <Select
-                    labelId="demo-select-small"
-                    id="demo-select-small"
-                    value={userRole}
-                    onChange={handleUserRoleChange}
+            <div className="col-12 px-0">
+              <div className="row">
+                <div className="col-md-12 mt-3">
+                  <p className="text-lightBlue mb-1">User Role</p>
+                  <FormControl
+                    sx={{ m: 0, minWidth: 120, width: "100%" }}
                     size="small"
                   >
-                    <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                      None
-                    </MenuItem>
-                    <MenuItem
-                      value={10}
-                      sx={{ fontSize: 13, color: "#5c6d8e" }}
+                    <Select
+                      labelId="demo-select-small"
+                      id="demo-select-small"
+                      value={userRole}
+                      onChange={handleUserRoleChange}
+                      size="small"
                     >
-                      Admin
-                    </MenuItem>
-                    <MenuItem
-                      value={20}
-                      sx={{ fontSize: 13, color: "#5c6d8e" }}
-                    >
-                      Super Admin
-                    </MenuItem>
-                    <MenuItem
-                      value={20}
-                      sx={{ fontSize: 13, color: "#5c6d8e" }}
-                    >
-                      Customer
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-              <div className="col-md-12 mt-3">
-                <p className="text-lightBlue mb-1">User Group</p>
-                <FormControl
-                  sx={{ m: 0, minWidth: 120, width: "100%" }}
-                  size="small"
-                >
-                  <Select
-                    labelId="demo-select-small"
-                    id="demo-select-small"
-                    value={userGroup}
-                    onChange={handleUserGroupChange}
+                      <MenuItem
+                        value=""
+                        sx={{ fontSize: 13, color: "#5c6d8e" }}
+                      >
+                        None
+                      </MenuItem>
+                      <MenuItem
+                        value={10}
+                        sx={{ fontSize: 13, color: "#5c6d8e" }}
+                      >
+                        Admin
+                      </MenuItem>
+                      <MenuItem
+                        value={20}
+                        sx={{ fontSize: 13, color: "#5c6d8e" }}
+                      >
+                        Super Admin
+                      </MenuItem>
+                      <MenuItem
+                        value={20}
+                        sx={{ fontSize: 13, color: "#5c6d8e" }}
+                      >
+                        User
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
+                <div className="col-md-12 mt-3">
+                  <p className="text-lightBlue mb-1">User Group</p>
+                  <FormControl
+                    sx={{ m: 0, minWidth: 120, width: "100%" }}
                     size="small"
                   >
-                    <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                      None
-                    </MenuItem>
-                    <MenuItem
-                      value={10}
-                      sx={{ fontSize: 13, color: "#5c6d8e" }}
+                    <Select
+                      labelId="demo-select-small"
+                      id="demo-select-small"
+                      value={userGroup}
+                      onChange={handleUserGroupChange}
+                      size="small"
                     >
-                      Group 1
-                    </MenuItem>
-                    <MenuItem
-                      value={20}
-                      sx={{ fontSize: 13, color: "#5c6d8e" }}
-                    >
-                      Group 2
-                    </MenuItem>
-                    <MenuItem
-                      value={20}
-                      sx={{ fontSize: 13, color: "#5c6d8e" }}
-                    >
-                      Group 3
-                    </MenuItem>
-                  </Select>
-                </FormControl>
+                      <MenuItem
+                        value=""
+                        sx={{ fontSize: 13, color: "#5c6d8e" }}
+                      >
+                        None
+                      </MenuItem>
+                      <MenuItem
+                        value={10}
+                        sx={{ fontSize: 13, color: "#5c6d8e" }}
+                      >
+                        Group 1
+                      </MenuItem>
+                      <MenuItem
+                        value={20}
+                        sx={{ fontSize: 13, color: "#5c6d8e" }}
+                      >
+                        Group 2
+                      </MenuItem>
+                      <MenuItem
+                        value={20}
+                        sx={{ fontSize: 13, color: "#5c6d8e" }}
+                      >
+                        Group 3
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
               </div>
             </div>
           </div>
@@ -971,7 +979,7 @@ const AddUser = () => {
               className="col-12"
             />
             <small className="mt-1 text-grey-6 font1">
-              Note: Customer can't see this, its for your reference
+              Note: User can't see this, its for your reference
             </small>
           </div>
         </div>

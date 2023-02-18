@@ -158,7 +158,7 @@ EnhancedTableHead.propTypes = {
 
 const UserGroupsTable = () => {
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("customerName");
+  const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -320,13 +320,13 @@ const UserGroupsTable = () => {
                 <small className="text-grey-7 px-2">ACTIONS</small>
                 <hr className="hr-grey-6 my-2" />
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit Customer
+                  Edit User
                 </small>
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                   Add or Remove Tags
                 </small>
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add to Customer Groups
+                  Add to User Groups
                 </small>
                 <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                   <small className="text-lightBlue font2 d-block">
@@ -468,7 +468,7 @@ const UserGroupsTable = () => {
                           <small className="text-grey-7 px-2">ACTIONS</small>
                           <hr className="hr-grey-6 my-2" />
                           <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                            Edit Customer Groups
+                            Edit User Groups
                           </small>
                           <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                             <small className="text-lightBlue font2 d-block">

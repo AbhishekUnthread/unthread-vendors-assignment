@@ -468,7 +468,7 @@ const UserDetails = () => {
             </div>
             <small className="text-grey-6 mt-2 mb-1 d-block">User Group</small>
             <Chip label="VIP" size="small" />
-            <Chip label="Verified Customer" size="small" className="ms-2" />
+            <Chip label="Verified User" size="small" className="ms-2" />
           </div>
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-3">
             <div className="d-flex justify-content-between align-items-center mb-2">
@@ -486,7 +486,7 @@ const UserDetails = () => {
               className="col-12"
             />
             <small className="mt-1 text-grey-6 font1">
-              Note: Customer can't see this, its for your reference
+              Note: User can't see this, its for your reference
             </small>
           </div>
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-3">

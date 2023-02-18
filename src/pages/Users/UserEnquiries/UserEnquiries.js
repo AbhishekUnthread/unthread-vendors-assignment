@@ -995,7 +995,7 @@ const UserEnquiries = () => {
                       aria-controls="panel3d-content"
                       id="panel3d-header"
                     >
-                      <p className="text-lightBlue">Customer Account Status</p>
+                      <p className="text-lightBlue">User Account Status</p>
                     </AccordionSummary>
                     <AccordionDetails>
                       <RadioGroup
@@ -1298,9 +1298,9 @@ const UserEnquiries = () => {
                     // onChange={handleRadioChange}
                   >
                     <FormControlLabel
-                      value="customerName"
+                      value="userName"
                       control={<Radio size="small" />}
-                      label="Customer Name"
+                      label="User Name"
                     />
                     <FormControlLabel
                       value="location"

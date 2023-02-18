@@ -320,7 +320,7 @@ const UserGroups = () => {
     { title: "VVIP", value: "content3" },
     { title: "Wholesaler", value: "content4" },
     { title: "Highest Orders", value: "content5" },
-    { title: "Loyal Customers", value: "content6" },
+    { title: "Loyal Users", value: "content6" },
     { title: "New Users", value: "content7" },
     { title: "Default Users", value: "content8" },
     { title: "Guest Users", value: "content9" },
@@ -675,9 +675,9 @@ const UserGroups = () => {
                     // onChange={handleRadioChange}
                   >
                     <FormControlLabel
-                      value="customerName"
+                      value="userName"
                       control={<Radio size="small" />}
-                      label="Customer Name"
+                      label="User Name"
                     />
                     <FormControlLabel
                       value="location"

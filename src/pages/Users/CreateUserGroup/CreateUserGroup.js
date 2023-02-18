@@ -635,32 +635,26 @@ const CreateUserGroup = () => {
               </div>
             </div>
             <hr className="hr-grey-6 mt-3 mb-0" />
-            <div className="col-12 mb-2 pb-2">
-              <div className="row align-items-start">
-                <div className="col-md-12 mt-3">
-                  <p className="text-lightBlue mb-1">Group Name</p>
-                  <FormControl className="w-100 px-0">
-                    <OutlinedInput
-                      placeholder="Enter Group Name"
-                      size="small"
-                    />
-                  </FormControl>
-                </div>
-                <div className="col-md-12 mt-3">
-                  <p className="text-lightBlue mb-1">Description</p>
-                  <TextareaAutosize
-                    aria-label="meta description"
-                    placeholder="Enter Short Description"
-                    style={{
-                      background: "#15142A",
-                      color: "#c8d8ff",
-                      borderRadius: 5,
-                    }}
-                    minRows={5}
-                    className="w-100"
-                  />
-                </div>
-              </div>
+
+            <div className="col-md-12 mt-3 px-0">
+              <p className="text-lightBlue mb-1">Group Name</p>
+              <FormControl className="w-100 px-0">
+                <OutlinedInput placeholder="Enter Group Name" size="small" />
+              </FormControl>
+            </div>
+            <div className="col-md-12 mt-3 px-0">
+              <p className="text-lightBlue mb-1">Description</p>
+              <TextareaAutosize
+                aria-label="meta description"
+                placeholder="Enter Short Description"
+                style={{
+                  background: "#15142A",
+                  color: "#c8d8ff",
+                  borderRadius: 5,
+                }}
+                minRows={5}
+                className="w-100"
+              />
             </div>
           </div>
 
