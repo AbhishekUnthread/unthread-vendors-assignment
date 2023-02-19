@@ -1,4 +1,4 @@
-import { Chip, OutlinedInput, Popover } from "@mui/material";
+import { Chip, OutlinedInput, Popover, Tooltip } from "@mui/material";
 import React from "react";
 // ! IMAGES IMPORTS
 import archivedGrey from "../../../../assets/icons/archivedGrey.svg";
@@ -9,10 +9,12 @@ import activity from "../../../../assets/icons/activity.svg";
 import UserActivityTable from "./UserActivityTable/UserActivityTable";
 import UserIPTable from "./UserIPTable/UserIPTable";
 import UserWishlistTable from "./UserWishlistTable/UserWishlistTable";
+import AppCustomerOverviewChart from "../../../../components/AppCustomerOverviewChart/AppCustomerOverviewChart";
 // ! MATERIAL IMPORTS
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const UserInformation = () => {
   // ? DATE PICKER STARTS
@@ -42,8 +44,110 @@ const UserInformation = () => {
 
   return (
     <React.Fragment>
-      <div className="bg-black-15 border-grey-5 rounded-8 row productInfo ">
-        <p className="text-lightBlue p-3">Customer Overview</p>
+      <div className="bg-black-15 border-grey-5 rounded-8 row productInfo">
+        <div className="col-12 d-flex mt-3">
+          <img src={location} alt="location" />
+          <p className="text-lightBlue ms-2">Customer Overview</p>
+        </div>
+        <div className="mt-3 px-3">
+          <hr className="hr-grey-6 m-0" />
+        </div>
+        <div className="col-12">
+          <div className="row py-3 mx-0">
+            <div
+              className="col-md-8 col-lg-9 d-flex justify-content-between align-items-center mb-3 mb-md-0 rounded-8 px-0"
+              style={{ background: "rgba(39, 40, 63, 0.5)" }}
+            >
+              <AppCustomerOverviewChart />
+            </div>
+            <div className="col-lg-3 col-md-4 d-flex flex-md-column flex-row">
+              <div
+                className="row mb-md-3 rounded-8 ms-md-0 p-2"
+                style={{ background: "rgba(39, 40, 63, 0.5)" }}
+              >
+                <div className="col-12 d-flex justify-content-between">
+                  <p className="text-blue-gradient">Total Orders</p>
+                  <Tooltip title="info" placement="top">
+                    <InfoOutlinedIcon
+                      sx={{
+                        color: "#c8d8ff",
+                        fontSize: 18,
+                        cursor: "pointer",
+                      }}
+                    />
+                  </Tooltip>
+                </div>
+                <div className="col-12 mt-2">
+                  <h6 className="text-lightBlue fw-500">24</h6>
+                </div>
+                <div className="col-12">
+                  <small className="text-grey-6">
+                    <span className="text-decoration-underline text-blue-2">
+                      Last Order:
+                    </span>
+                    &nbsp;April 20, 2022
+                  </small>
+                </div>
+              </div>
+              <div
+                className="row mb-md-3 rounded-8 ms-md-0 p-2"
+                style={{ background: "rgba(39, 40, 63, 0.5)" }}
+              >
+                <div className="col-12 d-flex justify-content-between">
+                  <p className="text-blue-gradient">Lifetime Spent</p>
+                  <Tooltip title="info" placement="top">
+                    <InfoOutlinedIcon
+                      sx={{
+                        color: "#c8d8ff",
+                        fontSize: 18,
+                        cursor: "pointer",
+                      }}
+                    />
+                  </Tooltip>
+                </div>
+                <div className="col-12 mt-2">
+                  <h6 className="text-lightBlue fw-500">₹&nbsp;50,465.00</h6>
+                </div>
+                <div className="col-12">
+                  <small className="text-grey-6">
+                    Mostly spent on&nbsp;
+                    <span className="text-decoration-underline text-blue-2">
+                      Rings
+                    </span>
+                  </small>
+                </div>
+              </div>
+              <div
+                className="row mb-md-3 rounded-8 ms-md-0 p-2"
+                style={{ background: "rgba(39, 40, 63, 0.5)" }}
+              >
+                <div className="col-12 d-flex justify-content-between">
+                  <p className="text-blue-gradient">Average Order Value</p>
+                  <Tooltip title="info" placement="top">
+                    <InfoOutlinedIcon
+                      sx={{
+                        color: "#c8d8ff",
+                        fontSize: 18,
+                        cursor: "pointer",
+                      }}
+                    />
+                  </Tooltip>
+                </div>
+                <div className="col-12 mt-2">
+                  <h6 className="text-lightBlue fw-500">₹&nbsp;3,215</h6>
+                </div>
+                <div className="col-12">
+                  <small className="text-grey-6">
+                    Mostly spent on&nbsp;
+                    <span className="text-decoration-underline text-blue-2">
+                      Rings
+                    </span>
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row productInfo ">
         <div className="col-12 d-flex mt-3">
