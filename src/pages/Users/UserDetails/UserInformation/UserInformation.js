@@ -5,6 +5,8 @@ import archivedGrey from "../../../../assets/icons/archivedGrey.svg";
 import editGrey from "../../../../assets/icons/editGrey.svg";
 import location from "../../../../assets/icons/location.svg";
 import activity from "../../../../assets/icons/activity.svg";
+import chart from "../../../../assets/icons/chart.svg";
+import refresh from "../../../../assets/icons/refresh.svg";
 // ! COMPONENT IMPORTS
 import UserActivityTable from "./UserActivityTable/UserActivityTable";
 import UserIPTable from "./UserIPTable/UserIPTable";
@@ -45,9 +47,17 @@ const UserInformation = () => {
   return (
     <React.Fragment>
       <div className="bg-black-15 border-grey-5 rounded-8 row productInfo">
-        <div className="col-12 d-flex mt-3">
-          <img src={location} alt="location" />
-          <p className="text-lightBlue ms-2">Customer Overview</p>
+        <div className="col-12 d-flex mt-3 justify-content-between">
+          <div className="d-flex align-items-center">
+            <img src={chart} alt="location" />
+            <p className="text-lightBlue ms-2">Customer Overview</p>
+          </div>
+          <div className="d-flex align-items-center">
+            <small className="text-lightBlue me-1">
+              Last Update:&nbsp;<span className="fw-500">April 25,2022</span>
+            </small>
+            <img src={refresh} alt="refresh" width={16} />
+          </div>
         </div>
         <div className="mt-3 px-3">
           <hr className="hr-grey-6 m-0" />
@@ -62,7 +72,7 @@ const UserInformation = () => {
             </div>
             <div className="col-lg-3 col-md-4 d-flex flex-md-column flex-row">
               <div
-                className="row mb-md-3 rounded-8 ms-md-0 p-2"
+                className="row mb-md-3 rounded-8 ms-md-0 py-2"
                 style={{ background: "rgba(39, 40, 63, 0.5)" }}
               >
                 <div className="col-12 d-flex justify-content-between">
@@ -90,7 +100,7 @@ const UserInformation = () => {
                 </div>
               </div>
               <div
-                className="row mb-md-3 rounded-8 ms-md-0 p-2"
+                className="row mb-md-3 rounded-8 ms-md-0 py-2"
                 style={{ background: "rgba(39, 40, 63, 0.5)" }}
               >
                 <div className="col-12 d-flex justify-content-between">
@@ -118,7 +128,7 @@ const UserInformation = () => {
                 </div>
               </div>
               <div
-                className="row mb-md-3 rounded-8 ms-md-0 p-2"
+                className="row mb-md-3 rounded-8 ms-md-0 py-2"
                 style={{ background: "rgba(39, 40, 63, 0.5)" }}
               >
                 <div className="col-12 d-flex justify-content-between">
