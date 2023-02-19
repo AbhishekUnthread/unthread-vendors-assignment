@@ -52,6 +52,8 @@ import {
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import SearchIcon from "@mui/icons-material/Search";
+import UserOrders from "./UserOrders/UserOrders";
+import UserInformation from "./UserInformation/UserInformation";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -245,7 +247,7 @@ const UserDetails = () => {
     <div className="page container-fluid position-relative">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/allProducts">
+          <Link to="/allUsers">
             <img
               src={arrowLeft}
               alt="arrowLeft"
@@ -409,19 +411,19 @@ const UserDetails = () => {
             </Box>
 
             <TabPanel value={value} index={0}>
-              Hiten
+              <UserInformation />
             </TabPanel>
             <TabPanel value={value} index={1}>
-              Hiten{" "}
+              <UserOrders />
             </TabPanel>
             <TabPanel value={value} index={2}>
-              Hiten
+              <p className="text-lightBlue">CJP</p>
             </TabPanel>
             <TabPanel value={value} index={3}>
-              Hiten
+              <p className="text-lightBlue">Digital Gold</p>
             </TabPanel>
             <TabPanel value={value} index={4}>
-              Hiten
+              <p className="text-lightBlue">Enquiries</p>
             </TabPanel>
           </div>
         </div>
@@ -482,7 +484,7 @@ const UserDetails = () => {
                 color: "#c8d8ff",
                 borderRadius: 5,
               }}
-              minRows={5}
+              minRows={3}
               className="col-12"
             />
             <small className="mt-1 text-grey-6 font1">

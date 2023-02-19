@@ -51,10 +51,11 @@ const Search = styled("div")(({ theme }) => ({
   width: "100%",
   [theme.breakpoints.up("sm")]: {
     marginLeft: 0,
-    width: "auto",
+    width: "100%",
   },
   backgroundColor: "#1c1b33",
   height: "37.6px",
+  marginRight: "8px",
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -70,6 +71,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
+  width: "100%",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1.2, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
@@ -643,7 +645,7 @@ const UserGroups = () => {
             </Search>
             <div className="d-flex">
               <button
-                className="button-grey py-2 px-3 ms-2"
+                className="button-grey py-2 px-3"
                 aria-describedby={idSort}
                 variant="contained"
                 onClick={handleSortClick}

@@ -612,7 +612,7 @@ const CreateUserGroup = () => {
     <div className="page container-fluid position-relative user-group">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/allUsers">
+          <Link to="/userGroups">
             <img
               src={arrowLeft}
               alt="arrowLeft"

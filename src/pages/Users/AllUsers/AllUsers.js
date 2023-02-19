@@ -71,10 +71,11 @@ const Search = styled("div")(({ theme }) => ({
   width: "100%",
   [theme.breakpoints.up("sm")]: {
     marginLeft: 0,
-    width: "auto",
+    width: "100%",
   },
   backgroundColor: "#1c1b33",
   height: "37.6px",
+  marginRight: "8px",
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -90,6 +91,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
+  width: "100%",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1.2, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
@@ -1309,9 +1311,9 @@ const AllUsers = () => {
               />
             </Search>
             <div className="d-flex">
-              <div className="d-flex product-button__box ms-2">
+              <div className="d-flex product-button__box">
                 <button
-                  className="button-grey py-2 px-3 d-none d-md-block"
+                  className="button-grey py-1 px-3 d-none d-md-block"
                   aria-describedby={idLocation}
                   variant="contained"
                   onClick={handleLocationClick}
@@ -1361,7 +1363,7 @@ const AllUsers = () => {
                   </div>
                 </Popover>
                 <button
-                  className="button-grey py-2 px-3 d-none d-md-block"
+                  className="button-grey py-1 px-3 d-none d-md-block"
                   aria-describedby={idOrders}
                   variant="contained"
                   onClick={handleOrdersClick}
@@ -1400,7 +1402,7 @@ const AllUsers = () => {
                 </Popover>
 
                 <button
-                  className="button-grey py-2 px-3 d-none d-md-block"
+                  className="button-grey py-1 px-3 d-none d-md-block"
                   aria-describedby={idStatus}
                   variant="contained"
                   onClick={handleStatusClick}

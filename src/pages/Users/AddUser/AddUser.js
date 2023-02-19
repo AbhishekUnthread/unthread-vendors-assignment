@@ -975,7 +975,7 @@ const AddUser = () => {
                 color: "#c8d8ff",
                 borderRadius: 5,
               }}
-              minRows={5}
+              minRows={3}
               className="col-12"
             />
             <small className="mt-1 text-grey-6 font1">
