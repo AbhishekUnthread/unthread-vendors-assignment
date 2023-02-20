@@ -696,3 +696,12 @@ textarea {
     color: $lightBlue !important;
   }
 }
+
+.table-edit-icon {
+  &:hover {
+    background: $lightBlue;
+    .MuiSvgIcon-root {
+      color: $grey6 !important;
+    }
+  }
+}

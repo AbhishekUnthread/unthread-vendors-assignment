@@ -30,6 +30,8 @@ import UserGroups from "./pages/Users/UserGroups/UserGroups";
 import UserEnquiries from "./pages/Users/UserEnquiries/UserEnquiries";
 import CreateUserGroup from "./pages/Users/CreateUserGroup/CreateUserGroup";
 import UserDetails from "./pages/Users/UserDetails/UserDetails";
+import AdditionalFields from "./pages/Parameters/AdditionalFields/AdditionalFields";
+import CreateFieldSets from "./pages/Parameters/CreateFieldSets/CreateFieldSets";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -199,6 +201,8 @@ function App(props) {
               <Route path="/userEnquiries" element={<UserEnquiries />} />
               <Route path="/createUserGroup" element={<CreateUserGroup />} />
               <Route path="/userDetails" element={<UserDetails />} />
+              <Route path="/additionalFields" element={<AdditionalFields />} />
+              <Route path="/createFieldSets" element={<CreateFieldSets />} />
               {/* <Route path="/orders" element={<Orders />} exact />
               <Route path="/add-product" element={<AddProduct />} exact />
               <Route path="/products" element={<Products />} exact />
