@@ -1,10 +1,10 @@
 import React from "react";
 // ! COMPONENT IMPORTS
 import {
-  EnhancedTableHead,
-  stableSort,
-  getComparator,
-} from "../../../../../components/TableDependencies/TableDependencies";
+  EnhancedTableHeadNoCheckbox,
+  stableSortNoCheckbox,
+  getComparatorNoCheckbox,
+} from "../../../../../components/TableDependenciesNoCheckbox/TableDependenciesNoCheckbox";
 // ! IMAGES IMPORTS
 // ! MATERIAL IMPORTS
 import {
@@ -106,7 +106,7 @@ const UserIPTable = () => {
           aria-labelledby="tableTitle"
           size="medium"
         >
-          <EnhancedTableHead
+          <EnhancedTableHeadNoCheckbox
             numSelected={selected.length}
             order={order}
             orderBy={orderBy}
@@ -116,7 +116,7 @@ const UserIPTable = () => {
             headCells={headCells}
           />
           <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
+            {stableSortNoCheckbox(rows, getComparatorNoCheckbox(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row.aId);

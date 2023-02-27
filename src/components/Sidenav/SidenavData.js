@@ -131,21 +131,21 @@ export const SidebarData = [
       },
     ],
   },
-  // {
-  //   title: "Teams",
-  //   path: "/teams/roles",
-  //   image: teams,
-  //   subNav: [
-  //     {
-  //       title: "Roles",
-  //       path: "/teams/roles",
-  //       image: teams,
-  //     },
-  //     {
-  //       title: "Members",
-  //       path: "/teams/members",
-  //       image: teams,
-  //     },
-  //   ],
-  // },
+  {
+    title: "Teams",
+    path: "/teams/roles",
+    image: teams,
+    subNav: [
+      {
+        title: "Roles",
+        path: "/teams/roles",
+        image: teams,
+      },
+      {
+        title: "Members",
+        path: "/teams/members",
+        image: teams,
+      },
+    ],
+  },
 ];

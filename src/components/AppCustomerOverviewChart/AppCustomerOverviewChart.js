@@ -1,9 +1,6 @@
 import React from "react";
 import "./AppCustomerOverviewChart.scss";
-// import React, { PureComponent } from 'react';
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,

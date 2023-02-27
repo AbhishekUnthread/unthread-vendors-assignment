@@ -1,12 +1,9 @@
-import React, { useMemo } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import "./Variants.scss";
-import { useDropzone } from "react-dropzone";
 // ! MATERIAL IMPORTS
 import {
   OutlinedInput,
-  ToggleButton,
-  ToggleButtonGroup,
   Box,
   Checkbox,
   FormControl,
@@ -34,18 +31,12 @@ import {
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 // ! IMAGES IMPORTS
-import convert from "../../../../assets/icons/convert.svg";
-import variantUpload from "../../../../assets/images/products/variantUpload.svg";
-import usaFlagRectangle from "../../../../assets/images/products/usaFlagRectangle.svg";
-import ukFlagRectangle from "../../../../assets/images/products/ukFlagRectangle.svg";
 import indiaFlagRectangle from "../../../../assets/images/products/indiaFlagRectangle.svg";
 import info from "../../../../assets/icons/info.svg";
 import editWhite from "../../../../assets/icons/editWhite.svg";
-import editContainedWhite from "../../../../assets/icons/editContainedWhite.svg";
 import AppCountrySelect from "../../../../components/AppCountrySelect/AppCountrySelect";
 import DeleteIcon from "@mui/icons-material/Delete";
 import cancel from "../../../../assets/icons/cancel.svg";
-import imageUpload from "../../../../assets/icons/imageUpload.svg";
 import ProductVariantsBulkEditor from "../../../../components/ProductVariantsBulkEditor/ProductVariantsBulkEditor";
 
 // ? DIALOG TRANSITION STARTS HERE
@@ -209,48 +200,7 @@ EnhancedTableHead.propTypes = {
 };
 // ? TABLE ENDS HERE
 
-// ? FILE UPLOAD STARTS HERE
-const baseStyle = {
-  flex: 0,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  padding: "0",
-  borderWidth: 2,
-  borderRadius: 2,
-  borderColor: "#38395c",
-  borderStyle: "dashed",
-  //   backgroundColor: "",
-  color: "#bdbdbd",
-  outline: "none",
-  transition: "border .24s ease-in-out",
-  cursor: "pointer",
-};
-
-const focusedStyle = {
-  borderColor: "#2196f3",
-};
-
-const acceptStyle = {
-  borderColor: "#00e676",
-};
-
-const rejectStyle = {
-  borderColor: "#ff1744",
-};
-// ? FILE UPLOAD ENDS HERE
-
 const Variants = () => {
-  // ? TOGGLE BUTTONS STARTS HERE
-  const [country, setCountry] = React.useState("india");
-
-  const handleCountry = (event, newCountry) => {
-    if (newCountry !== "add" && newCountry !== "markets") {
-      setCountry(newCountry);
-    }
-  };
-  // ? TOGGLE BUTTONS ENDS HERE
-
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("variantName");
   const [selected, setSelected] = React.useState([]);
@@ -304,24 +254,6 @@ const Variants = () => {
 
     setSelected(newSelected);
   };
-
-  // ? FILE UPLOAD STARTS HERE
-  const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
-    useDropzone({
-      accept: {
-        "image/*": [".jpeg", ".jpg", ".png"],
-      },
-    });
-  const style = useMemo(
-    () => ({
-      ...baseStyle,
-      ...(isFocused ? focusedStyle : {}),
-      ...(isDragAccept ? acceptStyle : {}),
-      ...(isDragReject ? rejectStyle : {}),
-    }),
-    [isFocused, isDragAccept, isDragReject]
-  );
-  // ? FILE UPLOAD ENDS HERE
 
   // ? SIZE SELECT STARTS HERE
   const [storeAddress, setStoreAddress] = React.useState("");

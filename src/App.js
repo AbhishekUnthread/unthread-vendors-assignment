@@ -43,6 +43,8 @@ import TagsManager from "./pages/Parameters/TagsManager/TagsManager";
 import EditTags from "./pages/Parameters/EditTags/EditTags";
 import Roles from "./pages/Teams/Roles/Roles";
 import CreateRoles from "./pages/Teams/CreateRoles/CreateRoles";
+import Members from "./pages/Teams/Members/Members";
+import MemberDetails from "./pages/Teams/MemberDetails/MemberDetails";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -251,6 +253,11 @@ function App(props) {
               />
               <Route path="/teams/roles" element={<Roles />} />
               <Route path="/teams/roles/create" element={<CreateRoles />} />
+              <Route path="/teams/members" element={<Members />} />
+              <Route
+                path="/teams/members/details"
+                element={<MemberDetails />}
+              />
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </React.Fragment>
             {/* ) : (

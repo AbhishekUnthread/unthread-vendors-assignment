@@ -8,16 +8,14 @@ import {
 } from "../../../components/TableDependencies/TableDependencies";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 // ! IMAGES IMPORTS
-import rolesOwner from "../../../assets/images/teams/rolesOwner.svg";
-import rolesSuperAdmin from "../../../assets/images/teams/rolesSuperAdmin.svg";
 import rolesAdmin from "../../../assets/images/teams/rolesAdmin.svg";
-import rolesStaff from "../../../assets/images/teams/rolesStaff.svg";
-import rolesFreelance from "../../../assets/images/teams/rolesFreelance.svg";
 import user from "../../../assets/images/users/user.svg";
+import verticalDots from "../../../assets/icons/verticalDots.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
+import deleteRed from "../../../assets/icons/delete.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
-  Chip,
   Popover,
   SwipeableDrawer,
   Table,
@@ -34,6 +32,8 @@ import {
   FormControlLabel,
   FormGroup,
   styled,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
@@ -41,11 +41,12 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 // ! MATERIAL ICONS IMPORTSe
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import ChatIcon from "@mui/icons-material/Chat";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 // ? PERMISSIONS ACCORDIAN STARTS HERE
 const Accordion = styled((props) => (
@@ -192,37 +193,46 @@ const permissionAccordionData = [
 ];
 // ? PERMISSIONS ACCORDIAN ENDS HERE
 
+const taggedWithData = [
+  { title: "Tag 1", value: "tag1" },
+  { title: "Tag 2", value: "tag2" },
+  { title: "Tag 3", value: "tag3" },
+  { title: "Tag 4", value: "tag4" },
+  { title: "Tag 5", value: "tag5" },
+  { title: "Tag 6", value: "tag6" },
+  { title: "Tag 7", value: "tag7" },
+  { title: "Tag 8", value: "tag8" },
+  { title: "Tag 9", value: "tag9" },
+  { title: "Tag 10", value: "tag10" },
+  { title: "Tag 11", value: "tag11" },
+  { title: "Tag 12", value: "tag12" },
+];
+
 // ? TABLE STARTS HERE
-function createData(rId, roles, members, permissions, createdOn, action) {
-  return { rId, roles, members, permissions, createdOn, action };
+function createData(tId, userName, role, createdOn, actions) {
+  return { tId, userName, role, createdOn, actions };
 }
 
 const rows = [
-  createData(1, "Owner", "SS", "All Permission", "23/09/21 at 09:23am"),
-  createData(2, "Super Admin", "SS, SB, +2", "Limited", "23/09/21 at 09:23am"),
-  createData(3, "Admin", "", "Limited", "23/09/21 at 09:23am"),
-  createData(4, "Staff", "SS, SB, +2", "Limited", "23/09/21 at 09:23am"),
-  createData(5, "Freelance", "SS, SB, +2", "Limited", "23/09/21 at 09:23am"),
+  createData(1, "Saniya Shaikh", "Owner", "23/09/21 at 09:23am"),
+  createData(2, "Saniya Shaikh", "Owner", "23/09/21 at 09:23am"),
+  createData(3, "Saniya Shaikh", "Owner", "23/09/21 at 09:23am"),
+  createData(4, "Saniya Shaikh", "Owner", "23/09/21 at 09:23am"),
+  createData(5, "Saniya Shaikh", "Owner", "23/09/21 at 09:23am"),
 ];
 
 const headCells = [
   {
-    id: "roles",
+    id: "userName",
     numeric: false,
     disablePadding: true,
-    label: "Roles",
+    label: "Name",
   },
   {
-    id: "members",
+    id: "role",
     numeric: false,
     disablePadding: false,
-    label: "Members",
-  },
-  {
-    id: "permissions",
-    numeric: false,
-    disablePadding: false,
-    label: "Permissions",
+    label: "Role",
   },
   {
     id: "createdOn",
@@ -239,7 +249,7 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const RolesTable = () => {
+const MembersTable = () => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -255,7 +265,7 @@ const RolesTable = () => {
 
   // ? TABLE STARTS HERE
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("rId");
+  const [orderBy, setOrderBy] = React.useState("userName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -275,7 +285,7 @@ const RolesTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.rId);
+      const newSelected = rows.map((n) => n.tId);
       setSelected(newSelected);
       return;
     }
@@ -343,6 +353,36 @@ const RolesTable = () => {
   const idAccess = openAccess ? "simple-popover" : undefined;
   // * ACTIVITY POPOVERS ENDS
 
+  // * ACTION POPOVERS STARTS
+  const [anchorActionEl, setAnchorActionEl] = React.useState(null);
+
+  const handleActionClick = (event) => {
+    setAnchorActionEl(event.currentTarget);
+  };
+
+  const handleActionClose = () => {
+    setAnchorActionEl(null);
+  };
+
+  const openActions = Boolean(anchorActionEl);
+  const idActions = openActions ? "simple-popover" : undefined;
+  // * ACTION POPOVERS ENDS
+
+  // * TAGGED WITH POPOVERS STARTS
+  const [anchorTaggedWithEl, setAnchorTaggedWithEl] = React.useState(null);
+
+  const handleTaggedWithClick = (event) => {
+    setAnchorTaggedWithEl(event.currentTarget);
+  };
+
+  const handleTaggedWithClose = () => {
+    setAnchorTaggedWithEl(null);
+  };
+
+  const openTaggedWith = Boolean(anchorTaggedWithEl);
+  const idTaggedWith = openTaggedWith ? "simple-popover" : undefined;
+  // * TAGGED WITH POPOVERS ENDS
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -379,7 +419,7 @@ const RolesTable = () => {
             {stableSort(rows, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const isItemSelected = isSelected(row.rId);
+                const isItemSelected = isSelected(row.tId);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -388,7 +428,7 @@ const RolesTable = () => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.rId}
+                    key={row.tId}
                     selected={isItemSelected}
                     className="table-rows"
                   >
@@ -398,7 +438,7 @@ const RolesTable = () => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.rId)}
+                        onClick={(event) => handleClick(event, row.tId)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -411,117 +451,102 @@ const RolesTable = () => {
                       scope="row"
                       padding="none"
                     >
-                      <div className="d-flex align-items-center">
-                        {row.roles.toLowerCase() === "owner" && (
-                          <img
-                            src={rolesOwner}
-                            alt="user"
-                            className="me-2 rounded-circle"
-                            height={45}
-                            width={45}
-                          />
-                        )}
-                        {row.roles.toLowerCase() === "super admin" && (
-                          <img
-                            src={rolesSuperAdmin}
-                            alt="user"
-                            className="me-2 rounded-circle"
-                            height={45}
-                            width={45}
-                          />
-                        )}
-                        {row.roles.toLowerCase() === "admin" && (
-                          <img
-                            src={rolesAdmin}
-                            alt="user"
-                            className="me-2 rounded-circle"
-                            height={45}
-                            width={45}
-                          />
-                        )}
-                        {row.roles.toLowerCase() === "staff" && (
-                          <img
-                            src={rolesStaff}
-                            alt="user"
-                            className="me-2 rounded-circle"
-                            height={45}
-                            width={45}
-                          />
-                        )}
-                        {row.roles.toLowerCase() === "freelance" && (
-                          <img
-                            src={rolesFreelance}
-                            alt="user"
-                            className="me-2 rounded-circle"
-                            height={45}
-                            width={45}
-                          />
-                        )}
+                      <div className="d-flex align-items-center pt-2 pb-3">
+                        <img
+                          src={user}
+                          alt="user"
+                          className="me-2 rounded-circle"
+                          height={45}
+                          width={45}
+                        />
                         <div>
-                          <p className="text-lightBlue rounded-circle fw-500">
-                            {row.roles}
-                          </p>
-                          <small className="mt-2 text-grey-6">4 Members</small>
+                          <Link
+                            to="/teams/members/details"
+                            className=" text-decoration-none"
+                          >
+                            <p className="text-lightBlue rounded-circle fw-600">
+                              {row.userName}
+                            </p>
+                          </Link>
+                          <small className="mt-2 text-grey-6">
+                            saniya@mydesignar.com
+                          </small>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="d-flex align-items-center c-pointer">
-                        {row.members ? (
-                          <p
-                            className="text-lightBlue"
-                            onClick={toggleActivityDrawer("right", true)}
-                          >
-                            {row.members}
-                          </p>
-                        ) : (
-                          <Link
-                            to="/teams/roles/create"
-                            className="text-decoration-none"
-                          >
-                            <p className="text-blue-2 text-decoration-underline">
-                              + Add Members
-                            </p>
-                          </Link>
-                        )}
+                    <TableCell style={{ width: 160 }}>
+                      <div
+                        className="d-flex align-items-center c-pointer"
+                        aria-describedby={idTaggedWith}
+                        variant="contained"
+                        onClick={handleTaggedWithClick}
+                      >
+                        <p className="text-lightBlue">{row.role}</p>
+                        <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                      </div>
+                      <Popover
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
+                        id={idTaggedWith}
+                        open={openTaggedWith}
+                        anchorEl={anchorTaggedWithEl}
+                        onClose={handleTaggedWithClose}
+                      >
+                        <div className="py-2">
+                          <Autocomplete
+                            multiple
+                            id="checkboxes-tags-demo"
+                            sx={{ width: 300 }}
+                            options={taggedWithData}
+                            disableCloseOnSelect
+                            getOptionLabel={(option) => option.title}
+                            size="small"
+                            renderOption={(props, option, { selected }) => (
+                              <li {...props}>
+                                <Checkbox
+                                  icon={
+                                    <CheckBoxOutlineBlankIcon fontSize="small" />
+                                  }
+                                  checkedIcon={
+                                    <CheckBoxIcon fontSize="small" />
+                                  }
+                                  checked={selected}
+                                  size="small"
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                  }}
+                                />
+                                <small className="text-lightBlue">
+                                  {option.title}
+                                </small>
+                              </li>
+                            )}
+                            renderInput={(params) => (
+                              <TextField
+                                size="small"
+                                {...params}
+                                placeholder="Search"
+                                inputRef={(input) => input?.focus()}
+                              />
+                            )}
+                          />
+                        </div>
+                      </Popover>
+                    </TableCell>
+                    <TableCell style={{ width: 200 }}>
+                      <div className="d-flex align-items-center">
+                        <p className="text-lightBlue">{row.createdOn}</p>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell style={{ width: 110, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        {row.permissions === "All Permission" ? (
-                          <Chip
-                            label={row.permissions}
-                            size="small"
-                            className="px-1"
-                          />
-                        ) : (
-                          <Chip
-                            label={row.permissions}
-                            size="small"
-                            className="px-1"
-                            variant="outlined"
-                          />
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <p className="text-lightBlue">{row.createdOn}</p>
-                    </TableCell>
-
-                    <TableCell style={{ width: 140, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <Tooltip title="View" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <VisibilityOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                              onClick={toggleActivityDrawer("right", true)}
-                            />
-                          </div>
-                        </Tooltip>
                         <Tooltip title="Edit" placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <EditOutlinedIcon
@@ -544,6 +569,49 @@ const RolesTable = () => {
                             />
                           </div>
                         </Tooltip>
+                        <img
+                          src={verticalDots}
+                          alt="verticalDots"
+                          className="c-pointer ms-auto"
+                          aria-describedby={idActions}
+                          variant="contained"
+                          onClick={handleActionClick}
+                        />
+
+                        <Popover
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                          }}
+                          id={idActions}
+                          open={openActions}
+                          anchorEl={anchorActionEl}
+                          onClose={handleActionClose}
+                        >
+                          <div className="py-2 px-2">
+                            <small className="text-grey-7 px-2">ACTIONS</small>
+                            <hr className="hr-grey-6 my-2" />
+                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                              View Member
+                            </small>
+                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                              Sent Resend Password Link
+                            </small>
+                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                              Change Team Role
+                            </small>
+                            <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
+                              <small className="text-lightBlue font2 d-block">
+                                Suspend & Archieve
+                              </small>
+                              <img src={deleteRed} alt="delete" className="" />
+                            </div>
+                          </div>
+                        </Popover>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -870,4 +938,4 @@ const RolesTable = () => {
   );
 };
 
-export default RolesTable;
+export default MembersTable;
