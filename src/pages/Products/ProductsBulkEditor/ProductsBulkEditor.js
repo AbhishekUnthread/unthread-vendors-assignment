@@ -23,7 +23,7 @@ const ProductsBulkEditor = () => {
         <h4 className="page-heading w-auto ps-0">Bulk Editor</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Parameters / Collections"} />{" "}
+          <ViewLogsDrawer headingName={"Bulk Editor"} />
           <button className="button-gradient py-2 px-4 ms-3">
             <p>Columns</p>
           </button>
@@ -39,7 +39,7 @@ const ProductsBulkEditor = () => {
         </small>
       </div>
 
-      <div className="row mt-3">
+      <div className="row mt-4">
         <div className="col-12 px-0">
           <ProductBulk />
         </div>

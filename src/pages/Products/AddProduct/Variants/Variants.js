@@ -228,7 +228,7 @@ const Variants = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.pId);
+      const newSelected = rows.map((n) => n.vId);
       setSelected(newSelected);
       return;
     }
@@ -325,7 +325,7 @@ const Variants = () => {
             Variants
           </h6>
         </div>
-        <p className="text-blue-2">Add Variant</p>
+        {/* <p className="text-blue-2">Add Variant</p> */}
       </div>
 
       <div className="col-12 px-0 mb-4">

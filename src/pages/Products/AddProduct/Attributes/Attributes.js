@@ -154,16 +154,13 @@ const Attributes = () => {
                   None
                 </MenuItem>
                 <MenuItem value={10} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                  S
+                  Metal Field Sets
                 </MenuItem>
                 <MenuItem value={20} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                  M
+                  Diamond Field Sets
                 </MenuItem>
                 <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                  L
-                </MenuItem>
-                <MenuItem value={40} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                  XL
+                  Gold Coin Field Sets
                 </MenuItem>
               </Select>
             </FormControl>
@@ -367,9 +364,9 @@ const Attributes = () => {
           </div>
         </div>
         <div className="row">
-          <small className="col-12 text-blue-2 mt-2 px-0">
+          <p className="col-12 text-blue-2 mt-2 px-0 mt-3">
             + Add more Diamond Info
-          </small>
+          </p>
         </div>
       </div>
     </div>

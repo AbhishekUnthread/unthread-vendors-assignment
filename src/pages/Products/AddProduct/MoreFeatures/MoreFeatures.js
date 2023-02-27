@@ -57,7 +57,8 @@ const Search = styled("div")(({ theme }) => ({
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
+  // padding: theme.spacing(0, 2),
+  padding: "0 8px",
   height: "100%",
   position: "absolute",
   pointerEvents: "none",
@@ -1033,7 +1034,7 @@ const MoreFeatures = () => {
             onClick={toggleAddProductDrawer("right", false)}
           />
         </div>
-        <hr className="hr-grey-6 mt-3 mb-3" />
+        <hr className="hr-grey-6 mt-0 mb-3" />
         <Search>
           <SearchIconWrapper>
             <SearchIcon sx={{ color: "#c8d8ff" }} />
@@ -1144,7 +1145,7 @@ const MoreFeatures = () => {
                           anchorEl={anchorPriceEl}
                           onClose={handlePriceClose}
                         >
-                          <div className="px-3">
+                          <div className="px-3 py-2">
                             <small className="text-lightBlue">
                               Default : 12KT • Yellow • Gold • IJ-SI
                             </small>

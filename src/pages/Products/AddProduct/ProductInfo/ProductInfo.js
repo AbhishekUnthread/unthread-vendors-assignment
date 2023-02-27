@@ -33,6 +33,7 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
 } from "@mui/material";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -570,16 +571,20 @@ const ProductInfo = () => {
                       Product Information
                     </p>
                   </ToggleButton>
-                  <ToggleButton value="inspiration" aria-label="inspiration">
+                  <ToggleButton value="metalInfo" aria-label="metalInfo">
                     <p className="text-capitalize text-lightBlue">
-                      Inspiration
+                      Metal Information
                     </p>
                   </ToggleButton>
-                  <ToggleButton value="careGuide" aria-label="careGuide">
-                    <p className="text-capitalize text-lightBlue">Care Guide</p>
+                  <ToggleButton value="diamondInfo" aria-label="diamondInfo">
+                    <p className="text-capitalize text-lightBlue">
+                      Diamond Information
+                    </p>
                   </ToggleButton>
-                  <ToggleButton value="shipping" aria-label="shipping">
-                    <p className="text-capitalize text-lightBlue">Shipping</p>
+                  <ToggleButton value="priceBreakup" aria-label="priceBreakup">
+                    <p className="text-capitalize text-lightBlue">
+                      Price Breakup
+                    </p>
                   </ToggleButton>
                 </ToggleButtonGroup>
                 <p className="text-blue-2">Customise</p>
@@ -591,8 +596,11 @@ const ProductInfo = () => {
 
         <hr className="hr-grey-6 my-3" />
         <div className="col-12">
-          <div className="row">
-            <p className="text-lightBlue col-12 px-0">Media</p>
+          <div className="row justify-content-between">
+            <p className="text-lightBlue px-0 w-auto">Media</p>
+            <small className="text-blue-2 w-auto px-0">
+              Link Variant Images
+            </small>
           </div>
           <div className="row">
             <div className="col-3 ps-0 d-flex flex-column justify-content-between">
@@ -1154,6 +1162,26 @@ const ProductInfo = () => {
                 </div>
                 <div className="col-4 mt-3">
                   <div className="d-flex mb-1">
+                    <p className="text-lightBlue">Select</p>
+                    <img src={info} alt="info" className="ms-2" width={13.5} />
+                  </div>
+
+                  <FormControl sx={{ width: "100%" }} size="small">
+                    <Select
+                      labelId="demo-select-small"
+                      id="demo-select-small"
+                      // value={metal}
+                      placeholder="Fixed"
+                      // onChange={handleMetalChange}
+                    >
+                      <MenuItem value="fixed">Metal Price</MenuItem>
+                      <MenuItem value="increase">Diamond Price</MenuItem>
+                      <MenuItem value="decrease">Making Charges</MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
+                <div className="col-4 mt-3">
+                  <div className="d-flex mb-1">
                     <p className="text-lightBlue">Sale Price</p>
                     <img src={info} alt="info" className="ms-2" width={13.5} />
                   </div>
@@ -1291,7 +1319,7 @@ const ProductInfo = () => {
                 )}
                 {trackInventory === "productLevel" && (
                   <React.Fragment>
-                    <div className="col-12 d-flex justify-content-between mt-3">
+                    {/* <div className="col-12 d-flex justify-content-between mt-3">
                       <h6 className="text-grey-6">Manage Inventory</h6>
                       <p
                         className="text-blue-2 c-pointer"
@@ -1299,7 +1327,7 @@ const ProductInfo = () => {
                       >
                         Edit Store
                       </p>
-                    </div>
+                    </div> */}
 
                     <Dialog
                       open={openStore}
@@ -1469,6 +1497,12 @@ const ProductInfo = () => {
                             <small>Apply</small>
                           </button>
                         </div>
+                        <p
+                          className="text-blue-2 c-pointer col-auto ms-auto px-0"
+                          onClick={handleStoreOpen}
+                        >
+                          Edit Store
+                        </p>
                       </div>
                     </div>
                     <div className="col-12 mt-4 mb-3">
@@ -1596,9 +1630,21 @@ const ProductInfo = () => {
         </div>
       </div>
       <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
-        <div className="d-flex mb-3 px-0">
-          <h6 className="text-lightBlue px-0 fw-500">Product Applicable For</h6>
-          <img src={info} alt="info" className="ms-2" width={15} />
+        <div className="d-flex justify-content-between px-0">
+          <div className="d-flex mb-3 px-0">
+            <h6 className="text-lightBlue px-0 fw-500">
+              Product Applicable For
+            </h6>
+            <Tooltip title="Lorem Ipsum" placement="top">
+              <img
+                src={info}
+                alt="info"
+                className="ms-2 c-pointer"
+                width={15}
+              />
+            </Tooltip>
+          </div>
+          <p className="text-blue-2 c-pointer col-auto ms-auto px-0">Manage</p>
         </div>
         <FormGroup className="tags-checkbox px-0">
           <FormControlLabel

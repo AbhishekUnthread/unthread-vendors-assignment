@@ -55,6 +55,7 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import TableSearch from "../../../components/TableSearch/TableSearch";
+import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 
 // ? FILTER ACCORDIAN STARTS HERE
 const Accordion = styled((props) => (
@@ -376,6 +377,7 @@ const AllProducts = () => {
             <img src={tutorial} alt="tutorial" className="me-2" width={20} />
             <p className="text-blue-gradient">Tutorial</p>
           </button>
+          <ViewLogsDrawer headingName={"Product Module"} />
           <button
             className="button-transparent me-1 py-2 px-3"
             onClick={handleExportOpen}
@@ -757,7 +759,7 @@ const AllProducts = () => {
               className="button-grey py-2 px-5"
               onClick={handleImportSecondClose}
             >
-              <p>Cancel</p>
+              <p className="text-lightBlue">Cancel</p>
             </button>
             <button
               className="button-gradient py-2 px-5"
