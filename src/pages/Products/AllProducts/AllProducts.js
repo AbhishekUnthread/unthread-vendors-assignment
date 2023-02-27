@@ -16,6 +16,7 @@ import sort from "../../../assets/icons/sort.svg";
 import uploadLineSheet from "../../../assets/images/products/uploadLineSheet.svg";
 import uploadCompanySheet1 from "../../../assets/images/products/uploadCompanySheet1.svg";
 import uploadCompanySheet2 from "../../../assets/images/products/uploadCompanySheet2.svg";
+import info from "../../../assets/icons/info.svg";
 import filter from "../../../assets/icons/filter.svg";
 // ! COMPONENT IMPORTS
 import AllProductsTable from "./AllProductsTable";
@@ -25,6 +26,7 @@ import {
   Autocomplete,
   Box,
   Checkbox,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -32,6 +34,7 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
+  OutlinedInput,
   Paper,
   Popover,
   Radio,
@@ -153,6 +156,9 @@ const taggedWithData = [
 ];
 
 const AllProducts = () => {
+  const handleDelete = () => {
+    console.info("You clicked the delete icon.");
+  };
   const [value, setValue] = React.useState(0);
   const [valueExport, setExportValue] = React.useState(0);
   const [importValue, setImportValue] = React.useState("importProducts");
@@ -207,6 +213,18 @@ const AllProducts = () => {
   const openFlag = Boolean(anchorFlagEl);
   const idFlag = openFlag ? "simple-popover" : undefined;
   // * FLAG POPOVERS ENDS
+
+  // * SAVE FILTER POPOVERS STARTS
+  const [anchorSaveFilterEl, setAnchorSaveFilterEl] = React.useState(null);
+  const handleSaveFilterClick = (event) => {
+    setAnchorSaveFilterEl(event.currentTarget);
+  };
+  const handleSaveFilterClose = () => {
+    setAnchorSaveFilterEl(null);
+  };
+  const openSaveFilter = Boolean(anchorSaveFilterEl);
+  const idSaveFilter = openSaveFilter ? "simple-popover" : undefined;
+  // * SAVE FILTER POPOVERS ENDS
 
   // * COLUMNS POPOVERS STARTS
   const [anchorColumnsEl, setAnchorColumnsEl] = React.useState(null);
@@ -813,7 +831,7 @@ const AllProducts = () => {
               </div>
             </Popover>
           </Box>
-          <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
+          <div className="d-flex align-items-center mt-3 px-2 justify-content-between">
             <TableSearch />
             <div className="d-flex">
               <div className="d-flex product-button__box ms-2">
@@ -1641,6 +1659,74 @@ const AllProducts = () => {
                     className="me-0"
                   />
                 </FormGroup>
+              </Popover>
+            </div>
+          </div>
+          <div className="d-flex justify-content-between mb-3 px-2">
+            <div className="d-flex">
+              <Chip
+                label="Rings"
+                onDelete={handleDelete}
+                size="small"
+                className="mt-3 me-2 px-1"
+              />
+              <Chip
+                label="Vendor is JWL"
+                onDelete={handleDelete}
+                size="small"
+                className="mt-3 me-2 px-1"
+              />
+              <Chip
+                label="Status is Active"
+                onDelete={handleDelete}
+                size="small"
+                className="mt-3 me-2 px-1"
+              />
+            </div>
+            <div className="d-flex">
+              <small className="text-blue-2 me-3 mt-3 c-pointer">
+                Clear all
+              </small>
+              <small
+                className="text-blue-2 mt-3 c-pointer"
+                aria-describedby={idSaveFilter}
+                variant="contained"
+                onClick={handleSaveFilterClick}
+              >
+                Save this filter
+              </small>
+
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSaveFilter}
+                open={openSaveFilter}
+                anchorEl={anchorSaveFilterEl}
+                onClose={handleSaveFilterClose}
+              >
+                <div className="px-1 py-3">
+                  <div className="d-flex mb-1">
+                    <small className="text-lightBlue me-2">Filter Name</small>
+                    <img src={info} alt="info" width={12} />
+                  </div>
+                  <FormControl className="px-0">
+                    <OutlinedInput
+                      placeholder="Enter Category Name"
+                      size="small"
+                    />
+                  </FormControl>
+                  {/* <div className="d-flex"> */}
+                  <button className="ms-auto button-gradient py-1 px-4 mt-3">
+                    <p>Save</p>
+                  </button>
+                  {/* </div> */}
+                </div>
               </Popover>
             </div>
           </div>
