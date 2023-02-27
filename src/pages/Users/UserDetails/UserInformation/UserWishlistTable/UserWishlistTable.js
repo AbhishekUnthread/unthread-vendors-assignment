@@ -1,164 +1,29 @@
 import React from "react";
-import PropTypes from "prop-types";
+// ! COMPONENT IMPORTS
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../../../components/TableDependencies/TableDependencies";
 // ! IMAGES IMPORTS
-import teamMember1 from "../../../../../assets/images/products/teamMember1.svg";
-import teamMember2 from "../../../../../assets/images/products/teamMember2.svg";
-import teamMember3 from "../../../../../assets/images/products/teamMember3.svg";
-import cancel from "../../../../../assets/icons/cancel.svg";
 import verticalDots from "../../../../../assets/icons/verticalDots.svg";
 import ringSmall from "../../../../../assets/images/ringSmall.svg";
 import arrowDown from "../../../../../assets/icons/arrowDown.svg";
 import arrowDownBlack from "../../../../../assets/icons/arrowDownBlack.svg";
-import sortBy from "../../../../../assets/icons/sortBy.svg";
-import activity from "../../../../../assets/icons/activity.svg";
 import editButton from "../../../../../assets/icons/editButton.svg";
 import duplicateButton from "../../../../../assets/icons/duplicateButton.svg";
 import deleteRed from "../../../../../assets/icons/delete.svg";
 // ! MATERIAL IMPORTS
 import {
-  Box,
   Checkbox,
   Popover,
-  SwipeableDrawer,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel,
 } from "@mui/material";
-import { visuallyHidden } from "@mui/utils";
-
-const activityData = [
-  {
-    id: 1,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 2,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 3,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 4,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 5,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 6,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 7,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 8,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 9,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 10,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 11,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 12,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 13,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 14,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 15,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 16,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 17,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 18,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 19,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 20,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-  {
-    id: 21,
-    dateAndTime: "25 July, 2022 at 12:00 pm",
-    user: "Saniya Shaikh",
-    activity: "Changed Images",
-  },
-];
 
 // ? TABLE STARTS HERE
 function createData(pId, productName, category, price, status) {
@@ -222,105 +87,10 @@ const headCells = [
   },
 ];
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-function EnhancedTableHead(props) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
-            size="small"
-            style={{
-              color: "#5C6D8E",
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            {headCell.id !== "actions" && (
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-              >
-                <p className="text-lightBlue">{headCell.label}</p>
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            )}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
 // ? TABLE ENDS HERE
 
 const UserWishlistTable = () => {
+  // ? TABLE STARTS HERE
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("productName");
   const [selected, setSelected] = React.useState([]);
@@ -375,51 +145,7 @@ const UserWishlistTable = () => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  // ? ACTIVITY DRAWER STARTS HERE
-  const [activityDrawer, setActivityDrawer] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
-
-  const toggleActivityDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setActivityDrawer({ ...activityDrawer, [anchor]: open });
-  };
-  // ? ACTIVITY DRAWER ENDS HERE
-
-  // * EDIT STATUS POPOVERS STARTS
-  const [anchorEditStatusEl, setAnchorEditStatusEl] = React.useState(null);
-  const handleEditStatusClick = (event) => {
-    setAnchorEditStatusEl(event.currentTarget);
-  };
-  const handleEditStatusClose = () => {
-    setAnchorEditStatusEl(null);
-  };
-  const openEditStatus = Boolean(anchorEditStatusEl);
-  const idEditStatus = openEditStatus ? "simple-popover" : undefined;
-  // * EDIT STATUS POPOVERS ENDS
-
-  // * MASS ACTION POPOVERS STARTS
-  const [anchorMassActionEl, setAnchorMassActionEl] = React.useState(null);
-  const handleMassActionClick = (event) => {
-    setAnchorMassActionEl(event.currentTarget);
-  };
-  const handleMassActionClose = () => {
-    setAnchorMassActionEl(null);
-  };
-  const openMassAction = Boolean(anchorMassActionEl);
-  const idMassAction = openMassAction ? "simple-popover" : undefined;
-  // * MASS ACTION POPOVERS ENDS
+  // ? TABLE ENDS HERE
 
   // * PRICE POPOVERS STARTS
   const [anchorPriceEl, setAnchorPriceEl] = React.useState(null);
@@ -464,116 +190,6 @@ const UserWishlistTable = () => {
 
   return (
     <React.Fragment>
-      {/* {selected.length > 0 && (
-        <div className="d-flex justify-content-between align-items-center px-2 mb-3">
-          <div className="d-flex">
-            <button className="button-grey py-2 px-3">
-              <small className="text-lightBlue">
-                {selected.length} products are selected&nbsp;
-                <span
-                  className="text-blue-2 c-pointer"
-                  onClick={() => setSelected([])}
-                >
-                  (Clear Selection)
-                </span>
-              </small>
-            </button>
-
-            <button className="button-grey py-2 px-3 ms-2">
-              <small className="text-lightBlue">Edit Products</small>
-            </button>
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idEditStatus}
-              variant="contained"
-              onClick={handleEditStatusClick}
-            >
-              <small className="text-lightBlue">Edit Status</small>
-              <img src={arrowDown} alt="arrowDown" className="ms-2" />
-            </button>
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idMassAction}
-              variant="contained"
-              onClick={handleMassActionClick}
-            >
-              <small className="text-lightBlue">Mass Action</small>
-              <img src={arrowDown} alt="arrowDown" className="ms-2" />
-            </button>
-
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              id={idEditStatus}
-              open={openEditStatus}
-              anchorEl={anchorEditStatusEl}
-              onClose={handleEditStatusClose}
-            >
-              <div className="py-2 px-1">
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Set as Active
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Set as Draft
-                </small>
-              </div>
-            </Popover>
-
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              id={idMassAction}
-              open={openMassAction}
-              anchorEl={anchorMassActionEl}
-              onClose={handleMassActionClose}
-            >
-              <div className="py-2 px-2">
-                <small className="text-grey-7 px-2">ACTIONS</small>
-                <hr className="hr-grey-6 my-2" />
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Make it Active
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Make it Draft
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit SKU
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit Quantity
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Schedule Product
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add or Remove Tags
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add or Remove Collections
-                </small>
-                <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                  <small className="text-lightBlue font2 d-block">
-                    Archived Product
-                  </small>
-                  <img src={deleteRed} alt="delete" className="" />
-                </div>
-              </div>
-            </Popover>
-          </div>
-        </div>
-      )} */}
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}
@@ -587,6 +203,7 @@ const UserWishlistTable = () => {
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
             rowCount={rows.length}
+            headCells={headCells}
           />
           <TableBody>
             {stableSort(rows, getComparator(order, orderBy))
@@ -645,15 +262,6 @@ const UserWishlistTable = () => {
                     <TableCell>
                       <p className="text-lightBlue">{row.category}</p>
                     </TableCell>
-                    {/* <TableCell>
-                      <div className="d-flex align-items-center">
-                        <p className="text-decoration-underline text-blue-2">
-                          1452
-                        </p>
-                        &nbsp;
-                        <p className="text-lightBlue"> {row.qty}</p>
-                      </div>
-                    </TableCell> */}
                     <TableCell>
                       <div
                         className="d-flex align-items-center c-pointer "
@@ -707,16 +315,6 @@ const UserWishlistTable = () => {
                         </div>
                       </Popover>
                     </TableCell>
-                    {/* <TableCell>
-                      <div
-                        className="d-flex c-pointer"
-                        onClick={toggleActivityDrawer("right", true)}
-                      >
-                        <img src={teamMember1} alt="teamMember1" />
-                        <img src={teamMember3} alt="teamMember2" />
-                        <img src={teamMember2} alt="teamMember3" />
-                      </div>
-                    </TableCell> */}
                     <TableCell>
                       <div className="d-flex align-items-center">
                         <div
@@ -852,92 +450,6 @@ const UserWishlistTable = () => {
         onRowsPerPageChange={handleChangeRowsPerPage}
         className="table-pagination"
       />
-
-      <SwipeableDrawer
-        anchor="right"
-        open={activityDrawer["right"]}
-        onClose={toggleActivityDrawer("right", false)}
-        onOpen={toggleActivityDrawer("right", true)}
-      >
-        <div className="d-flex justify-content-between py-3 px-3">
-          <h6 className="text-lightBlue">Activity Of</h6>
-          <img
-            src={cancel}
-            alt="cancel"
-            className="c-pointer filter-icon me-1"
-            onClick={toggleActivityDrawer("right", false)}
-          />
-        </div>
-
-        <div className="px-3">
-          <div className="d-flex align-items-center">
-            <div className="d-flex align-items-center">
-              <img
-                src={ringSmall}
-                alt="ringSmall"
-                className="me-2"
-                height={45}
-                width={45}
-              />
-              <div>
-                <p className="text-lightBlue fw-600">The Fringe Diamond Ring</p>
-                <small className="mt-2 text-grey-6">SKU: TFDR012345</small>
-              </div>
-            </div>
-            <div className="d-flex ms-5">
-              <button className="button-grey py-2 px-3 ms-5">
-                <small className="text-lightBlue">Sort By Date</small>
-                <img src={sortBy} alt="sortBy" className="ms-2" />
-              </button>
-              <button className="button-grey py-2 px-3">
-                <small className="text-lightBlue">Activity</small>
-                <img src={activity} alt="activity" className="ms-2" />
-              </button>
-            </div>
-          </div>
-          <table className="table table-borderless mt-4">
-            <thead>
-              <tr className="table-grey-bottom table-grey-top">
-                <th scope="col">
-                  <small className="text-lightBlue fw-400">User</small>
-                </th>
-                <th scope="col">
-                  <small className="text-lightBlue fw-400">Activity</small>
-                </th>
-                <th scope="col">
-                  <small className="text-lightBlue fw-400">Date and Time</small>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {activityData.map((data) => (
-                <tr key={data.id}>
-                  <th scope="row">
-                    <div className="d-flex align-items-center">
-                      <img
-                        src={teamMember1}
-                        alt="teamMember1"
-                        className="me-2"
-                      />
-                      <small className="text-lightBlue fw-400">
-                        {data.user}
-                      </small>
-                    </div>
-                  </th>
-                  <td>
-                    <small className="text-lightBlue">{data.activity}</small>
-                  </td>
-                  <td>
-                    <small className="text-grey-6 fw-400">
-                      {data.dateAndTime}
-                    </small>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </SwipeableDrawer>
     </React.Fragment>
   );
 };

@@ -295,14 +295,14 @@ const ProductInfo = () => {
   };
   // ? TAGS DIALOG ENDS HERE
 
-  // ? TAGS DIALOG STARTS HERE
+  // ? METAL STARTS HERE
   const [metal, setMetal] = React.useState("fixed");
 
   const handleMetalChange = (event) => {
     setMetal(event.target.value);
   };
 
-  // ? TAGS DIALOG ENDS HERE
+  // ? METAL ENDS HERE
 
   // ? TAGS DIALOG STARTS HERE
   const [openStore, setOpenStore] = React.useState(false);

@@ -1,48 +1,28 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+// ! COMPONENT IMPORTS
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../components/TableDependencies/TableDependencies";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
-import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 // ! MATERIAL IMPORTS
 import {
-  Autocomplete,
-  Box,
   Checkbox,
   Popover,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel,
-  TextField,
 } from "@mui/material";
-import { visuallyHidden } from "@mui/utils";
-// ! MATERIAL ICONS IMPORTS
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import { Link } from "react-router-dom";
-
-const taggedWithData = [
-  { title: "Tag 1", value: "tag1" },
-  { title: "Tag 2", value: "tag2" },
-  { title: "Tag 3", value: "tag3" },
-  { title: "Tag 4", value: "tag4" },
-  { title: "Tag 5", value: "tag5" },
-  { title: "Tag 6", value: "tag6" },
-  { title: "Tag 7", value: "tag7" },
-  { title: "Tag 8", value: "tag8" },
-  { title: "Tag 9", value: "tag9" },
-  { title: "Tag 10", value: "tag10" },
-  { title: "Tag 11", value: "tag11" },
-  { title: "Tag 12", value: "tag12" },
-];
 
 // ? TABLE STARTS HERE
 function createData(
@@ -131,103 +111,6 @@ const headCells = [
     label: "",
   },
 ];
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-function EnhancedTableHead(props) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
-            size="small"
-            style={{
-              color: "#5C6D8E",
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            {headCell.id !== "actions" && (
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-              >
-                <p className="text-lightBlue">{headCell.label}</p>
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            )}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
 // ? TABLE ENDS HERE
 
 const AllUsersTable = () => {
@@ -325,33 +208,6 @@ const AllUsersTable = () => {
   const idActions = openActions ? "simple-popover" : undefined;
   // * ACTION POPOVERS ENDS
 
-  // * METAL FILTER POPOVERS STARTS
-  const [anchorMetalFilterEl, setAnchorMetalFilterEl] = React.useState(null);
-  const handleMetalFilter = (event) => {
-    setAnchorMetalFilterEl(event.currentTarget);
-  };
-  const handleMetalFilterClose = () => {
-    setAnchorMetalFilterEl(null);
-  };
-  const openMetalFilter = Boolean(anchorMetalFilterEl);
-  const idMetalFilter = openMetalFilter ? "simple-popover" : undefined;
-  // * METAL FILTER POPOVERS ENDS
-
-  // * TAGGED WITH POPOVERS STARTS
-  const [anchorTaggedWithEl, setAnchorTaggedWithEl] = React.useState(null);
-
-  const handleTaggedWithClick = (event) => {
-    setAnchorTaggedWithEl(event.currentTarget);
-  };
-
-  const handleTaggedWithClose = () => {
-    setAnchorTaggedWithEl(null);
-  };
-
-  const openTaggedWith = Boolean(anchorTaggedWithEl);
-  const idTaggedWith = openTaggedWith ? "simple-popover" : undefined;
-  // * TAGGED WITH POPOVERS ENDS
-
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -441,9 +297,6 @@ const AllUsersTable = () => {
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                   Add or Remove Tags
                 </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add to User Groups
-                </small>
                 <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                   <small className="text-lightBlue font2 d-block">
                     Archived User
@@ -468,6 +321,7 @@ const AllUsersTable = () => {
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
             rowCount={rows.length}
+            headCells={headCells}
           />
           <TableBody>
             {stableSort(rows, getComparator(order, orderBy))
@@ -515,7 +369,7 @@ const AllUsersTable = () => {
                         />
                         <div>
                           <Link
-                            to="/userDetails"
+                            to="/users/allUsers/details"
                             className=" text-decoration-none"
                           >
                             <p className="text-lightBlue rounded-circle fw-600">
@@ -529,71 +383,9 @@ const AllUsersTable = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div
-                        className="d-flex align-items-center c-pointer"
-                        aria-describedby={idTaggedWith}
-                        variant="contained"
-                        onClick={handleTaggedWithClick}
-                      >
+                      <div className="d-flex align-items-center c-pointer">
                         <p className="text-lightBlue">{row.groups}</p>
-                        <img className="ms-4" src={arrowDown} alt="arrowDown" />
                       </div>
-
-                      <Popover
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "left",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "left",
-                        }}
-                        id={idTaggedWith}
-                        open={openTaggedWith}
-                        anchorEl={anchorTaggedWithEl}
-                        onClose={handleTaggedWithClose}
-                      >
-                        <div className="py-2">
-                          <Autocomplete
-                            multiple
-                            id="checkboxes-tags-demo"
-                            sx={{ width: 300 }}
-                            options={taggedWithData}
-                            disableCloseOnSelect
-                            getOptionLabel={(option) => option.title}
-                            size="small"
-                            renderOption={(props, option, { selected }) => (
-                              <li {...props}>
-                                <Checkbox
-                                  icon={
-                                    <CheckBoxOutlineBlankIcon fontSize="small" />
-                                  }
-                                  checkedIcon={
-                                    <CheckBoxIcon fontSize="small" />
-                                  }
-                                  checked={selected}
-                                  size="small"
-                                  style={{
-                                    color: "#5C6D8E",
-                                    marginRight: 0,
-                                  }}
-                                />
-                                <small className="text-lightBlue">
-                                  {option.title}
-                                </small>
-                              </li>
-                            )}
-                            renderInput={(params) => (
-                              <TextField
-                                size="small"
-                                {...params}
-                                placeholder="Search"
-                                inputRef={(input) => input?.focus()}
-                              />
-                            )}
-                          />
-                        </div>
-                      </Popover>
                     </TableCell>
                     <TableCell>
                       <div className="d-flex align-items-center">
@@ -611,44 +403,11 @@ const AllUsersTable = () => {
                     </TableCell>
                     <TableCell>
                       <div className="d-flex align-items-center">
-                        <div
-                          className="rounded-pill d-flex table-status px-2 py-1 c-pointer"
-                          aria-describedby={idMetalFilter}
-                          variant="contained"
-                          onClick={handleMetalFilter}
-                        >
+                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
                           <small className="text-black fw-light">
                             {row.status}
                           </small>
-                          <img
-                            src={arrowDownBlack}
-                            alt="arrowDownBlack"
-                            className="ms-2"
-                          />
                         </div>
-                        <Popover
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "left",
-                          }}
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "left",
-                          }}
-                          id={idMetalFilter}
-                          open={openMetalFilter}
-                          anchorEl={anchorMetalFilterEl}
-                          onClose={handleMetalFilterClose}
-                        >
-                          <div className="py-2 px-1">
-                            <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                              Draft
-                            </small>
-                            <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                              Archived
-                            </small>
-                          </div>
-                        </Popover>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -686,9 +445,6 @@ const AllUsersTable = () => {
                           </small>
                           <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                             Add or Remove Tags
-                          </small>
-                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                            Add to User Groups
                           </small>
                           <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                             <small className="text-lightBlue font2 d-block">

@@ -1,5 +1,9 @@
-import { Chip, OutlinedInput, Popover, Tooltip } from "@mui/material";
 import React from "react";
+// ! COMPONENT IMPORTS
+import UserActivityTable from "./UserActivityTable/UserActivityTable";
+import UserIPTable from "./UserIPTable/UserIPTable";
+import UserWishlistTable from "./UserWishlistTable/UserWishlistTable";
+import AppCustomerOverviewChart from "../../../../components/AppCustomerOverviewChart/AppCustomerOverviewChart";
 // ! IMAGES IMPORTS
 import archivedGrey from "../../../../assets/icons/archivedGrey.svg";
 import editGrey from "../../../../assets/icons/editGrey.svg";
@@ -7,20 +11,23 @@ import location from "../../../../assets/icons/location.svg";
 import activity from "../../../../assets/icons/activity.svg";
 import chart from "../../../../assets/icons/chart.svg";
 import refresh from "../../../../assets/icons/refresh.svg";
-// ! COMPONENT IMPORTS
-import UserActivityTable from "./UserActivityTable/UserActivityTable";
-import UserIPTable from "./UserIPTable/UserIPTable";
-import UserWishlistTable from "./UserWishlistTable/UserWishlistTable";
-import AppCustomerOverviewChart from "../../../../components/AppCustomerOverviewChart/AppCustomerOverviewChart";
 // ! MATERIAL IMPORTS
+import {
+  Chip,
+  OutlinedInput,
+  Popover,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DesktopDateTimePicker } from "@mui/x-date-pickers";
+// ! MATERIAL ICONS IMPORTS
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const UserInformation = () => {
   // ? DATE PICKER STARTS
-
   const [activityDateValue, setActivityDateValue] = React.useState(
     // moment()
     new Date()
@@ -29,7 +36,6 @@ const UserInformation = () => {
   const handleActivityDateChange = (newValue) => {
     setActivityDateValue(newValue);
   };
-
   // ? DATE PICKER ENDS
 
   // * ACTIVITY POPOVERS STARTS
@@ -46,11 +52,11 @@ const UserInformation = () => {
 
   return (
     <React.Fragment>
-      <div className="bg-black-15 border-grey-5 rounded-8 row productInfo">
-        <div className="col-12 d-flex mt-3 justify-content-between">
+      <div className="bg-black-15 border-grey-5 rounded-8 row ">
+        <div className="col-12 d-flex mt-3 justify-content-between px-3">
           <div className="d-flex align-items-center">
             <img src={chart} alt="location" />
-            <p className="text-lightBlue ms-2">Customer Overview</p>
+            <h6 className="text-lightBlue ms-2 fw-500">Customer Overview</h6>
           </div>
           <div className="d-flex align-items-center">
             <small className="text-lightBlue me-1">
@@ -62,8 +68,8 @@ const UserInformation = () => {
         <div className="mt-3 px-3">
           <hr className="hr-grey-6 m-0" />
         </div>
-        <div className="col-12">
-          <div className="row py-3 mx-0">
+        <div className="col-12 px-0">
+          <div className="row p-3 mx-0">
             <div
               className="col-md-8 col-lg-9 d-flex justify-content-between align-items-center mb-3 mb-md-0 rounded-8 px-0"
               style={{ background: "rgba(39, 40, 63, 0.5)" }}
@@ -159,32 +165,38 @@ const UserInformation = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row productInfo ">
-        <div className="col-12 d-flex mt-3">
+      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row">
+        <div className="col-12 d-flex mt-3 px-3">
           <img src={location} alt="location" />
-          <p className="text-lightBlue ms-2">Address</p>
+          <h6 className="text-lightBlue ms-2 fw-500">Address</h6>
         </div>
         <div className="my-3 px-3">
           <hr className="hr-grey-6 m-0" />
         </div>
-        <div className="col-12">
+        <div className="col-12 px-3">
           <div
             className="row py-3 mb-3 rounded-8 mx-0"
             style={{ background: "rgba(39, 40, 63, 0.5)" }}
           >
-            <div className="col-12 d-flex justify-content-between align-items-center mb-2">
+            <div className="col-12 d-flex justify-content-between align-items-center mb-2 px-3">
               <p className="text-lightBlue">Home</p>
               <div className="d-flex align-items-center">
-                <Chip label="Default" size="small" />
-                <img src={editGrey} alt="editGrey" className="c-pointer ms-3" />
+                <Chip label="Default" size="small" className="px-2" />
+                <img
+                  src={editGrey}
+                  alt="editGrey"
+                  className="c-pointer ms-3"
+                  width={16}
+                />
                 <img
                   src={archivedGrey}
                   alt="archiverdGrey"
                   className="c-pointer ms-3"
+                  width={16}
                 />
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12 px-3">
               <small className="text-lightBlue d-block">Sanjay Chauhan</small>
               <small className="text-lightBlue d-block">
                 66-68, Jambi Moballa, Bapu Khote Street, Mandvi
@@ -199,19 +211,25 @@ const UserInformation = () => {
             className="row py-3 mb-3 rounded-8 mx-0"
             style={{ background: "rgba(39, 40, 63, 0.5)" }}
           >
-            <div className="col-12 d-flex justify-content-between align-items-center mb-2">
+            <div className="col-12 d-flex justify-content-between align-items-center mb-2 px-3">
               <p className="text-lightBlue">Office</p>
               <div className="d-flex align-items-center">
                 {/* <Chip label="Default" size="small" /> */}
-                <img src={editGrey} alt="editGrey" className="c-pointer ms-3" />
+                <img
+                  src={editGrey}
+                  alt="editGrey"
+                  className="c-pointer ms-3"
+                  width={16}
+                />
                 <img
                   src={archivedGrey}
                   alt="archiverdGrey"
                   className="c-pointer ms-3"
+                  width={16}
                 />
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12 px-3">
               <small className="text-lightBlue d-block">Sanjay Chauhan</small>
               <small className="text-lightBlue d-block">
                 66-68, Jambi Moballa, Bapu Khote Street, Mandvi
@@ -224,9 +242,9 @@ const UserInformation = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row productInfo ">
-        <div className="col-12 d-flex mt-3">
-          <p className="text-lightBlue ms-2">Wishlist</p>
+      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row">
+        <div className="col-12 d-flex mt-3 px-3">
+          <h6 className="text-lightBlue fw-500">Wishlist</h6>
         </div>
         <div className="my-3 px-3">
           <hr className="hr-grey-6 m-0" />
@@ -235,26 +253,26 @@ const UserInformation = () => {
           <UserWishlistTable />
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row productInfo ">
+      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row  ">
         <div className="col-12 d-flex mt-3 align-items-center justify-content-between">
-          <p className="text-lightBlue ms-2">Activity</p>
+          <h6 className="text-lightBlue ms-2 fw-500">Activity</h6>
 
           <div className="d-flex">
             <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DateTimePicker
-                // label="Sort By Date"
+              <DesktopDateTimePicker
                 value={activityDateValue}
-                onChange={handleActivityDateChange}
+                onChange={(newValue) => {
+                  handleActivityDateChange(newValue);
+                }}
                 renderInput={(params) => (
-                  <OutlinedInput
+                  <TextField
                     {...params}
-                    placeholder="Enter Date & Time"
                     size="small"
+                    placeholder="Enter Date & Time"
                   />
                 )}
               />
             </LocalizationProvider>
-
             <button
               className="button-grey py-2 px-3 ms-2"
               aria-describedby={idActivity}
@@ -309,9 +327,11 @@ const UserInformation = () => {
           <UserActivityTable />
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row productInfo ">
-        <div className="col-12 d-flex mt-3 justify-content-between">
-          <p className="text-lightBlue ms-2">Access to Dashboard (IP)</p>
+      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row  ">
+        <div className="col-12 d-flex mt-3 justify-content-between align-items-center">
+          <h6 className="text-lightBlue ms-2 fw-500">
+            Access to Dashboard (IP)
+          </h6>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DateTimePicker
               // label="Sort By Date"

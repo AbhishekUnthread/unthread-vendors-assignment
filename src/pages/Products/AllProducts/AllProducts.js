@@ -438,7 +438,10 @@ const AllProducts = () => {
           >
             <p className="text-lightBlue">Import</p>
           </button>
-          <Link to="/addProduct" className="button-gradient py-2 px-4">
+          <Link
+            to="/products/allProducts/addProduct"
+            className="button-gradient py-2 px-4"
+          >
             <p>+ Add Product</p>
           </Link>
         </div>
@@ -464,7 +467,7 @@ const AllProducts = () => {
             </div>
           </DialogTitle>
           <hr className="hr-grey-6 my-0" />
-          <DialogContent className="py-2 px-4">
+          <DialogContent className="py-3 px-4">
             <p className="text-lightBlue mb-2">Export</p>
             <FormControl>
               <RadioGroup
@@ -691,6 +694,18 @@ const AllProducts = () => {
                   }}
                 />
 
+                <FormControlLabel
+                  value="uploadLineSheet"
+                  control={<Radio size="small" />}
+                  label="Upload your own line sheet"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+
                 {importSecondValue === "uploadCompanySheet" && (
                   <div className="d-flex flex-column">
                     <small className="text-grey-6"> Note :</small>
@@ -744,17 +759,6 @@ const AllProducts = () => {
                     </div>
                   </div>
                 )}
-                <FormControlLabel
-                  value="uploadLineSheet"
-                  control={<Radio size="small" />}
-                  label="Upload your own line sheet"
-                  sx={{
-                    "& .MuiTypography-root": {
-                      fontSize: 13,
-                      color: "#c8d8ff",
-                    },
-                  }}
-                />
               </RadioGroup>
             </FormControl>
             {importSecondValue === "uploadLineSheet" && (

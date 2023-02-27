@@ -39,6 +39,7 @@ const AppReactImageGallery = () => {
       showBullets={true}
       showPlayButton={false}
       showFullscreenButton={true}
+      disableKeyDown={true}
     />
   );
 };

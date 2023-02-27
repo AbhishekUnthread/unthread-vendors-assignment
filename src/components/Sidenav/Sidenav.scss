@@ -54,4 +54,16 @@
       }
     }
   }
+
+  .accordion-body {
+    background: linear-gradient(
+      303.01deg,
+      rgba(89, 97, 248, 0.1) -4.4%,
+      rgba(242, 217, 247, 0.1) 111.29%
+    );
+    border-radius: 10px;
+    margin-top: -44px;
+    padding-top: 44px;
+    margin-bottom: 6px;
+  }
 }

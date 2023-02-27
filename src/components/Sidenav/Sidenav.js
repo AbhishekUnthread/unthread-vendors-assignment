@@ -1,96 +1,95 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Sidenav.scss";
 import { NavLink } from "react-router-dom";
 // ! IMAGES IMPORTS
 import logo from "../../assets/icons/logo.svg";
-import dashboard from "../../assets/icons/sidenav/dashboard.svg";
-import orders from "../../assets/icons/sidenav/orders.svg";
-import products from "../../assets/icons/sidenav/products.svg";
 import analytics from "../../assets/icons/sidenav/analytics.svg";
-import customers from "../../assets/icons/sidenav/customers.svg";
 import discounts from "../../assets/icons/sidenav/discounts.svg";
 import emailers from "../../assets/icons/sidenav/emailers.svg";
 import functionality from "../../assets/icons/sidenav/functionality.svg";
 import globalStore from "../../assets/icons/sidenav/globalStore.svg";
-import parameters from "../../assets/icons/sidenav/parameters.svg";
-import teams from "../../assets/icons/sidenav/teams.svg";
 import helpCenter from "../../assets/icons/sidenav/helpCenter.svg";
 import newFeatures from "../../assets/icons/sidenav/newFeatures.svg";
 import settings from "../../assets/icons/sidenav/settings.svg";
 // ! MATERIAL IMPORTS
 import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { SidebarData } from "./SidenavData";
 
 const Sidenav = () => {
+  const sidenavData = SidebarData;
+
+  const [subnav, setSubnav] = useState(false);
+
+  const showSubnav = () => setSubnav(!subnav);
+
   return (
     <div className="sidenav px-2">
       <div className="d-flex align-items-center logo ps-3">
         <img src={logo} alt="Company Logo" width={70} className="ms-1" />
       </div>
       <List>
-        <NavLink to="/dashboard">
-          <ListItem button key="Dashboard" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={dashboard} alt="dashboard" />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/orders">
-          <ListItem button key="Orders" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={orders} alt="orders" />
-            </ListItemIcon>
-            <ListItemText primary="Orders" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/allProducts">
-          <ListItem button key="Products" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={products} alt="products" />
-            </ListItemIcon>
-            <ListItemText primary="Products" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/parameters">
-          <ListItem button key="Parameters" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={parameters} alt="parameters" />
-            </ListItemIcon>
-            <ListItemText primary="Parameters" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/allUsers">
-          <ListItem button key="Users" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={customers} alt="customers" />
-            </ListItemIcon>
-            <ListItemText primary="Users" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/userGroups">
-          <ListItem button key="User Groups" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={customers} alt="customers" />
-            </ListItemIcon>
-            <ListItemText primary="User Groups" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/userEnquiries">
-          <ListItem button key="User Enquiries" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={customers} alt="customers" />
-            </ListItemIcon>
-            <ListItemText primary="User Enquiries" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/additionalFields">
-          <ListItem button key="Additional Fields" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={customers} alt="customers" />
-            </ListItemIcon>
-            <ListItemText primary="Additional Fields" className="list-text" />
-          </ListItem>
-        </NavLink>
+        <div className="accordion" id="accordionExample">
+          {sidenavData.map((item, index) =>
+            !item.subNav ? (
+              <NavLink
+                to={item.path}
+                key={index}
+                onClick={item.subNav && showSubnav}
+              >
+                <ListItem button key={item.title} className="list-item">
+                  <ListItemIcon className="me-2 list-icon">
+                    <img src={item.image} alt="dashboard" />
+                  </ListItemIcon>
+                  <ListItemText primary={item.title} className="list-text" />
+                </ListItem>
+              </NavLink>
+            ) : (
+              <div className="accordion-item bg-transparent" key={index}>
+                <ListItem
+                  button
+                  key={item.title}
+                  className="list-item"
+                  data-bs-toggle="collapse"
+                  data-bs-target={"#Accordian" + index}
+                  aria-expanded="true"
+                  aria-controls={"Accordian" + index}
+                >
+                  <ListItemIcon className="me-2 list-icon">
+                    <img src={item.image} alt="dashboard" />
+                  </ListItemIcon>
+                  <ListItemText primary={item.title} className="list-text" />
+                </ListItem>
+                <div
+                  id={"Accordian" + index}
+                  className="accordion-collapse collapse "
+                  aria-labelledby={"heading" + index}
+                  data-bs-parent="#accordionExample"
+                >
+                  <div className="accordion-body pb-1">
+                    {item.subNav &&
+                      item.subNav.map((sub, index) => (
+                        <NavLink to={sub.path} key={index}>
+                          <ListItem
+                            button
+                            key={sub.title}
+                            className="list-item"
+                          >
+                            {/* <ListItemIcon className="me-2 list-icon">
+                              <img src={sub.image} alt="dashboard" />
+                            </ListItemIcon> */}
+                            <ListItemText
+                              primary={sub.title}
+                              className="list-text ms-4"
+                            />
+                          </ListItem>
+                        </NavLink>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+        </div>
         <NavLink to="/analytics">
           <ListItem button key="Analytics" className="list-item">
             <ListItemIcon className="me-2 list-icon">
@@ -121,14 +120,6 @@ const Sidenav = () => {
               <img src={emailers} alt="emailers" />
             </ListItemIcon>
             <ListItemText primary="Emailers" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/teams">
-          <ListItem button key="Teams" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={teams} alt="teams" />
-            </ListItemIcon>
-            <ListItemText primary="Teams" className="list-text" />
           </ListItem>
         </NavLink>
         <NavLink to="/globalStore">

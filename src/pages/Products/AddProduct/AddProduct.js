@@ -106,7 +106,7 @@ const AddProduct = () => {
     <div className="page container-fluid position-relative">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/allProducts">
+          <Link to="/products/allProducts" className="d-flex">
             <img
               src={arrowLeft}
               alt="arrowLeft"
@@ -358,12 +358,15 @@ const AddProduct = () => {
       </div>
       <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
-          <Link to="/allProducts" className="button-red-outline py-2 px-4">
+          <Link
+            to="/products/allProducts"
+            className="button-red-outline py-2 px-4"
+          >
             <p>Discard</p>
           </Link>
 
           <Link
-            to="/allProducts"
+            to="/products/allProducts"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
@@ -371,7 +374,10 @@ const AddProduct = () => {
         </div>
 
         {value === 6 ? (
-          <Link to="/allProducts" className="button-gradient py-2 px-4 w-auto">
+          <Link
+            to="/products/allProducts"
+            className="button-gradient py-2 px-4 w-auto"
+          >
             <p>Save</p>
           </Link>
         ) : (

@@ -7,10 +7,17 @@ export default function AppCountrySelect() {
   return (
     <Autocomplete
       id="country-select-demo"
-      sx={{ width: 300 }}
+      sx={{ width: "auto" }}
       options={countries}
       autoHighlight
       size="small"
+      componentsProps={{
+        paper: {
+          sx: {
+            width: 300,
+          },
+        },
+      }}
       getOptionLabel={(option) => option.label}
       renderOption={(props, option) => (
         <Box

@@ -3,12 +3,9 @@
 .main-box {
   min-height: calc(100vh - 56px);
   margin-top: 3.4rem;
-  // background: radial-gradient(
-  //   circle,
-  //   rgba(52, 29, 96, 1) 16%,
-  //   RGBA(17, 15, 38, 1) 100%
-  // );
   background: $black2;
+  // overflow-y: scroll;
+  // height: calc(100vh - 3.4rem) !important;
 }
 
 .app-sidenav {
@@ -256,6 +253,9 @@
 }
 .border-grey-8 {
   border: 1px solid $grey8;
+}
+.border-lightBlue {
+  border: 1px solid $lightBlue;
 }
 
 .text-grey-6 {
@@ -681,6 +681,27 @@ textarea {
   }
 }
 
+.teams-accordion {
+  border-bottom: 1px solid $grey5 !important;
+  border-radius: 0 !important;
+}
+.create-teams-accordion {
+  border-bottom: 1px solid $grey5 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+// * CHIPS OUTLINED COLORS
+.MuiChip-outlined {
+  border: 1px solid $grey6 !important;
+  .MuiChip-label {
+    color: $lightBlue;
+  }
+  .MuiChip-deleteIcon {
+    color: $lightBlue !important;
+  }
+}
+
 .MuiAutocomplete-endAdornment {
   svg {
     color: $lightBlue !important;
@@ -704,4 +725,33 @@ textarea {
       color: $grey6 !important;
     }
   }
+}
+
+.activity {
+  &-top {
+    position: sticky;
+    top: 0;
+  }
+  &-table {
+    thead {
+      position: sticky;
+      top: 172px;
+      border-radius: 8px;
+      margin-left: -15px;
+      margin-right: -15px;
+      // tr {
+      //   th {
+      //     border-bottom: 1px solid #36425a;
+      //     border-top: 1px solid #36425a;
+      //     background-color: $black13;
+      //   }
+      // }
+    }
+  }
+
+  //   table thead th {
+  //     position: sticky;
+  //     top: 0;
+  //     background-color: #edecec;
+  //   }
 }

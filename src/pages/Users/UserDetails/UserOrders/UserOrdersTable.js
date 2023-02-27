@@ -1,33 +1,25 @@
 import React from "react";
-import PropTypes from "prop-types";
+// ! COMPONENT IMPORTS
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../../components/TableDependencies/TableDependencies";
 // ! IMAGES IMPORTS
-import replyActionButton from "../../../../assets/icons/replyActionButton.svg";
-import cancel from "../../../../assets/icons/cancel.svg";
-import copy from "../../../../assets/icons/copy.svg";
 import indiaFlag from "../../../../assets/images/products/indiaFlag.svg";
 import arrowDown from "../../../../assets/icons/arrowDown.svg";
 import arrowDownBlack from "../../../../assets/icons/arrowDownBlack.svg";
 // ! MATERIAL IMPORTS
 import {
-  Box,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Slide,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel,
   Popover,
 } from "@mui/material";
-import { visuallyHidden } from "@mui/utils";
-import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 
 // ? TABLE STARTS HERE
 function createData(
@@ -116,110 +108,7 @@ const headCells = [
     label: "Order Status",
   },
 ];
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-function EnhancedTableHead(props) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
-            size="small"
-            style={{
-              color: "#5C6D8E",
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            {headCell.id !== "actions" && (
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-              >
-                <p className="text-lightBlue">{headCell.label}</p>
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            )}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
 // ? TABLE ENDS HERE
-
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-// ? DIALOG TRANSITION ENDS HERE
 
 const UserOrdersTable = () => {
   const [order, setOrder] = React.useState("asc");
@@ -277,18 +166,6 @@ const UserOrdersTable = () => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  // ? COMMENT DIALOG STARTS HERE
-  const [openComment, setOpenComment] = React.useState(false);
-
-  const handleOpenComment = () => {
-    setOpenComment(true);
-  };
-
-  const handleOpenCommentClose = () => {
-    setOpenComment(false);
-  };
-  // ? COMMENT DIALOG ENDS HERE
-
   // * METAL FILTER POPOVERS STARTS
   const [anchorMetalFilterEl, setAnchorMetalFilterEl] = React.useState(null);
   const handleMetalFilter = (event) => {
@@ -303,104 +180,21 @@ const UserOrdersTable = () => {
 
   return (
     <React.Fragment>
-      {/* {selected.length > 0 && (
+      {selected.length > 0 && (
         <div className="d-flex justify-content-between align-items-center px-2 mb-3">
-          <div className="d-flex">
-            <button className="button-grey py-2 px-3">
-              <small className="text-lightBlue">
-                {selected.length} products are selected&nbsp;
-                <span
-                  className="text-blue-2 c-pointer"
-                  onClick={() => setSelected([])}
-                >
-                  (Clear Selection)
-                </span>
-              </small>
-            </button>
-
-            <button className="button-grey py-2 px-3 ms-2">
-              <small className="text-lightBlue">Edit Products</small>
-            </button>
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idEditStatus}
-              variant="contained"
-              onClick={handleEditStatusClick}
-            >
-              <small className="text-lightBlue">Edit Status</small>
-              <img src={arrowDown} alt="arrowDown" className="ms-2" />
-            </button>
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idMassAction}
-              variant="contained"
-              onClick={handleMassActionClick}
-            >
-              <small className="text-lightBlue">Mass Action</small>
-              <img src={arrowDown} alt="arrowDown" className="ms-2" />
-            </button>
-
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              id={idEditStatus}
-              open={openEditStatus}
-              anchorEl={anchorEditStatusEl}
-              onClose={handleEditStatusClose}
-            >
-              <div className="py-2 px-1">
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Set as Active
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Set as Draft
-                </small>
-              </div>
-            </Popover>
-
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              id={idMassAction}
-              open={openMassAction}
-              anchorEl={anchorMassActionEl}
-              onClose={handleMassActionClose}
-            >
-              <div className="py-2 px-2">
-                <small className="text-grey-7 px-2">ACTIONS</small>
-                <hr className="hr-grey-6 my-2" />
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit User
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add or Remove Tags
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add to User Groups
-                </small>
-                <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                  <small className="text-lightBlue font2 d-block">
-                    Archived User
-                  </small>
-                  <img src={deleteRed} alt="delete" className="" />
-                </div>
-              </div>
-            </Popover>
-          </div>
+          <button className="button-grey py-2 px-3">
+            <small className="text-lightBlue">
+              {selected.length} products are selected&nbsp;
+              <span
+                className="text-blue-2 c-pointer"
+                onClick={() => setSelected([])}
+              >
+                (Clear Selection)
+              </span>
+            </small>
+          </button>
         </div>
-      )} */}
+      )}
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}
@@ -414,6 +208,7 @@ const UserOrdersTable = () => {
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
             rowCount={rows.length}
+            headCells={headCells}
           />
           <TableBody>
             {stableSort(rows, getComparator(order, orderBy))

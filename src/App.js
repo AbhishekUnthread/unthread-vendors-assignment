@@ -32,6 +32,17 @@ import CreateUserGroup from "./pages/Users/CreateUserGroup/CreateUserGroup";
 import UserDetails from "./pages/Users/UserDetails/UserDetails";
 import AdditionalFields from "./pages/Parameters/AdditionalFields/AdditionalFields";
 import CreateFieldSets from "./pages/Parameters/CreateFieldSets/CreateFieldSets";
+import Categories from "./pages/Parameters/Categories/Categories";
+import Collections from "./pages/Parameters/Collections/Collections";
+import CreateCollection from "./pages/Parameters/CreateCollection/CreateCollection";
+import VariantSets from "./pages/Parameters/VariantSets/VariantSets";
+import Vendors from "./pages/Parameters/Vendors/Vendors";
+import EditVendor from "./pages/Parameters/EditVendor/EditVendor";
+import CreateVariantSets from "./pages/Parameters/CreateVariantSets/CreateVariantSets";
+import TagsManager from "./pages/Parameters/TagsManager/TagsManager";
+import EditTags from "./pages/Parameters/EditTags/EditTags";
+import Roles from "./pages/Teams/Roles/Roles";
+import CreateRoles from "./pages/Teams/CreateRoles/CreateRoles";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -54,6 +65,11 @@ function App(props) {
       // greyLight: {
       //   main: "#f2f2f2",
       // },
+    },
+    typography: {
+      allVariants: {
+        fontFamily: "Inter",
+      },
     },
   });
   const { window } = props;
@@ -191,22 +207,50 @@ function App(props) {
           <Routes>
             {/* {admin ? ( */}
             <React.Fragment>
-              <Route path="/" element={<Navigate to="/allProducts" />} />
+              <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/allProducts" element={<AllProducts />} />
-              <Route path="/addProduct" element={<AddProduct />} />
-              <Route path="/allUsers" element={<AllUsers />} />
-              <Route path="/addUser" element={<AddUser />} />
-              <Route path="/userGroups" element={<UserGroups />} />
-              <Route path="/userEnquiries" element={<UserEnquiries />} />
-              <Route path="/createUserGroup" element={<CreateUserGroup />} />
-              <Route path="/userDetails" element={<UserDetails />} />
-              <Route path="/additionalFields" element={<AdditionalFields />} />
-              <Route path="/createFieldSets" element={<CreateFieldSets />} />
-              {/* <Route path="/orders" element={<Orders />} exact />
-              <Route path="/add-product" element={<AddProduct />} exact />
-              <Route path="/products" element={<Products />} exact />
-              <Route path="/users" element={<Users />} /> */}
+              <Route path="/products/allProducts" element={<AllProducts />} />
+              <Route
+                path="/products/allProducts/addProduct"
+                element={<AddProduct />}
+              />
+              <Route path="/users/allUsers" element={<AllUsers />} />
+              <Route path="/users/allUsers/add" element={<AddUser />} />
+              <Route path="/users/userGroups" element={<UserGroups />} />
+              <Route path="/users/userEnquiries" element={<UserEnquiries />} />
+              <Route
+                path="/users/userGroups/create"
+                element={<CreateUserGroup />}
+              />
+              <Route path="/users/allUsers/details" element={<UserDetails />} />
+              <Route
+                path="/parameters/additionalFields"
+                element={<AdditionalFields />}
+              />
+              <Route
+                path="/parameters/additionalFields/createFieldSets"
+                element={<CreateFieldSets />}
+              />
+              <Route path="/parameters/categories" element={<Categories />} />
+              <Route path="/parameters/collections" element={<Collections />} />
+              <Route
+                path="/parameters/collections/create"
+                element={<CreateCollection />}
+              />
+              <Route path="/parameters/variantSets" element={<VariantSets />} />
+              <Route
+                path="/parameters/variantSets/edit"
+                element={<CreateVariantSets />}
+              />
+              <Route path="/parameters/vendors" element={<Vendors />} />
+              <Route path="/parameters/vendors/edit" element={<EditVendor />} />
+              <Route path="/parameters/tagsManager" element={<TagsManager />} />
+              <Route
+                path="/parameters/tagsManager/edit"
+                element={<EditTags />}
+              />
+              <Route path="/teams/roles" element={<Roles />} />
+              <Route path="/teams/roles/create" element={<CreateRoles />} />
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </React.Fragment>
             {/* ) : (
