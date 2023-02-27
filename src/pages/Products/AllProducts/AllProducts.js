@@ -18,7 +18,8 @@ import uploadCompanySheet1 from "../../../assets/images/products/uploadCompanySh
 import uploadCompanySheet2 from "../../../assets/images/products/uploadCompanySheet2.svg";
 import filter from "../../../assets/icons/filter.svg";
 // ! COMPONENT IMPORTS
-import AllProductsTable from "../AllProductsTable/AllProductsTable";
+import AllProductsTable from "./AllProductsTable";
+import TabPanel from "../../../components/TabPanel/TabPanel";
 // ! MATERIAL IMPORTS
 import {
   Autocomplete,
@@ -49,76 +50,8 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import SearchIcon from "@mui/icons-material/Search";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-
-// ? SEARCH INPUT STARTS HERE
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  "&:hover": {
-    backgroundColor: "#1c1b33",
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: 0,
-    width: "auto",
-  },
-  backgroundColor: "#1c1b33",
-  height: "37.6px",
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  paddingLeft: theme.spacing(1.5),
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1.2, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    borderRadius: "5px",
-  },
-}));
-// ? SEARCH INPUT ENDS HERE
-
-// ? TABS STARTS HERE
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 0 }}>
-          <div>{children}</div>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-// ? TABS ENDS HERE
+import TableSearch from "../../../components/TableSearch/TableSearch";
 
 // ? FILTER ACCORDIAN STARTS HERE
 const Accordion = styled((props) => (
@@ -881,15 +814,7 @@ const AllProducts = () => {
             </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon sx={{ color: "#c8d8ff" }} />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search>
+            <TableSearch />
             <div className="d-flex">
               <div className="d-flex product-button__box ms-2">
                 <button

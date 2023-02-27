@@ -42,7 +42,7 @@ export const SidebarData = [
       },
       {
         title: "Bulk Editor",
-        path: "/",
+        path: "/products/bulkEditor",
         image: products,
       },
       {

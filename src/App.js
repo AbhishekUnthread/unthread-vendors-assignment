@@ -45,6 +45,7 @@ import Roles from "./pages/Teams/Roles/Roles";
 import CreateRoles from "./pages/Teams/CreateRoles/CreateRoles";
 import Members from "./pages/Teams/Members/Members";
 import MemberDetails from "./pages/Teams/MemberDetails/MemberDetails";
+import ProductsBulkEditor from "./pages/Products/ProductsBulkEditor/ProductsBulkEditor";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -215,6 +216,10 @@ function App(props) {
               <Route
                 path="/products/allProducts/addProduct"
                 element={<AddProduct />}
+              />
+              <Route
+                path="/products/bulkEditor"
+                element={<ProductsBulkEditor />}
               />
               <Route path="/users/allUsers" element={<AllUsers />} />
               <Route path="/users/allUsers/add" element={<AddUser />} />
