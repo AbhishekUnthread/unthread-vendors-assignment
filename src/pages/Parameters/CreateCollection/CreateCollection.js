@@ -401,16 +401,16 @@ const CreateCollection = () => {
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-            <div className="d-flex col-12 px-0 justify-content-between">
+            {/* <div className="d-flex col-12 px-0 justify-content-between">
               <div className="d-flex align-items-center">
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
                   Collection Information
                 </h6>
               </div>
             </div>
-            <hr className="hr-grey-6 mt-3 mb-0" />
+            <hr className="hr-grey-6 mt-3 mb-0" /> */}
 
-            <div className="col-md-12 mt-3 px-0">
+            <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Collection Title</p>
                 <img src={info} alt="info" width={15} />

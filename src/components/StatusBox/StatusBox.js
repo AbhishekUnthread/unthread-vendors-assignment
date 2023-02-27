@@ -1,5 +1,27 @@
-import React from "react";
-import { ToggleButtonGroup, ToggleButton } from "@mui/material";
+import React from "react"; // ! MATERIAL IMPORTS
+// ! IMAGES IMPORTS
+import info from "../../assets/icons/info.svg";
+import clock from "../../assets/icons/clock.svg";
+import cancel from "../../assets/icons/cancel.svg";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Slide,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
+import { DesktopDateTimePicker } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 
 const StatusBox = ({ headingName }) => {
   // ? TOGGLE BUTTONS STARTS HERE
@@ -8,6 +30,22 @@ const StatusBox = ({ headingName }) => {
     setPoductStatus(newProductStatus);
   };
   // ? TOGGLE BUTTONS ENDS HERE
+
+  // ? SCHEDULE PRODUCT DIALOG STARTS HERE
+  const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
+
+  const handelScheduleProduct = () => {
+    setOpenScheduleProduct(true);
+  };
+
+  const handelScheduleProductClose = () => {
+    setOpenScheduleProduct(false);
+  };
+  // ? SCHEDULE PRODUCT DIALOG ENDS HERE
+
+  // ? DATE PICKER STARTS HERE
+  const [dateStartValue, setDateStartValue] = React.useState(new Date());
+  // ? DATE PICKER ENDS HERE
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3">
       <div className="d-flex align-items-center justify-content-between">
@@ -43,6 +81,81 @@ const StatusBox = ({ headingName }) => {
           </div>
         </ToggleButton>
       </ToggleButtonGroup>
+      <div className="d-flex align-items-center mt-2 c-pointer">
+        <img src={clock} alt="clock" className="me-1" width={12} />
+        <small className="text-blue-2" onClick={handelScheduleProduct}>
+          Schedule Product
+        </small>
+      </div>
+
+      <Dialog
+        open={openScheduleProduct}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handelScheduleProductClose}
+        aria-describedby="alert-dialog-slide-description"
+        maxWidth="sm"
+        fullWidth={true}
+      >
+        <DialogTitle>
+          <div className="d-flex justify-content-between align-items-center">
+            <h5 className="text-lightBlue fw-500">Schedule Product</h5>
+            <img
+              src={cancel}
+              alt="cancel"
+              width={30}
+              onClick={handelScheduleProductClose}
+              className="c-pointer"
+            />
+          </div>
+        </DialogTitle>
+        <hr className="hr-grey-6 my-0" />
+        <DialogContent className="py-3 px-4 schedule-product">
+          <div className="d-flex mb-1">
+            <p className="text-lightBlue">Start Date</p>
+            <img src={info} alt="info" className="ms-2" width={13.5} />
+          </div>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <DesktopDateTimePicker
+              value={dateStartValue}
+              onChange={(newValue) => {
+                setDateStartValue(newValue);
+              }}
+              renderInput={(params) => <TextField {...params} size="small" />}
+            />
+          </LocalizationProvider>
+          <div className="d-flex mb-1 mt-3">
+            <p className="text-lightBlue">End Date</p>
+            <img src={info} alt="info" className="ms-2" width={13.5} />
+          </div>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <DesktopDateTimePicker
+              value={dateStartValue}
+              onChange={(newValue) => {
+                setDateStartValue(newValue);
+              }}
+              renderInput={(params) => <TextField {...params} size="small" />}
+            />
+          </LocalizationProvider>
+        </DialogContent>
+        <hr className="hr-grey-6 my-0" />
+        <DialogActions className="d-flex flex-column justify-content-start px-4 py-3">
+          <div className="d-flex justify-content-between w-100">
+            <button
+              className="button-grey py-2 px-5"
+              onClick={handelScheduleProductClose}
+            >
+              <p className="text-lightBlue">Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-5"
+              onClick={handelScheduleProductClose}
+            >
+              <p>Schedule</p>
+            </button>
+          </div>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

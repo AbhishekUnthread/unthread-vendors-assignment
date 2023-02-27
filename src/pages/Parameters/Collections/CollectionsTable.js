@@ -58,7 +58,7 @@ const CollectionsTable = () => {
       id: "noOfProducts",
       numeric: false,
       disablePadding: false,
-      label: "No. Of Fields",
+      label: "No. Of Products",
     },
     {
       id: "status",
