@@ -17,6 +17,8 @@ import {
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
+// !IMAGES IMPORTS
+import ringSmall from "../../../assets/images/ringSmall.svg";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -193,9 +195,18 @@ const CollectionsTable = () => {
                         className="text-decoration-none"
                         to="/parameters/createFieldSets"
                       >
-                        <p className="text-lightBlue rounded-circle fw-600">
-                          {row.collectionsName}
-                        </p>
+                        <div className="d-flex align-items-center py-2">
+                          <img
+                            src={ringSmall}
+                            alt="ringSmall"
+                            className="me-2"
+                            height={45}
+                            width={45}
+                          />
+                          <p className="text-lightBlue rounded-circle fw-600">
+                            {row.collectionsName}
+                          </p>
+                        </div>
                       </Link>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
@@ -204,7 +215,7 @@ const CollectionsTable = () => {
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
                         <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-light">
+                          <small className="text-black fw-400">
                             {row.status}
                           </small>
                         </div>

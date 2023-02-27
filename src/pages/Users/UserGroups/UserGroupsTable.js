@@ -229,7 +229,7 @@ const UserGroupsTable = () => {
                           variant="contained"
                           onClick={handleMetalFilter}
                         >
-                          <small className="text-black fw-light">
+                          <small className="text-black fw-400">
                             {row.status}
                           </small>
                           <img

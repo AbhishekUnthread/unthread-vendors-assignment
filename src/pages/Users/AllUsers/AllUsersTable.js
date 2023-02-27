@@ -404,7 +404,7 @@ const AllUsersTable = () => {
                     <TableCell>
                       <div className="d-flex align-items-center">
                         <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-light">
+                          <small className="text-black fw-400">
                             {row.status}
                           </small>
                         </div>

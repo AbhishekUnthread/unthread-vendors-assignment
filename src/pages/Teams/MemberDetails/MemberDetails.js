@@ -343,7 +343,7 @@ const MemberDetails = () => {
             </div>
             <small className="text-grey-6 my-2 d-block">#123456 • Female</small>
             <div className="d-flex align-items-baseline flex-wrap">
-              <small className="rounded-pill text-black fw-light table-status px-2 py-1 me-2">
+              <small className="rounded-pill text-black fw-400 table-status px-2 py-1 me-2">
                 Active
               </small>
               <small className="text-grey-6 my-2 d-block">

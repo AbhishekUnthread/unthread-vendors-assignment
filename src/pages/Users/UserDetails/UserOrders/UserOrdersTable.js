@@ -287,7 +287,7 @@ const UserOrdersTable = () => {
                           variant="contained"
                           onClick={handleMetalFilter}
                         >
-                          <small className="text-black fw-light">
+                          <small className="text-black fw-400">
                             {row.paymentStatus}
                           </small>
                           <img
@@ -329,7 +329,7 @@ const UserOrdersTable = () => {
                           variant="contained"
                           onClick={handleMetalFilter}
                         >
-                          <small className="text-black fw-light">
+                          <small className="text-black fw-400">
                             {row.orderStatus}
                           </small>
                           <img
