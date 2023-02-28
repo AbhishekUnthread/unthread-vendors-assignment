@@ -23,6 +23,7 @@ import {
   InputAdornment,
   OutlinedInput,
   SwipeableDrawer,
+  Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORT
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -100,15 +101,29 @@ const Members = () => {
                 </div>
                 <div className="col-md-8">
                   <div className="d-flex mb-1">
-                    <p className="text-lightBlue me-2">Name</p>
-                    <img src={info} alt="info" width={15} />
+                    <p className="text-lightBlue">Name</p>
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
                     <OutlinedInput placeholder="Enter Name" size="small" />
                   </FormControl>
                   <div className="d-flex mb-1 mt-3">
-                    <p className="text-lightBlue me-2">Designation</p>
-                    <img src={info} alt="info" width={15} />
+                    <p className="text-lightBlue">Designation</p>
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
                     <OutlinedInput
@@ -148,8 +163,15 @@ const Members = () => {
 
                 <div className="col-12 mt-3">
                   <div className="d-flex mb-1">
-                    <p className="text-lightBlue me-2">Member Id</p>
-                    <img src={info} alt="info" width={15} />
+                    <p className="text-lightBlue">Member Id</p>
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
                     <OutlinedInput placeholder="Enter Member ID" size="small" />
@@ -157,8 +179,15 @@ const Members = () => {
                 </div>
                 <div className="col-12 mt-3">
                   <div className="d-flex mb-1">
-                    <p className="text-lightBlue me-2">Select Roles</p>
-                    <img src={info} alt="info" width={15} />
+                    <p className="text-lightBlue">Select Roles</p>
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
                     <OutlinedInput placeholder="Enter Member ID" size="small" />
@@ -166,8 +195,15 @@ const Members = () => {
                 </div>
                 <div className="col-12 mt-3">
                   <div className="d-flex mb-1">
-                    <p className="text-lightBlue me-2">Description</p>
-                    <img src={info} alt="info" width={15} />
+                    <p className="text-lightBlue">Description</p>
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
                     <OutlinedInput

@@ -17,6 +17,7 @@ import {
   OutlinedInput,
   Select,
   Slide,
+  Tooltip,
 } from "@mui/material";
 
 // ? DIALOG TRANSITION STARTS HERE
@@ -62,10 +63,12 @@ const Attributes = () => {
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
       <div className="d-flex col-12 px-0 justify-content-between">
         <div className="d-flex align-items-center">
-          <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
+          <h6 className="text-lightBlue text-lightBlue fw-500 me-2">
             Additional Fields
           </h6>
-          <img src={info} alt="info" className="ms-2" />
+          <Tooltip title="Lorem ipsum" placement="top">
+            <img src={info} alt="info" className="c-pointer" width={13.5} />
+          </Tooltip>
         </div>
         <p className="c-pointer text-blue-2" onClick={handleAdditionalFields}>
           Manage Additional Fields

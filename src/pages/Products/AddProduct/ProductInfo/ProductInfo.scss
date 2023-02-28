@@ -29,15 +29,23 @@
   &-inputs {
     .MuiOutlinedInput-root {
       padding-right: 6px !important;
+      padding-left: 6px !important;
     }
     .MuiInputAdornment-outlined {
       p {
         font-size: 13px !important;
-        color: $lightBlue !important;
-        background: $black10 !important;
-        padding: 3px 8px;
+        color: #c8d8ff !important;
+        background: #27283f !important;
+        padding: 2px 10px;
         border-radius: 4px;
+        width: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
+    }
+    .MuiOutlinedInput-input {
+      text-align: center !important;
     }
   }
   .primary-image {

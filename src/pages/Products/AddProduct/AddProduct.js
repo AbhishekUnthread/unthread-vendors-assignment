@@ -20,7 +20,15 @@ import gold from "../../../assets/images/products/gold.svg";
 import silver from "../../../assets/images/products/silver.svg";
 import platinum from "../../../assets/images/products/platinum.svg";
 // ! MATERIAL IMPORTS
-import { Box, FormControl, MenuItem, Select, Tab, Tabs } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  MenuItem,
+  Select,
+  Tab,
+  Tabs,
+  Tooltip,
+} from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -307,16 +315,23 @@ const AddProduct = () => {
               </RadioGroup>
             </FormControl> */}
           </div>
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row mx-0 mt-3">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row mx-0 mt-4">
             <div className="col-12 px-0">
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex mb-3">
-                  <h6 className="text-lightBlue px-0 fw-500">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <div className="d-flex me-1">
+                  <h6 className="text-lightBlue px-0 fw-500 me-2">
                     Product Applicable For
                   </h6>
-                  <img src={info} alt="info" className="ms-2" width={15} />
+                  <Tooltip title="Lorem ipsum" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className="c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
-                <small className="mb-3 c-pointer text-blue-2">Edit</small>
+                <small className="c-pointer text-blue-2">Edit</small>
               </div>
               <div className="d-flex align-items-center mb-2">
                 <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />

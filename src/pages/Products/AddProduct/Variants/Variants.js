@@ -1,6 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import "./Variants.scss";
+// ! COMPONENT IMPORTS
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../../components/TableDependencies/TableDependencies";
 // ! MATERIAL IMPORTS
 import {
   OutlinedInput,
@@ -84,120 +90,17 @@ const headCells = [
   {
     id: "default",
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: "Default",
   },
   {
     id: "actions",
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: "",
   },
 ];
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-function EnhancedTableHead(props) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all rows",
-            }}
-            size="small"
-            style={{
-              color: "#5C6D8E",
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {(headCell.label === "Price" ||
-                headCell.label === "Quantity" ||
-                headCell.label === "SKU") && (
-                <img
-                  src={indiaFlagRectangle}
-                  alt="indiaFlagRectangle"
-                  width={25}
-                  className="me-2"
-                />
-              )}
-              <p className="text-lightBlue">{headCell.label}</p>
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
 // ? TABLE ENDS HERE
 
 const Variants = () => {
@@ -333,7 +236,14 @@ const Variants = () => {
           <div className="col-md-4 pe-md-0 mt-4">
             <div className="d-flex mb-1">
               <p className="text-lightBlue">Market</p>
-              <img src={info} alt="info" className="ms-2" width={15} />
+              <Tooltip title="Lorem ipsum" placement="top">
+                <img
+                  src={info}
+                  alt="info"
+                  className="c-pointer ms-2"
+                  width={13.5}
+                />
+              </Tooltip>
             </div>
             <AppCountrySelect className="w-100" />
             {/* <FormControl
@@ -389,7 +299,14 @@ const Variants = () => {
           <div className="col-md-8 mt-4">
             <div className="d-flex mb-1">
               <p className="text-lightBlue">Store Address</p>
-              <img src={info} alt="info" className="ms-2" width={15} />
+              <Tooltip title="Lorem ipsum" placement="top">
+                <img
+                  src={info}
+                  alt="info"
+                  className="c-pointer ms-2"
+                  width={13.5}
+                />
+              </Tooltip>
             </div>
             <FormControl
               sx={{ m: 0, minWidth: 120, width: "100%" }}
@@ -876,6 +793,7 @@ const Variants = () => {
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
                 rowCount={rows.length}
+                headCells={headCells}
               />
               <TableBody>
                 {stableSort(rows, getComparator(order, orderBy))
@@ -919,8 +837,8 @@ const Variants = () => {
                             </small>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <FormControl sx={{ width: 150 }} className="px-0">
+                        <TableCell style={{ width: 180 }}>
+                          <FormControl className="w-100">
                             <OutlinedInput
                               placeholder="Enter Price"
                               size="small"
@@ -933,8 +851,8 @@ const Variants = () => {
                             />
                           </FormControl>
                         </TableCell>
-                        <TableCell>
-                          <FormControl sx={{ width: 80 }} className="px-0">
+                        <TableCell style={{ width: 60 }}>
+                          <FormControl className="w-100">
                             <OutlinedInput
                               placeholder="Enter Qty"
                               size="small"
@@ -942,8 +860,8 @@ const Variants = () => {
                             />
                           </FormControl>
                         </TableCell>
-                        <TableCell>
-                          <FormControl sx={{ width: 150 }} className="px-0">
+                        <TableCell style={{ width: 160 }}>
+                          <FormControl className="w-100">
                             <OutlinedInput
                               placeholder="Enter SKU"
                               size="small"
@@ -951,8 +869,8 @@ const Variants = () => {
                             />
                           </FormControl>
                         </TableCell>
-                        <TableCell>
-                          <div className="d-flex align-items-center">
+                        <TableCell style={{ width: 50, padding: 0 }}>
+                          <div className="d-flex align-items-center ps-1">
                             <Radio
                               // checked={selectedValue === 'a'}
                               // onChange={handleChange}
@@ -963,7 +881,7 @@ const Variants = () => {
                             />
                           </div>
                         </TableCell>
-                        <TableCell style={{ width: 60 }}>
+                        <TableCell style={{ width: 50, padding: 0 }}>
                           <div className="d-flex align-items-center">
                             <Tooltip title="Delete" placement="top">
                               <div className="table-edit-icon rounded-4 p-2 border-grey-5">

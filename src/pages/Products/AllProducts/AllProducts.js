@@ -44,6 +44,7 @@ import {
   Tab,
   Tabs,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
@@ -1715,7 +1716,14 @@ const AllProducts = () => {
                 <div className="px-1 py-3">
                   <div className="d-flex mb-1">
                     <small className="text-lightBlue me-2">Filter Name</small>
-                    <img src={info} alt="info" width={12} />
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="px-0">
                     <OutlinedInput

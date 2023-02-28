@@ -31,6 +31,7 @@ import {
   Popover,
   SwipeableDrawer,
   FormGroup,
+  Tooltip,
 } from "@mui/material";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
@@ -283,8 +284,15 @@ const CreateRoles = () => {
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-12 px-0">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue me-2">Role Name</p>
-                <img src={info} alt="info" width={15} />
+                <p className="text-lightBlue">Role Name</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer ms-2"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
                 <OutlinedInput placeholder="Enter Role Name" size="small" />
@@ -292,8 +300,15 @@ const CreateRoles = () => {
             </div>
             <div className="col-12 mt-3 px-0">
               <div className="d-flex  mb-1">
-                <p className="text-lightBlue me-2">Description</p>
-                <img src={info} alt="info" width={15} />
+                <p className="text-lightBlue">Description</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer ms-2"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <AppTextEditor />
             </div>
@@ -624,15 +639,29 @@ const CreateRoles = () => {
                 </div>
                 <div className="col-md-8">
                   <div className="d-flex mb-1">
-                    <p className="text-lightBlue me-2">Name</p>
-                    <img src={info} alt="info" width={15} />
+                    <p className="text-lightBlue">Name</p>
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
                     <OutlinedInput placeholder="Enter Name" size="small" />
                   </FormControl>
                   <div className="d-flex mb-1 mt-3">
-                    <p className="text-lightBlue me-2">Designation</p>
-                    <img src={info} alt="info" width={15} />
+                    <p className="text-lightBlue">Designation</p>
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
                     <OutlinedInput
@@ -671,8 +700,15 @@ const CreateRoles = () => {
 
                 <div className="col-12 mt-3">
                   <div className="d-flex mb-1">
-                    <p className="text-lightBlue me-2">Member Id</p>
-                    <img src={info} alt="info" width={15} />
+                    <p className="text-lightBlue">Member Id</p>
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
                     <OutlinedInput placeholder="Enter Member ID" size="small" />
@@ -680,8 +716,15 @@ const CreateRoles = () => {
                 </div>
                 <div className="col-12 mt-3">
                   <div className="d-flex mb-1">
-                    <p className="text-lightBlue me-2">Select Roles</p>
-                    <img src={info} alt="info" width={15} />
+                    <p className="text-lightBlue">Select Roles</p>
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
                     <OutlinedInput placeholder="Enter Member ID" size="small" />
@@ -689,8 +732,15 @@ const CreateRoles = () => {
                 </div>
                 <div className="col-12 mt-3">
                   <div className="d-flex mb-1">
-                    <p className="text-lightBlue me-2">Description</p>
-                    <img src={info} alt="info" width={15} />
+                    <p className="text-lightBlue">Description</p>
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
                     <OutlinedInput

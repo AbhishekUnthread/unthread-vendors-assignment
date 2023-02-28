@@ -74,6 +74,17 @@ function App(props) {
         fontFamily: "Inter",
       },
     },
+    components: {
+      MuiTooltip: {
+        styleOverrides: {
+          tooltip: {
+            backgroundColor: "#8f5fe8",
+            color: "",
+            border: "1px solid #8f5fe8",
+          },
+        },
+      },
+    },
   });
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);

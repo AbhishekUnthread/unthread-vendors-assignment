@@ -14,6 +14,7 @@ import {
   OutlinedInput,
   Select,
   Slide,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import MuiAccordion from "@mui/material/Accordion";
@@ -151,8 +152,10 @@ const Options = () => {
       <div className="d-flex col-12 px-0 justify-content-between align-items-center">
         <div className="d-flex flex-column">
           <div className="d-flex align-items-center">
-            <h6 className="text-lightBlue fw-500">Options & Variants</h6>
-            <img src={info} alt="info" className="ms-2" />
+            <h6 className="text-lightBlue fw-500 me-2">Options & Variants</h6>
+            <Tooltip title="Lorem ipsum" placement="top">
+              <img src={info} alt="info" className="c-pointer" width={13.5} />
+            </Tooltip>
           </div>
           <small className="text-grey-6 mt-2">
             If this product has options, like size or color then add options
@@ -267,8 +270,15 @@ const Options = () => {
           <div className="row py-3 mb-3 border-grey-5 rounded-3 bg-black-13">
             <div className="col-md-6 mb-3">
               <div className="d-flex align-item-center mb-2">
-                <p className="text-lightBlue ">Enter Option Name</p>
-                <img src={info} alt="info" className="ms-2" width={15} />
+                <p className="text-lightBlue me-2">Enter Option Name</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <FormControl
                 sx={{
@@ -282,8 +292,15 @@ const Options = () => {
             </div>
             <div className="col-md-6 mb-3">
               <div className="d-flex align-item-center mb-2">
-                <p className="text-lightBlue">Input Field Type</p>
-                <img src={info} alt="info" className="ms-2" width={15} />
+                <p className="text-lightBlue me-2">Input Field Type</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <FormControl
                 sx={{

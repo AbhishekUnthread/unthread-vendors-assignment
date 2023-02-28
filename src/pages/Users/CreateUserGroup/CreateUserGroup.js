@@ -577,9 +577,16 @@ const CreateUserGroup = () => {
                     marginRight: 0,
                   },
                 }}
-                className=" px-0"
+                className="me-0 px-0"
               />
-              <img src={info} alt="info" width={15} />
+              <Tooltip title="Lorem ipsum" placement="top">
+                <img
+                  src={info}
+                  alt="info"
+                  className="c-pointer ms-2"
+                  width={13.5}
+                />
+              </Tooltip>
             </div>
             <div className="col-md-12 mt-3 px-0">
               <p className="text-lightBlue mb-1">Description</p>

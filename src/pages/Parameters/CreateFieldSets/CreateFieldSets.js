@@ -85,7 +85,14 @@ const CreateFieldSets = () => {
                   <h6 className="text-lightBlue text-lightBlue me-2 fw-500">
                     Add Custom Fields
                   </h6>
-                  <img src={info} alt="info" />
+                  <Tooltip title="Lorem ipsum" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className=" c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
 
                 <small className="text-grey-6 mt-1">
@@ -459,9 +466,16 @@ const CreateFieldSets = () => {
                           color: "#5C6D8E",
                         },
                       }}
-                      className=" px-0"
+                      className="me-2 px-0"
                     />
-                    <img src={info} alt="info" width={15} />
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className=" c-pointer"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <table className="table table-borderless w-100 mt-3">
                     <thead className="">

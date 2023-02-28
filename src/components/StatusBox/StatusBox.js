@@ -12,6 +12,7 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
 } from "@mui/material";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -113,7 +114,14 @@ const StatusBox = ({ headingName }) => {
         <DialogContent className="py-3 px-4 schedule-product">
           <div className="d-flex mb-1">
             <p className="text-lightBlue">Start Date</p>
-            <img src={info} alt="info" className="ms-2" width={13.5} />
+            <Tooltip title="Lorem ipsum" placement="top">
+              <img
+                src={info}
+                alt="info"
+                className="ms-2 c-pointer"
+                width={13.5}
+              />
+            </Tooltip>
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker
@@ -126,7 +134,15 @@ const StatusBox = ({ headingName }) => {
           </LocalizationProvider>
           <div className="d-flex mb-1 mt-3">
             <p className="text-lightBlue">End Date</p>
-            <img src={info} alt="info" className="ms-2" width={13.5} />
+
+            <Tooltip title="Lorem ipsum" placement="top">
+              <img
+                src={info}
+                alt="info"
+                className="ms-2 c-pointer"
+                width={13.5}
+              />
+            </Tooltip>
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker

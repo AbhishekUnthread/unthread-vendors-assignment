@@ -83,7 +83,7 @@ const UserInformation = () => {
               >
                 <div className="col-12 d-flex justify-content-between">
                   <p className="text-blue-gradient">Total Orders</p>
-                  <Tooltip title="info" placement="top">
+                  <Tooltip title="Lorem ipsum" placement="top">
                     <InfoOutlinedIcon
                       sx={{
                         color: "#c8d8ff",

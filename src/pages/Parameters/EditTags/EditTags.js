@@ -11,7 +11,7 @@ import info from "../../../assets/icons/info.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 // ! MATERIAL IMPORTS
-import { FormControl, OutlinedInput } from "@mui/material";
+import { FormControl, OutlinedInput, Tooltip } from "@mui/material";
 
 const EditTags = () => {
   return (
@@ -56,7 +56,14 @@ const EditTags = () => {
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Express Shipping</p>
-                <img src={info} alt="info" width={15} />
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
                 <OutlinedInput placeholder="Enter Tag Name" size="small" />

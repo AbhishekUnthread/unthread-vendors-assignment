@@ -47,6 +47,7 @@ import {
   SwipeableDrawer,
   RadioGroup,
   Radio,
+  Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
@@ -413,7 +414,14 @@ const CreateCollection = () => {
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Collection Title</p>
-                <img src={info} alt="info" width={15} />
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
                 <OutlinedInput placeholder="Enter Group Name" size="small" />
@@ -422,7 +430,14 @@ const CreateCollection = () => {
             <div className="col-12 mt-3 px-0">
               <div className="d-flex  mb-1">
                 <p className="text-lightBlue me-2">Description</p>
-                <img src={info} alt="info" width={15} />
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <AppTextEditor />
             </div>

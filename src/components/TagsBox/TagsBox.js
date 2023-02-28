@@ -20,6 +20,7 @@ import {
   InputBase,
   FormGroup,
   Popover,
+  Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -115,7 +116,14 @@ const TagsBox = () => {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="d-flex">
           <h6 className="text-lightBlue fw-500">Tags</h6>
-          <img src={info} alt="info" className="ms-2" width={13.5} />
+          <Tooltip title="Lorem ipsum" placement="top">
+            <img
+              src={info}
+              alt="info"
+              className="ms-2 c-pointer"
+              width={13.5}
+            />
+          </Tooltip>
         </div>
         <small className="text-blue-2 c-pointer" onClick={handleTagsOpen}>
           View all Tags
@@ -190,12 +198,14 @@ const TagsBox = () => {
                   <div className="py-2 px-2">
                     <div className="d-flex mb-2 pt-1">
                       <small className="text-grey-6">Enter Tag Name</small>
-                      <img
-                        src={info}
-                        alt="info"
-                        className="ms-2 c-pointer"
-                        width={14}
-                      />
+                      <Tooltip title="Lorem ipsum" placement="top">
+                        <img
+                          src={info}
+                          alt="info"
+                          className="ms-2 c-pointer"
+                          width={13.5}
+                        />
+                      </Tooltip>
                     </div>
                     <FormControl className="pb-1">
                       <OutlinedInput

@@ -366,8 +366,15 @@ const ProductInfo = () => {
           <div className="row">
             <div className="col-8">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue px-0">Title</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <p className="text-lightBlue px-0 me-2">Title</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
                 <OutlinedInput placeholder="Enter Title" size="small" />
@@ -375,8 +382,15 @@ const ProductInfo = () => {
             </div>
             <div className="col-4">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue">Product Status</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <p className="text-lightBlue me-2">Product Status</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <ToggleButtonGroup
                 value={productStatus}
@@ -439,8 +453,15 @@ const ProductInfo = () => {
               <hr className="hr-grey-6 my-0" />
               <DialogContent className="py-3 px-4 schedule-product">
                 <div className="d-flex mb-1">
-                  <p className="text-lightBlue">Start Date</p>
-                  <img src={info} alt="info" className="ms-2" width={13.5} />
+                  <p className="text-lightBlue me-2">Start Date</p>
+                  <Tooltip title="Lorem ipsum" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className="c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                   <DesktopDateTimePicker
@@ -454,8 +475,15 @@ const ProductInfo = () => {
                   />
                 </LocalizationProvider>
                 <div className="d-flex mb-1 mt-3">
-                  <p className="text-lightBlue">End Date</p>
-                  <img src={info} alt="info" className="ms-2" width={13.5} />
+                  <p className="text-lightBlue me-2">End Date</p>
+                  <Tooltip title="Lorem ipsum" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className="c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                   <DesktopDateTimePicker
@@ -643,8 +671,15 @@ const ProductInfo = () => {
           <div className="row">
             <div className="col-4 ps-0 mt-2">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue">Category</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <p className="text-lightBlue me-2">Category</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <Autocomplete
                 id="free-solo-demo"
@@ -669,8 +704,15 @@ const ProductInfo = () => {
             </div>
             <div className="col-4 ps-0 mt-2">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue">Sub-Category</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <p className="text-lightBlue me-2">Sub-Category</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <Autocomplete
                 id="free-solo-demo"
@@ -696,8 +738,15 @@ const ProductInfo = () => {
             </div>
             <div className="col-4 px-0 mt-2">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue">Vendor Name</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <p className="text-lightBlue me-2">Vendor Name</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <Autocomplete
                 id="free-solo-demo"
@@ -723,8 +772,15 @@ const ProductInfo = () => {
             </div>
             <div className="col-12 px-0 mt-4">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue">Collections</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <p className="text-lightBlue me-2">Collections</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <Autocomplete
                 multiple
@@ -757,8 +813,15 @@ const ProductInfo = () => {
             <div className="col-12 px-0 mt-4">
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex mb-1">
-                  <p className="text-lightBlue">Tags</p>
-                  <img src={info} alt="info" className="ms-2" width={13.5} />
+                  <p className="text-lightBlue me-2">Tags</p>
+                  <Tooltip title="Lorem ipsum" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className="c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
                 <small
                   className="text-blue-2 c-pointer"
@@ -989,14 +1052,25 @@ const ProductInfo = () => {
       <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
         <div className="col-12 px-0">
           <div className="d-flex mb-3">
-            <h6 className="text-lightBlue px-0 fw-500">Price</h6>
-            <img src={info} alt="info" className="ms-2" width={15} />
+            <h6 className="text-lightBlue px-0 fw-500 me-2">Price</h6>
+            <Tooltip title="Lorem ipsum" placement="top">
+              <img src={info} alt="info" className="c-pointer" width={13.5} />
+            </Tooltip>
           </div>
           <div className="row">
             <div className="col-4 mt-2">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue">Enter Price of the product</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <p className="text-lightBlue me-2">
+                  Enter Price of the product
+                </p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
 
               <FormControl sx={{ width: "100%" }} className="col-7 px-0">
@@ -1014,8 +1088,15 @@ const ProductInfo = () => {
             </div>
             <div className="col-4 ps-0 mt-2">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue ">Select Discount</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <p className="text-lightBlue me-2">Select Discount</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
               <Autocomplete
                 id="free-solo-demo"
@@ -1042,7 +1123,14 @@ const ProductInfo = () => {
             <div className="col-4 mt-2">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Sale Price</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer ms-2"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
 
               <FormControl sx={{ width: "100%" }} className="col-7 px-0">
@@ -1069,8 +1157,16 @@ const ProductInfo = () => {
                     color: "#c8d8ff",
                   },
                 }}
+                className="me-0"
               />
-              <img src={info} alt="info" className="" width={13.5} />
+              <Tooltip title="Lorem ipsum" placement="top">
+                <img
+                  src={info}
+                  alt="info"
+                  className="c-pointer ms-2"
+                  width={13.5}
+                />
+              </Tooltip>
             </div>
             {checkedPrice && (
               <div className="col-12 mt-1 mb-3">
@@ -1099,8 +1195,16 @@ const ProductInfo = () => {
                     color: "#c8d8ff",
                   },
                 }}
+                className="me-0"
               />
-              <img src={info} alt="info" className="" width={13.5} />
+              <Tooltip title="Lorem ipsum" placement="top">
+                <img
+                  src={info}
+                  alt="info"
+                  className="c-pointer ms-2"
+                  width={13.5}
+                />
+              </Tooltip>
             </div>
             {checkedDynamic && (
               <React.Fragment>
@@ -1137,7 +1241,14 @@ const ProductInfo = () => {
                 <div className="col-4 mt-3">
                   <div className="d-flex mb-1">
                     <p className="text-lightBlue">Select Discount</p>
-                    <img src={info} alt="info" className="ms-2" width={13.5} />
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <Autocomplete
                     id="free-solo-demo"
@@ -1163,7 +1274,14 @@ const ProductInfo = () => {
                 <div className="col-4 mt-3">
                   <div className="d-flex mb-1">
                     <p className="text-lightBlue">Select</p>
-                    <img src={info} alt="info" className="ms-2" width={13.5} />
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
 
                   <FormControl sx={{ width: "100%" }} size="small">
@@ -1183,7 +1301,14 @@ const ProductInfo = () => {
                 <div className="col-4 mt-3">
                   <div className="d-flex mb-1">
                     <p className="text-lightBlue">Sale Price</p>
-                    <img src={info} alt="info" className="ms-2" width={13.5} />
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
 
                   <FormControl sx={{ width: "100%" }} className="col-7 px-0">
@@ -1199,13 +1324,27 @@ const ProductInfo = () => {
         <div className="col-12 px-0">
           <div className="d-flex mb-3">
             <h6 className="text-lightBlue px-0 fw-500">Inventory</h6>
-            <img src={info} alt="info" className="ms-2" width={15} />
+            <Tooltip title="Lorem ipsum" placement="top">
+              <img
+                src={info}
+                alt="info"
+                className="c-pointer ms-2"
+                width={13.5}
+              />
+            </Tooltip>
           </div>
           <div className="row">
             <div className="col-6 mt-2">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">SKU</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer ms-2"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
 
               <FormControl sx={{ width: "100%" }} className="col-7 px-0">
@@ -1215,7 +1354,14 @@ const ProductInfo = () => {
             <div className="col-6 mt-2">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Barcode (ISBN, UPC, GTIN etc.)</p>
-                <img src={info} alt="info" className="ms-2" width={13.5} />
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="c-pointer ms-2"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
 
               <FormControl sx={{ width: "100%" }} className="col-7 px-0">
@@ -1242,8 +1388,16 @@ const ProductInfo = () => {
                     color: "#c8d8ff",
                   },
                 }}
+                className="me-0"
               />
-              <img src={info} alt="info" className="" width={13.5} />
+              <Tooltip title="Lorem ipsum" placement="top">
+                <img
+                  src={info}
+                  alt="info"
+                  className="c-pointer ms-2"
+                  width={13.5}
+                />
+              </Tooltip>
             </div>
             {checkedTrackInventory && (
               <React.Fragment>
@@ -1267,8 +1421,16 @@ const ProductInfo = () => {
                         color: "#c8d8ff",
                       },
                     }}
+                    className="me-0"
                   />
-                  <img src={info} alt="info" className="" width={13.5} />
+                  <Tooltip title="Lorem ipsum" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className="c-pointer ms-2"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
                 <div className="col-12">
                   <hr className="hr-grey-6 my-3 " />
@@ -1276,7 +1438,14 @@ const ProductInfo = () => {
                 <div className="col-12 d-flex">
                   <div className="d-flex align-items-center me-4">
                     <h6 className="text-lightBlue">Track Inventory on</h6>
-                    <img src={info} alt="info" className="ms-2" width={13.5} />
+                    <Tooltip title="Lorem ipsum" placement="top">
+                      <img
+                        src={info}
+                        alt="info"
+                        className="c-pointer ms-2"
+                        width={13.5}
+                      />
+                    </Tooltip>
                   </div>
                   <RadioGroup
                     row
@@ -1460,14 +1629,16 @@ const ProductInfo = () => {
                       <p className="text-lightBlue">
                         Apply Quantity to all stores
                       </p>
-                      <img
-                        src={info}
-                        alt="info"
-                        className="ms-2"
-                        width={13.5}
-                      />
+                      <Tooltip title="Lorem ipsum" placement="top">
+                        <img
+                          src={info}
+                          alt="info"
+                          className="c-pointer ms-2"
+                          width={13.5}
+                        />
+                      </Tooltip>
                     </div>
-                    <div className="col-12 d-flex productInfo-inputs">
+                    <div className="col-12 d-flex">
                       <div className="row w-100 align-items-center">
                         <div className="col-md-3">
                           <FormControl className="w-100">
@@ -1588,11 +1759,20 @@ const ProductInfo = () => {
                         JWL - JWL Bagh, New Delhi-110005, India
                       </p>
 
-                      <FormControl sx={{ width: 80 }} className="col-7 px-0">
+                      <FormControl
+                        sx={{ width: 100 }}
+                        className="col-7 px-0 productInfo-inputs"
+                      >
                         <OutlinedInput
                           placeholder="Enter Qty"
                           size="small"
                           defaultValue={1}
+                          endAdornment={
+                            <InputAdornment position="end">+</InputAdornment>
+                          }
+                          startAdornment={
+                            <InputAdornment position="start">-</InputAdornment>
+                          }
                         />
                       </FormControl>
                     </div>
@@ -1601,11 +1781,20 @@ const ProductInfo = () => {
                         JWL - JWL Bagh, New Delhi-110005, India
                       </p>
 
-                      <FormControl sx={{ width: 80 }} className="col-7 px-0">
+                      <FormControl
+                        sx={{ width: 100 }}
+                        className="col-7 px-0 productInfo-inputs"
+                      >
                         <OutlinedInput
                           placeholder="Enter Qty"
                           size="small"
                           defaultValue={1}
+                          endAdornment={
+                            <InputAdornment position="end">+</InputAdornment>
+                          }
+                          startAdornment={
+                            <InputAdornment position="start">-</InputAdornment>
+                          }
                         />
                       </FormControl>
                     </div>
@@ -1614,11 +1803,20 @@ const ProductInfo = () => {
                         JWL - JWL Bagh, New Delhi-110005, India
                       </p>
 
-                      <FormControl sx={{ width: 80 }} className="col-7 px-0">
+                      <FormControl
+                        sx={{ width: 100 }}
+                        className="col-7 px-0 productInfo-inputs"
+                      >
                         <OutlinedInput
                           placeholder="Enter Qty"
                           size="small"
-                          defaultValue={1}
+                          defaultValue={100}
+                          endAdornment={
+                            <InputAdornment position="end">+</InputAdornment>
+                          }
+                          startAdornment={
+                            <InputAdornment position="start">-</InputAdornment>
+                          }
                         />
                       </FormControl>
                     </div>

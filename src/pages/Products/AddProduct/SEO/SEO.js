@@ -11,6 +11,7 @@ import {
   FormControlLabel,
   OutlinedInput,
   TextareaAutosize,
+  Tooltip,
 } from "@mui/material";
 
 const SEO = () => {
@@ -36,7 +37,14 @@ const SEO = () => {
           <h6 className="text-lightBlue me-auto fw-500">
             Search Engine Optimisation
           </h6>
-          <img src={info} alt="info" className="ms-2" />
+          <Tooltip title="Lorem ipsum" placement="top">
+            <img
+              src={info}
+              alt="info"
+              className="c-pointer ms-2"
+              width={13.5}
+            />
+          </Tooltip>
         </div>
         <AntSwitch
           inputProps={{ "aria-label": "ant design" }}
