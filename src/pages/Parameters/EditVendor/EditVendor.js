@@ -55,7 +55,7 @@ const EditVendor = () => {
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue me-2">Vendor Name</p>
+                <p className="text-lightBlue me-2">Name</p>
                 <Tooltip title="Lorem ipsum" placement="top">
                   <img
                     src={info}
@@ -81,7 +81,7 @@ const EditVendor = () => {
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox headingName={"Vendor Status"} />
+          <StatusBox headingName={"Status"} />
           <NotesBox />
         </div>
       </div>

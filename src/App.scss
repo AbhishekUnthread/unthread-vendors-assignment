@@ -682,11 +682,11 @@ textarea {
 }
 
 .teams-accordion {
-  border-bottom: 1px solid $grey5 !important;
+  border-bottom: 1px solid $black19 !important;
   border-radius: 0 !important;
 }
 .create-teams-accordion {
-  border-bottom: 1px solid $grey5 !important;
+  border-bottom: 1px solid $black19 !important;
   border-radius: 0 !important;
   background: transparent !important;
 }
@@ -784,6 +784,15 @@ textarea {
     width: 100%;
     background: linear-gradient(180deg, rgba(17, 15, 38, 0) 0%, #110f26 47.98%);
   }
+}
+
+.MuiInputAdornment-root {
+  .MuiSvgIcon-root {
+    color: $lightBlue;
+  }
+}
+.MuiButtonBase-root.MuiPickersDay-root.Mui-selected {
+  background-color: $lightBlue !important;
 }
 
 @media screen and (max-width: 576px) {

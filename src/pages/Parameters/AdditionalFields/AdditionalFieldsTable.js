@@ -115,7 +115,7 @@ const AdditionalFieldsTable = () => {
         <div className="d-flex justify-content-between align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
             <small className="text-lightBlue">
-              {selected.length} fields are selected&nbsp;
+              {selected.length} field sets are selected&nbsp;
               <span
                 className="text-blue-2 c-pointer"
                 onClick={() => setSelected([])}

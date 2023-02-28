@@ -24,6 +24,8 @@ import {
   OutlinedInput,
   SwipeableDrawer,
   Tooltip,
+  Select,
+  MenuItem,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORT
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -66,7 +68,7 @@ const Members = () => {
         </div>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Team Role Module"} />
+          <ViewLogsDrawer headingName={"Team Members Module"} />
           <ExportDialog dialogName={"Team Members"} />
           <ImportSecondDialog dialogName={"Team Members"} />
           <button
@@ -83,17 +85,19 @@ const Members = () => {
             onOpen={toggleAddMemberDrawer("right", true)}
             className="role-drawer"
           >
-            <div className="d-flex align-items-center pt-3">
+            <div className="d-flex align-items-center pt-3 px-3">
               <KeyboardArrowLeftOutlinedIcon
                 sx={{ fontSize: 25, color: "#c8d8ff" }}
                 onClick={toggleAddMemberDrawer("right", false)}
                 className="c-pointer"
               />
               <div>
-                <h5 className="text-lightBlue fw-500">Add Team Member</h5>
+                <h5 className="text-lightBlue fw-500 ms-2">Add Team Member</h5>
               </div>
             </div>
-            <hr className="hr-grey-6 mt-3 mb-3" />
+            <div className="px-3">
+              <hr className="hr-grey-6 mt-3 mb-3" />
+            </div>
             <div className="px-3">
               <div className="row">
                 <div className="col-md-4 pt-1">
@@ -154,7 +158,6 @@ const Members = () => {
                       startAdornment={
                         <InputAdornment position="start">
                           <AppMobileCodeSelect />
-                          {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
                         </InputAdornment>
                       }
                     />
@@ -189,8 +192,22 @@ const Members = () => {
                       />
                     </Tooltip>
                   </div>
-                  <FormControl className="w-100 px-0">
-                    <OutlinedInput placeholder="Enter Member ID" size="small" />
+
+                  <FormControl sx={{ width: "100%" }} size="small">
+                    <Select
+                      labelId="demo-select-small"
+                      id="demo-select-small"
+                      // value={metal}
+                      placeholder="Fixed"
+                      // onChange={handleMetalChange}
+                    >
+                      <MenuItem value={10}>Super Admin</MenuItem>
+                      <MenuItem value={20}>Admin</MenuItem>
+                      <MenuItem value={30}>Project Manager</MenuItem>
+                      <MenuItem value={40}>Ecommerce Manager</MenuItem>
+                      <MenuItem value={50}>Digital Marketing</MenuItem>
+                      <MenuItem value={60}>Client Relationships</MenuItem>
+                    </Select>
                   </FormControl>
                 </div>
                 <div className="col-12 mt-3">
@@ -217,10 +234,16 @@ const Members = () => {
             <div className="d-flex flex-column py-3 px-4 role-buttons">
               <hr className="hr-grey-6 my-3 w-100" />
               <div className="d-flex justify-content-between">
-                <button className="button-gradient py-2 px-5 w-auto ">
-                  <p>Add to Team</p>
+                <button
+                  className="button-gradient py-2 px-5 w-auto"
+                  onClick={toggleAddMemberDrawer("right", false)}
+                >
+                  <p>Add Member</p>
                 </button>
-                <button className="button-lightBlue-outline py-2 px-4">
+                <button
+                  className="button-lightBlue-outline py-2 px-4"
+                  onClick={toggleAddMemberDrawer("right", false)}
+                >
                   <p>Cancel</p>
                 </button>
               </div>

@@ -13,6 +13,7 @@ import user from "../../../assets/images/users/user.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
+import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -477,14 +478,14 @@ const MembersTable = () => {
                     <TableCell style={{ width: 160 }}>
                       <div
                         className="d-flex align-items-center c-pointer"
-                        aria-describedby={idTaggedWith}
-                        variant="contained"
-                        onClick={handleTaggedWithClick}
+                        // aria-describedby={idTaggedWith}
+                        // variant="contained"
+                        // onClick={handleTaggedWithClick}
                       >
                         <p className="text-lightBlue">{row.role}</p>
-                        <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                        {/* <img src={arrowDown} alt="arrowDown" className="ms-2" /> */}
                       </div>
-                      <Popover
+                      {/* <Popover
                         anchorOrigin={{
                           vertical: "bottom",
                           horizontal: "left",
@@ -538,11 +539,12 @@ const MembersTable = () => {
                             )}
                           />
                         </div>
-                      </Popover>
+                      </Popover> */}
                     </TableCell>
-                    <TableCell style={{ width: 200 }}>
+                    <TableCell style={{ width: 260 }}>
                       <div className="d-flex align-items-center">
-                        <p className="text-lightBlue">{row.createdOn}</p>
+                        <p className="text-lightBlue me-2">{row.createdOn}</p>
+                        <img src={teamMember1} alt="teamMember1" />
                       </div>
                     </TableCell>
                     <TableCell style={{ width: 110, padding: 0 }}>
@@ -572,7 +574,7 @@ const MembersTable = () => {
                         <img
                           src={verticalDots}
                           alt="verticalDots"
-                          className="c-pointer ms-auto"
+                          className="c-pointer"
                           aria-describedby={idActions}
                           variant="contained"
                           onClick={handleActionClick}
@@ -596,10 +598,10 @@ const MembersTable = () => {
                             <small className="text-grey-7 px-2">ACTIONS</small>
                             <hr className="hr-grey-6 my-2" />
                             <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              View Member
+                              Edit Member
                             </small>
                             <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Sent Resend Password Link
+                              Send Reset Password Link
                             </small>
                             <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                               Change Team Role

@@ -6,7 +6,6 @@ import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
 import TagsBox from "../../../components/TagsBox/TagsBox";
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
-import StatusBox from "../../../components/StatusBox/StatusBox";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import UploadFileRounded from "../../../components/UploadFileRounded/UploadFileRounded";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
@@ -32,6 +31,8 @@ import {
   SwipeableDrawer,
   FormGroup,
   Tooltip,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
@@ -41,6 +42,7 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import ChatIcon from "@mui/icons-material/Chat";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import StatusBox from "../../../components/StatusBox/StatusBox";
 
 // ? PERMISSIONS ACCORDIAN STARTS HERE
 const Accordion = styled((props) => (
@@ -255,16 +257,16 @@ const CreateRoles = () => {
             <div>
               <h5 className="text-lightBlue fw-500">Super Admin</h5>
               <small className="mt-2 text-grey-6">
-                Create pn 23/09/21 at 09:23am
+                Create on 23/09/21 at 09:23am
               </small>
             </div>
           </div>
         </div>
 
         <div className="d-flex align-items-center w-auto pe-0">
-          <button className="button-transparent me-1 py-2 px-3">
+          {/* <button className="button-transparent me-1 py-2 px-3">
             <p className="text-lightBlue">Duplicate</p>
-          </button>
+          </button> */}
           <img
             src={paginationLeft}
             alt="paginationLeft"
@@ -344,12 +346,15 @@ const CreateRoles = () => {
                       Saniya Shaikh
                     </p>
                     <div className="d-flex align-items-center">
-                      <small className=" text-lightBlue me-2">
+                      <small className=" text-blue-1 me-2">
                         saniya@mydesignar.com
                       </small>
-                      <ContentCopyIcon
-                        sx={{ fontSize: 12, color: "#c8d8ff" }}
-                      />
+                      <Tooltip title="Copy" placement="top">
+                        <ContentCopyIcon
+                          sx={{ fontSize: 12, color: "#c8d8ff" }}
+                          className="c-pointer"
+                        />
+                      </Tooltip>
                     </div>
                     <small className=" text-grey-6 me-2 font1">
                       Access given on 23/09/21 at 09:23am
@@ -382,12 +387,15 @@ const CreateRoles = () => {
                       Saniya Shaikh
                     </p>
                     <div className="d-flex align-items-center">
-                      <small className=" text-lightBlue me-2">
+                      <small className=" text-blue-1 me-2">
                         saniya@mydesignar.com
                       </small>
-                      <ContentCopyIcon
-                        sx={{ fontSize: 12, color: "#c8d8ff" }}
-                      />
+                      <Tooltip title="Copy" placement="top">
+                        <ContentCopyIcon
+                          sx={{ fontSize: 12, color: "#c8d8ff" }}
+                          className="c-pointer"
+                        />
+                      </Tooltip>
                     </div>
                     <small className=" text-grey-6 me-2 font1">
                       Access given on 23/09/21 at 09:23am
@@ -420,12 +428,15 @@ const CreateRoles = () => {
                       Saniya Shaikh
                     </p>
                     <div className="d-flex align-items-center">
-                      <small className=" text-lightBlue me-2">
+                      <small className=" text-blue-1 me-2">
                         saniya@mydesignar.com
                       </small>
-                      <ContentCopyIcon
-                        sx={{ fontSize: 12, color: "#c8d8ff" }}
-                      />
+                      <Tooltip title="Copy" placement="top">
+                        <ContentCopyIcon
+                          sx={{ fontSize: 12, color: "#c8d8ff" }}
+                          className="c-pointer"
+                        />
+                      </Tooltip>
                     </div>
                     <small className=" text-grey-6 me-2 font1">
                       Access given on 23/09/21 at 09:23am
@@ -458,12 +469,15 @@ const CreateRoles = () => {
                       Saniya Shaikh
                     </p>
                     <div className="d-flex align-items-center">
-                      <small className=" text-lightBlue me-2">
+                      <small className=" text-blue-1 me-2">
                         saniya@mydesignar.com
                       </small>
-                      <ContentCopyIcon
-                        sx={{ fontSize: 12, color: "#c8d8ff" }}
-                      />
+                      <Tooltip title="Copy" placement="top">
+                        <ContentCopyIcon
+                          sx={{ fontSize: 12, color: "#c8d8ff" }}
+                          className="c-pointer"
+                        />
+                      </Tooltip>
                     </div>
                     <small className=" text-grey-6 me-2 font1">
                       Access given on 23/09/21 at 09:23am
@@ -489,7 +503,7 @@ const CreateRoles = () => {
               <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
                 Permissions
               </h6>
-              <div className="ps-3 rounded-4 border-lightBlue">
+              <div className="ps-3 rounded-4 ">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -518,7 +532,7 @@ const CreateRoles = () => {
                 expanded={expanded === `panel${i}`}
                 onChange={handleAccordianChange(`panel${i}`)}
                 key={i}
-                className="create-teams-accordion"
+                className="create-teams-accordion px-0"
               >
                 <AccordionSummary
                   aria-controls={`panel${i}d-content`}
@@ -621,17 +635,19 @@ const CreateRoles = () => {
             className="role-drawer"
           >
             {" "}
-            <div className="d-flex align-items-center pt-3">
+            <div className="d-flex align-items-center pt-3 px-3">
               <KeyboardArrowLeftOutlinedIcon
                 sx={{ fontSize: 25, color: "#c8d8ff" }}
                 onClick={toggleAddMemberDrawer("right", false)}
                 className="c-pointer"
               />
               <div>
-                <h5 className="text-lightBlue fw-500">Add Team Member</h5>
+                <h5 className="text-lightBlue fw-500 ms-2">Add Team Member</h5>
               </div>
             </div>
-            <hr className="hr-grey-6 mt-3 mb-3" />
+            <div className="px-3">
+              <hr className="hr-grey-6 mt-3 mb-3" />
+            </div>
             <div className="px-3">
               <div className="row">
                 <div className="col-md-4 pt-1">
@@ -726,8 +742,22 @@ const CreateRoles = () => {
                       />
                     </Tooltip>
                   </div>
-                  <FormControl className="w-100 px-0">
-                    <OutlinedInput placeholder="Enter Member ID" size="small" />
+
+                  <FormControl sx={{ width: "100%" }} size="small">
+                    <Select
+                      labelId="demo-select-small"
+                      id="demo-select-small"
+                      // value={metal}
+                      placeholder="Fixed"
+                      // onChange={handleMetalChange}
+                    >
+                      <MenuItem value={10}>Super Admin</MenuItem>
+                      <MenuItem value={20}>Admin</MenuItem>
+                      <MenuItem value={30}>Project Manager</MenuItem>
+                      <MenuItem value={40}>Ecommerce Manager</MenuItem>
+                      <MenuItem value={50}>Digital Marketing</MenuItem>
+                      <MenuItem value={60}>Client Relationships</MenuItem>
+                    </Select>
                   </FormControl>
                 </div>
                 <div className="col-12 mt-3">
@@ -754,10 +784,16 @@ const CreateRoles = () => {
             <div className="d-flex flex-column py-3 px-4 role-buttons">
               <hr className="hr-grey-6 my-3 w-100" />
               <div className="d-flex justify-content-between">
-                <button className="button-gradient py-2 px-5 w-auto ">
+                <button
+                  className="button-gradient py-2 px-5 w-auto"
+                  onClick={toggleAddMemberDrawer("right", false)}
+                >
                   <p>Add to Team</p>
                 </button>
-                <button className="button-lightBlue-outline py-2 px-4">
+                <button
+                  className="button-lightBlue-outline py-2 px-4"
+                  onClick={toggleAddMemberDrawer("right", false)}
+                >
                   <p>Cancel</p>
                 </button>
               </div>
@@ -765,7 +801,7 @@ const CreateRoles = () => {
           </SwipeableDrawer>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox headingName={"Collection Status"} />
+          <StatusBox headingName={"Role Status"} showSchedule={"false"} />
           <div className="mt-4">
             <UploadMediaBox
               imageName={userRoles}

@@ -122,7 +122,7 @@ const TagsManagerTable = () => {
         <div className="d-flex justify-content-between align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
             <small className="text-lightBlue">
-              {selected.length} products are selected&nbsp;
+              {selected.length} tage are selected&nbsp;
               <span
                 className="text-blue-2 c-pointer"
                 onClick={() => setSelected([])}
@@ -184,14 +184,14 @@ const TagsManagerTable = () => {
                       scope="row"
                       padding="none"
                     >
-                      {/* <Link
+                      <Link
                         className="text-decoration-none"
-                        to="/parameters/createFieldSets"
-                      > */}
-                      <p className="text-lightBlue rounded-circle fw-600">
-                        {row.tagName}
-                      </p>
-                      {/* </Link> */}
+                        to="/parameters/edit"
+                      >
+                        <p className="text-lightBlue rounded-circle fw-600">
+                          {row.tagName}
+                        </p>
+                      </Link>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.noOfProducts}</p>

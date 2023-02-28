@@ -3,6 +3,8 @@ import { styled } from "@mui/material/styles";
 import "./Navbar.scss";
 // ! IMAGES IMPORTS
 import user from "../../assets/icons/user.svg";
+import menuClose from "../../assets/icons/sidenav/menuClose.svg";
+import menuOpen from "../../assets/icons/sidenav/menuOpen.svg";
 // ! MATERIAL IMPORTS
 import {
   AppBar,
@@ -22,6 +24,7 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 // import LightModeIcon from "@mui/icons-material/LightMode";
 // import DarkModeIcon from "@mui/icons-material/DarkMode";
 
@@ -185,9 +188,11 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
             className="app-navbar__toggle"
           >
             {!mobileOpen ? (
-              <KeyboardArrowLeftIcon />
+              <img src={menuOpen} alt="menuOpen" />
             ) : (
-              <KeyboardArrowRightIcon />
+              // <MenuOpenIcon sx={{ fontSize: 25, color: "#c8d8ff" }} />
+              <img src={menuClose} alt="menuClose" />
+              // <MenuOpenIcon sx={{ fontSize: 25, color: "#c8d8ff" }} />
             )}
           </IconButton>
           <Search>

@@ -78,9 +78,9 @@ function App(props) {
       MuiTooltip: {
         styleOverrides: {
           tooltip: {
-            backgroundColor: "#8f5fe8",
+            backgroundColor: "#433e73",
             color: "",
-            border: "1px solid #8f5fe8",
+            border: "1px solid #433e73",
           },
         },
       },
@@ -261,7 +261,7 @@ function App(props) {
                 element={<CreateVariantSets />}
               />
               <Route path="/parameters/vendors" element={<Vendors />} />
-              <Route path="/parameters/vendors/edit" element={<EditVendor />} />
+              <Route path="/parameters/edit" element={<EditVendor />} />
               <Route path="/parameters/tagsManager" element={<TagsManager />} />
               <Route
                 path="/parameters/tagsManager/edit"

@@ -24,7 +24,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const StatusBox = ({ headingName }) => {
+const StatusBox = ({ headingName, showSchedule }) => {
+  const showScheduleData = showSchedule ? false : true;
   // ? TOGGLE BUTTONS STARTS HERE
   const [productStatus, setPoductStatus] = React.useState("active");
   const handleProductStatus = (event, newProductStatus) => {
@@ -82,12 +83,14 @@ const StatusBox = ({ headingName }) => {
           </div>
         </ToggleButton>
       </ToggleButtonGroup>
-      <div className="d-flex align-items-center mt-2 c-pointer">
-        <img src={clock} alt="clock" className="me-1" width={12} />
-        <small className="text-blue-2" onClick={handelScheduleProduct}>
-          Schedule
-        </small>
-      </div>
+      {showScheduleData && (
+        <div className="d-flex align-items-center mt-2 c-pointer">
+          <img src={clock} alt="clock" className="me-1" width={12} />
+          <small className="text-blue-2" onClick={handelScheduleProduct}>
+            Schedule
+          </small>
+        </div>
+      )}
 
       <Dialog
         open={openScheduleProduct}

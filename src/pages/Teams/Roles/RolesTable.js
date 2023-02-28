@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
   EnhancedTableHead,
@@ -14,6 +14,9 @@ import rolesAdmin from "../../../assets/images/teams/rolesAdmin.svg";
 import rolesStaff from "../../../assets/images/teams/rolesStaff.svg";
 import rolesFreelance from "../../../assets/images/teams/rolesFreelance.svg";
 import user from "../../../assets/images/users/user.svg";
+import teamMember1 from "../../../assets/images/products/teamMember1.svg";
+import teamMember2 from "../../../assets/images/products/teamMember2.svg";
+import teamMember3 from "../../../assets/images/products/teamMember3.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -198,7 +201,7 @@ function createData(rId, roles, members, permissions, createdOn, action) {
 }
 
 const rows = [
-  createData(1, "Owner", "SS", "All Permission", "23/09/21 at 09:23am"),
+  createData(1, "Owner", "SS", "All Permissions", "23/09/21 at 09:23am"),
   createData(2, "Super Admin", "SS, SB, +2", "Limited", "23/09/21 at 09:23am"),
   createData(3, "Admin", "", "Limited", "23/09/21 at 09:23am"),
   createData(4, "Staff", "SS, SB, +2", "Limited", "23/09/21 at 09:23am"),
@@ -465,15 +468,32 @@ const RolesTable = () => {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell style={{ width: 200 }}>
                       <div className="d-flex align-items-center c-pointer">
                         {row.members ? (
-                          <p
-                            className="text-lightBlue"
-                            onClick={toggleActivityDrawer("right", true)}
-                          >
-                            {row.members}
-                          </p>
+                          // <p
+                          //   className="text-lightBlue"
+                          //   onClick={toggleActivityDrawer("right", true)}
+                          // >
+                          //   {row.members}
+                          // </p>
+                          <React.Fragment>
+                            <img
+                              src={teamMember1}
+                              alt="teamMember1"
+                              onClick={toggleActivityDrawer("right", true)}
+                            />
+                            <img
+                              src={teamMember3}
+                              alt="teamMember2"
+                              onClick={toggleActivityDrawer("right", true)}
+                            />
+                            <img
+                              src={teamMember2}
+                              alt="teamMember3"
+                              onClick={toggleActivityDrawer("right", true)}
+                            />
+                          </React.Fragment>
                         ) : (
                           <Link
                             to="/teams/roles/create"
@@ -486,9 +506,9 @@ const RolesTable = () => {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell style={{ width: 200 }}>
                       <div className="d-flex align-items-center">
-                        {row.permissions === "All Permission" ? (
+                        {row.permissions === "All Permissions" ? (
                           <Chip
                             label={row.permissions}
                             size="small"
@@ -504,8 +524,11 @@ const RolesTable = () => {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <p className="text-lightBlue">{row.createdOn}</p>
+                    <TableCell style={{ width: 240 }}>
+                      <div className="d-flex align-items-center">
+                        <p className="text-lightBlue me-2">{row.createdOn}</p>
+                        <img src={teamMember1} alt="teamMember1" />
+                      </div>
                     </TableCell>
 
                     <TableCell style={{ width: 140, padding: 0 }}>
@@ -583,6 +606,8 @@ const RolesTable = () => {
             <div className="d-flex align-items-center">
               <KeyboardArrowLeftOutlinedIcon
                 sx={{ fontSize: 25, color: "#c8d8ff" }}
+                onClick={toggleActivityDrawer("right", false)}
+                className="c-pointer"
               />
               <img
                 src={rolesAdmin}
@@ -596,10 +621,13 @@ const RolesTable = () => {
                 <small className="mt-2 text-grey-6">4 Members</small>
               </div>
             </div>
-            <div className="c-pointer d-flex filter-icon me-1 align-items-center">
+            <NavLink
+              to="/teams/roles/create"
+              className="c-pointer d-flex filter-icon me-1 align-items-center text-decoration-none"
+            >
               <EditOutlinedIcon sx={{ color: "#658DED", fontSize: 14 }} />
               <small className="text-blue-2 ms-1">Edit</small>
-            </div>
+            </NavLink>
           </div>
 
           <div className="d-flex align-items-center">
@@ -627,7 +655,7 @@ const RolesTable = () => {
               <TabPanel value={value} index={0}>
                 <div className="d-flex flex-column">
                   <div className="d-flex justify-content-between my-3">
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center ps-3">
                       <img
                         src={user}
                         alt="user"
@@ -641,20 +669,22 @@ const RolesTable = () => {
                           Saniya Shaikh
                         </p>
                         <div className="d-flex align-items-center">
-                          <small className=" text-grey-6 me-2">4 Members</small>
+                          <small className=" text-grey-6 me-2">
+                            saniya@mydesignar.com
+                          </small>
                           <ContentCopyIcon
                             sx={{ fontSize: 12, color: "#c8d8ff" }}
                           />
                         </div>
                       </div>
                     </div>
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center hover-back c-pointer px-3 rounded-4">
                       <ChatIcon sx={{ fontSize: 18, color: "#c8d8ff" }} />
                       <small className="text-lightBlue ms-2">Message</small>
                     </div>
                   </div>
                   <div className="d-flex justify-content-between my-3">
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center ps-3">
                       <img
                         src={user}
                         alt="user"
@@ -668,20 +698,22 @@ const RolesTable = () => {
                           Saniya Shaikh
                         </p>
                         <div className="d-flex align-items-center">
-                          <small className=" text-grey-6 me-2">4 Members</small>
+                          <small className=" text-grey-6 me-2">
+                            saniya@mydesignar.com
+                          </small>
                           <ContentCopyIcon
                             sx={{ fontSize: 12, color: "#c8d8ff" }}
                           />
                         </div>
                       </div>
                     </div>
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center hover-back c-pointer px-3 rounded-4">
                       <ChatIcon sx={{ fontSize: 18, color: "#c8d8ff" }} />
                       <small className="text-lightBlue ms-2">Message</small>
                     </div>
                   </div>
                   <div className="d-flex justify-content-between my-3">
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center ps-3">
                       <img
                         src={user}
                         alt="user"
@@ -695,20 +727,22 @@ const RolesTable = () => {
                           Saniya Shaikh
                         </p>
                         <div className="d-flex align-items-center">
-                          <small className=" text-grey-6 me-2">4 Members</small>
+                          <small className=" text-grey-6 me-2">
+                            saniya@mydesignar.com
+                          </small>
                           <ContentCopyIcon
                             sx={{ fontSize: 12, color: "#c8d8ff" }}
                           />
                         </div>
                       </div>
                     </div>
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center hover-back c-pointer px-3 rounded-4">
                       <ChatIcon sx={{ fontSize: 18, color: "#c8d8ff" }} />
                       <small className="text-lightBlue ms-2">Message</small>
                     </div>
                   </div>
                   <div className="d-flex justify-content-between my-3">
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center ps-3">
                       <img
                         src={user}
                         alt="user"
@@ -722,14 +756,16 @@ const RolesTable = () => {
                           Saniya Shaikh
                         </p>
                         <div className="d-flex align-items-center">
-                          <small className=" text-grey-6 me-2">4 Members</small>
+                          <small className=" text-grey-6 me-2">
+                            saniya@mydesignar.com
+                          </small>
                           <ContentCopyIcon
                             sx={{ fontSize: 12, color: "#c8d8ff" }}
                           />
                         </div>
                       </div>
                     </div>
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center hover-back c-pointer px-3 rounded-4">
                       <ChatIcon sx={{ fontSize: 18, color: "#c8d8ff" }} />
                       <small className="text-lightBlue ms-2">Message</small>
                     </div>
@@ -740,7 +776,7 @@ const RolesTable = () => {
                 <div className="">
                   <div className="d-flex justify-content-between align-items-center mt-3">
                     <h6 className="text-lightBlue ps-3">Permissions</h6>
-                    <div className="ps-3 rounded-4 border-lightBlue">
+                    <div className="ps-3 rounded-4">
                       <FormControlLabel
                         control={
                           <Checkbox

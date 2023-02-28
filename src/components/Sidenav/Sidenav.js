@@ -45,6 +45,7 @@ const Sidenav = () => {
               </NavLink>
             ) : (
               <div className="accordion-item bg-transparent" key={index}>
+                {/* <NavLink to={item.path}> */}
                 <ListItem
                   button
                   key={item.title}
@@ -59,6 +60,7 @@ const Sidenav = () => {
                   </ListItemIcon>
                   <ListItemText primary={item.title} className="list-text" />
                 </ListItem>
+                {/* </NavLink> */}
                 <div
                   id={"Accordian" + index}
                   className="accordion-collapse collapse "

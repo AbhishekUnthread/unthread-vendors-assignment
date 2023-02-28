@@ -97,7 +97,7 @@ const MemberDetails = () => {
     <div className="page container-fluid position-relative">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/users/allUsers" className="d-flex">
+          <Link to="/teams/members" className="d-flex">
             <img
               src={arrowLeft}
               alt="arrowLeft"
@@ -132,7 +132,7 @@ const MemberDetails = () => {
             maxWidth="sm"
           >
             <DialogContent className="py-2 px-4 text-center">
-              <img src={block} alt="block" width={100} />
+              <img src={block} alt="block" width={100} className="mt-3" />
               <div className="row"></div>
               <h6 className="text-lightBlue mt-3 mb-2">
                 Are you sure you want to
@@ -141,19 +141,19 @@ const MemberDetails = () => {
                 Block & Archive&nbsp;
                 <span className="text-blue-2">Saniya Shaikh</span>&nbsp;?
               </h6>
-              <div className="d-flex justify-content-center mt-4">
+              <div className="d-flex justify-content-center mt-2">
                 <hr className="hr-grey-6 w-100" />
               </div>
             </DialogContent>
-            <DialogActions className="d-flex justify-content-between px-4 pb-4">
+            <DialogActions className="d-flex justify-content-between pt-0 pb-4 w-100">
               <button
-                className="button-lightBlue-outline py-2 px-3 ms-5"
+                className="button-lightBlue-outline py-2 px-3 ms-5 me-2"
                 onClick={handleBlockClose}
               >
                 <p>Cancel</p>
               </button>
               <button
-                className="button-red-outline py-2 px-3 me-5"
+                className="button-red-outline py-2 px-3 me-5 ms-2"
                 onClick={handleBlockClose}
               >
                 <p>Block & Archive</p>
@@ -192,24 +192,20 @@ const MemberDetails = () => {
             anchorEl={anchorContactEl}
             onClose={handleContactClose}
           >
-            <div className="py-2 px-1">
-              <div className="d-flex align-items-center">
+            <div className="py-2 px-0">
+              <div className="d-flex align-items-center  hover-back c-pointer p-2 rounded-3">
                 <img src={phone} alt="phome" width={16} />
-                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                  Call
-                </small>
+                <small className="text-lightBlue  ps-2 d-block">Call</small>
               </div>
-              <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center  hover-back c-pointer p-2 rounded-3">
                 <img src={email} alt="email" width={16} />
-                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                <small className="text-lightBlue ps-2 d-block">
                   Send Email
                 </small>
               </div>
-              <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center  hover-back c-pointer p-2 rounded-3">
                 <img src={message} alt="message" width={16} />
-                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                  Message
-                </small>
+                <small className="text-lightBlue ps-2 d-block">Message</small>
               </div>
             </div>
           </Popover>
@@ -228,10 +224,10 @@ const MemberDetails = () => {
         </div>
       </div>
       <div className="row">
-        <div className="col-lg-9 mt-3">
-          <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row  ">
+        <div className="col-lg-9 mt-4">
+          <div className="bg-black-15 border-grey-5 rounded-8 row">
             <div className="col-12 d-flex mt-3 align-items-center justify-content-between">
-              <h6 className="text-lightBlue ms-2 fw-500">Activity</h6>
+              <h6 className="text-lightBlue ms-1 fw-500">Activity</h6>
 
               <div className="d-flex">
                 <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -296,42 +292,43 @@ const MemberDetails = () => {
                 </Popover>
               </div>
             </div>
-            <div className="my-3 px-3">
-              <hr className="hr-grey-6 m-0" />
+            <div className="my-3 px-2">
+              <hr className="hr-grey-6 my-0 mx-1" />
             </div>
             <div className="col-12 px-0">
               <UserActivityTable />
             </div>
           </div>
-          <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row  ">
+          <div className="bg-black-15 border-grey-5 mt-4 rounded-8 row">
             <div className="col-12 d-flex mt-3 justify-content-between align-items-center">
-              <h6 className="text-lightBlue ms-2 fw-500">
+              <h6 className="text-lightBlue ms-1 fw-500">
                 Access to Dashboard (IP)
               </h6>
               <LocalizationProvider dateAdapter={AdapterMoment}>
-                <DateTimePicker
-                  // label="Sort By Date"
+                <DesktopDateTimePicker
                   value={activityDateValue}
-                  onChange={handleActivityDateChange}
+                  onChange={(newValue) => {
+                    handleActivityDateChange(newValue);
+                  }}
                   renderInput={(params) => (
-                    <OutlinedInput
+                    <TextField
                       {...params}
-                      placeholder="Enter Date & Time"
                       size="small"
+                      placeholder="Enter Date & Time"
                     />
                   )}
                 />
               </LocalizationProvider>
             </div>
-            <div className="my-3 px-3">
-              <hr className="hr-grey-6 m-0" />
+            <div className="my-3 px-2">
+              <hr className="hr-grey-6 my-0 mx-1" />
             </div>
             <div className="col-12 px-0">
               <UserIPTable />
             </div>
           </div>
         </div>
-        <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
+        <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3">
             <img src={userLarge} alt="userLarge" width={100} />
             <div className="d-flex w-100 mt-3">
