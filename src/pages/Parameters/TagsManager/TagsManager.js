@@ -50,6 +50,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
+  Chip,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -93,7 +94,8 @@ const Search = styled("div")(({ theme }) => ({
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
+  // padding: theme.spacing(0, 2),
+  padding: "0 8px",
   height: "100%",
   position: "absolute",
   pointerEvents: "none",
@@ -326,6 +328,10 @@ const TagsManager = () => {
   };
   // ? LIKE APPLY CONDITION ENDS HERE
 
+  const handleDelete = () => {
+    console.info("You clicked the delete icon.");
+  };
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -378,35 +384,24 @@ const TagsManager = () => {
             <hr className="hr-grey-6 my-0" />
 
             <DialogContent className="py-3 px-4">
-              <p className="text-lightBlue mb-2">Create Tags</p>
-
-              <Autocomplete
-                multiple
-                id="checkboxes-tags-demo"
-                className="col-md-7"
-                options={taggedWithData}
-                disableCloseOnSelect
-                getOptionLabel={(option) => option.title}
-                size="small"
-                renderOption={(props, option, { selected }) => (
-                  <li {...props}>
-                    <Checkbox
-                      icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                      checkedIcon={<CheckBoxIcon fontSize="small" />}
-                      checked={selected}
-                      size="small"
-                      style={{
-                        color: "#5C6D8E",
-                        marginRight: 0,
-                      }}
-                    />
-                    <small className="text-lightBlue">{option.title}</small>
-                  </li>
-                )}
-                renderInput={(params) => (
-                  <TextField size="small" {...params} placeholder="Search" />
-                )}
-              />
+              <p className="text-lightBlue mb-2">Tag Name</p>
+              <FormControl className="col-7 px-0">
+                <OutlinedInput placeholder="Enter Tag Name" size="small" />
+              </FormControl>
+              <div className="d-flex">
+                <Chip
+                  label="Silver Products"
+                  onDelete={handleDelete}
+                  size="small"
+                  className="mt-3 me-2"
+                />
+                <Chip
+                  label="Diamond Products"
+                  onDelete={handleDelete}
+                  className="me-2 mt-3"
+                  size="small"
+                />
+              </div>
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -430,25 +425,28 @@ const TagsManager = () => {
             open={state["right"]}
             onClose={toggleBulkTagDrawer("right", false)}
             onOpen={toggleBulkTagDrawer("right", true)}
+            className="bulk-drawer"
           >
-            <div className="d-flex justify-content-between pt-3 px-3 ms-2 me-1">
-              <div className="d-flex flex-column w-100">
-                <h6 className="text-lightBlue">Bulk Add Tags</h6>
+            <div className="d-flex flex-column bulk-top">
+              <div className="d-flex justify-content-between pt-3 px-3 ms-2 me-1">
+                <div className="d-flex flex-column w-100">
+                  <h6 className="text-lightBlue">Bulk Add Tags</h6>
 
-                <small className="text-grey-6 mt-1 d-block">
-                  ⓘ Some Dummy Content to explain
-                </small>
+                  <small className="text-grey-6 mt-1 d-block">
+                    ⓘ Some Dummy Content to explain
+                  </small>
+                </div>
+                <img
+                  src={cancel}
+                  alt="cancel"
+                  className="c-pointer filter-icon"
+                  onClick={toggleBulkTagDrawer("right", false)}
+                />
               </div>
-              <img
-                src={cancel}
-                alt="cancel"
-                className="c-pointer filter-icon"
-                onClick={toggleBulkTagDrawer("right", false)}
-              />
+              <hr className="hr-grey-6 my-3 w-100" />
             </div>
-            <hr className="hr-grey-6 my-3 w-100" />
 
-            <div className="px-3 ms-2 me-1">
+            <div className="px-3 ms-2 me-1 mb-4">
               <p className="text-lightBlue mb-2">Select Tags</p>
               <FormControl size="small" className="col-md-8">
                 <Select
@@ -592,7 +590,7 @@ const TagsManager = () => {
                 )}
                 {likeAddCondition && (
                   <div className="row">
-                    <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                    <div className="col-sm-6 col-md-3 mt-3 mb-1 ps-4">
                       <p className="text-lightBlue mb-1">Field</p>
 
                       <FormControl className="w-100 px-0" size="small">
@@ -712,7 +710,7 @@ const TagsManager = () => {
                 <React.Fragment>
                   <div className="col-12 mt-3">
                     <div className="row align-items-center">
-                      <div className="col-md-9 px-md-0 py-2">
+                      <div className="col-md-12  py-2">
                         <Search className="mx-0">
                           <SearchIconWrapper>
                             <SearchIcon sx={{ color: "#c8d8ff" }} />
@@ -723,11 +721,11 @@ const TagsManager = () => {
                           />
                         </Search>
                       </div>
-                      <div className="col-md-3 pe-md-0 py-2">
+                      {/* <div className="col-md-3 pe-md-0 py-2">
                         <button className="button-gradient w-100 py-1 px-3">
                           <p>Apply</p>
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className="col-12 px-0">
@@ -860,11 +858,29 @@ const TagsManager = () => {
                 </React.Fragment>
               )}
             </div>
+
+            <div className="d-flex flex-column py-3 px-4 bulk-buttons">
+              <hr className="hr-grey-6 my-3 w-100" />
+              <div className="d-flex justify-content-between">
+                <button
+                  className="button-gradient py-2 px-5 w-auto "
+                  onClick={toggleBulkTagDrawer("right", false)}
+                >
+                  <p>Add to 53 Products</p>
+                </button>
+                <button
+                  className="button-lightBlue-outline py-2 px-4"
+                  onClick={toggleBulkTagDrawer("right", false)}
+                >
+                  ><p>Cancel</p>
+                </button>
+              </div>
+            </div>
           </SwipeableDrawer>
         </div>
       </div>
 
-      <div className="row mt-3">
+      <div className="row mt-4">
         <Paper
           sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
           className="border-grey-5 bg-black-15"

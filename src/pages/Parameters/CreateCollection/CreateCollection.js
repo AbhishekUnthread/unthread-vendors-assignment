@@ -586,7 +586,7 @@ const CreateCollection = () => {
                     )}
                     {likeAddCondition && (
                       <div className="row">
-                        <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                        <div className="col-sm-6 col-md-3 mt-3 mb-1 ps-4">
                           <p className="text-lightBlue mb-1">Field</p>
 
                           <FormControl className="w-100 px-0" size="small">
@@ -1083,12 +1083,15 @@ const CreateCollection = () => {
       </div>
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
-          <Link to="/users/allUsers" className="button-red-outline py-2 px-4">
+          <Link
+            to="/parameters/collections"
+            className="button-red-outline py-2 px-4"
+          >
             <p>Discard</p>
           </Link>
 
           <Link
-            to="/users/allUsers"
+            to="/parameters/collections"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
@@ -1096,13 +1099,13 @@ const CreateCollection = () => {
         </div>
         <div className="d-flex w-auto px-0">
           <Link
-            to="/users/allUsers"
+            to="/parameters/collections"
             className="button-lightBlue-outline py-2 px-4"
           >
             <p>Save & Add Another</p>
           </Link>
           <Link
-            to="/users/allUsers"
+            to="/parameters/collections"
             className="button-gradient ms-3 py-2 px-4 w-auto"
           >
             <p>Save</p>

@@ -84,7 +84,7 @@ const StatusBox = ({ headingName }) => {
       <div className="d-flex align-items-center mt-2 c-pointer">
         <img src={clock} alt="clock" className="me-1" width={12} />
         <small className="text-blue-2" onClick={handelScheduleProduct}>
-          Schedule Product
+          Schedule
         </small>
       </div>
 

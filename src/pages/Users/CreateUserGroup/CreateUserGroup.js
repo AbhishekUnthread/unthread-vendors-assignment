@@ -10,6 +10,7 @@ import featureUpload from "../../../assets/images/products/featureUpload.svg";
 import ringSmall from "../../../assets/images/ringSmall.svg";
 import deleteWhite from "../../../assets/icons/deleteWhite.svg";
 import editWhite from "../../../assets/icons/editWhite.svg";
+import info from "../../../assets/icons/info.svg";
 // import deleteButton from "../../../assets/icons/deleteButton.svg";
 // ! MATERIAL IMPORTS
 import {
@@ -36,6 +37,7 @@ import {
   Radio,
   TableHead,
   TableSortLabel,
+  Tooltip,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 // ! MATERIAL ICONS IMPORTS
@@ -546,20 +548,38 @@ const CreateUserGroup = () => {
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-            <div className="d-flex col-12 px-0 justify-content-between">
-              <div className="d-flex align-items-center">
-                <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                  Group Information
-                </h6>
-              </div>
-            </div>
-            <hr className="hr-grey-6 mt-3 mb-0" />
-
-            <div className="col-md-12 mt-3 px-0">
+            <div className="col-md-12 px-0">
               <p className="text-lightBlue mb-1">Group Name</p>
               <FormControl className="w-100 px-0">
                 <OutlinedInput placeholder="Enter Group Name" size="small" />
               </FormControl>
+            </div>
+            <div className="col-md-12 d-flex px-0">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    // checked={checked}
+                    // onChange={handleCheckboxChange}
+                    inputProps={{ "aria-label": "controlled" }}
+                    size="small"
+                    style={{
+                      color: "#5C6D8E",
+                      marginRight: 0,
+                      width: "auto",
+                    }}
+                  />
+                }
+                label="Overwite Other User Groups"
+                sx={{
+                  "& .MuiTypography-root": {
+                    fontSize: "0.8rem",
+                    color: "#5C6D8E",
+                    marginRight: 0,
+                  },
+                }}
+                className=" px-0"
+              />
+              <img src={info} alt="info" width={15} />
             </div>
             <div className="col-md-12 mt-3 px-0">
               <p className="text-lightBlue mb-1">Description</p>
@@ -577,12 +597,11 @@ const CreateUserGroup = () => {
             </div>
           </div>
 
-          <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-3">
+          <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-4">
             <div className="d-flex justify-content-between mb-2 px-0">
               <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
                 Add User
               </h6>
-              <p className="text-blue-2 col-auto pe-0">Customise</p>
             </div>
             <div className="d-flex align-items-center col-12 px-0 mb-2">
               <p className="text-grey-6 me-4 px-0">Select Users Through</p>
@@ -724,19 +743,28 @@ const CreateUserGroup = () => {
                           </small>
                         </div>
                         <div className="d-flex align-items-center">
-                          <img
-                            src={editWhite}
-                            alt="editWhite"
-                            width={30}
-                            className="me-1"
-                          />
-                          <img src={deleteWhite} alt="deleteWhite" width={30} />
+                          <Tooltip title="Edit" placement="top">
+                            <img
+                              src={editWhite}
+                              alt="editWhite"
+                              width={30}
+                              className="hover-back c-pointer rounded-4 me-1"
+                            />
+                          </Tooltip>
+                          <Tooltip title="Delete" placement="top">
+                            <img
+                              src={deleteWhite}
+                              alt="deleteWhite"
+                              width={30}
+                              className="hover-back c-pointer rounded-4"
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                     )}
                     {likeAddCondition && (
                       <div className="row">
-                        <div className="col-sm-6 col-md-3 mt-3 mb-1">
+                        <div className="col-sm-6 col-md-3 mt-3 mb-1 ps-4">
                           <p className="text-lightBlue mb-1">Field</p>
 
                           <FormControl className="w-100 px-0" size="small">
@@ -1215,12 +1243,12 @@ const CreateUserGroup = () => {
       </div>
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
-          <Link to="/users/allUsers" className="button-red-outline py-2 px-4">
+          <Link to="/users/userGroups" className="button-red-outline py-2 px-4">
             <p>Discard</p>
           </Link>
 
           <Link
-            to="/users/allUsers"
+            to="/users/userGroups"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
@@ -1228,13 +1256,13 @@ const CreateUserGroup = () => {
         </div>
         <div className="d-flex w-auto px-0">
           <Link
-            to="/users/allUsers"
+            to="/users/userGroups"
             className="button-lightBlue-outline py-2 px-4"
           >
             <p>Save & Add Another</p>
           </Link>
           <Link
-            to="/users/allUsers"
+            to="/users/userGroups"
             className="button-gradient ms-3 py-2 px-4 w-auto"
           >
             <p>Save</p>

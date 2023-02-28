@@ -254,6 +254,9 @@ const AllUsers = () => {
               <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
                 Last 30 Days
               </small>
+              <small className="text-blue-gradient rounded-3 p-2 d-block c-pointer">
+                Custom Date
+              </small>
             </div>
           </Popover>
         </div>

@@ -189,7 +189,7 @@ const VendorsTable = () => {
                     >
                       <Link
                         className="text-decoration-none"
-                        to="/parameters/createFieldSets"
+                        to="/parameters/vendors/edit"
                       >
                         <p className="text-lightBlue rounded-circle fw-600">
                           {row.vendorsName}

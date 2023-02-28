@@ -767,6 +767,24 @@ textarea {
     background: linear-gradient(180deg, rgba(17, 15, 38, 0) 0%, #110f26 47.98%);
   }
 }
+.bulk-drawer {
+  // .MuiDrawer-paper {
+  //   max-width: 35vw;
+  // }
+  .bulk-top {
+    position: sticky;
+    top: 0;
+    background: $black13;
+    z-index: 100;
+  }
+  .bulk-buttons {
+    position: sticky;
+    margin-top: auto;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(180deg, rgba(17, 15, 38, 0) 0%, #110f26 47.98%);
+  }
+}
 
 @media screen and (max-width: 576px) {
   .role-drawer {

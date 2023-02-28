@@ -223,7 +223,9 @@ const Categories = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">Create Categories</h5>
+                  <h5 className="text-lightBlue fw-500">
+                    Create Sub Categories
+                  </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -241,7 +243,7 @@ const Categories = () => {
             <hr className="hr-grey-6 my-0" />
 
             <DialogContent className="py-3 px-4">
-              <p className="text-lightBlue mb-2">Category Name</p>
+              <p className="text-lightBlue mb-2">Select Category</p>
               <FormControl
                 //   sx={{ m: 0, minWidth: 120, width: "100%" }}
                 size="small"
@@ -268,9 +270,12 @@ const Categories = () => {
                   </MenuItem>
                 </Select>
               </FormControl>
-              <p className="text-lightBlue mb-2 mt-3">Sub Category Name</p>
+              <p className="text-lightBlue mb-2 mt-3">Sub Category</p>
               <FormControl className="col-md-7 px-0">
-                <OutlinedInput placeholder="Enter Category Name" size="small" />
+                <OutlinedInput
+                  placeholder="Enter Sub Category Name"
+                  size="small"
+                />
               </FormControl>
               <div className="d-flex">
                 <Chip
@@ -318,7 +323,7 @@ const Categories = () => {
         </div>
       </div>
 
-      <div className="row mt-3">
+      <div className="row mt-4">
         <Paper
           sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
           className="border-grey-5 bg-black-15"

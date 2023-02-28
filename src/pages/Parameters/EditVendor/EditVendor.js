@@ -26,7 +26,7 @@ const EditVendor = () => {
               className="c-pointer"
             />
           </Link>
-          <h5 className="page-heading ms-2 ps-1">Edit Vendor</h5>
+          <h5 className="page-heading ms-2 ps-1">JWL 1</h5>
         </div>
 
         <div className="d-flex align-items-center w-auto pe-0">
@@ -80,12 +80,15 @@ const EditVendor = () => {
       </div>
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
-          <Link to="/users/allUsers" className="button-red-outline py-2 px-4">
+          <Link
+            to="/parameters/vendors"
+            className="button-red-outline py-2 px-4"
+          >
             <p>Discard</p>
           </Link>
 
           <Link
-            to="/users/allUsers"
+            to="/parameters/vendors"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
@@ -93,13 +96,13 @@ const EditVendor = () => {
         </div>
         <div className="d-flex w-auto px-0">
           <Link
-            to="/users/allUsers"
+            to="/parameters/vendors"
             className="button-lightBlue-outline py-2 px-4"
           >
             <p>Save & Add Another</p>
           </Link>
           <Link
-            to="/users/allUsers"
+            to="/parameters/vendors"
             className="button-gradient ms-3 py-2 px-4 w-auto"
           >
             <p>Save</p>

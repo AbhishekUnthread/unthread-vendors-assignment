@@ -35,7 +35,7 @@ const AdditionalFields = () => {
         </div>
       </div>
 
-      <div className="row mt-3">
+      <div className="row mt-4">
         <Paper
           sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
           className="border-grey-5 bg-black-15"
@@ -54,7 +54,6 @@ const AdditionalFields = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
-              <Tab label="Active" className="tabs-head" />
               <Tab label="Draft" className="tabs-head" />
             </Tabs>
           </Box>
@@ -65,9 +64,6 @@ const AdditionalFields = () => {
             <AdditionalFieldsTable />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <AdditionalFieldsTable />
-          </TabPanel>
-          <TabPanel value={value} index={2}>
             <AdditionalFieldsTable />
           </TabPanel>
         </Paper>

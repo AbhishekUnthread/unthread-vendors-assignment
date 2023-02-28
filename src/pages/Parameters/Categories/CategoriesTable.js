@@ -197,14 +197,14 @@ const CategoriesTable = () => {
                       scope="row"
                       padding="none"
                     >
-                      <Link
+                      {/* <Link
                         className="text-decoration-none"
                         to="/parameters/createFieldSets"
-                      >
-                        <p className="text-lightBlue rounded-circle fw-600">
-                          {row.categoriesName}
-                        </p>
-                      </Link>
+                      > */}
+                      <p className="text-lightBlue rounded-circle fw-600">
+                        {row.categoriesName}
+                      </p>
+                      {/* </Link> */}
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.type}</p>

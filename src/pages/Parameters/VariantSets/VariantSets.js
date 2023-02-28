@@ -24,19 +24,19 @@ const VariantSets = () => {
         <h4 className="page-heading w-auto ps-0">Option Sets</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Parameters / Variant Sets"} />
-          <ExportDialog dialogName={"Variant Sets"} />
-          <ImportSecondDialog dialogName={"Variant Sets"} />
+          <ViewLogsDrawer headingName={"Parameters / Option Sets"} />
+          <ExportDialog dialogName={"Option Sets"} />
+          <ImportSecondDialog dialogName={"Option Sets"} />
           <Link
             to="/parameters/variantSets/edit"
             className="button-gradient py-2 px-4 ms-3"
           >
-            <p>+ Create Variant Sets</p>
+            <p>+ Create Option Sets</p>
           </Link>
         </div>
       </div>
 
-      <div className="row mt-3">
+      <div className="row mt-4">
         <Paper
           sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
           className="border-grey-5 bg-black-15"

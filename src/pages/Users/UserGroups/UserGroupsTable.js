@@ -232,35 +232,7 @@ const UserGroupsTable = () => {
                           <small className="text-black fw-400">
                             {row.status}
                           </small>
-                          <img
-                            src={arrowDownBlack}
-                            alt="arrowDownBlack"
-                            className="ms-2"
-                          />
                         </div>
-                        <Popover
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "left",
-                          }}
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "left",
-                          }}
-                          id={idMetalFilter}
-                          open={openMetalFilter}
-                          anchorEl={anchorMetalFilterEl}
-                          onClose={handleMetalFilterClose}
-                        >
-                          <div className="py-2 px-1">
-                            <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                              Draft
-                            </small>
-                            <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                              Archived
-                            </small>
-                          </div>
-                        </Popover>
                       </div>
                     </TableCell>
                     <TableCell style={{ width: 60 }}>

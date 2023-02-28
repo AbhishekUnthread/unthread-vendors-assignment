@@ -68,17 +68,17 @@ const CreateFieldSets = () => {
         </div>
       </div>
       <div className="row">
-        <div className="col-lg-9 mt-3">
+        <div className="col-lg-9 mt-4">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
-              <p className="text-lightBlue mb-1">Create Field Sets Name</p>
+              <p className="text-lightBlue mb-2">Create Field Sets Name</p>
               <FormControl className="w-100 px-0">
                 <OutlinedInput placeholder="Enter Name" size="small" />
               </FormControl>
             </div>
           </div>
 
-          <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-3">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row features mt-4">
             <div className="d-flex justify-content-between mb-2 px-0">
               <div>
                 <div className="d-flex">
@@ -714,8 +714,7 @@ const CreateFieldSets = () => {
             </TabPanel>
           </div>
         </div>
-        <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox headingNmae={"Field Sets Status"} />
+        <div className="col-lg-3  pe-0 ps-0 ps-lg-3">
           <NotesBox />
         </div>
       </div>

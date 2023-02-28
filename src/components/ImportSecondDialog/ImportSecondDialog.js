@@ -257,7 +257,7 @@ const ImportSecondDialog = ({ dialogName }) => {
             className="button-grey py-2 px-5"
             onClick={handleImportSecondClose}
           >
-            <p>Cancel</p>
+            <p className="text-lightBlue">Cancel</p>
           </button>
           <button
             className="button-gradient py-2 px-5"

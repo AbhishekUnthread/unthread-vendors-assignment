@@ -411,7 +411,7 @@ const RolesTable = () => {
                       scope="row"
                       padding="none"
                     >
-                      <div className="d-flex align-items-center">
+                      <div className="d-flex align-items-center py-2 my-1">
                         {row.roles.toLowerCase() === "owner" && (
                           <img
                             src={rolesOwner}

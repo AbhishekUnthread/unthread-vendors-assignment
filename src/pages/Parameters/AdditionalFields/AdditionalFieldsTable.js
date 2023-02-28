@@ -22,8 +22,8 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 
 // ? TABLE STARTS HERE
-function createData(cId, collectionsName, noOfProducts, status, actions) {
-  return { cId, collectionsName, noOfProducts, status, actions };
+function createData(cId, collectionsName, noOfProducts, actions) {
+  return { cId, collectionsName, noOfProducts, actions };
 }
 
 const rows = [
@@ -51,12 +51,6 @@ const AdditionalFieldsTable = () => {
       numeric: false,
       disablePadding: false,
       label: "No. Of Fields",
-    },
-    {
-      id: "status",
-      numeric: false,
-      disablePadding: true,
-      label: "Status",
     },
     {
       id: "actions",
@@ -121,7 +115,7 @@ const AdditionalFieldsTable = () => {
         <div className="d-flex justify-content-between align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
             <small className="text-lightBlue">
-              {selected.length} products are selected&nbsp;
+              {selected.length} fields are selected&nbsp;
               <span
                 className="text-blue-2 c-pointer"
                 onClick={() => setSelected([])}
@@ -195,16 +189,7 @@ const AdditionalFieldsTable = () => {
                     <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.noOfProducts}</p>
                     </TableCell>
-                    <TableCell style={{ width: 140, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.status}
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell style={{ width: 140, padding: 0 }}>
+                    <TableCell style={{ width: 120, padding: 0 }}>
                       <div className="d-flex align-items-center">
                         <Tooltip title="Edit" placement="top">
                           <div className="table-edit-icon rounded-4 p-2">

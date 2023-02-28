@@ -37,7 +37,7 @@ const headCells = [
     id: "variantSets",
     numeric: false,
     disablePadding: true,
-    label: "Variant Sets",
+    label: "Option Sets",
   },
   {
     id: "variants",

@@ -238,7 +238,7 @@ const UserEnquiriesTable = () => {
                       padding="none"
                     >
                       <div className="d-flex align-items-center">
-                        <p className="text-lightBlue rounded-circle fw-600">
+                        <p className="text-blue-2 rounded-circle fw-600">
                           {row.eId}
                         </p>
                       </div>
@@ -279,11 +279,11 @@ const UserEnquiriesTable = () => {
                           <div className="d-flex justify-content-between align-items-center">
                             <div className="d-flex flex-column ">
                               <h5 className="text-lightBlue fw-500">
-                                Enquiry:&nbsp;Saniya Shaikh
+                                Enquiry ID:&nbsp;#12345
                               </h5>
 
                               <small className="text-grey-6 mt-1 d-block">
-                                #ENB12
+                                Today at 09:23am
                               </small>
                             </div>
                             <img
@@ -365,6 +365,8 @@ const UserEnquiriesTable = () => {
                           src={replyActionButton}
                           alt="replyActionButton"
                           height={30}
+                          onClick={handleOpenComment}
+                          className="c-pointer"
                         />
                       </div>
                     </TableCell>

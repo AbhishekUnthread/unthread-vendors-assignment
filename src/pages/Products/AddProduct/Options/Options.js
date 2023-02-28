@@ -177,9 +177,7 @@ const Options = () => {
           >
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
-                <h5 className="text-lightBlue fw-500">
-                  Import Variant Sets Sets
-                </h5>
+                <h5 className="text-lightBlue fw-500">Import Option Sets</h5>
                 <img
                   src={cancel}
                   alt="cancel"
@@ -191,7 +189,7 @@ const Options = () => {
             </DialogTitle>
             <hr className="hr-grey-6 my-0" />
             <DialogContent className="py-3 px-4">
-              <p className="text-lightBlue mb-2">Select Variant Sets</p>
+              <p className="text-lightBlue mb-2">Select Option Sets</p>
               <div className="row mx-0">
                 <FormControl
                   sx={{
@@ -233,7 +231,7 @@ const Options = () => {
                       value={40}
                       sx={{ fontSize: 13, color: "#5c6d8e" }}
                     >
-                      Default Variant Sets
+                      Default Option Sets
                     </MenuItem>
                   </Select>
                 </FormControl>
@@ -251,7 +249,7 @@ const Options = () => {
                 className="button-gradient py-2 px-4"
                 onClick={handleImportOptionsClose}
               >
-                <p>Import Variant Sets</p>
+                <p>Import Option Sets</p>
               </button>
             </DialogActions>
           </Dialog>

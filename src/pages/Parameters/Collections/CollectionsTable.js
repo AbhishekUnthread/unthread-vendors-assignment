@@ -52,13 +52,13 @@ const CollectionsTable = () => {
       id: "collectionsName",
       numeric: false,
       disablePadding: true,
-      label: "Field Set Name",
+      label: "Collection Name",
     },
     {
       id: "noOfProducts",
       numeric: false,
       disablePadding: false,
-      label: "No. Of Products",
+      label: "No. of Products",
     },
     {
       id: "status",
