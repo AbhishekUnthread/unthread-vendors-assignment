@@ -30,6 +30,7 @@ import {
   OutlinedInput,
   Popover,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -357,17 +358,24 @@ const MemberDetails = () => {
             <small className="text-grey-6 mt- d-block">E-mail ID</small>
             <div className="d-flex mt-1">
               <p className="text-lightBlue me-2">saniya@mydesignar.com</p>
-              <img src={copy} alt="copy" />
+
+              <Tooltip title="Copy" placement="top">
+                <img src={copy} alt="copy" className="c-pointer" />
+              </Tooltip>
             </div>
             <small className="text-grey-6 mt-3 d-block">Mobile Number</small>
             <div className="d-flex mt-1">
               <p className="text-lightBlue me-2">+91 9876543210</p>
-              <img src={copy} alt="copy" />
+              <Tooltip title="Copy" placement="top">
+                <img src={copy} alt="copy" className="c-pointer" />
+              </Tooltip>
             </div>
             <small className="text-grey-6 mt-3 d-block">Member ID</small>
             <div className="d-flex mt-1">
               <p className="text-lightBlue me-2">UN845127</p>
-              <img src={copy} alt="copy" />
+              <Tooltip title="Copy" placement="top">
+                <img src={copy} alt="copy" className="c-pointer" />
+              </Tooltip>
             </div>
             <small className="text-grey-6 mt-3 mb-1 d-block">User Role</small>
             <Chip label="Super Admin" size="small" className="px-1" />

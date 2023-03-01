@@ -614,7 +614,7 @@ const MembersTable = () => {
                             </small>
                             <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                               <small className="text-lightBlue font2 d-block">
-                                Suspend & Archieve
+                                Block & Archieve
                               </small>
                               <img src={deleteRed} alt="delete" className="" />
                             </div>

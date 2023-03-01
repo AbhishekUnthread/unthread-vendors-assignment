@@ -19,6 +19,7 @@ import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import userRoles from "../../../assets/icons/userRoles.svg";
 import uploadProfile from "../../../assets/icons/uploadProfile.svg";
 import user from "../../../assets/images/users/user.svg";
+import block from "../../../assets/images/users/block.svg";
 // ! MATERIAL IMPORTS
 import {
   FormControl,
@@ -33,6 +34,10 @@ import {
   Tooltip,
   Select,
   MenuItem,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  Slide,
 } from "@mui/material";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
@@ -43,6 +48,12 @@ import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeft
 import ChatIcon from "@mui/icons-material/Chat";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import StatusBox from "../../../components/StatusBox/StatusBox";
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 
 // ? PERMISSIONS ACCORDIAN STARTS HERE
 const Accordion = styled((props) => (
@@ -233,6 +244,18 @@ const CreateRoles = () => {
   const idAccess = openAccess ? "simple-popover" : undefined;
   // * ACTIVITY POPOVERS ENDS
 
+  // ? BLOCK DIALOG STARTS HERE
+  const [openBlock, setOpenBlock] = React.useState(false);
+
+  const handleBlock = () => {
+    setOpenBlock(true);
+  };
+
+  const handleBlockClose = () => {
+    setOpenBlock(false);
+  };
+  // ? BLOCK DIALOG ENDS HERE
+
   return (
     <div className="page container-fluid position-relative user-group">
       <div className="row justify-content-between">
@@ -368,10 +391,57 @@ const CreateRoles = () => {
                     <ChatIcon sx={{ fontSize: 18, color: "#c8d8ff" }} />
                     <small className="text-lightBlue ms-2">Message</small>
                   </button>
-                  <button className="button-transparent py-2 ms-2 px-2">
+                  <button
+                    className="button-transparent py-2 ms-2 px-2"
+                    onClick={handleBlock}
+                  >
                     <img src={deleteRed} alt="delete" />
                     <small className="text-lightBlue ms-2">Revoke</small>
                   </button>
+
+                  <Dialog
+                    open={openBlock}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={handleBlockClose}
+                    aria-describedby="alert-dialog-slide-description"
+                    maxWidth="sm"
+                  >
+                    <DialogContent className="py-2 px-5 text-center">
+                      <img
+                        src={block}
+                        alt="block"
+                        width={100}
+                        className="mt-3"
+                      />
+                      <div className="row"></div>
+                      <h6 className="text-lightBlue mt-3 mb-2">
+                        Are you sure you want to revoke
+                      </h6>
+                      <h6 className="text-lightBlue mt-2 mb-2">
+                        <span className="text-blue-2">Saniya Shaikh</span>
+                        &nbsp;from&nbsp;
+                        <span className="text-blue-2">Super Admin Role</span>?
+                      </h6>
+                      <div className="d-flex justify-content-center mt-2">
+                        <hr className="hr-grey-6 w-100" />
+                      </div>
+                    </DialogContent>
+                    <DialogActions className="d-flex justify-content-center pt-0 pb-4">
+                      <button
+                        className="button-lightBlue-outline py-2 px-3 me-2 "
+                        onClick={handleBlockClose}
+                      >
+                        <p>Cancel</p>
+                      </button>
+                      <button
+                        className="button-red-outline py-2 px-3 ms-2"
+                        onClick={handleBlockClose}
+                      >
+                        <p>Revoke Access</p>
+                      </button>
+                    </DialogActions>
+                  </Dialog>
                 </div>
               </div>
               <div className="d-flex justify-content-between my-3">
