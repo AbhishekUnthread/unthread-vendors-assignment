@@ -20,6 +20,7 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 
 // ? TABLE STARTS HERE
 function createData(uId, groupName, usersInGroup, status) {
@@ -43,7 +44,7 @@ const headCells = [
     id: "usersInGroup",
     numeric: false,
     disablePadding: false,
-    label: "Users InGroup",
+    label: "Users in Group",
   },
   {
     id: "status",
@@ -212,11 +213,14 @@ const UserGroupsTable = () => {
                       scope="row"
                       padding="none"
                     >
-                      <div className="d-flex align-items-center">
+                      <Link
+                        to="/users/userGroups/create"
+                        className="d-flex align-items-center text-decoration-none c-pointer"
+                      >
                         <p className="text-lightBlue rounded-circle fw-600">
                           {row.groupName}
                         </p>
-                      </div>
+                      </Link>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.usersInGroup}</p>
@@ -269,7 +273,11 @@ const UserGroupsTable = () => {
                             <small className="text-lightBlue font2 d-block">
                               Delete Groups
                             </small>
-                            <img src={deleteRed} alt="delete" className="" />
+                            <img
+                              src={deleteRed}
+                              alt="delete"
+                              className="ms-2"
+                            />
                           </div>
                         </div>
                       </Popover>

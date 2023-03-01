@@ -25,6 +25,7 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 
 // ? TABLE STARTS HERE
 function createData(eId, date, userName, subject) {
@@ -238,7 +239,10 @@ const UserEnquiriesTable = () => {
                       padding="none"
                     >
                       <div className="d-flex align-items-center">
-                        <p className="text-blue-2 rounded-circle fw-600">
+                        <p
+                          className="text-blue-2 rounded-circle fw-600 c-pointer"
+                          onClick={handleOpenComment}
+                        >
                           {row.eId}
                         </p>
                       </div>
@@ -249,11 +253,14 @@ const UserEnquiriesTable = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="d-flex align-items-center">
-                        <p className="text-blue-2 text-decoration-underline">
+                      <Link
+                        to="/users/allUsers/details"
+                        className="d-flex align-items-center text-decoration-none"
+                      >
+                        <p className="text-blue-2 text-decoration-underline c-pointer">
                           {row.userName}
                         </p>
-                      </div>
+                      </Link>
                     </TableCell>
                     <TableCell>
                       <p className="text-lightBlue">{row.subject}</p>
@@ -298,12 +305,12 @@ const UserEnquiriesTable = () => {
                         <hr className="hr-grey-6 my-0" />
                         <DialogContent className="py-3 px-4">
                           <div className="row">
-                            <div className="col-5 col-md-4">
+                            <div className="col-4 col-md-3">
                               <small className="text-grey-6">
                                 User Information
                               </small>
                             </div>
-                            <div className="col-7 col-md-8">
+                            <div className="col-8 col-md-9">
                               <p className="text-lightBlue">Saniya Shaikh</p>
                               <p className="text-blue-2">
                                 saniya@mydesignar.com
@@ -313,18 +320,18 @@ const UserEnquiriesTable = () => {
                                 <img src={copy} alt="copy" className="ms-2" />
                               </div>
                             </div>
-                            <div className="col-5 col-md-4 mt-3">
+                            <div className="col-4 col-md-3 mt-3">
                               <small className="text-grey-6">Subject</small>
                             </div>
-                            <div className="col-7 col-md-8 mt-3">
+                            <div className="col-8 col-md-9 mt-3">
                               <p className="text-lightBlue">
                                 Book an Appointment
                               </p>
                             </div>
-                            <div className="col-5 col-md-4 mt-3">
+                            <div className="col-4 col-md-3 mt-3">
                               <small className="text-grey-6">Message</small>
                             </div>
-                            <div className="col-7 col-md-8 mt-3">
+                            <div className="col-8 col-md-9 mt-3">
                               <p className="text-lightBlue">
                                 Lorem ipsum dolor sit amet consectetur
                                 adipisicing elit. Maiores, ducimus id ea et illo

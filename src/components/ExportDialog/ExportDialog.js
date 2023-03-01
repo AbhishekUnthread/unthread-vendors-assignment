@@ -40,7 +40,7 @@ const ExportDialog = ({ dialogName }) => {
   return (
     <React.Fragment>
       <button
-        className="button-transparent py-2 px-3"
+        className="button-transparent py-2 px-3 me-1"
         onClick={handleExportOpen}
       >
         <p className="text-lightBlue">Export</p>

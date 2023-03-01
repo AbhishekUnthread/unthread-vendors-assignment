@@ -91,7 +91,7 @@ const UserGroups = () => {
         <h4 className="page-heading w-auto ps-0">User Groups</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"User Module"} icon={customers} />
+          <ViewLogsDrawer headingName={"User Groups"} icon={customers} />
           <button
             className="button-lightBlue-outline py-2 px-3 ms-3"
             onClick={handleOpenManageGroups}
@@ -206,7 +206,7 @@ const UserGroups = () => {
         </div>
       </div>
 
-      <div className="row mt-3">
+      <div className="row mt-4">
         <Paper
           sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
           className="border-grey-5 bg-black-15"

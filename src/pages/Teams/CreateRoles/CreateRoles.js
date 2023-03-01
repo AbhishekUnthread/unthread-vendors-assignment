@@ -479,7 +479,10 @@ const CreateRoles = () => {
                     <ChatIcon sx={{ fontSize: 18, color: "#c8d8ff" }} />
                     <small className="text-lightBlue ms-2">Message</small>
                   </button>
-                  <button className="button-transparent py-2 ms-2 px-2">
+                  <button
+                    className="button-transparent py-2 ms-2 px-2"
+                    onClick={handleBlock}
+                  >
                     <img src={deleteRed} alt="delete" />
                     <small className="text-lightBlue ms-2">Revoke</small>
                   </button>
@@ -520,7 +523,10 @@ const CreateRoles = () => {
                     <ChatIcon sx={{ fontSize: 18, color: "#c8d8ff" }} />
                     <small className="text-lightBlue ms-2">Message</small>
                   </button>
-                  <button className="button-transparent py-2 ms-2 px-2">
+                  <button
+                    className="button-transparent py-2 ms-2 px-2"
+                    onClick={handleBlock}
+                  >
                     <img src={deleteRed} alt="delete" />
                     <small className="text-lightBlue ms-2">Revoke</small>
                   </button>
@@ -561,7 +567,10 @@ const CreateRoles = () => {
                     <ChatIcon sx={{ fontSize: 18, color: "#c8d8ff" }} />
                     <small className="text-lightBlue ms-2">Message</small>
                   </button>
-                  <button className="button-transparent py-2 ms-2 px-2">
+                  <button
+                    className="button-transparent py-2 ms-2 px-2"
+                    onClick={handleBlock}
+                  >
                     <img src={deleteRed} alt="delete" />
                     <small className="text-lightBlue ms-2">Revoke</small>
                   </button>

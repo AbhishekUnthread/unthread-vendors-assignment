@@ -358,7 +358,6 @@ const MemberDetails = () => {
             <small className="text-grey-6 mt- d-block">E-mail ID</small>
             <div className="d-flex mt-1">
               <p className="text-lightBlue me-2">saniya@mydesignar.com</p>
-
               <Tooltip title="Copy" placement="top">
                 <img src={copy} alt="copy" className="c-pointer" />
               </Tooltip>

@@ -22,7 +22,11 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
+  Tooltip,
 } from "@mui/material";
+// ! MATERIAL ICON IMPORTS
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 // ? TABLE STARTS HERE
 function createData(
@@ -359,7 +363,7 @@ const AllUsersTable = () => {
                       scope="row"
                       padding="none"
                     >
-                      <div className="d-flex align-items-center">
+                      <div className="d-flex align-items-center py-3">
                         <img
                           src={user}
                           alt="user"
@@ -367,6 +371,7 @@ const AllUsersTable = () => {
                           height={45}
                           width={45}
                         />
+
                         <div>
                           <Link
                             to="/users/allUsers/details"
@@ -378,6 +383,12 @@ const AllUsersTable = () => {
                           </Link>
                           <small className="mt-2 text-grey-6">
                             saniya@mydesignar.com
+                            <Tooltip title="Copy" placement="top">
+                              <ContentCopyIcon
+                                sx={{ fontSize: 12, color: "#c8d8ff" }}
+                                className="c-pointer ms-2"
+                              />
+                            </Tooltip>
                           </small>
                         </div>
                       </div>
@@ -410,50 +421,63 @@ const AllUsersTable = () => {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <img
-                        src={verticalDots}
-                        alt="verticalDots"
-                        className="c-pointer"
-                        aria-describedby={idActions}
-                        variant="contained"
-                        onClick={handleActionClick}
-                      />
-
-                      <Popover
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "center",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "center",
-                        }}
-                        id={idActions}
-                        open={openActions}
-                        anchorEl={anchorActionEl}
-                        onClose={handleActionClose}
-                      >
-                        <div className="py-2 px-2">
-                          <small className="text-grey-7 px-2">ACTIONS</small>
-                          <hr className="hr-grey-6 my-2" />
-                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                            Edit User
-                          </small>
-                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                            Edit User Group
-                          </small>
-                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                            Add or Remove Tags
-                          </small>
-                          <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                            <small className="text-lightBlue font2 d-block">
-                              Archived User
-                            </small>
-                            <img src={deleteRed} alt="delete" className="" />
+                    <TableCell style={{ width: 80, padding: 0 }}>
+                      <div className="d-flex align-items-center">
+                        <Tooltip title="Edit" placement="top">
+                          <div className="table-edit-icon rounded-4 p-2">
+                            <EditOutlinedIcon
+                              sx={{
+                                color: "#5c6d8e",
+                                fontSize: 18,
+                                cursor: "pointer",
+                              }}
+                            />
                           </div>
-                        </div>
-                      </Popover>
+                        </Tooltip>
+                        <img
+                          src={verticalDots}
+                          alt="verticalDots"
+                          className="c-pointer"
+                          aria-describedby={idActions}
+                          variant="contained"
+                          onClick={handleActionClick}
+                        />
+
+                        <Popover
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                          }}
+                          id={idActions}
+                          open={openActions}
+                          anchorEl={anchorActionEl}
+                          onClose={handleActionClose}
+                        >
+                          <div className="py-2 px-2">
+                            <small className="text-grey-7 px-2">ACTIONS</small>
+                            <hr className="hr-grey-6 my-2" />
+                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                              Edit User
+                            </small>
+                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                              Edit User Group
+                            </small>
+                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                              Add or Remove Tags
+                            </small>
+                            <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
+                              <small className="text-lightBlue font2 d-block">
+                                Archived User
+                              </small>
+                              <img src={deleteRed} alt="delete" className="" />
+                            </div>
+                          </div>
+                        </Popover>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );

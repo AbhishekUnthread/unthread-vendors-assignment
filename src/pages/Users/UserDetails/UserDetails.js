@@ -32,6 +32,8 @@ import {
   Popover,
   Chip,
 } from "@mui/material";
+// ! MATERIAL ICONS IMPORTS
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -141,15 +143,18 @@ const UserDetails = () => {
           </Dialog>
 
           <button className="button-lightBlue-outline py-1 ps-2 pe-3 ms-3">
-            <img
-              src={editWhite}
-              alt="editWhite"
-              height={20}
-              className="ps-1 pe-1"
-            />
+            <div className="table-edit-icon rounded-4 pe-2 ps-1">
+              <EditOutlinedIcon
+                sx={{
+                  color: "#5c6d8e",
+                  fontSize: 15,
+                  cursor: "pointer",
+                  marginTop: "-3px",
+                }}
+              />
+            </div>
             <p>Edit</p>
           </button>
-
           <button
             className="button-gradient py-1 px-4 w-auto ms-3 me-3"
             onClick={handleContactClick}

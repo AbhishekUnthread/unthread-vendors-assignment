@@ -73,7 +73,7 @@ const UserEnquiries = () => {
         <h4 className="page-heading w-auto ps-0">Enquiries</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"User Module"} icon={customers} />
+          <ViewLogsDrawer headingName={"User Enquiries"} icon={customers} />
           <ExportDialog dialogName={"Users"} />
           <button className="button-gradient py-2 px-4">
             <p>Form Settings</p>
@@ -81,7 +81,7 @@ const UserEnquiries = () => {
         </div>
       </div>
 
-      <div className="row mt-3">
+      <div className="row mt-4">
         <Paper
           sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
           className="border-grey-5 bg-black-15"

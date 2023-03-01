@@ -165,7 +165,7 @@ const AllUsers = () => {
         </div>
       </div>
 
-      <div className="row">
+      <div className="row mt-2">
         <div className="col-md-3 col-6 ps-0 my-3 d-flex">
           <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3 flex-grow-1">
             <div className="d-flex justify-content-between align-items-end">

@@ -332,15 +332,16 @@ const UserInformation = () => {
             Access to Dashboard (IP)
           </h6>
           <LocalizationProvider dateAdapter={AdapterMoment}>
-            <DateTimePicker
-              // label="Sort By Date"
+            <DesktopDateTimePicker
               value={activityDateValue}
-              onChange={handleActivityDateChange}
+              onChange={(newValue) => {
+                handleActivityDateChange(newValue);
+              }}
               renderInput={(params) => (
-                <OutlinedInput
+                <TextField
                   {...params}
-                  placeholder="Enter Date & Time"
                   size="small"
+                  placeholder="Enter Date & Time"
                 />
               )}
             />

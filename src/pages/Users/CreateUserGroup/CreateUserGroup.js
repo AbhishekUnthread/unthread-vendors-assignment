@@ -569,7 +569,7 @@ const CreateUserGroup = () => {
                     }}
                   />
                 }
-                label="Overwite Other User Groups"
+                label="Overwride Other User Groups"
                 sx={{
                   "& .MuiTypography-root": {
                     fontSize: "0.8rem",
