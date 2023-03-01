@@ -7,6 +7,8 @@ import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
+// ! IMAGES IMPORTS
+import products from "../../../assets/icons/sidenav/products.svg";
 // ! MATERIAL IMPORTS
 import { Box, Paper, Tab, Tabs } from "@mui/material";
 import ProductBulk from "../../../components/ProductBulk/ProductBulk";
@@ -23,7 +25,7 @@ const ProductsBulkEditor = () => {
         <h4 className="page-heading w-auto ps-0">Bulk Editor</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Bulk Editor"} />
+          <ViewLogsDrawer headingName={"Bulk Editor"} icon={products} />
           <button className="button-gradient py-2 px-4 ms-3">
             <p>Columns</p>
           </button>

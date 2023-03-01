@@ -41,7 +41,7 @@ import {
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
-// ! MATERIAL ICONS IMPORTSe
+// ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -878,7 +878,7 @@ const RolesTable = () => {
                       </AccordionSummary>
                       <AccordionDetails>
                         <FormGroup className="tags-checkbox">
-                          {e.accDetails.map((sub) => (
+                          {e.accDetails.map((sub, i) => (
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -889,6 +889,7 @@ const RolesTable = () => {
                                   }}
                                 />
                               }
+                              key={i}
                               label={sub.name}
                             />
                           ))}

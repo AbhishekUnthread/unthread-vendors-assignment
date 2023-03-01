@@ -8,6 +8,8 @@ import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
+// ! IMAGES IMPORTS
+import parameters from "../../../assets/icons/sidenav/parameters.svg";
 // ! MATERIAL IMPORTS
 import { Box, Paper, Tab, Tabs } from "@mui/material";
 
@@ -23,7 +25,10 @@ const AdditionalFields = () => {
         <h4 className="page-heading w-auto ps-0">Additional Fields</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Parameters / Collections"} />
+          <ViewLogsDrawer
+            headingName={"Parameters / Additional Fields"}
+            icon={parameters}
+          />
           <ExportDialog dialogName={"Collections"} />
           <ImportSecondDialog dialogName={"Collections"} />
           <Link

@@ -199,7 +199,7 @@ const CategoriesTable = () => {
                     >
                       <Link
                         className="text-decoration-none"
-                        to="/parameters/edit"
+                        to="/parameters/categories/edit"
                       >
                         <p className="text-lightBlue rounded-circle fw-600">
                           {row.categoriesName}

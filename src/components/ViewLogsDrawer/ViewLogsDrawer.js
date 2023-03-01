@@ -189,7 +189,7 @@ const activityData = [
   },
 ];
 
-const ViewLogsDrawer = ({ headingName }) => {
+const ViewLogsDrawer = ({ headingName, icon }) => {
   // ? DATE PICKER STARTS
 
   const [activityDateValue, setActivityDateValue] = React.useState(
@@ -269,7 +269,7 @@ const ViewLogsDrawer = ({ headingName }) => {
           <div className="d-flex align-items-center">
             <div className="d-flex align-items-center">
               <img
-                src={userIcon}
+                src={icon}
                 alt="user"
                 className="me-2"
                 height={30}

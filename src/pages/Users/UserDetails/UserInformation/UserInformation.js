@@ -25,6 +25,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 // ! MATERIAL ICONS IMPORTS
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import AddNotesDialog from "../../../../components/AddNotesDialog/AddNotesDialog";
 
 const UserInformation = () => {
   // ? DATE PICKER STARTS
@@ -282,9 +283,7 @@ const UserInformation = () => {
               <small className="text-lightBlue">Activity</small>
               <img src={activity} alt="activity" className="ms-2" />
             </button>
-            <button className="button-gradient py-2 px-3 ms-2">
-              <small>+ Add Notes</small>
-            </button>
+            <AddNotesDialog />
 
             <Popover
               anchorOrigin={{

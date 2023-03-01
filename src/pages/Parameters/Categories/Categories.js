@@ -10,6 +10,7 @@ import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSec
 import TabPanel from "../../../components/TabPanel/TabPanel";
 // ! IMAGES IMPORTS
 import cancel from "../../../assets/icons/cancel.svg";
+import parameters from "../../../assets/icons/sidenav/parameters.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -106,7 +107,10 @@ const Categories = () => {
         <h4 className="page-heading w-auto ps-0">Categories</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Parameters / Categories"} />
+          <ViewLogsDrawer
+            headingName={"Parameters / Categories"}
+            icon={parameters}
+          />
           <ExportDialog dialogName={"Categories"} />
           <ImportSecondDialog dialogName={"Categories"} />
           <button

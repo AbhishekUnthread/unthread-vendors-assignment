@@ -189,7 +189,7 @@ const VendorsTable = () => {
                     >
                       <Link
                         className="text-decoration-none"
-                        to="/parameters/edit"
+                        to="/parameters/vendors/edit"
                       >
                         <p className="text-lightBlue rounded-circle fw-600">
                           {row.vendorsName}
@@ -213,7 +213,7 @@ const VendorsTable = () => {
                       <div className="d-flex align-items-center">
                         <Tooltip title="Edit" placement="top">
                           <Link
-                            to="/parameters/edit"
+                            to="/parameters/vendors/edit"
                             className="table-edit-icon rounded-4 p-2"
                           >
                             <EditOutlinedIcon

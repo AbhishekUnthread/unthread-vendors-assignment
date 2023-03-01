@@ -13,6 +13,7 @@ import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSec
 // ! IMAGES IMPORTS
 import info from "../../../assets/icons/info.svg";
 import uploadProfile from "../../../assets/icons/uploadProfile.svg";
+import teams from "../../../assets/icons/sidenav/teams.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -68,7 +69,7 @@ const Members = () => {
         </div>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Team Members Module"} />
+          <ViewLogsDrawer headingName={"Team Role Module"} icon={teams} />
           <ExportDialog dialogName={"Team Members"} />
           <ImportSecondDialog dialogName={"Team Members"} />
           <button

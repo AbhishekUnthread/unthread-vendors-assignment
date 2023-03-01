@@ -10,6 +10,7 @@ import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSec
 import TableSearch from "../../../components/TableSearch/TableSearch";
 // ! IMAGES IMPORTS
 import cancel from "../../../assets/icons/cancel.svg";
+import parameters from "../../../assets/icons/sidenav/parameters.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -66,7 +67,10 @@ const Vendors = () => {
         <h4 className="page-heading w-auto ps-0">Vendors</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Parameters / Vendors"} />
+          <ViewLogsDrawer
+            headingName={"Parameters / Vendors"}
+            icon={parameters}
+          />
           <ExportDialog dialogName={"Vendors"} />
           <ImportSecondDialog dialogName={"Vendors"} />
           <button

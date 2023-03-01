@@ -786,14 +786,35 @@ textarea {
   }
 }
 
+// ? DATE PICKER STYLES STARTS HERE
+
 .MuiInputAdornment-root {
   .MuiSvgIcon-root {
     color: $lightBlue;
   }
 }
-.MuiButtonBase-root.MuiPickersDay-root.Mui-selected {
-  background-color: $lightBlue !important;
+
+.MuiCalendarPicker-root {
+  .MuiButtonBase-root.MuiPickersDay-root.Mui-selected {
+    background-color: $lightBlue !important;
+  }
+  .MuiPickersCalendarHeader-label {
+    color: $lightBlue;
+  }
+  .MuiSvgIcon-root {
+    color: $lightBlue;
+  }
+  .MuiTypography-root {
+    color: $lightBlue;
+  }
+  .MuiButtonBase-root {
+    color: $lightBlue;
+  }
 }
+
+// MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiClock-amButton css-dv4hng-MuiButtonBase-root-MuiIconButton-root-MuiClock-amButton
+// MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiClock-pmButton css-1uog4ez-MuiButtonBase-root-MuiIconButton-root-MuiClock-pmButton
+// ? DATE PICKER STYLES ENDS HERE
 
 @media screen and (max-width: 576px) {
   .role-drawer {

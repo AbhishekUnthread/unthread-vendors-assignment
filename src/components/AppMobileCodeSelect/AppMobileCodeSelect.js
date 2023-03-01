@@ -18,6 +18,9 @@ export default function AppMobileCodeSelect() {
         paper: {
           sx: {
             width: 300,
+            border: "2px solid #38395c",
+            marginLeft: "-7px",
+            marginTop: "-1px",
           },
         },
       }}

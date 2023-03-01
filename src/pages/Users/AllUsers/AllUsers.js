@@ -19,6 +19,7 @@ import arrowDown from "../../../assets/icons/arrowDown.svg";
 import sort from "../../../assets/icons/sort.svg";
 import analyticsUp from "../../../assets/icons/analyticsUp.svg";
 import analyticsDown from "../../../assets/icons/analyticsDown.svg";
+import customers from "../../../assets/icons/sidenav/customers.svg";
 // ! MATERIAL IMPORTS
 import {
   Autocomplete,
@@ -155,7 +156,7 @@ const AllUsers = () => {
         <h4 className="page-heading w-auto ps-0">All Users</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"User Module"} />
+          <ViewLogsDrawer headingName={"User Module"} icon={customers} />
           <ExportDialog dialogName={"Users"} />
           <ImportSecondDialog dialogName={"Users"} />
           <Link to="/users/allUsers/add" className="button-gradient py-2 px-4">

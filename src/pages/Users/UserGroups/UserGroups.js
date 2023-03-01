@@ -9,6 +9,7 @@ import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 // ! IMAGES IMPORTS
 import cancel from "../../../assets/icons/cancel.svg";
 import sort from "../../../assets/icons/sort.svg";
+import customers from "../../../assets/icons/sidenav/customers.svg";
 // ! MATERIAL IMPORTS
 import {
   Autocomplete,
@@ -90,7 +91,7 @@ const UserGroups = () => {
         <h4 className="page-heading w-auto ps-0">User Groups</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"User Module"} />
+          <ViewLogsDrawer headingName={"User Module"} icon={customers} />
           <button
             className="button-lightBlue-outline py-2 px-3 ms-3"
             onClick={handleOpenManageGroups}

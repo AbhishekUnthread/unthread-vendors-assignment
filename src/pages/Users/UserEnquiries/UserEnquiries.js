@@ -15,6 +15,7 @@ import usaFlag from "../../../assets/images/products/usaFlag.svg";
 import ukFlag from "../../../assets/images/products/ukFlag.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import sort from "../../../assets/icons/sort.svg";
+import customers from "../../../assets/icons/sidenav/customers.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -72,7 +73,7 @@ const UserEnquiries = () => {
         <h4 className="page-heading w-auto ps-0">Enquiries</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"User Module"} />
+          <ViewLogsDrawer headingName={"User Module"} icon={customers} />
           <ExportDialog dialogName={"Users"} />
           <button className="button-gradient py-2 px-4">
             <p>Form Settings</p>

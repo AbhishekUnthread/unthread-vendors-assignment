@@ -18,6 +18,7 @@ import uploadCompanySheet1 from "../../../assets/images/products/uploadCompanySh
 import uploadCompanySheet2 from "../../../assets/images/products/uploadCompanySheet2.svg";
 import info from "../../../assets/icons/info.svg";
 import filter from "../../../assets/icons/filter.svg";
+import products from "../../../assets/icons/sidenav/products.svg";
 // ! COMPONENT IMPORTS
 import AllProductsTable from "./AllProductsTable";
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -378,7 +379,7 @@ const AllProducts = () => {
             <img src={tutorial} alt="tutorial" className="me-2" width={20} />
             <p className="text-blue-gradient">Tutorial</p>
           </button>
-          <ViewLogsDrawer headingName={"Product Module"} />
+          <ViewLogsDrawer headingName={"Product Module"} icon={products} />
           <button
             className="button-transparent me-1 py-2 px-3"
             onClick={handleExportOpen}

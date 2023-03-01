@@ -7,6 +7,8 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import TableSearch from "../../../components/TableSearch/TableSearch";
+// ! IMAGES IMPORTS
+import teams from "../../../assets/icons/sidenav/teams.svg";
 // ! MATERIAL IMPORTS
 import { Box, Paper, Tab, Tabs } from "@mui/material";
 // ! MATERIAL ICONS IMPORT
@@ -27,7 +29,7 @@ const Roles = () => {
         </div>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Team Role Module"} />
+          <ViewLogsDrawer headingName={"Team Role Module"} icon={teams} />
           <Link to="/teams/roles/create" className="button-gradient py-2 px-4">
             <p>+ Create Roles</p>
           </Link>

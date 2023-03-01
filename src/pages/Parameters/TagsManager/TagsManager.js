@@ -19,6 +19,7 @@ import ringSmall from "../../../assets/images/ringSmall.svg";
 import deleteWhite from "../../../assets/icons/deleteWhite.svg";
 import editWhite from "../../../assets/icons/editWhite.svg";
 import deleteButton from "../../../assets/icons/deleteButton.svg";
+import parameters from "../../../assets/icons/sidenav/parameters.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -338,7 +339,10 @@ const TagsManager = () => {
         <h4 className="page-heading w-auto ps-0">Tag Manager</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Parameters / Tag Manager"} />
+          <ViewLogsDrawer
+            headingName={"Parameters / Tag Manager"}
+            icon={parameters}
+          />
           <ExportDialog dialogName={"Tag Manager"} />
           <ImportSecondDialog dialogName={"Tag Manager"} />
           <button

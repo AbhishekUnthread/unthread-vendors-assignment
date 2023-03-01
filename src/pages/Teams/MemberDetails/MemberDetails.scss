@@ -1,0 +1,19 @@
+@import "../../../styles/variables";
+
+.member-image {
+  position: relative;
+  img {
+    border: 3px solid $green3;
+    border-radius: 50%;
+  }
+  &__dot {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: #56ca00;
+    border: 2.5px solid #fff;
+    bottom: 8px;
+    left: 76px;
+    border-radius: 50%;
+  }
+}

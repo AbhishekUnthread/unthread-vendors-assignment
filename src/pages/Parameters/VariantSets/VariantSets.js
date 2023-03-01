@@ -8,6 +8,8 @@ import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSec
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import VariantSetsTable from "./VariantSetsTable";
+// ! IMAGES IMPORTS
+import parameters from "../../../assets/icons/sidenav/parameters.svg";
 // ! MATERIAL IMPORTS
 import { Box, Paper, Tab, Tabs } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
@@ -24,7 +26,10 @@ const VariantSets = () => {
         <h4 className="page-heading w-auto ps-0">Option Sets</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Parameters / Option Sets"} />
+          <ViewLogsDrawer
+            headingName={"Parameters / Option Sets"}
+            icon={parameters}
+          />
           <ExportDialog dialogName={"Option Sets"} />
           <ImportSecondDialog dialogName={"Option Sets"} />
           <Link

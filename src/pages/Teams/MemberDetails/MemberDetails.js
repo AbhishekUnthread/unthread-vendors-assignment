@@ -35,6 +35,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
+// !MATERIAL ICONS IMPORTS
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import AddNotesDialog from "../../../components/AddNotesDialog/AddNotesDialog";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -162,12 +165,16 @@ const MemberDetails = () => {
           </Dialog>
 
           <button className="button-lightBlue-outline py-1 ps-2 pe-3 ms-3">
-            <img
-              src={editWhite}
-              alt="editWhite"
-              height={20}
-              className="ps-1 pe-1"
-            />
+            <div className="table-edit-icon rounded-4 pe-2 ps-1">
+              <EditOutlinedIcon
+                sx={{
+                  color: "#5c6d8e",
+                  fontSize: 15,
+                  cursor: "pointer",
+                  marginTop: "-3px",
+                }}
+              />
+            </div>
             <p>Edit</p>
           </button>
 
@@ -254,9 +261,7 @@ const MemberDetails = () => {
                   <small className="text-lightBlue">Activity</small>
                   <img src={activity} alt="activity" className="ms-2" />
                 </button>
-                <button className="button-gradient py-2 px-3 ms-2">
-                  <small>+ Add Notes</small>
-                </button>
+                <AddNotesDialog />
 
                 <Popover
                   anchorOrigin={{
@@ -330,28 +335,22 @@ const MemberDetails = () => {
         </div>
         <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3">
-            <img src={userLarge} alt="userLarge" width={100} />
+            <div className="member-image">
+              <img src={userLarge} alt="userLarge" width={100} />
+              <div className="member-image__dot"></div>
+            </div>
             <div className="d-flex w-100 mt-3">
-              <div className="d-flex w-100 align-items-center">
-                <h6 className="text-lightBlue me-2">Saniya Shaikh</h6>
-                <img src={verified} alt="verified" width={15} />
-              </div>
-              <img src={indiaFlag} alt="indiaFlag" width={18} />
+              <h6 className="text-lightBlue me-2">Saniya Shaikh</h6>
             </div>
-            <small className="text-grey-6 my-2 d-block">#123456 • Female</small>
-            <div className="d-flex align-items-baseline flex-wrap">
-              <small className="rounded-pill text-black fw-400 table-status px-2 py-1 me-2">
-                Active
-              </small>
-              <small className="text-grey-6 my-2 d-block">
-                Last session&nbsp;
-                <span className="text-lightBlue">Today at 6:00am</span>
-              </small>
-            </div>
+            <p className="text-blue-1">Co-Founder</p>
             <small className="text-grey-6 mt-3 d-block">Registered Date</small>
             <p className="text-lightBlue mt-1">
               5 Dec, 2022&nbsp;<span className="text-grey-6">at 10:00am</span>
             </p>
+            <small className="text-grey-6 mt-3 d-block">
+              Last session&nbsp;
+              <span className="text-lightBlue">Today at 6:00am</span>
+            </small>
             <div className="d-flex justify-content-center ">
               <hr className="hr-grey-6 w-100" />
             </div>
@@ -365,13 +364,13 @@ const MemberDetails = () => {
               <p className="text-lightBlue me-2">+91 9876543210</p>
               <img src={copy} alt="copy" />
             </div>
-            <small className="text-grey-6 mt-3 d-block">Date of Birth</small>
+            <small className="text-grey-6 mt-3 d-block">Member ID</small>
             <div className="d-flex mt-1">
-              <p className="text-lightBlue me-2">21 Nov, 1999</p>
+              <p className="text-lightBlue me-2">UN845127</p>
+              <img src={copy} alt="copy" />
             </div>
-            <small className="text-grey-6 mt-3 mb-1 d-block">User Group</small>
-            <Chip label="VIP" size="small" className="px-1" />
-            <Chip label="Verified User" size="small" className="ms-2 px-1" />
+            <small className="text-grey-6 mt-3 mb-1 d-block">User Role</small>
+            <Chip label="Super Admin" size="small" className="px-1" />
           </div>
           <NotesBox />
           <TagsBox />

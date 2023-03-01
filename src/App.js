@@ -260,7 +260,9 @@ function App(props) {
                   element={<CreateVariantSets />}
                 />
                 <Route path="vendors" element={<Vendors />} />
-                <Route path="edit" element={<EditVendor />} />
+                <Route path="categories/edit" element={<EditVendor />} />
+                <Route path="vendors/edit" element={<EditVendor />} />
+                <Route path="tagsManager/edit" element={<EditVendor />} />
                 <Route path="tagsManager" element={<TagsManager />} />
                 <Route path="tagsManager/edit" element={<EditTags />} />
               </Route>
@@ -268,7 +270,7 @@ function App(props) {
               <Route path="/teams">
                 <Route path="" element={<Navigate to="roles" />} />
                 <Route path="roles" element={<Roles />} />
-                <Route path="create" element={<CreateRoles />} />
+                <Route path="roles/create" element={<CreateRoles />} />
                 <Route path="members" element={<Members />} />
                 <Route path="members/details" element={<MemberDetails />} />
               </Route>
