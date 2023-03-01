@@ -14,6 +14,7 @@ import activity from "../../../assets/icons/activity.svg";
 import editButton from "../../../assets/icons/editButton.svg";
 import duplicateButton from "../../../assets/icons/duplicateButton.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
+import products from "../../../assets/icons/sidenav/products.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -28,8 +29,60 @@ import {
   TablePagination,
   TableRow,
   TableSortLabel,
+  TextField,
+  styled,
+  InputBase,
+  Tooltip,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DesktopDateTimePicker } from "@mui/x-date-pickers";
+// ! MATERIAL ICONS IMPORTS
+import SearchIcon from "@mui/icons-material/Search";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+
+// ? SEARCH INPUT STARTS HERE
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  "&:hover": {
+    backgroundColor: "#1c1b33",
+  },
+  marginLeft: 0,
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: 0,
+    width: "100%",
+  },
+  backgroundColor: "#1c1b33",
+  height: "37.6px",
+  //   marginRight: "8px",
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  paddingLeft: theme.spacing(1.5),
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "inherit",
+  width: "100%",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1.2, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    borderRadius: "5px",
+  },
+}));
+// ? SEARCH INPUT ENDS HERE
 
 const activityData = [
   {
@@ -394,27 +447,6 @@ const AllProductsTable = () => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  // ? ACTIVITY DRAWER STARTS HERE
-  const [activityDrawer, setActivityDrawer] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
-
-  const toggleActivityDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setActivityDrawer({ ...activityDrawer, [anchor]: open });
-  };
-  // ? ACTIVITY DRAWER ENDS HERE
-
   // * EDIT STATUS POPOVERS STARTS
   const [anchorEditStatusEl, setAnchorEditStatusEl] = React.useState(null);
   const handleEditStatusClick = (event) => {
@@ -479,6 +511,54 @@ const AllProductsTable = () => {
   const openMetalFilter = Boolean(anchorMetalFilterEl);
   const idMetalFilter = openMetalFilter ? "simple-popover" : undefined;
   // * METAL FILTER POPOVERS ENDS
+
+  // ? DATE PICKER STARTS
+
+  const [activityDateValue, setActivityDateValue] = React.useState(
+    // moment()
+    new Date()
+  );
+
+  const handleActivityDateChange = (newValue) => {
+    setActivityDateValue(newValue);
+  };
+
+  // ? DATE PICKER ENDS
+
+  // ? ACTIVITY DRAWER STARTS HERE
+  const [activityDrawer, setActivityDrawer] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+
+  const toggleActivityDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setActivityDrawer({ ...activityDrawer, [anchor]: open });
+  };
+  // ? ACTIVITY DRAWER ENDS HERE
+
+  // ? POPOVERS STARTS HERE
+
+  // * ACTIVITY POPOVERS STARTS
+  const [anchorActivityEl, setAnchorActivityEl] = React.useState(null);
+  const handleActivityClick = (event) => {
+    setAnchorActivityEl(event.currentTarget);
+  };
+  const handleActivityClose = () => {
+    setAnchorActivityEl(null);
+  };
+  const openActivity = Boolean(anchorActivityEl);
+  const idActivity = openActivity ? "simple-popover" : undefined;
+  // * ACTIVITY POPOVERS ENDS
 
   return (
     <React.Fragment>
@@ -751,16 +831,28 @@ const AllProductsTable = () => {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <img
-                        src={verticalDots}
-                        alt="verticalDots"
-                        className="c-pointer"
-                        aria-describedby={idActions}
-                        variant="contained"
-                        onClick={handleActionClick}
-                      />
-
+                    <TableCell style={{ width: 80, padding: 0 }}>
+                      <div className="d-flex align-items-center">
+                        <Tooltip title="View" placement="top">
+                          <div className="table-edit-icon rounded-4 p-2">
+                            <VisibilityOutlinedIcon
+                              sx={{
+                                color: "#5c6d8e",
+                                fontSize: 18,
+                                cursor: "pointer",
+                              }}
+                            />
+                          </div>
+                        </Tooltip>
+                        <img
+                          src={verticalDots}
+                          alt="verticalDots"
+                          className="c-pointer"
+                          aria-describedby={idActions}
+                          variant="contained"
+                          onClick={handleActionClick}
+                        />
+                      </div>
                       <Popover
                         anchorOrigin={{
                           vertical: "bottom",
@@ -851,45 +943,116 @@ const AllProductsTable = () => {
         onClose={toggleActivityDrawer("right", false)}
         onOpen={toggleActivityDrawer("right", true)}
       >
-        <div className="d-flex justify-content-between py-3 px-3">
-          <h6 className="text-lightBlue">Activity Of</h6>
-          <img
-            src={cancel}
-            alt="cancel"
-            className="c-pointer filter-icon me-1"
-            onClick={toggleActivityDrawer("right", false)}
-          />
-        </div>
+        <div className="px-3 activity-top bg-black-13 pb-3">
+          <div className="d-flex justify-content-between py-3 px-0">
+            <h6 className="text-lightBlue">View Logs</h6>
+            <img
+              src={cancel}
+              alt="cancel"
+              className="c-pointer filter-icon me-1"
+              onClick={toggleActivityDrawer("right", false)}
+            />
+          </div>
 
-        <div className="px-3">
           <div className="d-flex align-items-center">
             <div className="d-flex align-items-center">
               <img
-                src={ringSmall}
-                alt="ringSmall"
+                src={products}
+                alt="user"
                 className="me-2"
-                height={45}
-                width={45}
+                height={30}
+                width={30}
               />
               <div>
-                <p className="text-lightBlue fw-600">The Fringe Diamond Ring</p>
-                <small className="mt-2 text-grey-6">SKU: TFDR012345</small>
+                <p className="text-lightBlue fw-600">Product Module</p>
+                <small className="mt-2 text-grey-6">
+                  Last modified on 10 Dec, 2022 by Saniya Shaikh
+                </small>
               </div>
             </div>
             <div className="d-flex ms-5">
-              <button className="button-grey py-2 px-3 ms-5">
-                <small className="text-lightBlue">Sort By Date</small>
-                <img src={sortBy} alt="sortBy" className="ms-2" />
-              </button>
-              <button className="button-grey py-2 px-3">
-                <small className="text-lightBlue">Activity</small>
-                <img src={activity} alt="activity" className="ms-2" />
-              </button>
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DesktopDateTimePicker
+                  value={activityDateValue}
+                  onChange={(newValue) => {
+                    handleActivityDateChange(newValue);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      placeholder="Enter Date & Time"
+                      sx={{ width: 210 }}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             </div>
           </div>
-          <table className="table table-borderless mt-4">
-            <thead>
-              <tr className="table-grey-bottom table-grey-top">
+
+          <div className="d-flex mt-3 ">
+            <Search sx={{ border: "1px solid #5c6d8e", background: "#15142a" }}>
+              <SearchIconWrapper>
+                <SearchIcon sx={{ color: "#c8d8ff" }} />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+              />
+            </Search>
+
+            <button
+              className="button-grey py-2 px-3"
+              aria-describedby={idActivity}
+              variant="contained"
+              onClick={handleActivityClick}
+            >
+              <small className="text-lightBlue">Activity</small>
+              <img src={activity} alt="activity" className="ms-2" />
+            </button>
+
+            <Popover
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              id={idActivity}
+              open={openActivity}
+              anchorEl={anchorActivityEl}
+              onClose={handleActivityClose}
+            >
+              <div className="py-2 px-1">
+                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                  Viewed User
+                </small>
+                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                  Edited User
+                </small>
+                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                  Updated User Status
+                </small>
+                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                  Archived User
+                </small>
+                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                  Added Comments
+                </small>
+              </div>
+            </Popover>
+          </div>
+        </div>
+
+        <div className="">
+          <table className="table table-borderless activity-table">
+            <thead className="">
+              <tr className="bg-black-15">
+                <th scope="col">
+                  <small className="text-lightBlue fw-400"></small>
+                </th>
                 <th scope="col">
                   <small className="text-lightBlue fw-400">User</small>
                 </th>
@@ -899,11 +1062,19 @@ const AllProductsTable = () => {
                 <th scope="col">
                   <small className="text-lightBlue fw-400">Date and Time</small>
                 </th>
+                <th scope="col">
+                  <small className="text-lightBlue fw-400"></small>
+                </th>
               </tr>
             </thead>
             <tbody>
               {activityData.map((data) => (
                 <tr key={data.id}>
+                  {/* DONOT REMOVE THIS BLANK COLUMN DONE FOR STYLING */}
+                  <td>
+                    <small className="text-grey-6 fw-400"></small>
+                  </td>
+                  {/* DONOT REMOVE THIS BLANK COLUMN DONE FOR STYLING */}
                   <th scope="row">
                     <div className="d-flex align-items-center">
                       <img
@@ -924,6 +1095,11 @@ const AllProductsTable = () => {
                       {data.dateAndTime}
                     </small>
                   </td>
+                  {/* DONOT REMOVE THIS BLANK COLUMN DONE FOR STYLING */}
+                  <td>
+                    <small className="text-grey-6 fw-400"></small>
+                  </td>
+                  {/* DONOT REMOVE THIS BLANK COLUMN DONE FOR STYLING */}
                 </tr>
               ))}
             </tbody>
