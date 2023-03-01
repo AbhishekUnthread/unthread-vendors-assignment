@@ -328,9 +328,11 @@ const CreateRoles = () => {
                 <p>+ Add New Member</p>
               </button>
             </div>
-            <TableSearch />
+            <div className="col-12 px-0">
+              <TableSearch />
+            </div>
 
-            <div className="d-flex flex-column col-12 px-0">
+            <div className="d-flex flex-column col-12 px-0 pt-2">
               <div className="d-flex justify-content-between my-3">
                 <div className="d-flex align-items-center">
                   <img
@@ -814,12 +816,12 @@ const CreateRoles = () => {
       </div>
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
-          <Link to="/users/allUsers" className="button-red-outline py-2 px-4">
+          <Link to="/teams/roles" className="button-red-outline py-2 px-4">
             <p>Discard</p>
           </Link>
 
           <Link
-            to="/users/allUsers"
+            to="/teams/roles"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
@@ -827,13 +829,13 @@ const CreateRoles = () => {
         </div>
         <div className="d-flex w-auto px-0">
           <Link
-            to="/users/allUsers"
+            to="/teams/roles"
             className="button-lightBlue-outline py-2 px-4"
           >
             <p>Save & Add Another</p>
           </Link>
           <Link
-            to="/users/allUsers"
+            to="/teams/roles"
             className="button-gradient ms-3 py-2 px-4 w-auto"
           >
             <p>Save</p>

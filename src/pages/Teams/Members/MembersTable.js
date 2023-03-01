@@ -452,7 +452,7 @@ const MembersTable = () => {
                       scope="row"
                       padding="none"
                     >
-                      <div className="d-flex align-items-center pt-2 pb-3">
+                      <div className="d-flex align-items-center pt-3 pb-3">
                         <img
                           src={user}
                           alt="user"
@@ -471,6 +471,12 @@ const MembersTable = () => {
                           </Link>
                           <small className="mt-2 text-grey-6">
                             saniya@mydesignar.com
+                            <Tooltip title="Copy" placement="top">
+                              <ContentCopyIcon
+                                sx={{ fontSize: 12, color: "#c8d8ff" }}
+                                className="c-pointer ms-2"
+                              />
+                            </Tooltip>
                           </small>
                         </div>
                       </div>

@@ -672,9 +672,13 @@ const RolesTable = () => {
                           <small className=" text-grey-6 me-2">
                             saniya@mydesignar.com
                           </small>
-                          <ContentCopyIcon
-                            sx={{ fontSize: 12, color: "#c8d8ff" }}
-                          />
+
+                          <Tooltip title="Copy" placement="top">
+                            <ContentCopyIcon
+                              sx={{ fontSize: 12, color: "#c8d8ff" }}
+                              className="c-pointer"
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                     </div>
@@ -701,9 +705,13 @@ const RolesTable = () => {
                           <small className=" text-grey-6 me-2">
                             saniya@mydesignar.com
                           </small>
-                          <ContentCopyIcon
-                            sx={{ fontSize: 12, color: "#c8d8ff" }}
-                          />
+
+                          <Tooltip title="Copy" placement="top">
+                            <ContentCopyIcon
+                              sx={{ fontSize: 12, color: "#c8d8ff" }}
+                              className="c-pointer"
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                     </div>
@@ -730,9 +738,12 @@ const RolesTable = () => {
                           <small className=" text-grey-6 me-2">
                             saniya@mydesignar.com
                           </small>
-                          <ContentCopyIcon
-                            sx={{ fontSize: 12, color: "#c8d8ff" }}
-                          />
+                          <Tooltip title="Copy" placement="top">
+                            <ContentCopyIcon
+                              sx={{ fontSize: 12, color: "#c8d8ff" }}
+                              className="c-pointer"
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                     </div>
@@ -759,9 +770,12 @@ const RolesTable = () => {
                           <small className=" text-grey-6 me-2">
                             saniya@mydesignar.com
                           </small>
-                          <ContentCopyIcon
-                            sx={{ fontSize: 12, color: "#c8d8ff" }}
-                          />
+                          <Tooltip title="Copy" placement="top">
+                            <ContentCopyIcon
+                              sx={{ fontSize: 12, color: "#c8d8ff" }}
+                              className="c-pointer"
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                     </div>

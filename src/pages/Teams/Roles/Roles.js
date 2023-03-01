@@ -10,7 +10,7 @@ import TableSearch from "../../../components/TableSearch/TableSearch";
 // ! IMAGES IMPORTS
 import teams from "../../../assets/icons/sidenav/teams.svg";
 // ! MATERIAL IMPORTS
-import { Box, Paper, Tab, Tabs } from "@mui/material";
+import { Box, Paper, Tab, Tabs, Tooltip } from "@mui/material";
 // ! MATERIAL ICONS IMPORT
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
@@ -25,7 +25,10 @@ const Roles = () => {
       <div className="row justify-content-between align-items-center">
         <div className="d-flex w-auto align-items-center">
           <h4 className="page-heading w-auto ps-0 me-2">Team Roles</h4>
-          <InfoOutlinedIcon sx={{ color: "#c8d8ff", fontSize: 20 }} />
+
+          <Tooltip title="Lorem ipsum" placement="top">
+            <InfoOutlinedIcon sx={{ color: "#c8d8ff", fontSize: 20 }} />
+          </Tooltip>
         </div>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
