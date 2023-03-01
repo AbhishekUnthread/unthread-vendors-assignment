@@ -59,7 +59,7 @@ export const SidebarData = [
   },
   {
     title: "Parameters",
-    path: "/parameters/additionalFields",
+    path: "/parameters",
     image: parameters,
     subNav: [
       {
@@ -101,7 +101,7 @@ export const SidebarData = [
   },
   {
     title: "Users",
-    path: "/users/allUsers",
+    path: "/users",
     image: customers,
     subNav: [
       {
@@ -133,7 +133,7 @@ export const SidebarData = [
   },
   {
     title: "Teams",
-    path: "/teams/roles",
+    path: "/teams",
     image: teams,
     subNav: [
       {

@@ -223,57 +223,55 @@ function App(props) {
             <React.Fragment>
               <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/products/allProducts" element={<AllProducts />} />
-              <Route
-                path="/products/allProducts/addProduct"
-                element={<AddProduct />}
-              />
-              <Route
-                path="/products/bulkEditor"
-                element={<ProductsBulkEditor />}
-              />
-              <Route path="/users/allUsers" element={<AllUsers />} />
-              <Route path="/users/allUsers/add" element={<AddUser />} />
-              <Route path="/users/userGroups" element={<UserGroups />} />
-              <Route path="/users/userEnquiries" element={<UserEnquiries />} />
-              <Route
-                path="/users/userGroups/create"
-                element={<CreateUserGroup />}
-              />
-              <Route path="/users/allUsers/details" element={<UserDetails />} />
-              <Route
-                path="/parameters/additionalFields"
-                element={<AdditionalFields />}
-              />
-              <Route
-                path="/parameters/additionalFields/createFieldSets"
-                element={<CreateFieldSets />}
-              />
-              <Route path="/parameters/categories" element={<Categories />} />
-              <Route path="/parameters/collections" element={<Collections />} />
-              <Route
-                path="/parameters/collections/create"
-                element={<CreateCollection />}
-              />
-              <Route path="/parameters/variantSets" element={<VariantSets />} />
-              <Route
-                path="/parameters/variantSets/edit"
-                element={<CreateVariantSets />}
-              />
-              <Route path="/parameters/vendors" element={<Vendors />} />
-              <Route path="/parameters/edit" element={<EditVendor />} />
-              <Route path="/parameters/tagsManager" element={<TagsManager />} />
-              <Route
-                path="/parameters/tagsManager/edit"
-                element={<EditTags />}
-              />
-              <Route path="/teams/roles" element={<Roles />} />
-              <Route path="/teams/roles/create" element={<CreateRoles />} />
-              <Route path="/teams/members" element={<Members />} />
-              <Route
-                path="/teams/members/details"
-                element={<MemberDetails />}
-              />
+              {/* PRODUCT ROUTES */}
+              <Route path="/products">
+                <Route path="" element={<Navigate to="allProducts" />} />
+                <Route path="allProducts" element={<AllProducts />} />
+                <Route path="allProducts/addProduct" element={<AddProduct />} />
+                <Route path="bulkEditor" element={<ProductsBulkEditor />} />
+              </Route>
+              {/* USERS ROUTES */}
+              <Route path="/users">
+                <Route path="" element={<Navigate to="allUsers" />} />
+                <Route path="allUsers" element={<AllUsers />} />
+                <Route path="allUsers/add" element={<AddUser />} />
+                <Route path="allUsers/details" element={<UserDetails />} />
+                <Route path="userGroups" element={<UserGroups />} />
+                <Route path="userGroups/create" element={<CreateUserGroup />} />
+                <Route path="userEnquiries" element={<UserEnquiries />} />
+              </Route>
+              {/* PARAMETER ROUTES */}
+              <Route path="/parameters">
+                <Route path="" element={<Navigate to="collections" />} />
+                <Route path="additionalFields" element={<AdditionalFields />} />
+                <Route
+                  path="additionalFields/createFieldSets"
+                  element={<CreateFieldSets />}
+                />
+                <Route path="categories" element={<Categories />} />
+                <Route path="collections" element={<Collections />} />
+                <Route
+                  path="collections/create"
+                  element={<CreateCollection />}
+                />
+                <Route path="variantSets" element={<VariantSets />} />
+                <Route
+                  path="variantSets/edit"
+                  element={<CreateVariantSets />}
+                />
+                <Route path="vendors" element={<Vendors />} />
+                <Route path="edit" element={<EditVendor />} />
+                <Route path="tagsManager" element={<TagsManager />} />
+                <Route path="tagsManager/edit" element={<EditTags />} />
+              </Route>
+              {/* TEAM ROUTES */}
+              <Route path="/teams">
+                <Route path="" element={<Navigate to="roles" />} />
+                <Route path="roles" element={<Roles />} />
+                <Route path="create" element={<CreateRoles />} />
+                <Route path="members" element={<Members />} />
+                <Route path="members/details" element={<MemberDetails />} />
+              </Route>
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </React.Fragment>
             {/* ) : (

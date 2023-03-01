@@ -45,22 +45,22 @@ const Sidenav = () => {
               </NavLink>
             ) : (
               <div className="accordion-item bg-transparent" key={index}>
-                {/* <NavLink to={item.path}> */}
-                <ListItem
-                  button
-                  key={item.title}
-                  className="list-item"
-                  data-bs-toggle="collapse"
-                  data-bs-target={"#Accordian" + index}
-                  aria-expanded="true"
-                  aria-controls={"Accordian" + index}
-                >
-                  <ListItemIcon className="me-2 list-icon">
-                    <img src={item.image} alt="dashboard" />
-                  </ListItemIcon>
-                  <ListItemText primary={item.title} className="list-text" />
-                </ListItem>
-                {/* </NavLink> */}
+                <NavLink to={item.path}>
+                  <ListItem
+                    button
+                    key={item.title}
+                    className="list-item"
+                    data-bs-toggle="collapse"
+                    data-bs-target={"#Accordian" + index}
+                    aria-expanded="true"
+                    aria-controls={"Accordian" + index}
+                  >
+                    <ListItemIcon className="me-2 list-icon">
+                      <img src={item.image} alt="dashboard" />
+                    </ListItemIcon>
+                    <ListItemText primary={item.title} className="list-text" />
+                  </ListItem>
+                </NavLink>
                 <div
                   id={"Accordian" + index}
                   className="accordion-collapse collapse "

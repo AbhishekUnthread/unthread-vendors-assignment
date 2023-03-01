@@ -198,9 +198,11 @@ const Members = () => {
                       labelId="demo-select-small"
                       id="demo-select-small"
                       // value={metal}
+                      value=""
                       placeholder="Fixed"
                       // onChange={handleMetalChange}
                     >
+                      <MenuItem value="">None</MenuItem>
                       <MenuItem value={10}>Super Admin</MenuItem>
                       <MenuItem value={20}>Admin</MenuItem>
                       <MenuItem value={30}>Project Manager</MenuItem>

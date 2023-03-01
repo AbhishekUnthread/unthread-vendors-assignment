@@ -912,7 +912,7 @@ const MembersTable = () => {
                       </AccordionSummary>
                       <AccordionDetails>
                         <FormGroup className="tags-checkbox">
-                          {e.accDetails.map((sub) => (
+                          {e.accDetails.map((sub, i) => (
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -923,6 +923,7 @@ const MembersTable = () => {
                                   }}
                                 />
                               }
+                              key={i}
                               label={sub.name}
                             />
                           ))}
