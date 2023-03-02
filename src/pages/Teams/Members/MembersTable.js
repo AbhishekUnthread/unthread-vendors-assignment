@@ -48,6 +48,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 // ? PERMISSIONS ACCORDIAN STARTS HERE
 const Accordion = styled((props) => (
@@ -387,7 +389,7 @@ const MembersTable = () => {
   return (
     <React.Fragment>
       {selected.length > 0 && (
-        <div className="d-flex justify-content-between align-items-center px-2 mb-3">
+        <div className="d-flex align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
             <small className="text-lightBlue">
               {selected.length} users are selected&nbsp;
@@ -399,6 +401,8 @@ const MembersTable = () => {
               </span>
             </small>
           </button>
+          <TableEditStatusButton />
+          <TableMassActionButton />
         </div>
       )}
       <TableContainer>

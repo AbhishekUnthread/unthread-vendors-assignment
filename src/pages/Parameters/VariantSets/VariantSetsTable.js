@@ -20,6 +20,8 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 
 // ? TABLE STARTS HERE
 function createData(vId, variantSets, variants) {
@@ -113,7 +115,7 @@ const VariantSetsTable = () => {
   return (
     <React.Fragment>
       {selected.length > 0 && (
-        <div className="d-flex justify-content-between align-items-center px-2 mb-3">
+        <div className="d-flex align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
             <small className="text-lightBlue">
               {selected.length} option sets are selected&nbsp;
@@ -125,6 +127,8 @@ const VariantSetsTable = () => {
               </span>
             </small>
           </button>
+          <TableEditStatusButton />
+          <TableMassActionButton />
         </div>
       )}
       <TableContainer>

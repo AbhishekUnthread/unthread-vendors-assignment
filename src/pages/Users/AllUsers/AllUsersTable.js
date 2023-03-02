@@ -27,6 +27,8 @@ import {
 // ! MATERIAL ICON IMPORTS
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 // ? TABLE STARTS HERE
 function createData(
@@ -232,83 +234,8 @@ const AllUsersTable = () => {
             <button className="button-grey py-2 px-3 ms-2">
               <small className="text-lightBlue">Edit Users</small>
             </button>
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idEditStatus}
-              variant="contained"
-              onClick={handleEditStatusClick}
-            >
-              <small className="text-lightBlue">Edit Status</small>
-              <img src={arrowDown} alt="arrowDown" className="ms-2" />
-            </button>
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idMassAction}
-              variant="contained"
-              onClick={handleMassActionClick}
-            >
-              <small className="text-lightBlue">Mass Action</small>
-              <img src={arrowDown} alt="arrowDown" className="ms-2" />
-            </button>
-
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              id={idEditStatus}
-              open={openEditStatus}
-              anchorEl={anchorEditStatusEl}
-              onClose={handleEditStatusClose}
-            >
-              <div className="py-2 px-1">
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Set as Active
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Set as Draft
-                </small>
-              </div>
-            </Popover>
-
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              id={idMassAction}
-              open={openMassAction}
-              anchorEl={anchorMassActionEl}
-              onClose={handleMassActionClose}
-            >
-              <div className="py-2 px-2">
-                <small className="text-grey-7 px-2">ACTIONS</small>
-                <hr className="hr-grey-6 my-2" />
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit User
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit User Group
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add or Remove Tags
-                </small>
-                <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                  <small className="text-lightBlue font2 d-block">
-                    Archived User
-                  </small>
-                  <img src={deleteRed} alt="delete" className="" />
-                </div>
-              </div>
-            </Popover>
+            <TableEditStatusButton />
+            <TableMassActionButton />
           </div>
         </div>
       )}

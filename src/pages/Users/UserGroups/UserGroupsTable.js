@@ -21,6 +21,8 @@ import {
   TableRow,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 // ? TABLE STARTS HERE
 function createData(uId, groupName, usersInGroup, status) {
@@ -148,7 +150,7 @@ const UserGroupsTable = () => {
   return (
     <React.Fragment>
       {selected.length > 0 && (
-        <div className="d-flex justify-content-between align-items-center px-2 mb-3">
+        <div className="d-flex align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
             <small className="text-lightBlue">
               {selected.length} products are selected&nbsp;
@@ -160,6 +162,8 @@ const UserGroupsTable = () => {
               </span>
             </small>
           </button>
+          <TableEditStatusButton />
+          <TableMassActionButton />
         </div>
       )}
       <TableContainer>
