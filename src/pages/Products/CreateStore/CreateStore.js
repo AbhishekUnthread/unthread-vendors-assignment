@@ -33,6 +33,7 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
 import StatusBox from "../../../components/StatusBox/StatusBox";
+import AppGoogleMaps from "../../../components/AppGoogleMaps/AppGoogleMaps";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -93,7 +94,7 @@ const CreateStore = () => {
     <div className="page container-fluid position-relative">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/users/allUsers" className="d-flex">
+          <Link to="/products/inventory" className="d-flex">
             <img
               src={arrowLeft}
               alt="arrowLeft"
@@ -102,7 +103,7 @@ const CreateStore = () => {
             />
           </Link>
 
-          <h5 className="page-heading ms-2 ps-1">Add New Users</h5>
+          <h5 className="page-heading ms-2 ps-1">Create Store</h5>
         </div>
       </div>
       <div className="row mt-3">
@@ -214,7 +215,25 @@ const CreateStore = () => {
               </div>
               <AppStateSelect />
             </div>
-
+            <div className="col-12 px-0 mt-3">
+              {/* <AppGoogleMaps
+                isMarkerShown
+                googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"
+                loadingElement={<div style={{ height: `100%` }} />}
+                containerElement={<div style={{ height: `400px` }} />}
+                mapElement={<div style={{ height: `100%` }} />}
+              /> */}
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15282225.79979123!2d73.7250245393691!3d20.750301298393563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30635ff06b92b791%3A0xd78c4fa1854213a6!2sIndia!5e0!3m2!1sen!2sin!4v1587818542745!5m2!1sen!2sin"
+                width="100%"
+                height="300"
+                frameborder="0"
+                style={{ border: 0 }}
+                allowfullscreen=""
+                aria-hidden="false"
+                tabindex="0"
+              ></iframe>
+            </div>
             <div className="col-md-6 mt-3 ps-0">
               <p className="text-lightBlue mb-1">Latitude</p>
               <FormControl className="w-100">

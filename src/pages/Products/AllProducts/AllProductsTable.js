@@ -722,7 +722,7 @@ const AllProductsTable = () => {
                       scope="row"
                       padding="none"
                     >
-                      <div className="d-flex align-items-center">
+                      <div className="d-flex align-items-center py-3">
                         <img
                           src={ringSmall}
                           alt="ringSmall"

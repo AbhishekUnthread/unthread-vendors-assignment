@@ -9,7 +9,7 @@ import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSec
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 // ! IMAGES IMPORTS
-import parameters from "../../../assets/icons/sidenav/parameters.svg";
+import products from "../../../assets/icons/sidenav/products.svg";
 // ! MATERIAL IMPORTS
 import { Box, Paper, Tab, Tabs } from "@mui/material";
 
@@ -25,7 +25,7 @@ const ProductInventory = () => {
         <h4 className="page-heading w-auto ps-0">Inventory</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Product Inventory"} icon={parameters} />
+          <ViewLogsDrawer headingName={"Product Inventory"} icon={products} />
           <button className="button-transparent py-2 px-3 me-1">
             <p className="text-lightBlue">Transfer Inventory</p>
           </button>
