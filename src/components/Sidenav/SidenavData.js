@@ -37,7 +37,7 @@ export const SidebarData = [
       },
       {
         title: "Inventory",
-        path: "/",
+        path: "/products/inventory",
         image: products,
       },
       {
@@ -47,7 +47,7 @@ export const SidebarData = [
       },
       {
         title: "Product Reviews",
-        path: "/",
+        path: "/products/reviews",
         image: products,
       },
       {

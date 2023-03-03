@@ -47,6 +47,10 @@ import Members from "./pages/Teams/Members/Members";
 import MemberDetails from "./pages/Teams/MemberDetails/MemberDetails";
 import ProductsBulkEditor from "./pages/Products/ProductsBulkEditor/ProductsBulkEditor";
 import ProductReviews from "./pages/Products/ProductReviews/ProductReviews";
+import CreateReview from "./pages/Products/CreateReview/CreateReview";
+import ProductInventory from "./pages/Products/ProductIntventory/ProductIntventory";
+import CreateStore from "./pages/Products/CreateStore/CreateStore";
+import ProductInventroyDetails from "./pages/Products/ProductInventroyDetails/ProductInventroyDetails";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -231,6 +235,13 @@ function App(props) {
                 <Route path="allProducts/addProduct" element={<AddProduct />} />
                 <Route path="bulkEditor" element={<ProductsBulkEditor />} />
                 <Route path="reviews" element={<ProductReviews />} />
+                <Route path="reviews/create" element={<CreateReview />} />
+                <Route path="inventory" element={<ProductInventory />} />
+                <Route path="inventory/create" element={<CreateStore />} />
+                <Route
+                  path="inventory/details"
+                  element={<ProductInventroyDetails />}
+                />
               </Route>
               {/* USERS ROUTES */}
               <Route path="/users">

@@ -116,14 +116,14 @@ const Sidenav = () => {
             <ListItemText primary="Functionality" className="list-text" />
           </ListItem>
         </NavLink>
-        <NavLink to="/emailers">
+        {/* <NavLink to="/emailers">
           <ListItem button key="Emailers" className="list-item">
             <ListItemIcon className="me-2 list-icon">
               <img src={emailers} alt="emailers" />
             </ListItemIcon>
             <ListItemText primary="Emailers" className="list-text" />
           </ListItem>
-        </NavLink>
+        </NavLink> */}
         <NavLink to="/globalStore">
           <ListItem button key="Global Store" className="list-item">
             <ListItemIcon className="me-2 list-icon">

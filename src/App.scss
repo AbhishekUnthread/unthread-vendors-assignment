@@ -127,6 +127,26 @@
       cursor: not-allowed;
     }
   }
+  &-green-outline {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    border-radius: 5px;
+    border: 1px solid $green2;
+    color: $green2;
+    text-decoration: none;
+    min-width: max-content;
+    &:hover {
+      background: $green2;
+      color: $black1;
+    }
+    &:disabled {
+      background: $grey1;
+      cursor: not-allowed;
+    }
+  }
   &-lightBlue-outline {
     display: flex;
     flex-direction: row;
