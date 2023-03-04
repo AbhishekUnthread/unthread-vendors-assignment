@@ -1,72 +1,73 @@
 import React from "react";
-// ! COMPONENTS IMPORTS
+import { Link } from "react-router-dom";
+// ! COMPONENT IMPORTS
 import {
   EnhancedTableHead,
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
-// ! IMAGES IMPORTS
-import verticalDots from "../../../assets/icons/verticalDots.svg";
-import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
-import deleteRed from "../../../assets/icons/delete.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
-  Popover,
+  Chip,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TablePagination,
   TableRow,
+  Tooltip,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+// ! MATERIAL ICONS IMPORTS
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import InventoryIcon from "@mui/icons-material/Inventory";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 
 // ? TABLE STARTS HERE
-function createData(uId, groupName, usersInGroup, status) {
-  return { uId, groupName, usersInGroup, status };
+function createData(vId, dataTitle, dataValues, appearance) {
+  return { vId, dataTitle, dataValues, appearance };
 }
 
 const rows = [
-  createData(1, "VIP", "100", "Active"),
-  createData(2, "VVIP", "50", "Active"),
-  createData(3, "Wholesalers", "20", "Active"),
+  createData(1, "Size", ["Silver", "Gold", "Platinum"], "Dropdown"),
+  createData(2, "Size", ["Silver", "Gold", "Platinum"], "Dropdown"),
+  createData(3, "Size", ["Silver", "Gold", "Platinum"], "Dropdown"),
+  createData(4, "Size", ["Silver", "Gold", "Platinum"], "Dropdown"),
+  createData(5, "Size", ["Silver", "Gold", "Platinum"], "Dropdown"),
 ];
 
 const headCells = [
   {
-    id: "groupName",
+    id: "dataTitle",
     numeric: false,
     disablePadding: true,
-    label: "Group Name",
+    label: "Data Title",
   },
   {
-    id: "usersInGroup",
+    id: "dataValues",
     numeric: false,
     disablePadding: false,
-    label: "Users in Group",
+    label: "Data Values",
   },
   {
-    id: "status",
+    id: "appearance",
     numeric: false,
     disablePadding: false,
-    label: "Group Status",
+    label: "Appearance",
   },
   {
     id: "actions",
     numeric: false,
     disablePadding: true,
-    label: "",
+    label: "Actions",
   },
 ];
-
 // ? TABLE ENDS HERE
 
-const UserGroupsTable = () => {
+const DataSetsTable = () => {
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("groupName");
+  const [orderBy, setOrderBy] = React.useState("dataTitle");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -86,7 +87,7 @@ const UserGroupsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.uId);
+      const newSelected = rows.map((n) => n.vId);
       setSelected(newSelected);
       return;
     }
@@ -120,28 +121,13 @@ const UserGroupsTable = () => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  // * ACTION POPOVERS STARTS
-  const [anchorActionEl, setAnchorActionEl] = React.useState(null);
-
-  const handleActionClick = (event) => {
-    setAnchorActionEl(event.currentTarget);
-  };
-
-  const handleActionClose = () => {
-    setAnchorActionEl(null);
-  };
-
-  const openActions = Boolean(anchorActionEl);
-  const idActions = openActions ? "simple-popover" : undefined;
-  // * ACTION POPOVERS ENDS
-
   return (
     <React.Fragment>
       {selected.length > 0 && (
         <div className="d-flex align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
             <small className="text-lightBlue">
-              {selected.length} products are selected&nbsp;
+              {selected.length} option sets are selected&nbsp;
               <span
                 className="text-blue-2 c-pointer"
                 onClick={() => setSelected([])}
@@ -173,7 +159,7 @@ const UserGroupsTable = () => {
             {stableSort(rows, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const isItemSelected = isSelected(row.uId);
+                const isItemSelected = isSelected(row.vId);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -182,7 +168,7 @@ const UserGroupsTable = () => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.uId}
+                    key={row.vId}
                     selected={isItemSelected}
                     className="table-rows"
                   >
@@ -192,7 +178,7 @@ const UserGroupsTable = () => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.uId)}
+                        onClick={(event) => handleClick(event, row.vId)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -206,68 +192,54 @@ const UserGroupsTable = () => {
                       padding="none"
                     >
                       <Link
-                        to="/users/userGroups/create"
-                        className="d-flex align-items-center text-decoration-none c-pointer"
+                        className="text-decoration-none"
+                        to="/parameters/createFieldSets"
                       >
                         <p className="text-lightBlue rounded-circle fw-600">
-                          {row.groupName}
+                          {row.dataTitle}
                         </p>
                       </Link>
                     </TableCell>
-                    <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.usersInGroup}</p>
-                    </TableCell>
-                    <TableCell style={{ width: 180 }}>
-                      <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.status}
-                          </small>
-                        </div>
+                    <TableCell>
+                      <div className="d-flex">
+                        {row.dataValues.map((e) => (
+                          <Chip
+                            label={e}
+                            size="small"
+                            className="px-1 me-2"
+                            variant="outlined"
+                          />
+                        ))}
                       </div>
                     </TableCell>
-                    <TableCell style={{ width: 60 }}>
-                      <img
-                        src={verticalDots}
-                        alt="verticalDots"
-                        className="c-pointer"
-                        aria-describedby={idActions}
-                        variant="contained"
-                        onClick={handleActionClick}
-                      />
-
-                      <Popover
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "center",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "center",
-                        }}
-                        id={idActions}
-                        open={openActions}
-                        anchorEl={anchorActionEl}
-                        onClose={handleActionClose}
-                      >
-                        <div className="py-2 px-2">
-                          <small className="text-grey-7 px-2">ACTIONS</small>
-                          <hr className="hr-grey-6 my-2" />
-                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                            Edit User Groups
-                          </small>
-                          <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                            <small className="text-lightBlue font2 d-block">
-                              Delete Groups
-                            </small>
-                            <img
-                              src={deleteRed}
-                              alt="delete"
-                              className="ms-2"
+                    <TableCell style={{ width: 200 }}>
+                      <p className="text-lightBlue">{row.appearance}</p>
+                    </TableCell>
+                    <TableCell style={{ width: 120, padding: 0 }}>
+                      <div className="d-flex align-items-center">
+                        <Tooltip title="Edit" placement="top">
+                          <div className="table-edit-icon rounded-4 p-2">
+                            <EditOutlinedIcon
+                              sx={{
+                                color: "#5c6d8e",
+                                fontSize: 18,
+                                cursor: "pointer",
+                              }}
                             />
                           </div>
-                        </div>
-                      </Popover>
+                        </Tooltip>
+                        <Tooltip title="Archive" placement="top">
+                          <div className="table-edit-icon rounded-4 p-2">
+                            <InventoryIcon
+                              sx={{
+                                color: "#5c6d8e",
+                                fontSize: 18,
+                                cursor: "pointer",
+                              }}
+                            />
+                          </div>
+                        </Tooltip>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -298,4 +270,4 @@ const UserGroupsTable = () => {
   );
 };
 
-export default UserGroupsTable;
+export default DataSetsTable;

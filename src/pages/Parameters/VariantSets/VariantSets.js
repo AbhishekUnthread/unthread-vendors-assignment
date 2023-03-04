@@ -12,6 +12,7 @@ import VariantSetsTable from "./VariantSetsTable";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 // ! MATERIAL IMPORTS
 import { Box, Paper, Tab, Tabs } from "@mui/material";
+import DataSetsTable from "./DataSetsTable";
 // ! MATERIAL ICONS IMPORTS
 
 const VariantSets = () => {
@@ -36,7 +37,7 @@ const VariantSets = () => {
             to="/parameters/variantSets/edit"
             className="button-gradient py-2 px-4 ms-3"
           >
-            <p>+ Create Option Sets</p>
+            <p>+ Add Data</p>
           </Link>
         </div>
       </div>
@@ -59,20 +60,17 @@ const VariantSets = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Draft" className="tabs-head" />
+              <Tab label="Data" className="tabs-head" />
+              <Tab label="Options Sets" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
           </div>
           <TabPanel value={value} index={0}>
-            <VariantSetsTable />
+            <DataSetsTable />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <VariantSetsTable />
-          </TabPanel>
-          <TabPanel value={value} index={2}>
             <VariantSetsTable />
           </TabPanel>
         </Paper>

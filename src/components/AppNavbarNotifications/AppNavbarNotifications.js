@@ -31,6 +31,7 @@ import {
 } from "@mui/material";
 // ! IMAGES IMPORTS
 import rolesOwner from "../../assets/images/teams/rolesOwner.svg";
+import arrowDown from "../../assets/icons/arrowDown.svg";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
@@ -92,6 +93,18 @@ const AppNavbarNotifications = () => {
   const idPopper = openPopper ? "simple-popper" : undefined;
   // ? POPPER ENDS HERE
 
+  // * METAL FILTER POPOVERS STARTS
+  const [anchorMetalFilterEl, setAnchorMetalFilterEl] = React.useState(null);
+  const handleMetalFilter = (event) => {
+    setAnchorMetalFilterEl(event.currentTarget);
+  };
+  const handleMetalFilterClose = () => {
+    setAnchorMetalFilterEl(null);
+  };
+  const openMetalFilter = Boolean(anchorMetalFilterEl);
+  const idMetalFilter = openMetalFilter ? "simple-popover" : undefined;
+  // * METAL FILTER POPOVERS ENDS
+
   return (
     <React.Fragment>
       <IconButton
@@ -123,7 +136,47 @@ const AppNavbarNotifications = () => {
       >
         <div className="d-flex flex-column my-3">
           <div className="d-flex align-items-center justify-content-between px-3 navbar-popover-heading">
-            <h6 className="text-lightBlue fw-500">Notification</h6>
+            <div className="d-flex">
+              <div className="d-flex align-items-center">
+                <h6 className="text-lightBlue fw-500 me-2">Notification</h6>
+                <div
+                  className="rounded-pill d-flex button-transparent px-2 py-1 c-pointer border-grey-5"
+                  aria-describedby={idMetalFilter}
+                  variant="contained"
+                  onClick={handleMetalFilter}
+                >
+                  <small className="text-lightBlue fw-400">All</small>
+                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                </div>
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  id={idMetalFilter}
+                  open={openMetalFilter}
+                  anchorEl={anchorMetalFilterEl}
+                  onClose={handleMetalFilterClose}
+                >
+                  <div className="py-2 px-1">
+                    <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                      All
+                    </small>
+                    <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                      Unread
+                    </small>
+                    <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                      Unseen
+                    </small>
+                  </div>
+                </Popover>
+              </div>
+            </div>
+
             <img
               src={cancel}
               alt="cancel"
