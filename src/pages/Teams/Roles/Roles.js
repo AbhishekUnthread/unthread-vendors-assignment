@@ -27,7 +27,10 @@ const Roles = () => {
           <h4 className="page-heading w-auto ps-0 me-2">Team Roles</h4>
 
           <Tooltip title="Lorem ipsum" placement="top">
-            <InfoOutlinedIcon sx={{ color: "#c8d8ff", fontSize: 20 }} />
+            <InfoOutlinedIcon
+              sx={{ color: "#c8d8ff", fontSize: 20 }}
+              className="c-pointer"
+            />
           </Tooltip>
         </div>
         <div className="d-flex align-items-center w-auto pe-0">

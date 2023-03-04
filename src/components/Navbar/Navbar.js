@@ -5,15 +5,27 @@ import "./Navbar.scss";
 import user from "../../assets/icons/user.svg";
 import menuClose from "../../assets/icons/sidenav/menuClose.svg";
 import menuOpen from "../../assets/icons/sidenav/menuOpen.svg";
+import cancel from "../../assets/icons/cancel.svg";
 // ! MATERIAL IMPORTS
 import {
   AppBar,
   Badge,
   Box,
+  Checkbox,
+  FormControlLabel,
   IconButton,
   InputBase,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Menu,
   MenuItem,
+  Popover,
+  Popper,
+  Tab,
+  Tabs,
   Toolbar,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
@@ -25,6 +37,13 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import TabPanel from "../TabPanel/TabPanel";
+import AppNavbarNotes from "../AppNavbarNotes/AppNavbarNotes";
+import AppNavbarNotifications from "../AppNavbarNotifications/AppNavbarNotifications";
+import LogoutIcon from "@mui/icons-material/Logout";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 // import LightModeIcon from "@mui/icons-material/LightMode";
 // import DarkModeIcon from "@mui/icons-material/DarkMode";
 
@@ -117,8 +136,31 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>
+        <PersonOutlineOutlinedIcon
+          size="small"
+          sx={{ color: "#c8d8ff", fontSize: 18 }}
+        />
+        <small className="text-lightBlue ms-2">My Account</small>
+      </MenuItem>
+      <MenuItem onClick={handleMenuClose} className="mt-1">
+        <HelpOutlineOutlinedIcon
+          size="small"
+          sx={{ color: "#c8d8ff", fontSize: 18 }}
+        />
+        <small className="text-lightBlue ms-2">Help & Support</small>
+      </MenuItem>
+      <MenuItem onClick={handleMenuClose} className="mt-1">
+        <SettingsOutlinedIcon
+          size="small"
+          sx={{ color: "#c8d8ff", fontSize: 18 }}
+        />
+        <small className="text-lightBlue ms-2">Settings</small>
+      </MenuItem>
+      <MenuItem onClick={handleMenuClose} className="mt-1">
+        <LogoutIcon size="small" sx={{ color: "#FC756E", fontSize: 18 }} />
+        <small className="text-red-5 ms-2">Log out</small>
+      </MenuItem>
     </Menu>
   );
 
@@ -217,27 +259,9 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
             >
               {lightTheme ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton> */}
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="purple" size="small">
-                <DescriptionOutlinedIcon
-                  sx={{ color: "#c8d8ff" }}
-                  size="small"
-                />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={7} color="purple" size="small">
-                <NotificationsNoneIcon size="small" sx={{ color: "#c8d8ff" }} />
-              </Badge>
-            </IconButton>
+
+            <AppNavbarNotes />
+            <AppNavbarNotifications />
             <IconButton
               size="large"
               edge="end"

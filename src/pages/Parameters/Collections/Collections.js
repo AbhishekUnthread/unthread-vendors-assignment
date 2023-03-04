@@ -11,7 +11,9 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 // ! IMAGES IMPORTS
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 // ! MATERIAL IMPORTS
-import { Box, Paper, Tab, Tabs } from "@mui/material";
+import { Box, Paper, Tab, Tabs, Tooltip } from "@mui/material";
+// ! MATERIAL ICONS IMPORT
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const Collections = () => {
   const [value, setValue] = React.useState(0);
@@ -23,6 +25,12 @@ const Collections = () => {
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
         <h4 className="page-heading w-auto ps-0">Collections</h4>
+        <Tooltip title="Lorem ipsum" placement="top">
+          <InfoOutlinedIcon
+            sx={{ color: "#c8d8ff", fontSize: 20 }}
+            className="c-pointer"
+          />
+        </Tooltip>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
           <ViewLogsDrawer

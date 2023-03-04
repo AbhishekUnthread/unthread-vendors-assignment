@@ -1,0 +1,15 @@
+.navbar-popover {
+  .MuiPaper-root {
+    padding: 0;
+    // position: relative;
+  }
+  .nav-tab-panel {
+    max-height: 300px;
+    overflow: auto;
+  }
+  &-heading {
+    // position: fixed;
+    // top: 0;
+    // background: $black13;
+  }
+}

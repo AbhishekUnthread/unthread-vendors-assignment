@@ -102,7 +102,7 @@ const AddNotesDialog = () => {
               },
             }}
             className=" px-0"
-          />{" "}
+          />
           <TextareaAutosize
             aria-label="meta description"
             placeholder="Type Something"
