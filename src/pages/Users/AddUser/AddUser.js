@@ -154,7 +154,7 @@ const AddUser = () => {
                         value={10}
                         sx={{ fontSize: 13, color: "#5c6d8e" }}
                       >
-                        Male{" "}
+                        Male
                       </MenuItem>
                       <MenuItem
                         value={20}

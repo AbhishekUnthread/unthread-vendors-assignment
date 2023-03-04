@@ -33,12 +33,21 @@ const VariantSets = () => {
           />
           <ExportDialog dialogName={"Option Sets"} />
           <ImportSecondDialog dialogName={"Option Sets"} />
-          <Link
-            to="/parameters/variantSets/edit"
-            className="button-gradient py-2 px-4 ms-3"
-          >
-            <p>+ Add Data</p>
-          </Link>
+          {value === 0 ? (
+            <Link
+              to="/parameters/variantSets/dataSets/create"
+              className="button-gradient py-2 px-4 ms-3"
+            >
+              <p>+ Add Data</p>
+            </Link>
+          ) : (
+            <Link
+              to="/parameters/variantSets/edit"
+              className="button-gradient py-2 px-4 ms-3"
+            >
+              <p>+ Create Variant Sets</p>
+            </Link>
+          )}
         </div>
       </div>
 

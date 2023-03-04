@@ -51,6 +51,7 @@ import CreateReview from "./pages/Products/CreateReview/CreateReview";
 import ProductInventory from "./pages/Products/ProductIntventory/ProductIntventory";
 import CreateStore from "./pages/Products/CreateStore/CreateStore";
 import ProductInventroyDetails from "./pages/Products/ProductInventroyDetails/ProductInventroyDetails";
+import CreateDataSets from "./pages/Parameters/CreateDataSets/CreateDataSets";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -271,6 +272,10 @@ function App(props) {
                 <Route
                   path="variantSets/edit"
                   element={<CreateVariantSets />}
+                />
+                <Route
+                  path="variantSets/dataSets/create"
+                  element={<CreateDataSets />}
                 />
                 <Route path="vendors" element={<Vendors />} />
                 <Route path="categories/edit" element={<EditVendor />} />
