@@ -59,8 +59,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
-  // border: `1px solid ${theme.palette.divider}`,
-  // background: "transparent",
   "&:not(:last-child)": {
     borderBottom: 0,
   },
@@ -71,15 +69,11 @@ const Accordion = styled((props) => (
 
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
-    // sx={{
-    //   pointerEvents: "none",
-    // }}
     expandIcon={
       <ArrowForwardIosSharpIcon
         sx={{
           fontSize: "0.9rem",
           color: "#c8d8ff",
-          // pointerEvents: "auto"
         }}
       />
     }
@@ -287,9 +281,6 @@ const CreateRoles = () => {
         </div>
 
         <div className="d-flex align-items-center w-auto pe-0">
-          {/* <button className="button-transparent me-1 py-2 px-3">
-            <p className="text-lightBlue">Duplicate</p>
-          </button> */}
           <img
             src={paginationLeft}
             alt="paginationLeft"
@@ -592,7 +583,6 @@ const CreateRoles = () => {
                       style={{
                         color: "#5C6D8E",
                         marginRight: 0,
-                        // pointerEvents: "auto",
                       }}
                     />
                   }
@@ -601,7 +591,6 @@ const CreateRoles = () => {
                     "& .MuiTypography-root": {
                       fontSize: 14,
                       color: "#c8d8ff",
-                      // pointerEvents: "auto",
                     },
                   }}
                 />
@@ -627,7 +616,6 @@ const CreateRoles = () => {
                           style={{
                             color: "#5C6D8E",
                             marginRight: 0,
-                            // pointerEvents: "auto",
                           }}
                         />
                       }
@@ -636,7 +624,6 @@ const CreateRoles = () => {
                         "& .MuiTypography-root": {
                           fontSize: 14,
                           color: "#c8d8ff",
-                          // pointerEvents: "auto",
                         },
                       }}
                     />
@@ -646,19 +633,8 @@ const CreateRoles = () => {
                       aria-describedby={idAccess}
                       variant="contained"
                       onClick={handleAccessClick}
-                      // sx={{
-                      //   pointerEvents: "auto",
-                      // }}
                     >
-                      <small
-                        className="text-lightBlue"
-                        // sx={{
-                        //   pointerEvents: "auto",
-                        // }}
-                      >
-                        View Access
-                      </small>
-                      {/* <img src={activity} alt="activity" className="ms-2" /> */}
+                      <small className="text-lightBlue">View Access</small>
                     </button>
 
                     <Popover
@@ -715,7 +691,6 @@ const CreateRoles = () => {
             onOpen={toggleAddMemberDrawer("right", true)}
             className="role-drawer"
           >
-            {" "}
             <div className="d-flex align-items-center pt-3 px-3">
               <KeyboardArrowLeftOutlinedIcon
                 sx={{ fontSize: 25, color: "#c8d8ff" }}

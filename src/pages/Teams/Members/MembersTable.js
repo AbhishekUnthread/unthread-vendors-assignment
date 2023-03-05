@@ -11,7 +11,6 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 import rolesAdmin from "../../../assets/images/teams/rolesAdmin.svg";
 import user from "../../../assets/images/users/user.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 // ! MATERIAL IMPORTS
@@ -33,8 +32,6 @@ import {
   FormControlLabel,
   FormGroup,
   styled,
-  Autocomplete,
-  TextField,
 } from "@mui/material";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
@@ -46,8 +43,6 @@ import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeft
 import ChatIcon from "@mui/icons-material/Chat";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
@@ -55,7 +50,6 @@ import TableMassActionButton from "../../../components/TableMassActionButton/Tab
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
-  // border: `1px solid ${theme.palette.divider}`,
   "&:not(:last-child)": {
     borderBottom: 0,
   },
@@ -66,15 +60,11 @@ const Accordion = styled((props) => (
 
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
-    // sx={{
-    //   pointerEvents: "none",
-    // }}
     expandIcon={
       <ArrowForwardIosSharpIcon
         sx={{
           fontSize: "0.9rem",
           color: "#c8d8ff",
-          // pointerEvents: "auto"
         }}
       />
     }
@@ -195,21 +185,6 @@ const permissionAccordionData = [
   },
 ];
 // ? PERMISSIONS ACCORDIAN ENDS HERE
-
-const taggedWithData = [
-  { title: "Tag 1", value: "tag1" },
-  { title: "Tag 2", value: "tag2" },
-  { title: "Tag 3", value: "tag3" },
-  { title: "Tag 4", value: "tag4" },
-  { title: "Tag 5", value: "tag5" },
-  { title: "Tag 6", value: "tag6" },
-  { title: "Tag 7", value: "tag7" },
-  { title: "Tag 8", value: "tag8" },
-  { title: "Tag 9", value: "tag9" },
-  { title: "Tag 10", value: "tag10" },
-  { title: "Tag 11", value: "tag11" },
-  { title: "Tag 12", value: "tag12" },
-];
 
 // ? TABLE STARTS HERE
 function createData(tId, userName, role, createdOn, actions) {
@@ -371,21 +346,6 @@ const MembersTable = () => {
   const idActions = openActions ? "simple-popover" : undefined;
   // * ACTION POPOVERS ENDS
 
-  // * TAGGED WITH POPOVERS STARTS
-  const [anchorTaggedWithEl, setAnchorTaggedWithEl] = React.useState(null);
-
-  const handleTaggedWithClick = (event) => {
-    setAnchorTaggedWithEl(event.currentTarget);
-  };
-
-  const handleTaggedWithClose = () => {
-    setAnchorTaggedWithEl(null);
-  };
-
-  const openTaggedWith = Boolean(anchorTaggedWithEl);
-  const idTaggedWith = openTaggedWith ? "simple-popover" : undefined;
-  // * TAGGED WITH POPOVERS ENDS
-
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -486,70 +446,9 @@ const MembersTable = () => {
                       </div>
                     </TableCell>
                     <TableCell style={{ width: 160 }}>
-                      <div
-                        className="d-flex align-items-center c-pointer"
-                        // aria-describedby={idTaggedWith}
-                        // variant="contained"
-                        // onClick={handleTaggedWithClick}
-                      >
+                      <div className="d-flex align-items-center c-pointer">
                         <p className="text-lightBlue">{row.role}</p>
-                        {/* <img src={arrowDown} alt="arrowDown" className="ms-2" /> */}
                       </div>
-                      {/* <Popover
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "left",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "left",
-                        }}
-                        id={idTaggedWith}
-                        open={openTaggedWith}
-                        anchorEl={anchorTaggedWithEl}
-                        onClose={handleTaggedWithClose}
-                      >
-                        <div className="py-2">
-                          <Autocomplete
-                            multiple
-                            id="checkboxes-tags-demo"
-                            sx={{ width: 300 }}
-                            options={taggedWithData}
-                            disableCloseOnSelect
-                            getOptionLabel={(option) => option.title}
-                            size="small"
-                            renderOption={(props, option, { selected }) => (
-                              <li {...props}>
-                                <Checkbox
-                                  icon={
-                                    <CheckBoxOutlineBlankIcon fontSize="small" />
-                                  }
-                                  checkedIcon={
-                                    <CheckBoxIcon fontSize="small" />
-                                  }
-                                  checked={selected}
-                                  size="small"
-                                  style={{
-                                    color: "#5C6D8E",
-                                    marginRight: 0,
-                                  }}
-                                />
-                                <small className="text-lightBlue">
-                                  {option.title}
-                                </small>
-                              </li>
-                            )}
-                            renderInput={(params) => (
-                              <TextField
-                                size="small"
-                                {...params}
-                                placeholder="Search"
-                                inputRef={(input) => input?.focus()}
-                              />
-                            )}
-                          />
-                        </div>
-                      </Popover> */}
                     </TableCell>
                     <TableCell style={{ width: 260 }}>
                       <div className="d-flex align-items-center">
@@ -862,7 +761,6 @@ const MembersTable = () => {
                                 style={{
                                   color: "#5C6D8E",
                                   marginRight: 0,
-                                  // pointerEvents: "auto",
                                 }}
                               />
                             }
@@ -871,7 +769,6 @@ const MembersTable = () => {
                               "& .MuiTypography-root": {
                                 fontSize: 14,
                                 color: "#c8d8ff",
-                                // pointerEvents: "auto",
                               },
                             }}
                           />
@@ -881,16 +778,8 @@ const MembersTable = () => {
                             aria-describedby={idAccess}
                             variant="contained"
                             onClick={handleAccessClick}
-                            // sx={{
-                            //   pointerEvents: "auto",
-                            // }}
                           >
-                            <small
-                              className="text-lightBlue"
-                              // sx={{
-                              //   pointerEvents: "auto",
-                              // }}
-                            >
+                            <small className="text-lightBlue">
                               View Access
                             </small>
                           </button>

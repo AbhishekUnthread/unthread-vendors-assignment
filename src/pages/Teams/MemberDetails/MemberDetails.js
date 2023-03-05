@@ -10,14 +10,12 @@ import UserActivityTable from "../../Users/UserDetails/UserInformation/UserActiv
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
-import editWhite from "../../../assets/icons/editWhite.svg";
 import email from "../../../assets/icons/email.svg";
 import phone from "../../../assets/icons/phone.svg";
 import message from "../../../assets/icons/message.svg";
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import block from "../../../assets/images/users/block.svg";
 import userLarge from "../../../assets/images/users/userLarge.svg";
-import verified from "../../../assets/icons/verified.svg";
 import copy from "../../../assets/icons/copy.svg";
 import activity from "../../../assets/icons/activity.svg";
 // ! MATERIAL IMPORTS
@@ -27,14 +25,12 @@ import {
   DialogContent,
   Slide,
   Chip,
-  OutlinedInput,
   Popover,
   TextField,
   Tooltip,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 // !MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";

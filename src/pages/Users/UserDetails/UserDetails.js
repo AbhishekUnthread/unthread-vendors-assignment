@@ -11,7 +11,6 @@ import TagsBox from "../../../components/TagsBox/TagsBox";
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
-import editWhite from "../../../assets/icons/editWhite.svg";
 import email from "../../../assets/icons/email.svg";
 import phone from "../../../assets/icons/phone.svg";
 import message from "../../../assets/icons/message.svg";

@@ -7,7 +7,6 @@ import {
 } from "../../../components/TableDependencies/TableDependencies";
 // ! IMAGES IMPORTS
 import verticalDots from "../../../assets/icons/verticalDots.svg";
-import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 // ! MATERIAL IMPORTS
 import {

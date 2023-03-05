@@ -56,7 +56,6 @@ import TableMassActionButton from "../../../components/TableMassActionButton/Tab
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
-  // border: `1px solid ${theme.palette.divider}`,
   "&:not(:last-child)": {
     borderBottom: 0,
   },
@@ -67,15 +66,11 @@ const Accordion = styled((props) => (
 
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
-    // sx={{
-    //   pointerEvents: "none",
-    // }}
     expandIcon={
       <ArrowForwardIosSharpIcon
         sx={{
           fontSize: "0.9rem",
           color: "#c8d8ff",
-          // pointerEvents: "auto"
         }}
       />
     }
@@ -475,12 +470,6 @@ const RolesTable = () => {
                     <TableCell style={{ width: 200 }}>
                       <div className="d-flex align-items-center c-pointer">
                         {row.members ? (
-                          // <p
-                          //   className="text-lightBlue"
-                          //   onClick={toggleActivityDrawer("right", true)}
-                          // >
-                          //   {row.members}
-                          // </p>
                           <React.Fragment>
                             <img
                               src={teamMember1}
@@ -802,7 +791,6 @@ const RolesTable = () => {
                             style={{
                               color: "#5C6D8E",
                               marginRight: 0,
-                              // pointerEvents: "auto",
                             }}
                           />
                         }
@@ -811,7 +799,6 @@ const RolesTable = () => {
                           "& .MuiTypography-root": {
                             fontSize: 14,
                             color: "#c8d8ff",
-                            // pointerEvents: "auto",
                           },
                         }}
                       />
@@ -836,7 +823,6 @@ const RolesTable = () => {
                                 style={{
                                   color: "#5C6D8E",
                                   marginRight: 0,
-                                  // pointerEvents: "auto",
                                 }}
                               />
                             }
@@ -845,7 +831,6 @@ const RolesTable = () => {
                               "& .MuiTypography-root": {
                                 fontSize: 14,
                                 color: "#c8d8ff",
-                                // pointerEvents: "auto",
                               },
                             }}
                           />
@@ -855,16 +840,8 @@ const RolesTable = () => {
                             aria-describedby={idAccess}
                             variant="contained"
                             onClick={handleAccessClick}
-                            // sx={{
-                            //   pointerEvents: "auto",
-                            // }}
                           >
-                            <small
-                              className="text-lightBlue"
-                              // sx={{
-                              //   pointerEvents: "auto",
-                              // }}
-                            >
+                            <small className="text-lightBlue">
                               View Access
                             </small>
                           </button>

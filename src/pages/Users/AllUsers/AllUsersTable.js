@@ -27,8 +27,6 @@ import {
 // ! MATERIAL ICON IMPORTS
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 // ? TABLE STARTS HERE
 function createData(
