@@ -67,6 +67,7 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import AppReactTree from "../../../components/AppReactTree/AppReactTree";
+import AppReactComplexTree from "../../../components/AppReactComplexTree/AppReactComplexTree";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -837,6 +838,7 @@ const CreateVariantSets = () => {
             </TabPanel>
             <TabPanel value={value} index={1}>
               <AppReactTree />
+              {/* <AppReactComplexTree /> */}
             </TabPanel>
           </div>
         </div>
@@ -884,28 +886,21 @@ const CreateVariantSets = () => {
                 row
               >
                 {productMetal.map((e, index) => (
-                  <React.Fragment>
-                    <FormControlLabel
-                      value={e.name}
-                      control={<Radio size="small" />}
-                      className={`mb-2 custom-radio${index} radio-buttons`}
-                      onChange={(e) => {
-                        handleMetalChange(e);
-                      }}
-                      key={index}
-                      label={
-                        <div className="d-flex align-items-center px-1">
-                          <img
-                            src={e.image}
-                            alt=""
-                            className="me-2"
-                            width={15}
-                          />
-                          {e.name}
-                        </div>
-                      }
-                    />
-                  </React.Fragment>
+                  <FormControlLabel
+                    value={e.name}
+                    control={<Radio size="small" />}
+                    className={`mb-2 custom-radio${index} radio-buttons`}
+                    onChange={(e) => {
+                      handleMetalChange(e);
+                    }}
+                    key={index}
+                    label={
+                      <div className="d-flex align-items-center px-1">
+                        <img src={e.image} alt="" className="me-2" width={15} />
+                        {e.name}
+                      </div>
+                    }
+                  />
                 ))}
               </RadioGroup>
             </FormControl>

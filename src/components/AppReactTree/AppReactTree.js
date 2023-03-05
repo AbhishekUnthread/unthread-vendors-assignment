@@ -33,15 +33,43 @@ export default class AppReactTree extends Component {
 
     this.state = {
       treeData: [
-        { title: "Chicken", children: [{ title: "Egg" }] },
-        { title: "Fish", children: [{ title: "fingerline" }] },
+        {
+          title: "Size",
+          children: [
+            { title: "S" },
+            { title: "M" },
+            { title: "L" },
+            { title: "XL" },
+          ],
+        },
+        {
+          title: "Metal",
+          children: [
+            { title: "Gold" },
+            { title: "Silver" },
+            { title: "Platinum" },
+          ],
+        },
+        {
+          title: "Gold Purity",
+          children: [{ title: "14KT" }, { title: "18KT" }, { title: "22KT" }],
+        },
+        {
+          title: "Diamond",
+          children: [
+            { title: "IJ-SI" },
+            { title: "JK-VSSI" },
+            { title: "GH-VSSI" },
+            { title: "EF-VSS" },
+          ],
+        },
       ],
     };
   }
 
   render() {
     return (
-      <div style={{ height: 400 }}>
+      <div style={{ height: "auto" }}>
         <SortableTree
           treeData={this.state.treeData}
           onChange={(treeData) => this.setState({ treeData })}
