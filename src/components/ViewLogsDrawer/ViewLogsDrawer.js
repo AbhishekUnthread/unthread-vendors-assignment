@@ -3,7 +3,6 @@ import React from "react";
 import activity from "../../assets/icons/activity.svg";
 import teamMember1 from "../../assets/images/products/teamMember1.svg";
 import cancel from "../../assets/icons/cancel.svg";
-import userIcon from "../../assets/icons/userIcon.svg";
 // ! MATERIAL IMPORTS
 import {
   Popover,

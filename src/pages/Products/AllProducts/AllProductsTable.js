@@ -8,8 +8,6 @@ import cancel from "../../../assets/icons/cancel.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import ringSmall from "../../../assets/images/ringSmall.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
-import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
-import sortBy from "../../../assets/icons/sortBy.svg";
 import activity from "../../../assets/icons/activity.svg";
 import editButton from "../../../assets/icons/editButton.svg";
 import duplicateButton from "../../../assets/icons/duplicateButton.svg";
@@ -500,18 +498,6 @@ const AllProductsTable = () => {
   const idActions = openActions ? "simple-popover" : undefined;
   // * ACTION POPOVERS ENDS
 
-  // * METAL FILTER POPOVERS STARTS
-  const [anchorMetalFilterEl, setAnchorMetalFilterEl] = React.useState(null);
-  const handleMetalFilter = (event) => {
-    setAnchorMetalFilterEl(event.currentTarget);
-  };
-  const handleMetalFilterClose = () => {
-    setAnchorMetalFilterEl(null);
-  };
-  const openMetalFilter = Boolean(anchorMetalFilterEl);
-  const idMetalFilter = openMetalFilter ? "simple-popover" : undefined;
-  // * METAL FILTER POPOVERS ENDS
-
   // ? DATE PICKER STARTS
 
   const [activityDateValue, setActivityDateValue] = React.useState(
@@ -819,12 +805,7 @@ const AllProductsTable = () => {
                     </TableCell>
                     <TableCell>
                       <div className="d-flex align-items-center">
-                        <div
-                          className="rounded-pill d-flex table-status px-2 py-1 c-pointer"
-                          aria-describedby={idMetalFilter}
-                          variant="contained"
-                          onClick={handleMetalFilter}
-                        >
+                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
                           <small className="text-black fw-400">
                             {row.status}
                           </small>

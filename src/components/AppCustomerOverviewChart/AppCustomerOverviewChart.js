@@ -3,9 +3,9 @@ import "./AppCustomerOverviewChart.scss";
 import {
   XAxis,
   YAxis,
-  CartesianGrid,
+  // CartesianGrid,
   Tooltip,
-  Legend,
+  // Legend,
   ResponsiveContainer,
   Area,
   AreaChart,

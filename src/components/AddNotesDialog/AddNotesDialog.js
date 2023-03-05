@@ -8,9 +8,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   FormControlLabel,
-  OutlinedInput,
   Slide,
   TextareaAutosize,
 } from "@mui/material";

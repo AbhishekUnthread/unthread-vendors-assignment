@@ -1,4 +1,8 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useMemo,
+  //  useState
+} from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -151,8 +155,10 @@ const ProductBulk = () => {
     []
   );
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
-  const [rowData, setRowData] = useState(getData());
-  const [columnDefs, setColumnDefs] = useState([
+  // const [rowData, setRowData] = useState(getData());
+  const rowData = getData();
+  // const [columnDefs, setColumnDefs] = useState([
+  const columnDefs = [
     {
       field: "title",
       headerName: "Title",
@@ -201,7 +207,7 @@ const ProductBulk = () => {
         return costDetails;
       },
     },
-  ]);
+  ];
   // const defaultColDef = useMemo(() => {
   //   return {
   //     editable: true,
@@ -222,11 +228,11 @@ const ProductBulk = () => {
     console.log("Data after change is", event.data);
   }, []);
 
-  const onGridReady = useCallback((params) => {
-    fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
-      .then((resp) => resp.json())
-      .then((data) => setRowData(data));
-  }, []);
+  // const onGridReady = useCallback((params) => {
+  //   fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
+  //     .then((resp) => resp.json())
+  //     .then((data) => setRowData(data));
+  // }, []);
 
   return (
     <div style={containerStyle}>

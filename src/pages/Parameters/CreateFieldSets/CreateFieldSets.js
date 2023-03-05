@@ -22,7 +22,6 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import DeleteIcon from "@mui/icons-material/Delete";
 import NotesBox from "../../../components/NotesBox/NotesBox";
-import StatusBox from "../../../components/StatusBox/StatusBox";
 
 const CreateFieldSets = () => {
   const [value, setValue] = React.useState(0);
@@ -151,11 +150,7 @@ const CreateFieldSets = () => {
                     <th scope="col" className="">
                       <small className="text-lightBlue fw-400">Show/Hide</small>
                     </th>
-                    <th scope="col" className="">
-                      {/* <small className="text-lightBlue fw-400 w-100">
-                        Actions
-                      </small> */}
-                    </th>
+                    <th scope="col" className=""></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -171,11 +166,7 @@ const CreateFieldSets = () => {
                           </FormControl>
                         </th>
                         <td>
-                          <FormControl
-                            //   sx={{ m: 0, minWidth: 120, width: "100%" }}
-                            size="small"
-                            className="w-100"
-                          >
+                          <FormControl size="small" className="w-100">
                             <Select
                               labelId="demo-select-small"
                               id="demo-select-small"
@@ -278,11 +269,7 @@ const CreateFieldSets = () => {
                           </FormControl>
                         </th>
                         <td>
-                          <FormControl
-                            //   sx={{ m: 0, minWidth: 120, width: "100%" }}
-                            size="small"
-                            className="w-100"
-                          >
+                          <FormControl size="small" className="w-100">
                             <Select
                               labelId="demo-select-small"
                               id="demo-select-small"
@@ -495,11 +482,7 @@ const CreateFieldSets = () => {
                             Show/Hide
                           </small>
                         </th>
-                        <th scope="col" className="">
-                          {/* <small className="text-lightBlue fw-400 w-100">
-                        Actions
-                      </small> */}
-                        </th>
+                        <th scope="col" className=""></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -515,11 +498,7 @@ const CreateFieldSets = () => {
                               </FormControl>
                             </th>
                             <td>
-                              <FormControl
-                                //   sx={{ m: 0, minWidth: 120, width: "100%" }}
-                                size="small"
-                                className="w-100"
-                              >
+                              <FormControl size="small" className="w-100">
                                 <Select
                                   labelId="demo-select-small"
                                   id="demo-select-small"
@@ -622,11 +601,7 @@ const CreateFieldSets = () => {
                               </FormControl>
                             </th>
                             <td>
-                              <FormControl
-                                //   sx={{ m: 0, minWidth: 120, width: "100%" }}
-                                size="small"
-                                className="w-100"
-                              >
+                              <FormControl size="small" className="w-100">
                                 <Select
                                   labelId="demo-select-small"
                                   id="demo-select-small"

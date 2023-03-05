@@ -5,27 +5,15 @@ import "./Navbar.scss";
 import user from "../../assets/icons/user.svg";
 import menuClose from "../../assets/icons/sidenav/menuClose.svg";
 import menuOpen from "../../assets/icons/sidenav/menuOpen.svg";
-import cancel from "../../assets/icons/cancel.svg";
 // ! MATERIAL IMPORTS
 import {
   AppBar,
   Badge,
   Box,
-  Checkbox,
-  FormControlLabel,
   IconButton,
   InputBase,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Menu,
   MenuItem,
-  Popover,
-  Popper,
-  Tab,
-  Tabs,
   Toolbar,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
@@ -33,19 +21,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import MenuOpenIcon from "@mui/icons-material/MenuOpen";
-import TabPanel from "../TabPanel/TabPanel";
 import AppNavbarNotes from "../AppNavbarNotes/AppNavbarNotes";
 import AppNavbarNotifications from "../AppNavbarNotifications/AppNavbarNotifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-// import LightModeIcon from "@mui/icons-material/LightMode";
-// import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -232,9 +214,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
             {!mobileOpen ? (
               <img src={menuOpen} alt="menuOpen" />
             ) : (
-              // <MenuOpenIcon sx={{ fontSize: 25, color: "#c8d8ff" }} />
               <img src={menuClose} alt="menuClose" />
-              // <MenuOpenIcon sx={{ fontSize: 25, color: "#c8d8ff" }} />
             )}
           </IconButton>
           <Search>
@@ -251,15 +231,6 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
             sx={{ display: { xs: "none", md: "flex" } }}
             className="align-items-center"
           >
-            {/* <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-              onClick={handleTheme}
-            >
-              {lightTheme ? <LightModeIcon /> : <DarkModeIcon />}
-            </IconButton> */}
-
             <AppNavbarNotes />
             <AppNavbarNotifications />
             <IconButton

@@ -18,6 +18,8 @@ import {
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // !IMAGES IMPORTS
 import storeIcon from "../../../assets/icons/storeIcon.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
@@ -27,9 +29,6 @@ import deleteRed from "../../../assets/icons/delete.svg";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 // ? TABLE STARTS HERE
 function createData(sId, selectStore, noOfProducts, status, actions) {

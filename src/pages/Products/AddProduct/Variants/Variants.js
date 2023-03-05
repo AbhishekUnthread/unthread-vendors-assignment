@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import "./Variants.scss";
 // ! COMPONENT IMPORTS
 import {
@@ -10,17 +9,14 @@ import {
 // ! MATERIAL IMPORTS
 import {
   OutlinedInput,
-  Box,
   Checkbox,
   FormControl,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel,
   InputAdornment,
   MenuItem,
   Select,
@@ -35,9 +31,7 @@ import {
   Slide,
   DialogActions,
 } from "@mui/material";
-import { visuallyHidden } from "@mui/utils";
 // ! IMAGES IMPORTS
-import indiaFlagRectangle from "../../../../assets/images/products/indiaFlagRectangle.svg";
 import info from "../../../../assets/icons/info.svg";
 import editWhite from "../../../../assets/icons/editWhite.svg";
 import AppCountrySelect from "../../../../components/AppCountrySelect/AppCountrySelect";
@@ -187,7 +181,7 @@ const Variants = () => {
   };
   const openEditVariants = Boolean(anchorEditVariantsEl);
   const idEditVariants = openEditVariants ? "simple-popover" : undefined;
-  // * METAL FILTER POPOVERS ENDS
+  // * EDIT VARIANTS POPOVERS ENDS
 
   // ? EDIT STATUS DIALOG STARTS HERE
   const [openEditStatusDialog, setOpenEditStatusDialog] = React.useState(false);

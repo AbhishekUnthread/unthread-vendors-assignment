@@ -5,7 +5,6 @@ import { NavLink } from "react-router-dom";
 import logo from "../../assets/icons/logo.svg";
 import analytics from "../../assets/icons/sidenav/analytics.svg";
 import discounts from "../../assets/icons/sidenav/discounts.svg";
-import emailers from "../../assets/icons/sidenav/emailers.svg";
 import functionality from "../../assets/icons/sidenav/functionality.svg";
 import globalStore from "../../assets/icons/sidenav/globalStore.svg";
 import helpCenter from "../../assets/icons/sidenav/helpCenter.svg";

@@ -8,80 +8,21 @@ import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobi
 import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import TagsBox from "../../../components/TagsBox/TagsBox";
+import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
+import StatusBox from "../../../components/StatusBox/StatusBox";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
-import archivedGrey from "../../../assets/icons/archivedGrey.svg";
-import editGrey from "../../../assets/icons/editGrey.svg";
 import addMedia from "../../../assets/icons/addMedia.svg";
 import info from "../../../assets/icons/info.svg";
 // ! MATERIAL IMPORTS
 import {
   FormControl,
-  MenuItem,
-  Select,
   InputAdornment,
   OutlinedInput,
-  Checkbox,
-  FormControlLabel,
-  Chip,
-  TextField,
-  Autocomplete,
   Tooltip,
 } from "@mui/material";
-// ! MATERIAL ICONS IMPORTS
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
-import StatusBox from "../../../components/StatusBox/StatusBox";
-
-const taggedWithData = [
-  { title: "Tag 1", value: "tag1" },
-  { title: "Tag 2", value: "tag2" },
-  { title: "Tag 3", value: "tag3" },
-  { title: "Tag 4", value: "tag4" },
-  { title: "Tag 5", value: "tag5" },
-  { title: "Tag 6", value: "tag6" },
-  { title: "Tag 7", value: "tag7" },
-  { title: "Tag 8", value: "tag8" },
-  { title: "Tag 9", value: "tag9" },
-  { title: "Tag 10", value: "tag10" },
-  { title: "Tag 11", value: "tag11" },
-  { title: "Tag 12", value: "tag12" },
-];
 
 const CreateStore = () => {
-  // ? GENDER SELECT STARTS HERE
-  const [gender, setGender] = React.useState("");
-
-  const handleGenderChange = (event) => {
-    setGender(event.target.value);
-  };
-  // ? GENDER SELECT ENDS HERE
-
-  // ? USER ROLE SELECT STARTS HERE
-  const [userRole, setUserRole] = React.useState("");
-
-  const handleUserRoleChange = (event) => {
-    setUserRole(event.target.value);
-  };
-  // ? USER ROLE SELECT ENDS HERE
-
-  // ? ADDRESS STARTS HERE
-  const [address, setAddress] = React.useState(false);
-
-  const handleAddressChange = () => {
-    address ? setAddress(false) : setAddress(true);
-  };
-  // ? ADDRESS ENDS HERE
-  // ? ADDRESS STARTS HERE
-  const [savedAddress, setSavedAddress] = React.useState(false);
-
-  const handleSavedAddressChange = () => {
-    setSavedAddress(true);
-    setAddress(false);
-  };
-  // ? ADDRESS ENDS HERE
-
   // ? SWITCH STARTS HERE
   const [checkedSwitch, setCheckedSwitch] = React.useState(true);
   const handleSwitchChange = (event) => {
@@ -224,6 +165,7 @@ const CreateStore = () => {
                 allowfullscreen=""
                 aria-hidden="false"
                 tabindex="0"
+                title="store map"
               ></iframe>
             </div>
             <div className="col-md-6 mt-3 ps-0">

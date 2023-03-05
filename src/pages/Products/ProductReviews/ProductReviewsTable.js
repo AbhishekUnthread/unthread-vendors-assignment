@@ -9,7 +9,6 @@ import TableEditStatusButton from "../../../components/TableEditStatusButton/Tab
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // ! IMAGES IMPORTS
 import verticalDots from "../../../assets/icons/verticalDots.svg";
-import arrowDownBlack from "../../../assets/icons/arrowDownBlack.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import cancel from "../../../assets/icons/cancel.svg";
 // ! MATERIAL IMPORTS
@@ -30,7 +29,6 @@ import {
   DialogTitle,
   Slide,
 } from "@mui/material";
-import { Link } from "react-router-dom";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -386,10 +384,8 @@ const ProductReviewsTable = () => {
                             >
                               <TaskAltIcon
                                 sx={{
-                                  // color: "#1ad598",
                                   fontSize: 18,
                                   cursor: "pointer",
-                                  // "& :hover": { color: "#000000" },
                                   "& :hover": { color: "green" },
                                 }}
                               />
@@ -401,10 +397,8 @@ const ProductReviewsTable = () => {
                             >
                               <BlockIcon
                                 sx={{
-                                  // color: "#1ad598",
                                   fontSize: 18,
                                   cursor: "pointer",
-                                  // "& :hover": { color: "#000000" },
                                   "& :hover": { color: "green" },
                                 }}
                               />

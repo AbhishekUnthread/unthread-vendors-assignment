@@ -8,8 +8,6 @@ import {
 } from "../../../components/TableDependencies/TableDependencies";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
-import verticalDots from "../../../assets/icons/verticalDots.svg";
-import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import ordersIcon from "../../../assets/icons/ordersIcon.svg";
@@ -26,11 +24,7 @@ import {
   Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICON IMPORTS
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 // ? TABLE STARTS HERE
 function createData(
@@ -219,21 +213,6 @@ const AllOrdersTable = () => {
   const openMassAction = Boolean(anchorMassActionEl);
   const idMassAction = openMassAction ? "simple-popover" : undefined;
   // * MASS ACTION POPOVERS ENDS
-
-  // * ACTION POPOVERS STARTS
-  const [anchorActionEl, setAnchorActionEl] = React.useState(null);
-
-  const handleActionClick = (event) => {
-    setAnchorActionEl(event.currentTarget);
-  };
-
-  const handleActionClose = () => {
-    setAnchorActionEl(null);
-  };
-
-  const openActions = Boolean(anchorActionEl);
-  const idActions = openActions ? "simple-popover" : undefined;
-  // * ACTION POPOVERS ENDS
 
   return (
     <React.Fragment>

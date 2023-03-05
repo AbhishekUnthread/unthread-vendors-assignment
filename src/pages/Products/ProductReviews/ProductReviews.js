@@ -7,34 +7,20 @@ import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 // ! IMAGES IMPORTS
-import cancel from "../../../assets/icons/cancel.svg";
 import sort from "../../../assets/icons/sort.svg";
 import products from "../../../assets/icons/sidenav/products.svg";
 // ! MATERIAL IMPORTS
 import {
-  Autocomplete,
   Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControl,
   FormControlLabel,
   Paper,
   Popover,
   Radio,
   RadioGroup,
-  Slide,
   Tab,
   Tabs,
-  TextField,
 } from "@mui/material";
-
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-// ? DIALOG TRANSITION ENDS HERE
 
 const ProductReviews = () => {
   const [value, setValue] = React.useState(0);
@@ -60,30 +46,6 @@ const ProductReviews = () => {
   // * SORT POPOVERS ENDS
 
   // ? POPOVERS ENDS HERE
-
-  const groupData = [
-    { title: "No Group", value: "content1" },
-    { title: "VIP", value: "content2" },
-    { title: "VVIP", value: "content3" },
-    { title: "Wholesaler", value: "content4" },
-    { title: "Highest Orders", value: "content5" },
-    { title: "Loyal Users", value: "content6" },
-    { title: "New Users", value: "content7" },
-    { title: "Default Users", value: "content8" },
-    { title: "Guest Users", value: "content9" },
-  ];
-
-  // ? FIELD SETS DIALOG STARTS HERE
-  const [openManageGroups, setOpenManageGroups] = React.useState(false);
-
-  const handleOpenManageGroups = () => {
-    setOpenManageGroups(true);
-  };
-
-  const handleOpenManageGroupsClose = () => {
-    setOpenManageGroups(false);
-  };
-  // ? FIELD SETS DIALOG ENDS HERE
 
   return (
     <div className="container-fluid page">

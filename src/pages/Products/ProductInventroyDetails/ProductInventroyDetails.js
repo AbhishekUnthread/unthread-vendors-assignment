@@ -7,21 +7,15 @@ import TableSearch from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
-import TabPanel from "../../../components/TabPanel/TabPanel";
 // ! IMAGES IMPORTS
 import products from "../../../assets/icons/sidenav/products.svg";
 import storeIcon from "../../../assets/icons/storeIcon.svg";
 import editWhite from "../../../assets/icons/editWhite.svg";
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 // ! MATERIAL IMPORTS
-import { Box, Paper, Tab, Tabs } from "@mui/material";
+import { Paper } from "@mui/material";
 
 const ProductInventoryDetails = () => {
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -93,15 +87,9 @@ const ProductInventoryDetails = () => {
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
           </div>
-          <TabPanel value={value} index={0}>
-            <ProductInventoryDetailsTable />
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <ProductInventoryDetailsTable />
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            <ProductInventoryDetailsTable />
-          </TabPanel>
+          {/* <TabPanel value={value} index={0}> */}
+          <ProductInventoryDetailsTable />
+          {/* </TabPanel> */}
         </Paper>
       </div>
     </div>

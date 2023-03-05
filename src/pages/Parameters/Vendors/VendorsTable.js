@@ -1,11 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
   EnhancedTableHead,
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
-// ! IMAGES IMPORTS
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -20,9 +22,6 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import { Link } from "react-router-dom";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 // ? TABLE STARTS HERE
 function createData(vId, vendorsName, noOfProducts, status) {
