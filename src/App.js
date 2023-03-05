@@ -52,6 +52,9 @@ import ProductInventory from "./pages/Products/ProductIntventory/ProductIntvento
 import CreateStore from "./pages/Products/CreateStore/CreateStore";
 import ProductInventroyDetails from "./pages/Products/ProductInventroyDetails/ProductInventroyDetails";
 import CreateDataSets from "./pages/Parameters/CreateDataSets/CreateDataSets";
+import AllOrders from "./pages/Orders/AllOrders/AllOrders";
+import CreateOrder from "./pages/Orders/CreateOrder/CreateOrder";
+import OrderDetails from "./pages/Orders/OrderDetails/OrderDetails";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -291,6 +294,13 @@ function App(props) {
                 <Route path="roles/create" element={<CreateRoles />} />
                 <Route path="members" element={<Members />} />
                 <Route path="members/details" element={<MemberDetails />} />
+              </Route>
+              {/* ORDER ROUTES */}
+              <Route path="/orders">
+                <Route path="" element={<Navigate to="allOrders" />} />
+                <Route path="allOrders" element={<AllOrders />} />
+                <Route path="allOrders/create" element={<CreateOrder />} />
+                <Route path="allOrders/details" element={<OrderDetails />} />
               </Route>
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </React.Fragment>

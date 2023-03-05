@@ -22,8 +22,15 @@ export const SidebarData = [
   },
   {
     title: "Orders",
-    path: "/orders",
+    path: "/orders/allOrders",
     image: orders,
+    subNav: [
+      {
+        title: "All Orders",
+        path: "/orders/allOrders",
+        image: orders,
+      },
+    ],
   },
   {
     title: "Products",
