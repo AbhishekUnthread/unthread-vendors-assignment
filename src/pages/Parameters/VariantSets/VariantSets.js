@@ -45,7 +45,7 @@ const VariantSets = () => {
               to="/parameters/variantSets/edit"
               className="button-gradient py-2 px-4 ms-3"
             >
-              <p>+ Create Variant Sets</p>
+              <p>+ Create Option Sets</p>
             </Link>
           )}
         </div>
