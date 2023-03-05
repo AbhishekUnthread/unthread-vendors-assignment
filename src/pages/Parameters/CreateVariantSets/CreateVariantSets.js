@@ -837,7 +837,9 @@ const CreateVariantSets = () => {
               )}
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <AppReactTree />
+              <div className="mt-3">
+                <AppReactTree />
+              </div>
               {/* <AppReactComplexTree /> */}
             </TabPanel>
           </div>
@@ -906,9 +908,7 @@ const CreateVariantSets = () => {
             </FormControl>
             {metal === "gold" && (
               <React.Fragment>
-                <small className="text-lightBlue mt-3 d-block">
-                  Gold Purity
-                </small>
+                <p className="text-lightBlue mt-3 d-block">Gold Purity</p>
                 <RadioGroup
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
@@ -954,9 +954,7 @@ const CreateVariantSets = () => {
                     }}
                   />
                 </RadioGroup>
-                <small className="text-lightBlue mt-3 d-block">
-                  Gold Color
-                </small>
+                <p className="text-lightBlue mt-3 d-block">Gold Color</p>
                 <div className="d-flex flex-wrap">
                   <div className="d-flex border-grey-5 py-1 px-2 rounded-3 me-2 mt-2">
                     <img src={gold} alt="gold" width={15} />
@@ -971,38 +969,106 @@ const CreateVariantSets = () => {
             )}
             {metal === "silver" && (
               <React.Fragment>
-                <p className="text-lightBlue mt-3">Gold Purity</p>
+                <p className="text-lightBlue mt-3 d-block">Silver Purity</p>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  value={likeProductRadio}
+                  onChange={handleLikeProductRadio}
+                  className="features-radio px-0"
+                >
+                  <FormControlLabel
+                    value="925"
+                    control={<Radio size="small" />}
+                    label="925"
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontSize: 13,
+                        color: "#c8d8ff",
+                        marginRight: 1,
+                      },
+                    }}
+                  />
+                  <FormControlLabel
+                    value="999"
+                    control={<Radio size="small" />}
+                    label="999"
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontSize: 13,
+                        color: "#c8d8ff",
+                        marginRight: 1,
+                      },
+                    }}
+                  />
+                </RadioGroup>
+                <p className="text-lightBlue mt-3 d-block">Silver Color</p>
                 <div className="d-flex flex-wrap">
-                  <div className="d-flex border-grey-5 py-2 px-2 rounded-3 me-2 mt-2">
+                  <div className="d-flex border-grey-5 py-1 px-2 rounded-3 me-2 mt-2">
                     <img src={gold} alt="gold" width={15} />
-                    <small className="text-grey-6 ms-2">Gold</small>
+                    <small className="text-grey-6 ms-2">Gold Plated</small>
                   </div>
-                  <div className="d-flex border-grey-5 py-2 px-2 rounded-3 me-2 mt-2">
+                  <div className="d-flex border-grey-5 py-1 px-2 rounded-3 me-2 mt-2">
                     <img src={gold} alt="gold" width={15} />
-                    <small className="text-grey-6 ms-2">Silver</small>
-                  </div>
-                  <div className="d-flex border-grey-5 py-2 px-2 rounded-3 me-2 mt-2">
-                    <img src={gold} alt="gold" width={15} />
-                    <small className="text-grey-6 ms-2">Platinum</small>
+                    <small className="text-grey-6 ms-2">Sterling Silver</small>
                   </div>
                 </div>
               </React.Fragment>
             )}
             {metal === "platinum" && (
               <React.Fragment>
-                <p className="text-lightBlue mt-3">Gold Color</p>
+                <p className="text-lightBlue mt-3 d-block">Platinum Purity</p>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  value={likeProductRadio}
+                  onChange={handleLikeProductRadio}
+                  className="features-radio px-0"
+                >
+                  <FormControlLabel
+                    value="800"
+                    control={<Radio size="small" />}
+                    label="800"
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontSize: 13,
+                        color: "#c8d8ff",
+                        marginRight: 1,
+                      },
+                    }}
+                  />
+                  <FormControlLabel
+                    value="850"
+                    control={<Radio size="small" />}
+                    label="850"
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontSize: 13,
+                        color: "#c8d8ff",
+                        marginRight: 1,
+                      },
+                    }}
+                  />
+                  <FormControlLabel
+                    value="950"
+                    control={<Radio size="small" />}
+                    label="950"
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontSize: 13,
+                        color: "#c8d8ff",
+                        marginRight: 1,
+                      },
+                    }}
+                  />
+                </RadioGroup>
+                <p className="text-lightBlue mt-3 d-block">Platinum Color</p>
                 <div className="d-flex flex-wrap">
-                  <div className="d-flex border-grey-5 py-2 px-2 rounded-3 me-2 mt-2">
-                    <img src={gold} alt="gold" width={15} />
-                    <small className="text-grey-6 ms-2">Gold</small>
-                  </div>
-                  <div className="d-flex border-grey-5 py-2 px-2 rounded-3 me-2 mt-2">
-                    <img src={gold} alt="gold" width={15} />
-                    <small className="text-grey-6 ms-2">Silver</small>
-                  </div>
-                  <div className="d-flex border-grey-5 py-2 px-2 rounded-3 me-2 mt-2">
-                    <img src={gold} alt="gold" width={15} />
-                    <small className="text-grey-6 ms-2">Platinum</small>
+                  <div className="d-flex border-grey-5 py-1 px-2 rounded-3 me-2 mt-2">
+                    <img src={silver} alt="gold" width={15} />
+                    <small className="text-grey-6 ms-2">Pure White</small>
                   </div>
                 </div>
               </React.Fragment>
