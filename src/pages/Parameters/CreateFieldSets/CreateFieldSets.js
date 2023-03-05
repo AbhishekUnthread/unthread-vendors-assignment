@@ -118,7 +118,7 @@ const CreateFieldSets = () => {
 
             <Box
               sx={{ width: "100%" }}
-              className="col-12 d-flex justify-content-between tabs-header-box"
+              className="col-12 d-flex justify-content-between tabs-header-box px-0"
             >
               {/* variant="scrollable"
               scrollButtons
@@ -133,8 +133,8 @@ const CreateFieldSets = () => {
                 <Tab label="Group Info" className="tabs-head" />
               </Tabs>
             </Box>
-            <TabPanel value={value} index={0}>
-              <table className="table table-borderless w-100 mt-3">
+            <TabPanel value={value} index={0} className="px-0">
+              <table className="table table-borderless w-100 mt-3 create-table">
                 <thead className="">
                   <tr className="bg-black-18">
                     <th scope="col" className="">
@@ -154,18 +154,18 @@ const CreateFieldSets = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {singleInfoRows && (
-                    <React.Fragment>
+                  {singleInfoRows &&
+                    [...Array(2)].map((elementInArray, index) => (
                       <tr>
-                        <th scope="row">
+                        <td>
                           <FormControl className="w-100 px-0">
                             <OutlinedInput
                               placeholder="Enter Custom Title"
                               size="small"
                             />
                           </FormControl>
-                        </th>
-                        <td>
+                        </td>
+                        <td width={200}>
                           <FormControl size="small" className="w-100">
                             <Select
                               labelId="demo-select-small"
@@ -213,62 +213,7 @@ const CreateFieldSets = () => {
                             </Select>
                           </FormControl>
                         </td>
-                        <td>
-                          <FormControl size="small" className="w-75">
-                            <Select
-                              labelId="demo-select-small"
-                              id="demo-select-small"
-                              // value={category}
-                              // onChange={handleCategoryChange}
-                              size="small"
-                            >
-                              <MenuItem
-                                value=""
-                                sx={{ fontSize: 13, color: "#5c6d8e" }}
-                              >
-                                None
-                              </MenuItem>
-                              <MenuItem
-                                value={10}
-                                sx={{ fontSize: 13, color: "#5c6d8e" }}
-                              >
-                                Show
-                              </MenuItem>
-                              <MenuItem
-                                value={20}
-                                sx={{ fontSize: 13, color: "#5c6d8e" }}
-                              >
-                                Hide
-                              </MenuItem>
-                            </Select>
-                          </FormControl>
-                        </td>
-                        <td>
-                          <div className="d-flex align-items-center">
-                            <Tooltip title="Delete" placement="top">
-                              <div className="d-flex table-edit-icon rounded-4 p-2 border-grey-5">
-                                <DeleteIcon
-                                  sx={{
-                                    color: "#5c6d8e",
-                                    fontSize: 20,
-                                    cursor: "pointer",
-                                  }}
-                                />
-                              </div>
-                            </Tooltip>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <th scope="row">
-                          <FormControl className="w-100 px-0">
-                            <OutlinedInput
-                              placeholder="Enter Custom Title"
-                              size="small"
-                            />
-                          </FormControl>
-                        </th>
-                        <td>
+                        <td width={100}>
                           <FormControl size="small" className="w-100">
                             <Select
                               labelId="demo-select-small"
@@ -287,54 +232,6 @@ const CreateFieldSets = () => {
                                 value={10}
                                 sx={{ fontSize: 13, color: "#5c6d8e" }}
                               >
-                                Text Field
-                              </MenuItem>
-                              <MenuItem
-                                value={20}
-                                sx={{ fontSize: 13, color: "#5c6d8e" }}
-                              >
-                                Text
-                              </MenuItem>
-                              <MenuItem
-                                value={30}
-                                sx={{ fontSize: 13, color: "#5c6d8e" }}
-                              >
-                                Swatches
-                              </MenuItem>
-                              <MenuItem
-                                value={40}
-                                sx={{ fontSize: 13, color: "#5c6d8e" }}
-                              >
-                                Weight
-                              </MenuItem>
-                              <MenuItem
-                                value={50}
-                                sx={{ fontSize: 13, color: "#5c6d8e" }}
-                              >
-                                Dimensions
-                              </MenuItem>
-                            </Select>
-                          </FormControl>
-                        </td>
-                        <td>
-                          <FormControl size="small" className="w-75">
-                            <Select
-                              labelId="demo-select-small"
-                              id="demo-select-small"
-                              // value={category}
-                              // onChange={handleCategoryChange}
-                              size="small"
-                            >
-                              <MenuItem
-                                value=""
-                                sx={{ fontSize: 13, color: "#5c6d8e" }}
-                              >
-                                None
-                              </MenuItem>
-                              <MenuItem
-                                value={10}
-                                sx={{ fontSize: 13, color: "#5c6d8e" }}
-                              >
                                 Show
                               </MenuItem>
                               <MenuItem
@@ -346,7 +243,7 @@ const CreateFieldSets = () => {
                             </Select>
                           </FormControl>
                         </td>
-                        <td>
+                        <td width={50}>
                           <div className="d-flex align-items-center">
                             <Tooltip title="Delete" placement="top">
                               <div className="d-flex table-edit-icon rounded-4 p-2 border-grey-5">
@@ -362,14 +259,13 @@ const CreateFieldSets = () => {
                           </div>
                         </td>
                       </tr>
-                    </React.Fragment>
-                  )}
+                    ))}
                 </tbody>
               </table>
             </TabPanel>
-            <TabPanel value={value} index={1}>
+            <TabPanel value={value} index={1} className="px-0">
               {groupFieldsData && (
-                <div className="bg-black-15 border-grey-5 rounded-8 p-3">
+                <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-3">
                   <div className="row">
                     <div className="col-4">
                       <FormControl className="w-100 px-0">
@@ -486,18 +382,18 @@ const CreateFieldSets = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {singleInfoRows && (
-                        <React.Fragment>
+                      {singleInfoRows &&
+                        [...Array(2)].map((elementInArray, index) => (
                           <tr>
-                            <th scope="row">
+                            <td>
                               <FormControl className="w-100 px-0">
                                 <OutlinedInput
                                   placeholder="Enter Custom Title"
                                   size="small"
                                 />
                               </FormControl>
-                            </th>
-                            <td>
+                            </td>
+                            <td width={200}>
                               <FormControl size="small" className="w-100">
                                 <Select
                                   labelId="demo-select-small"
@@ -545,62 +441,7 @@ const CreateFieldSets = () => {
                                 </Select>
                               </FormControl>
                             </td>
-                            <td>
-                              <FormControl size="small" className="w-75">
-                                <Select
-                                  labelId="demo-select-small"
-                                  id="demo-select-small"
-                                  // value={category}
-                                  // onChange={handleCategoryChange}
-                                  size="small"
-                                >
-                                  <MenuItem
-                                    value=""
-                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                  >
-                                    None
-                                  </MenuItem>
-                                  <MenuItem
-                                    value={10}
-                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                  >
-                                    Show
-                                  </MenuItem>
-                                  <MenuItem
-                                    value={20}
-                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                  >
-                                    Hide
-                                  </MenuItem>
-                                </Select>
-                              </FormControl>
-                            </td>
-                            <td>
-                              <div className="d-flex align-items-center">
-                                <Tooltip title="Delete" placement="top">
-                                  <div className="d-flex table-edit-icon rounded-4 p-2 border-grey-5">
-                                    <DeleteIcon
-                                      sx={{
-                                        color: "#5c6d8e",
-                                        fontSize: 20,
-                                        cursor: "pointer",
-                                      }}
-                                    />
-                                  </div>
-                                </Tooltip>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row">
-                              <FormControl className="w-100 px-0">
-                                <OutlinedInput
-                                  placeholder="Enter Custom Title"
-                                  size="small"
-                                />
-                              </FormControl>
-                            </th>
-                            <td>
+                            <td width={100}>
                               <FormControl size="small" className="w-100">
                                 <Select
                                   labelId="demo-select-small"
@@ -619,54 +460,6 @@ const CreateFieldSets = () => {
                                     value={10}
                                     sx={{ fontSize: 13, color: "#5c6d8e" }}
                                   >
-                                    Text Field
-                                  </MenuItem>
-                                  <MenuItem
-                                    value={20}
-                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                  >
-                                    Text
-                                  </MenuItem>
-                                  <MenuItem
-                                    value={30}
-                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                  >
-                                    Swatches
-                                  </MenuItem>
-                                  <MenuItem
-                                    value={40}
-                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                  >
-                                    Weight
-                                  </MenuItem>
-                                  <MenuItem
-                                    value={50}
-                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                  >
-                                    Dimensions
-                                  </MenuItem>
-                                </Select>
-                              </FormControl>
-                            </td>
-                            <td>
-                              <FormControl size="small" className="w-75">
-                                <Select
-                                  labelId="demo-select-small"
-                                  id="demo-select-small"
-                                  // value={category}
-                                  // onChange={handleCategoryChange}
-                                  size="small"
-                                >
-                                  <MenuItem
-                                    value=""
-                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                  >
-                                    None
-                                  </MenuItem>
-                                  <MenuItem
-                                    value={10}
-                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                  >
                                     Show
                                   </MenuItem>
                                   <MenuItem
@@ -678,7 +471,7 @@ const CreateFieldSets = () => {
                                 </Select>
                               </FormControl>
                             </td>
-                            <td>
+                            <td width={50}>
                               <div className="d-flex align-items-center">
                                 <Tooltip title="Delete" placement="top">
                                   <div className="d-flex table-edit-icon rounded-4 p-2 border-grey-5">
@@ -694,8 +487,7 @@ const CreateFieldSets = () => {
                               </div>
                             </td>
                           </tr>
-                        </React.Fragment>
-                      )}
+                        ))}
                     </tbody>
                   </table>
                 </div>
