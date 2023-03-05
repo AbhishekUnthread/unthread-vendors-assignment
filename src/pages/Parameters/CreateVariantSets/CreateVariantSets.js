@@ -66,6 +66,7 @@ import UploadFile from "../../../components/UploadFile/UploadFile";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import AppReactTree from "../../../components/AppReactTree/AppReactTree";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -435,13 +436,13 @@ const CreateVariantSets = () => {
   };
   // ? ADD OPTIONS SELECT ENDS HERE
 
-  // ? ADD OPTIONS STARTS HERE
+  // ? SAVE OPTIONS STARTS HERE
   const [saveOption, setSaveOption] = React.useState(false);
 
   const handleSaveOption = () => {
     setSaveOption(true);
   };
-  // ? ADD OPTIONS SELECT ENDS HERE
+  // ? SAVE OPTIONS ENDS HERE
 
   const [metal, setMetal] = React.useState("");
   const handleMetalChange = (e) => {
@@ -834,7 +835,9 @@ const CreateVariantSets = () => {
                 </div>
               )}
             </TabPanel>
-            <TabPanel value={value} index={1}></TabPanel>
+            <TabPanel value={value} index={1}>
+              <AppReactTree />
+            </TabPanel>
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
