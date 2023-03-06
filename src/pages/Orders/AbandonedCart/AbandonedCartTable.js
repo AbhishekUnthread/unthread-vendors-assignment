@@ -13,6 +13,9 @@ import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import ordersIcon from "../../../assets/icons/ordersIcon.svg";
+import editButton from "../../../assets/icons/editButton.svg";
+import duplicateButton from "../../../assets/icons/duplicateButton.svg";
+import verticalDots from "../../../assets/icons/verticalDots.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -35,16 +38,7 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import PrintIcon from "@mui/icons-material/Print";
 
 // ? TABLE STARTS HERE
-function createData(
-  oId,
-  time,
-  userName,
-  location,
-  items,
-  total,
-  paymentStatus,
-  orderStatus
-) {
+function createData(oId, time, userName, location, items, total, status) {
   return {
     oId,
     time,
@@ -52,8 +46,7 @@ function createData(
     location,
     items,
     total,
-    paymentStatus,
-    orderStatus,
+    status,
   };
 }
 
@@ -65,8 +58,7 @@ const rows = [
     "Delhi, India",
     "2 Items",
     "₹ 1,00,000",
-    "Paid",
-    "Order Confirm"
+    "Complete"
   ),
   createData(
     "#12512",
@@ -75,8 +67,7 @@ const rows = [
     "Delhi, India",
     "2 Items",
     "₹ 1,00,000",
-    "Paid",
-    "Order Confirm"
+    "Complete"
   ),
   createData(
     "#13444",
@@ -85,41 +76,28 @@ const rows = [
     "Delhi, India",
     "2 Items",
     "₹ 1,00,000",
-    "Paid",
-    "Order Confirm"
+    "Complete"
   ),
 ];
 
 const headCells = [
   {
-    id: "merchant",
+    id: "draftOrder",
     numeric: false,
     disablePadding: true,
-    label: "",
-  },
-  {
-    id: "orderInfo",
-    numeric: false,
-    disablePadding: true,
-    label: "Order Info",
-  },
-  {
-    id: "actions",
-    numeric: false,
-    disablePadding: false,
-    label: "",
+    label: "Checkout ID",
   },
   {
     id: "userName",
     numeric: false,
     disablePadding: false,
-    label: "User",
+    label: "Placed By",
   },
   {
     id: "items",
     numeric: false,
     disablePadding: false,
-    label: "Items",
+    label: "Items in Cart",
   },
   {
     id: "total",
@@ -128,21 +106,21 @@ const headCells = [
     label: "Total",
   },
   {
-    id: "paymentStatus",
+    id: "status",
     numeric: false,
     disablePadding: false,
-    label: "Payment Status",
+    label: "Status",
   },
   {
-    id: "orderStatus",
+    id: "actions",
     numeric: false,
-    disablePadding: false,
-    label: "Order Status",
+    disablePadding: true,
+    label: "",
   },
 ];
 // ? TABLE ENDS HERE
 
-const AllOrdersTable = () => {
+const AbandonedCartTable = () => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("userName");
   const [selected, setSelected] = React.useState([]);
@@ -250,8 +228,24 @@ const AllOrdersTable = () => {
   const idItem = openItem ? "simple-popover" : undefined;
   // * ITEM POPOVERS ENDS
 
+  // * POPOVER ACTION POPOVERS STARTS
+  const [anchorPopoverActionEl, setAnchorPopoverActionEl] =
+    React.useState(null);
+  const handlePopoverActionClick = (event) => {
+    setAnchorPopoverActionEl(event.currentTarget);
+  };
+
+  const handlePopoverActionClose = () => {
+    setAnchorPopoverActionEl(null);
+  };
+
+  const openPopoverAction = Boolean(anchorPopoverActionEl);
+  const idPopoverAction = openPopoverAction ? "simple-popover" : undefined;
+  // * POPOVER ACTION POPOVERS ENDS
+
   // * ACTION POPOVERS STARTS
   const [anchorActionEl, setAnchorActionEl] = React.useState(null);
+
   const handleActionClick = (event) => {
     setAnchorActionEl(event.currentTarget);
   };
@@ -260,8 +254,8 @@ const AllOrdersTable = () => {
     setAnchorActionEl(null);
   };
 
-  const openAction = Boolean(anchorActionEl);
-  const idAction = openAction ? "simple-popover" : undefined;
+  const openActions = Boolean(anchorActionEl);
+  const idActions = openActions ? "simple-popover" : undefined;
   // * ACTION POPOVERS ENDS
 
   return (
@@ -408,17 +402,6 @@ const AllOrdersTable = () => {
                         }}
                       />
                     </TableCell>
-                    <TableCell>
-                      <div className="d-flex align-items-center justify-content-center me-3">
-                        <img
-                          src={ordersIcon}
-                          alt="ordersIcon"
-                          width={20}
-                          className="c-pointer"
-                        />
-                      </div>
-                    </TableCell>
-
                     <TableCell
                       component="th"
                       id={labelId}
@@ -429,9 +412,11 @@ const AllOrdersTable = () => {
                         <div>
                           <Link
                             to="/orders/allOrders/details"
-                            className=" text-decoration-none d-flex"
+                            className="text-decoration-none d-flex"
                           >
-                            <p className="text-blue-2 fw-600">{row.oId}</p>
+                            <p className="text-blue-2 fw-600 text-decoration-underline">
+                              {row.oId}
+                            </p>
                             {row.oId === "#12512" && (
                               <p className="text-blue-gradient">
                                 &nbsp;• Pre Order
@@ -442,21 +427,6 @@ const AllOrdersTable = () => {
                             {row.time}
                           </small>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell padding="none" width={50}>
-                      <div className="d-flex align-items-center justify-content-center me-3">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <VisibilityOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -577,7 +547,7 @@ const AllOrdersTable = () => {
                         </Popover>
                       </div>
                     </TableCell>
-                    <TableCell width={120}>
+                    <TableCell>
                       <div className="d-flex align-items-center c-pointer">
                         <p
                           className="text-lightBlue"
@@ -628,9 +598,9 @@ const AllOrdersTable = () => {
                             </small>
                             <button
                               className="button-lightBlue-outline py-1 px-2 ms-3"
-                              aria-describedby={idAction}
+                              aria-describedby={idPopoverAction}
                               variant="contained"
-                              onClick={handleActionClick}
+                              onClick={handlePopoverActionClick}
                             >
                               <small>Action</small>
                               <KeyboardArrowDownIcon
@@ -649,10 +619,10 @@ const AllOrdersTable = () => {
                                 vertical: "top",
                                 horizontal: "left",
                               }}
-                              id={idAction}
-                              open={openAction}
-                              anchorEl={anchorActionEl}
-                              onClose={handleActionClose}
+                              id={idPopoverAction}
+                              open={openPopoverAction}
+                              anchorEl={anchorPopoverActionEl}
+                              onClose={handlePopoverActionClose}
                             >
                               <div className="py-2 px-1">
                                 <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
@@ -688,29 +658,70 @@ const AllOrdersTable = () => {
                         </div>
                       </Popover>
                     </TableCell>
-                    <TableCell width={180}>
+                    <TableCell>
                       <div className="d-flex flex-column">
                         <p className="text-lightBlue">{row.total}</p>
-                        <p className="text-grey-6">via Debit Card</p>
+                        {/* <p className="text-grey-6">via Debit Card</p> */}
                       </div>
                     </TableCell>
-                    <TableCell width="180">
+                    <TableCell>
                       <div className="d-flex align-items-center">
                         <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
                           <small className="text-black fw-400">
-                            {row.paymentStatus}
+                            {row.status}
                           </small>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell width="180">
+                    <TableCell style={{ width: 50, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.orderStatus}
-                          </small>
-                        </div>
+                        <img
+                          src={verticalDots}
+                          alt="verticalDots"
+                          className="c-pointer"
+                          aria-describedby={idActions}
+                          variant="contained"
+                          onClick={handleActionClick}
+                        />
                       </div>
+                      <Popover
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "center",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "center",
+                        }}
+                        id={idActions}
+                        open={openActions}
+                        anchorEl={anchorActionEl}
+                        onClose={handleActionClose}
+                      >
+                        <div className="py-2 px-2">
+                          <small className="text-grey-7 px-2">ACTIONS</small>
+                          <hr className="hr-grey-6 my-2" />
+
+                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                            Send Recovery Email
+                          </small>
+                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                            Open Checkout Page
+                          </small>
+                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                            Place Order
+                          </small>
+                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                            Print
+                          </small>
+                          <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
+                            <small className="text-lightBlue font2 d-block">
+                              Delete
+                            </small>
+                            <img src={deleteRed} alt="delete" className="" />
+                          </div>
+                        </div>
+                      </Popover>
                     </TableCell>
                     {/* <TableCell style={{ width: 80, padding: 0 }}>
                       <div className="d-flex align-items-center">
@@ -799,4 +810,4 @@ const AllOrdersTable = () => {
   );
 };
 
-export default AllOrdersTable;
+export default AbandonedCartTable;

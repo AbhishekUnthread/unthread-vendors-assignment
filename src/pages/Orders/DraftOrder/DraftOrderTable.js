@@ -35,16 +35,7 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import PrintIcon from "@mui/icons-material/Print";
 
 // ? TABLE STARTS HERE
-function createData(
-  oId,
-  time,
-  userName,
-  location,
-  items,
-  total,
-  paymentStatus,
-  orderStatus
-) {
+function createData(oId, time, userName, location, items, total, status) {
   return {
     oId,
     time,
@@ -52,8 +43,7 @@ function createData(
     location,
     items,
     total,
-    paymentStatus,
-    orderStatus,
+    status,
   };
 }
 
@@ -65,8 +55,7 @@ const rows = [
     "Delhi, India",
     "2 Items",
     "₹ 1,00,000",
-    "Paid",
-    "Order Confirm"
+    "Complete"
   ),
   createData(
     "#12512",
@@ -75,8 +64,7 @@ const rows = [
     "Delhi, India",
     "2 Items",
     "₹ 1,00,000",
-    "Paid",
-    "Order Confirm"
+    "Complete"
   ),
   createData(
     "#13444",
@@ -85,29 +73,16 @@ const rows = [
     "Delhi, India",
     "2 Items",
     "₹ 1,00,000",
-    "Paid",
-    "Order Confirm"
+    "Complete"
   ),
 ];
 
 const headCells = [
   {
-    id: "merchant",
+    id: "draftOrder",
     numeric: false,
     disablePadding: true,
-    label: "",
-  },
-  {
-    id: "orderInfo",
-    numeric: false,
-    disablePadding: true,
-    label: "Order Info",
-  },
-  {
-    id: "actions",
-    numeric: false,
-    disablePadding: false,
-    label: "",
+    label: "Draft Order",
   },
   {
     id: "userName",
@@ -128,21 +103,15 @@ const headCells = [
     label: "Total",
   },
   {
-    id: "paymentStatus",
+    id: "status",
     numeric: false,
     disablePadding: false,
-    label: "Payment Status",
-  },
-  {
-    id: "orderStatus",
-    numeric: false,
-    disablePadding: false,
-    label: "Order Status",
+    label: "Status",
   },
 ];
 // ? TABLE ENDS HERE
 
-const AllOrdersTable = () => {
+const DraftOrderTable = () => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("userName");
   const [selected, setSelected] = React.useState([]);
@@ -408,17 +377,6 @@ const AllOrdersTable = () => {
                         }}
                       />
                     </TableCell>
-                    <TableCell>
-                      <div className="d-flex align-items-center justify-content-center me-3">
-                        <img
-                          src={ordersIcon}
-                          alt="ordersIcon"
-                          width={20}
-                          className="c-pointer"
-                        />
-                      </div>
-                    </TableCell>
-
                     <TableCell
                       component="th"
                       id={labelId}
@@ -429,9 +387,11 @@ const AllOrdersTable = () => {
                         <div>
                           <Link
                             to="/orders/allOrders/details"
-                            className=" text-decoration-none d-flex"
+                            className="text-decoration-none d-flex"
                           >
-                            <p className="text-blue-2 fw-600">{row.oId}</p>
+                            <p className="text-blue-2 fw-600 text-decoration-underline">
+                              {row.oId}
+                            </p>
                             {row.oId === "#12512" && (
                               <p className="text-blue-gradient">
                                 &nbsp;• Pre Order
@@ -442,21 +402,6 @@ const AllOrdersTable = () => {
                             {row.time}
                           </small>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell padding="none" width={50}>
-                      <div className="d-flex align-items-center justify-content-center me-3">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <VisibilityOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -577,7 +522,7 @@ const AllOrdersTable = () => {
                         </Popover>
                       </div>
                     </TableCell>
-                    <TableCell width={120}>
+                    <TableCell>
                       <div className="d-flex align-items-center c-pointer">
                         <p
                           className="text-lightBlue"
@@ -688,26 +633,17 @@ const AllOrdersTable = () => {
                         </div>
                       </Popover>
                     </TableCell>
-                    <TableCell width={180}>
+                    <TableCell>
                       <div className="d-flex flex-column">
                         <p className="text-lightBlue">{row.total}</p>
-                        <p className="text-grey-6">via Debit Card</p>
+                        {/* <p className="text-grey-6">via Debit Card</p> */}
                       </div>
                     </TableCell>
-                    <TableCell width="180">
+                    <TableCell>
                       <div className="d-flex align-items-center">
                         <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
                           <small className="text-black fw-400">
-                            {row.paymentStatus}
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell width="180">
-                      <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.orderStatus}
+                            {row.status}
                           </small>
                         </div>
                       </div>
@@ -799,4 +735,4 @@ const AllOrdersTable = () => {
   );
 };
 
-export default AllOrdersTable;
+export default DraftOrderTable;

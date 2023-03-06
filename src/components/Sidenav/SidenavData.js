@@ -30,6 +30,21 @@ export const SidebarData = [
         path: "/orders/allOrders",
         image: orders,
       },
+      {
+        title: "Omni-Channel Orders",
+        path: "/orders/omniChannelOrders",
+        image: orders,
+      },
+      {
+        title: "Draft",
+        path: "/orders/draftOrder",
+        image: orders,
+      },
+      {
+        title: "Abandoned Cart",
+        path: "/orders/abandonedCart",
+        image: orders,
+      },
     ],
   },
   {

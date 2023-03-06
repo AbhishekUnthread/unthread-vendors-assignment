@@ -55,6 +55,9 @@ import CreateDataSets from "./pages/Parameters/CreateDataSets/CreateDataSets";
 import AllOrders from "./pages/Orders/AllOrders/AllOrders";
 import CreateOrder from "./pages/Orders/CreateOrder/CreateOrder";
 import OrderDetails from "./pages/Orders/OrderDetails/OrderDetails";
+import OmniChannelOrders from "./pages/Orders/OmniChannelOrders/OmniChannelOrders";
+import DraftOrder from "./pages/Orders/DraftOrder/DraftOrder";
+import AbandonedCart from "./pages/Orders/AbandonedCart/AbandonedCart";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -301,6 +304,12 @@ function App(props) {
                 <Route path="allOrders" element={<AllOrders />} />
                 <Route path="allOrders/create" element={<CreateOrder />} />
                 <Route path="allOrders/details" element={<OrderDetails />} />
+                <Route
+                  path="omniChannelOrders"
+                  element={<OmniChannelOrders />}
+                />
+                <Route path="draftOrder" element={<DraftOrder />} />
+                <Route path="abandonedCart" element={<AbandonedCart />} />
               </Route>
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </React.Fragment>

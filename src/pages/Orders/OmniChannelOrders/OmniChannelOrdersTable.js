@@ -37,6 +37,7 @@ import PrintIcon from "@mui/icons-material/Print";
 // ? TABLE STARTS HERE
 function createData(
   oId,
+  channelId,
   time,
   userName,
   location,
@@ -47,6 +48,7 @@ function createData(
 ) {
   return {
     oId,
+    channelId,
     time,
     userName,
     location,
@@ -60,6 +62,7 @@ function createData(
 const rows = [
   createData(
     "#12345",
+    "#INSTA1234",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
@@ -70,6 +73,7 @@ const rows = [
   ),
   createData(
     "#12512",
+    "#FB12345",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
@@ -80,6 +84,7 @@ const rows = [
   ),
   createData(
     "#13444",
+    "#AMAZON1234",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
@@ -92,22 +97,22 @@ const rows = [
 
 const headCells = [
   {
-    id: "merchant",
+    id: "channelId",
     numeric: false,
     disablePadding: true,
-    label: "",
-  },
-  {
-    id: "orderInfo",
-    numeric: false,
-    disablePadding: true,
-    label: "Order Info",
+    label: "Channel ID",
   },
   {
     id: "actions",
     numeric: false,
     disablePadding: false,
     label: "",
+  },
+  {
+    id: "orderInfo",
+    numeric: false,
+    disablePadding: true,
+    label: "Order ID",
   },
   {
     id: "userName",
@@ -142,7 +147,7 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const AllOrdersTable = () => {
+const OmniChannelOrdersTable = () => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("userName");
   const [selected, setSelected] = React.useState([]);
@@ -408,17 +413,6 @@ const AllOrdersTable = () => {
                         }}
                       />
                     </TableCell>
-                    <TableCell>
-                      <div className="d-flex align-items-center justify-content-center me-3">
-                        <img
-                          src={ordersIcon}
-                          alt="ordersIcon"
-                          width={20}
-                          className="c-pointer"
-                        />
-                      </div>
-                    </TableCell>
-
                     <TableCell
                       component="th"
                       id={labelId}
@@ -431,12 +425,9 @@ const AllOrdersTable = () => {
                             to="/orders/allOrders/details"
                             className=" text-decoration-none d-flex"
                           >
-                            <p className="text-blue-2 fw-600">{row.oId}</p>
-                            {row.oId === "#12512" && (
-                              <p className="text-blue-gradient">
-                                &nbsp;• Pre Order
-                              </p>
-                            )}
+                            <p className="text-blue-2 fw-600 text-decoration-underline">
+                              {row.channelId}
+                            </p>
                           </Link>
                           <small className="mt-2 text-lightBlue">
                             {row.time}
@@ -457,6 +448,30 @@ const AllOrdersTable = () => {
                             />
                           </div>
                         </Tooltip>
+                      </div>
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="none"
+                    >
+                      <div className="d-flex align-items-center py-2">
+                        <div>
+                          <Link
+                            to="/orders/allOrders/details"
+                            className="text-decoration-none d-flex"
+                          >
+                            <p className="text-blue-2 fw-600 text-decoration-underline">
+                              {row.oId}
+                            </p>
+                            {row.oId === "#12512" && (
+                              <p className="text-blue-gradient">
+                                &nbsp;• Pre Order
+                              </p>
+                            )}
+                          </Link>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -799,4 +814,4 @@ const AllOrdersTable = () => {
   );
 };
 
-export default AllOrdersTable;
+export default OmniChannelOrdersTable;
