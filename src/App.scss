@@ -27,6 +27,7 @@
     color: $white1;
     text-decoration: none;
     min-width: max-content;
+    cursor: pointer;
     &:hover {
       background: $black2;
     }
@@ -45,6 +46,7 @@
     justify-content: center;
     text-decoration: none;
     min-width: max-content;
+    cursor: pointer;
     &:hover {
       background: $black16;
       border: 1px solid $black16;
@@ -59,6 +61,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
     background: linear-gradient(
       165.69deg,
       rgba(104, 108, 248, 0.7) 4.49%,
@@ -88,6 +91,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
     background: linear-gradient(
       303.01deg,
       rgba(89, 97, 248, 0.2) -4.4%,
@@ -118,6 +122,7 @@
     color: $red2;
     text-decoration: none;
     min-width: max-content;
+    cursor: pointer;
     &:hover {
       background: $red2;
       color: $black1;
@@ -138,6 +143,7 @@
     color: $green2;
     text-decoration: none;
     min-width: max-content;
+    cursor: pointer;
     &:hover {
       background: $green2;
       color: $black1;
@@ -159,6 +165,7 @@
     color: $lightBlue;
     text-decoration: none;
     min-width: max-content;
+    cursor: pointer;
     &:hover {
       background: $lightBlue;
       color: $black1;
@@ -180,6 +187,7 @@
     color: $lightBlue;
     text-decoration: none;
     min-width: max-content;
+    cursor: pointer;
     &:hover {
       background: rgba(200, 216, 255, 0.05);
       color: $black1;
@@ -194,6 +202,7 @@
     border: 1px solid $black1;
     border-radius: 5px;
     text-decoration: none;
+    cursor: pointer;
     // font-size: $font2;
     // font-weight: 500;
   }

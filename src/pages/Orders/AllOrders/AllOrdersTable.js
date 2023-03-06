@@ -8,6 +8,8 @@ import {
 } from "../../../components/TableDependencies/TableDependencies";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
+import ringSmall from "../../../assets/images/ringSmall.svg";
+import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import ordersIcon from "../../../assets/icons/ordersIcon.svg";
@@ -25,6 +27,12 @@ import {
 } from "@mui/material";
 // ! MATERIAL ICON IMPORTS
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ChatIcon from "@mui/icons-material/Chat";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import CloseIcon from "@mui/icons-material/Close";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import PrintIcon from "@mui/icons-material/Print";
 
 // ? TABLE STARTS HERE
 function createData(
@@ -214,6 +222,48 @@ const AllOrdersTable = () => {
   const idMassAction = openMassAction ? "simple-popover" : undefined;
   // * MASS ACTION POPOVERS ENDS
 
+  // * USER POPOVERS STARTS
+  const [anchorUserEl, setAnchorUserEl] = React.useState(null);
+  const handleUserClick = (event) => {
+    setAnchorUserEl(event.currentTarget);
+  };
+
+  const handleUserClose = () => {
+    setAnchorUserEl(null);
+  };
+
+  const openUser = Boolean(anchorUserEl);
+  const idUser = openUser ? "simple-popover" : undefined;
+  // * USER POPOVERS ENDS
+
+  // * ITEM POPOVERS STARTS
+  const [anchorItemEl, setAnchorItemEl] = React.useState(null);
+  const handleItemClick = (event) => {
+    setAnchorItemEl(event.currentTarget);
+  };
+
+  const handleItemClose = () => {
+    setAnchorItemEl(null);
+  };
+
+  const openItem = Boolean(anchorItemEl);
+  const idItem = openItem ? "simple-popover" : undefined;
+  // * ITEM POPOVERS ENDS
+
+  // * ACTION POPOVERS STARTS
+  const [anchorActionEl, setAnchorActionEl] = React.useState(null);
+  const handleActionClick = (event) => {
+    setAnchorActionEl(event.currentTarget);
+  };
+
+  const handleActionClose = () => {
+    setAnchorActionEl(null);
+  };
+
+  const openAction = Boolean(anchorActionEl);
+  const idAction = openAction ? "simple-popover" : undefined;
+  // * ACTION POPOVERS ENDS
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -375,13 +425,18 @@ const AllOrdersTable = () => {
                       scope="row"
                       padding="none"
                     >
-                      <div className="d-flex align-items-center py-3">
+                      <div className="d-flex align-items-center py-2">
                         <div>
                           <Link
                             to="/orders/allOrders/details"
-                            className=" text-decoration-none"
+                            className=" text-decoration-none d-flex"
                           >
                             <p className="text-blue-2 fw-600">{row.oId}</p>
+                            {row.oId === "#12512" && (
+                              <p className="text-blue-gradient">
+                                &nbsp;• Pre Order
+                              </p>
+                            )}
                           </Link>
                           <small className="mt-2 text-lightBlue">
                             {row.time}
@@ -405,7 +460,7 @@ const AllOrdersTable = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="d-flex align-items-center py-3">
+                      <div className="d-flex align-items-center py-2">
                         {/* <img
                           src={user}
                           alt="user"
@@ -414,15 +469,17 @@ const AllOrdersTable = () => {
                           width={45}
                         /> */}
 
-                        <div>
-                          <Link
-                            to="/users/allUsers/details"
-                            className=" text-decoration-none"
-                          >
+                        <div
+                          aria-describedby={idUser}
+                          variant="contained"
+                          onClick={handleUserClick}
+                          className="c-pointer"
+                        >
+                          <div className=" text-decoration-none">
                             <p className="text-lightBlue rounded-circle fw-600">
                               {row.userName}
                             </p>
-                          </Link>
+                          </div>
 
                           <div className="d-flex align-items-center mt-2">
                             <p className="text-lightBlue">{row.location}</p>
@@ -434,12 +491,202 @@ const AllOrdersTable = () => {
                             />
                           </div>
                         </div>
+
+                        <Popover
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                          }}
+                          id={idUser}
+                          open={openUser}
+                          anchorEl={anchorUserEl}
+                          onClose={handleUserClose}
+                        >
+                          <div className="py-2 px-2">
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div className="d-flex">
+                                <img
+                                  src={user}
+                                  alt="user"
+                                  className="me-2 rounded-circle"
+                                  height={45}
+                                  width={45}
+                                />
+                                <div className="d-flex flex-column">
+                                  <p className="text-lightBlue">
+                                    Saniya Shaikh
+                                  </p>
+                                  <small className="text-blue-2">
+                                    View Profile
+                                  </small>
+                                </div>
+                              </div>
+                              <img src={indiaFlag} alt="indiaFlag" width={20} />
+                            </div>
+                            <hr className="hr-grey-6 my-2" />
+                            <div className="d-flex align-items-center mt-3">
+                              <small className=" text-blue-2 me-2">
+                                saniya@mydesignar.com
+                              </small>
+                              <Tooltip title="Copy" placement="top">
+                                <ContentCopyIcon
+                                  sx={{ fontSize: 12, color: "#c8d8ff" }}
+                                  className="c-pointer"
+                                />
+                              </Tooltip>
+                            </div>
+                            <div className="d-flex align-items-center mt-3">
+                              <small className="text-blue-2 me-2">
+                                +91-9876543210
+                              </small>
+                              <Tooltip title="Copy" placement="top">
+                                <ContentCopyIcon
+                                  sx={{ fontSize: 12, color: "#c8d8ff" }}
+                                  className="c-pointer"
+                                />
+                              </Tooltip>
+                            </div>
+                            <div className="d-flex align-items-center mt-3">
+                              <small className="text-lightBlue me-2">
+                                66-68, Jambi Mohalla, Bapu Khote <br /> Street,
+                                Mumbai - 400003
+                              </small>
+                              <Tooltip title="Copy" placement="top">
+                                <ContentCopyIcon
+                                  sx={{ fontSize: 12, color: "#c8d8ff" }}
+                                  className="c-pointer ms-3"
+                                />
+                              </Tooltip>
+                            </div>
+                            <div className="d-flex mt-4">
+                              <buton className="button-lightBlue-outline px-3 py-1 align-items-center">
+                                <ChatIcon
+                                  sx={{
+                                    fontSize: 14,
+                                    "& :hover": { color: "" },
+                                  }}
+                                />
+                                <small className="ms-2">Message</small>
+                              </buton>
+                            </div>
+                          </div>
+                        </Popover>
                       </div>
                     </TableCell>
                     <TableCell width={120}>
                       <div className="d-flex align-items-center c-pointer">
-                        <p className="text-lightBlue">{row.items}</p>
+                        <p
+                          className="text-lightBlue"
+                          aria-describedby={idItem}
+                          variant="contained"
+                          onClick={handleItemClick}
+                        >
+                          {row.items}
+                        </p>
                       </div>
+
+                      <Popover
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
+                        id={idItem}
+                        open={openItem}
+                        anchorEl={anchorItemEl}
+                        onClose={handleItemClose}
+                      >
+                        <div className="py-2 px-2">
+                          <div className="d-flex align-items-center">
+                            <small className="text-blue-2 text-decoration-underline">
+                              #12345
+                            </small>
+                            <img
+                              src={ringSmall}
+                              alt="product"
+                              width={40}
+                              className="ms-4 me-2"
+                            />
+                            <div>
+                              <small className="text-lightBlue d-block">
+                                The Fringe Diamond Ring
+                              </small>
+                              <small className="text-grey-6 font0 d-block">
+                                ₹ 50,000
+                              </small>
+                            </div>
+                            <small className="text-grey-6 ms-4">
+                              SKU:&nbsp;
+                              <span className="text-blue-2">TFDR012345</span>
+                            </small>
+                            <button
+                              className="button-lightBlue-outline py-1 px-2 ms-3"
+                              aria-describedby={idAction}
+                              variant="contained"
+                              onClick={handleActionClick}
+                            >
+                              <small>Action</small>
+                              <KeyboardArrowDownIcon
+                                sx={{
+                                  fontSize: 14,
+                                  marginLeft: 1,
+                                }}
+                              />
+                            </button>
+                            <Popover
+                              anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "left",
+                              }}
+                              transformOrigin={{
+                                vertical: "top",
+                                horizontal: "left",
+                              }}
+                              id={idAction}
+                              open={openAction}
+                              anchorEl={anchorActionEl}
+                              onClose={handleActionClose}
+                            >
+                              <div className="py-2 px-1">
+                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                                  <CloseIcon
+                                    sx={{
+                                      fontSize: 14,
+                                      marginRight: 1,
+                                    }}
+                                  />
+                                  Cancel Order
+                                </small>
+                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                                  <ReceiptIcon
+                                    sx={{
+                                      fontSize: 14,
+                                      marginRight: 1,
+                                    }}
+                                  />
+                                  View Invoice
+                                </small>
+                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                                  <PrintIcon
+                                    sx={{
+                                      fontSize: 14,
+                                      marginRight: 1,
+                                    }}
+                                  />
+                                  Print Packaging Slip
+                                </small>
+                              </div>
+                            </Popover>
+                          </div>
+                        </div>
+                      </Popover>
                     </TableCell>
                     <TableCell width={180}>
                       <div className="d-flex flex-column">
