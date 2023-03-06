@@ -118,28 +118,28 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>
+      <MenuItem onClick={handleMenuClose} className="px-2">
         <PersonOutlineOutlinedIcon
           size="small"
           sx={{ color: "#c8d8ff", fontSize: 18 }}
         />
         <small className="text-lightBlue ms-2">My Account</small>
       </MenuItem>
-      <MenuItem onClick={handleMenuClose} className="mt-1">
+      <MenuItem onClick={handleMenuClose} className="mt-1  px-2">
         <HelpOutlineOutlinedIcon
           size="small"
           sx={{ color: "#c8d8ff", fontSize: 18 }}
         />
         <small className="text-lightBlue ms-2">Help & Support</small>
       </MenuItem>
-      <MenuItem onClick={handleMenuClose} className="mt-1">
+      <MenuItem onClick={handleMenuClose} className="mt-1 px-2">
         <SettingsOutlinedIcon
           size="small"
           sx={{ color: "#c8d8ff", fontSize: 18 }}
         />
         <small className="text-lightBlue ms-2">Settings</small>
       </MenuItem>
-      <MenuItem onClick={handleMenuClose} className="mt-1">
+      <MenuItem onClick={handleMenuClose} className="mt-1  px-2">
         <LogoutIcon size="small" sx={{ color: "#FC756E", fontSize: 18 }} />
         <small className="text-red-5 ms-2">Log out</small>
       </MenuItem>

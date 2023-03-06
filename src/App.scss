@@ -243,6 +243,9 @@
 .bg-black-18 {
   background: $black18 !important;
 }
+.bg-black-20 {
+  background: $black20 !important;
+}
 
 .tabs {
   .MuiTabs-indicator {
@@ -522,6 +525,9 @@ textarea {
   outline: none !important;
 }
 
+.nav-textarea {
+  border: 0 !important;
+}
 .hover-back {
   transition: 0.1s all ease-in;
   &:hover {

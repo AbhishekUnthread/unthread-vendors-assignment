@@ -9,7 +9,7 @@ import cancel from "../../assets/icons/cancel.svg";
 // ! MATERIAL IMPORTS
 import { Badge, Box, IconButton, Popover, Tab, Tabs } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 
 const AppNavbarNotifications = () => {
   const [value, setValue] = React.useState(0);
@@ -47,12 +47,12 @@ const AppNavbarNotifications = () => {
     <React.Fragment>
       <IconButton
         size="large"
-        aria-label="show 4 new mails"
+        aria-label="show 17 new notifications"
         color="inherit"
         onClick={handlePopperClick}
       >
-        <Badge badgeContent={4} color="purple" size="small">
-          <DescriptionOutlinedIcon sx={{ color: "#c8d8ff" }} size="small" />
+        <Badge badgeContent={7} color="purple" size="small">
+          <NotificationsNoneIcon size="small" sx={{ color: "#c8d8ff" }} />
         </Badge>
       </IconButton>
 
@@ -131,7 +131,7 @@ const AppNavbarNotifications = () => {
               value={value}
               onChange={handleChange}
               aria-label="scrollable force tabs example"
-              className="tabs"
+              className="tabs px-3"
             >
               <Tab label="All" className="tabs-head" />
               <Tab label="Orders" className="tabs-head" />
@@ -142,7 +142,7 @@ const AppNavbarNotifications = () => {
 
           <TabPanel value={value} index={0} className="px-3 nav-tab-panel">
             {[...Array(10)].map((elementInArray, index) => (
-              <div className="d-flex justify-content-center border-grey-5 bg-black-13 p-3 rounded-8 my-3">
+              <div className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3">
                 <div className="d-flex">
                   <img
                     src={notificationNavbar}
@@ -160,9 +160,11 @@ const AppNavbarNotifications = () => {
                     Quia error quasi nihil expedita amet, officia sapiente.
                   </small>
                 </div>
-                <div className="d-flex flex-column justify-content-between align-items-end">
-                  <small className="text-grey-6 d-block">1:37 PM</small>
-                  <small className="text-blue-2 d-block text-decoration-underline">
+                <div className="d-flex justify-content-between align-items-center mt-3">
+                  <small className="text-grey-6 d-block font0">
+                    1:37 PM • 06/02/23
+                  </small>
+                  <small className="text-blue-2 d-block text-decoration-underline c-pointer">
                     View
                   </small>
                 </div>
@@ -171,7 +173,7 @@ const AppNavbarNotifications = () => {
           </TabPanel>
           <TabPanel value={value} index={1} className="px-3 nav-tab-panel">
             {[...Array(10)].map((elementInArray, index) => (
-              <div className="d-flex justify-content-center border-grey-5 bg-black-13 p-3 rounded-8 my-3">
+              <div className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3">
                 <div className="d-flex">
                   <img
                     src={notificationNavbar}
@@ -189,9 +191,11 @@ const AppNavbarNotifications = () => {
                     Quia error quasi nihil expedita amet, officia sapiente.
                   </small>
                 </div>
-                <div className="d-flex flex-column justify-content-between align-items-end">
-                  <small className="text-grey-6 d-block">1:37 PM</small>
-                  <small className="text-blue-2 d-block text-decoration-underline">
+                <div className="d-flex justify-content-between align-items-center mt-3">
+                  <small className="text-grey-6 d-block font0">
+                    1:37 PM • 06/02/23
+                  </small>
+                  <small className="text-blue-2 d-block text-decoration-underline c-pointer">
                     View
                   </small>
                 </div>
@@ -200,7 +204,7 @@ const AppNavbarNotifications = () => {
           </TabPanel>
           <TabPanel value={value} index={2} className="px-3 nav-tab-panel">
             {[...Array(10)].map((elementInArray, index) => (
-              <div className="d-flex justify-content-center border-grey-5 bg-black-13 p-3 rounded-8 my-3">
+              <div className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3">
                 <div className="d-flex">
                   <img
                     src={notificationNavbar}
@@ -218,9 +222,11 @@ const AppNavbarNotifications = () => {
                     Quia error quasi nihil expedita amet, officia sapiente.
                   </small>
                 </div>
-                <div className="d-flex flex-column justify-content-between align-items-end">
-                  <small className="text-grey-6 d-block">1:37 PM</small>
-                  <small className="text-blue-2 d-block text-decoration-underline">
+                <div className="d-flex justify-content-between align-items-center mt-3">
+                  <small className="text-grey-6 d-block font0">
+                    1:37 PM • 06/02/23
+                  </small>
+                  <small className="text-blue-2 d-block text-decoration-underline c-pointer">
                     View
                   </small>
                 </div>
@@ -229,7 +235,7 @@ const AppNavbarNotifications = () => {
           </TabPanel>
           <TabPanel value={value} index={3} className="px-3 nav-tab-panel">
             {[...Array(10)].map((elementInArray, index) => (
-              <div className="d-flex justify-content-center border-grey-5 bg-black-13 p-3 rounded-8 my-3">
+              <div className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3">
                 <div className="d-flex">
                   <img
                     src={notificationNavbar}
@@ -247,9 +253,11 @@ const AppNavbarNotifications = () => {
                     Quia error quasi nihil expedita amet, officia sapiente.
                   </small>
                 </div>
-                <div className="d-flex flex-column justify-content-between align-items-end">
-                  <small className="text-grey-6 d-block">1:37 PM</small>
-                  <small className="text-blue-2 d-block text-decoration-underline">
+                <div className="d-flex justify-content-between align-items-center mt-3">
+                  <small className="text-grey-6 d-block font0">
+                    1:37 PM • 06/02/23
+                  </small>
+                  <small className="text-blue-2 d-block text-decoration-underline c-pointer">
                     View
                   </small>
                 </div>
@@ -258,7 +266,7 @@ const AppNavbarNotifications = () => {
           </TabPanel>
           <hr className="hr-grey-6 my-0" />
           <div className="d-flex justify-content-center mt-3">
-            <small className="text-blue-gradient">View More</small>
+            <small className="text-blue-gradient c-pointer">View More</small>
           </div>
         </div>
       </Popover>
