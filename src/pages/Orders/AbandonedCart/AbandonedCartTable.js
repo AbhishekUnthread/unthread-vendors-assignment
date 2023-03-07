@@ -52,7 +52,7 @@ function createData(oId, time, userName, location, items, total, status) {
 
 const rows = [
   createData(
-    "#12345",
+    "#CHKT12345",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
@@ -61,7 +61,7 @@ const rows = [
     "Complete"
   ),
   createData(
-    "#12512",
+    "#CHKT12512",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
@@ -70,7 +70,7 @@ const rows = [
     "Complete"
   ),
   createData(
-    "#13444",
+    "#CHKT13444",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
@@ -411,7 +411,7 @@ const AbandonedCartTable = () => {
                       <div className="d-flex align-items-center py-2">
                         <div>
                           <Link
-                            to="/orders/allOrders/details"
+                            to="/orders/abandonedCart/details"
                             className="text-decoration-none d-flex"
                           >
                             <p className="text-blue-2 fw-600 text-decoration-underline">

@@ -159,7 +159,7 @@ const UserInformation = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row">
+      <div className="bg-black-15 border-grey-5 mt-4 rounded-8 row">
         <div className="col-12 d-flex mt-3 px-3">
           <img src={location} alt="location" />
           <h6 className="text-lightBlue ms-2 fw-500">Address</h6>
@@ -236,7 +236,7 @@ const UserInformation = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row">
+      <div className="bg-black-15 border-grey-5 mt-4 rounded-8 row">
         <div className="col-12 d-flex mt-3 px-3">
           <h6 className="text-lightBlue fw-500">Wishlist</h6>
         </div>
@@ -247,7 +247,7 @@ const UserInformation = () => {
           <UserWishlistTable />
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row  ">
+      <div className="bg-black-15 border-grey-5 mt-4 rounded-8 row  ">
         <div className="col-12 d-flex mt-3 align-items-center justify-content-between">
           <h6 className="text-lightBlue ms-2 fw-500">Activity</h6>
 
@@ -319,7 +319,7 @@ const UserInformation = () => {
           <UserActivityTable />
         </div>
       </div>
-      <div className="bg-black-15 border-grey-5 mt-3 rounded-8 row  ">
+      <div className="bg-black-15 border-grey-5 mt-4 rounded-8 row  ">
         <div className="col-12 d-flex mt-3 justify-content-between align-items-center">
           <h6 className="text-lightBlue ms-2 fw-500">
             Access to Dashboard (IP)

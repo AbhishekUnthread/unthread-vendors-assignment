@@ -58,6 +58,7 @@ import OrderDetails from "./pages/Orders/OrderDetails/OrderDetails";
 import OmniChannelOrders from "./pages/Orders/OmniChannelOrders/OmniChannelOrders";
 import DraftOrder from "./pages/Orders/DraftOrder/DraftOrder";
 import AbandonedCart from "./pages/Orders/AbandonedCart/AbandonedCart";
+import AbandonedCartDetails from "./pages/Orders/AbandonedCartDetails/AbandonedCartDetails";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -310,6 +311,11 @@ function App(props) {
                 />
                 <Route path="draftOrder" element={<DraftOrder />} />
                 <Route path="abandonedCart" element={<AbandonedCart />} />
+                <Route
+                  path="abandonedCart/details"
+                  element={<AbandonedCartDetails />}
+                />
+                <Route path="orderDetails" element={<OrderDetails />} />
               </Route>
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </React.Fragment>

@@ -36,14 +36,14 @@ const VariantSets = () => {
           {value === 0 ? (
             <Link
               to="/parameters/variantSets/dataSets/create"
-              className="button-gradient py-2 px-4 ms-3"
+              className="button-gradient py-2 px-4"
             >
               <p>+ Add Data</p>
             </Link>
           ) : (
             <Link
               to="/parameters/variantSets/edit"
-              className="button-gradient py-2 px-4 ms-3"
+              className="button-gradient py-2 px-4"
             >
               <p>+ Create Option Sets</p>
             </Link>

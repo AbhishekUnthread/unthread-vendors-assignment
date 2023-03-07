@@ -211,7 +211,7 @@ const UserDetails = () => {
         </div>
       </div>
       <div className="row">
-        <div className="col-lg-9 mt-3">
+        <div className="col-lg-9 mt-4">
           <div className="row flex-column mb-2">
             <Box
               sx={{ width: "100%" }}
@@ -251,7 +251,7 @@ const UserDetails = () => {
             </TabPanel>
           </div>
         </div>
-        <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
+        <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3">
             <img src={userLarge} alt="userLarge" width={100} />
             <div className="d-flex w-100 mt-3">

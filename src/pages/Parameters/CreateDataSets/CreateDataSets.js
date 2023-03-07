@@ -151,11 +151,12 @@ const CreateDataSets = () => {
               </FormControl>
             </div>
             {inputFieldType && (
-              <div className="col-12 bg-black-13 d-flex justify-content-between mt-3 py-3 mb-2">
+              <div className="col-12 bg-black-13 d-flex justify-content-between mt-4 py-3 mb-2">
                 <p className="text-lightBlue">
-                  {inputFieldType === 20 || inputFieldType === 30
+                  {/* {inputFieldType === 20 || inputFieldType === 30
                     ? "Option Name"
-                    : "Data Values"}
+                    : "Data Values"} */}
+                  Data Value
                 </p>
                 <p className="text-lightBlue">Action</p>
               </div>
@@ -290,6 +291,9 @@ const CreateDataSets = () => {
                     </div>
                   </Tooltip>
                 </div>
+                <small className="text-blue-2 c-pointer mt-2">
+                  + Add Data Values
+                </small>
               </React.Fragment>
             )}
           </div>
@@ -436,14 +440,14 @@ const CreateDataSets = () => {
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
           <Link
-            to="/parameters/collections"
+            to="/parameters/variantSets"
             className="button-red-outline py-2 px-4"
           >
             <p>Discard</p>
           </Link>
 
           <Link
-            to="/parameters/collections"
+            to="/parameters/variantSets"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
@@ -451,13 +455,13 @@ const CreateDataSets = () => {
         </div>
         <div className="d-flex w-auto px-0">
           <Link
-            to="/parameters/collections"
+            to="/parameters/variantSets"
             className="button-lightBlue-outline py-2 px-4"
           >
             <p>Save & Add Another</p>
           </Link>
           <Link
-            to="/parameters/collections"
+            to="/parameters/variantSets"
             className="button-gradient ms-3 py-2 px-4 w-auto"
           >
             <p>Save</p>

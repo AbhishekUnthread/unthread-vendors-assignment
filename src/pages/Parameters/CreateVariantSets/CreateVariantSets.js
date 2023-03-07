@@ -33,6 +33,8 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import InventoryIcon from "@mui/icons-material/Inventory";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -84,7 +86,7 @@ const CreateVariantSets = () => {
   // ? SIZE SELECT ENDS HERE
 
   // ? ADD OPTIONS STARTS HERE
-  const [addOptions, setAddOptions] = React.useState(false);
+  const [addOptions, setAddOptions] = React.useState(true);
 
   const handleAddOptions = () => {
     !addOptions ? setAddOptions(true) : setAddOptions(false);
@@ -151,13 +153,14 @@ const CreateVariantSets = () => {
         </div>
       </div>
       <div className="row mt-3">
-        <div className="col-12">
+        {/* <div className="col-12">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
+           
+          </div>
+        </div> */}
+        <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
-              <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
-                Option Information
-              </h6>
-              <hr className="hr-grey-6 my-3" />
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Name this Option Sets</p>
                 <Tooltip title="Lorem ipsum" placement="top">
@@ -173,11 +176,7 @@ const CreateVariantSets = () => {
                 <OutlinedInput placeholder="Global Option Sets" size="small" />
               </FormControl>
             </div>
-          </div>
-        </div>
-        <div className="col-lg-9 mt-3">
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-            <div className="col-12 mt-3 px-0">
+            <div className="col-12 px-0 mt-4">
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">Add Notes</h5>
@@ -196,7 +195,7 @@ const CreateVariantSets = () => {
             </div>
             <Box
               sx={{ width: "100%" }}
-              className="d-flex justify-content-between tabs-header-box"
+              className="d-flex justify-content-between tabs-header-box px-0 mt-2"
             >
               {/* variant="scrollable"
               scrollButtons
@@ -215,7 +214,7 @@ const CreateVariantSets = () => {
             <TabPanel value={value} index={0}>
               {saveOption && (
                 <div className="col-12 ">
-                  <div className="row py-3 border-grey-5 rounded-3 align-items-center bg-black-13 mt-3">
+                  <div className="row py-3 border-grey-5 rounded-8 align-items-center bg-black-13 mt-3">
                     <div className="col-md-8 col-6 d-flex">
                       <FormControl
                         sx={{
@@ -228,27 +227,43 @@ const CreateVariantSets = () => {
                       </FormControl>
                     </div>
                     <div className="d-flex col-md-4 col-6 justify-content-end">
-                      <button className="button-lightBlue-outline py-1 px-3 me-2">
-                        <p>Edit</p>
-                      </button>
-                      <button className="button-lightBlue-outline py-1 px-3">
-                        <p>Delete</p>
-                      </button>
+                      <Tooltip title="Edit" placement="top">
+                        <div className="table-edit-icon rounded-4 p-2">
+                          <EditOutlinedIcon
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                            }}
+                          />
+                        </div>
+                      </Tooltip>
+                      <Tooltip title="Delete" placement="top">
+                        <div className="table-edit-icon rounded-4 p-2">
+                          <InventoryIcon
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                            }}
+                          />
+                        </div>
+                      </Tooltip>
                     </div>
-                    <div className="col-12 mt-3">
+                    <div className="col-12 mt-2">
                       <small className="text-grey-6">
                         Input Field Type:&nbsp;
                         <span className="text-lightBlue">Dropdown</span>
                       </small>
                     </div>
-                    <div className="col-12 d-flex mt-1">
+                    <div className="col-12 d-flex mt-2">
                       <Chip label="S" size="small" className="px-1 me-2" />
                       <Chip label="M" size="small" className="px-1 me-2" />
                       <Chip label="L" size="small" className="px-1 me-2" />
                       <Chip label="XL" size="small" className="px-1 me-2" />
                     </div>
                   </div>
-                  <div className="row py-3 border-grey-5 rounded-3 align-items-center bg-black-13 mt-3">
+                  <div className="row py-3 border-grey-5 rounded-8 align-items-center bg-black-13 mt-3">
                     <div className="col-md-8 col-6 d-flex">
                       <FormControl
                         sx={{
@@ -260,21 +275,38 @@ const CreateVariantSets = () => {
                         <OutlinedInput placeholder="Enter Size" size="small" />
                       </FormControl>
                     </div>
+
                     <div className="d-flex col-md-4 col-6 justify-content-end">
-                      <button className="button-lightBlue-outline py-1 px-3 me-2">
-                        <p>Edit</p>
-                      </button>
-                      <button className="button-lightBlue-outline py-1 px-3">
-                        <p>Delete</p>
-                      </button>
+                      <Tooltip title="Edit" placement="top">
+                        <div className="table-edit-icon rounded-4 p-2">
+                          <EditOutlinedIcon
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                            }}
+                          />
+                        </div>
+                      </Tooltip>
+                      <Tooltip title="Delete" placement="top">
+                        <div className="table-edit-icon rounded-4 p-2">
+                          <InventoryIcon
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                            }}
+                          />
+                        </div>
+                      </Tooltip>
                     </div>
-                    <div className="col-12 mt-3">
+                    <div className="col-12 mt-2">
                       <small className="text-grey-6">
                         Input Field Type:&nbsp;
                         <span className="text-lightBlue">Dropdown</span>
                       </small>
                     </div>
-                    <div className="col-12 d-flex mt-1">
+                    <div className="col-12 d-flex mt-2">
                       <Chip label="S" size="small" className="px-1 me-2" />
                       <Chip label="M" size="small" className="px-1 me-2" />
                       <Chip label="L" size="small" className="px-1 me-2" />
@@ -285,35 +317,10 @@ const CreateVariantSets = () => {
               )}
               {addOptions && (
                 <div className="col-12 mt-3">
-                  <div className="row py-3 border-grey-5 rounded-3 bg-black-13">
+                  <div className="row py-3 border-grey-5 rounded-8 bg-black-13">
                     <div className="col-md-6 mb-3">
                       <div className="d-flex align-item-center mb-2">
                         <p className="text-lightBlue me-2">Enter Option Name</p>
-                        <Tooltip title="Lorem ipsum" placement="top">
-                          <img
-                            src={info}
-                            alt="info"
-                            className="c-pointer"
-                            width={13.5}
-                          />
-                        </Tooltip>
-                      </div>
-                      <FormControl
-                        sx={{
-                          m: 0,
-                          minWidth: 120,
-                          width: "100%",
-                        }}
-                      >
-                        <OutlinedInput
-                          placeholder="Enter Option Name"
-                          size="small"
-                        />
-                      </FormControl>
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <div className="d-flex align-item-center mb-2">
-                        <p className="text-lightBlue me-2">Input Field Type</p>
                         <Tooltip title="Lorem ipsum" placement="top">
                           <img
                             src={info}
@@ -348,58 +355,51 @@ const CreateVariantSets = () => {
                             value={10}
                             sx={{ fontSize: 13, color: "#5c6d8e" }}
                           >
-                            Drop-Down List
+                            Size
                           </MenuItem>
                           <MenuItem
                             value={20}
                             sx={{ fontSize: 13, color: "#5c6d8e" }}
                           >
-                            Drop-Down List with Thumbnails
+                            Metal
                           </MenuItem>
                           <MenuItem
                             value={30}
                             sx={{ fontSize: 13, color: "#5c6d8e" }}
                           >
-                            Images & Color Swatches
+                            Gold Color
                           </MenuItem>
                           <MenuItem
                             value={40}
                             sx={{ fontSize: 13, color: "#5c6d8e" }}
                           >
-                            Radio Buttons
+                            Silver Color
                           </MenuItem>
                           <MenuItem
                             value={50}
                             sx={{ fontSize: 13, color: "#5c6d8e" }}
                           >
-                            Multiple Select
-                          </MenuItem>
-                          <MenuItem
-                            value={60}
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            Circle Buttons
-                          </MenuItem>
-                          <MenuItem
-                            value={70}
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            Square Button
-                          </MenuItem>
-                          <MenuItem
-                            value={80}
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            Text Field
-                          </MenuItem>
-                          <MenuItem
-                            value={90}
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            File Uploader
+                            Silver Purity
                           </MenuItem>
                         </Select>
                       </FormControl>
+                    </div>
+                    <div className="col-md-6 mb-3 d-flex align-items-center pt-4 mt-2">
+                      <div className="d-flex align-item-center mb-2">
+                        <p className="text-lightBlue me-2">
+                          Input Field Type : Drop Down List&nbsp;
+                          <span className="text-blue-2">(change)</span>
+                        </p>
+
+                        <Tooltip title="Lorem ipsum" placement="top">
+                          <img
+                            src={info}
+                            alt="info"
+                            className="c-pointer"
+                            width={13.5}
+                          />
+                        </Tooltip>
+                      </div>
                     </div>
                     <div className="col-12 text-end mb-3">
                       <div className="d-flex align-item-center mb-2">
@@ -725,14 +725,14 @@ const CreateVariantSets = () => {
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
           <Link
-            to="/parameters/collections"
+            to="/parameters/variantSets"
             className="button-red-outline py-2 px-4"
           >
             <p>Discard</p>
           </Link>
 
           <Link
-            to="/parameters/collections"
+            to="/parameters/variantSets"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
@@ -740,13 +740,13 @@ const CreateVariantSets = () => {
         </div>
         <div className="d-flex w-auto px-0">
           <Link
-            to="/parameters/collections"
+            to="/parameters/variantSets"
             className="button-lightBlue-outline py-2 px-4"
           >
             <p>Save & Add Another</p>
           </Link>
           <Link
-            to="/parameters/collections"
+            to="/parameters/variantSets"
             className="button-gradient ms-3 py-2 px-4 w-auto"
           >
             <p>Save</p>

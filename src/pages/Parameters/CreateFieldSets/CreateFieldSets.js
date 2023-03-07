@@ -134,7 +134,7 @@ const CreateFieldSets = () => {
               </Tabs>
             </Box>
             <TabPanel value={value} index={0} className="px-0">
-              <table className="table table-borderless w-100 mt-3 create-table">
+              <table className="table table-borderless w-100 mt-3 mb-0 create-table">
                 <thead className="">
                   <tr className="bg-black-18">
                     <th scope="col" className="">
@@ -265,7 +265,7 @@ const CreateFieldSets = () => {
             </TabPanel>
             <TabPanel value={value} index={1} className="px-0">
               {groupFieldsData && (
-                <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-3">
+                <div className="bg-black-13 border-grey-5 rounded-8 p-3 mt-3">
                   <div className="row">
                     <div className="col-4">
                       <FormControl className="w-100 px-0">

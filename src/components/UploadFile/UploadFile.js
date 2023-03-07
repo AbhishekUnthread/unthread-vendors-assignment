@@ -68,7 +68,12 @@ const UploadFile = ({ imageName, height }) => {
         //   event.target.value = null;
         // }}
       />
-      <img src={imageName} alt="" height={height} />
+      <img
+        src={imageName}
+        alt=""
+        height={height ? height : "auto"}
+        className={height ? "" : "w-100"}
+      />
     </div>
     // </div>
   );

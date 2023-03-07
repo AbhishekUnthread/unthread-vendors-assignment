@@ -207,7 +207,7 @@ const DataSetsTable = () => {
                             label={e}
                             size="small"
                             className="px-1 me-2"
-                            variant="outlined"
+                            // variant="outlined"
                           />
                         ))}
                       </div>
