@@ -241,10 +241,7 @@ const Attributes = () => {
         </div>
       </div>
       <div className="col-12">
-        <div
-          className="row py-3 mb-3 rounded-8"
-          style={{ background: "rgba(39, 40, 63, 0.5)" }}
-        >
+        <div className="row py-3 mb-3 rounded-8 bg-black-21">
           <div className="col-12 mb-3">
             <p className="text-lightBlue fw-500">Diamond Information 1</p>
           </div>

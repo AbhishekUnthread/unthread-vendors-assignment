@@ -29,6 +29,34 @@ body {
     color: $lightBlue;
   }
 }
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+// ::-webkit-scrollbar:hover {
+//   ::-webkit-scrollbar {
+//     width: 10px;
+//   }
+// }
+
+::-webkit-scrollbar-track {
+  background: #0e0d21;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5c6d8e;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c8d8ff;
+}
+
+// *:hover::-webkit-scrollbar {
+//   width: 8px;
+// }
+
 // .MuiOutlinedInput-notchedOutline {
 //   border-color: white !important;
 // }

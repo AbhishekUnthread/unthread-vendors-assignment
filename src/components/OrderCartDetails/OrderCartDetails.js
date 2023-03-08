@@ -110,7 +110,7 @@ const OrderCartDetails = ({
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
-      <div className="d-flex justify-content-between align-items-center col-12">
+      <div className="d-flex justify-content-between align-items-center col-12 px-0">
         <div className="d-flex align-items-center">
           <img src={productIcon} alt="userIcon" width={16} />
           <h6 className="text-lightBlue fw-500 ms-2">
@@ -128,10 +128,10 @@ const OrderCartDetails = ({
         )}
       </div>
 
-      <div className="d-flex justify-content-center col-12">
+      <div className="d-flex justify-content-center col-12 px-0">
         <hr className="hr-grey-6 w-100 mt-3 mb-0" />
       </div>
-      <div className="bg-black-20 rounded-8 p-3 col-12 mt-4">
+      <div className="bg-black-21 rounded-8 p-3 col-12 mt-4">
         <div className="d-flex align-items-center row">
           <p className="text-grey-6 w-auto pe-0">Location:</p>
           <Chip
@@ -232,7 +232,7 @@ const OrderCartDetails = ({
           </div>
         </div>
       </div>
-      <div className="bg-black-20 rounded-8 p-3 col-12 mt-3">
+      <div className="bg-black-21 rounded-8 p-3 col-12 mt-3">
         <div className="d-flex align-items-center row">
           <p className="text-grey-6 w-auto pe-0">Location:</p>
           <Chip
