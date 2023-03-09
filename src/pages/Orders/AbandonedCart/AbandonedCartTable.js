@@ -16,6 +16,8 @@ import ordersIcon from "../../../assets/icons/ordersIcon.svg";
 import editButton from "../../../assets/icons/editButton.svg";
 import duplicateButton from "../../../assets/icons/duplicateButton.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
+import cancel from "../../../assets/icons/cancel.svg";
+import product2 from "../../../assets/images/products/product2.jpg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -27,6 +29,14 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Slide,
+  FormControl,
+  OutlinedInput,
+  TextareaAutosize,
 } from "@mui/material";
 // ! MATERIAL ICON IMPORTS
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -36,6 +46,12 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import PrintIcon from "@mui/icons-material/Print";
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 
 // ? TABLE STARTS HERE
 function createData(oId, time, userName, location, items, total, status) {
@@ -257,6 +273,19 @@ const AbandonedCartTable = () => {
   const openActions = Boolean(anchorActionEl);
   const idActions = openActions ? "simple-popover" : undefined;
   // * ACTION POPOVERS ENDS
+
+  // ? RECOVERY EMAIL DIALOG STARTS HERE
+  const [openRecoveryEmail, setOpenRecoveryEmail] = React.useState(false);
+
+  const handleRecoveryEmail = () => {
+    setAnchorActionEl(null);
+    setOpenRecoveryEmail(true);
+  };
+
+  const handleRecoveryEmailClose = () => {
+    setOpenRecoveryEmail(false);
+  };
+  // ? RECOVERY EMAIL DIALOG ENDS HERE
 
   return (
     <React.Fragment>
@@ -702,7 +731,10 @@ const AbandonedCartTable = () => {
                           <small className="text-grey-7 px-2">ACTIONS</small>
                           <hr className="hr-grey-6 my-2" />
 
-                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                          <small
+                            className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                            onClick={handleRecoveryEmail}
+                          >
                             Send Recovery Email
                           </small>
                           <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
@@ -723,64 +755,180 @@ const AbandonedCartTable = () => {
                         </div>
                       </Popover>
                     </TableCell>
-                    {/* <TableCell style={{ width: 80, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <EditOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                        <img
-                          src={verticalDots}
-                          alt="verticalDots"
-                          className="c-pointer"
-                          aria-describedby={idActions}
-                          variant="contained"
-                          onClick={handleActionClick}
-                        />
 
-                        <Popover
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "center",
-                          }}
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "center",
-                          }}
-                          id={idActions}
-                          open={openActions}
-                          anchorEl={anchorActionEl}
-                          onClose={handleActionClose}
-                        >
-                          <div className="py-2 px-2">
-                            <small className="text-grey-7 px-2">ACTIONS</small>
-                            <hr className="hr-grey-6 my-2" />
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit User
+                    <Dialog
+                      open={openRecoveryEmail}
+                      TransitionComponent={Transition}
+                      keepMounted
+                      onClose={handleRecoveryEmailClose}
+                      aria-describedby="alert-dialog-slide-description"
+                      maxWidth="md"
+                      fullWidth={true}
+                    >
+                      <DialogTitle>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div className="d-flex flex-column ">
+                            <h5 className="text-lightBlue fw-500">
+                              Send Recovery Email
+                            </h5>
+
+                            <small className="text-grey-6 mt-1 d-block w-75">
+                              This email will be sent to your customer so they
+                              can quickly and easily complete their order.
+                              Personalize the message to fit your business. Need
+                              to make more changes?&nbsp;
+                              <span className="text-blue-2">
+                                Click here to edit the email template.
+                              </span>
                             </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit User Group
+                          </div>
+                          <img
+                            src={cancel}
+                            alt="cancel"
+                            width={30}
+                            onClick={handleRecoveryEmailClose}
+                            className="c-pointer"
+                          />
+                        </div>
+                      </DialogTitle>
+                      <hr className="hr-grey-6 my-0" />
+                      <DialogContent className="pt-3 pb-0 px-4">
+                        <div className="row align-items-center">
+                          <p className="text-lightBlue col-3">To</p>
+                          <FormControl className="col-9 px-0">
+                            <OutlinedInput
+                              placeholder="Enter Email"
+                              size="small"
+                            />
+                          </FormControl>
+                        </div>
+                        <div className="row mt-3 align-items-center">
+                          <p className="text-lightBlue col-3">Subject</p>
+                          <FormControl className="col-9 px-0">
+                            <OutlinedInput
+                              placeholder="Enter Subject"
+                              size="small"
+                            />
+                          </FormControl>
+                        </div>
+                        <div className="row mt-3 align-items-center">
+                          <p className="text-lightBlue col-3">Message</p>
+                          <TextareaAutosize
+                            aria-label="meta description"
+                            placeholder="Type Message"
+                            style={{
+                              background: "#15142A",
+                              color: "#c8d8ff",
+                              borderRadius: 5,
+                            }}
+                            minRows={3}
+                            className="col-9"
+                          />
+                        </div>
+                        <div className="row">
+                          <div className="col-3"></div>
+                          <div className="col-9">
+                            <small className="text-grey-6">
+                              <span className="text-blue-2">Add Discount</span>
+                              &nbsp;to increase the chance of a successful sale
                             </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Add or Remove Tags
-                            </small>
-                            <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                              <small className="text-lightBlue font2 d-block">
-                                Archived User
-                              </small>
-                              <img src={deleteRed} alt="delete" className="" />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-12">
+                            <hr className="hr-grey-6 my-3" />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <p className="text-lightBlue col-3">Items in Cart</p>
+                          <div className="col-9 px-0">
+                            <div className="row w-100">
+                              <div className="d-flex align-items-start col-6 mb-3">
+                                <img
+                                  src={product2}
+                                  alt="porduct2"
+                                  width={60}
+                                  className="rounded-8"
+                                />
+                                <div className="d-flex flex-column ms-3">
+                                  <small className="text-lightBlue">
+                                    The Fringe Diamond Ring
+                                  </small>
+                                  <small className="text-grey-6 mt-1">
+                                    SKU: TFDR012345
+                                  </small>
+                                  <small className="text-grey-6 mt-1">
+                                    7 Gold-18KT-Rose-IJSI&nbsp;•&nbsp;3.65g
+                                  </small>
+                                  <small className="text-grey-6 mt-1">
+                                    Price:&nbsp;₹&nbsp;46,350
+                                  </small>
+                                </div>
+                              </div>
+                              <div className="d-flex align-items-start col-6 mb-3">
+                                <img
+                                  src={product2}
+                                  alt="porduct2"
+                                  width={60}
+                                  className="rounded-8"
+                                />
+                                <div className="d-flex flex-column ms-3">
+                                  <small className="text-lightBlue">
+                                    The Fringe Diamond Ring
+                                  </small>
+                                  <small className="text-grey-6 mt-1">
+                                    SKU: TFDR012345
+                                  </small>
+                                  <small className="text-grey-6 mt-1">
+                                    7 Gold-18KT-Rose-IJSI&nbsp;•&nbsp;3.65g
+                                  </small>
+                                  <small className="text-grey-6 mt-1">
+                                    Price:&nbsp;₹&nbsp;46,350
+                                  </small>
+                                </div>
+                              </div>
+                              <div className="d-flex align-items-start col-6 mb-3">
+                                <img
+                                  src={product2}
+                                  alt="porduct2"
+                                  width={60}
+                                  className="rounded-8"
+                                />
+                                <div className="d-flex flex-column ms-3">
+                                  <small className="text-lightBlue">
+                                    The Fringe Diamond Ring
+                                  </small>
+                                  <small className="text-grey-6 mt-1">
+                                    SKU: TFDR012345
+                                  </small>
+                                  <small className="text-grey-6 mt-1">
+                                    7 Gold-18KT-Rose-IJSI&nbsp;•&nbsp;3.65g
+                                  </small>
+                                  <small className="text-grey-6 mt-1">
+                                    Price:&nbsp;₹&nbsp;46,350
+                                  </small>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </Popover>
-                      </div>
-                    </TableCell> */}
+                        </div>
+                      </DialogContent>
+                      <hr className="hr-grey-6 my-0" />
+                      <DialogActions className="d-flex justify-content-between px-4 py-3">
+                        <button
+                          className="button-lightBlue-outline py-2 px-5"
+                          onClick={handleRecoveryEmailClose}
+                        >
+                          <p className="">Preview</p>
+                        </button>
+                        <button
+                          className="button-gradient py-2 px-5"
+                          onClick={handleRecoveryEmailClose}
+                        >
+                          <p>Send Email</p>
+                        </button>
+                      </DialogActions>
+                    </Dialog>
                   </TableRow>
                 );
               })}

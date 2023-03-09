@@ -59,6 +59,8 @@ import OmniChannelOrders from "./pages/Orders/OmniChannelOrders/OmniChannelOrder
 import DraftOrder from "./pages/Orders/DraftOrder/DraftOrder";
 import AbandonedCart from "./pages/Orders/AbandonedCart/AbandonedCart";
 import AbandonedCartDetails from "./pages/Orders/AbandonedCartDetails/AbandonedCartDetails";
+import CreateDiscount from "./pages/Offers/CreateDiscount/CreateDiscount";
+import Discounts from "./pages/Offers/Discounts/Discounts";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -298,6 +300,12 @@ function App(props) {
                 <Route path="roles/create" element={<CreateRoles />} />
                 <Route path="members" element={<Members />} />
                 <Route path="members/details" element={<MemberDetails />} />
+              </Route>
+              {/* OFFERS ROUTES */}
+              <Route path="/offers">
+                <Route path="" element={<Navigate to="discounts" />} />
+                <Route path="discounts" element={<Discounts />} />
+                <Route path="discounts/create" element={<CreateDiscount />} />
               </Route>
               {/* ORDER ROUTES */}
               <Route path="/orders">

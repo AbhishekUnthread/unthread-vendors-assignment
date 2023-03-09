@@ -9,7 +9,7 @@ import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import TableSearch from "../../../components/TableSearch/TableSearch";
-import FilterUsers from "../../../components/FilterUsers/FilterUsers";
+import FilterOrders from "../../../components/FilterOrders/FilterOrders";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import allFlag from "../../../assets/images/products/allFlag.svg";
@@ -37,6 +37,9 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
+// ! MATERIAL ICONS IMPORTS
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 const locationData = [
   { title: "Content 1", value: "content1" },
@@ -51,6 +54,21 @@ const locationData = [
   { title: "Content 10", value: "content10" },
   { title: "Content 11", value: "content11" },
   { title: "Content 12", value: "content12" },
+];
+
+const taggedWithData = [
+  { title: "Tag 1", value: "tag1" },
+  { title: "Tag 2", value: "tag2" },
+  { title: "Tag 3", value: "tag3" },
+  { title: "Tag 4", value: "tag4" },
+  { title: "Tag 5", value: "tag5" },
+  { title: "Tag 6", value: "tag6" },
+  { title: "Tag 7", value: "tag7" },
+  { title: "Tag 8", value: "tag8" },
+  { title: "Tag 9", value: "tag9" },
+  { title: "Tag 10", value: "tag10" },
+  { title: "Tag 11", value: "tag11" },
+  { title: "Tag 12", value: "tag12" },
 ];
 
 const OmniChannelOrders = () => {
@@ -103,6 +121,21 @@ const OmniChannelOrders = () => {
   const idLocation = openLocation ? "simple-popover" : undefined;
   // * LOCATION POPOVERS ENDS
 
+  // * ORDER STATUS POPOVERS STARTS
+  const [anchorOrderStatusEl, setAnchorOrderStatusEl] = React.useState(null);
+
+  const handleOrderStatusClick = (event) => {
+    setAnchorOrderStatusEl(event.currentTarget);
+  };
+
+  const handleOrderStatusClose = () => {
+    setAnchorOrderStatusEl(null);
+  };
+
+  const openOrderStatus = Boolean(anchorOrderStatusEl);
+  const idOrderStatus = openOrderStatus ? "simple-popover" : undefined;
+  // * ORDER STATUS POPOVERS ENDS
+
   // * NO OF ORDERS POPOVERS STARTS
   const [anchorOrdersEl, setAnchorOrdersEl] = React.useState(null);
 
@@ -147,6 +180,21 @@ const OmniChannelOrders = () => {
   const openDays = Boolean(anchorDaysEl);
   const idDays = openDays ? "simple-popover" : undefined;
   // * DAYS POPOVERS ENDS
+
+  // * TAGGED WITH POPOVERS STARTS
+  const [anchorTaggedWithEl, setAnchorTaggedWithEl] = React.useState(null);
+
+  const handleTaggedWithClick = (event) => {
+    setAnchorTaggedWithEl(event.currentTarget);
+  };
+
+  const handleTaggedWithClose = () => {
+    setAnchorTaggedWithEl(null);
+  };
+
+  const openTaggedWith = Boolean(anchorTaggedWithEl);
+  const idTaggedWith = openTaggedWith ? "simple-popover" : undefined;
+  // * TAGGED WITH POPOVERS ENDS
 
   // ? POPOVERS ENDS HERE
 
@@ -284,44 +332,6 @@ const OmniChannelOrders = () => {
                     />
                   </div>
                 </Popover>
-                <button
-                  className="button-grey py-1 px-3 d-none d-md-block"
-                  aria-describedby={idOrders}
-                  variant="contained"
-                  onClick={handleOrdersClick}
-                >
-                  <small className="text-lightBlue">No of Orders</small>
-                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
-                </button>
-                <Popover
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  id={idOrders}
-                  open={openOrders}
-                  anchorEl={anchorOrdersEl}
-                  onClose={handleOrdersClose}
-                >
-                  <div className="py-2 px-1">
-                    <small className="d-block text-lightBlue">
-                      Min No. of Order
-                    </small>
-                    <FormControl className="px-0 mt-1">
-                      <OutlinedInput placeholder="Enter Min" size="small" />
-                    </FormControl>
-                    <small className="d-block text-lightBlue mt-2">
-                      Max No. of Order
-                    </small>
-                    <FormControl className="px-0 mt-1">
-                      <OutlinedInput placeholder="Enter Max" size="small" />
-                    </FormControl>
-                  </div>
-                </Popover>
 
                 <button
                   className="button-grey py-1 px-3 d-none d-md-block"
@@ -329,7 +339,7 @@ const OmniChannelOrders = () => {
                   variant="contained"
                   onClick={handleStatusClick}
                 >
-                  <small className="text-lightBlue">Status</small>
+                  <small className="text-lightBlue">Order Status</small>
                   <img src={arrowDown} alt="arrowDown" className="ms-2" />
                 </button>
 
@@ -400,7 +410,120 @@ const OmniChannelOrders = () => {
                     </FormGroup>
                   </div>
                 </Popover>
-                <FilterUsers buttonName={"More Filters"} />
+
+                <button
+                  className="button-grey py-2 px-3 d-none d-md-block"
+                  aria-describedby={idTaggedWith}
+                  variant="contained"
+                  onClick={handleTaggedWithClick}
+                >
+                  <small className="text-lightBlue">Tagged With</small>
+                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                </button>
+
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  id={idTaggedWith}
+                  open={openTaggedWith}
+                  anchorEl={anchorTaggedWithEl}
+                  onClose={handleTaggedWithClose}
+                >
+                  <div className="py-2">
+                    <Autocomplete
+                      multiple
+                      id="checkboxes-tags-demo"
+                      sx={{ width: 300 }}
+                      options={taggedWithData}
+                      disableCloseOnSelect
+                      getOptionLabel={(option) => option.title}
+                      size="small"
+                      renderOption={(props, option, { selected }) => (
+                        <li {...props}>
+                          <Checkbox
+                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                            checkedIcon={<CheckBoxIcon fontSize="small" />}
+                            checked={selected}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                            }}
+                          />
+                          <small className="text-lightBlue">
+                            {option.title}
+                          </small>
+                        </li>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          size="small"
+                          {...params}
+                          placeholder="Search"
+                          inputRef={(input) => input?.focus()}
+                        />
+                      )}
+                    />
+                  </div>
+                </Popover>
+                {/* <button
+                  className="button-grey py-1 px-3 d-none d-md-block"
+                  aria-describedby={idOrderStatus}
+                  variant="contained"
+                  onClick={handleOrderStatusClick}
+                >
+                  <small className="text-lightBlue">Order Status</small>
+                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                </button>
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  id={idOrderStatus}
+                  open={openOrderStatus}
+                  anchorEl={anchorOrderStatusEl}
+                  onClose={handleOrderStatusClose}
+                >
+                  <div className="py-2">
+                    <Autocomplete
+                      id="free-solo-demo"
+                      freeSolo
+                      size="small"
+                      options={locationData}
+                      getOptionLabel={(option) => option.title}
+                      renderOption={(props, option) => (
+                        <li {...props}>
+                          <small className="text-lightBlue my-1">
+                            {option.title}
+                          </small>
+                        </li>
+                      )}
+                      sx={{
+                        width: 200,
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder="Search"
+                          inputRef={(input) => input?.focus()}
+                        />
+                      )}
+                    />
+                  </div>
+                </Popover> */}
+
+                <FilterOrders buttonName={"More Filters"} />
               </div>
               <button
                 className="button-grey py-2 px-3 ms-2"

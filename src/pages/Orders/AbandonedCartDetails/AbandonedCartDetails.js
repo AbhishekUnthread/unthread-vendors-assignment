@@ -123,7 +123,7 @@ const AbandonedCartDetails = () => {
               sx={{
                 fontSize: 18,
                 marginRight: 1,
-                color: "#c8d8ff",
+                // color: "#c8d8ff",
                 cursor: "pointer",
               }}
             />

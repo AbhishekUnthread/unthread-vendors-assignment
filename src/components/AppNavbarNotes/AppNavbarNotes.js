@@ -134,7 +134,7 @@ const AppNavbarNotes = () => {
               </div>
             </div>
             {[...Array(5)].map((elementInArray, index) => (
-              <React.Fragment>
+              <React.Fragment key={index}>
                 <div className="d-flex justify-content-center mt-3">
                   <small className="text-grey-6 d-block mt-3">10/02/2023</small>
                 </div>
@@ -237,7 +237,7 @@ const AppNavbarNotes = () => {
               </div>
             </div>
             {[...Array(5)].map((elementInArray, index) => (
-              <React.Fragment>
+              <React.Fragment key={index}>
                 <div className="d-flex justify-content-center mt-3">
                   <small className="text-grey-6 d-block mt-3">10/02/2023</small>
                 </div>

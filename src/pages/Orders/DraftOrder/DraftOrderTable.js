@@ -414,14 +414,14 @@ const DraftOrderTable = () => {
                           width={45}
                         /> */}
 
-                        <div
-                          aria-describedby={idUser}
-                          variant="contained"
-                          onClick={handleUserClick}
-                          className="c-pointer"
-                        >
-                          <div className=" text-decoration-none">
-                            <p className="text-lightBlue rounded-circle fw-600">
+                        <div className="">
+                          <div className="text-decoration-none">
+                            <p
+                              className="text-blue-2 fw-600 c-pointer"
+                              aria-describedby={idUser}
+                              variant="contained"
+                              onClick={handleUserClick}
+                            >
                               {row.userName}
                             </p>
                           </div>
@@ -523,9 +523,9 @@ const DraftOrderTable = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="d-flex align-items-center c-pointer">
+                      <div className="d-flex align-items-center">
                         <p
-                          className="text-lightBlue"
+                          className="text-blue-2 text-decoration-underline c-pointer fw-500"
                           aria-describedby={idItem}
                           variant="contained"
                           onClick={handleItemClick}

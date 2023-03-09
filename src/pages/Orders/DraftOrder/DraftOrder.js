@@ -37,6 +37,12 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
+import { DesktopDateTimePicker } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+// ! MATERIAL ICONS IMPORTS
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 const locationData = [
   { title: "Content 1", value: "content1" },
@@ -51,6 +57,21 @@ const locationData = [
   { title: "Content 10", value: "content10" },
   { title: "Content 11", value: "content11" },
   { title: "Content 12", value: "content12" },
+];
+
+const taggedWithData = [
+  { title: "Tag 1", value: "tag1" },
+  { title: "Tag 2", value: "tag2" },
+  { title: "Tag 3", value: "tag3" },
+  { title: "Tag 4", value: "tag4" },
+  { title: "Tag 5", value: "tag5" },
+  { title: "Tag 6", value: "tag6" },
+  { title: "Tag 7", value: "tag7" },
+  { title: "Tag 8", value: "tag8" },
+  { title: "Tag 9", value: "tag9" },
+  { title: "Tag 10", value: "tag10" },
+  { title: "Tag 11", value: "tag11" },
+  { title: "Tag 12", value: "tag12" },
 ];
 
 const DraftOrder = () => {
@@ -148,7 +169,56 @@ const DraftOrder = () => {
   const idDays = openDays ? "simple-popover" : undefined;
   // * DAYS POPOVERS ENDS
 
+  // * TAGGED WITH POPOVERS STARTS
+  const [anchorTaggedWithEl, setAnchorTaggedWithEl] = React.useState(null);
+
+  const handleTaggedWithClick = (event) => {
+    setAnchorTaggedWithEl(event.currentTarget);
+  };
+
+  const handleTaggedWithClose = () => {
+    setAnchorTaggedWithEl(null);
+  };
+
+  const openTaggedWith = Boolean(anchorTaggedWithEl);
+  const idTaggedWith = openTaggedWith ? "simple-popover" : undefined;
+  // * TAGGED WITH POPOVERS ENDS
+
+  // * CUSTOMER POPOVERS STARTS
+  const [anchorCustomerEl, setAnchorCustomerEl] = React.useState(null);
+
+  const handleCustomerClick = (event) => {
+    setAnchorCustomerEl(event.currentTarget);
+  };
+
+  const handleCustomerClose = () => {
+    setAnchorCustomerEl(null);
+  };
+
+  const openCustomer = Boolean(anchorCustomerEl);
+  const idCustomer = openCustomer ? "simple-popover" : undefined;
+  // * CUSTOMER POPOVERS ENDS
+
+  // * NO OF ORDERS POPOVERS STARTS
+  const [anchorDateEl, setAnchorDateEl] = React.useState(null);
+
+  const handleDateClick = (event) => {
+    setAnchorDateEl(event.currentTarget);
+  };
+
+  const handleDateClose = () => {
+    setAnchorDateEl(null);
+  };
+
+  const openDate = Boolean(anchorDateEl);
+  const idDate = openDate ? "simple-popover" : undefined;
+  // * NO OF ORDERS POPOVERS ENDS
+
   // ? POPOVERS ENDS HERE
+
+  // ? DATE PICKER STARTS HERE
+  const [dateStartValue, setDateStartValue] = React.useState(new Date());
+  // ? DATE PICKER ENDS HERE
 
   return (
     <div className="container-fluid page">
@@ -235,95 +305,6 @@ const DraftOrder = () => {
               <div className="d-flex product-button__box">
                 <button
                   className="button-grey py-1 px-3 d-none d-md-block"
-                  aria-describedby={idLocation}
-                  variant="contained"
-                  onClick={handleLocationClick}
-                >
-                  <small className="text-lightBlue">Location</small>
-                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
-                </button>
-                <Popover
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  id={idLocation}
-                  open={openLocation}
-                  anchorEl={anchorLocationEl}
-                  onClose={handleLocationClose}
-                >
-                  <div className="py-2">
-                    <Autocomplete
-                      id="free-solo-demo"
-                      freeSolo
-                      size="small"
-                      options={locationData}
-                      getOptionLabel={(option) => option.title}
-                      renderOption={(props, option) => (
-                        <li {...props}>
-                          <small className="text-lightBlue my-1">
-                            {option.title}
-                          </small>
-                        </li>
-                      )}
-                      sx={{
-                        width: 200,
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          placeholder="Search"
-                          inputRef={(input) => input?.focus()}
-                        />
-                      )}
-                    />
-                  </div>
-                </Popover>
-                <button
-                  className="button-grey py-1 px-3 d-none d-md-block"
-                  aria-describedby={idOrders}
-                  variant="contained"
-                  onClick={handleOrdersClick}
-                >
-                  <small className="text-lightBlue">No of Orders</small>
-                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
-                </button>
-                <Popover
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  id={idOrders}
-                  open={openOrders}
-                  anchorEl={anchorOrdersEl}
-                  onClose={handleOrdersClose}
-                >
-                  <div className="py-2 px-1">
-                    <small className="d-block text-lightBlue">
-                      Min No. of Order
-                    </small>
-                    <FormControl className="px-0 mt-1">
-                      <OutlinedInput placeholder="Enter Min" size="small" />
-                    </FormControl>
-                    <small className="d-block text-lightBlue mt-2">
-                      Max No. of Order
-                    </small>
-                    <FormControl className="px-0 mt-1">
-                      <OutlinedInput placeholder="Enter Max" size="small" />
-                    </FormControl>
-                  </div>
-                </Popover>
-
-                <button
-                  className="button-grey py-1 px-3 d-none d-md-block"
                   aria-describedby={idStatus}
                   variant="contained"
                   onClick={handleStatusClick}
@@ -399,7 +380,194 @@ const DraftOrder = () => {
                     </FormGroup>
                   </div>
                 </Popover>
-                <FilterUsers buttonName={"More Filters"} />
+
+                <button
+                  className="button-grey py-1 px-3 d-none d-md-block"
+                  aria-describedby={idDate}
+                  variant="contained"
+                  onClick={handleDateClick}
+                >
+                  <small className="text-lightBlue">Created at</small>
+                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                </button>
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  id={idDate}
+                  open={openDate}
+                  anchorEl={anchorDateEl}
+                  onClose={handleDateClose}
+                >
+                  <div className="py-2">
+                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                      <DesktopDateTimePicker
+                        value={dateStartValue}
+                        onChange={(newValue) => {
+                          setDateStartValue(newValue);
+                        }}
+                        renderInput={(params) => (
+                          <TextField {...params} size="small" />
+                        )}
+                      />
+                    </LocalizationProvider>
+                  </div>
+                </Popover>
+
+                <button
+                  className="button-grey py-1 px-3 d-none d-md-block"
+                  aria-describedby={idDate}
+                  variant="contained"
+                  onClick={handleDateClick}
+                >
+                  <small className="text-lightBlue">Updated at</small>
+                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                </button>
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  id={idDate}
+                  open={openDate}
+                  anchorEl={anchorDateEl}
+                  onClose={handleDateClose}
+                >
+                  <div className="py-2">
+                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                      <DesktopDateTimePicker
+                        value={dateStartValue}
+                        onChange={(newValue) => {
+                          setDateStartValue(newValue);
+                        }}
+                        renderInput={(params) => (
+                          <TextField {...params} size="small" />
+                        )}
+                      />
+                    </LocalizationProvider>
+                  </div>
+                </Popover>
+                <button
+                  className="button-grey py-2 px-3 d-none d-md-block"
+                  aria-describedby={idTaggedWith}
+                  variant="contained"
+                  onClick={handleTaggedWithClick}
+                >
+                  <small className="text-lightBlue">Tagged With</small>
+                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                </button>
+
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  id={idTaggedWith}
+                  open={openTaggedWith}
+                  anchorEl={anchorTaggedWithEl}
+                  onClose={handleTaggedWithClose}
+                >
+                  <div className="py-2">
+                    <Autocomplete
+                      multiple
+                      id="checkboxes-tags-demo"
+                      sx={{ width: 300 }}
+                      options={taggedWithData}
+                      disableCloseOnSelect
+                      getOptionLabel={(option) => option.title}
+                      size="small"
+                      renderOption={(props, option, { selected }) => (
+                        <li {...props}>
+                          <Checkbox
+                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                            checkedIcon={<CheckBoxIcon fontSize="small" />}
+                            checked={selected}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                            }}
+                          />
+                          <small className="text-lightBlue">
+                            {option.title}
+                          </small>
+                        </li>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          size="small"
+                          {...params}
+                          placeholder="Search"
+                          inputRef={(input) => input?.focus()}
+                        />
+                      )}
+                    />
+                  </div>
+                </Popover>
+
+                <button
+                  className="button-grey py-1 px-3 d-none d-md-block"
+                  aria-describedby={idCustomer}
+                  variant="contained"
+                  onClick={handleCustomerClick}
+                >
+                  <small className="text-lightBlue">Customer</small>
+                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                </button>
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  id={idCustomer}
+                  open={openCustomer}
+                  anchorEl={anchorCustomerEl}
+                  onClose={handleCustomerClose}
+                >
+                  <div className="py-2">
+                    <Autocomplete
+                      id="free-solo-demo"
+                      freeSolo
+                      size="small"
+                      options={locationData}
+                      getOptionLabel={(option) => option.title}
+                      renderOption={(props, option) => (
+                        <li {...props}>
+                          <small className="text-lightBlue my-1">
+                            {option.title}
+                          </small>
+                        </li>
+                      )}
+                      sx={{
+                        width: 200,
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder="Search"
+                          inputRef={(input) => input?.focus()}
+                        />
+                      )}
+                    />
+                  </div>
+                </Popover>
               </div>
               <button
                 className="button-grey py-2 px-3 ms-2"

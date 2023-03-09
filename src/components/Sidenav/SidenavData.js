@@ -5,7 +5,7 @@ import orders from "../../assets/icons/sidenav/orders.svg";
 import products from "../../assets/icons/sidenav/products.svg";
 // import analytics from "../../assets/icons/sidenav/analytics.svg";
 import customers from "../../assets/icons/sidenav/customers.svg";
-// import discounts from "../../assets/icons/sidenav/discounts.svg";
+import discounts from "../../assets/icons/sidenav/discounts.svg";
 // import emailers from "../../assets/icons/sidenav/emailers.svg";
 // import functionality from "../../assets/icons/sidenav/functionality.svg";
 // import globalStore from "../../assets/icons/sidenav/globalStore.svg";
@@ -167,6 +167,23 @@ export const SidebarData = [
         title: "Members",
         path: "/teams/members",
         image: teams,
+      },
+    ],
+  },
+  {
+    title: "Offers",
+    path: "/offers",
+    image: discounts,
+    subNav: [
+      {
+        title: "Discounts",
+        path: "/offers/discounts",
+        image: discounts,
+      },
+      {
+        title: "Bundle Discount",
+        path: "/offers/discounts/bundleDiscount",
+        image: discounts,
       },
     ],
   },

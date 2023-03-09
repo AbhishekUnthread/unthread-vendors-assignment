@@ -587,20 +587,15 @@ const OrderCartDetails = ({
         onClose={handleGiftClose}
       >
         <div className="d-flex py-3 px-2">
-          <img
-            src={product2}
-            alt="product2"
-            className="rounded-8"
-            width={120}
-          />
-          <div className="d-flex flex-column justify-content-between ms-2">
+          <img src={product2} alt="product2" className="rounded-8" width={80} />
+          <div className="d-flex flex-column justify-content-between ms-3">
             <div>
-              <h6 className="fw-500 text-lightBlue">JWL Exclusive Packaging</h6>
-              <p className="text-grey-6 mt-2">#GIFTWRAPPER</p>
+              <p className="fw-500 text-lightBlue">JWL Exclusive Packaging</p>
+              <small className="text-grey-6 mt-2">#GIFTWRAPPER</small>
             </div>
-            <p className="text-blue-2 text-decoration-underline c-pointer">
+            <small className="text-blue-2 text-decoration-underline c-pointer">
               View Image
-            </p>
+            </small>
           </div>
         </div>
       </Popover>

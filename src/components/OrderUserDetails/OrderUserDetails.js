@@ -104,7 +104,7 @@ const OrderUserDetails = ({ showGST, showReviewData, showMediaData }) => {
         <small className="text-lightBlue me-2">saniya@mydesignar.com</small>
         <VisibilityOutlinedIcon
           sx={{
-            color: "#c8d8ff",
+            color: "#5c6d8e",
             fontSize: 14,
             cursor: "pointer",
             marginRight: "8px",
@@ -113,7 +113,7 @@ const OrderUserDetails = ({ showGST, showReviewData, showMediaData }) => {
         <ContentCopyIcon
           sx={{
             fontSize: 12,
-            color: "#c8d8ff",
+            color: "#5c6d8e",
           }}
           className="c-pointer"
         />
@@ -122,7 +122,7 @@ const OrderUserDetails = ({ showGST, showReviewData, showMediaData }) => {
         <small className="text-lightBlue me-2">+91-9876543210</small>
         <VisibilityOutlinedIcon
           sx={{
-            color: "#c8d8ff",
+            color: "#5c6d8e",
             fontSize: 14,
             cursor: "pointer",
             marginRight: "8px",
@@ -131,7 +131,7 @@ const OrderUserDetails = ({ showGST, showReviewData, showMediaData }) => {
         <ContentCopyIcon
           sx={{
             fontSize: 12,
-            color: "#c8d8ff",
+            color: "#5c6d8e",
           }}
           className="c-pointer"
         />
@@ -152,7 +152,7 @@ const OrderUserDetails = ({ showGST, showReviewData, showMediaData }) => {
         <ContentCopyIcon
           sx={{
             fontSize: 12,
-            color: "#c8d8ff",
+            color: "#5c6d8e",
           }}
           className="c-pointer"
         />
@@ -189,9 +189,9 @@ const OrderUserDetails = ({ showGST, showReviewData, showMediaData }) => {
       </div>
       {showGST && (
         <div className="d-flex mt-3">
-          <small className="text-lightBlue me-3 d-block me-3">
+          <small className="text-grey-6 me-3 d-block me-3">
             GSTIN:&nbsp;
-            <span className="text-grey-6">AB1234567890ADS</span>
+            <span className="text-lightBlue">AB1234567890ADS</span>
           </small>
           <ContentCopyIcon
             sx={{
@@ -202,10 +202,10 @@ const OrderUserDetails = ({ showGST, showReviewData, showMediaData }) => {
           />
         </div>
       )}
-      <div className="d-flex mt-2">
-        <small className="text-lightBlue me-3 d-block me-3">
+      <div className="d-flex mt-2 align-items-center">
+        <small className="text-grey-6 me-3 d-block me-3">
           Email ID:&nbsp;
-          <span className="text-grey-6">saniya@mydesignar.com</span>
+          <span className="text-lightBlue">saniya@mydesignar.com</span>
         </small>
         <ContentCopyIcon
           sx={{
@@ -215,10 +215,10 @@ const OrderUserDetails = ({ showGST, showReviewData, showMediaData }) => {
           className="c-pointer"
         />
       </div>
-      <div className="d-flex mt-2">
-        <small className="text-lightBlue me-3">
+      <div className="d-flex mt-2 align-items-center">
+        <small className="text-grey-6 me-3">
           Mobile No:&nbsp;
-          <span className="text-grey-6">+91-9876543210</span>
+          <span className="text-lightBlue">+91-9876543210</span>
         </small>
         <ContentCopyIcon
           sx={{

@@ -142,7 +142,10 @@ const AppNavbarNotifications = () => {
 
           <TabPanel value={value} index={0} className="px-3 nav-tab-panel">
             {[...Array(10)].map((elementInArray, index) => (
-              <div className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3">
+              <div
+                className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3"
+                key={index}
+              >
                 <div className="d-flex">
                   <img
                     src={notificationNavbar}
@@ -173,7 +176,10 @@ const AppNavbarNotifications = () => {
           </TabPanel>
           <TabPanel value={value} index={1} className="px-3 nav-tab-panel">
             {[...Array(10)].map((elementInArray, index) => (
-              <div className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3">
+              <div
+                className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3"
+                key={index}
+              >
                 <div className="d-flex">
                   <img
                     src={notificationNavbar}
@@ -204,7 +210,10 @@ const AppNavbarNotifications = () => {
           </TabPanel>
           <TabPanel value={value} index={2} className="px-3 nav-tab-panel">
             {[...Array(10)].map((elementInArray, index) => (
-              <div className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3">
+              <div
+                className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3"
+                key={index}
+              >
                 <div className="d-flex">
                   <img
                     src={notificationNavbar}
@@ -235,7 +244,10 @@ const AppNavbarNotifications = () => {
           </TabPanel>
           <TabPanel value={value} index={3} className="px-3 nav-tab-panel">
             {[...Array(10)].map((elementInArray, index) => (
-              <div className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3">
+              <div
+                className="d-flex flex-column justify-content-center border-grey-5 bg-black-20 p-3 rounded-8 my-3"
+                key={index}
+              >
                 <div className="d-flex">
                   <img
                     src={notificationNavbar}
