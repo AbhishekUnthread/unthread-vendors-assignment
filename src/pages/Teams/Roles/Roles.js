@@ -23,7 +23,7 @@ const Roles = () => {
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
-        <div className="d-flex w-auto align-items-center">
+        <div className="d-flex w-auto align-items-center px-0">
           <h4 className="page-heading w-auto ps-0 me-2">Team Roles</h4>
 
           <Tooltip title="Lorem ipsum" placement="top">

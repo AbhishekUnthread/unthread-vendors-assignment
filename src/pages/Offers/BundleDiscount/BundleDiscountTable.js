@@ -29,9 +29,8 @@ import TableMassActionButton from "../../../components/TableMassActionButton/Tab
 // ? TABLE STARTS HERE
 function createData(
   dId,
-  discountName,
-  discountCode,
-  discountType,
+  bundleName,
+  products,
   timePeriod,
   date,
   totalUsage,
@@ -39,9 +38,8 @@ function createData(
 ) {
   return {
     dId,
-    discountName,
-    discountCode,
-    discountType,
+    bundleName,
+    products,
     timePeriod,
     date,
     totalUsage,
@@ -52,9 +50,8 @@ function createData(
 const rows = [
   createData(
     1,
-    "Discount 1",
-    "JWL20OFF",
-    "Product Discount",
+    "3 Super Saver - 20%",
+    "Product 1, Product 2, Product 3",
     "From Today",
     "Till 05 May, 2023",
     "10 / 3000",
@@ -62,9 +59,8 @@ const rows = [
   ),
   createData(
     2,
-    "Discount 2",
-    "JWL20OFF",
-    "Product Discount",
+    "3 Super Saver - 20%",
+    "Product 1, Product 2, Product 3",
     "From Today",
     "Till 05 May, 2023",
     "10 / 3000",
@@ -72,9 +68,8 @@ const rows = [
   ),
   createData(
     3,
-    "Discount 3",
-    "JWL20OFF",
-    "Product Discount",
+    "3 Super Saver - 20%",
+    "Product 1, Product 2, Product 3",
     "From Today",
     "Till 05 May, 2023",
     "10 / 3000",
@@ -82,9 +77,8 @@ const rows = [
   ),
   createData(
     4,
-    "Discount 4",
-    "JWL20OFF",
-    "Product Discount",
+    "3 Super Saver - 20%",
+    "Product 1, Product 2, Product 3",
     "From Today",
     "Till 05 May, 2023",
     "10 / 3000",
@@ -92,7 +86,7 @@ const rows = [
   ),
 ];
 
-const DiscountsTable = () => {
+const BundleDiscountTable = () => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -101,16 +95,16 @@ const DiscountsTable = () => {
 
   const headCells = [
     {
-      id: "discountName",
+      id: "bundleName",
       numeric: false,
       disablePadding: true,
-      label: "Name",
+      label: "Bundle Name",
     },
     {
-      id: "discountType",
+      id: "products",
       numeric: false,
       disablePadding: false,
-      label: "Discount Type",
+      label: "Products",
     },
     {
       id: "timePeriod",
@@ -266,27 +260,15 @@ const DiscountsTable = () => {
                           width={45}
                         /> */}
                         <p className="text-lightBlue rounded-circle fw-600">
-                          {row.discountName}
+                          {row.bundleName}
                         </p>
                       </div>
                     </TableCell>
-                    <TableCell style={{ width: 180 }}>
+                    <TableCell>
                       <div className="d-flex flex-column">
-                        <div className="d-flex align-items-center">
-                          <p className="text-lightBlue me-2">
-                            {row.discountCode}
-                          </p>
-                          <ContentCopyIcon
-                            sx={{
-                              color: "#5c6d8e",
-                              fontSize: 12,
-                              cursor: "pointer",
-                            }}
-                          />
-                        </div>
-                        <small className="text-grey-6 mt-1 d-block">
-                          {row.discountType}
-                        </small>
+                        <p className="text-lightBlue mt-1 d-block">
+                          {row.products}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
@@ -383,4 +365,4 @@ const DiscountsTable = () => {
   );
 };
 
-export default DiscountsTable;
+export default BundleDiscountTable;

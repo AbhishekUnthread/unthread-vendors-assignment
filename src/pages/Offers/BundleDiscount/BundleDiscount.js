@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
-import DiscountsTable from "./DiscountsTable";
+import BundleDiscountTable from "./BundleDiscountTable";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
@@ -45,7 +45,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const Discounts = () => {
+const BundleDiscount = () => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -82,7 +82,8 @@ const Discounts = () => {
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
         <div className="d-flex w-auto align-items-center px-0">
-          <h4 className="page-heading w-auto ps-0 me-2">Discounts</h4>
+          <h4 className="page-heading w-auto ps-0 me-2">Bundle Discount</h4>
+
           <Tooltip title="Lorem ipsum" placement="top">
             <InfoOutlinedIcon
               sx={{ color: "#c8d8ff", fontSize: 20 }}
@@ -92,84 +93,17 @@ const Discounts = () => {
         </div>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Offers / Discounts"} icon={discounts} />
-          <ImportSecondDialog dialogName={"Discounts"} />
-          <button
+          {/* <ViewLogsDrawer
+            headingName={"Offers / Bundle Discount"}
+            icon={discounts}
+          />
+          <ImportSecondDialog dialogName={"Bundle Discount"} /> */}
+          <Link
+            to="offers/discounts/create"
             className="button-gradient py-2 px-4 ms-3"
-            onClick={handleCreateDiscount}
           >
-            <p>+ Create Discount</p>
-          </button>
-
-          <Dialog
-            open={openCreateDiscount}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={handleCreateDiscountClose}
-            aria-describedby="alert-dialog-slide-description"
-            maxWidth="md"
-            fullWidth={true}
-          >
-            <DialogTitle>
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">Create Categories</h5>
-
-                  <small className="text-grey-6 mt-1 d-block">
-                    ⓘ Some Dummy Content to explain
-                  </small>
-                </div>
-                <img
-                  src={cancel}
-                  alt="cancel"
-                  width={30}
-                  onClick={handleCreateDiscountClose}
-                  className="c-pointer"
-                />
-              </div>
-            </DialogTitle>
-            <hr className="hr-grey-6 my-0" />
-            <DialogContent className="py-3 px-4">
-              <div className="row">
-                {[...Array(5)].map((elementInArray, index) => (
-                  <div className="col-6 my-3">
-                    <Link
-                      to="/offers/discounts/create"
-                      className="d-flex p-3 rounded-8 hover-back c-pointer text-decoration-none"
-                    >
-                      <img
-                        src={productDiscount}
-                        alt="productDiscount"
-                        width={100}
-                      />
-                      <div className="d-flex ms-3 flex-column">
-                        <p className="text-lightBlue">Product Discount</p>
-                        <small className="d-block mt-2 text-grey-6">
-                          Lorem ipsum dolor, sit amet consectetur adipisicing
-                          elit. Esse odio amet
-                        </small>
-                      </div>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </DialogContent>
-            <hr className="hr-grey-6 my-0" />
-            <DialogActions className="d-flex justify-content-end px-4 py-3">
-              <button
-                className="button-lightBlue-outline py-2 px-5"
-                onClick={handleCreateDiscountClose}
-              >
-                <p className="">Cancel</p>
-              </button>
-              {/* <button
-                className="button-gradient py-2 px-5"
-                onClick={handleCreateDiscountClose}
-              >
-                <p>Save</p>
-              </button> */}
-            </DialogActions>
-          </Dialog>
+            <p>+ Create Bundle</p>
+          </Link>
         </div>
       </div>
 
@@ -192,11 +126,9 @@ const Discounts = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
-              <Tab label="Product Discount" className="tabs-head" />
-              <Tab label="Cart Discount" className="tabs-head" />
-              <Tab label="Free Shipping" className="tabs-head" />
-              <Tab label="Buy X, Get Y" className="tabs-head" />
-              <Tab label="Bulk/Tired Discount Pricing" className="tabs-head" />
+              <Tab label="Active" className="tabs-head" />
+              <Tab label="Scheduled" className="tabs-head" />
+              <Tab label="Expired" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -283,22 +215,16 @@ const Discounts = () => {
             </Popover>
           </div>
           <TabPanel value={value} index={0}>
-            <DiscountsTable />
+            <BundleDiscountTable />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <DiscountsTable />
+            <BundleDiscountTable />
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <DiscountsTable />
+            <BundleDiscountTable />
           </TabPanel>
           <TabPanel value={value} index={3}>
-            <DiscountsTable />
-          </TabPanel>
-          <TabPanel value={value} index={4}>
-            <DiscountsTable />
-          </TabPanel>
-          <TabPanel value={value} index={5}>
-            <DiscountsTable />
+            <BundleDiscountTable />
           </TabPanel>
         </Paper>
       </div>
@@ -306,4 +232,4 @@ const Discounts = () => {
   );
 };
 
-export default Discounts;
+export default BundleDiscount;

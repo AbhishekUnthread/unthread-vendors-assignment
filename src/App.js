@@ -61,6 +61,8 @@ import AbandonedCart from "./pages/Orders/AbandonedCart/AbandonedCart";
 import AbandonedCartDetails from "./pages/Orders/AbandonedCartDetails/AbandonedCartDetails";
 import CreateDiscount from "./pages/Offers/CreateDiscount/CreateDiscount";
 import Discounts from "./pages/Offers/Discounts/Discounts";
+import BundleDiscount from "./pages/Offers/BundleDiscount/BundleDiscount";
+import CreateBundleDiscount from "./pages/Offers/CreateBundleDiscount/CreateBundleDiscount";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -306,6 +308,11 @@ function App(props) {
                 <Route path="" element={<Navigate to="discounts" />} />
                 <Route path="discounts" element={<Discounts />} />
                 <Route path="discounts/create" element={<CreateDiscount />} />
+                <Route path="bundleDiscount" element={<BundleDiscount />} />
+                <Route
+                  path="bundleDiscount/create"
+                  element={<CreateBundleDiscount />}
+                />
               </Route>
               {/* ORDER ROUTES */}
               <Route path="/orders">

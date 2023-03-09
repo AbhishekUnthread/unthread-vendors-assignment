@@ -182,7 +182,7 @@ export const SidebarData = [
       },
       {
         title: "Bundle Discount",
-        path: "/offers/discounts/bundleDiscount",
+        path: "/offers/bundleDiscount",
         image: discounts,
       },
     ],
