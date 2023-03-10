@@ -347,7 +347,7 @@ const ViewLogsDrawer = ({ headingName, icon }) => {
                   Updated User Status
                 </small>
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Archived User
+                  Archive User
                 </small>
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                   Added Comments

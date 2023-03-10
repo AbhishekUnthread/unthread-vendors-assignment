@@ -49,9 +49,7 @@ const TableMassActionButton = () => {
             Edit
           </small>
           <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-            <small className="text-lightBlue font2 d-block me-3">
-              Archived
-            </small>
+            <small className="text-lightBlue font2 d-block me-3">Archive</small>
             <img src={deleteRed} alt="delete" className="" />
           </div>
         </div>

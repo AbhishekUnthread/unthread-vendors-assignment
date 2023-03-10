@@ -649,7 +649,7 @@ const AllProductsTable = () => {
                 </small>
                 <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                   <small className="text-lightBlue font2 d-block">
-                    Archived Product
+                    Archive Product
                   </small>
                   <img src={deleteRed} alt="delete" className="" />
                 </div>
@@ -885,7 +885,7 @@ const AllProductsTable = () => {
                           </small>
                           <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                             <small className="text-lightBlue font2 d-block">
-                              Archived Product
+                              Archive Product
                             </small>
                             <img src={deleteRed} alt="delete" className="" />
                           </div>
@@ -1017,7 +1017,7 @@ const AllProductsTable = () => {
                   Updated User Status
                 </small>
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Archived User
+                  Archive User
                 </small>
                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                   Added Comments

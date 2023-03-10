@@ -319,7 +319,7 @@ const UserOrdersTable = () => {
                               Draft
                             </small>
                             <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                              Archived
+                              Archive
                             </small>
                           </div>
                         </Popover>
@@ -361,7 +361,7 @@ const UserOrdersTable = () => {
                               Draft
                             </small>
                             <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                              Archived
+                              Archive
                             </small>
                           </div>
                         </Popover>

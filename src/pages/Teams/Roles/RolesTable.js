@@ -358,7 +358,6 @@ const RolesTable = () => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
           <TableMassActionButton />
         </div>
       )}

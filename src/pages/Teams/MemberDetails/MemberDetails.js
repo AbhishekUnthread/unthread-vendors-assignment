@@ -162,16 +162,15 @@ const MemberDetails = () => {
           </Dialog>
 
           <button className="button-lightBlue-outline py-1 ps-2 pe-3 ms-3">
-            <div className="table-edit-icon rounded-4 pe-2 ps-1">
-              <EditOutlinedIcon
-                sx={{
-                  color: "#5c6d8e",
-                  fontSize: 15,
-                  cursor: "pointer",
-                  marginTop: "-3px",
-                }}
-              />
-            </div>
+            <EditOutlinedIcon
+              sx={{
+                color: "#5c6d8e",
+                fontSize: 14,
+                cursor: "pointer",
+                margin: "0 8px 0 8px",
+                // marginTop: "-3px",
+              }}
+            />
             <p>Edit</p>
           </button>
 
@@ -285,7 +284,7 @@ const MemberDetails = () => {
                       Updated User Status
                     </small>
                     <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                      Archived User
+                      Archive User
                     </small>
                     <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                       Added Comments

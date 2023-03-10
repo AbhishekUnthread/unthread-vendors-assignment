@@ -302,7 +302,7 @@ const AllUsersTable = () => {
                 </small>
                 <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                   <small className="text-lightBlue font2 d-block">
-                    Archived User
+                    Archive User
                   </small>
                   <img src={deleteRed} alt="delete" className="" />
                 </div>
@@ -470,7 +470,7 @@ const AllUsersTable = () => {
                             </small>
                             <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                               <small className="text-lightBlue font2 d-block">
-                                Archived User
+                                Archive User
                               </small>
                               <img src={deleteRed} alt="delete" className="" />
                             </div>
