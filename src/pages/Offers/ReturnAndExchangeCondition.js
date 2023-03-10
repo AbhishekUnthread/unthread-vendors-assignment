@@ -7,7 +7,7 @@ import {
   Radio,
 } from "@mui/material";
 
-const ReturnAndExchangeCondition = () => {
+const ReturnAndExchangeCondition = ({ sectionHeading }) => {
   // ? RADIO STARTS HERE
   const [returnAndExchangeCondition, setReturnAndExchangeCondition] =
     React.useState(0);
@@ -21,7 +21,7 @@ const ReturnAndExchangeCondition = () => {
       <div className="d-flex col-12 px-0 justify-content-between">
         <div className="d-flex align-items-center">
           <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-            Return & Exchange Condition
+            {sectionHeading}
           </h6>
           {/* <Tooltip title="Lorem ipsum" placement="top">
           <img

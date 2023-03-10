@@ -539,6 +539,15 @@ textarea {
     transition: 0.1s all ease-in;
   }
 }
+.hover-back-two {
+  transition: 0.1s all ease-in;
+  border: 1px solid transparent;
+  &:hover {
+    background: #1c1836;
+    border: 1px solid #373357;
+    transition: 0.1s all ease-in;
+  }
+}
 .hover-back-transparent {
   transition: 0.1s all ease-in;
   &:hover {

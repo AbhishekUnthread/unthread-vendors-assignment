@@ -399,8 +399,8 @@ const CreateCollection = () => {
           />
         </div>
       </div>
-      <div className="row mt-3">
-        <div className="col-lg-9 mt-3">
+      <div className="row">
+        <div className="col-lg-9 mt-4">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             {/* <div className="d-flex col-12 px-0 justify-content-between">
               <div className="d-flex align-items-center">
@@ -1087,7 +1087,7 @@ const CreateCollection = () => {
             </div>
           </SwipeableDrawer>
         </div>
-        <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
+        <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
           <StatusBox headingName={"Collection Status"} />
           <div className="mt-4">
             <UploadMediaBox imageName={addMedia} headingName={"Media"} />

@@ -137,7 +137,7 @@ const Discounts = () => {
                   <div className="col-6 my-3">
                     <Link
                       to="/offers/discounts/create"
-                      className="d-flex p-3 rounded-8 hover-back c-pointer text-decoration-none"
+                      className="d-flex p-3 rounded-8 hover-back-two c-pointer text-decoration-none"
                     >
                       <img
                         src={productDiscount}

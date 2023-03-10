@@ -63,18 +63,18 @@ const MaximumDiscountUsers = () => {
           label="Limit number of times this discount can be used in total"
           sx={{
             "& .MuiTypography-root": {
-              fontSize: "0.75rem",
-              // color: "#c8d8ff",
-              color: "#5c6d8e",
+              fontSize: 13,
+              color: "#c8d8ff",
+              // color: "#5c6d8e",
             },
           }}
           className="px-0"
         />
 
         {checkedNumberofTimes && (
-          <div className="discount-inputs ps-4 ms-1">
+          <div className="discount-inputs ps-4 ms-1 mb-3">
             <div className="d-flex mb-1">
-              <p className="text-lightBlue">Enter Number</p>
+              <small className="text-lightBlue">Enter Number</small>
               <Tooltip title="Lorem ipsum" placement="top">
                 <img
                   src={info}
@@ -89,7 +89,7 @@ const MaximumDiscountUsers = () => {
                 placeholder="Enter Value"
                 size="small"
                 endAdornment={
-                  <InputAdornment position="end">per customer</InputAdornment>
+                  <InputAdornment position="end">times</InputAdornment>
                 }
               />
             </FormControl>
@@ -112,9 +112,9 @@ const MaximumDiscountUsers = () => {
           label="Limit the number of usage per customer"
           sx={{
             "& .MuiTypography-root": {
-              fontSize: "0.75rem",
-              // color: "#c8d8ff",
-              color: "#5c6d8e",
+              fontSize: 13,
+              color: "#c8d8ff",
+              // color: "#5c6d8e",
             },
           }}
           className="px-0"
@@ -122,7 +122,7 @@ const MaximumDiscountUsers = () => {
         {checkedNumberOfTimesUsage && (
           <div className="discount-inputs ps-4 ms-1">
             <div className="d-flex mb-1">
-              <p className="text-lightBlue">Enter Number</p>
+              <small className="text-lightBlue">Enter Number</small>
               <Tooltip title="Lorem ipsum" placement="top">
                 <img
                   src={info}

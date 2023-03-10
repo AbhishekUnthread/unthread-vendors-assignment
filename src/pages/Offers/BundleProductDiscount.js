@@ -24,6 +24,7 @@ import {
   Popover,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
+import SearchBorder from "../../components/SearchBorder/SearchBorder";
 
 const BundleProductDiscount = ({ sectionTitle }) => {
   // ? FIELD SELECT STARTS HERE
@@ -107,7 +108,7 @@ const BundleProductDiscount = ({ sectionTitle }) => {
             />
           </Tooltip>
         </div>
-        <TableSearch />
+        <SearchBorder />
       </div>
       <div className="col-12 mt-2 px-0">
         <div className="bg-black-21 rounded-8 align-items-center p-2 d-flex justify-content-between">

@@ -276,13 +276,16 @@ const DiscountsTable = () => {
                           <p className="text-lightBlue me-2">
                             {row.discountCode}
                           </p>
-                          <ContentCopyIcon
-                            sx={{
-                              color: "#5c6d8e",
-                              fontSize: 12,
-                              cursor: "pointer",
-                            }}
-                          />
+
+                          <Tooltip title="Copy" placement="top">
+                            <ContentCopyIcon
+                              sx={{
+                                color: "#5c6d8e",
+                                fontSize: 12,
+                                cursor: "pointer",
+                              }}
+                            />
+                          </Tooltip>
                         </div>
                         <small className="text-grey-6 mt-1 d-block">
                           {row.discountType}
@@ -330,7 +333,7 @@ const DiscountsTable = () => {
                             />
                           </div>
                         </Tooltip>
-                        <Tooltip title="Copy" placement="top">
+                        <Tooltip title="Duplicate" placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <ContentCopyIcon
                               sx={{

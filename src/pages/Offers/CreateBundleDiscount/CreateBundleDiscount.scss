@@ -34,3 +34,20 @@
     padding-right: 6px !important;
   }
 }
+
+.discount-inputs-two {
+  .MuiInputAdornment-outlined {
+    span {
+      background: $black10 !important;
+      padding: 1px 8px;
+      border-radius: 4px;
+      p {
+        font-size: 13px !important;
+        color: $lightBlue !important;
+      }
+    }
+  }
+  .MuiOutlinedInput-root {
+    padding-right: 6px !important;
+  }
+}
