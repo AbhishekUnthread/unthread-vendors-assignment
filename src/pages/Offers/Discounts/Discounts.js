@@ -113,7 +113,9 @@ const Discounts = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">Create Categories</h5>
+                  <h5 className="text-lightBlue fw-500">
+                    Select Type of Discount
+                  </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
