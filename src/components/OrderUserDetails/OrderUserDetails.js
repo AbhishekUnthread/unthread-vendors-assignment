@@ -235,26 +235,27 @@ const OrderUserDetails = ({ showGST, showReviewData, showMediaData }) => {
           </div>
           <div className="d-flex justify-content-between mb-2">
             <small className="text-grey-6 me-2">Reviews</small>
-            <small className="text-blue-2">ask for feedback?</small>
+            {/* <small className="text-blue-2">ask for feedback?</small> */}
+            <small className="text-blue-2">Send Email</small>
           </div>
           <div className="d-flex flex-column">
-            <small
-              className="text-blue-2 d-block mt-2 c-pointer"
-              onClick={handleOpenReview}
-            >
-              #REV12345&nbsp;
-              <span className="text-grey-6">
-                •&nbsp;13/07/20222&nbsp;•&nbsp;09:23 am
+            <small className="text-grey-6 d-block mt-2 ">
+              <span
+                className="text-blue-2 c-pointer"
+                onClick={handleOpenReview}
+              >
+                #REV12345&nbsp;
               </span>
+              •&nbsp;13/07/20222&nbsp;•&nbsp;09:23 am
             </small>
-            <small
-              className="text-blue-2 d-block mt-2 c-pointer"
-              onClick={handleOpenReview}
-            >
-              #REV12345&nbsp;
-              <span className="text-grey-6">
-                •&nbsp;13/07/20222&nbsp;•&nbsp;09:23 am
+            <small className="text-grey-6 d-block mt-2 ">
+              <span
+                className="text-blue-2 c-pointer"
+                onClick={handleOpenReview}
+              >
+                #REV12345&nbsp;
               </span>
+              •&nbsp;13/07/20222&nbsp;•&nbsp;09:23 am
             </small>
           </div>
 

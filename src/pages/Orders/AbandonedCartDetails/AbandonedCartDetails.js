@@ -205,6 +205,7 @@ const AbandonedCartDetails = () => {
             showItemAvailable={false}
             showActionButton={false}
             showFulfillButton={false}
+            showQCButton={true}
           />
         </div>
         <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">

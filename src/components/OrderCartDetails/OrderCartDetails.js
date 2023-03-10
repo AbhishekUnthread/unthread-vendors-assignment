@@ -4,6 +4,8 @@ import "./OrderCartDetails.scss";
 // ! IMAGES IMPORTS
 import product2 from "../../assets/images/products/product2.jpg";
 import productIcon from "../../assets/icons/productIcon.svg";
+import video from "../../assets/icons/video.svg";
+import cancel from "../../assets/icons/cancel.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -43,6 +45,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import PrintIcon from "@mui/icons-material/Print";
 
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
+
 const OrderCartDetails = ({
   showEditButton,
   showCartButton,
@@ -50,6 +58,7 @@ const OrderCartDetails = ({
   showItemAvailable,
   showActionButton,
   showFulfillButton,
+  showQCButton,
 }) => {
   // * PRODUCT DETAIL POPOVERS STARTS
   const [anchorProductDetailEl, setAnchorProductDetailEl] =
@@ -108,6 +117,18 @@ const OrderCartDetails = ({
   const idGift = openGift ? "simple-popover" : undefined;
   // * GIFT POPOVERS ENDS
 
+  // ? VIEW QC DIALOG STARTS HERE
+  const [openQc, setOpenQc] = React.useState(false);
+
+  const handleOpenQc = () => {
+    setOpenQc(true);
+  };
+
+  const handleOpenQcClose = () => {
+    setOpenQc(false);
+  };
+  // ? VIEW QC DIALOG ENDS HERE
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
       <div className="d-flex justify-content-between align-items-center col-12 px-0">
@@ -132,14 +153,25 @@ const OrderCartDetails = ({
         <hr className="hr-grey-6 w-100 mt-3 mb-0" />
       </div>
       <div className="bg-black-21 rounded-8 p-3 col-12 mt-4">
-        <div className="d-flex align-items-center row">
-          <p className="text-grey-6 w-auto pe-0">Location:</p>
-          <Chip
-            label="Karol Bagh, Delhi • 1.1km"
-            size="small"
-            className="px-1 w-auto ms-3"
-            variant="outlined"
-          />
+        <div className="d-flex align-items-center justify-content-between ">
+          <div className="d-flex align-items-center">
+            <p className="text-grey-6 w-auto pe-0">Location:</p>
+            <Chip
+              label="Karol Bagh, Delhi • 1.1km"
+              size="small"
+              className="px-1 w-auto ms-3"
+              variant="outlined"
+            />
+          </div>
+          {/*{showQCButton && <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+            <img src={video} alt="video" width={16} className="me-2" />
+            <small
+              className="text-blue-gradient d-block"
+              onClick={handleOpenQc}
+            >
+              View QC
+            </small>
+          </div>} */}
         </div>
         <div className="row justify-content-between">
           {showBasicDetail && (
@@ -233,14 +265,32 @@ const OrderCartDetails = ({
         </div>
       </div>
       <div className="bg-black-21 rounded-8 p-3 col-12 mt-3">
-        <div className="d-flex align-items-center row">
-          <p className="text-grey-6 w-auto pe-0">Location:</p>
-          <Chip
-            label="Karol Bagh, Delhi • 1.1km"
-            size="small"
-            className="px-1 w-auto ms-3"
-            variant="outlined"
-          />
+        <div className="d-flex align-items-center justify-content-between ">
+          <div className="d-flex align-items-center">
+            <p className="text-grey-6 w-auto pe-0">Location:</p>
+            <Chip
+              label="Mahalaxmi, Mumbai • 2.1km"
+              size="small"
+              className="px-1 w-auto ms-3"
+              variant="outlined"
+            />
+            <Chip
+              label="Made to Order"
+              size="small"
+              className="px-1 w-auto ms-3"
+            />
+          </div>
+          {/* {showQCButton && (
+            <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+              <img src={video} alt="video" width={16} className="me-2" />
+              <small
+                className="text-blue-gradient d-block"
+                onClick={handleOpenQc}
+              >
+                View QC
+              </small>
+            </div>
+          )} */}
         </div>
         <div className="row justify-content-between">
           {showBasicDetail && (
@@ -333,6 +383,153 @@ const OrderCartDetails = ({
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={openQc}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleOpenQcClose}
+        aria-describedby="alert-dialog-slide-description"
+        maxWidth="sm"
+        fullWidth={true}
+      >
+        <DialogTitle>
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex flex-column ">
+              <h5 className="text-lightBlue fw-500">QC Video:</h5>
+
+              <small className="text-grey-6 mt-1 d-block">
+                ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              </small>
+            </div>
+            <img
+              src={cancel}
+              alt="cancel"
+              width={30}
+              onClick={handleOpenQcClose}
+              className="c-pointer"
+            />
+          </div>
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex align-items-center">
+              <img
+                src={product2}
+                alt="product2"
+                className="rounded-8"
+                width={60}
+              />
+              <div className="d-flex flex-column">
+                <p className="text-lightBlue">The Fringe Diamond Ring</p>
+                <small className="text-grey-6 mt-1 d-block">
+                  SKU:&nbsp;TFDR012345
+                </small>
+              </div>
+            </div>
+            <div className="d-flex">
+              <button
+                className="button-green-outline py-2 px-4"
+                onClick={handleOpenQcClose}
+              >
+                <TaskAltIcon
+                  sx={{
+                    fontSize: 18,
+                    cursor: "pointer",
+                    "& :hover": { color: "green" },
+                  }}
+                />
+                <p className="ms-2">Approve QC</p>
+              </button>
+              <button
+                className="button-red-outline py-2 px-4"
+                onClick={handleOpenQcClose}
+              >
+                <BlockIcon
+                  sx={{
+                    fontSize: 18,
+                    cursor: "pointer",
+                    "& :hover": { color: "green" },
+                  }}
+                />
+                <p className="ms-2">Reject QC</p>
+              </button>
+            </div>
+          </div>
+        </DialogTitle>
+        <hr className="hr-grey-6 my-0" />
+        <DialogContent className="py-3 px-4">
+          <p className="text-grey-6 mb-2">Rating</p>
+          <Rating
+            // size="small"
+            name="half-rating-read"
+            defaultValue={4}
+            readOnly
+          />
+          <p className="text-grey-6 mt-3">Reviews</p>
+          <p className="text-lightBlue mt-1">
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            quod delectus ex quam dolorum, obcaecati molestiae praesentium
+            soluta beatae laborum. Perspiciatis iusto facere repellendus
+            molestiae animi sapiente aliquam quidem quae.
+          </p>
+          <div className="d-flex">
+            <div className="d-flex flex-column">
+              <p className="text-grey-6 mt-3">Product</p>
+              <p className="text-blue-2 mt-1 text-decoration-underline">
+                The Fringe Diamond Ring
+              </p>
+            </div>
+            <div className="d-flex flex-column ms-5">
+              <p className="text-grey-6 mt-3">Order ID</p>
+              <p className="text-blue-2 mt-1 text-decoration-underline">
+                #12345
+              </p>
+            </div>
+          </div>
+          <p className="text-grey-6 mt-3">Customer</p>
+          <p className="text-blue-2 mt-1 text-decoration-underline">
+            Saniya Shaikh
+          </p>
+          <p className="text-grey-6 mt-3">Created On</p>
+          <p className="text-lightBlue mt-1 ">
+            13/07/20222&nbsp;•&nbsp;09:23 am
+          </p>
+          <p className="text-grey-6 mt-3">Status</p>
+          <div className="d-flex mt-1">
+            <div className="rounded-pill d-flex table-status px-4 py-1 c-pointer">
+              <small className="text-black fw-400">Active</small>
+            </div>
+          </div>
+        </DialogContent>
+        <hr className="hr-grey-6 my-0" />
+        <DialogActions className="d-flex justify-content-between px-4 py-3">
+          <button
+            className="button-green-outline py-2 px-4"
+            onClick={handleOpenQcClose}
+          >
+            <TaskAltIcon
+              sx={{
+                fontSize: 18,
+                cursor: "pointer",
+                "& :hover": { color: "green" },
+              }}
+            />
+            <p className="ms-2">Approve Reviews</p>
+          </button>
+          <button
+            className="button-red-outline py-2 px-4"
+            onClick={handleOpenQcClose}
+          >
+            <BlockIcon
+              sx={{
+                fontSize: 18,
+                cursor: "pointer",
+                "& :hover": { color: "green" },
+              }}
+            />
+            <p className="ms-2">Reject Reviews</p>
+          </button>
+        </DialogActions>
+      </Dialog>
 
       <Popover
         anchorOrigin={{

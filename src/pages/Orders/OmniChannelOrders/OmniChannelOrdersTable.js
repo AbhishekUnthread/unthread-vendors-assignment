@@ -484,18 +484,15 @@ const OmniChannelOrdersTable = () => {
                           width={45}
                         /> */}
 
-                        <div
-                          aria-describedby={idUser}
-                          variant="contained"
-                          onClick={handleUserClick}
-                          className="c-pointer"
-                        >
-                          <div className=" text-decoration-none">
-                            <p className="text-lightBlue rounded-circle fw-600">
-                              {row.userName}
-                            </p>
-                          </div>
-
+                        <div>
+                          <p
+                            className="text-blue-2 rounded-circle fw-600 c-pointer"
+                            aria-describedby={idUser}
+                            variant="contained"
+                            onClick={handleUserClick}
+                          >
+                            {row.userName}
+                          </p>
                           <div className="d-flex align-items-center mt-2">
                             <p className="text-lightBlue">{row.location}</p>
                             <img
@@ -593,9 +590,9 @@ const OmniChannelOrdersTable = () => {
                       </div>
                     </TableCell>
                     <TableCell width={120}>
-                      <div className="d-flex align-items-center c-pointer">
+                      <div className="d-flex align-items-center">
                         <p
-                          className="text-lightBlue"
+                          className="text-blue-2 c-pointer"
                           aria-describedby={idItem}
                           variant="contained"
                           onClick={handleItemClick}

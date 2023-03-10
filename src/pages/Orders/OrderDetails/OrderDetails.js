@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import TagsBox from "../../../components/TagsBox/TagsBox";
 import UploadFile from "../../../components/UploadFile/UploadFile";
+import OrderUserDetails from "../../../components/OrderUserDetails/OrderUserDetails";
+import OrderCartDetails from "../../../components/OrderCartDetails/OrderCartDetails";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
@@ -12,6 +14,7 @@ import email from "../../../assets/icons/email.svg";
 import phone from "../../../assets/icons/phone.svg";
 import message from "../../../assets/icons/message.svg";
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
+import razorpay from "../../../assets/icons/razorpay.png";
 import product2 from "../../../assets/images/products/product2.jpg";
 import rolesSuperAdmin from "../../../assets/images/teams/rolesSuperAdmin.svg";
 import info from "../../../assets/icons/info.svg";
@@ -74,8 +77,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import PrintIcon from "@mui/icons-material/Print";
-import OrderUserDetails from "../../../components/OrderUserDetails/OrderUserDetails";
-import OrderCartDetails from "../../../components/OrderCartDetails/OrderCartDetails";
+import ClearIcon from "@mui/icons-material/Clear";
+import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
 const OrderDetails = () => {
   // * CONTACT POPOVERS STARTS
@@ -127,7 +131,7 @@ const OrderDetails = () => {
     <div className="page container-fluid">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/users/allUsers" className="d-flex">
+          <Link to="/orders/allOrders" className="d-flex">
             <img
               src={arrowLeft}
               alt="arrowLeft"
@@ -147,7 +151,7 @@ const OrderDetails = () => {
         </div>
         <div className="d-flex align-items-center w-auto pe-0">
           <button className="button-lightBlue-outline py-1 px-4">
-            <p>Send Invoice</p>
+            <p>Refund</p>
           </button>
           <button
             className="button-gradient py-1 px-4 w-auto ms-3 me-3"
@@ -171,7 +175,7 @@ const OrderDetails = () => {
             onClose={handleContactClose}
           >
             <div className="py-2 px-1">
-              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+              {/* <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
                 <img src={phone} alt="phome" width={16} className="me-2" />
                 <small className="text-lightBlue d-block">Call</small>
               </div>
@@ -182,6 +186,91 @@ const OrderDetails = () => {
               <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
                 <img src={message} alt="message" width={16} className="me-2" />
                 <small className="text-lightBlue d-block">Message</small>
+              </div> */}
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+                <ClearIcon
+                  sx={{
+                    color: "#c8d8ff",
+                    fontSize: 16,
+                    cursor: "pointer",
+                    marginRight: "0.5rem",
+                  }}
+                />
+                <small className="text-lightBlue d-block">Cancel Order</small>
+              </div>
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+                <ReceiptLongOutlinedIcon
+                  sx={{
+                    color: "#c8d8ff",
+                    fontSize: 16,
+                    cursor: "pointer",
+                    marginRight: "0.5rem",
+                  }}
+                />
+                <small className="text-lightBlue d-block">View Invoice</small>
+              </div>
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+                <FileDownloadOutlinedIcon
+                  sx={{
+                    color: "#c8d8ff",
+                    fontSize: 16,
+                    cursor: "pointer",
+                    marginRight: "0.5rem",
+                  }}
+                />
+                <small className="text-lightBlue d-block">
+                  Download Order Invoice
+                </small>
+              </div>
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+                <PrintIcon
+                  sx={{
+                    color: "#c8d8ff",
+                    fontSize: 16,
+                    cursor: "pointer",
+                    marginRight: "0.5rem",
+                  }}
+                />
+                <small className="text-lightBlue d-block">
+                  Print Packaging Slip
+                </small>
+              </div>
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+                <StarBorderOutlinedIcon
+                  sx={{
+                    color: "#c8d8ff",
+                    fontSize: 16,
+                    cursor: "pointer",
+                    marginRight: "0.5rem",
+                  }}
+                />
+                <small className="text-lightBlue d-block">
+                  Mark as Priority Order
+                </small>
+              </div>
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+                <EmailOutlinedIcon
+                  sx={{
+                    color: "#c8d8ff",
+                    fontSize: 16,
+                    cursor: "pointer",
+                    marginRight: "0.5rem",
+                  }}
+                />
+                <small className="text-lightBlue d-block">
+                  Send Feedback Email
+                </small>
+              </div>
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+                <DeleteIcon
+                  sx={{
+                    color: "#c8d8ff",
+                    fontSize: 16,
+                    cursor: "pointer",
+                    marginRight: "0.5rem",
+                  }}
+                />
+                <small className="text-lightBlue d-block">Archive Order</small>
               </div>
             </div>
           </Popover>
@@ -208,6 +297,7 @@ const OrderDetails = () => {
             showItemAvailable={true}
             showActionButton={true}
             showFulfillButton={true}
+            showQCButton={true}
           />
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
             <div className="col-12 px-0">
@@ -221,10 +311,53 @@ const OrderDetails = () => {
                 </div>
               </div>
             </div>
-            <div className="col-12 d-flex justify-content-center mt-2 px-0">
-              <hr className="hr-grey-6 w-100" />
+            <div className="col-12 d-flex justify-content-center px-0">
+              <hr className="hr-grey-6 w-100 mt-3 mb-0" />
             </div>
-            <div className="col-12 d-flex mt-2 px-0">
+            <div className="col-12 px-0">
+              <div className="row">
+                <div className="col-md-3 col-6 mt-3">
+                  <small className="text-grey-6 mb-1 d-block">Gateway</small>
+                  <img
+                    src={razorpay}
+                    alt="razorpay"
+                    height={20}
+                    className="rounded-pill"
+                  />
+                </div>
+                <div className="col-md-3 col-6 mt-3">
+                  <small className="text-grey-6 mb-1 d-block">
+                    Payment Type
+                  </small>
+                  <div className="d-flex">
+                    <h6 className="text-lightBlue">Debit Card</h6>
+                    <p className="text-blue-2 ms-2">(View Info)</p>
+                  </div>
+                </div>
+                <div className="col-md-3 col-6 mt-3">
+                  <small className="text-grey-6 mb-1 d-block">
+                    Order/Payment Status History
+                  </small>
+
+                  <p className="text-lightBlue">16 May, 2022 at 11:59 PM</p>
+                </div>
+                <div className="col-md-3 col-6 mt-3">
+                  <small className="text-grey-6 mb-1 d-block">
+                    Transaction ID
+                  </small>
+                  <div className="d-flex align-items-center">
+                    <p className="text-lightBlue me-2">16444443532</p>
+                    <Tooltip title="Copy" placement="top">
+                      <ContentCopyIcon
+                        sx={{ fontSize: 12, color: "#c8d8ff" }}
+                        className="c-pointer"
+                      />
+                    </Tooltip>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-12 d-flex px-0 mt-3">
               <button className="button-lightBlue-outline py-2 px-4 me-3">
                 <p>Mark as Paid</p>
               </button>
