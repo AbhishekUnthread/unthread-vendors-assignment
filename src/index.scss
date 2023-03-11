@@ -22,6 +22,14 @@ body {
     font-weight: 500;
   }
 }
+.page-center {
+  min-height: calc(100vh - 56px);
+  display: flex;
+  align-items: center;
+  // justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
 
 .columns {
   .MuiTypography-root {

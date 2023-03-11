@@ -195,9 +195,6 @@ const Vendors = () => {
           <TabPanel value={value} index={1}>
             <VendorsTable />
           </TabPanel>
-          <TabPanel value={value} index={2}>
-            <VendorsTable />
-          </TabPanel>
         </Paper>
       </div>
     </div>

@@ -116,7 +116,7 @@ export const SidebarData = [
       },
       {
         title: "Price Master",
-        path: "/",
+        path: "/parameters/priceMaster",
         image: parameters,
       },
     ],

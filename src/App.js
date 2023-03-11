@@ -63,6 +63,12 @@ import CreateDiscount from "./pages/Offers/CreateDiscount/CreateDiscount";
 import Discounts from "./pages/Offers/Discounts/Discounts";
 import BundleDiscount from "./pages/Offers/BundleDiscount/BundleDiscount";
 import CreateBundleDiscount from "./pages/Offers/CreateBundleDiscount/CreateBundleDiscount";
+import PriceMasterLanding from "./pages/Parameters/PriceMasterLanding/PriceMasterLanding";
+import PriceMaster from "./pages/Parameters/PriceMaster/PriceMaster";
+import CreatePriceMaster from "./pages/Parameters/CreatePriceMaster/CreatePriceMaster";
+import MetalPriceManager from "./pages/Parameters/MetalPriceManager/MetalPriceManager";
+import DiamondPriceManager from "./pages/Parameters/DiamondPriceManager/DiamondPriceManager";
+import MakingChargesManager from "./pages/Parameters/MakingChargesManager/MakingChargesManager";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -294,6 +300,24 @@ function App(props) {
                 <Route path="tagsManager/edit" element={<EditVendor />} />
                 <Route path="tagsManager" element={<TagsManager />} />
                 <Route path="tagsManager/edit" element={<EditTags />} />
+                <Route path="priceMaster" element={<PriceMasterLanding />} />
+                <Route path="priceMaster/inventory" element={<PriceMaster />} />
+                <Route
+                  path="priceMaster/create"
+                  element={<CreatePriceMaster />}
+                />
+                <Route
+                  path="priceMaster/metalMaster"
+                  element={<MetalPriceManager />}
+                />
+                <Route
+                  path="priceMaster/diamondMaster"
+                  element={<DiamondPriceManager />}
+                />
+                <Route
+                  path="priceMaster/makingMaster"
+                  element={<MakingChargesManager />}
+                />
               </Route>
               {/* TEAM ROUTES */}
               <Route path="/teams">

@@ -848,7 +848,7 @@ const CreateDiscount = () => {
                               value={40}
                               sx={{ fontSize: 13, color: "#5c6d8e" }}
                             >
-                              SPecific Sub-Category
+                              Specific Sub-Category
                             </MenuItem>
                           </Select>
                         </FormControl>
