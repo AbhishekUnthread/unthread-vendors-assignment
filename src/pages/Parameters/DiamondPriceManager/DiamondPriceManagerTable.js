@@ -180,15 +180,15 @@ function Row(props) {
                 <ArrowDropDownIcon
                   sx={{
                     color: "#5c6d8e",
-                    fontSize: 20,
+                    fontSize: 24,
                     cursor: "pointer",
                   }}
                 />
               ) : (
                 <ArrowRightIcon
                   sx={{
-                    color: "#5c6d8e",
-                    fontSize: 20,
+                    color: "#c8d8ff",
+                    fontSize: 24,
                     cursor: "pointer",
                   }}
                 />
