@@ -6,13 +6,13 @@ import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
 import TagsBox from "../../../components/TagsBox/TagsBox";
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
-import TableSearch from "../../../components/TableSearch/TableSearch";
 import UploadFileRounded from "../../../components/UploadFileRounded/UploadFileRounded";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import StatusBox from "../../../components/StatusBox/StatusBox";
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
+import SearchBorder from "../../../components/SearchBorder/SearchBorder";
 // ! IMAGES IMPORTS
 import rolesSuperAdmin from "../../../assets/images/teams/rolesSuperAdmin.svg";
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
@@ -245,7 +245,7 @@ const CreateOrder = () => {
     right: false,
   });
 
-  const toggleAddMemberDrawer = (anchor, open) => (event) => {
+  const toggleAddProductDrawer = (anchor, open) => (event) => {
     if (
       event &&
       event.type === "keydown" &&
@@ -837,7 +837,7 @@ const CreateOrder = () => {
                 <hr className="hr-grey-6 w-100" />
               </div>
               <div className="col-12">
-                <TableSearch />
+                <SearchBorder />
               </div>
               <div className="col-12 mt-3">
                 <div className="row">
@@ -1004,8 +1004,207 @@ const CreateOrder = () => {
                     Select Products
                   </h6>
                 </div>
-                <small className="text-blue-2">Custom Product</small>
+                <small
+                  className="text-blue-2 c-pointer"
+                  onClick={toggleAddProductDrawer("right", true)}
+                >
+                  Custom Product
+                </small>
               </div>
+
+              <SwipeableDrawer
+                anchor="right"
+                open={addProductDrawer["right"]}
+                onClose={toggleAddProductDrawer("right", false)}
+                onOpen={toggleAddProductDrawer("right", true)}
+                className="order-custom-product-drawer"
+              >
+                <div className="d-flex align-items-center pt-3 px-3">
+                  <KeyboardArrowLeftOutlinedIcon
+                    sx={{ fontSize: 25, color: "#c8d8ff" }}
+                    onClick={toggleAddProductDrawer("right", false)}
+                    className="c-pointer"
+                  />
+                  <div>
+                    <div className="d-flex align-items-center">
+                      <h5 className="text-lightBlue fw-500 ms-2">
+                        Add Custom Product
+                      </h5>
+                      <Tooltip title="Lorem ipsum" placement="top">
+                        <img
+                          src={info}
+                          alt="info"
+                          className="ms-2 c-pointer"
+                          width={13.5}
+                        />
+                      </Tooltip>
+                    </div>
+                    <small className="text-grey-6 mt-1 d-block">
+                      ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </small>
+                  </div>
+                </div>
+                <div className="px-3">
+                  <hr className="hr-grey-6 mt-3 mb-3" />
+                </div>
+                <div className="px-3">
+                  <div className="row">
+                    <div className="col-12">
+                      <SearchBorder />
+                    </div>
+
+                    <div className="col-12 mt-3">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue">Product Title</p>
+                        <Tooltip title="Lorem ipsum" placement="top">
+                          <img
+                            src={info}
+                            alt="info"
+                            className="c-pointer ms-2"
+                            width={13.5}
+                          />
+                        </Tooltip>
+                      </div>
+                      <FormControl className="w-100 px-0">
+                        <OutlinedInput placeholder="Enter Title" size="small" />
+                      </FormControl>
+                    </div>
+                    <div className="col-md-6 mt-3">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue">Category</p>
+                        <Tooltip title="Lorem ipsum" placement="top">
+                          <img
+                            src={info}
+                            alt="info"
+                            className="c-pointer ms-2"
+                            width={13.5}
+                          />
+                        </Tooltip>
+                      </div>
+
+                      <FormControl sx={{ width: "100%" }} size="small">
+                        <Select
+                          labelId="demo-select-small"
+                          id="demo-select-small"
+                          // value={metal}
+                          value=""
+                          placeholder="Fixed"
+                          // onChange={handleMetalChange}
+                        >
+                          <MenuItem value="">None</MenuItem>
+                          <MenuItem value={10}>Category 1</MenuItem>
+                          <MenuItem value={20}>Category 2</MenuItem>
+                          <MenuItem value={30}>Category 3</MenuItem>
+                          <MenuItem value={40}>Category 4r</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="col-md-6 mt-3">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue">Vendor Name</p>
+                        <Tooltip title="Lorem ipsum" placement="top">
+                          <img
+                            src={info}
+                            alt="info"
+                            className="c-pointer ms-2"
+                            width={13.5}
+                          />
+                        </Tooltip>
+                      </div>
+
+                      <FormControl sx={{ width: "100%" }} size="small">
+                        <Select
+                          labelId="demo-select-small"
+                          id="demo-select-small"
+                          // value={metal}
+                          value=""
+                          placeholder="Fixed"
+                          // onChange={handleMetalChange}
+                        >
+                          <MenuItem value="">None</MenuItem>
+                          <MenuItem value={10}>Vendor 1</MenuItem>
+                          <MenuItem value={20}>Vendor 2</MenuItem>
+                          <MenuItem value={30}>Vendor 3</MenuItem>
+                          <MenuItem value={40}>Vendor 4</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+
+                    <div className="col-12 mt-3">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue">
+                          Enter Weight and Dimensions
+                        </p>
+                        <Tooltip title="Lorem ipsum" placement="top">
+                          <img
+                            src={info}
+                            alt="info"
+                            className="c-pointer ms-2"
+                            width={13.5}
+                          />
+                        </Tooltip>
+                      </div>
+                    </div>
+                    <div className="d-flex my-3 align-items-center shipping shipping-inputs col-12">
+                      <FormControl className="me-5">
+                        <OutlinedInput
+                          placeholder="Enter Weight"
+                          size="small"
+                          endAdornment={
+                            <InputAdornment position="end">kg</InputAdornment>
+                          }
+                        />
+                      </FormControl>
+                      <FormControl className="">
+                        <OutlinedInput
+                          placeholder="Enter Length"
+                          size="small"
+                          endAdornment={
+                            <InputAdornment position="end">cm</InputAdornment>
+                          }
+                        />
+                      </FormControl>
+                      <p className="text-lightBlue mx-2">x</p>
+                      <FormControl className="">
+                        <OutlinedInput
+                          placeholder="Enter Height"
+                          size="small"
+                          endAdornment={
+                            <InputAdornment position="end">cm</InputAdornment>
+                          }
+                        />
+                      </FormControl>
+                      <p className="text-lightBlue mx-2">x</p>
+                      <FormControl className="">
+                        <OutlinedInput
+                          placeholder="Enter Width"
+                          size="small"
+                          endAdornment={
+                            <InputAdornment position="end">cm</InputAdornment>
+                          }
+                        />
+                      </FormControl>
+                    </div>
+                  </div>
+                </div>
+                <div className="d-flex flex-column py-3 px-4 order-custom-product-drawer-buttons">
+                  <hr className="hr-grey-6 my-3 w-100" />
+                  <div className="d-flex justify-content-between">
+                    <button
+                      className="button-gradient py-2 px-5 w-auto"
+                      onClick={toggleAddProductDrawer("right", false)}
+                    >
+                      <p>Save</p>
+                    </button>
+                    <button
+                      className="button-lightBlue-outline py-2 px-4"
+                      onClick={toggleAddProductDrawer("right", false)}
+                    >
+                      <p>Cancel</p>
+                    </button>
+                  </div>
+                </div>
+              </SwipeableDrawer>
 
               <div className="d-flex justify-content-center mt-2">
                 <hr className="hr-grey-6 w-100" />
@@ -1022,7 +1221,7 @@ const CreateOrder = () => {
                     />
                   </Tooltip>
                 </div>
-                <TableSearch />
+                <SearchBorder />
               </div>
             </div>
             <div className="col-12 px-0 d-flex justify-content-center mt-2">

@@ -819,6 +819,17 @@ textarea {
     background: linear-gradient(180deg, rgba(17, 15, 38, 0) 0%, #110f26 47.98%);
   }
 }
+.order-custom-product-drawer {
+  .MuiDrawer-paper {
+    max-width: 45vw;
+  }
+  &-buttons {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(180deg, rgba(17, 15, 38, 0) 0%, #110f26 47.98%);
+  }
+}
 .bulk-drawer {
   // .MuiDrawer-paper {
   //   max-width: 35vw;
@@ -870,6 +881,11 @@ textarea {
 
 @media screen and (max-width: 576px) {
   .role-drawer {
+    .MuiDrawer-paper {
+      max-width: 90vw;
+    }
+  }
+  .order-custom-product-drawer {
     .MuiDrawer-paper {
       max-width: 90vw;
     }

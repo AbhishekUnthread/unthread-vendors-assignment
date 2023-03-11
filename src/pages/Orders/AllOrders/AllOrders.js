@@ -37,21 +37,11 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
-
-const locationData = [
-  { title: "Content 1", value: "content1" },
-  { title: "Content 2", value: "content2" },
-  { title: "Content 3", value: "content3" },
-  { title: "Content 4", value: "content4" },
-  { title: "Content 5", value: "content5" },
-  { title: "Content 6", value: "content6" },
-  { title: "Content 7", value: "content7" },
-  { title: "Content 8", value: "content8" },
-  { title: "Content 9", value: "content9" },
-  { title: "Content 10", value: "content10" },
-  { title: "Content 11", value: "content11" },
-  { title: "Content 12", value: "content12" },
-];
+import OrderSortFilter from "../OrderSortFilter";
+import OrderColumnsFilter from "../OrderColumnsFilter";
+import OrderTagsFilter from "../OrderTagsFilter";
+import OrderStatusFilter from "../OrderStatusFilter";
+import OrderLocationFilter from "../OrderLocationFilter";
 
 const AllOrders = () => {
   const [value, setValue] = React.useState(0);
@@ -73,36 +63,6 @@ const AllOrders = () => {
   const idFlag = openFlag ? "simple-popover" : undefined;
   // * FLAG POPOVERS ENDS
 
-  // * SORT POPOVERS STARTS
-  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
-
-  const handleSortClick = (event) => {
-    setAnchorSortEl(event.currentTarget);
-  };
-
-  const handleSortClose = () => {
-    setAnchorSortEl(null);
-  };
-
-  const openSort = Boolean(anchorSortEl);
-  const idSort = openSort ? "simple-popover" : undefined;
-  // * SORT POPOVERS ENDS
-
-  // * LOCATION POPOVERS STARTS
-  const [anchorLocationEl, setAnchorLocationEl] = React.useState(null);
-
-  const handleLocationClick = (event) => {
-    setAnchorLocationEl(event.currentTarget);
-  };
-
-  const handleLocationClose = () => {
-    setAnchorLocationEl(null);
-  };
-
-  const openLocation = Boolean(anchorLocationEl);
-  const idLocation = openLocation ? "simple-popover" : undefined;
-  // * LOCATION POPOVERS ENDS
-
   // * NO OF ORDERS POPOVERS STARTS
   const [anchorOrdersEl, setAnchorOrdersEl] = React.useState(null);
 
@@ -117,21 +77,6 @@ const AllOrders = () => {
   const openOrders = Boolean(anchorOrdersEl);
   const idOrders = openOrders ? "simple-popover" : undefined;
   // * NO OF ORDERS POPOVERS ENDS
-
-  // * STATUS POPOVERS STARTS
-  const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
-
-  const handleStatusClick = (event) => {
-    setAnchorStatusEl(event.currentTarget);
-  };
-
-  const handleStatusClose = () => {
-    setAnchorStatusEl(null);
-  };
-
-  const openStatus = Boolean(anchorStatusEl);
-  const idStatus = openStatus ? "simple-popover" : undefined;
-  // * STATUS POPOVERS ENDS
 
   // * DAYS POPOVERS STARTS
   const [anchorDaysEl, setDaysEl] = React.useState(null);
@@ -333,254 +278,13 @@ const AllOrders = () => {
             <TableSearch />
             <div className="d-flex ms-2">
               <div className="d-flex product-button__box">
-                <button
-                  className="button-grey py-1 px-3 d-none d-md-block"
-                  aria-describedby={idLocation}
-                  variant="contained"
-                  onClick={handleLocationClick}
-                >
-                  <small className="text-lightBlue">Location</small>
-                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
-                </button>
-                <Popover
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  id={idLocation}
-                  open={openLocation}
-                  anchorEl={anchorLocationEl}
-                  onClose={handleLocationClose}
-                >
-                  <div className="py-2">
-                    <Autocomplete
-                      id="free-solo-demo"
-                      freeSolo
-                      size="small"
-                      options={locationData}
-                      getOptionLabel={(option) => option.title}
-                      renderOption={(props, option) => (
-                        <li {...props}>
-                          <small className="text-lightBlue my-1">
-                            {option.title}
-                          </small>
-                        </li>
-                      )}
-                      sx={{
-                        width: 200,
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          placeholder="Search"
-                          inputRef={(input) => input?.focus()}
-                        />
-                      )}
-                    />
-                  </div>
-                </Popover>
-                <button
-                  className="button-grey py-1 px-3 d-none d-md-block"
-                  aria-describedby={idOrders}
-                  variant="contained"
-                  onClick={handleOrdersClick}
-                >
-                  <small className="text-lightBlue">No of Orders</small>
-                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
-                </button>
-                <Popover
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  id={idOrders}
-                  open={openOrders}
-                  anchorEl={anchorOrdersEl}
-                  onClose={handleOrdersClose}
-                >
-                  <div className="py-2 px-1">
-                    <small className="d-block text-lightBlue">
-                      Min No. of Order
-                    </small>
-                    <FormControl className="px-0 mt-1">
-                      <OutlinedInput placeholder="Enter Min" size="small" />
-                    </FormControl>
-                    <small className="d-block text-lightBlue mt-2">
-                      Max No. of Order
-                    </small>
-                    <FormControl className="px-0 mt-1">
-                      <OutlinedInput placeholder="Enter Max" size="small" />
-                    </FormControl>
-                  </div>
-                </Popover>
-
-                <button
-                  className="button-grey py-1 px-3 d-none d-md-block"
-                  aria-describedby={idStatus}
-                  variant="contained"
-                  onClick={handleStatusClick}
-                >
-                  <small className="text-lightBlue">Status</small>
-                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
-                </button>
-
-                <Popover
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  id={idStatus}
-                  open={openStatus}
-                  anchorEl={anchorStatusEl}
-                  onClose={handleStatusClose}
-                >
-                  <div className=" px-1">
-                    <FormGroup className="tags-checkbox">
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            size="small"
-                            style={{
-                              color: "#5C6D8E",
-                              marginRight: 0,
-                            }}
-                          />
-                        }
-                        label="Active"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            size="small"
-                            style={{
-                              color: "#5C6D8E",
-                              marginRight: 0,
-                            }}
-                          />
-                        }
-                        label="In-Active"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            size="small"
-                            style={{
-                              color: "#5C6D8E",
-                              marginRight: 0,
-                            }}
-                          />
-                        }
-                        label="Blocked"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            size="small"
-                            style={{
-                              color: "#5C6D8E",
-                              marginRight: 0,
-                            }}
-                          />
-                        }
-                        label="Archived"
-                      />
-                    </FormGroup>
-                  </div>
-                </Popover>
+                <OrderLocationFilter />
+                <OrderStatusFilter />
+                <OrderTagsFilter />
                 <FilterUsers buttonName={"More Filters"} />
               </div>
-              <button
-                className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idSort}
-                variant="contained"
-                onClick={handleSortClick}
-              >
-                <small className="text-lightBlue me-2">Sort</small>
-                <img src={sort} alt="sort" className="" />
-              </button>
-
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idSort}
-                open={openSort}
-                anchorEl={anchorSortEl}
-                onClose={handleSortClose}
-                className="columns"
-              >
-                <FormControl className="px-2 py-1">
-                  <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    // value={value}
-                    // onChange={handleRadioChange}
-                  >
-                    <FormControlLabel
-                      value="userName"
-                      control={<Radio size="small" />}
-                      label="User Name"
-                    />
-                    <FormControlLabel
-                      value="location"
-                      control={<Radio size="small" />}
-                      label="Location"
-                    />
-                    <FormControlLabel
-                      value="totalSpent"
-                      control={<Radio size="small" />}
-                      label="Total Spent"
-                    />
-                    <FormControlLabel
-                      value="noOfOrders"
-                      control={<Radio size="small" />}
-                      label="No of Orders"
-                    />
-                    <FormControlLabel
-                      value="uploadTime"
-                      control={<Radio size="small" />}
-                      label="Upload Time"
-                    />
-                    <FormControlLabel
-                      value="alphabeticalAtoZ"
-                      control={<Radio size="small" />}
-                      label="Alphabetical (A-Z)"
-                    />
-                    <FormControlLabel
-                      value="alphabeticalZtoA"
-                      control={<Radio size="small" />}
-                      label="Alphabetical (Z-A)"
-                    />
-                    <FormControlLabel
-                      value="oldestToNewest"
-                      control={<Radio size="small" />}
-                      label="Oldest to Newest"
-                    />
-                    <FormControlLabel
-                      value="newestToOldest"
-                      control={<Radio size="small" />}
-                      label="Newest to Oldest"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Popover>
+              <OrderSortFilter />
+              <OrderColumnsFilter />
             </div>
           </div>
           <TabPanel value={value} index={0}>

@@ -58,16 +58,18 @@ function createData(
     maxWeight,
     price,
     priceType,
-    history: [
+    detailData: [
       {
-        date: "2020-01-05",
-        customerId: "11091700",
-        amount: 3,
+        min: "0",
+        max: "5",
+        price: "₹ 50,000",
+        tags: "Tag 1",
       },
       {
-        date: "2020-01-02",
-        customerId: "Anonymous",
-        amount: 1,
+        min: "0",
+        max: "5",
+        price: "₹ 70,000",
+        tags: "Tag 2",
       },
     ],
   };
@@ -256,129 +258,50 @@ function Row(props) {
           </div>
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell style={{ padding: 0 }} colSpan={15}>
+      <TableRow className="table-rows">
+        <TableCell style={{ padding: 0 }} colSpan={12}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box>
-              {/* <Typography variant="h6" gutterBottom component="div">
-                History
-              </Typography> */}
+            <div className="px-5 py-3">
+              <h5 className="text-lightBlue my-3 fw-500">IJSI 5 Round</h5>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell padding="none" width={50} />
-                    <TableCell width={50} padding="none" />
-                    <TableCell>Clarity</TableCell>
-                    <TableCell>Size</TableCell>
-                    <TableCell>Diamond Shape</TableCell>
-                    <TableCell>Min. Wt.</TableCell>
-                    <TableCell>Max. Wt.</TableCell>
-                    <TableCell>Price</TableCell>
-                    <TableCell>Price Type</TableCell>
-                    <TableCell>Actions</TableCell>
+                    <TableCell>
+                      <p className="text-lightBlue">Min</p>
+                    </TableCell>
+                    <TableCell>
+                      <p className="text-lightBlue">Max</p>
+                    </TableCell>
+                    <TableCell>
+                      <p className="text-lightBlue">Price</p>
+                    </TableCell>
+                    <TableCell>
+                      <p className="text-lightBlue">Tags</p>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow>
-                    <TableCell padding="checkbox"></TableCell>
-                    <TableCell width={50} padding="none"></TableCell>
-                    <TableCell>
-                      <FormControl className="px-0" sx={{ width: "140px" }}>
-                        <OutlinedInput
-                          placeholder="Enter Master Name"
-                          size="small"
-                        />
-                      </FormControl>
-                    </TableCell>
-                    <TableCell>
-                      <FormControl className="px-0" sx={{ width: "140px" }}>
-                        <OutlinedInput
-                          placeholder="Enter Master Name"
-                          size="small"
-                        />
-                      </FormControl>
-                    </TableCell>
-                    <TableCell>
-                      <FormControl className="px-0" sx={{ width: "140px" }}>
-                        <OutlinedInput
-                          placeholder="Enter Master Name"
-                          size="small"
-                        />
-                      </FormControl>
-                    </TableCell>
-                    <TableCell>
-                      <FormControl className="px-0" sx={{ width: "140px" }}>
-                        <OutlinedInput
-                          placeholder="Enter Master Name"
-                          size="small"
-                        />
-                      </FormControl>
-                    </TableCell>
-                    <TableCell>
-                      <FormControl className="px-0" sx={{ width: "140px" }}>
-                        <OutlinedInput
-                          placeholder="Enter Master Name"
-                          size="small"
-                        />
-                      </FormControl>
-                    </TableCell>
-                    <TableCell>
-                      <FormControl className="px-0" sx={{ width: "140px" }}>
-                        <OutlinedInput
-                          placeholder="Enter Master Name"
-                          size="small"
-                        />
-                      </FormControl>
-                    </TableCell>
-                    <TableCell>
-                      <FormControl className="px-0" sx={{ width: "140px" }}>
-                        <OutlinedInput
-                          placeholder="Enter Master Name"
-                          size="small"
-                        />
-                      </FormControl>
-                    </TableCell>
-                    <TableCell style={{ width: 140, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <EditOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                        <Tooltip title="Copy" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <ContentCopyIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                        <Tooltip title="Archive" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <InventoryIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  {row.detailData.map((detailDataRow, index) => (
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="row">
+                        <p className="text-lightBlue">{detailDataRow.min}</p>
+                      </TableCell>
+                      <TableCell>
+                        <p className="text-lightBlue">{detailDataRow.max}</p>
+                      </TableCell>
+                      <TableCell>
+                        <p className="text-lightBlue">{detailDataRow.price}</p>
+                      </TableCell>
+                      <TableCell>
+                        <p className="text-ligthBlue">
+                          <p className="text-lightBlue">{detailDataRow.tags}</p>
+                        </p>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
-            </Box>
+            </div>
           </Collapse>
         </TableCell>
       </TableRow>

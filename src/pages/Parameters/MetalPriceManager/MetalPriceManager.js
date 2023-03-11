@@ -1,5 +1,6 @@
 import React from "react";
 import "../../Products/AllProducts/AllProducts.scss";
+import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import MetalPriceManagerTable from "./MetalPriceManagerTable";
@@ -13,6 +14,7 @@ import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 import sort from "../../../assets/icons/sort.svg";
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
+import info from "../../../assets/icons/info.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -27,14 +29,19 @@ import {
   Tab,
   Tabs,
   Select,
+  Tooltip,
   MenuItem,
   Radio,
   FormControlLabel,
   Popover,
   RadioGroup,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-// ! MATERIAL ICONS IMPORTS
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 
 const MetalPriceManager = () => {
   const [value, setValue] = React.useState(0);
@@ -56,6 +63,18 @@ const MetalPriceManager = () => {
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
+
+  // ? ADD STANDARDS DIALOG STARTS HERE
+  const [openAddStandards, setOpenAddStandards] = React.useState(false);
+
+  const handleAddStandards = () => {
+    setOpenAddStandards(true);
+  };
+
+  const handleAddStandardsClose = () => {
+    setOpenAddStandards(false);
+  };
+  // ? ADD STANDARDS DIALOG ENDS HERE
 
   return (
     <div className="container-fluid page">
@@ -204,9 +223,188 @@ const MetalPriceManager = () => {
                 </RadioGroup>
               </FormControl>
             </Popover>
-            <button className="button-gradient py-2 px-4 ms-2 c-pointer">
+
+            <button
+              className="button-gradient py-2 px-4 ms-2 c-pointer"
+              onClick={handleAddStandards}
+            >
               <p>Add Standards</p>
             </button>
+
+            <Dialog
+              open={openAddStandards}
+              TransitionComponent={Transition}
+              keepMounted
+              onClose={handleAddStandardsClose}
+              aria-describedby="alert-dialog-slide-description"
+              maxWidth="md"
+              fullWidth={true}
+            >
+              <DialogTitle>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex flex-column ">
+                    <h5 className="text-lightBlue fw-500">Add Standards</h5>
+
+                    <small className="text-grey-6 mt-1 d-block">
+                      ⓘ Some Dummy Content to explain
+                    </small>
+                  </div>
+                  <img
+                    src={cancel}
+                    alt="cancel"
+                    width={30}
+                    onClick={handleAddStandardsClose}
+                    className="c-pointer"
+                  />
+                </div>
+              </DialogTitle>
+              <hr className="hr-grey-6 my-0" />
+
+              <DialogContent className="py-3 px-4">
+                <div className="row mt-3">
+                  <div className="col-3">
+                    <p className="text-lightBlue mb-1">Metal</p>
+
+                    <FormControl sx={{ width: "100%" }} size="small">
+                      <Select
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        // value={metal}
+                        value=""
+                        placeholder="Fixed"
+                        // onChange={handleMetalChange}
+                      >
+                        <MenuItem value="">None</MenuItem>
+                        <MenuItem value={10}>Gold</MenuItem>
+                        <MenuItem value={20}>Silver</MenuItem>
+                        <MenuItem value={30}>Platinum</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div className="col-3">
+                    <p className="text-lightBlue mb-1">Gold Purity</p>
+
+                    <FormControl sx={{ width: "100%" }} size="small">
+                      <Select
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        // value={metal}
+                        value=""
+                        placeholder="Fixed"
+                        // onChange={handleMetalChange}
+                      >
+                        <MenuItem value="">NA</MenuItem>
+                        <MenuItem value={10}>9 KT</MenuItem>
+                        <MenuItem value={20}>14 KT</MenuItem>
+                        <MenuItem value={30}>18 KT</MenuItem>
+                        <MenuItem value={40}>22 KT</MenuItem>
+                        <MenuItem value={50}>24 KT</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div className="col-3">
+                    <p className="text-lightBlue mb-1">Silver Purity</p>
+
+                    <FormControl sx={{ width: "100%" }} size="small">
+                      <Select
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        // value={metal}
+                        value=""
+                        placeholder="Fixed"
+                        // onChange={handleMetalChange}
+                      >
+                        <MenuItem value="">NA</MenuItem>
+                        <MenuItem value={10}>925</MenuItem>
+                        <MenuItem value={20}>999</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div className="col-3">
+                    <p className="text-lightBlue mb-1">Platinum Purity</p>
+
+                    <FormControl sx={{ width: "100%" }} size="small">
+                      <Select
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        // value={metal}
+                        value=""
+                        placeholder="Fixed"
+                        // onChange={handleMetalChange}
+                      >
+                        <MenuItem value="">NA</MenuItem>
+                        <MenuItem value={10}>915</MenuItem>
+                        <MenuItem value={20}>888</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                </div>
+                <div className="row mb-3 mt-4">
+                  <div className="col-12">
+                    <div className="row bg-black-21 rounded-8 mx-0 py-3">
+                      <div className="col-12 ">
+                        <div className="d-flex">
+                          <p className="text-lightBlue">
+                            Default Pricing (Selection between Fixed Pricing or
+                            Per Gram Pricing)
+                          </p>
+                          <Tooltip title="Lorem ipsum" placement="top">
+                            <img
+                              src={info}
+                              alt="info"
+                              className="c-pointer ms-2"
+                              width={13.5}
+                            />
+                          </Tooltip>
+                        </div>
+                      </div>
+                      <div className="col-6 col-md-9 mt-3">
+                        <p className="text-lightBlue mb-1">Price</p>
+                        <FormControl className="w-100 px-0">
+                          <OutlinedInput
+                            placeholder="Enter Price"
+                            size="small"
+                          />
+                        </FormControl>
+                      </div>
+                      <div className="col-6 col-md-3 mt-3">
+                        <p className="text-lightBlue mb-1">Price Type</p>
+
+                        <FormControl sx={{ width: "100%" }} size="small">
+                          <Select
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            // value={metal}
+                            value=""
+                            placeholder="Price Type"
+                            // onChange={handleMetalChange}
+                          >
+                            <MenuItem value="">NA</MenuItem>
+                            <MenuItem value={10}>Per Gram</MenuItem>
+                            <MenuItem value={20}>Fixed Price</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+              <hr className="hr-grey-6 my-0" />
+              <DialogActions className="d-flex justify-content-between px-4 py-3">
+                <button
+                  className="button-grey py-2 px-5"
+                  onClick={handleAddStandardsClose}
+                >
+                  <p className="text-lightBlue">Cancel</p>
+                </button>
+                <button
+                  className="button-gradient py-2 px-5"
+                  onClick={handleAddStandardsClose}
+                >
+                  <p>Save</p>
+                </button>
+              </DialogActions>
+            </Dialog>
           </div>
           <TabPanel value={value} index={0}>
             <MetalPriceManagerTable />
