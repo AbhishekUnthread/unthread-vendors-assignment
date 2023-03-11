@@ -99,9 +99,12 @@ const DiamondPriceManager = () => {
           />
           <ExportDialog dialogName={"Price Master"} />
           <ImportSecondDialog dialogName={"Price Master"} />
-          <button className="button-transparent py-2 px-3">
+          <Link
+            to="/parameters/priceMaster/create"
+            className="button-transparent py-2 px-3 me-1"
+          >
             <p className="text-lightBlue">Settings</p>
-          </button>
+          </Link>
 
           {/* <button className="button-lightBlue-outline px-3 py-1">
             <p>Live Rates</p>
@@ -378,7 +381,9 @@ const DiamondPriceManager = () => {
                       </div>
 
                       <div className="col-12 text-end mt-3">
-                        <p className="text-blue-2">+ Add More Range</p>
+                        <p className="text-blue-2 c-pointer">
+                          + Add More Range
+                        </p>
                       </div>
                     </div>
                   </div>

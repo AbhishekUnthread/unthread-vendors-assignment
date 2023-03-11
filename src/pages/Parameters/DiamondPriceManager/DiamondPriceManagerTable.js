@@ -23,6 +23,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 // !IMAGES IMPORTS
 import ringSmall from "../../../assets/images/ringSmall.svg";
 // ! COMPONENT IMPORTS
@@ -63,79 +64,25 @@ function createData(
         min: "0",
         max: "5",
         price: "₹ 50,000",
-        tags: "Tag 1",
+        priceType: "per gram",
       },
       {
         min: "0",
         max: "5",
         price: "₹ 70,000",
-        tags: "Tag 2",
+        priceType: "Fixed",
       },
     ],
   };
 }
 
 const rows = [
-  createData(
-    1,
-    "IJ-SI",
-    "5",
-    "Round",
-    "Min: 0.00g",
-    "Max: 5.00g",
-    "View",
-    "Mixed"
-  ),
-  createData(
-    2,
-    "IJ-SI",
-    "5",
-    "Round",
-    "Min: 0.00g",
-    "Max: 5.00g",
-    "View",
-    "Mixed"
-  ),
-  createData(
-    3,
-    "IJ-SI",
-    "5",
-    "Round",
-    "Min: 0.00g",
-    "Max: 5.00g",
-    "View",
-    "Mixed"
-  ),
-  createData(
-    4,
-    "IJ-SI",
-    "5",
-    "Round",
-    "Min: 0.00g",
-    "Max: 5.00g",
-    "View",
-    "Mixed"
-  ),
-  createData(
-    5,
-    "IJ-SI",
-    "5",
-    "Round",
-    "Min: 0.00g",
-    "Max: 5.00g",
-    "View",
-    "Mixed"
-  ),
-  createData(
-    6,
-    "IJ-SI",
-    "5",
-    "Round",
-    "Min: 0.00g",
-    "Max: 5.00g",
-    "View",
-    "Mixed"
-  ),
+  createData(1, "IJ-SI", "5", "Round", "0.00g", "5.00g", "View", "Mixed"),
+  createData(2, "IJ-SI", "5", "Round", "0.00g", "5.00g", "View", "Mixed"),
+  createData(3, "IJ-SI", "5", "Round", "0.00g", "5.00g", "View", "Mixed"),
+  createData(4, "IJ-SI", "5", "Round", "0.00g", "5.00g", "View", "Mixed"),
+  createData(5, "IJ-SI", "5", "Round", "0.00g", "5.00g", "View", "Mixed"),
+  createData(6, "IJ-SI", "5", "Round", "0.00g", "5.00g", "View", "Mixed"),
 ];
 
 function Row(props) {
@@ -215,7 +162,9 @@ function Row(props) {
           <p className="text-lightBlue">{row.maxWeight}</p>
         </TableCell>
         <TableCell>
-          <p className="text-blue-2">View</p>
+          <p className="text-blue-2 c-pointer" onClick={() => setOpen(!open)}>
+            View
+          </p>
         </TableCell>
         <TableCell>
           <p className="text-lightBlue">{row.priceType}</p>
@@ -261,9 +210,17 @@ function Row(props) {
       <TableRow className="table-rows">
         <TableCell style={{ padding: 0 }} colSpan={12}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <div className="px-5 py-3">
-              <h5 className="text-lightBlue my-3 fw-500">IJSI 5 Round</h5>
-              <Table size="small" aria-label="purchases">
+            <hr className="hr-grey-6 my-0" />
+            <div className="px-5 pt-2 pb-3 bg-black-15 ms-5">
+              <div className="d-flex justify-content-between">
+                <h5 className="text-lightBlue my-3 fw-500 ps-3">
+                  IJSI&nbsp;•&nbsp;5&nbsp;•&nbsp;Round
+                </h5>
+                <p className="text-blue-2 my-3 fw-500 ps-3 c-pointer">
+                  + Add More Range
+                </p>
+              </div>
+              <Table size="small" aria-label="purchases" className="ms-2">
                 <TableHead>
                   <TableRow>
                     <TableCell>
@@ -276,7 +233,7 @@ function Row(props) {
                       <p className="text-lightBlue">Price</p>
                     </TableCell>
                     <TableCell>
-                      <p className="text-lightBlue">Tags</p>
+                      <p className="text-lightBlue">Price Type</p>
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -294,7 +251,9 @@ function Row(props) {
                       </TableCell>
                       <TableCell>
                         <p className="text-ligthBlue">
-                          <p className="text-lightBlue">{detailDataRow.tags}</p>
+                          <p className="text-lightBlue">
+                            {detailDataRow.priceType}
+                          </p>
                         </p>
                       </TableCell>
                     </TableRow>
@@ -302,6 +261,7 @@ function Row(props) {
                 </TableBody>
               </Table>
             </div>
+            <hr className="hr-grey-6 my-0" />
           </Collapse>
         </TableCell>
       </TableRow>

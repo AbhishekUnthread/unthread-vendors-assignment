@@ -98,9 +98,12 @@ const MetalPriceManager = () => {
           />
           <ExportDialog dialogName={"Price Master"} />
           <ImportSecondDialog dialogName={"Price Master"} />
-          <button className="button-transparent py-2 px-3 me-1">
+          <Link
+            to="/parameters/priceMaster/create"
+            className="button-transparent py-2 px-3 me-1"
+          >
             <p className="text-lightBlue">Settings</p>
-          </button>
+          </Link>
 
           <button className="button-lightBlue-outline px-3 py-1">
             {/* <EditOutlinedIcon

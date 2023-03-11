@@ -22,6 +22,7 @@ import TableEditStatusButton from "../../../components/TableEditStatusButton/Tab
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // !IMAGES IMPORTS
 import storeIcon from "../../../assets/icons/storeIcon.svg";
+import product2 from "../../../assets/images/products/product2.jpg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import editButton from "../../../assets/icons/editButton.svg";
 import duplicateButton from "../../../assets/icons/duplicateButton.svg";
@@ -29,20 +30,20 @@ import deleteRed from "../../../assets/icons/delete.svg";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 // ? TABLE STARTS HERE
-function createData(sId, selectStore, noOfProducts, status, actions) {
-  return { sId, selectStore, noOfProducts, status, actions };
+function createData(sId, products, variants, qty) {
+  return { sId, products, variants, qty };
 }
 
 const rows = [
-  createData(1, "JWL Karol Bagh", "25", "Active"),
-  createData(2, "JWL Karol Bagh", "25", "Active"),
-  createData(3, "JWL Karol Bagh", "25", "Active"),
-  createData(4, "JWL Karol Bagh", "25", "Active"),
-  createData(5, "JWL Karol Bagh", "25", "Active"),
-  createData(6, "JWL Karol Bagh", "25", "Active"),
-  createData(7, "JWL Karol Bagh", "25", "Active"),
+  createData(1, "The Fringe Diamond Ring", "245", "452"),
+  createData(2, "The Fringe Diamond Ring", "245", "452"),
+  createData(3, "The Fringe Diamond Ring", "245", "452"),
+  createData(4, "The Fringe Diamond Ring", "245", "452"),
+  createData(5, "The Fringe Diamond Ring", "245", "452"),
+  createData(6, "The Fringe Diamond Ring", "245", "452"),
 ];
 
 const ProductInventoryDetailsTable = () => {
@@ -54,28 +55,28 @@ const ProductInventoryDetailsTable = () => {
 
   const headCells = [
     {
-      id: "selectStore",
+      id: "products",
       numeric: false,
       disablePadding: true,
-      label: "Select Store",
+      label: "Products",
     },
     {
-      id: "noOfProducts",
+      id: "variants",
       numeric: false,
       disablePadding: false,
-      label: "No. of Products",
+      label: "Variants",
     },
     {
-      id: "status",
+      id: "qty",
       numeric: false,
       disablePadding: true,
-      label: "Status",
+      label: "Total Qty",
     },
     {
       id: "actions",
       numeric: false,
       disablePadding: true,
-      label: "Actions",
+      label: "Add Quantity",
     },
   ];
 
@@ -219,50 +220,32 @@ const ProductInventoryDetailsTable = () => {
                       >
                         <div className="d-flex align-items-center py-3">
                           <img
-                            src={storeIcon}
-                            alt="storeIcon"
+                            src={product2}
+                            alt="product2"
                             className="me-2"
                             height={45}
                             width={45}
                           />
                           <div>
                             <p className="text-lightBlue rounded-circle fw-600">
-                              {row.selectStore}
+                              {row.products}
                             </p>
                             <small className="text-grey-6 mt-1">
-                              2708, Bank Street, Karol Bagh, New Delhi - 110005,
-                              India
+                              Style Code: TFDR012345
                             </small>
                           </div>
                         </div>
                       </Link>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.noOfProducts}</p>
+                      <p className="text-lightBlue">{row.variants}</p>
+                    </TableCell>
+                    <TableCell style={{ width: 140, padding: 0 }}>
+                      <p className="text-lightBlue">{row.qty}</p>
                     </TableCell>
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.status}
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell style={{ width: 140, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <EditOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                        <Tooltip title="Archive" placement="top">
+                        {/* <Tooltip title="Archive" placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <InventoryIcon
                               sx={{
@@ -272,72 +255,19 @@ const ProductInventoryDetailsTable = () => {
                               }}
                             />
                           </div>
-                        </Tooltip>
-                        <img
-                          src={verticalDots}
-                          alt="verticalDots"
-                          className="c-pointer"
-                          aria-describedby={idActions}
-                          variant="contained"
-                          onClick={handleActionClick}
-                        />
-                        <Popover
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "center",
-                          }}
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "center",
-                          }}
-                          id={idActions}
-                          open={openActions}
-                          anchorEl={anchorActionEl}
-                          onClose={handleActionClose}
-                        >
-                          <div className="py-2 px-2">
-                            <small className="text-grey-7 px-2">ACTIONS</small>
-                            <hr className="hr-grey-6 my-2" />
-                            <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-blue-1">
-                              <img
-                                src={editButton}
-                                alt="editButton"
-                                height={36}
-                                className="c-pointer me-2"
-                              />
-                              <img
-                                src={duplicateButton}
-                                alt="duplicateButton"
-                                height={36}
-                                className="c-pointer"
-                              />
-                            </div>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Make it Active
-                            </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Make it Draft
-                            </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit SKU
-                            </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit Quantity
-                            </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Add or Remove Tags
-                            </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Add or Remove Collections
-                            </small>
-                            <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                              <small className="text-lightBlue font2 d-block">
-                                Archive Product
-                              </small>
-                              <img src={deleteRed} alt="delete" className="" />
-                            </div>
-                          </div>
-                        </Popover>
+                        </Tooltip> */}
+                        <button className="button-transparent border-grey-5 py-2 px-3">
+                          <AddCircleIcon
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                              // "&:hover": { color: "#c8d8ff" },
+                              // "&:hover": { color: "#5c6d8e" },
+                            }}
+                          />
+                          <p className="text-lightBlue ms-2">Add</p>
+                        </button>
                       </div>
                     </TableCell>
                   </TableRow>

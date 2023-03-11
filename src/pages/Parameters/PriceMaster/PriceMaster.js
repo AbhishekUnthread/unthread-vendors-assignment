@@ -46,8 +46,14 @@ const PriceMaster = () => {
             headingName={"Parameters / Price Master"}
             icon={parameters}
           />
-          <ExportDialog dialogName={"Price Master"} />
-          <ImportSecondDialog dialogName={"Price Master"} />
+
+          <Link
+            to="/parameters/priceMaster/create"
+            className="button-transparent py-2 px-3 me-1"
+          >
+            <p className="text-lightBlue">Settings</p>
+          </Link>
+
           <Link
             to="/parameters/priceMaster/create"
             className="button-gradient py-2 px-4 ms-3 c-pointer"

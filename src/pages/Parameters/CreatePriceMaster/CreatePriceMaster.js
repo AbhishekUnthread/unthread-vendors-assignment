@@ -164,7 +164,7 @@ const CreatePriceMaster = () => {
             </div>
 
             {[...Array(4)].map((elementInArray, index) => (
-              <div className="col-12 d-flex justify-content-between px-0 mt-3">
+              <div className="col-12 d-flex px-0 mt-3">
                 <Autocomplete
                   id="free-solo-demo"
                   freeSolo
@@ -185,7 +185,7 @@ const CreatePriceMaster = () => {
                     <TextField {...params} placeholder="Search" />
                   )}
                 />
-                <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+                <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer ms-2">
                   <DeleteIcon
                     sx={{
                       color: "#c8d8ff",
@@ -295,7 +295,7 @@ const CreatePriceMaster = () => {
                 Final Formula:&nbsp;₹ 4,400&nbsp;x1.46 grams&nbsp;=&nbsp;₹ 5,820
               </p>
             </div>
-            <div className="d-flex flex-column col-12 px-0 justify-content-between mt-4">
+            <div className="d-flex flex-column col-12 px-0 justify-content-between mt-4 pt-3">
               <div className="d-flex align-items-center">
                 <h6 className="text-lightBlue text-lightBlue fw-500">
                   Price Type
@@ -352,7 +352,7 @@ const CreatePriceMaster = () => {
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox headingName={"Master Status"} />
+          <StatusBox headingName={"Master Status"} showSchedule={"false"} />
           <div className="mt-4">
             <UploadMediaBox imageName={addMedia} headingName={"Media"} />
           </div>
