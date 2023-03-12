@@ -309,7 +309,7 @@ const OrderDetails = () => {
                   <img src={cardIcon} alt="userIcon" width={16} />
                   <h6 className="text-lightBlue fw-500 ms-2">Payment</h6>
                   <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer ms-4">
-                    <small className="text-black fw-400">Order Confirm</small>
+                    <small className="text-black fw-400">Pending</small>
                   </div>
                 </div>
               </div>
@@ -505,39 +505,64 @@ const OrderDetails = () => {
             <div className="d-flex justify-content-center col-12 px-0">
               <hr className="hr-grey-6 w-100 mt-3 mb-0" />
             </div>
-            <div className="d-flex justify-content-center col-12 px-0 mt-3">
+            <div className="d-flex justify-content-center col-12 px-0 mt-3 align-items-start">
               {/* <div className="d-flex"> */}
               <img
                 src={timelineSmile}
                 alt="timelineSmile"
                 width={18}
-                className="me-2 c-pointer"
+                className="me-2 c-pointer mt-2"
               />
               <img
                 src={timelineAttachment}
                 alt="timelineAttachment"
                 width={18}
-                className="me-2 c-pointer"
+                className="me-2 c-pointer mt-2"
               />
               <img
                 src={timelineTag}
                 alt="timelineTag"
                 width={18}
-                className="me-2 c-pointer"
+                className="me-2 c-pointer mt-2"
               />
               <img
                 src={timelineMicrophone}
                 alt="timelineMicrophone"
                 width={18}
-                className="me-2 c-pointer"
+                className="me-2 c-pointer mt-2"
               />
-
-              <FormControl className="w-100 px-0">
-                <OutlinedInput
-                  placeholder="Write your message here..."
-                  size="small"
+              <div className="d-flex flex-column w-100">
+                <FormControl className="w-100 px-0">
+                  <OutlinedInput
+                    placeholder="Write your message here..."
+                    size="small"
+                  />
+                </FormControl>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={checked}
+                      onChange={handleCheckboxChange}
+                      inputProps={{ "aria-label": "controlled" }}
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                        marginRight: 0,
+                        width: "auto",
+                      }}
+                    />
+                  }
+                  label="Send Notification to Customer"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: "0.75rem",
+                      color: "#c8d8ff",
+                      // color: "#5c6d8e",
+                    },
+                  }}
+                  className=" px-0"
                 />
-              </FormControl>
+              </div>
               <button className="button-gradient ms-2 px-4 py-2">
                 <p>Post</p>
               </button>

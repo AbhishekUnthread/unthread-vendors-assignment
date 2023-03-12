@@ -10,6 +10,7 @@ import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSec
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import FilterUsers from "../../../components/FilterUsers/FilterUsers";
+import FilterOrders from "../../../components/FilterOrders/FilterOrders";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import allFlag from "../../../assets/images/products/allFlag.svg";
@@ -42,7 +43,7 @@ import OrderColumnsFilter from "../OrderColumnsFilter";
 import OrderTagsFilter from "../OrderTagsFilter";
 import OrderStatusFilter from "../OrderStatusFilter";
 import OrderLocationFilter from "../OrderLocationFilter";
-import FilterOrders from "../../../components/FilterOrders/FilterOrders";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const AllOrders = () => {
   const [value, setValue] = React.useState(0);
@@ -178,6 +179,16 @@ const AllOrders = () => {
             onClick={handleDaysClick}
           >
             <h3 className="text-lightBlue">30 Days</h3>
+
+            <KeyboardArrowDownIcon
+              sx={{
+                fontSize: 30,
+                marginLeft: 1,
+                color: "#c8d8ff",
+                cursor: "pointer",
+                marginTop: "2px",
+              }}
+            />
           </div>
 
           <Popover

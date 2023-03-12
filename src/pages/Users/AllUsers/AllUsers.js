@@ -37,6 +37,7 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const locationData = [
   { title: "Content 1", value: "content1" },
@@ -229,6 +230,16 @@ const AllUsers = () => {
             onClick={handleDaysClick}
           >
             <h3 className="text-lightBlue">30 Days</h3>
+
+            <KeyboardArrowDownIcon
+              sx={{
+                fontSize: 30,
+                marginLeft: 1,
+                color: "#c8d8ff",
+                cursor: "pointer",
+                marginTop: "2px",
+              }}
+            />
           </div>
 
           <Popover

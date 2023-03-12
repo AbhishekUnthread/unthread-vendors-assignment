@@ -259,20 +259,22 @@ const OrderCartDetails = ({
                 onClick={handlePriceClick}
               />
             </div>
-            <button
-              className="button-lightBlue-outline py-2 px-4"
-              aria-describedby={idAction}
-              variant="contained"
-              onClick={handleActionClick}
-            >
-              <small>Action</small>
-              <KeyboardArrowDownIcon
-                sx={{
-                  fontSize: 18,
-                  marginLeft: 1,
-                }}
-              />
-            </button>
+            {showActionButton && (
+              <button
+                className="button-lightBlue-outline py-2 px-4"
+                aria-describedby={idAction}
+                variant="contained"
+                onClick={handleActionClick}
+              >
+                <small>Action</small>
+                <KeyboardArrowDownIcon
+                  sx={{
+                    fontSize: 18,
+                    marginLeft: 1,
+                  }}
+                />
+              </button>
+            )}
           </div>
         </div>
       </div>

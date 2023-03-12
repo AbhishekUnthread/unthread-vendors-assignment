@@ -22,7 +22,7 @@ export const SidebarData = [
   },
   {
     title: "Orders",
-    path: "/orders/allOrders",
+    path: "/orders",
     image: orders,
     subNav: [
       {

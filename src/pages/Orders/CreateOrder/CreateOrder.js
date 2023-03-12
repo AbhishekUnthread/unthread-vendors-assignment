@@ -35,6 +35,7 @@ import cardIcon from "../../../assets/icons/cardIcon.svg";
 import cancel from "../../../assets/icons/cancel.svg";
 import locationGradient from "../../../assets/icons/locationGradient.svg";
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
+import product2 from "../../../assets/images/products/product2.jpg";
 // ! MATERIAL IMPORTS
 import {
   FormControl,
@@ -72,6 +73,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import OrderProductCard from "../OrderProductCard";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -331,6 +333,63 @@ const CreateOrder = () => {
   };
   // ? FIELD SETS DIALOG ENDS HERE
 
+  // ? ADD DISCOUNT DIALOG STARTS HERE
+  const [openDiscount, setOpenDiscount] = React.useState(false);
+
+  const handleDiscount = () => {
+    setOpenDiscount(true);
+  };
+
+  const handleDiscountClose = () => {
+    setOpenDiscount(false);
+  };
+  // ? ADD DISCOUNT DIALOG ENDS HERE
+
+  // ? SHIIPPING DIALOG STARTS HERE
+  const [openShipping, setOpenShipping] = React.useState(false);
+
+  const handleShipping = () => {
+    setOpenShipping(true);
+  };
+
+  const handleShippingClose = () => {
+    setOpenShipping(false);
+  };
+  // ? SHIPPING DIALOG ENDS HERE
+
+  // ? CHARGES DIALOG STARTS HERE
+  const [openCharges, setOpenCharges] = React.useState(false);
+
+  const handleCharges = () => {
+    setOpenCharges(true);
+  };
+
+  const handleChargesClose = () => {
+    setOpenCharges(false);
+  };
+  // ? CHARGES DIALOG ENDS HERE
+
+  // ? CHECKBOX STARTS HERE
+  const [checkedGiftWrap, setCheckedGiftWrap] = React.useState(false);
+
+  const handleGiftWrapChange = (event) => {
+    setCheckedGiftWrap(event.target.checked);
+  };
+  // ? CHECKBOX ENDS HERE
+
+  // * DISCOUNT PERCENT POPOVERS STARTS
+  const [anchorDiscountPercentEl, setAnchorDiscountPercentEl] =
+    React.useState(null);
+  const handleDiscountPercent = (event) => {
+    setAnchorDiscountPercentEl(event.currentTarget);
+  };
+  const handleDiscountPercentClose = () => {
+    setAnchorDiscountPercentEl(null);
+  };
+  const openDiscountPercent = Boolean(anchorDiscountPercentEl);
+  const idDiscountPercent = openDiscountPercent ? "simple-popover" : undefined;
+  // * DICOUNT PERCENT POPOVERS ENDS
+
   return (
     <div className="page container-fluid position-relative user-group">
       <div className="row justify-content-between">
@@ -502,7 +561,8 @@ const CreateOrder = () => {
                       className="tabs"
                     >
                       <Tab label="Basic Info" className="tabs-head" />
-                      <Tab label="Addresses" className="tabs-head" />
+                      <Tab label="Shipping Address" className="tabs-head" />
+                      <Tab label="Billing Address" className="tabs-head" />
                     </Tabs>
                   </Box>
                 </DialogTitle>
@@ -682,7 +742,7 @@ const CreateOrder = () => {
                   >
                     <div className="col-12 px-0">
                       <div className="row ">
-                        <div className="col-md-12">
+                        {/* <div className="col-md-12">
                           <p className="text-lightBlue mb-1">Name</p>
                           <FormControl className="w-100 px-0">
                             <OutlinedInput
@@ -693,27 +753,7 @@ const CreateOrder = () => {
                           <small className="text-grey-6">
                             Name this address Ex. Office Address, Home Address
                           </small>
-                        </div>
-                        <div className="col-12">
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                inputProps={{ "aria-label": "controlled" }}
-                                size="small"
-                                style={{
-                                  color: "#5C6D8E",
-                                }}
-                              />
-                            }
-                            label="Set as Default Address"
-                            sx={{
-                              "& .MuiTypography-root": {
-                                fontSize: 13,
-                                color: "#c8d8ff",
-                              },
-                            }}
-                          />
-                        </div>
+                        </div> */}
 
                         <div className="col-md-6 mt-3">
                           <p className="text-lightBlue mb-1">First Name</p>
@@ -737,7 +777,7 @@ const CreateOrder = () => {
                           <p className="text-lightBlue mb-1">Company Name</p>
                           <FormControl className="w-100 px-0">
                             <OutlinedInput
-                              placeholder="Enter Email ID"
+                              placeholder="Enter Company Name"
                               size="small"
                             />
                           </FormControl>
@@ -782,21 +822,21 @@ const CreateOrder = () => {
                           </FormControl>
                         </div>
                         <div className="col-md-6 mt-3">
-                          <p className="text-lightBlue mb-1">Town/City</p>
+                          <p className="text-lightBlue mb-1">Town / City</p>
                           <FormControl className="w-100 px-0">
                             <OutlinedInput
-                              placeholder="Enter Town/City"
+                              placeholder="Enter Town / City"
                               size="small"
                             />
                           </FormControl>
                         </div>
                         <div className="col-md-6 mt-3">
                           <p className="text-lightBlue mb-1">
-                            Zipcode/Postalcode
+                            Zipcode / Postalcode
                           </p>
                           <FormControl className="w-100 px-0">
                             <OutlinedInput
-                              placeholder="Enter Zipcode/Postalcode"
+                              placeholder="Enter Zipcode / Postalcode"
                               size="small"
                             />
                           </FormControl>
@@ -812,6 +852,183 @@ const CreateOrder = () => {
                             </small>
                           </div>
                           <AppStateSelect />
+                        </div>
+                        <div className="col-12 mt-3">
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                inputProps={{ "aria-label": "controlled" }}
+                                size="small"
+                                style={{
+                                  color: "#5C6D8E",
+                                }}
+                              />
+                            }
+                            label="Same as Billing Address"
+                            sx={{
+                              "& .MuiTypography-root": {
+                                fontSize: 13,
+                                color: "#c8d8ff",
+                              },
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </TabPanel>
+                  <TabPanel
+                    value={value}
+                    index={2}
+                    className="px-0 nav-tab-panel"
+                  >
+                    <div className="col-12 px-0">
+                      <div className="row ">
+                        <div className="col-12">
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                inputProps={{ "aria-label": "controlled" }}
+                                size="small"
+                                style={{
+                                  color: "#5C6D8E",
+                                }}
+                              />
+                            }
+                            label="Same as Shipping Address"
+                            sx={{
+                              "& .MuiTypography-root": {
+                                fontSize: 13,
+                                color: "#c8d8ff",
+                              },
+                            }}
+                          />
+                        </div>
+
+                        {/* <div className="col-md-12">
+                          <p className="text-lightBlue mb-1">Name</p>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Office Address, Home Address"
+                              size="small"
+                            />
+                          </FormControl>
+                          <small className="text-grey-6">
+                            Name this address Ex. Office Address, Home Address
+                          </small>
+                        </div> */}
+
+                        <div className="col-md-6 mt-3">
+                          <p className="text-lightBlue mb-1">First Name</p>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Enter First Name"
+                              size="small"
+                            />
+                          </FormControl>
+                        </div>
+                        <div className="col-md-6 mt-3">
+                          <p className="text-lightBlue mb-1">Last Name</p>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Enter Last Name"
+                              size="small"
+                            />
+                          </FormControl>
+                        </div>
+                        <div className="col-md-12 mt-3">
+                          <p className="text-lightBlue mb-1">Company Name</p>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Enter Company Name"
+                              size="small"
+                            />
+                          </FormControl>
+                        </div>
+                        <div className="col-md-12 mt-3">
+                          <p className="text-lightBlue mb-1">Mobile Number</p>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Enter Mobile Number"
+                              size="small"
+                              sx={{ paddingLeft: 0 }}
+                              startAdornment={
+                                <InputAdornment position="start">
+                                  <AppMobileCodeSelect />
+                                  {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
+                                </InputAdornment>
+                              }
+                            />
+                          </FormControl>
+                        </div>
+                        <div className="col-md-12 mt-3 add-user-country">
+                          <p className="text-lightBlue mb-1">Country</p>
+                          <AppCountrySelect />
+                        </div>
+
+                        <div className="col-md-6 mt-3">
+                          <p className="text-lightBlue mb-1">Address Line 1</p>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Enter Address Line 1"
+                              size="small"
+                            />
+                          </FormControl>
+                        </div>
+                        <div className="col-md-6 mt-3">
+                          <p className="text-lightBlue mb-1">Address Line 2</p>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Enter Address Line 2"
+                              size="small"
+                            />
+                          </FormControl>
+                        </div>
+                        <div className="col-md-6 mt-3">
+                          <p className="text-lightBlue mb-1">Town / City</p>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Enter Town / City"
+                              size="small"
+                            />
+                          </FormControl>
+                        </div>
+                        <div className="col-md-6 mt-3">
+                          <p className="text-lightBlue mb-1">
+                            Zipcode / Postalcode
+                          </p>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Enter Zipcode / Postalcode"
+                              size="small"
+                            />
+                          </FormControl>
+                        </div>
+
+                        <div className="col-md-12 mt-3  add-user-country">
+                          <div className="d-flex align-items-center justify-content-between">
+                            <p className="text-lightBlue mb-1">
+                              State or Region
+                            </p>
+                            <small className="text-grey-6 mb-1">
+                              (Optional)
+                            </small>
+                          </div>
+                          <AppStateSelect />
+                        </div>
+
+                        <div className="col-md-12 mt-3  add-user-country">
+                          <div className="d-flex align-items-center justify-content-between">
+                            <p className="text-lightBlue mb-1">GSTIN</p>
+                            <small className="text-grey-6 mb-1">
+                              (Optional)
+                            </small>
+                          </div>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Enter GSTIN"
+                              size="small"
+                            />
+                          </FormControl>
                         </div>
                       </div>
                     </div>
@@ -1248,8 +1465,18 @@ const CreateOrder = () => {
                 <SearchBorder />
               </div>
             </div>
-            <div className="col-12 px-0 d-flex justify-content-center mt-2">
-              <hr className="hr-grey-6 w-100" />
+
+            <OrderProductCard
+              showCartButton={true}
+              showEditButton={false}
+              showBasicDetail={false}
+              showItemAvailable={false}
+              showActionButton={false}
+              showFulfillButton={false}
+              showQCButton={true}
+            />
+            <div className="col-12 px-0 d-flex justify-content-center">
+              <hr className="hr-grey-6 w-100 my-3" />
             </div>
             <div className="col-12 mt-2 px-0">
               <div className="d-flex  mb-1">
@@ -1278,8 +1505,8 @@ const CreateOrder = () => {
             <FormControlLabel
               control={
                 <Checkbox
-                  // checked={checked}
-                  // onChange={handleCheckboxChange}
+                  checked={checkedGiftWrap}
+                  onChange={handleGiftWrapChange}
                   inputProps={{ "aria-label": "controlled" }}
                   size="small"
                   style={{
@@ -1299,6 +1526,32 @@ const CreateOrder = () => {
               }}
               className=" px-0"
             />
+            {checkedGiftWrap && (
+              <div className="col-12 px-0">
+                <SearchBorder />
+                <div className="row mx-0">
+                  <div className="d-flex py-3 px-3 bg-black-21 w-auto rounded-8 mt-3">
+                    <img
+                      src={product2}
+                      alt="product2"
+                      className="rounded-8"
+                      width={80}
+                    />
+                    <div className="d-flex flex-column justify-content-between ms-3">
+                      <div>
+                        <p className="fw-500 text-lightBlue">
+                          JWL Exclusive Packaging
+                        </p>
+                        <small className="text-grey-6 mt-2">#GIFTWRAPPER</small>
+                      </div>
+                      <small className="text-blue-2 text-decoration-underline c-pointer">
+                        View Image
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
             <div className="col-12 px-0">
@@ -1328,9 +1581,175 @@ const CreateOrder = () => {
               </div>
               <div className="row mt-2">
                 <div className="col-4">
-                  <small className="text-blue-2 text-decoration-underline c-pointer">
+                  <small
+                    className="text-blue-2 text-decoration-underline c-pointer"
+                    onClick={handleDiscount}
+                  >
                     Add Discount
                   </small>
+
+                  <Dialog
+                    open={openDiscount}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={handleDiscountClose}
+                    aria-describedby="alert-dialog-slide-description"
+                    maxWidth="sm"
+                    fullWidth={true}
+                  >
+                    <DialogTitle>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex flex-column ">
+                          <h5 className="text-lightBlue fw-500">
+                            Add Discount
+                          </h5>
+
+                          <small className="text-grey-6 mt-1 d-block">
+                            ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit.
+                          </small>
+                        </div>
+                        <img
+                          src={cancel}
+                          alt="cancel"
+                          width={30}
+                          onClick={handleDiscountClose}
+                          className="c-pointer"
+                        />
+                      </div>
+                    </DialogTitle>
+                    <hr className="hr-grey-6 my-0" />
+                    <DialogContent className="pb-4 px-4">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue">Select Product</p>
+                      </div>
+                      <SearchBorder />
+                      <div className="d-flex mb-1 mt-3">
+                        <p className="text-lightBlue">Discount Value</p>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-7 discount-inputs-two d-flex align-items-center">
+                          <FormControl className="px-0">
+                            <OutlinedInput
+                              placeholder="Enter Discount"
+                              size="small"
+                              endAdornment={
+                                <InputAdornment
+                                  position="end"
+                                  aria-describedby={idDiscountPercent}
+                                  onClick={handleDiscountPercent}
+                                  className="c-pointer"
+                                >
+                                  <span className="d-flex align-items-center">
+                                    <p className="text-lightBlue">Percentage</p>
+                                    <img
+                                      src={arrowDown}
+                                      alt="arrow"
+                                      className="ms-2"
+                                    />
+                                  </span>
+                                </InputAdornment>
+                              }
+                            />
+                          </FormControl>
+                          <Popover
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "left",
+                            }}
+                            transformOrigin={{
+                              vertical: "top",
+                              horizontal: "left",
+                            }}
+                            id={idDiscountPercent}
+                            open={openDiscountPercent}
+                            anchorEl={anchorDiscountPercentEl}
+                            onClose={handleDiscountPercentClose}
+                          >
+                            <div className="py-2 px-1">
+                              <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                                Percentage Discount
+                              </small>
+                              <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                                Fixed Amount
+                              </small>
+                            </div>
+                          </Popover>
+
+                          <div className="w-auto text-center ms-3">
+                            <p className="text-lightBlue">on</p>
+                          </div>
+                        </div>
+                        <div className="col-md-5">
+                          <FormControl
+                            sx={{ m: 0, minWidth: 120, width: "100%" }}
+                            size="small"
+                          >
+                            <Select
+                              labelId="demo-select-small"
+                              id="demo-select-small"
+                              // value={field}
+                              // onChange={handleFieldChange}
+                              size="small"
+                            >
+                              <MenuItem
+                                value=""
+                                sx={{ fontSize: 13, color: "#5c6d8e" }}
+                              >
+                                None
+                              </MenuItem>
+                              <MenuItem
+                                value={10}
+                                sx={{ fontSize: 13, color: "#5c6d8e" }}
+                              >
+                                Value 1
+                              </MenuItem>
+                              <MenuItem
+                                value={20}
+                                sx={{ fontSize: 13, color: "#5c6d8e" }}
+                              >
+                                Value 2
+                              </MenuItem>
+                              <MenuItem
+                                value={30}
+                                sx={{ fontSize: 13, color: "#5c6d8e" }}
+                              >
+                                Value 3
+                              </MenuItem>
+                            </Select>
+                          </FormControl>
+                        </div>
+                      </div>
+                      <div className="d-flex mb-1 mt-3">
+                        <p className="text-lightBlue">Add Reason</p>
+                        <p className="text-grey-6">(Optional)</p>
+                      </div>
+                      <FormControl className="w-100 px-0">
+                        <OutlinedInput
+                          placeholder="Type Something"
+                          size="small"
+                        />
+                      </FormControl>
+                      <small className="text-grey-6">
+                        Customer can see this reason
+                      </small>
+                    </DialogContent>
+                    <hr className="hr-grey-6 my-0" />
+                    <DialogActions className="d-flex justify-content-between px-4 py-3">
+                      <button
+                        className="button-grey py-2 px-5"
+                        onClick={handleDiscountClose}
+                      >
+                        <p className="text-lightBlue">Cancel</p>
+                      </button>
+                      <button
+                        className="button-gradient py-2 px-5"
+                        onClick={handleDiscountClose}
+                      >
+                        <p>Add Discount</p>
+                      </button>
+                    </DialogActions>
+                  </Dialog>
                 </div>
                 <div className="col-4 text-center">
                   <p className="text-lightBlue">-</p>
@@ -1341,9 +1760,129 @@ const CreateOrder = () => {
               </div>
               <div className="row mt-2">
                 <div className="col-4">
-                  <small className="text-blue-2 text-decoration-underline c-pointer">
+                  <small
+                    className="text-blue-2 text-decoration-underline c-pointer"
+                    onClick={handleShipping}
+                  >
                     Add Shipping
                   </small>
+
+                  <Dialog
+                    open={openShipping}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={handleShippingClose}
+                    aria-describedby="alert-dialog-slide-description"
+                    maxWidth="sm"
+                    fullWidth={true}
+                  >
+                    <DialogTitle>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex flex-column ">
+                          <h5 className="text-lightBlue fw-500">
+                            Add Shipping
+                          </h5>
+
+                          <small className="text-grey-6 mt-1 d-block">
+                            ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit.
+                          </small>
+                        </div>
+                        <img
+                          src={cancel}
+                          alt="cancel"
+                          width={30}
+                          onClick={handleShippingClose}
+                          className="c-pointer"
+                        />
+                      </div>
+                    </DialogTitle>
+                    <hr className="hr-grey-6 my-0" />
+                    <DialogContent className="pb-4 px-4 discount-inputs-two">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue">
+                          Enter Custom Shipping Value
+                        </p>
+                      </div>
+                      <FormControl className="px-0 col-12">
+                        <OutlinedInput
+                          placeholder="Enter Discount"
+                          size="small"
+                          endAdornment={
+                            <InputAdornment
+                              position="end"
+                              aria-describedby={idDiscountPercent}
+                              onClick={handleDiscountPercent}
+                              className="c-pointer"
+                            >
+                              <span className="d-flex align-items-center">
+                                <p className="text-lightBlue">Percentage</p>
+                                <img
+                                  src={arrowDown}
+                                  alt="arrow"
+                                  className="ms-2"
+                                />
+                              </span>
+                            </InputAdornment>
+                          }
+                        />
+                      </FormControl>
+                      <Popover
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
+                        id={idDiscountPercent}
+                        open={openDiscountPercent}
+                        anchorEl={anchorDiscountPercentEl}
+                        onClose={handleDiscountPercentClose}
+                      >
+                        <div className="py-2 px-1">
+                          <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                            Percentage Discount
+                          </small>
+                          <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                            Fixed Amount
+                          </small>
+                        </div>
+                      </Popover>
+                      <small className="text-grey-6">
+                        Enter "0" for Free Shipping
+                      </small>
+
+                      <div className="d-flex mb-1 mt-3">
+                        <p className="text-lightBlue">Rate Name</p>
+                      </div>
+                      <FormControl className="w-100 px-0">
+                        <OutlinedInput
+                          placeholder="Type Something"
+                          size="small"
+                        />
+                      </FormControl>
+                      <small className="text-grey-6">
+                        Customer can see this reason
+                      </small>
+                    </DialogContent>
+                    <hr className="hr-grey-6 my-0" />
+                    <DialogActions className="d-flex justify-content-between px-4 py-3">
+                      <button
+                        className="button-grey py-2 px-5"
+                        onClick={handleShippingClose}
+                      >
+                        <p className="text-lightBlue">Cancel</p>
+                      </button>
+                      <button
+                        className="button-gradient py-2 px-5"
+                        onClick={handleShippingClose}
+                      >
+                        <p>Add Shipping</p>
+                      </button>
+                    </DialogActions>
+                  </Dialog>
                 </div>
                 <div className="col-4 text-center">
                   <p className="text-lightBlue">-</p>
@@ -1392,9 +1931,142 @@ const CreateOrder = () => {
               </div>
               <div className="row mt-2">
                 <div className="col-4">
-                  <small className="text-blue-2 c-pointer text-decoration-underline">
+                  <small
+                    className="text-blue-2 c-pointer text-decoration-underline"
+                    onClick={handleCharges}
+                  >
                     Add other charges
                   </small>
+
+                  <Dialog
+                    open={openCharges}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={handleChargesClose}
+                    aria-describedby="alert-dialog-slide-description"
+                    maxWidth="sm"
+                    fullWidth={true}
+                  >
+                    <DialogTitle>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex flex-column ">
+                          <h5 className="text-lightBlue fw-500">
+                            Add Other Charges
+                          </h5>
+
+                          <small className="text-grey-6 mt-1 d-block">
+                            ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit.
+                          </small>
+                        </div>
+                        <img
+                          src={cancel}
+                          alt="cancel"
+                          width={30}
+                          onClick={handleChargesClose}
+                          className="c-pointer"
+                        />
+                      </div>
+                    </DialogTitle>
+                    <hr className="hr-grey-6 my-0" />
+                    <DialogContent className="pb-4 px-4 discount-inputs-two">
+                      <div className="row">
+                        <div className="col-6">
+                          <div className="d-flex mb-1">
+                            <p className="text-lightBlue">Enter Name</p>
+                          </div>
+                          <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                              placeholder="Labour Charges"
+                              size="small"
+                            />
+                          </FormControl>
+                          <small className="text-grey-6">
+                            Customer can see this name
+                          </small>
+                        </div>
+                        <div className="col-6">
+                          <div className="d-flex mb-1">
+                            <p className="text-lightBlue">Enter Amount</p>
+                          </div>
+                          <FormControl className="px-0 w-100">
+                            <OutlinedInput
+                              placeholder="Enter Amount"
+                              size="small"
+                              endAdornment={
+                                <InputAdornment
+                                  position="end"
+                                  aria-describedby={idDiscountPercent}
+                                  onClick={handleDiscountPercent}
+                                  className="c-pointer"
+                                >
+                                  <span className="d-flex align-items-center">
+                                    <p className="text-lightBlue">Percentage</p>
+                                    <img
+                                      src={arrowDown}
+                                      alt="arrow"
+                                      className="ms-2"
+                                    />
+                                  </span>
+                                </InputAdornment>
+                              }
+                            />
+                          </FormControl>
+                          <Popover
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "left",
+                            }}
+                            transformOrigin={{
+                              vertical: "top",
+                              horizontal: "left",
+                            }}
+                            id={idDiscountPercent}
+                            open={openDiscountPercent}
+                            anchorEl={anchorDiscountPercentEl}
+                            onClose={handleDiscountPercentClose}
+                          >
+                            <div className="py-2 px-1">
+                              <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                                Percentage Discount
+                              </small>
+                              <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                                Fixed Amount
+                              </small>
+                            </div>
+                          </Popover>
+                        </div>
+                      </div>
+
+                      <div className="d-flex mb-1 mt-3">
+                        <p className="text-lightBlue">Add Reason</p>
+                      </div>
+                      <FormControl className="w-100 px-0">
+                        <OutlinedInput
+                          placeholder="Type Something"
+                          size="small"
+                        />
+                      </FormControl>
+                      <small className="text-grey-6">
+                        Customer can see this reason
+                      </small>
+                    </DialogContent>
+                    <hr className="hr-grey-6 my-0" />
+                    <DialogActions className="d-flex justify-content-between px-4 py-3">
+                      <button
+                        className="button-grey py-2 px-5"
+                        onClick={handleChargesClose}
+                      >
+                        <p className="text-lightBlue">Cancel</p>
+                      </button>
+                      <button
+                        className="button-gradient py-2 px-5"
+                        onClick={handleChargesClose}
+                      >
+                        <p>Add Extra Amount</p>
+                      </button>
+                    </DialogActions>
+                  </Dialog>
                 </div>
               </div>
             </div>
