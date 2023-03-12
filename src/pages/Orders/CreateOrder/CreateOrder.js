@@ -70,6 +70,7 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import ChatIcon from "@mui/icons-material/Chat";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 // ? DIALOG TRANSITION STARTS HERE
@@ -400,7 +401,7 @@ const CreateOrder = () => {
             onClose={handleMetalFilterClose}
           >
             <div className="py-2 px-1">
-              <div className="d-flex align-items-center rounded-3 p-2 hover-back">
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
                 <img
                   src={currencyRupee}
                   alt="currencyRupee"
@@ -411,7 +412,7 @@ const CreateOrder = () => {
                   Indian Currency
                 </small>
               </div>
-              <div className="d-flex align-items-center rounded-3 p-2 hover-back">
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
                 <img
                   src={currencyDollar}
                   alt="currencyDollar"
@@ -420,7 +421,7 @@ const CreateOrder = () => {
                 />
                 <small className="text-lightBlue d-block">USA Currency</small>
               </div>
-              <div className="d-flex align-items-center rounded-3 p-2 hover-back">
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
                 <img
                   src={currencyPound}
                   alt="currencyPound"
@@ -429,7 +430,7 @@ const CreateOrder = () => {
                 />
                 <small className="text-lightBlue d-block">UK Currency</small>
               </div>
-              <div className="d-flex align-items-center rounded-3 p-2 hover-back">
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
                 <img
                   src={addMarkets}
                   alt="addMarkets"
@@ -489,7 +490,7 @@ const CreateOrder = () => {
 
                   <Box
                     sx={{ width: "100%" }}
-                    className="d-flex justify-content-between tabs-header-box"
+                    className="d-flex justify-content-between tabs-header-box mt-3"
                   >
                     {/* variant="scrollable"
               scrollButtons
@@ -833,8 +834,8 @@ const CreateOrder = () => {
                 </DialogActions>
               </Dialog>
 
-              <div className="d-flex justify-content-center mt-2">
-                <hr className="hr-grey-6 w-100" />
+              <div className="d-flex justify-content-center">
+                <hr className="hr-grey-6 w-100 my-3" />
               </div>
               <div className="col-12">
                 <SearchBorder />
@@ -844,7 +845,7 @@ const CreateOrder = () => {
                   <div className="col-md-7">
                     <div className="row">
                       <div className="col-6">
-                        <div className="d-flex align-items-center">
+                        <div className="d-flex align-items-center mt-1">
                           <h6 className="fw-500 text-blue-2 text-decoration-underline me-3">
                             Saniya Shaikh
                           </h6>
@@ -852,44 +853,54 @@ const CreateOrder = () => {
                           <img src={indiaFlag} alt="indiaFlag" height={15} />
                         </div>
                         <div className="d-flex align-items-center mt-2">
-                          <small className="text-grey-6 me-2">
+                          <small className="text-lightBlue me-2">
                             saniya@mydesignar.com
                           </small>
-                          <VisibilityOutlinedIcon
-                            sx={{
-                              color: "#5c6d8e",
-                              fontSize: 14,
-                              cursor: "pointer",
-                              marginRight: "8px",
-                            }}
-                          />
-                          <ContentCopyIcon
-                            sx={{
-                              fontSize: 12,
-                              color: "#5c6d8e",
-                            }}
-                            className="c-pointer"
-                          />
+
+                          <Tooltip title="Hide" placement="top">
+                            <VisibilityOutlinedIcon
+                              sx={{
+                                color: "#c8d8ff",
+                                fontSize: 14,
+                                cursor: "pointer",
+                                marginRight: "8px",
+                              }}
+                            />
+                          </Tooltip>
+
+                          <Tooltip title="Copy" placement="top">
+                            <ContentCopyIcon
+                              sx={{
+                                fontSize: 12,
+                                color: "#c8d8ff",
+                              }}
+                              className="c-pointer"
+                            />
+                          </Tooltip>
                         </div>
                         <div className="d-flex align-items-center mt-2">
-                          <small className="text-grey-6 me-2">
+                          <small className="text-lightBlue me-2">
                             +91-9876543210
                           </small>
-                          <VisibilityOutlinedIcon
-                            sx={{
-                              color: "#5c6d8e",
-                              fontSize: 14,
-                              cursor: "pointer",
-                              marginRight: "8px",
-                            }}
-                          />
-                          <ContentCopyIcon
-                            sx={{
-                              fontSize: 12,
-                              color: "#5c6d8e",
-                            }}
-                            className="c-pointer"
-                          />
+                          <Tooltip title="Hide" placement="top">
+                            <VisibilityOutlinedIcon
+                              sx={{
+                                color: "#c8d8ff",
+                                fontSize: 14,
+                                cursor: "pointer",
+                                marginRight: "8px",
+                              }}
+                            />
+                          </Tooltip>
+                          <Tooltip title="Copy" placement="top">
+                            <ContentCopyIcon
+                              sx={{
+                                fontSize: 12,
+                                color: "#c8d8ff",
+                              }}
+                              className="c-pointer"
+                            />
+                          </Tooltip>
                         </div>
                       </div>
                       <div className="col-6">
@@ -897,20 +908,22 @@ const CreateOrder = () => {
                           <small className="text-grey-6 me-2">
                             Shipping Address
                           </small>
-                          <small className="text-blue-2">Edit</small>
+                          <small className="text-blue-2 c-pointer">Edit</small>
                         </div>
                         <div className="d-flex align-items-center justify-content-between">
                           <small className="text-lightBlue me-3">
                             The Boardroom Co-Working Space - Andheri Near DN
                             Nagar Metro Station, Mumbai - 4000039, India
                           </small>
-                          <ContentCopyIcon
-                            sx={{
-                              fontSize: 12,
-                              color: "#c8d8ff",
-                            }}
-                            className="c-pointer"
-                          />
+                          <Tooltip title="Copy" placement="top">
+                            <ContentCopyIcon
+                              sx={{
+                                fontSize: 12,
+                                color: "#c8d8ff",
+                              }}
+                              className="c-pointer"
+                            />
+                          </Tooltip>
                         </div>
                         <div className="d-flex mt-3">
                           <img
@@ -919,7 +932,7 @@ const CreateOrder = () => {
                             width={14}
                             className="me-2"
                           />
-                          <small className="text-blue-gradient">
+                          <small className="text-blue-gradient c-pointer">
                             Get Direction
                           </small>
                         </div>
@@ -931,7 +944,7 @@ const CreateOrder = () => {
                       <small className="text-grey-6 me-2">
                         Billing Address
                       </small>
-                      <small className="text-blue-2">Edit</small>
+                      <small className="text-blue-2 c-pointer">Edit</small>
                     </div>
                     <small className="text-lightBlue me-3 d-block">
                       Sahil Bhutani
@@ -941,54 +954,65 @@ const CreateOrder = () => {
                         The Boardroom Co-Working Space - Andheri Near DN Nagar
                         Metro Station, Mumbai - 4000039, India
                       </small>
-                      <ContentCopyIcon
-                        sx={{
-                          fontSize: 12,
-                          color: "#c8d8ff",
-                        }}
-                        className="c-pointer"
-                      />
+
+                      <Tooltip title="Copy" placement="top">
+                        <ContentCopyIcon
+                          sx={{
+                            fontSize: 12,
+                            color: "#c8d8ff",
+                          }}
+                          className="c-pointer"
+                        />
+                      </Tooltip>
                     </div>
                     <div className="d-flex mt-3">
-                      <small className="text-lightBlue me-3 d-block me-3">
+                      <small className="text-grey-6 me-3 d-block me-3">
                         GSTIN:&nbsp;
-                        <span className="text-grey-6">AB1234567890ADS</span>
+                        <span className="text-lightBlue">AB1234567890ADS</span>
                       </small>
-                      <ContentCopyIcon
-                        sx={{
-                          fontSize: 12,
-                          color: "#5c6d8e",
-                        }}
-                        className="c-pointer"
-                      />
+
+                      <Tooltip title="Copy" placement="top">
+                        <ContentCopyIcon
+                          sx={{
+                            fontSize: 12,
+                            color: "#c8d8ff",
+                          }}
+                          className="c-pointer"
+                        />
+                      </Tooltip>
                     </div>
                     <div className="d-flex mt-2">
-                      <small className="text-lightBlue me-3 d-block me-3">
+                      <small className="text-grey-6 me-3 d-block me-3">
                         Email ID:&nbsp;
-                        <span className="text-grey-6">
+                        <span className="text-lightBlue">
                           saniya@mydesignar.com
                         </span>
                       </small>
-                      <ContentCopyIcon
-                        sx={{
-                          fontSize: 12,
-                          color: "#5c6d8e",
-                        }}
-                        className="c-pointer"
-                      />
+                      <Tooltip title="Copy" placement="top">
+                        <ContentCopyIcon
+                          sx={{
+                            fontSize: 12,
+                            color: "#c8d8ff",
+                          }}
+                          className="c-pointer"
+                        />
+                      </Tooltip>
                     </div>
                     <div className="d-flex mt-2">
-                      <small className="text-lightBlue me-3">
+                      <small className="text-grey-6 me-3">
                         Mobile No:&nbsp;
-                        <span className="text-grey-6">+91-9876543210</span>
+                        <span className="text-lightBlue">+91-9876543210</span>
                       </small>
-                      <ContentCopyIcon
-                        sx={{
-                          fontSize: 12,
-                          color: "#5c6d8e",
-                        }}
-                        className="c-pointer"
-                      />
+
+                      <Tooltip title="Copy" placement="top">
+                        <ContentCopyIcon
+                          sx={{
+                            fontSize: 12,
+                            color: "#c8d8ff",
+                          }}
+                          className="c-pointer"
+                        />
+                      </Tooltip>
                     </div>
                   </div>
                 </div>
@@ -1004,15 +1028,15 @@ const CreateOrder = () => {
                     Select Products
                   </h6>
                 </div>
-                <small
+                {/* <small
                   className="text-blue-2 c-pointer"
                   onClick={toggleAddProductDrawer("right", true)}
                 >
                   Custom Product
-                </small>
+                </small> */}
               </div>
 
-              <SwipeableDrawer
+              {/* <SwipeableDrawer
                 anchor="right"
                 open={addProductDrawer["right"]}
                 onClose={toggleAddProductDrawer("right", false)}
@@ -1204,10 +1228,10 @@ const CreateOrder = () => {
                     </button>
                   </div>
                 </div>
-              </SwipeableDrawer>
+              </SwipeableDrawer> */}
 
-              <div className="d-flex justify-content-center mt-2">
-                <hr className="hr-grey-6 w-100" />
+              <div className="d-flex justify-content-center">
+                <hr className="hr-grey-6 w-100 my-3" />
               </div>
               <div className="col-12">
                 <div className="d-flex mb-1">
@@ -1229,7 +1253,7 @@ const CreateOrder = () => {
             </div>
             <div className="col-12 mt-2 px-0">
               <div className="d-flex  mb-1">
-                <p className="text-lightBlue">User Note:</p>
+                <p className="text-lightBlue">Add Note to Customer:</p>
                 {/* <Tooltip title="Lorem ipsum" placement="top">
                   <img
                     src={info}
@@ -1285,8 +1309,8 @@ const CreateOrder = () => {
                 </div>
               </div>
             </div>
-            <div className="col-12 d-flex justify-content-center mt-2 px-0">
-              <hr className="hr-grey-6 w-100" />
+            <div className="col-12 d-flex justify-content-center px-0">
+              <hr className="hr-grey-6 w-100 my-3" />
             </div>
             <div className="col-12 px-0">
               <div className="row">
@@ -1304,7 +1328,7 @@ const CreateOrder = () => {
               </div>
               <div className="row mt-2">
                 <div className="col-4">
-                  <small className="text-blue-2 text-decoration-underline">
+                  <small className="text-blue-2 text-decoration-underline c-pointer">
                     Add Discount
                   </small>
                 </div>
@@ -1317,7 +1341,7 @@ const CreateOrder = () => {
               </div>
               <div className="row mt-2">
                 <div className="col-4">
-                  <small className="text-blue-2 text-decoration-underline">
+                  <small className="text-blue-2 text-decoration-underline c-pointer">
                     Add Shipping
                   </small>
                 </div>
@@ -1332,7 +1356,7 @@ const CreateOrder = () => {
                 <div className="col-4">
                   <small className="text-lightBlue">
                     Tax&nbsp;
-                    <span className="text-blue-2">(Remove Tax)</span>
+                    <span className="text-blue-2 c-pointer">(Remove Tax)</span>
                   </small>
                 </div>
                 <div className="col-4 text-center">
@@ -1344,14 +1368,40 @@ const CreateOrder = () => {
               </div>
               <div className="row mt-2">
                 <div className="col-4">
-                  <small className="text-blue-2">Add other charges</small>
+                  <div className="d-flex align-items-center">
+                    <small className="text-lightBlue me-2">
+                      Labour Charges
+                    </small>
+                    <Tooltip title="Edit" placement="top">
+                      <EditOutlinedIcon
+                        sx={{
+                          color: "#6e8dd7",
+                          fontSize: 13,
+                          cursor: "pointer",
+                        }}
+                      />
+                    </Tooltip>
+                  </div>
+                </div>
+                <div className="col-4 text-center">
+                  <p className="text-lightBlue">Extra Labour Charges</p>
+                </div>
+                <div className="col-4 text-end">
+                  <p className="text-lightBlue">₹&nbsp;2,300</p>
+                </div>
+              </div>
+              <div className="row mt-2">
+                <div className="col-4">
+                  <small className="text-blue-2 c-pointer text-decoration-underline">
+                    Add other charges
+                  </small>
                 </div>
               </div>
             </div>
-            <div className="col-12 d-flex justify-content-center mt-2 px-0">
-              <hr className="hr-grey-6 w-100" />
+            <div className="col-12 d-flex justify-content-center px-0">
+              <hr className="hr-grey-6 w-100 my-3" />
             </div>
-            <div className="col-12">
+            <div className="col-12 px-0">
               <div className="d-flex justify-content-between">
                 <h6 className="fw-500 text-lightBlue">Total</h6>
                 <h6 className="fw-500 text-lightBlue">₹&nbsp;46,350</h6>
@@ -1377,17 +1427,17 @@ const CreateOrder = () => {
           </Link>
         </div>
         <div className="d-flex w-auto px-0">
-          <Link
+          {/* <Link
             to="/orders/allOrders"
             className="button-lightBlue-outline py-2 px-4"
           >
             <p>Save & Add Another</p>
-          </Link>
+          </Link> */}
           <Link
             to="/orders/orderDetails"
             className="button-gradient ms-3 py-2 px-4 w-auto"
           >
-            <p>Save</p>
+            <p>Create Order</p>
           </Link>
         </div>
       </div>

@@ -11,6 +11,7 @@ import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import info from "../../../assets/icons/info.svg";
 // ! MATERIAL IMPORTS
 import { FormControl, OutlinedInput, Tooltip, Rating } from "@mui/material";
+import SearchBorder from "../../../components/SearchBorder/SearchBorder";
 
 const CreateReview = () => {
   return (
@@ -32,7 +33,18 @@ const CreateReview = () => {
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-            {" "}
+            <div className="col-12 px-0">
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex align-items-center">
+                  <h6 className="text-lightBlue fw-500 ">
+                    Product and Customer Information
+                  </h6>
+                </div>
+              </div>
+              <div className="d-flex justify-content-center">
+                <hr className="hr-grey-6 w-100 my-3" />
+              </div>
+            </div>
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Select Product to Review</p>
@@ -45,23 +57,11 @@ const CreateReview = () => {
                   />
                 </Tooltip>
               </div>
-              <TableSearch />
+              <SearchBorder />
             </div>
-          </div>
-
-          <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-4">
-            <div className="d-flex justify-content-between mb-2 px-0">
-              <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
-                Rating & Reviews
-              </h6>
-            </div>
-            <div className="col-12 mt-3 px-0">
-              <p className="text-lightBlue">Add Rating</p>
-              <Rating name="half-rating-read" defaultValue={4} />
-            </div>
-            <div className="col-12 mt-3 px-0">
-              <div className="d-flex  mb-1">
-                <p className="text-lightBlue me-2">Description</p>
+            <div className="col-md-12 px-0 mt-3">
+              <div className="d-flex mb-1">
+                <p className="text-lightBlue me-2">Order ID</p>
                 <Tooltip title="Lorem ipsum" placement="top">
                   <img
                     src={info}
@@ -71,7 +71,9 @@ const CreateReview = () => {
                   />
                 </Tooltip>
               </div>
-              <AppTextEditor />
+              <FormControl className="w-100 px-0">
+                <OutlinedInput placeholder="Enter Order ID" size="small" />
+              </FormControl>
             </div>
             <div className="col-md-12 px-0 mt-3">
               <div className="d-flex mb-1">
@@ -85,7 +87,7 @@ const CreateReview = () => {
                   />
                 </Tooltip>
               </div>
-              <TableSearch />
+              <SearchBorder />
             </div>
             <div className="col-md-12 px-0 mt-3">
               <div className="d-flex mb-1">
@@ -104,6 +106,36 @@ const CreateReview = () => {
               </FormControl>
             </div>
           </div>
+
+          <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-4">
+            <div className="d-flex justify-content-between px-0">
+              <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
+                Add Rating & Reviews
+              </h6>
+            </div>
+
+            <div className="d-flex justify-content-center col-12 px-0">
+              <hr className="hr-grey-6 w-100 my-3" />
+            </div>
+            <div className="col-12 px-0">
+              <p className="text-lightBlue">Add Rating</p>
+              <Rating name="half-rating-read" defaultValue={4} />
+            </div>
+            <div className="col-12 mt-3 px-0">
+              <div className="d-flex  mb-1">
+                <p className="text-lightBlue me-2">Description</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+              </div>
+              <AppTextEditor />
+            </div>
+          </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
           <StatusBox headingName={"Status"} />
@@ -112,29 +144,26 @@ const CreateReview = () => {
       </div>
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
-          <Link
-            to="/parameters/collections"
-            className="button-red-outline py-2 px-4"
-          >
+          <Link to="/products/reviews" className="button-red-outline py-2 px-4">
             <p>Discard</p>
           </Link>
-
+          {/* 
           <Link
-            to="/parameters/collections"
+            to="/products/reviews"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
-          </Link>
+          </Link> */}
         </div>
         <div className="d-flex w-auto px-0">
           <Link
-            to="/parameters/collections"
+            to="/products/reviews"
             className="button-lightBlue-outline py-2 px-4"
           >
             <p>Save & Add Another</p>
           </Link>
           <Link
-            to="/parameters/collections"
+            to="/products/reviews"
             className="button-gradient ms-3 py-2 px-4 w-auto"
           >
             <p>Save</p>

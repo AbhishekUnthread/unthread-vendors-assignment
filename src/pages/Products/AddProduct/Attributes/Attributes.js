@@ -113,11 +113,15 @@ const Attributes = () => {
       </div>
       <hr className="hr-grey-6 my-3" />
       <div className="d-flex col-12 px-0">
-        <p className="text-grey-6">Field Type :</p>
-        <p className="mx-1 text-lightBlue">Metal Field Sets</p>
-        <p className="text-blue-2 c-pointer" onClick={handelFieldSets}>
-          (Change field sets)
-        </p>
+        <div className="d-flex justify-content-between w-100">
+          <div className="d-flex">
+            <p className="text-grey-6">Field Type :</p>
+            <p className="mx-1 text-lightBlue">Metal Field Sets</p>
+          </div>
+          <p className="text-blue-2 c-pointer" onClick={handelFieldSets}>
+            Change field sets
+          </p>
+        </div>
 
         <Dialog
           open={openFieldSets}

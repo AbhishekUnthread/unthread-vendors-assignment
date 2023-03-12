@@ -150,11 +150,14 @@ const OrderDetails = () => {
           </div>
         </div>
         <div className="d-flex align-items-center w-auto pe-0">
-          <button className="button-lightBlue-outline py-1 px-4">
+          <button className="button-lightBlue-outline py-1 px-4 me-3">
             <p>Refund</p>
           </button>
+          <button className="button-lightBlue-outline py-1 px-4 me-3">
+            <p>Send Invoice</p>
+          </button>
           <button
-            className="button-gradient py-1 px-4 w-auto ms-3 me-3"
+            className="button-gradient py-1 px-4 w-auto me-3"
             onClick={handleContactClick}
           >
             <p>More Actions</p>
@@ -357,6 +360,10 @@ const OrderDetails = () => {
                 </div>
               </div>
             </div>
+
+            <div className="col-12 d-flex justify-content-center px-0">
+              <hr className="hr-grey-6 w-100 mt-3 mb-0" />
+            </div>
             <div className="col-12 d-flex px-0 mt-3">
               <button className="button-lightBlue-outline py-2 px-4 me-3">
                 <p>Mark as Paid</p>
@@ -395,7 +402,7 @@ const OrderDetails = () => {
               </Popover>
             </div>
           </div>
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row mt-4">
+          {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row mt-4">
             <div className="d-flex justify-content-between align-items-center col-12 px-0">
               <div className="d-flex align-items-center">
                 <img src={productIcon} alt="userIcon" width={16} />
@@ -486,7 +493,7 @@ const OrderDetails = () => {
                 <p>Update Status</p>
               </button>
             </div>
-          </div>
+          </div> */}
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row mt-4">
             <div className="d-flex justify-content-between align-items-center col-12 px-0">
               <div className="d-flex align-items-center">

@@ -94,7 +94,7 @@ const headCells = [
   {
     id: "merchant",
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: "",
   },
   {
@@ -103,12 +103,12 @@ const headCells = [
     disablePadding: true,
     label: "Order Info",
   },
-  {
-    id: "actions",
-    numeric: false,
-    disablePadding: false,
-    label: "",
-  },
+  // {
+  //   id: "actions",
+  //   numeric: false,
+  //   disablePadding: false,
+  //   label: "",
+  // },
   {
     id: "userName",
     numeric: false,
@@ -408,14 +408,16 @@ const AllOrdersTable = () => {
                         }}
                       />
                     </TableCell>
-                    <TableCell>
-                      <div className="d-flex align-items-center justify-content-center me-3">
-                        <img
-                          src={ordersIcon}
-                          alt="ordersIcon"
-                          width={20}
-                          className="c-pointer"
-                        />
+                    <TableCell padding="none">
+                      <div className="d-flex align-items-center justify-content-center me-2 pe-2">
+                        <Tooltip title="Website" placement="top">
+                          <img
+                            src={ordersIcon}
+                            alt="ordersIcon"
+                            width={20}
+                            className="c-pointer"
+                          />
+                        </Tooltip>
                       </div>
                     </TableCell>
 
@@ -444,7 +446,7 @@ const AllOrdersTable = () => {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell padding="none" width={50}>
+                    {/* <TableCell padding="none" width={50}>
                       <div className="d-flex align-items-center justify-content-center me-3">
                         <Tooltip title="Edit" placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
@@ -458,7 +460,7 @@ const AllOrdersTable = () => {
                           </div>
                         </Tooltip>
                       </div>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       <div className="d-flex align-items-center py-2">
                         {/* <img
@@ -476,7 +478,7 @@ const AllOrdersTable = () => {
                           className="c-pointer"
                         >
                           <div className=" text-decoration-none">
-                            <p className="text-lightBlue rounded-circle fw-600">
+                            <p className="text-blue-2 rounded-circle fw-600">
                               {row.userName}
                             </p>
                           </div>
@@ -507,7 +509,7 @@ const AllOrdersTable = () => {
                           onClose={handleUserClose}
                         >
                           <div className="py-2 px-2">
-                            <div className="d-flex justify-content-between align-items-center">
+                            <div className="d-flex justify-content-between align-items-center pt-1">
                               <div className="d-flex">
                                 <img
                                   src={user}
@@ -520,7 +522,7 @@ const AllOrdersTable = () => {
                                   <p className="text-lightBlue">
                                     Saniya Shaikh
                                   </p>
-                                  <small className="text-blue-2">
+                                  <small className="text-blue-2 c-pointer">
                                     View Profile
                                   </small>
                                 </div>
@@ -562,7 +564,7 @@ const AllOrdersTable = () => {
                                 />
                               </Tooltip>
                             </div>
-                            <div className="d-flex mt-4">
+                            <div className="d-flex mt-4 mb-1">
                               <buton className="button-lightBlue-outline px-3 py-1 align-items-center">
                                 <ChatIcon
                                   sx={{
@@ -580,7 +582,7 @@ const AllOrdersTable = () => {
                     <TableCell width={120}>
                       <div className="d-flex align-items-center c-pointer">
                         <p
-                          className="text-lightBlue"
+                          className="text-blue-2"
                           aria-describedby={idItem}
                           variant="contained"
                           onClick={handleItemClick}
@@ -603,10 +605,10 @@ const AllOrdersTable = () => {
                         anchorEl={anchorItemEl}
                         onClose={handleItemClose}
                       >
-                        <div className="py-2 px-2">
+                        <div className="py-3 px-2">
                           <div className="d-flex align-items-center">
                             <small className="text-blue-2 text-decoration-underline">
-                              #12345
+                              #12345-A
                             </small>
                             <img
                               src={ringSmall}
@@ -622,7 +624,7 @@ const AllOrdersTable = () => {
                                 ₹ 50,000
                               </small>
                             </div>
-                            <small className="text-grey-6 ms-4">
+                            <small className="text-grey-6 ms-4 me-3">
                               SKU:&nbsp;
                               <span className="text-blue-2">TFDR012345</span>
                             </small>
@@ -655,7 +657,7 @@ const AllOrdersTable = () => {
                               onClose={handleActionClose}
                             >
                               <div className="py-2 px-1">
-                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block c-pointer">
                                   <CloseIcon
                                     sx={{
                                       fontSize: 14,
@@ -664,7 +666,7 @@ const AllOrdersTable = () => {
                                   />
                                   Cancel Order
                                 </small>
-                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block c-pointer">
                                   <ReceiptIcon
                                     sx={{
                                       fontSize: 14,
@@ -673,7 +675,88 @@ const AllOrdersTable = () => {
                                   />
                                   View Invoice
                                 </small>
-                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block c-pointer">
+                                  <PrintIcon
+                                    sx={{
+                                      fontSize: 14,
+                                      marginRight: 1,
+                                    }}
+                                  />
+                                  Print Packaging Slip
+                                </small>
+                              </div>
+                            </Popover>
+                          </div>
+                          <div className="d-flex align-items-center mt-3">
+                            <small className="text-blue-2 text-decoration-underline">
+                              #12345-B
+                            </small>
+                            <img
+                              src={ringSmall}
+                              alt="product"
+                              width={40}
+                              className="ms-4 me-2"
+                            />
+                            <div>
+                              <small className="text-lightBlue d-block">
+                                The Fringe Diamond Ring
+                              </small>
+                              <small className="text-grey-6 font0 d-block">
+                                ₹ 50,000
+                              </small>
+                            </div>
+                            <small className="text-grey-6 ms-4 me-3">
+                              SKU:&nbsp;
+                              <span className="text-blue-2">TFDR012345</span>
+                            </small>
+                            <button
+                              className="button-lightBlue-outline py-1 px-2 ms-3"
+                              aria-describedby={idAction}
+                              variant="contained"
+                              onClick={handleActionClick}
+                            >
+                              <small>Action</small>
+                              <KeyboardArrowDownIcon
+                                sx={{
+                                  fontSize: 14,
+                                  marginLeft: 1,
+                                }}
+                              />
+                            </button>
+                            <Popover
+                              anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "left",
+                              }}
+                              transformOrigin={{
+                                vertical: "top",
+                                horizontal: "left",
+                              }}
+                              id={idAction}
+                              open={openAction}
+                              anchorEl={anchorActionEl}
+                              onClose={handleActionClose}
+                            >
+                              <div className="py-2 px-1">
+                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block c-pointer">
+                                  <CloseIcon
+                                    sx={{
+                                      fontSize: 14,
+                                      marginRight: 1,
+                                    }}
+                                  />
+                                  Cancel Order
+                                </small>
+                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block c-pointer">
+                                  <ReceiptIcon
+                                    sx={{
+                                      fontSize: 14,
+                                      marginRight: 1,
+                                    }}
+                                  />
+                                  View Invoice
+                                </small>
+                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block c-pointer">
                                   <PrintIcon
                                     sx={{
                                       fontSize: 14,

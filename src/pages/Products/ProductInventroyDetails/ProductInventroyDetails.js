@@ -71,18 +71,20 @@ const ProductInventoryDetails = () => {
                 </small>
               </div>
             </div>
-            <button
-              className="button-transparent py-2 px-3 border-grey-5"
-              // onClick={handleBulkEditor}
-            >
-              <img
-                src={editWhite}
-                alt="editContainedWhite"
-                className="me-1"
-                width={20}
-              />
-              <p className="text-grey-6">Open Bulk Editor</p>
-            </button>
+            <div className="d-flex">
+              <button
+                className="button-transparent py-2 px-3 border-grey-5"
+                // onClick={handleBulkEditor}
+              >
+                <img
+                  src={editWhite}
+                  alt="editContainedWhite"
+                  className="me-1"
+                  width={20}
+                />
+                <p className="text-lightBlue">Open Bulk Editor</p>
+              </button>
+            </div>
           </div>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />

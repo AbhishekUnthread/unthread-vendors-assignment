@@ -159,7 +159,7 @@ const OrderCartDetails = ({
             <Chip
               label="Karol Bagh, Delhi • 1.1km"
               size="small"
-              className="px-1 w-auto ms-3"
+              className="px-1 w-auto ms-2"
               variant="outlined"
             />
           </div>
@@ -183,7 +183,7 @@ const OrderCartDetails = ({
                 Delivery Date:&nbsp;
                 <span className="text-lightBlue">20th May, 2022</span>
               </small>
-              <div className="d-flex mt-2">
+              <div className="d-flex mt-3">
                 <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer w-auto">
                   <small className="text-black fw-400">Order Confirm</small>
                 </div>
@@ -199,13 +199,18 @@ const OrderCartDetails = ({
                 width={80}
                 height="auto"
               />
-              <div className="d-flex flex-column ms-2">
-                <p className="text-lightBlue">The Fringe Diamond Ring</p>
+              <div className="d-flex flex-column ms-3">
+                <p className="text-lightBlue fw-500">The Fringe Diamond Ring</p>
                 <small className="text-grey-6 mt-1 d-block">
                   SKU:&nbsp;TFDR012345&nbsp;&nbsp;|&nbsp;&nbsp;Brand:JWLellers
                 </small>
-                <div className="d-flex mt-1 align-items-center">
-                  <small className="text-grey-6 d-block me-2">
+                <div className="d-flex mt-2 align-items-center mt-2">
+                  <small
+                    className="text-blue-1 d-block me-2 c-pointer"
+                    aria-describedby={idProductDetail}
+                    variant="contained"
+                    onClick={handleProductDetailClick}
+                  >
                     7-Gold-18KT-Rose-IJSI&nbsp;•&nbsp;3.65g
                   </small>
                   <KeyboardArrowDownIcon
@@ -234,7 +239,14 @@ const OrderCartDetails = ({
           <div className="col-4 d-flex flex-column justify-content-between mt-3 align-items-end">
             <div className="d-flex">
               <small className="text-lightBlue me-3">Calculated Price:</small>
-              <h6 className="text-lightBlue me-2 fw-500">₹ 46,350</h6>
+              <h6
+                className="text-lightBlue me-2 fw-500 c-pointer"
+                aria-describedby={idPrice}
+                variant="contained"
+                onClick={handlePriceClick}
+              >
+                ₹ 46,350
+              </h6>
               <KeyboardArrowDownIcon
                 sx={{
                   fontSize: 18,
@@ -271,13 +283,13 @@ const OrderCartDetails = ({
             <Chip
               label="Mahalaxmi, Mumbai • 2.1km"
               size="small"
-              className="px-1 w-auto ms-3"
+              className="px-1 w-auto ms-2"
               variant="outlined"
             />
             <Chip
               label="Made to Order"
               size="small"
-              className="px-1 w-auto ms-3"
+              className="px-1 w-auto ms-2"
             />
           </div>
           {/* {showQCButton && (
@@ -302,7 +314,7 @@ const OrderCartDetails = ({
                 Delivery Date:&nbsp;
                 <span className="text-lightBlue">20th May, 2022</span>
               </small>
-              <div className="d-flex mt-2">
+              <div className="d-flex mt-3">
                 <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer w-auto">
                   <small className="text-black fw-400">Order Confirm</small>
                 </div>
@@ -318,13 +330,18 @@ const OrderCartDetails = ({
                 width={80}
                 height="auto"
               />
-              <div className="d-flex flex-column ms-2">
-                <p className="text-lightBlue">The Fringe Diamond Ring</p>
+              <div className="d-flex flex-column ms-3">
+                <p className="text-lightBlue fw-500">The Fringe Diamond Ring</p>
                 <small className="text-grey-6 mt-1 d-block">
                   SKU:&nbsp;TFDR012345&nbsp;&nbsp;|&nbsp;&nbsp;Brand:JWLellers
                 </small>
-                <div className="d-flex mt-1 align-items-center">
-                  <small className="text-grey-6 d-block me-2">
+                <div className="d-flex mt-2 align-items-center">
+                  <small
+                    className="text-blue-1 d-block me-2 c-pointer"
+                    aria-describedby={idProductDetail}
+                    variant="contained"
+                    onClick={handleProductDetailClick}
+                  >
                     7-Gold-18KT-Rose-IJSI&nbsp;•&nbsp;3.65g
                   </small>
                   <KeyboardArrowDownIcon
@@ -353,7 +370,14 @@ const OrderCartDetails = ({
           <div className="col-4 d-flex flex-column justify-content-between mt-3 align-items-end">
             <div className="d-flex">
               <small className="text-lightBlue me-3">Calculated Price:</small>
-              <h6 className="text-lightBlue me-2 fw-500">₹ 46,350</h6>
+              <h6
+                className="text-lightBlue me-2 fw-500 c-pointer"
+                aria-describedby={idPrice}
+                variant="contained"
+                onClick={handlePriceClick}
+              >
+                ₹ 46,350
+              </h6>
               <KeyboardArrowDownIcon
                 sx={{
                   fontSize: 18,
@@ -486,7 +510,7 @@ const OrderCartDetails = ({
             </div>
           </div>
           <p className="text-grey-6 mt-3">Customer</p>
-          <p className="text-blue-2 mt-1 text-decoration-underline">
+          <p className="text-blue-2 mt-1 text-decoration-underline c-pointer">
             Saniya Shaikh
           </p>
           <p className="text-grey-6 mt-3">Created On</p>
@@ -605,21 +629,21 @@ const OrderCartDetails = ({
           {/* <small className="text-lightBlue">
           Default : 12KT • Yellow • Gold • IJ-SI
         </small> */}
-          <div className="d-flex align-items-center justify-content-between mb-2 text-grey-6">
+          <div className="d-flex align-items-center justify-content-between mb-2 text-lightBlue">
             <small>Metal Price</small>
-            <small className="ms-2">₹&nbsp;15,000</small>
+            <small className="ms-4">₹&nbsp;15,000</small>
           </div>
-          <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
+          <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-lightBlue">
             <small>Diamond Price</small>
-            <small className="ms-2">₹&nbsp;4,000</small>
+            <small className="ms-4">₹&nbsp;4,000</small>
           </div>
-          <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
+          <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-lightBlue">
             <small>Making Charges</small>
-            <small className="ms-2">₹&nbsp;1,000</small>
+            <small className="ms-4">₹&nbsp;1,000</small>
           </div>
-          <div className="d-flex align-items-center justify-content-between mt-2 text-grey-6">
+          <div className="d-flex align-items-center justify-content-between mt-2 text-lightBlue">
             <small>GST</small>
-            <small className="ms-2">₹&nbsp;&nbsp;600</small>
+            <small className="ms-4">₹&nbsp;&nbsp;600</small>
           </div>
           {/* <div className="d-flex align-items-center justify-content-between mt-2">
           <p className="text-lightBlue">Total</p>

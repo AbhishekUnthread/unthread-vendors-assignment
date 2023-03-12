@@ -42,6 +42,7 @@ import OrderColumnsFilter from "../OrderColumnsFilter";
 import OrderTagsFilter from "../OrderTagsFilter";
 import OrderStatusFilter from "../OrderStatusFilter";
 import OrderLocationFilter from "../OrderLocationFilter";
+import FilterOrders from "../../../components/FilterOrders/FilterOrders";
 
 const AllOrders = () => {
   const [value, setValue] = React.useState(0);
@@ -281,7 +282,7 @@ const AllOrders = () => {
                 <OrderLocationFilter />
                 <OrderStatusFilter />
                 <OrderTagsFilter />
-                <FilterUsers buttonName={"More Filters"} />
+                <FilterOrders buttonName={"More Filters"} />
               </div>
               <OrderSortFilter />
               <OrderColumnsFilter />

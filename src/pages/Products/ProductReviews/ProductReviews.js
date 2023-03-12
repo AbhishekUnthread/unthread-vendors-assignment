@@ -53,12 +53,12 @@ const ProductReviews = () => {
         <h4 className="page-heading w-auto ps-0">Product Reviews</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer headingName={"Product Module"} icon={products} />
+          <ViewLogsDrawer headingName={"Product Reviews"} icon={products} />
           <Link
             to="/products/reviews/create"
             className="button-gradient py-2 px-4 ms-3"
           >
-            <p>Create Reviews</p>
+            <p>+ Create Reviews</p>
           </Link>
         </div>
       </div>

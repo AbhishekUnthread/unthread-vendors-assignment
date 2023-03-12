@@ -11,6 +11,7 @@ import TableMassActionButton from "../../../components/TableMassActionButton/Tab
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import cancel from "../../../assets/icons/cancel.svg";
+import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -186,7 +187,7 @@ const ProductReviewsTable = () => {
         <div className="d-flex align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
             <small className="text-lightBlue">
-              {selected.length} products are selected&nbsp;
+              {selected.length} reviews are selected&nbsp;
               <span
                 className="text-blue-2 c-pointer"
                 onClick={() => setSelected([])}
@@ -257,18 +258,31 @@ const ProductReviewsTable = () => {
                           defaultValue={4}
                           readOnly
                         />
-                        <p className="text-lightBlue rounded-circle fw-600 my-2">
+                        <p className="text-lightBlue rounded-circle fw-500 my-2">
                           {row.reviews}
                         </p>
-                        <small className="text-grey-6">
-                          The Fringe Diamond Ring • 13/07/2022 • 9.43am
+                        <small className="text-blue-2">
+                          The Fringe Diamond Ring&nbsp;
+                          <span className="text-grey-6">•</span>
+                          &nbsp;#12345&nbsp;
+                          <span className="text-grey-6">
+                            • 13/07/2022 • 09:23am
+                          </span>
                         </small>
                       </div>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
-                      <p className="text-blue-2 text-decoration-underline">
-                        {row.customer}
-                      </p>
+                      <div className="d-flex flex-column">
+                        <p className="text-blue-2 text-decoration-underline">
+                          {row.customer}
+                        </p>
+                        <div className="d-flex align-items-center mt-2">
+                          <small className="text-grey-6 me-2">
+                            Create by Staff
+                          </small>
+                          <img src={teamMember1} alt="teamMember1" />
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell style={{ width: 140 }}>
                       <div className="d-flex align-items-center">
@@ -316,96 +330,6 @@ const ProductReviewsTable = () => {
                           </div>
                         </Tooltip>
 
-                        <Dialog
-                          open={openReview}
-                          TransitionComponent={Transition}
-                          keepMounted
-                          onClose={handleOpenReviewClose}
-                          aria-describedby="alert-dialog-slide-description"
-                          maxWidth="sm"
-                          fullWidth={true}
-                        >
-                          <DialogTitle>
-                            <div className="d-flex justify-content-between align-items-center">
-                              <div className="d-flex flex-column ">
-                                <h5 className="text-lightBlue fw-500">
-                                  Rating Review
-                                </h5>
-                              </div>
-                              <img
-                                src={cancel}
-                                alt="cancel"
-                                width={30}
-                                onClick={handleOpenReviewClose}
-                                className="c-pointer"
-                              />
-                            </div>
-                          </DialogTitle>
-                          <hr className="hr-grey-6 my-0" />
-                          <DialogContent className="py-3 px-4">
-                            <p className="text-grey-6 mb-2">Rating</p>
-                            <Rating
-                              // size="small"
-                              name="half-rating-read"
-                              defaultValue={4}
-                              readOnly
-                            />
-                            <p className="text-grey-6 mt-3">Reviews</p>
-                            <p className="text-lightBlue mt-1">
-                              Lorem ipsum dolor sit, amet consectetur
-                              adipisicing elit. Officiis quod delectus ex quam
-                              dolorum, obcaecati molestiae praesentium soluta
-                              beatae laborum. Perspiciatis iusto facere
-                              repellendus molestiae animi sapiente aliquam
-                              quidem quae.
-                            </p>
-                            <p className="text-grey-6 mt-3">Product</p>
-                            <p className="text-blue-2 mt-1 text-decoration-underline">
-                              The Fringe Diamond Ring
-                            </p>
-                            <p className="text-grey-6 mt-3">Customer</p>
-                            <p className="text-blue-2 mt-1 text-decoration-underline">
-                              Saniya Shaikh
-                            </p>
-                            <p className="text-grey-6 mt-3">Status</p>
-                            <div className="d-flex mt-1">
-                              <div className="rounded-pill d-flex table-status px-4 py-1 c-pointer">
-                                <small className="text-black fw-400">
-                                  Active
-                                </small>
-                              </div>
-                            </div>
-                          </DialogContent>
-                          <hr className="hr-grey-6 my-0" />
-                          <DialogActions className="d-flex justify-content-between px-4 py-3">
-                            <button
-                              className="button-green-outline py-2 px-4"
-                              onClick={handleOpenReviewClose}
-                            >
-                              <TaskAltIcon
-                                sx={{
-                                  fontSize: 18,
-                                  cursor: "pointer",
-                                  "& :hover": { color: "green" },
-                                }}
-                              />
-                              <p className="ms-2">Approve Reviews</p>
-                            </button>
-                            <button
-                              className="button-red-outline py-2 px-4"
-                              onClick={handleOpenReviewClose}
-                            >
-                              <BlockIcon
-                                sx={{
-                                  fontSize: 18,
-                                  cursor: "pointer",
-                                  "& :hover": { color: "green" },
-                                }}
-                              />
-                              <p className="ms-2">Reject Reviews</p>
-                            </button>
-                          </DialogActions>
-                        </Dialog>
                         <img
                           src={verticalDots}
                           alt="verticalDots"
@@ -432,18 +356,29 @@ const ProductReviewsTable = () => {
                           <div className="py-2 px-2">
                             <small className="text-grey-7 px-2">ACTIONS</small>
                             <hr className="hr-grey-6 my-2" />
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit User Groups
-                            </small>
-                            <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                              <small className="text-lightBlue font2 d-block">
-                                Delete Groups
-                              </small>
-                              <img
-                                src={deleteRed}
-                                alt="delete"
-                                className="ms-2"
+                            <div className="d-flex p-2 rounded-3 text-green-2 align-items-center hover-back">
+                              <TaskAltIcon
+                                sx={{
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                  "& :hover": { color: "green" },
+                                }}
                               />
+                              <small className="c-pointer font2 d-block ms-2">
+                                Approve Reviews
+                              </small>
+                            </div>
+                            <div className="d-flex p-2 rounded-3 text-red-5 align-items-center hover-back">
+                              <BlockIcon
+                                sx={{
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                  "& :hover": { color: "green" },
+                                }}
+                              />
+                              <small className="c-pointer font2 d-block ms-2">
+                                Disapprove Reviews
+                              </small>
                             </div>
                           </div>
                         </Popover>
@@ -474,6 +409,102 @@ const ProductReviewsTable = () => {
         onRowsPerPageChange={handleChangeRowsPerPage}
         className="table-pagination"
       />
+
+      <Dialog
+        open={openReview}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleOpenReviewClose}
+        aria-describedby="alert-dialog-slide-description"
+        maxWidth="sm"
+        fullWidth={true}
+      >
+        <DialogTitle>
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex flex-column ">
+              <h5 className="text-lightBlue fw-500">Rating Review</h5>
+              <small className="text-grey-6 mt-1">13/07/2022 at 09:23am</small>
+            </div>
+            <img
+              src={cancel}
+              alt="cancel"
+              width={30}
+              onClick={handleOpenReviewClose}
+              className="c-pointer"
+            />
+          </div>
+        </DialogTitle>
+        <hr className="hr-grey-6 my-0" />
+        <DialogContent className="py-3 px-4">
+          <p className="text-grey-6 mb-2">Rating</p>
+          <Rating
+            // size="small"
+            name="half-rating-read"
+            defaultValue={4}
+            readOnly
+          />
+          <p className="text-grey-6 mt-3">Reviews</p>
+          <p className="text-lightBlue mt-1">
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            quod delectus ex quam dolorum, obcaecati molestiae praesentium
+            soluta beatae laborum. Perspiciatis iusto facere repellendus
+            molestiae animi sapiente aliquam quidem quae.
+          </p>
+          <div className="d-flex">
+            <div>
+              <p className="text-grey-6 mt-3">Product</p>
+              <p className="text-blue-2 mt-1 text-decoration-underline">
+                The Fringe Diamond Ring
+              </p>
+            </div>
+            <div className="ms-5">
+              <p className="text-grey-6 mt-3">Order ID</p>
+              <p className="text-blue-2 mt-1 text-decoration-underline">
+                #12345
+              </p>
+            </div>
+          </div>
+          <p className="text-grey-6 mt-3">Customer</p>
+          <p className="text-blue-2 mt-1 text-decoration-underline">
+            Saniya Shaikh
+          </p>
+          <p className="text-grey-6 mt-3">Status</p>
+          <div className="d-flex mt-1">
+            <div className="rounded-pill d-flex table-status px-4 py-1 c-pointer">
+              <small className="text-black fw-400">Active</small>
+            </div>
+          </div>
+        </DialogContent>
+        <hr className="hr-grey-6 my-0" />
+        <DialogActions className="d-flex justify-content-between px-4 py-3">
+          <button
+            className="button-green-outline py-2 px-4"
+            onClick={handleOpenReviewClose}
+          >
+            <TaskAltIcon
+              sx={{
+                fontSize: 18,
+                cursor: "pointer",
+                "& :hover": { color: "green" },
+              }}
+            />
+            <p className="ms-2">Approve Reviews</p>
+          </button>
+          <button
+            className="button-red-outline py-2 px-4"
+            onClick={handleOpenReviewClose}
+          >
+            <BlockIcon
+              sx={{
+                fontSize: 18,
+                cursor: "pointer",
+                "& :hover": { color: "green" },
+              }}
+            />
+            <p className="ms-2">Reject Reviews</p>
+          </button>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 };

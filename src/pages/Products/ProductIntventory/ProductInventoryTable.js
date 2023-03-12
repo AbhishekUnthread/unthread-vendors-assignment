@@ -273,7 +273,7 @@ const ProductInventoryTable = () => {
                             />
                           </div>
                         </Tooltip>
-                        <img
+                        {/* <img
                           src={verticalDots}
                           alt="verticalDots"
                           className="c-pointer"
@@ -337,7 +337,7 @@ const ProductInventoryTable = () => {
                               <img src={deleteRed} alt="delete" className="" />
                             </div>
                           </div>
-                        </Popover>
+                        </Popover> */}
                       </div>
                     </TableCell>
                   </TableRow>

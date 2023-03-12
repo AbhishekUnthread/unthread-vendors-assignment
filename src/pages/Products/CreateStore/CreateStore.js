@@ -133,16 +133,16 @@ const CreateStore = () => {
               </FormControl>
             </div>
             <div className="col-md-6 ps-0 mt-3">
-              <p className="text-lightBlue mb-1">Town/City</p>
+              <p className="text-lightBlue mb-1">Town / City</p>
               <FormControl className="w-100 px-0">
-                <OutlinedInput placeholder="Enter Town/City" size="small" />
+                <OutlinedInput placeholder="Enter Town / City" size="small" />
               </FormControl>
             </div>
             <div className="col-md-6 pe-0 mt-3">
-              <p className="text-lightBlue mb-1">Zipcode/Postalcode</p>
+              <p className="text-lightBlue mb-1">Zipcode / Postalcode</p>
               <FormControl className="w-100 px-0">
                 <OutlinedInput
-                  placeholder="Enter Zipcode/Postalcode"
+                  placeholder="Enter Zipcode / Postalcode"
                   size="small"
                 />
               </FormControl>
@@ -253,7 +253,9 @@ const CreateStore = () => {
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
           <StatusBox headingName={"Store Status"} />
-          <UploadMediaBox imageName={addMedia} headingName={"Store Media"} />
+          <div className="mt-4">
+            <UploadMediaBox imageName={addMedia} headingName={"Store Media"} />
+          </div>
           <TagsBox />
           <NotesBox />
         </div>
@@ -264,12 +266,12 @@ const CreateStore = () => {
             <p>Discard</p>
           </Link>
 
-          <Link
+          {/* <Link
             to="/users/allUsers"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
-          </Link>
+          </Link> */}
         </div>
         <div className="d-flex w-auto px-0">
           <Link
