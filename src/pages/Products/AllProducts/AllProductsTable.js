@@ -1,5 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
+// ! COMPONENT IMPORTS
+import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
+import ProductDrawerTable from "../ProductDrawerTable";
 // ! IMAGES IMPORTS
 import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 import teamMember2 from "../../../assets/images/products/teamMember2.svg";
@@ -13,6 +16,7 @@ import editButton from "../../../assets/icons/editButton.svg";
 import duplicateButton from "../../../assets/icons/duplicateButton.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import products from "../../../assets/icons/sidenav/products.svg";
+import product2 from "../../../assets/images/products/product2.jpg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -31,6 +35,13 @@ import {
   styled,
   InputBase,
   Tooltip,
+  FormControlLabel,
+  FormGroup,
+  InputAdornment,
+  MenuItem,
+  Select,
+  FormControl,
+  OutlinedInput,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -39,6 +50,7 @@ import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -546,6 +558,53 @@ const AllProductsTable = () => {
   const idActivity = openActivity ? "simple-popover" : undefined;
   // * ACTIVITY POPOVERS ENDS
 
+  // ? PRODUCT DRAWER STARTS HERE
+
+  const [addProductDrawer, setAddProductDrawer] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+
+  const toggleProductDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
+  };
+  // ? PRODUCT DRAWER ENDS HERE
+
+  // * METAL FILTER POPOVERS STARTS
+  const [anchorMetalFilterEl, setAnchorMetalFilterEl] = React.useState(null);
+  const handleMetalFilter = (event) => {
+    setAnchorMetalFilterEl(event.currentTarget);
+  };
+  const handleMetalFilterClose = () => {
+    setAnchorMetalFilterEl(null);
+  };
+  const openMetalFilter = Boolean(anchorMetalFilterEl);
+  const idMetalFilter = openMetalFilter ? "simple-popover" : undefined;
+  // * METAL FILTER POPOVERS ENDS
+
+  // * DISCOUNT PERCENT POPOVERS STARTS
+  const [anchorDiscountPercentEl, setAnchorDiscountPercentEl] =
+    React.useState(null);
+  const handleDiscountPercent = (event) => {
+    setAnchorDiscountPercentEl(event.currentTarget);
+  };
+  const handleDiscountPercentClose = () => {
+    setAnchorDiscountPercentEl(null);
+  };
+  const openDiscountPercent = Boolean(anchorDiscountPercentEl);
+  const idDiscountPercent = openDiscountPercent ? "simple-popover" : undefined;
+  // * DICOUNT PERCENT POPOVERS ENDS
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -822,6 +881,7 @@ const AllProductsTable = () => {
                                 fontSize: 18,
                                 cursor: "pointer",
                               }}
+                              onClick={toggleProductDrawer("right", true)}
                             />
                           </div>
                         </Tooltip>
@@ -1085,6 +1145,180 @@ const AllProductsTable = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      </SwipeableDrawer>
+
+      <SwipeableDrawer
+        anchor="right"
+        open={addProductDrawer["right"]}
+        onClose={toggleProductDrawer("right", false)}
+        onOpen={toggleProductDrawer("right", true)}
+        className="role-drawer"
+      >
+        <div className="d-flex align-items-center pt-3 px-3">
+          <KeyboardArrowLeftOutlinedIcon
+            sx={{ fontSize: 25, color: "#c8d8ff" }}
+            onClick={toggleProductDrawer("right", false)}
+            className="c-pointer"
+          />
+          {/* <div>
+            <h5 className="text-lightBlue fw-500 ms-2">Add Team Member</h5>
+          </div> */}
+          <div className="d-flex align-items-center">
+            <img
+              src={product2}
+              alt="product2"
+              className="me-2 rounded-8 ms-2"
+              height={45}
+              width={45}
+            />
+            <div>
+              <p className="text-lightBlue rounded-circle fw-600">
+                The Fringe Diamond Ring
+              </p>
+              <small className="text-grey-6 mt-1">Style Code: TFDR012345</small>
+            </div>
+          </div>
+        </div>
+        <div className="px-3">
+          <hr className="hr-grey-6 mt-3 mb-3" />
+        </div>
+        <div className="px-3">
+          <div className="row">
+            <div className="col-4">
+              <AppCountrySelect />
+            </div>
+            <div className="col-8">
+              <FormControl sx={{ width: "100%" }} size="small">
+                <Select
+                  labelId="demo-select-small"
+                  id="demo-select-small"
+                  // value={metal}
+                  placeholder="Fixed"
+                  // onChange={handleMetalChange}
+                >
+                  <MenuItem value={10}>Super Admin</MenuItem>
+                  <MenuItem value={20}>Admin</MenuItem>
+                  <MenuItem value={30}>Project Manager</MenuItem>
+                  <MenuItem value={40}>Ecommerce Manager</MenuItem>
+                  <MenuItem value={50}>Digital Marketing</MenuItem>
+                  <MenuItem value={60}>Client Relationships</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+
+            <div className="d-flex col-12 justify-content-between align-items-center mt-3">
+              <div className="d-flex">
+                <p className="text-lightBlue py-1 me-2">Filter:</p>
+                <p
+                  className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
+                  aria-describedby={idMetalFilter}
+                  variant="contained"
+                  onClick={handleMetalFilter}
+                >
+                  Size
+                </p>
+                <p
+                  className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
+                  aria-describedby={idMetalFilter}
+                  variant="contained"
+                  onClick={handleMetalFilter}
+                >
+                  Metal
+                </p>
+                <p
+                  className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
+                  aria-describedby={idMetalFilter}
+                  variant="contained"
+                  onClick={handleMetalFilter}
+                >
+                  Metal Purity
+                </p>
+                <p
+                  className="text-blue-2 px-2 py-1 c-pointer hover-back-transparent rounded-3"
+                  aria-describedby={idMetalFilter}
+                  variant="contained"
+                  onClick={handleMetalFilter}
+                >
+                  Diamond
+                </p>
+
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  id={idMetalFilter}
+                  open={openMetalFilter}
+                  anchorEl={anchorMetalFilterEl}
+                  onClose={handleMetalFilterClose}
+                >
+                  <FormGroup className="tags-checkbox py-2">
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                          }}
+                        />
+                      }
+                      label="Content 1"
+                      className="hover-back rounded-3 mx-0 pe-2"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                          }}
+                        />
+                      }
+                      label="Content 2"
+                      className="hover-back rounded-3 mx-0 pe-2"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                          }}
+                        />
+                      }
+                      label="Content 3"
+                      className="hover-back rounded-3 mx-0 pe-2"
+                    />
+                  </FormGroup>
+                </Popover>
+              </div>
+            </div>
+            <div className="col-12 mt-3">
+              <ProductDrawerTable />
+            </div>
+          </div>
+        </div>
+        <div className="d-flex flex-column py-3 px-4 role-buttons">
+          <hr className="hr-grey-6 my-3 w-100" />
+          <div className="d-flex justify-content-between">
+            <button
+              className="button-gradient py-2 px-5 w-auto"
+              onClick={toggleProductDrawer("right", false)}
+            >
+              <p>Add</p>
+            </button>
+            <button
+              className="button-lightBlue-outline py-2 px-4"
+              onClick={toggleProductDrawer("right", false)}
+            >
+              <p>Cancel</p>
+            </button>
+          </div>
         </div>
       </SwipeableDrawer>
     </React.Fragment>
