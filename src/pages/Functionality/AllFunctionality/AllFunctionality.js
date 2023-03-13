@@ -12,6 +12,10 @@ import functionalityHyperlocalDelivery from "../../../assets/images/functionalit
 import functionalityRestrictRegion from "../../../assets/images/functionality/functionalityRestrictRegion.svg";
 import functionalityReturnRefund from "../../../assets/images/functionality/functionalityReturnRefund.svg";
 import gridView from "../../../assets/images/functionality/gridView.svg";
+import productOneInRowFilled from "../../../assets/icons/productOneInRowFilled.svg";
+import productOneInRowOutlined from "../../../assets/icons/productOneInRowOutlined.svg";
+import productTwoInRowFilled from "../../../assets/icons/productTwoInRowFilled.svg";
+import productTwoInRowOutlined from "../../../assets/icons/productTwoInRowOutlined.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -106,7 +110,7 @@ const AllFunctionality = () => {
           <div className="d-flex align-items-center">
             {/* <img src={indiaFlag} alt="indiaFlag" height={15} /> */}
             <TableSearch />
-            <p className="text-grey-6 ms-2">|</p>
+            <p className="text-grey-6 ms-3">|</p>
             {/* <GridViewIcon
               sx={{ color: "#c8d8ff", fontSize: 20 }}
               className="c-pointer ms-2"
@@ -116,13 +120,13 @@ const AllFunctionality = () => {
               className="c-pointer ms-2"
             /> */}
 
-            <FormControl
+            {/* <FormControl
               className="view-radio-buttons view-radio d-flex"
               style={{ width: "101px" }}
             >
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue={viewData.name}
+                defaultValue={viewData[0].name}
                 name="radio-buttons-group"
                 row
               >
@@ -138,13 +142,55 @@ const AllFunctionality = () => {
                     label={
                       <div className="d-flex align-items-center px-1">
                         <img src={e.image} alt="gridView" width={20} />
-                        {/* {e.image} */}
                       </div>
                     }
                   />
                 ))}
               </RadioGroup>
-            </FormControl>
+            </FormControl> */}
+
+            <div className="d-flex">
+              {view === "gridview" && (
+                <img
+                  src={productTwoInRowFilled}
+                  alt=""
+                  onClick={() => {
+                    setView("gridview");
+                  }}
+                  className="c-pointer ms-3"
+                />
+              )}
+              {view === "listview" && (
+                <img
+                  src={productTwoInRowOutlined}
+                  alt=""
+                  onClick={() => {
+                    setView("gridview");
+                  }}
+                  className="c-pointer ms-3"
+                />
+              )}
+              {view === "listview" && (
+                <img
+                  src={productOneInRowFilled}
+                  alt=""
+                  onClick={() => {
+                    setView("listview");
+                  }}
+                  className="c-pointer ms-3"
+                />
+              )}
+              {view === "gridview" && (
+                <img
+                  src={productOneInRowOutlined}
+                  alt=""
+                  onClick={() => {
+                    setView("listview");
+                  }}
+                  className="c-pointer ms-3"
+                />
+              )}
+            </div>
           </div>
         </Box>
         <TabPanel value={value} index={0}>
