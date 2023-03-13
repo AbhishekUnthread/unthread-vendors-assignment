@@ -414,6 +414,52 @@
   }
 }
 
+.view-radio-buttons {
+  //   .MuiFormControlLabel-root {
+  //     border: 1px solid $black1;
+  //     padding: 4px 12px;
+  //   }
+
+  .chips {
+    .MuiChip-root {
+      border-radius: 0 !important;
+    }
+  }
+  .MuiRadio-root {
+    display: none !important;
+  }
+
+  .view-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    margin-left: 0.5rem !important;
+    margin-right: 0 !important;
+    border: 1px solid transparent !important;
+    color: $grey6 !important;
+    transition: 0.1s all ease-in;
+    padding: 4px 0;
+    .MuiFormControlLabel-label {
+      font-size: $font2 !important;
+    }
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+  .active {
+    background: linear-gradient(
+      303.01deg,
+      rgba(89, 97, 248, 0.1) -4.4%,
+      rgba(242, 217, 247, 0.1) 111.29%
+    ) !important;
+    // background-color: $purple1 !important;
+    color: $lightBlue !important;
+    border: 1px solid #373357;
+    // border: 1px solid $lightBlue !important;
+  }
+}
+
 .text-blue-2 {
   color: $blue2;
 }

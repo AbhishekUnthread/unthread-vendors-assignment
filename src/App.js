@@ -69,6 +69,13 @@ import CreatePriceMaster from "./pages/Parameters/CreatePriceMaster/CreatePriceM
 import MetalPriceManager from "./pages/Parameters/MetalPriceManager/MetalPriceManager";
 import DiamondPriceManager from "./pages/Parameters/DiamondPriceManager/DiamondPriceManager";
 import MakingChargesManager from "./pages/Parameters/MakingChargesManager/MakingChargesManager";
+import AllFunctionality from "./pages/Functionality/AllFunctionality/AllFunctionality";
+import LabelsBadges from "./pages/Functionality/LabelsBadges/LabelsBadges";
+import PreOrder from "./pages/Functionality/PreOrder/PreOrder";
+import SizeChart from "./pages/Functionality/SizeChart/SizeChart";
+import CreateSizeChart from "./pages/Functionality/CreateSizeChart/CreateSizeChart";
+import CreatePreOrder from "./pages/Functionality/CreatePreOrder/CreatePreOrder";
+import CreateLabels from "./pages/Functionality/CreateLabels/CreateLabels";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -355,6 +362,17 @@ function App(props) {
                   element={<AbandonedCartDetails />}
                 />
                 <Route path="orderDetails" element={<OrderDetails />} />
+              </Route>
+              {/* FUNCTIONALITY ROUTES */}
+              <Route path="/functionality">
+                <Route path="" element={<Navigate to="allFunctionality" />} />
+                <Route path="allFunctionality" element={<AllFunctionality />} />
+                <Route path="sizeChart" element={<SizeChart />} />
+                <Route path="labelsBadges" element={<LabelsBadges />} />
+                <Route path="preOrder" element={<PreOrder />} />
+                <Route path="sizeChart/create" element={<CreateSizeChart />} />
+                <Route path="preOrder/create" element={<CreatePreOrder />} />
+                <Route path="labelsBadges/create" element={<CreateLabels />} />
               </Route>
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </React.Fragment>

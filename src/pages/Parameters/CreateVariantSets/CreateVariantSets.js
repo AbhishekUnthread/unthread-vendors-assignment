@@ -520,7 +520,7 @@ const CreateVariantSets = () => {
                   <FormControlLabel
                     value={e.name}
                     control={<Radio size="small" />}
-                    className={`mb-2 custom-radio${index} radio-buttons`}
+                    className={`mb-2 custom-radio${index} view-buttons`}
                     onChange={(e) => {
                       handleMetalChange(e);
                     }}
