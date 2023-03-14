@@ -1,55 +1,16 @@
 import React from "react";
-import "./OrderCartDetails.scss";
-// ! COMPONENT IMPORTS
 // ! IMAGES IMPORTS
 import product2 from "../../assets/images/products/product2.jpg";
 import productIcon from "../../assets/icons/productIcon.svg";
-import video from "../../assets/icons/video.svg";
-import cancel from "../../assets/icons/cancel.svg";
 // ! MATERIAL IMPORTS
-import {
-  Box,
-  Tab,
-  Tabs,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Slide,
-  Popover,
-  Chip,
-  DialogTitle,
-  Rating,
-  TextareaAutosize,
-  FormControl,
-  OutlinedInput,
-  MenuItem,
-  Select,
-  FormControlLabel,
-  Checkbox,
-  Tooltip,
-} from "@mui/material";
+import { Popover, Chip, TextareaAutosize } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
-import ChatIcon from "@mui/icons-material/Chat";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import BlockIcon from "@mui/icons-material/Block";
-import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
-import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
-import ReceiptIcon from "@mui/icons-material/Receipt";
 import PrintIcon from "@mui/icons-material/Print";
-
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-// ? DIALOG TRANSITION ENDS HERE
 
 const OrderCartDetails = ({
   showEditButton,
@@ -117,17 +78,17 @@ const OrderCartDetails = ({
   const idGift = openGift ? "simple-popover" : undefined;
   // * GIFT POPOVERS ENDS
 
-  // ? VIEW QC DIALOG STARTS HERE
-  const [openQc, setOpenQc] = React.useState(false);
+  // // ? VIEW QC DIALOG STARTS HERE
+  // const [openQc, setOpenQc] = React.useState(false);
 
-  const handleOpenQc = () => {
-    setOpenQc(true);
-  };
+  // const handleOpenQc = () => {
+  //   setOpenQc(true);
+  // };
 
-  const handleOpenQcClose = () => {
-    setOpenQc(false);
-  };
-  // ? VIEW QC DIALOG ENDS HERE
+  // const handleOpenQcClose = () => {
+  //   setOpenQc(false);
+  // };
+  // // ? VIEW QC DIALOG ENDS HERE
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
@@ -410,7 +371,7 @@ const OrderCartDetails = ({
         </div>
       </div>
 
-      <Dialog
+      {/* <Dialog
         open={openQc}
         TransitionComponent={Transition}
         keepMounted
@@ -555,7 +516,7 @@ const OrderCartDetails = ({
             <p className="ms-2">Reject Reviews</p>
           </button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
 
       <Popover
         anchorOrigin={{

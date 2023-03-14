@@ -3,80 +3,19 @@ import "./AbandonedCartDetails.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import TagsBox from "../../../components/TagsBox/TagsBox";
-import UploadFile from "../../../components/UploadFile/UploadFile";
-import OrderUserDetails from "../../../components/OrderUserDetails/OrderUserDetails";
-import OrderCartDetails from "../../../components/OrderCartDetails/OrderCartDetails";
+import OrderUserDetails from "../OrderUserDetails";
+import OrderCartDetails from "../OrderCartDetails";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
-import email from "../../../assets/icons/email.svg";
-import phone from "../../../assets/icons/phone.svg";
-import message from "../../../assets/icons/message.svg";
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
-import product2 from "../../../assets/images/products/product2.jpg";
-import rolesSuperAdmin from "../../../assets/images/teams/rolesSuperAdmin.svg";
-import info from "../../../assets/icons/info.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
-import userRoles from "../../../assets/icons/userRoles.svg";
-import uploadProfile from "../../../assets/icons/uploadProfile.svg";
-import user from "../../../assets/images/users/user.svg";
-import block from "../../../assets/images/users/block.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg";
-import currencyRupee from "../../../assets/icons/currencyRupee.svg";
-import currencyDollar from "../../../assets/icons/currencyDollar.svg";
-import currencyPound from "../../../assets/icons/currencyPound.svg";
-import addMarkets from "../../../assets/icons/addMarkets.svg";
-import userIcon from "../../../assets/icons/userIcon.svg";
-import productIcon from "../../../assets/icons/productIcon.svg";
-import timelineIcon from "../../../assets/icons/timelineIcon.svg";
-import timelineTag from "../../../assets/icons/timelineTag.svg";
-import timelineMicrophone from "../../../assets/icons/timelineMicrophone.svg";
-import timelineAttachment from "../../../assets/icons/timelineAttachment.svg";
-import timelineSmile from "../../../assets/icons/timelineSmile.svg";
-import cardIcon from "../../../assets/icons/cardIcon.svg";
-import cancel from "../../../assets/icons/cancel.svg";
-import locationGradient from "../../../assets/icons/locationGradient.svg";
-import productInfoMedia2 from "../../../assets/images/products/productInfoMedia2.svg";
 // ! MATERIAL IMPORTS
-import {
-  Box,
-  Tab,
-  Tabs,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Slide,
-  Popover,
-  Chip,
-  DialogTitle,
-  Rating,
-  TextareaAutosize,
-  FormControl,
-  OutlinedInput,
-  MenuItem,
-  Select,
-  FormControlLabel,
-  Checkbox,
-  Tooltip,
-} from "@mui/material";
+import { Popover } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
-import ChatIcon from "@mui/icons-material/Chat";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import BlockIcon from "@mui/icons-material/Block";
-import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CloseIcon from "@mui/icons-material/Close";
-import ReceiptIcon from "@mui/icons-material/Receipt";
-import PrintIcon from "@mui/icons-material/Print";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
 const AbandonedCartDetails = () => {

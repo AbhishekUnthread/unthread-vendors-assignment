@@ -1,7 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
-import UploadFile from "../UploadFile/UploadFile";
+import UploadFile from "../../components/UploadFile/UploadFile";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../assets/images/products/indiaFlag.svg";
 import product2 from "../../assets/images/products/product2.jpg";
@@ -11,42 +10,19 @@ import locationGradient from "../../assets/icons/locationGradient.svg";
 import productInfoMedia2 from "../../assets/images/products/productInfoMedia2.svg";
 // ! MATERIAL IMPORTS
 import {
-  Box,
-  Tab,
-  Tabs,
   Dialog,
   DialogActions,
   DialogContent,
   Slide,
-  Popover,
-  Chip,
   DialogTitle,
   Rating,
-  TextareaAutosize,
-  FormControl,
-  OutlinedInput,
-  MenuItem,
-  Select,
-  FormControlLabel,
-  Checkbox,
   Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
-import ChatIcon from "@mui/icons-material/Chat";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import BlockIcon from "@mui/icons-material/Block";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CloseIcon from "@mui/icons-material/Close";
-import ReceiptIcon from "@mui/icons-material/Receipt";
-import PrintIcon from "@mui/icons-material/Print";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
