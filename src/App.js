@@ -78,6 +78,7 @@ import CreatePreOrder from "./pages/Functionality/CreatePreOrder/CreatePreOrder"
 import CreateLabels from "./pages/Functionality/CreateLabels/CreateLabels";
 import ReturnRefunds from "./pages/Orders/ReturnRefunds/ReturnRefunds";
 import CreateReturnRefund from "./pages/Orders/CreateReturnRefund/CreateReturnRefund";
+import ReturnRequestDetails from "./pages/Orders/ReturnRequestDetails/ReturnRequestDetails";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -368,6 +369,10 @@ function App(props) {
                 <Route
                   path="returnRefunds/create"
                   element={<CreateReturnRefund />}
+                />
+                <Route
+                  path="returnRefunds/details"
+                  element={<ReturnRequestDetails />}
                 />
               </Route>
               {/* FUNCTIONALITY ROUTES */}

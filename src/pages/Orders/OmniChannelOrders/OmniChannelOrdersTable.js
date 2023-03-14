@@ -12,6 +12,7 @@ import ringSmall from "../../../assets/images/ringSmall.svg";
 import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
+import ordersIcon from "../../../assets/icons/ordersIcon.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -32,6 +33,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import PrintIcon from "@mui/icons-material/Print";
+import FacebookIcon from "@mui/icons-material/Facebook";
 
 // ? TABLE STARTS HERE
 function createData(
@@ -96,16 +98,16 @@ const rows = [
 
 const headCells = [
   {
+    id: "merchant",
+    numeric: false,
+    disablePadding: false,
+    label: "",
+  },
+  {
     id: "channelId",
     numeric: false,
     disablePadding: true,
     label: "Channel ID",
-  },
-  {
-    id: "actions",
-    numeric: false,
-    disablePadding: false,
-    label: "",
   },
   {
     id: "orderInfo",
@@ -412,6 +414,19 @@ const OmniChannelOrdersTable = () => {
                         }}
                       />
                     </TableCell>
+                    <TableCell padding="none" width="50">
+                      <div className="d-flex align-items-center justify-content-center me-3">
+                        <Tooltip title="Facebook" placement="top">
+                          <FacebookIcon
+                            sx={{
+                              fontSize: 28,
+                              marginRight: 1,
+                              color: "#5c6d8e",
+                            }}
+                          />
+                        </Tooltip>
+                      </div>
+                    </TableCell>
                     <TableCell
                       component="th"
                       id={labelId}
@@ -432,21 +447,6 @@ const OmniChannelOrdersTable = () => {
                             {row.time}
                           </small>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell padding="none" width={50}>
-                      <div className="d-flex align-items-center justify-content-center me-3">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <VisibilityOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
                       </div>
                     </TableCell>
                     <TableCell>

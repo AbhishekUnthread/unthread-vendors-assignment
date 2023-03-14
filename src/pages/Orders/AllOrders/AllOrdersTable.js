@@ -407,8 +407,8 @@ const AllOrdersTable = () => {
                         }}
                       />
                     </TableCell>
-                    <TableCell padding="none">
-                      <div className="d-flex align-items-center justify-content-center me-2 pe-2">
+                    <TableCell padding="none" width="50">
+                      <div className="d-flex align-items-center justify-content-center me-3">
                         <Tooltip title="Website" placement="top">
                           <img
                             src={ordersIcon}
@@ -434,7 +434,7 @@ const AllOrdersTable = () => {
                           >
                             <p className="text-blue-2 fw-600">{row.oId}</p>
                             {row.oId === "#12512" && (
-                              <p className="text-blue-gradient">
+                              <p className="text-yellow-2 fw-600">
                                 &nbsp;• Pre Order
                               </p>
                             )}

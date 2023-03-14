@@ -7,14 +7,17 @@ export default function AppCountrySelect() {
   return (
     <Autocomplete
       id="country-select-demo"
-      sx={{ width: "auto" }}
+      sx={{ width: 320 }}
       options={countries}
       autoHighlight
       size="small"
       componentsProps={{
         paper: {
           sx: {
-            width: 300,
+            width: 320,
+            border: "2px solid #38395c",
+            marginLeft: "-7px",
+            marginTop: "-1px",
           },
         },
       }}

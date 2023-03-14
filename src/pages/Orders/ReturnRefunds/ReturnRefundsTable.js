@@ -416,7 +416,7 @@ const ReturnRefundsTable = () => {
                       <div className="d-flex align-items-center py-2">
                         <div>
                           <Link
-                            to="/orders/returnRefunds/create"
+                            to="/orders/returnRefunds/details"
                             className=" text-decoration-none d-flex"
                           >
                             <p className="text-blue-2 fw-600 text-decoration-underline">
@@ -622,7 +622,7 @@ const ReturnRefundsTable = () => {
                                 }}
                               />
                               <small className="c-pointer font2 d-block ms-2">
-                                Approve Reviews
+                                Approve Request
                               </small>
                             </div>
                             <div className="d-flex p-2 rounded-3 text-red-5 align-items-center hover-back">
@@ -634,7 +634,7 @@ const ReturnRefundsTable = () => {
                                 }}
                               />
                               <small className="c-pointer font2 d-block ms-2">
-                                Disapprove Reviews
+                                Reject Request
                               </small>
                             </div>
                           </div>

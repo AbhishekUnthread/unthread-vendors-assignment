@@ -2,8 +2,9 @@ import React from "react";
 // ! IMAGES IMPORTS
 import product2 from "../../assets/images/products/product2.jpg";
 import productIcon from "../../assets/icons/productIcon.svg";
+import jwlPackaging from "../../assets/icons/jwlPackaging.svg";
 // ! MATERIAL IMPORTS
-import { Popover, Chip, TextareaAutosize } from "@mui/material";
+import { Popover, Chip, TextareaAutosize, Tooltip } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
@@ -11,6 +12,9 @@ import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import PrintIcon from "@mui/icons-material/Print";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import LaunchIcon from "@mui/icons-material/Launch";
 
 const OrderCartDetails = ({
   showEditButton,
@@ -20,6 +24,9 @@ const OrderCartDetails = ({
   showActionButton,
   showFulfillButton,
   showQCButton,
+  showTrackingBox,
+  showReturnButton,
+  showExchangeButton,
 }) => {
   // * PRODUCT DETAIL POPOVERS STARTS
   const [anchorProductDetailEl, setAnchorProductDetailEl] =
@@ -91,7 +98,7 @@ const OrderCartDetails = ({
   // // ? VIEW QC DIALOG ENDS HERE
 
   return (
-    <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
+    <div className="bg-black-15 border-grey-5 rounded-8 p-3 row mt-4">
       <div className="d-flex justify-content-between align-items-center col-12 px-0">
         <div className="d-flex align-items-center">
           <img src={productIcon} alt="userIcon" width={16} />
@@ -113,18 +120,53 @@ const OrderCartDetails = ({
       <div className="d-flex justify-content-center col-12 px-0">
         <hr className="hr-grey-6 w-100 mt-3 mb-0" />
       </div>
-      <div className="bg-black-21 rounded-8 p-3 col-12 mt-4">
-        <div className="d-flex align-items-center justify-content-between ">
-          <div className="d-flex align-items-center">
-            <p className="text-grey-6 w-auto pe-0">Location:</p>
-            <Chip
-              label="Karol Bagh, Delhi • 1.1km"
-              size="small"
-              className="px-1 w-auto ms-2"
-              variant="outlined"
-            />
-          </div>
-          {/*{showQCButton && <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+
+      {[...Array(2)].map((elementInArray, index) => (
+        <div className="bg-black-21 rounded-8 p-3 col-12 mt-4">
+          {showTrackingBox && (
+            <div className="d-flex rounded-8 bg-black-18 mb-3 justify-content-between p-3">
+              <div className="d-flex align-items-center">
+                <LocalShippingOutlinedIcon
+                  style={{ fontSize: 20, color: "#c8d8ff" }}
+                />
+                <p className="text-lightBlue ms-1 me-2">
+                  Tracking No:&nbsp;1234567890123456789
+                </p>
+                <Tooltip title="Copy" placement="top">
+                  <ContentCopyIcon
+                    sx={{ fontSize: 12, color: "#c8d8ff" }}
+                    className="c-pointer"
+                  />
+                </Tooltip>
+                <Tooltip title="Launch" placement="top">
+                  <LaunchIcon
+                    sx={{ fontSize: 20, color: "#6e8dd7", marginLeft: 1 }}
+                    className="c-pointer"
+                  />
+                </Tooltip>
+              </div>
+              <small className="text-grey-6 text-end">
+                <span className="text-yellow-2 font4">•</span> Product is at
+                warehouse
+              </small>
+            </div>
+          )}
+          <div className="d-flex align-items-center justify-content-between ">
+            <div className="d-flex align-items-center">
+              <p className="text-grey-6 w-auto pe-0">Location:</p>
+              <Chip
+                label="Karol Bagh, Delhi • 1.1km"
+                size="small"
+                className="px-1 w-auto ms-2"
+                variant="outlined"
+              />
+              <Chip
+                label="Made to Order"
+                size="small"
+                className="px-1 w-auto ms-2"
+              />
+            </div>
+            {/*{showQCButton && <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
             <img src={video} alt="video" width={16} className="me-2" />
             <small
               className="text-blue-gradient d-block"
@@ -133,244 +175,115 @@ const OrderCartDetails = ({
               View QC
             </small>
           </div>} */}
-        </div>
-        <div className="row justify-content-between">
-          {showBasicDetail && (
-            <div className="col-3 mt-3">
-              <p className="fw-500 text-blue-2 text-decoration-underline">
-                #12345-A
-              </p>
-              <small className="text-grey-6 mt-2 d-block">
-                Delivery Date:&nbsp;
-                <span className="text-lightBlue">20th May, 2022</span>
-              </small>
-              <div className="d-flex mt-3">
-                <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer w-auto">
-                  <small className="text-black fw-400">Order Confirm</small>
-                </div>
-              </div>
-            </div>
-          )}
-          <div className="col-5 mt-3">
-            <div className="d-flex align-items-start">
-              <img
-                src={product2}
-                alt="product2"
-                className="rounded-8"
-                width={80}
-                height="auto"
-              />
-              <div className="d-flex flex-column ms-3">
-                <p className="text-lightBlue fw-500">The Fringe Diamond Ring</p>
-                <small className="text-grey-6 mt-1 d-block">
-                  SKU:&nbsp;TFDR012345&nbsp;&nbsp;|&nbsp;&nbsp;Brand:JWLellers
+          </div>
+          <div className="row justify-content-between">
+            {showBasicDetail && (
+              <div className="col-3 mt-3">
+                <p className="fw-500 text-blue-2 text-decoration-underline">
+                  #12345-A
+                </p>
+                <small className="text-grey-6 mt-2 d-block">
+                  Delivery Date:&nbsp;
+                  <span className="text-lightBlue">20th May, 2022</span>
                 </small>
-                <div className="d-flex mt-2 align-items-center mt-2">
-                  <small
-                    className="text-blue-1 d-block me-2 c-pointer"
-                    aria-describedby={idProductDetail}
-                    variant="contained"
-                    onClick={handleProductDetailClick}
-                  >
-                    7-Gold-18KT-Rose-IJSI&nbsp;•&nbsp;3.65g
-                  </small>
-                  <KeyboardArrowDownIcon
-                    sx={{
-                      fontSize: 18,
-                      marginLeft: 1,
-                      color: "#c8d8ff",
-                      cursor: "pointer",
-                    }}
-                    aria-describedby={idProductDetail}
-                    variant="contained"
-                    onClick={handleProductDetailClick}
-                  />
+                <div className="d-flex mt-3">
+                  <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer w-auto">
+                    <small className="text-black fw-400">Order Confirm</small>
+                  </div>
                 </div>
-              </div>
-            </div>
-            {showItemAvailable && (
-              <div className="d-flex ps-5">
-                <small className="text-grey-6 mt-5 mb-2 ps-4">
-                  Item available for Return & Exchange:&nbsp;
-                  <span className="text-lightBlue">15 days</span>
-                </small>
               </div>
             )}
-          </div>
-          <div className="col-4 d-flex flex-column justify-content-between mt-3 align-items-end">
-            <div className="d-flex">
-              <small className="text-lightBlue me-3">Calculated Price:</small>
-              <h6
-                className="text-lightBlue me-2 fw-500 c-pointer"
-                aria-describedby={idPrice}
-                variant="contained"
-                onClick={handlePriceClick}
-              >
-                ₹ 46,350
-              </h6>
-              <KeyboardArrowDownIcon
-                sx={{
-                  fontSize: 18,
-                  marginLeft: 1,
-                  color: "#c8d8ff",
-                  cursor: "pointer",
-                }}
-                aria-describedby={idPrice}
-                variant="contained"
-                onClick={handlePriceClick}
-              />
+            <div className="col-5 mt-3">
+              <div className="d-flex align-items-start">
+                <img
+                  src={product2}
+                  alt="product2"
+                  className="rounded-8"
+                  width={80}
+                  height="auto"
+                />
+                <div className="d-flex flex-column ms-3">
+                  <p className="text-lightBlue fw-500">
+                    The Fringe Diamond Ring
+                  </p>
+                  <small className="text-grey-6 mt-1 d-block">
+                    SKU:&nbsp;TFDR012345&nbsp;&nbsp;|&nbsp;&nbsp;Brand:JWLellers
+                  </small>
+                  <div className="d-flex mt-2 align-items-center mt-2">
+                    <small
+                      className="text-blue-1 d-block me-2 c-pointer"
+                      aria-describedby={idProductDetail}
+                      variant="contained"
+                      onClick={handleProductDetailClick}
+                    >
+                      7-Gold-18KT-Rose-IJSI&nbsp;•&nbsp;3.65g
+                    </small>
+                    <KeyboardArrowDownIcon
+                      sx={{
+                        fontSize: 18,
+                        marginLeft: 1,
+                        color: "#c8d8ff",
+                        cursor: "pointer",
+                      }}
+                      aria-describedby={idProductDetail}
+                      variant="contained"
+                      onClick={handleProductDetailClick}
+                    />
+                  </div>
+                </div>
+              </div>
+              {showItemAvailable && (
+                <div className="d-flex ps-5">
+                  <small className="text-grey-6 mt-5 mb-2 ps-4">
+                    Item available for Return & Exchange:&nbsp;
+                    <span className="text-lightBlue">15 days</span>
+                  </small>
+                </div>
+              )}
             </div>
-            {showActionButton && (
-              <button
-                className="button-lightBlue-outline py-2 px-4"
-                aria-describedby={idAction}
-                variant="contained"
-                onClick={handleActionClick}
-              >
-                <small>Action</small>
+            <div className="col-4 d-flex flex-column justify-content-between mt-3 align-items-end">
+              <div className="d-flex">
+                <small className="text-lightBlue me-3">Calculated Price:</small>
+                <h6
+                  className="text-lightBlue me-2 fw-500 c-pointer"
+                  aria-describedby={idPrice}
+                  variant="contained"
+                  onClick={handlePriceClick}
+                >
+                  ₹ 46,350
+                </h6>
                 <KeyboardArrowDownIcon
                   sx={{
                     fontSize: 18,
                     marginLeft: 1,
+                    color: "#c8d8ff",
+                    cursor: "pointer",
                   }}
+                  aria-describedby={idPrice}
+                  variant="contained"
+                  onClick={handlePriceClick}
                 />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="bg-black-21 rounded-8 p-3 col-12 mt-3">
-        <div className="d-flex align-items-center justify-content-between ">
-          <div className="d-flex align-items-center">
-            <p className="text-grey-6 w-auto pe-0">Location:</p>
-            <Chip
-              label="Mahalaxmi, Mumbai • 2.1km"
-              size="small"
-              className="px-1 w-auto ms-2"
-              variant="outlined"
-            />
-            <Chip
-              label="Made to Order"
-              size="small"
-              className="px-1 w-auto ms-2"
-            />
-          </div>
-          {/* {showQCButton && (
-            <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
-              <img src={video} alt="video" width={16} className="me-2" />
-              <small
-                className="text-blue-gradient d-block"
-                onClick={handleOpenQc}
-              >
-                View QC
-              </small>
-            </div>
-          )} */}
-        </div>
-        <div className="row justify-content-between">
-          {showBasicDetail && (
-            <div className="col-3 mt-3">
-              <p className="fw-500 text-blue-2 text-decoration-underline">
-                #12345-A
-              </p>
-              <small className="text-grey-6 mt-2 d-block">
-                Delivery Date:&nbsp;
-                <span className="text-lightBlue">20th May, 2022</span>
-              </small>
-              <div className="d-flex mt-3">
-                <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer w-auto">
-                  <small className="text-black fw-400">Order Confirm</small>
-                </div>
               </div>
-            </div>
-          )}
-          <div className="col-5 mt-3">
-            <div className="d-flex align-items-start">
-              <img
-                src={product2}
-                alt="product2"
-                className="rounded-8"
-                width={80}
-                height="auto"
-              />
-              <div className="d-flex flex-column ms-3">
-                <p className="text-lightBlue fw-500">The Fringe Diamond Ring</p>
-                <small className="text-grey-6 mt-1 d-block">
-                  SKU:&nbsp;TFDR012345&nbsp;&nbsp;|&nbsp;&nbsp;Brand:JWLellers
-                </small>
-                <div className="d-flex mt-2 align-items-center">
-                  <small
-                    className="text-blue-1 d-block me-2 c-pointer"
-                    aria-describedby={idProductDetail}
-                    variant="contained"
-                    onClick={handleProductDetailClick}
-                  >
-                    7-Gold-18KT-Rose-IJSI&nbsp;•&nbsp;3.65g
-                  </small>
+              {showActionButton && (
+                <button
+                  className="button-lightBlue-outline py-2 px-4"
+                  aria-describedby={idAction}
+                  variant="contained"
+                  onClick={handleActionClick}
+                >
+                  <small>Action</small>
                   <KeyboardArrowDownIcon
                     sx={{
                       fontSize: 18,
                       marginLeft: 1,
-                      color: "#c8d8ff",
-                      cursor: "pointer",
                     }}
-                    aria-describedby={idProductDetail}
-                    variant="contained"
-                    onClick={handleProductDetailClick}
                   />
-                </div>
-              </div>
+                </button>
+              )}
             </div>
-            {showItemAvailable && (
-              <div className="d-flex ps-5">
-                <small className="text-grey-6 mt-5 mb-2 ps-4">
-                  Item available for Return & Exchange:&nbsp;
-                  <span className="text-lightBlue">15 days</span>
-                </small>
-              </div>
-            )}
-          </div>
-          <div className="col-4 d-flex flex-column justify-content-between mt-3 align-items-end">
-            <div className="d-flex">
-              <small className="text-lightBlue me-3">Calculated Price:</small>
-              <h6
-                className="text-lightBlue me-2 fw-500 c-pointer"
-                aria-describedby={idPrice}
-                variant="contained"
-                onClick={handlePriceClick}
-              >
-                ₹ 46,350
-              </h6>
-              <KeyboardArrowDownIcon
-                sx={{
-                  fontSize: 18,
-                  marginLeft: 1,
-                  color: "#c8d8ff",
-                  cursor: "pointer",
-                }}
-                aria-describedby={idPrice}
-                variant="contained"
-                onClick={handlePriceClick}
-              />
-            </div>
-            <button
-              className="button-lightBlue-outline py-2 px-4"
-              aria-describedby={idAction}
-              variant="contained"
-              onClick={handleActionClick}
-            >
-              <small>Action</small>
-              <KeyboardArrowDownIcon
-                sx={{
-                  fontSize: 18,
-                  marginLeft: 1,
-                }}
-              />
-            </button>
           </div>
         </div>
-      </div>
-
+      ))}
       {/* <Dialog
         open={openQc}
         TransitionComponent={Transition}
@@ -771,7 +684,12 @@ const OrderCartDetails = ({
         onClose={handleGiftClose}
       >
         <div className="d-flex py-3 px-2">
-          <img src={product2} alt="product2" className="rounded-8" width={80} />
+          <img
+            src={jwlPackaging}
+            alt="jwlPackaging"
+            className="rounded-8"
+            width={80}
+          />
           <div className="d-flex flex-column justify-content-between ms-3">
             <div>
               <p className="fw-500 text-lightBlue">JWL Exclusive Packaging</p>
@@ -784,12 +702,26 @@ const OrderCartDetails = ({
         </div>
       </Popover>
 
-      {showFulfillButton && (
+      {(showFulfillButton || showReturnButton || showExchangeButton) && (
         <React.Fragment>
           <div className="d-flex justify-content-center col-12 px-0">
             <hr className="hr-grey-6 w-100 my-3" />
           </div>
-          <div className="col-12 px-0 ">
+          <div className="col-12 px-0 d-flex justify-content-between">
+            {(showExchangeButton || showReturnButton) && (
+              <div className="d-flex">
+                {showReturnButton && (
+                  <button className="button-lightBlue-outline py-2 px-4 w-auto me-3">
+                    <p>Return</p>
+                  </button>
+                )}
+                {showExchangeButton && (
+                  <button className="button-lightBlue-outline py-2 px-4 w-auto">
+                    <p>Exchange</p>
+                  </button>
+                )}
+              </div>
+            )}
             <button className="button-gradient ms-auto py-2 px-4 w-auto">
               <p>FulFill Item</p>
             </button>

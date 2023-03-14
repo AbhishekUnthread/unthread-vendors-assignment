@@ -19,6 +19,7 @@ import OrderLocationFilter from "../OrderLocationFilter";
 import orders from "../../../assets/icons/sidenav/orders.svg";
 // ! MATERIAL IMPORTS
 import { Box, Paper, Tab, Tabs } from "@mui/material";
+import OrderChannelFilter from "../OrderChannelFilter";
 // ! MATERIAL ICONS IMPORTS
 
 const OmniChannelOrders = () => {
@@ -74,7 +75,7 @@ const OmniChannelOrders = () => {
               <div className="d-flex product-button__box">
                 <OrderLocationFilter />
                 <OrderStatusFilter />
-                <OrderTagsFilter />
+                <OrderChannelFilter />
                 <FilterOrders buttonName={"More Filters"} />
               </div>
               <OrderSortFilter />

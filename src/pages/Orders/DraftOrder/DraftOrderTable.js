@@ -47,7 +47,7 @@ function createData(oId, time, userName, location, items, total, status) {
 
 const rows = [
   createData(
-    "#12345",
+    "#D1-1234",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
@@ -56,7 +56,7 @@ const rows = [
     "Complete"
   ),
   createData(
-    "#12512",
+    "#D2-1234",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
@@ -65,7 +65,7 @@ const rows = [
     "Complete"
   ),
   createData(
-    "#13444",
+    "#D3-1234",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
@@ -390,11 +390,6 @@ const DraftOrderTable = () => {
                             <p className="text-blue-2 fw-600 text-decoration-underline">
                               {row.oId}
                             </p>
-                            {row.oId === "#12512" && (
-                              <p className="text-blue-gradient">
-                                &nbsp;• Pre Order
-                              </p>
-                            )}
                           </Link>
                           <small className="mt-2 text-lightBlue">
                             {row.time}
@@ -523,7 +518,7 @@ const DraftOrderTable = () => {
                     <TableCell>
                       <div className="d-flex align-items-center">
                         <p
-                          className="text-blue-2 text-decoration-underline c-pointer fw-500"
+                          className="text-blue-2 c-pointer fw-500"
                           aria-describedby={idItem}
                           variant="contained"
                           onClick={handleItemClick}

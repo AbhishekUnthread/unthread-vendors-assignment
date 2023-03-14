@@ -9,6 +9,7 @@ import OrderTimelines from "../OrderTimelines";
 import OrderPayments from "../OrderPayments";
 import OrderActions from "../OrderActions";
 import OrderMoreActionsButton from "../OrderMoreActionsButton";
+import OrderReturnBox from "../OrderReturnBox";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
@@ -61,7 +62,7 @@ const OrderDetails = () => {
         </div>
       </div>
       <div className="row">
-        <div className="col-lg-9 mt-4">
+        <div className="col-lg-9">
           <OrderCartDetails
             showCartButton={false}
             showEditButton={true}
@@ -70,6 +71,16 @@ const OrderDetails = () => {
             showActionButton={true}
             showFulfillButton={true}
             showQCButton={true}
+            showTrackingBox={true}
+            showReturnButton={true}
+            showExchangeButton={true}
+          />
+          <OrderReturnBox
+            showBasicDetail={true}
+            showItemAvailable={true}
+            showActionButton={true}
+            showQCButton={true}
+            showProductReceived={true}
           />
           <OrderPayments
             showMarkAsPaidButton={false}

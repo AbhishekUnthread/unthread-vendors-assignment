@@ -475,9 +475,7 @@ const AbandonedCartTable = () => {
                           className="c-pointer"
                         >
                           <div className=" text-decoration-none">
-                            <p className="text-lightBlue rounded-circle fw-600">
-                              {row.userName}
-                            </p>
+                            <p className="text-blue-2 fw-600">{row.userName}</p>
                           </div>
 
                           <div className="d-flex align-items-center mt-2">
@@ -577,9 +575,9 @@ const AbandonedCartTable = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="d-flex align-items-center c-pointer">
+                      <div className="d-flex align-items-center c-pointer fw-500">
                         <p
-                          className="text-lightBlue"
+                          className="text-blue-2"
                           aria-describedby={idItem}
                           variant="contained"
                           onClick={handleItemClick}

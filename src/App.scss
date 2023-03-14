@@ -211,6 +211,9 @@
 .text-lightBlue {
   color: $lightBlue;
 }
+.text-yellow-2 {
+  color: $yellow2;
+}
 
 .text-blue-gradient {
   background: linear-gradient(303.01deg, #5961f8 -4.4%, #f2d9f7 111.29%);
@@ -564,6 +567,9 @@ textarea,
   border-radius: 4px;
 }
 
+.font4 {
+  font-size: $font4;
+}
 .font2 {
   font-size: $font2;
 }

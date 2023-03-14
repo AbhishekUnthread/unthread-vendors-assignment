@@ -354,7 +354,10 @@ const FilterOrders = ({ buttonName }) => {
                   label="3 days ago"
                 />
               </FormGroup>
-              <small className="text-grey-6 mt-2 c-pointer">Clear All</small>
+              <small className="text-blue-gradient ps-3 ms-2 pt-2 fw-500 c-pointer">
+                Custom Date
+              </small>
+              {/* <small className="text-grey-6 mt-2 c-pointer">Clear All</small> */}
             </AccordionDetails>
           </Accordion>
           <Accordion
@@ -406,7 +409,10 @@ const FilterOrders = ({ buttonName }) => {
                   label="3 days ago"
                 />
               </FormGroup>
-              <small className="text-grey-6 mt-2 c-pointer">Clear All</small>
+              <small className="text-blue-gradient ps-3 ms-2 pt-2 fw-500 c-pointer">
+                Custom Date
+              </small>
+              {/* <small className="text-grey-6 mt-2 c-pointer">Clear All</small> */}
             </AccordionDetails>
           </Accordion>
           <Accordion

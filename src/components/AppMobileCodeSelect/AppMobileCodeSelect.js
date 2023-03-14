@@ -17,7 +17,7 @@ export default function AppMobileCodeSelect() {
       componentsProps={{
         paper: {
           sx: {
-            width: 300,
+            width: 320,
             border: "2px solid #38395c",
             marginLeft: "-7px",
             marginTop: "-1px",

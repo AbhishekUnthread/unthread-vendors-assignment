@@ -47,7 +47,7 @@ const AbandonedCartDetails = () => {
             />
           </Link>
           <div>
-            <h5 className="page-heading ms-2 ps-1">#12345</h5>
+            <h5 className="page-heading ms-2 ps-1">#CHKT12345</h5>
             <div className="d-flex ms-2 ps-1 mt-1">
               <small className="text-lightBlue me-2">
                 May 15, 2022 at 12:00 am
