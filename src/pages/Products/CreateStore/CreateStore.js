@@ -181,7 +181,7 @@ const CreateStore = () => {
               </FormControl>
             </div>
           </div>
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-3 row attributes">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4 row attributes">
             <div className="d-flex col-12 px-0 justify-content-between">
               <div className="d-flex align-items-center">
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
@@ -236,7 +236,7 @@ const CreateStore = () => {
               </div>
             </div>
           </div>
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-3 row attributes">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4 row attributes">
             <div className="d-flex col-12 px-0 justify-content-between">
               <div className="d-flex align-items-center">
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">

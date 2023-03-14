@@ -10,14 +10,31 @@ import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 // ! IMAGES IMPORTS
 import products from "../../../assets/icons/sidenav/products.svg";
+import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
+import allFlag from "../../../assets/images/products/allFlag.svg";
+import usaFlag from "../../../assets/images/products/usaFlag.svg";
+import ukFlag from "../../../assets/images/products/ukFlag.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
-import { Box, Paper, Tab, Tabs } from "@mui/material";
+import { Box, Paper, Tab, Tabs, Popover } from "@mui/material";
 
 const ProductInventory = () => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  // * FLAG POPOVERS STARTS
+  const [anchorFlagEl, setAnchorFlagEl] = React.useState(null);
+  const handleFlagClick = (event) => {
+    setAnchorFlagEl(event.currentTarget);
+  };
+  const handleFlagClose = () => {
+    setAnchorFlagEl(null);
+  };
+  const openFlag = Boolean(anchorFlagEl);
+  const idFlag = openFlag ? "simple-popover" : undefined;
+  // * FLAG POPOVERS ENDS
 
   return (
     <div className="container-fluid page">
@@ -63,6 +80,45 @@ const ProductInventory = () => {
               <Tab label="USA" className="tabs-head" />
               <Tab label="UK" className="tabs-head" />
             </Tabs>
+            <div
+              className="tabs-country c-pointer"
+              aria-describedby={idFlag}
+              variant="contained"
+              onClick={handleFlagClick}
+            >
+              <img src={indiaFlag} alt="indiaFlag" height={15} />
+              <p className="mx-2 text-lightBlue">India</p>
+              <img src={arrowDown} alt="arrowDown" />
+            </div>
+            <Popover
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+              id={idFlag}
+              open={openFlag}
+              anchorEl={anchorFlagEl}
+              onClose={handleFlagClose}
+            >
+              <div className="px-1 py-2">
+                <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+                  <img src={allFlag} alt="allFlag" height={20} />
+                  <p className="ms-2 text-lightBlue">All</p>
+                </div>
+                <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+                  <img src={ukFlag} alt="usaFlag" height={15} />
+                  <p className="ms-2 text-lightBlue">UK</p>
+                </div>
+                <div className="d-flex align-items-center c-pointer hover-back px-3 py-1 my-1 rounded-3">
+                  <img src={usaFlag} alt="usaFlag" height={15} />
+                  <p className="ms-2 text-lightBlue">USA</p>
+                </div>
+              </div>
+            </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />

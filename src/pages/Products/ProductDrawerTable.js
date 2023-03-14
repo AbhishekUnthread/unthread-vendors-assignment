@@ -38,16 +38,41 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 // ? TABLE STARTS HERE
-function createData(vId, variant, variantCode) {
-  return { vId, variant, variantCode };
+function createData(vId, variant, price, variantCode) {
+  return { vId, variant, price, variantCode };
 }
 
 const rows = [
-  createData(1, "12 • 14KT • Rose • Gold • IJ-SI", "Jewel Code: 123456789"),
-  createData(2, "12 • 14KT • Rose • Gold • IJ-SI", "Jewel Code: 123456789"),
-  createData(3, "12 • 14KT • Rose • Gold • IJ-SI", "Jewel Code: 123456789"),
-  createData(4, "12 • 14KT • Rose • Gold • IJ-SI", "Jewel Code: 123456789"),
-  createData(5, "12 • 14KT • Rose • Gold • IJ-SI", "Jewel Code: 123456789"),
+  createData(
+    1,
+    "12 • 14KT • Rose • Gold • IJ-SI",
+    "50,000",
+    "Jewel Code: 123456789"
+  ),
+  createData(
+    2,
+    "12 • 14KT • Rose • Gold • IJ-SI",
+    "50,000",
+    "Jewel Code: 123456789"
+  ),
+  createData(
+    3,
+    "12 • 14KT • Rose • Gold • IJ-SI",
+    "50,000",
+    "Jewel Code: 123456789"
+  ),
+  createData(
+    4,
+    "12 • 14KT • Rose • Gold • IJ-SI",
+    "50,000",
+    "Jewel Code: 123456789"
+  ),
+  createData(
+    5,
+    "12 • 14KT • Rose • Gold • IJ-SI",
+    "50,000",
+    "Jewel Code: 123456789"
+  ),
 ];
 
 const headCells = [
@@ -56,6 +81,12 @@ const headCells = [
     numeric: false,
     disablePadding: true,
     label: "Variant",
+  },
+  {
+    id: "price",
+    numeric: false,
+    disablePadding: false,
+    label: "Price",
   },
   {
     id: "addQuantity",
@@ -480,6 +511,20 @@ const ProductDrawerTable = () => {
                         <p className="text-lightBlue">{row.variant}</p>
                         <p className="text-grey-6 mt-1">{row.variantCode}</p>
                       </div>
+                    </TableCell>
+                    <TableCell style={{ width: 160 }}>
+                      <FormControl className="w-100">
+                        <OutlinedInput
+                          placeholder="Enter Price"
+                          size="small"
+                          defaultValue={row.price}
+                          startAdornment={
+                            <InputAdornment position="start">
+                              <p className="text-lightBlue">₹</p>
+                            </InputAdornment>
+                          }
+                        />
+                      </FormControl>
                     </TableCell>
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center py-2">
