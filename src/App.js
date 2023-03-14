@@ -76,6 +76,8 @@ import SizeChart from "./pages/Functionality/SizeChart/SizeChart";
 import CreateSizeChart from "./pages/Functionality/CreateSizeChart/CreateSizeChart";
 import CreatePreOrder from "./pages/Functionality/CreatePreOrder/CreatePreOrder";
 import CreateLabels from "./pages/Functionality/CreateLabels/CreateLabels";
+import ReturnRefunds from "./pages/Orders/ReturnRefunds/ReturnRefunds";
+import CreateReturnRefund from "./pages/Orders/CreateReturnRefund/CreateReturnRefund";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -362,6 +364,11 @@ function App(props) {
                   element={<AbandonedCartDetails />}
                 />
                 <Route path="orderDetails" element={<OrderDetails />} />
+                <Route path="returnRefunds" element={<ReturnRefunds />} />
+                <Route
+                  path="returnRefunds/create"
+                  element={<CreateReturnRefund />}
+                />
               </Route>
               {/* FUNCTIONALITY ROUTES */}
               <Route path="/functionality">

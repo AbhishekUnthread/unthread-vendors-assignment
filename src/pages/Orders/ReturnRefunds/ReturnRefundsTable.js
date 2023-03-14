@@ -13,6 +13,9 @@ import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import ordersIcon from "../../../assets/icons/ordersIcon.svg";
+import rupeeRounded from "../../../assets/icons/rupeeRounded.svg";
+import product2 from "../../../assets/images/products/product2.jpg";
+import verticalDots from "../../../assets/icons/verticalDots.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -33,86 +36,94 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import PrintIcon from "@mui/icons-material/Print";
+import BlockIcon from "@mui/icons-material/Block";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
 
 // ? TABLE STARTS HERE
 function createData(
   oId,
-  channelId,
+  rmaId,
   time,
   userName,
   location,
   items,
   total,
-  paymentStatus,
-  orderStatus
+  rmaStatus,
+  refundMethod
 ) {
   return {
     oId,
-    channelId,
+    rmaId,
     time,
     userName,
     location,
     items,
     total,
-    paymentStatus,
-    orderStatus,
+    rmaStatus,
+    refundMethod,
   };
 }
 
 const rows = [
   createData(
     "#12345",
-    "#INSTA1234",
+    "#RET12345",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
     "2 Items",
     "₹ 1,00,000",
-    "Paid",
-    "Order Confirm"
+    "Approved",
+    "Store Credit"
   ),
   createData(
     "#12512",
-    "#FB12345",
+    "#RET1234345",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
     "2 Items",
     "₹ 1,00,000",
-    "Paid",
-    "Order Confirm"
+    "Approved",
+    "Store Credit"
   ),
   createData(
     "#13444",
-    "#AMAZON1234",
+    "#RET2334",
     "Today at 09:23am",
     "Saniya Shaikh",
     "Delhi, India",
     "2 Items",
     "₹ 1,00,000",
-    "Paid",
-    "Order Confirm"
+    "Approved",
+    "Original Payment Mode"
   ),
 ];
 
 const headCells = [
   {
-    id: "channelId",
+    id: "image",
     numeric: false,
     disablePadding: true,
-    label: "Channel ID",
+    label: "IMG",
   },
   {
-    id: "actions",
+    id: "rmaId",
+    numeric: false,
+    disablePadding: true,
+    label: "RMA ID",
+  },
+  {
+    id: "orderId",
     numeric: false,
     disablePadding: false,
-    label: "",
+    label: "Order ID",
   },
   {
-    id: "orderInfo",
+    id: "refundMethod",
     numeric: false,
-    disablePadding: true,
-    label: "Order ID",
+    disablePadding: false,
+    label: "Refund Method",
   },
   {
     id: "userName",
@@ -121,35 +132,23 @@ const headCells = [
     label: "User",
   },
   {
-    id: "items",
+    id: "rmaStatus",
     numeric: false,
     disablePadding: false,
-    label: "Items",
+    label: "RMA Status",
   },
   {
-    id: "total",
+    id: "actions",
     numeric: false,
-    disablePadding: false,
-    label: "Total",
-  },
-  {
-    id: "paymentStatus",
-    numeric: false,
-    disablePadding: false,
-    label: "Payment Status",
-  },
-  {
-    id: "orderStatus",
-    numeric: false,
-    disablePadding: false,
-    label: "Order Status",
+    disablePadding: true,
+    label: "Action",
   },
 ];
 // ? TABLE ENDS HERE
 
-const OmniChannelOrdersTable = () => {
+const ReturnRefundsTable = () => {
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("userName");
+  const [orderBy, setOrderBy] = React.useState("rmaId");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -257,6 +256,7 @@ const OmniChannelOrdersTable = () => {
 
   // * ACTION POPOVERS STARTS
   const [anchorActionEl, setAnchorActionEl] = React.useState(null);
+
   const handleActionClick = (event) => {
     setAnchorActionEl(event.currentTarget);
   };
@@ -265,10 +265,9 @@ const OmniChannelOrdersTable = () => {
     setAnchorActionEl(null);
   };
 
-  const openAction = Boolean(anchorActionEl);
-  const idAction = openAction ? "simple-popover" : undefined;
+  const openActions = Boolean(anchorActionEl);
+  const idActions = openActions ? "simple-popover" : undefined;
   // * ACTION POPOVERS ENDS
-
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -420,34 +419,35 @@ const OmniChannelOrdersTable = () => {
                       padding="none"
                     >
                       <div className="d-flex align-items-center py-2">
+                        <img
+                          src={product2}
+                          alt="product2"
+                          className="me-2 rounded-8"
+                          height={45}
+                          width={45}
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="none"
+                    >
+                      <div className="d-flex align-items-center py-2">
                         <div>
                           <Link
-                            to="/orders/allOrders/details"
+                            to="/orders/returnRefunds/create"
                             className=" text-decoration-none d-flex"
                           >
                             <p className="text-blue-2 fw-600 text-decoration-underline">
-                              {row.channelId}
+                              {row.rmaId}
                             </p>
                           </Link>
                           <small className="mt-2 text-lightBlue">
                             {row.time}
                           </small>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell padding="none" width={50}>
-                      <div className="d-flex align-items-center justify-content-center me-3">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <VisibilityOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -460,25 +460,26 @@ const OmniChannelOrdersTable = () => {
                             <p className="text-blue-2 fw-600 text-decoration-underline">
                               {row.oId}
                             </p>
-                            {row.oId === "#12512" && (
-                              <p className="text-blue-gradient">
-                                &nbsp;• Pre Order
-                              </p>
-                            )}
                           </Link>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="d-flex align-items-center py-2">
-                        {/* <img
-                          src={user}
-                          alt="user"
-                          className="me-2 rounded-circle"
-                          height={45}
-                          width={45}
-                        /> */}
-
+                        <img
+                          src={rupeeRounded}
+                          alt="rupeeRounded"
+                          width={20}
+                          className="me-2"
+                        />
+                        <p className="text-lightBlue">
+                          <span className="text-grey-6">Refund to&nbsp;</span>
+                          {row.refundMethod}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="d-flex align-items-center py-2">
                         <div>
                           <p
                             className="text-blue-2 rounded-circle fw-600 c-pointer"
@@ -584,139 +585,81 @@ const OmniChannelOrdersTable = () => {
                         </Popover>
                       </div>
                     </TableCell>
-                    <TableCell width={120}>
+                    <TableCell width="180">
                       <div className="d-flex align-items-center">
-                        <p
-                          className="text-blue-2 c-pointer"
-                          aria-describedby={idItem}
-                          variant="contained"
-                          onClick={handleItemClick}
-                        >
-                          {row.items}
-                        </p>
+                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
+                          <small className="text-black fw-400">
+                            {row.rmaStatus}
+                          </small>
+                        </div>
                       </div>
+                    </TableCell>
 
-                      <Popover
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "left",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "left",
-                        }}
-                        id={idItem}
-                        open={openItem}
-                        anchorEl={anchorItemEl}
-                        onClose={handleItemClose}
-                      >
-                        <div className="py-2 px-2">
-                          <div className="d-flex align-items-center">
-                            <small className="text-blue-2 text-decoration-underline">
-                              #12345
-                            </small>
-                            <img
-                              src={ringSmall}
-                              alt="product"
-                              width={40}
-                              className="ms-4 me-2"
+                    <TableCell padding="none" width={60}>
+                      <div className="d-flex align-items-center justify-content-end me-3">
+                        {/* <Tooltip title="Edit" placement="top">
+                          <div className="table-edit-icon rounded-4 p-2">
+                            <VisibilityOutlinedIcon
+                              sx={{
+                                color: "#5c6d8e",
+                                fontSize: 18,
+                                cursor: "pointer",
+                              }}
                             />
-                            <div>
-                              <small className="text-lightBlue d-block">
-                                The Fringe Diamond Ring
-                              </small>
-                              <small className="text-grey-6 font0 d-block">
-                                ₹ 50,000
-                              </small>
-                            </div>
-                            <small className="text-grey-6 ms-4">
-                              SKU:&nbsp;
-                              <span className="text-blue-2">TFDR012345</span>
-                            </small>
-                            <button
-                              className="button-lightBlue-outline py-1 px-2 ms-3"
-                              aria-describedby={idAction}
-                              variant="contained"
-                              onClick={handleActionClick}
-                            >
-                              <small>Action</small>
-                              <KeyboardArrowDownIcon
+                          </div>
+                        </Tooltip> */}
+                        <img
+                          src={verticalDots}
+                          alt="verticalDots"
+                          className="c-pointer"
+                          aria-describedby={idActions}
+                          variant="contained"
+                          onClick={handleActionClick}
+                        />
+
+                        <Popover
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                          }}
+                          id={idActions}
+                          open={openActions}
+                          anchorEl={anchorActionEl}
+                          onClose={handleActionClose}
+                        >
+                          <div className="py-2 px-2">
+                            <small className="text-grey-7 px-2">ACTIONS</small>
+                            <hr className="hr-grey-6 my-2" />
+                            <div className="d-flex p-2 rounded-3 text-green-2 align-items-center hover-back">
+                              <TaskAltIcon
                                 sx={{
-                                  fontSize: 14,
-                                  marginLeft: 1,
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                  "& :hover": { color: "green" },
                                 }}
                               />
-                            </button>
-                            <Popover
-                              anchorOrigin={{
-                                vertical: "bottom",
-                                horizontal: "left",
-                              }}
-                              transformOrigin={{
-                                vertical: "top",
-                                horizontal: "left",
-                              }}
-                              id={idAction}
-                              open={openAction}
-                              anchorEl={anchorActionEl}
-                              onClose={handleActionClose}
-                            >
-                              <div className="py-2 px-1">
-                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                                  <CloseIcon
-                                    sx={{
-                                      fontSize: 14,
-                                      marginRight: 1,
-                                    }}
-                                  />
-                                  Cancel Order
-                                </small>
-                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                                  <ReceiptIcon
-                                    sx={{
-                                      fontSize: 14,
-                                      marginRight: 1,
-                                    }}
-                                  />
-                                  View Invoice
-                                </small>
-                                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                                  <PrintIcon
-                                    sx={{
-                                      fontSize: 14,
-                                      marginRight: 1,
-                                    }}
-                                  />
-                                  Print Packaging Slip
-                                </small>
-                              </div>
-                            </Popover>
+                              <small className="c-pointer font2 d-block ms-2">
+                                Approve Reviews
+                              </small>
+                            </div>
+                            <div className="d-flex p-2 rounded-3 text-red-5 align-items-center hover-back">
+                              <BlockIcon
+                                sx={{
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                  "& :hover": { color: "green" },
+                                }}
+                              />
+                              <small className="c-pointer font2 d-block ms-2">
+                                Disapprove Reviews
+                              </small>
+                            </div>
                           </div>
-                        </div>
-                      </Popover>
-                    </TableCell>
-                    <TableCell width={180}>
-                      <div className="d-flex flex-column">
-                        <p className="text-lightBlue">{row.total}</p>
-                        <p className="text-grey-6">via Debit Card</p>
-                      </div>
-                    </TableCell>
-                    <TableCell width="180">
-                      <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.paymentStatus}
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell width="180">
-                      <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.orderStatus}
-                          </small>
-                        </div>
+                        </Popover>
                       </div>
                     </TableCell>
                     {/* <TableCell style={{ width: 80, padding: 0 }}>
@@ -806,4 +749,4 @@ const OmniChannelOrdersTable = () => {
   );
 };
 
-export default OmniChannelOrdersTable;
+export default ReturnRefundsTable;

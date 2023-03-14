@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./AllOrders.scss";
+import "./ReturnRefunds.scss";
 // ! COMPONENT IMPORTS
-import AllOrdersTable from "./AllOrdersTable";
+import ReturnRefundsTable from "./ReturnRefundsTable";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
@@ -42,9 +42,41 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+// ! MATERIAL ICONS IMPORTS
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
-const AllOrders = () => {
+const locationData = [
+  { title: "Content 1", value: "content1" },
+  { title: "Content 2", value: "content2" },
+  { title: "Content 3", value: "content3" },
+  { title: "Content 4", value: "content4" },
+  { title: "Content 5", value: "content5" },
+  { title: "Content 6", value: "content6" },
+  { title: "Content 7", value: "content7" },
+  { title: "Content 8", value: "content8" },
+  { title: "Content 9", value: "content9" },
+  { title: "Content 10", value: "content10" },
+  { title: "Content 11", value: "content11" },
+  { title: "Content 12", value: "content12" },
+];
+
+const taggedWithData = [
+  { title: "Tag 1", value: "tag1" },
+  { title: "Tag 2", value: "tag2" },
+  { title: "Tag 3", value: "tag3" },
+  { title: "Tag 4", value: "tag4" },
+  { title: "Tag 5", value: "tag5" },
+  { title: "Tag 6", value: "tag6" },
+  { title: "Tag 7", value: "tag7" },
+  { title: "Tag 8", value: "tag8" },
+  { title: "Tag 9", value: "tag9" },
+  { title: "Tag 10", value: "tag10" },
+  { title: "Tag 11", value: "tag11" },
+  { title: "Tag 12", value: "tag12" },
+];
+
+const ReturnRefunds = () => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -64,6 +96,51 @@ const AllOrders = () => {
   const idFlag = openFlag ? "simple-popover" : undefined;
   // * FLAG POPOVERS ENDS
 
+  // * SORT POPOVERS STARTS
+  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+
+  const handleSortClick = (event) => {
+    setAnchorSortEl(event.currentTarget);
+  };
+
+  const handleSortClose = () => {
+    setAnchorSortEl(null);
+  };
+
+  const openSort = Boolean(anchorSortEl);
+  const idSort = openSort ? "simple-popover" : undefined;
+  // * SORT POPOVERS ENDS
+
+  // * LOCATION POPOVERS STARTS
+  const [anchorLocationEl, setAnchorLocationEl] = React.useState(null);
+
+  const handleLocationClick = (event) => {
+    setAnchorLocationEl(event.currentTarget);
+  };
+
+  const handleLocationClose = () => {
+    setAnchorLocationEl(null);
+  };
+
+  const openLocation = Boolean(anchorLocationEl);
+  const idLocation = openLocation ? "simple-popover" : undefined;
+  // * LOCATION POPOVERS ENDS
+
+  // * ORDER STATUS POPOVERS STARTS
+  const [anchorOrderStatusEl, setAnchorOrderStatusEl] = React.useState(null);
+
+  const handleOrderStatusClick = (event) => {
+    setAnchorOrderStatusEl(event.currentTarget);
+  };
+
+  const handleOrderStatusClose = () => {
+    setAnchorOrderStatusEl(null);
+  };
+
+  const openOrderStatus = Boolean(anchorOrderStatusEl);
+  const idOrderStatus = openOrderStatus ? "simple-popover" : undefined;
+  // * ORDER STATUS POPOVERS ENDS
+
   // * NO OF ORDERS POPOVERS STARTS
   const [anchorOrdersEl, setAnchorOrdersEl] = React.useState(null);
 
@@ -78,6 +155,21 @@ const AllOrders = () => {
   const openOrders = Boolean(anchorOrdersEl);
   const idOrders = openOrders ? "simple-popover" : undefined;
   // * NO OF ORDERS POPOVERS ENDS
+
+  // * STATUS POPOVERS STARTS
+  const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
+
+  const handleStatusClick = (event) => {
+    setAnchorStatusEl(event.currentTarget);
+  };
+
+  const handleStatusClose = () => {
+    setAnchorStatusEl(null);
+  };
+
+  const openStatus = Boolean(anchorStatusEl);
+  const idStatus = openStatus ? "simple-popover" : undefined;
+  // * STATUS POPOVERS ENDS
 
   // * DAYS POPOVERS STARTS
   const [anchorDaysEl, setDaysEl] = React.useState(null);
@@ -94,135 +186,41 @@ const AllOrders = () => {
   const idDays = openDays ? "simple-popover" : undefined;
   // * DAYS POPOVERS ENDS
 
+  // * TAGGED WITH POPOVERS STARTS
+  const [anchorTaggedWithEl, setAnchorTaggedWithEl] = React.useState(null);
+
+  const handleTaggedWithClick = (event) => {
+    setAnchorTaggedWithEl(event.currentTarget);
+  };
+
+  const handleTaggedWithClose = () => {
+    setAnchorTaggedWithEl(null);
+  };
+
+  const openTaggedWith = Boolean(anchorTaggedWithEl);
+  const idTaggedWith = openTaggedWith ? "simple-popover" : undefined;
+  // * TAGGED WITH POPOVERS ENDS
+
   // ? POPOVERS ENDS HERE
 
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
-        <h4 className="page-heading w-auto ps-0">Orders</h4>
+        <h4 className="page-heading w-auto ps-0">Return & Refund Requests</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
           <ViewLogsDrawer headingName={"Orders Module"} icon={orders} />
           <ExportDialog dialogName={"Orders"} />
           <ImportSecondDialog dialogName={"Orders"} />
           <Link
-            to="/orders/allOrders/create"
+            to="/orders/returnRefunds/create"
             className="button-gradient py-2 px-4"
           >
-            <p>+ Create Order</p>
+            <p>+ Create Request</p>
           </Link>
         </div>
       </div>
-
-      <div className="row mt-2">
-        <div className="col-md-3 col-6 ps-0 my-3 d-flex">
-          <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3 flex-grow-1">
-            <div className="d-flex justify-content-between align-items-end">
-              <div className="d-flex flex-column">
-                <h2 className="text-lightBlue fw-400">50</h2>
-                <small className="text-grey-6 mt-2">Orders</small>
-              </div>
-              <div className="d-flex flex-column align-items-end">
-                <img
-                  src={analyticsUp}
-                  alt="analyticsUp"
-                  className=""
-                  width={25}
-                />
-                <small className="text-green-2 mt-3">+10.78 %</small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-3 col-6 ps-0 my-3 d-flex">
-          <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3 flex-grow-1">
-            <div className="d-flex justify-content-between align-items-end">
-              <div className="d-flex flex-column">
-                <h2 className="text-lightBlue fw-400">50</h2>
-                <small className="text-grey-6 mt-2">Sales Amount</small>
-              </div>
-              <div className="d-flex flex-column align-items-end">
-                <img
-                  src={analyticsDown}
-                  alt="analyticsDown"
-                  className=""
-                  width={25}
-                />
-                <small className="text-red-4 mt-3">-10.78 %</small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-3 col-6 ps-0 my-3 d-flex">
-          <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3 flex-grow-1">
-            <div className="d-flex justify-content-between align-items-end">
-              <div className="d-flex flex-column">
-                <h2 className="text-lightBlue fw-400">50</h2>
-                <small className="text-grey-6 mt-2">Fulfillment Items</small>
-              </div>
-              <div className="d-flex flex-column align-items-end">
-                <img
-                  src={analyticsUp}
-                  alt="analyticsUp"
-                  className=""
-                  width={25}
-                />
-                <small className="text-green-2 mt-3">+10.78 %</small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-3 col-6 ps-0 pe-0 my-3 d-flex">
-          <div
-            className="border-grey-5 bg-black-15 rounded-8 py-3 px-3 text-center flex-grow-1 d-flex align-items-center justify-content-center c-pointer"
-            onClick={handleDaysClick}
-          >
-            <h3 className="text-lightBlue">30 Days</h3>
-
-            <KeyboardArrowDownIcon
-              sx={{
-                fontSize: 30,
-                marginLeft: 1,
-                color: "#c8d8ff",
-                cursor: "pointer",
-                marginTop: "2px",
-              }}
-            />
-          </div>
-
-          <Popover
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
-            id={idDays}
-            open={openDays}
-            anchorEl={anchorDaysEl}
-            onClose={handleDaysClose}
-          >
-            <div className="py-2 px-1">
-              <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                Last 7 Days
-              </small>
-              <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                Last 15 Days
-              </small>
-              <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                Last 30 Days
-              </small>
-              <small className="text-blue-gradient rounded-3 p-2 d-block c-pointer">
-                Custom Date
-              </small>
-            </div>
-          </Popover>
-        </div>
-      </div>
-
-      <div className="row">
+      <div className="row mt-4">
         <Paper
           sx={{ width: "100%", mb: 0, mt: 0, p: 0 }}
           className="border-grey-5 bg-black-15"
@@ -241,11 +239,10 @@ const AllOrders = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
-              <Tab label="New" className="tabs-head" />
-              <Tab label="Complete" className="tabs-head" />
-              <Tab label="Today" className="tabs-head" />
+              <Tab label="Today's" className="tabs-head" />
+              <Tab label="Last 7 Days" className="tabs-head" />
             </Tabs>
-            <div
+            {/* <div
               className="tabs-country c-pointer"
               aria-describedby={idFlag}
               variant="contained"
@@ -283,7 +280,7 @@ const AllOrders = () => {
                   <p className="ms-2 text-lightBlue">USA</p>
                 </div>
               </div>
-            </Popover>
+            </Popover> */}
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
@@ -299,16 +296,16 @@ const AllOrders = () => {
             </div>
           </div>
           <TabPanel value={value} index={0}>
-            <AllOrdersTable />
+            <ReturnRefundsTable />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <AllOrdersTable />
+            <ReturnRefundsTable />
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <AllOrdersTable />
+            <ReturnRefundsTable />
           </TabPanel>
           <TabPanel value={value} index={3}>
-            <AllOrdersTable />
+            <ReturnRefundsTable />
           </TabPanel>
         </Paper>
       </div>
@@ -316,4 +313,4 @@ const AllOrders = () => {
   );
 };
 
-export default AllOrders;
+export default ReturnRefunds;

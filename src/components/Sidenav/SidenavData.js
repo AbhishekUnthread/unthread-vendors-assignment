@@ -36,6 +36,11 @@ export const SidebarData = [
         image: orders,
       },
       {
+        title: "Return & Refunds",
+        path: "/orders/returnRefunds",
+        image: orders,
+      },
+      {
         title: "Draft",
         path: "/orders/draftOrder",
         image: orders,

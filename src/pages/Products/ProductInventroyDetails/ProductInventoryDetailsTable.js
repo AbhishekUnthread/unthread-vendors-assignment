@@ -732,7 +732,7 @@ const ProductInventoryDetailsTable = () => {
         open={addProductDrawer["right"]}
         onClose={toggleProductDrawer("right", false)}
         onOpen={toggleProductDrawer("right", true)}
-        className="role-drawer"
+        className="product-drawer"
       >
         <div className="d-flex align-items-center pt-3 px-3">
           <KeyboardArrowLeftOutlinedIcon
@@ -740,9 +740,6 @@ const ProductInventoryDetailsTable = () => {
             onClick={toggleProductDrawer("right", false)}
             className="c-pointer"
           />
-          {/* <div>
-            <h5 className="text-lightBlue fw-500 ms-2">Add Team Member</h5>
-          </div> */}
           <div className="d-flex align-items-center">
             <img
               src={product2}
@@ -776,16 +773,18 @@ const ProductInventoryDetailsTable = () => {
                   placeholder="Fixed"
                   // onChange={handleMetalChange}
                 >
-                  <MenuItem value={10}>Super Admin</MenuItem>
-                  <MenuItem value={20}>Admin</MenuItem>
-                  <MenuItem value={30}>Project Manager</MenuItem>
-                  <MenuItem value={40}>Ecommerce Manager</MenuItem>
-                  <MenuItem value={50}>Digital Marketing</MenuItem>
-                  <MenuItem value={60}>Client Relationships</MenuItem>
+                  <MenuItem value={10}>Store 1</MenuItem>
+                  <MenuItem value={20}>Store 2</MenuItem>
+                  <MenuItem value={30}>Store 3</MenuItem>
+                  <MenuItem value={40}>Store 4</MenuItem>
+                  <MenuItem value={50}>Store 5</MenuItem>
                 </Select>
               </FormControl>
             </div>
-            <div className="col-12 d-flex justify-content-between align-items-center mt-3">
+            <div className="px-3">
+              <hr className="hr-grey-6 mt-3 mb-3" />
+            </div>
+            <div className="col-12 d-flex justify-content-between align-items-center">
               <p className="text-lightBlue fw-50" style={{ width: 200 }}>
                 Bulk Update Quantity
               </p>
@@ -931,19 +930,19 @@ const ProductInventoryDetailsTable = () => {
                 </Popover>
               </div>
             </div>
-            <div className="col-12 mt-3">
+            <div className="col-12 mt-3 px-0">
               <ProductDrawerTable />
             </div>
           </div>
         </div>
-        <div className="d-flex flex-column py-3 px-4 role-buttons">
+        <div className="d-flex flex-column py-3 px-4 product-buttons">
           <hr className="hr-grey-6 my-3 w-100" />
           <div className="d-flex justify-content-between">
             <button
               className="button-gradient py-2 px-5 w-auto"
               onClick={toggleProductDrawer("right", false)}
             >
-              <p>Add</p>
+              <p>Save</p>
             </button>
             <button
               className="button-lightBlue-outline py-2 px-4"

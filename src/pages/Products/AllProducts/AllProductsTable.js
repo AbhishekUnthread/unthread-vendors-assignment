@@ -51,6 +51,7 @@ import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -1153,7 +1154,7 @@ const AllProductsTable = () => {
         open={addProductDrawer["right"]}
         onClose={toggleProductDrawer("right", false)}
         onOpen={toggleProductDrawer("right", true)}
-        className="role-drawer"
+        className="product-drawer"
       >
         <div className="d-flex align-items-center pt-3 px-3">
           <KeyboardArrowLeftOutlinedIcon
@@ -1164,20 +1165,40 @@ const AllProductsTable = () => {
           {/* <div>
             <h5 className="text-lightBlue fw-500 ms-2">Add Team Member</h5>
           </div> */}
-          <div className="d-flex align-items-center">
-            <img
-              src={product2}
-              alt="product2"
-              className="me-2 rounded-8 ms-2"
-              height={45}
-              width={45}
-            />
-            <div>
-              <p className="text-lightBlue rounded-circle fw-600">
-                The Fringe Diamond Ring
-              </p>
-              <small className="text-grey-6 mt-1">Style Code: TFDR012345</small>
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="d-flex">
+              <img
+                src={product2}
+                alt="product2"
+                className="me-2 rounded-8 ms-2"
+                height={45}
+                width={45}
+              />
+              <div>
+                <p className="text-lightBlue rounded-circle fw-600">
+                  The Fringe Diamond Ring
+                </p>
+                <small className="text-grey-6 mt-1">
+                  Style Code: TFDR012345
+                </small>
+              </div>
             </div>
+            {/* <button
+              className="button-transparent py-2 px-3 border-grey-5"
+            > */}
+            <Tooltip title="Edit" placement="top">
+              <div className="table-edit-icon rounded-4 p-2 ms-3">
+                <EditOutlinedIcon
+                  sx={{
+                    color: "#6e8dd7",
+                    fontSize: 18,
+                    cursor: "pointer",
+                  }}
+                />
+              </div>
+            </Tooltip>
+            {/* <p className="text-lightBlue">Open Bulk Editor</p> */}
+            {/* </button> */}
           </div>
         </div>
         <div className="px-3">
@@ -1197,12 +1218,11 @@ const AllProductsTable = () => {
                   placeholder="Fixed"
                   // onChange={handleMetalChange}
                 >
-                  <MenuItem value={10}>Super Admin</MenuItem>
-                  <MenuItem value={20}>Admin</MenuItem>
-                  <MenuItem value={30}>Project Manager</MenuItem>
-                  <MenuItem value={40}>Ecommerce Manager</MenuItem>
-                  <MenuItem value={50}>Digital Marketing</MenuItem>
-                  <MenuItem value={60}>Client Relationships</MenuItem>
+                  <MenuItem value={10}>Store 1</MenuItem>
+                  <MenuItem value={20}>Store 2</MenuItem>
+                  <MenuItem value={30}>Store 3</MenuItem>
+                  <MenuItem value={40}>Store 4</MenuItem>
+                  <MenuItem value={50}>Store 5</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -1298,20 +1318,20 @@ const AllProductsTable = () => {
                 </Popover>
               </div>
             </div>
-            <div className="col-12 mt-3">
+            <div className="col-12 mt-3 px-0">
               <ProductDrawerTable />
             </div>
           </div>
         </div>
-        <div className="d-flex flex-column py-3 px-4 role-buttons">
+        <div className="d-flex flex-column py-3 px-4 product-buttons">
           <hr className="hr-grey-6 my-3 w-100" />
           <div className="d-flex justify-content-between">
-            <button
+            {/* <button
               className="button-gradient py-2 px-5 w-auto"
               onClick={toggleProductDrawer("right", false)}
             >
               <p>Add</p>
-            </button>
+            </button> */}
             <button
               className="button-lightBlue-outline py-2 px-4"
               onClick={toggleProductDrawer("right", false)}
