@@ -12,12 +12,7 @@ import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySel
 import ProductDrawerTable from "../ProductDrawerTable";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 // !IMAGES IMPORTS
-import storeIcon from "../../../assets/icons/storeIcon.svg";
 import product2 from "../../../assets/images/products/product2.jpg";
-import verticalDots from "../../../assets/icons/verticalDots.svg";
-import editButton from "../../../assets/icons/editButton.svg";
-import duplicateButton from "../../../assets/icons/duplicateButton.svg";
-import deleteRed from "../../../assets/icons/delete.svg";
 import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 import teamMember2 from "../../../assets/images/products/teamMember2.svg";
 import teamMember3 from "../../../assets/images/products/teamMember3.svg";
@@ -34,7 +29,6 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Tooltip,
   Popover,
   SwipeableDrawer,
   TextField,
@@ -50,8 +44,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 // ! MATERIAL ICONS IMPORTS
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import InventoryIcon from "@mui/icons-material/Inventory";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 
@@ -286,21 +278,6 @@ const ProductInventoryDetailsTable = () => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  // * ACTION POPOVERS STARTS
-  const [anchorActionEl, setAnchorActionEl] = React.useState(null);
-
-  const handleActionClick = (event) => {
-    setAnchorActionEl(event.currentTarget);
-  };
-
-  const handleActionClose = () => {
-    setAnchorActionEl(null);
-  };
-
-  const openActions = Boolean(anchorActionEl);
-  const idActions = openActions ? "simple-popover" : undefined;
-  // * ACTION POPOVERS ENDS
 
   // * ACTIVITY POPOVERS STARTS
   const [anchorActivityEl, setAnchorActivityEl] = React.useState(null);

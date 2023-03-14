@@ -218,6 +218,7 @@ const DraftOrder = () => {
 
   // ? DATE PICKER STARTS HERE
   const [dateStartValue, setDateStartValue] = React.useState(new Date());
+  const [dateEndValue, setDateEndValue] = React.useState(new Date());
   // ? DATE PICKER ENDS HERE
 
   return (

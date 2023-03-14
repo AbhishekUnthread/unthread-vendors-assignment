@@ -6,6 +6,7 @@ import {
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
@@ -173,18 +174,6 @@ const AllUsersTable = () => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  // * EDIT STATUS POPOVERS STARTS
-  const [anchorEditStatusEl, setAnchorEditStatusEl] = React.useState(null);
-  const handleEditStatusClick = (event) => {
-    setAnchorEditStatusEl(event.currentTarget);
-  };
-  const handleEditStatusClose = () => {
-    setAnchorEditStatusEl(null);
-  };
-  const openEditStatus = Boolean(anchorEditStatusEl);
-  const idEditStatus = openEditStatus ? "simple-popover" : undefined;
-  // * EDIT STATUS POPOVERS ENDS
-
   // * MASS ACTION POPOVERS STARTS
   const [anchorMassActionEl, setAnchorMassActionEl] = React.useState(null);
   const handleMassActionClick = (event) => {
@@ -232,39 +221,8 @@ const AllUsersTable = () => {
             <button className="button-grey py-2 px-3 ms-2">
               <small className="text-lightBlue">Edit Users</small>
             </button>
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idEditStatus}
-              variant="contained"
-              onClick={handleEditStatusClick}
-            >
-              <small className="text-lightBlue">Edit Status</small>
-              <img src={arrowDown} alt="arrowDown" className="ms-2" />
-            </button>
+            <TableEditStatusButton />
 
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              id={idEditStatus}
-              open={openEditStatus}
-              anchorEl={anchorEditStatusEl}
-              onClose={handleEditStatusClose}
-            >
-              <div className="py-2 px-1">
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Set as Active
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Set as Draft
-                </small>
-              </div>
-            </Popover>
             <button
               className="button-grey py-2 px-3 ms-2"
               aria-describedby={idMassAction}

@@ -6,6 +6,7 @@ import NotesBox from "../../../components/NotesBox/NotesBox";
 import TagsBox from "../../../components/TagsBox/TagsBox";
 import UserIPTable from "../../Users/UserDetails/UserInformation/UserIPTable/UserIPTable";
 import UserActivityTable from "../../Users/UserDetails/UserInformation/UserActivityTable/UserActivityTable";
+import AddNotesDialog from "../../../components/AddNotesDialog/AddNotesDialog";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
@@ -34,7 +35,6 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 // !MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import AddNotesDialog from "../../../components/AddNotesDialog/AddNotesDialog";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {

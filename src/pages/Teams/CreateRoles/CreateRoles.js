@@ -9,6 +9,7 @@ import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import UploadFileRounded from "../../../components/UploadFileRounded/UploadFileRounded";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
+import StatusBox from "../../../components/StatusBox/StatusBox";
 // ! IMAGES IMPORTS
 import rolesSuperAdmin from "../../../assets/images/teams/rolesSuperAdmin.svg";
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
@@ -47,7 +48,6 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import ChatIcon from "@mui/icons-material/Chat";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import StatusBox from "../../../components/StatusBox/StatusBox";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {

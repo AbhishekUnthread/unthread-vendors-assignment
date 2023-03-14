@@ -341,43 +341,6 @@ const AddUser = () => {
                       />
                     )}
                   />
-                  {/* <FormControl
-                    sx={{ m: 0, minWidth: 120, width: "100%" }}
-                    size="small"
-                  >
-                    <Select
-                      labelId="demo-select-small"
-                      id="demo-select-small"
-                      value={userGroup}
-                      onChange={handleUserGroupChange}
-                      size="small"
-                    >
-                      <MenuItem
-                        value=""
-                        sx={{ fontSize: 13, color: "#5c6d8e" }}
-                      >
-                        None
-                      </MenuItem>
-                      <MenuItem
-                        value={10}
-                        sx={{ fontSize: 13, color: "#5c6d8e" }}
-                      >
-                        Group 1
-                      </MenuItem>
-                      <MenuItem
-                        value={20}
-                        sx={{ fontSize: 13, color: "#5c6d8e" }}
-                      >
-                        Group 2
-                      </MenuItem>
-                      <MenuItem
-                        value={20}
-                        sx={{ fontSize: 13, color: "#5c6d8e" }}
-                      >
-                        Group 3
-                      </MenuItem>
-                    </Select>
-                  </FormControl> */}
                 </div>
               </div>
             </div>
@@ -440,10 +403,7 @@ const AddUser = () => {
             )}
             {address && (
               <div className="col-12 mt-3">
-                <div
-                  className="row py-3 rounded-8 border-grey-5 bg-black-13"
-                  // style={{ background: "rgba(39, 40, 63, 0.5)" }}
-                >
+                <div className="row py-3 rounded-8 border-grey-5 bg-black-13">
                   <div className="col-md-12">
                     <p className="text-lightBlue mb-1">Name</p>
                     <FormControl className="w-100 px-0">

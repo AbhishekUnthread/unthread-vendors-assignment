@@ -5,13 +5,12 @@ import { Link } from "react-router-dom";
 import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
 import TagsBox from "../../../components/TagsBox/TagsBox";
 import StatusBox from "../../../components/StatusBox/StatusBox";
-import TableSearch from "../../../components/TableSearch/TableSearch";
+import SearchBorder from "../../../components/SearchBorder/SearchBorder";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import info from "../../../assets/icons/info.svg";
 // ! MATERIAL IMPORTS
 import { FormControl, OutlinedInput, Tooltip, Rating } from "@mui/material";
-import SearchBorder from "../../../components/SearchBorder/SearchBorder";
 
 const CreateReview = () => {
   return (

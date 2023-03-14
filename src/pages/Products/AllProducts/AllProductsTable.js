@@ -1,8 +1,12 @@
 import React from "react";
-import PropTypes from "prop-types";
 // ! COMPONENT IMPORTS
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import ProductDrawerTable from "../ProductDrawerTable";
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../components/TableDependencies/TableDependencies";
 // ! IMAGES IMPORTS
 import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 import teamMember2 from "../../../assets/images/products/teamMember2.svg";
@@ -19,7 +23,6 @@ import products from "../../../assets/icons/sidenav/products.svg";
 import product2 from "../../../assets/images/products/product2.jpg";
 // ! MATERIAL IMPORTS
 import {
-  Box,
   Checkbox,
   Popover,
   SwipeableDrawer,
@@ -27,73 +30,24 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel,
   TextField,
-  styled,
-  InputBase,
   Tooltip,
   FormControlLabel,
   FormGroup,
-  InputAdornment,
   MenuItem,
   Select,
   FormControl,
-  OutlinedInput,
 } from "@mui/material";
-import { visuallyHidden } from "@mui/utils";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 // ! MATERIAL ICONS IMPORTS
-import SearchIcon from "@mui/icons-material/Search";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-
-// ? SEARCH INPUT STARTS HERE
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  "&:hover": {
-    backgroundColor: "#1c1b33",
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: 0,
-    width: "100%",
-  },
-  backgroundColor: "#1c1b33",
-  height: "37.6px",
-  //   marginRight: "8px",
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  paddingLeft: theme.spacing(1.5),
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  width: "100%",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1.2, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    borderRadius: "5px",
-  },
-}));
-// ? SEARCH INPUT ENDS HERE
+import TableSearch from "../../../components/TableSearch/TableSearch";
 
 const activityData = [
   {
@@ -304,102 +258,6 @@ const headCells = [
   },
 ];
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-function EnhancedTableHead(props) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all rows",
-            }}
-            size="small"
-            style={{
-              color: "#5C6D8E",
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            {headCell.id !== "actions" && (
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-              >
-                <p className="text-lightBlue">{headCell.label}</p>
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            )}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
 // ? TABLE ENDS HERE
 
 const AllProductsTable = () => {
@@ -593,19 +451,6 @@ const AllProductsTable = () => {
   const idMetalFilter = openMetalFilter ? "simple-popover" : undefined;
   // * METAL FILTER POPOVERS ENDS
 
-  // * DISCOUNT PERCENT POPOVERS STARTS
-  const [anchorDiscountPercentEl, setAnchorDiscountPercentEl] =
-    React.useState(null);
-  const handleDiscountPercent = (event) => {
-    setAnchorDiscountPercentEl(event.currentTarget);
-  };
-  const handleDiscountPercentClose = () => {
-    setAnchorDiscountPercentEl(null);
-  };
-  const openDiscountPercent = Boolean(anchorDiscountPercentEl);
-  const idDiscountPercent = openDiscountPercent ? "simple-popover" : undefined;
-  // * DICOUNT PERCENT POPOVERS ENDS
-
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -731,6 +576,7 @@ const AllProductsTable = () => {
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
             rowCount={rows.length}
+            headCells={headCells}
           />
           <TableBody>
             {stableSort(rows, getComparator(order, orderBy))
@@ -1033,15 +879,7 @@ const AllProductsTable = () => {
           </div>
 
           <div className="d-flex mt-3 ">
-            <Search sx={{ border: "1px solid #5c6d8e", background: "#15142a" }}>
-              <SearchIconWrapper>
-                <SearchIcon sx={{ color: "#c8d8ff" }} />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search>
+            <TableSearch />
 
             <button
               className="button-grey py-2 px-3"

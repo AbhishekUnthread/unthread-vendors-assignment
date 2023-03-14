@@ -9,7 +9,6 @@ import TableEditStatusButton from "../../../components/TableEditStatusButton/Tab
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // ! IMAGES IMPORTS
 import verticalDots from "../../../assets/icons/verticalDots.svg";
-import deleteRed from "../../../assets/icons/delete.svg";
 import cancel from "../../../assets/icons/cancel.svg";
 import teamMember1 from "../../../assets/images/products/teamMember1.svg";
 // ! MATERIAL IMPORTS

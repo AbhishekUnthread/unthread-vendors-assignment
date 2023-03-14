@@ -5,7 +5,6 @@ import {
   stableSortNoCheckbox,
   getComparatorNoCheckbox,
 } from "../../../../../components/TableDependenciesNoCheckbox/TableDependenciesNoCheckbox";
-// ! IMAGES IMPORTS
 // ! MATERIAL IMPORTS
 import {
   Table,
@@ -16,6 +15,7 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
+// ! MATERIAL ICON IMPORTS
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 // ? TABLE STARTS HERE

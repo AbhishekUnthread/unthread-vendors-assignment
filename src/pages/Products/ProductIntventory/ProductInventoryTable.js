@@ -10,7 +10,6 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
-  Popover,
 } from "@mui/material";
 // ! COMPONENT IMPORTS
 import {
@@ -22,10 +21,6 @@ import TableEditStatusButton from "../../../components/TableEditStatusButton/Tab
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // !IMAGES IMPORTS
 import storeIcon from "../../../assets/icons/storeIcon.svg";
-import verticalDots from "../../../assets/icons/verticalDots.svg";
-import editButton from "../../../assets/icons/editButton.svg";
-import duplicateButton from "../../../assets/icons/duplicateButton.svg";
-import deleteRed from "../../../assets/icons/delete.svg";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -127,21 +122,6 @@ const ProductInventoryTable = () => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  // * ACTION POPOVERS STARTS
-  const [anchorActionEl, setAnchorActionEl] = React.useState(null);
-
-  const handleActionClick = (event) => {
-    setAnchorActionEl(event.currentTarget);
-  };
-
-  const handleActionClose = () => {
-    setAnchorActionEl(null);
-  };
-
-  const openActions = Boolean(anchorActionEl);
-  const idActions = openActions ? "simple-popover" : undefined;
-  // * ACTION POPOVERS ENDS
 
   return (
     <React.Fragment>

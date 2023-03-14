@@ -1,5 +1,4 @@
 import React from "react";
-import "./OrderUserDetails.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import UploadFile from "../UploadFile/UploadFile";

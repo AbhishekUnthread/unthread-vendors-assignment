@@ -1,11 +1,14 @@
 import React from "react";
+import { Link } from "react-router-dom";
 // ! COMPONENTS IMPORTS
-import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
 import {
   EnhancedTableHead,
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
+import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // ! IMAGES IMPORTS
 import replyActionButton from "../../../assets/icons/replyActionButton.svg";
 import cancel from "../../../assets/icons/cancel.svg";
@@ -25,9 +28,6 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 // ? TABLE STARTS HERE
 function createData(eId, date, userName, subject) {

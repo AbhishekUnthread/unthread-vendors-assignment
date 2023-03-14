@@ -9,10 +9,6 @@ import {
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // ! IMAGES IMPORTS
-import teamMember1 from "../../../assets/images/products/teamMember1.svg";
-import masterGold from "../../../assets/icons/masterGold.svg";
-import masterMaking from "../../../assets/icons/masterMaking.svg";
-import masterDiamond from "../../../assets/icons/masterDiamond.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,

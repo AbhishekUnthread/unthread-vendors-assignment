@@ -5,28 +5,11 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 import PriceMasterTable from "./PriceMasterTable";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import ExportDialog from "../../../components/ExportDialog/ExportDialog";
-import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 // ! IMAGES IMPORTS
-import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 // ! MATERIAL IMPORTS
-import {
-  Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  OutlinedInput,
-  Paper,
-  Slide,
-  Tab,
-  Tabs,
-  Select,
-  MenuItem,
-} from "@mui/material";
+import { Box, Paper, Tab, Tabs } from "@mui/material";
 import { Link } from "react-router-dom";
 // ! MATERIAL ICONS IMPORTS
 

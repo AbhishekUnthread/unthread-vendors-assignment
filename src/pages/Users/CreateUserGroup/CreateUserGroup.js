@@ -2,6 +2,11 @@ import React from "react";
 import "./CreateUserGroup.scss";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+// ! COMPONENT IMPORTS
+import StatusBox from "../../../components/StatusBox/StatusBox";
+import TagsBox from "../../../components/TagsBox/TagsBox";
+import AllUsersTable from "../AllUsers/AllUsersTable";
+import SearchBorder from "../../../components/SearchBorder/SearchBorder";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import cancel from "../../../assets/icons/cancel.svg";
@@ -11,7 +16,6 @@ import ringSmall from "../../../assets/images/ringSmall.svg";
 import deleteWhite from "../../../assets/icons/deleteWhite.svg";
 import editWhite from "../../../assets/icons/editWhite.svg";
 import info from "../../../assets/icons/info.svg";
-// import deleteButton from "../../../assets/icons/deleteButton.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -22,8 +26,6 @@ import {
   OutlinedInput,
   Checkbox,
   FormControlLabel,
-  styled,
-  InputBase,
   Popover,
   TextareaAutosize,
   TableContainer,
@@ -40,75 +42,6 @@ import {
   Tooltip,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-// ! MATERIAL ICONS IMPORTS
-import SearchIcon from "@mui/icons-material/Search";
-import StatusBox from "../../../components/StatusBox/StatusBox";
-import TagsBox from "../../../components/TagsBox/TagsBox";
-import AllUsersTable from "../AllUsers/AllUsersTable";
-
-// ? SEARCH INPUT STARTS HERE
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  "&:hover": {},
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    width: "auto",
-  },
-  height: "30.6px",
-  border: "1px solid #38395c",
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 1.5),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(0.8, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    borderRadius: "5px",
-  },
-}));
-// ? SEARCH INPUT ENDS HERE
-
-// ? TABS STARTS HERE
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 0 }}>
-          <div>{children}</div>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-// ? TABS ENDS HERE
 
 // ? TABLE STARTS HERE
 function createData(pId, productName, category, price) {
@@ -894,143 +827,11 @@ const CreateUserGroup = () => {
                 <div className="col-12 mt-3">
                   <div className="row align-items-center">
                     <div className="col-md-12 px-md-0 py-2">
-                      <Search className="mx-0">
-                        <SearchIconWrapper>
-                          <SearchIcon sx={{ color: "#c8d8ff" }} />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                          placeholder="Search…"
-                          inputProps={{ "aria-label": "search" }}
-                        />
-                      </Search>
+                      <SearchBorder />
                     </div>
                   </div>
                 </div>
                 <div className="col-12 px-0 mt-2">
-                  {/* <TableContainer className="mt-3">
-                    <Table
-                      sx={{ minWidth: 750 }}
-                      aria-labelledby="tableTitle"
-                      size="medium"
-                    >
-                      <LikeProductTableHead
-                        numSelected={selected.length}
-                        order={order}
-                        orderBy={orderBy}
-                        onSelectAllClick={handleLikeSelectAllClick}
-                        onRequestSort={handleRequestSort}
-                        rowCount={likeProductRows.length}
-                      />
-                      <TableBody>
-                        {stableSort(
-                          likeProductRows,
-                          getComparator(order, orderBy)
-                        )
-                          .slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage
-                          )
-                          .map((row, index) => {
-                            const isItemSelected = isSelected(row.pId);
-                            const labelId = `enhanced-table-checkbox-${index}`;
-
-                            return (
-                              <TableRow
-                                hover
-                                role="checkbox"
-                                aria-checked={isItemSelected}
-                                tabIndex={-1}
-                                key={row.pId}
-                                selected={isItemSelected}
-                              >
-                                <TableCell padding="checkbox">
-                                  <Checkbox
-                                    color="primary"
-                                    checked={isItemSelected}
-                                    inputProps={{
-                                      "aria-labelledby": labelId,
-                                    }}
-                                    size="small"
-                                    onClick={(event) =>
-                                      handleClick(event, row.pId)
-                                    }
-                                    style={{
-                                      color: "#5C6D8E",
-                                      marginRight: 0,
-                                    }}
-                                  />
-                                </TableCell>
-                                <TableCell
-                                  component="th"
-                                  id={labelId}
-                                  scope="row"
-                                  padding="none"
-                                >
-                                  <div className="d-flex align-items-center my-2">
-                                    <img
-                                      src={ringSmall}
-                                      alt="ringSmall"
-                                      className="me-2"
-                                      height={45}
-                                      width={45}
-                                    />
-                                    <div>
-                                      <p className="text-lightBlue fw-600">
-                                        {row.productName}
-                                      </p>
-                                      <small className="mt-2 text-grey-6">
-                                        SKU: TFDR012345
-                                      </small>
-                                    </div>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <p className="text-lightBlue">
-                                    {row.category}
-                                  </p>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="d-flex align-items-center c-pointer ">
-                                    <p className="text-lightBlue">
-                                      {row.price}
-                                    </p>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="d-flex align-items-center c-pointer ">
-                                    <img
-                                      src={deleteButton}
-                                      alt="deleteButton"
-                                      width={75}
-                                      className="c-pointer"
-                                    />
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        {emptyRows > 0 && (
-                          <TableRow
-                            style={{
-                              height: 53 * emptyRows,
-                            }}
-                          >
-                            <TableCell colSpan={6} />
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                  <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    className="table-pagination"
-                  /> */}
                   <AllUsersTable />
                 </div>
               </React.Fragment>
@@ -1064,15 +865,8 @@ const CreateUserGroup = () => {
               />
             </div>
             <hr className="hr-grey-6 mt-3 mb-3" />
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon sx={{ color: "#c8d8ff" }} />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search>
+
+            <SearchBorder />
 
             <TableContainer className="mt-3">
               <Table

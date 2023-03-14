@@ -4,7 +4,6 @@ import "./AppNavbarNotes.scss";
 import TabPanel from "../TabPanel/TabPanel";
 // ! IMAGES IMPORTS
 import cancel from "../../assets/icons/cancel.svg";
-import clock from "../../assets/icons/clock.svg";
 // ! MATERIAL IMPORTS
 import {
   Badge,
