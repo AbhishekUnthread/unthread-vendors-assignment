@@ -55,7 +55,7 @@ const headCells = [
     id: "createdAt",
     numeric: false,
     disablePadding: false,
-    label: "Created At",
+    label: "Modified On",
   },
   {
     id: "status",
@@ -134,7 +134,7 @@ const PreOrderTable = () => {
         <div className="d-flex align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
             <small className="text-lightBlue">
-              {selected.length} categories are selected&nbsp;
+              {selected.length} profile are selected&nbsp;
               <span
                 className="text-blue-2 c-pointer"
                 onClick={() => setSelected([])}
@@ -198,14 +198,11 @@ const PreOrderTable = () => {
                       scope="row"
                       padding="none"
                     >
-                      <Link
-                        className="text-decoration-none"
-                        to="/parameters/categories/edit"
-                      >
+                      <div className="text-decoration-none">
                         <p className="text-lightBlue rounded-circle fw-600">
                           {row.name}
                         </p>
-                      </Link>
+                      </div>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.noOfProducts}</p>

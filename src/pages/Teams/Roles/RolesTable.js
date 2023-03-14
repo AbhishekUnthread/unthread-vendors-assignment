@@ -227,7 +227,7 @@ const headCells = [
     id: "createdOn",
     numeric: false,
     disablePadding: false,
-    label: "Created On",
+    label: "Modified On",
   },
   {
     id: "actions",

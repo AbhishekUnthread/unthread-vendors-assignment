@@ -81,7 +81,7 @@ const AllFunctionality = () => {
 
   return (
     <div className="container page-center">
-      <h1 className="fw-600 text-lightBlue mt-5">All Functionality</h1>
+      <h1 className="fw-600 text-lightBlue mt-4">All Functionality</h1>
       <h6 className="fw-500 text-blue-1 mt-3 opacity-75">
         Streamline your website efforetless Functionality
       </h6>

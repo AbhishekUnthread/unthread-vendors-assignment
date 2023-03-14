@@ -2,7 +2,6 @@ import React from "react";
 import { Popover } from "@mui/material";
 // ! IMAGES IMPORTS
 import arrowDown from "../../assets/icons/arrowDown.svg";
-import deleteRed from "../../assets/icons/delete.svg";
 
 const TableMassActionButton = () => {
   // * MASS ACTION POPOVERS STARTS
@@ -50,7 +49,6 @@ const TableMassActionButton = () => {
           </small>
           <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
             <small className="text-lightBlue font2 d-block me-3">Archive</small>
-            <img src={deleteRed} alt="delete" className="" />
           </div>
         </div>
       </Popover>
