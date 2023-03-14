@@ -26,7 +26,6 @@ import {
   Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICON IMPORTS
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ChatIcon from "@mui/icons-material/Chat";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";

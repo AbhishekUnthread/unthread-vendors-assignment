@@ -1,9 +1,4 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
 import {
   Checkbox,
   TablePagination,
@@ -14,24 +9,17 @@ import {
   TableContainer,
   TableRow,
   Tooltip,
-  FormControl,
-  OutlinedInput,
+  Collapse,
+  IconButton,
 } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-// !IMAGES IMPORTS
-import ringSmall from "../../../assets/images/ringSmall.svg";
 // ! COMPONENT IMPORTS
 import {
   EnhancedTableHead,
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -87,8 +75,6 @@ const rows = [
 
 function Row(props) {
   const { row, isItemSelected, labelId, handleClick } = props;
-  // console.log(props);
-  // console.log("ROW", row);
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -421,16 +407,6 @@ export default function DiamondPriceManagerTable() {
       )}
       <TableContainer>
         <Table aria-label="collapsible table">
-          {/* <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead> */}
           <EnhancedTableHead
             numSelected={selected.length}
             order={order}
@@ -441,10 +417,6 @@ export default function DiamondPriceManagerTable() {
             headCells={headCells}
           />
           <TableBody>
-            {/* {rows.map((row) => (
-              <Row key={row.name} row={row} />
-            ))} */}
-
             {stableSort(rows, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {

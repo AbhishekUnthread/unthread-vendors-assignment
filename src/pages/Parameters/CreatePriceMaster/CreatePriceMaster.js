@@ -4,13 +4,10 @@ import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import StatusBox from "../../../components/StatusBox/StatusBox";
-import AddProducts from "../../../components/AddProducts/AddProducts";
 import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import info from "../../../assets/icons/info.svg";
-import paginationRight from "../../../assets/icons/paginationRight.svg";
-import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import addMedia from "../../../assets/icons/addMedia.svg";
 // ! MATERIAL IMPORTS
 import {
@@ -81,27 +78,6 @@ const CreatePriceMaster = () => {
           </Link>
           <h5 className="page-heading ms-2 ps-1">Create Master</h5>
         </div>
-        {/* {
-        <div className="d-flex align-items-center w-auto pe-0">
-          <button className="button-transparent me-1 py-2 px-3">
-            <p className="text-lightBlue">Duplicate</p>
-          </button>
-          <button className="button-transparent me-1 py-2 px-3">
-            <p className="text-lightBlue">Preview</p>
-          </button>
-          <img
-            src={paginationLeft}
-            alt="paginationLeft"
-            className="c-pointer"
-            width={30}
-          />
-          <img
-            src={paginationRight}
-            alt="paginationRight"
-            className="c-pointer"
-            width={30}
-          />
-        </div>} */}
       </div>
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
@@ -111,14 +87,6 @@ const CreatePriceMaster = () => {
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
                   Master Information
                 </h6>
-                {/* <Tooltip title="Lorem ipsum" placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className="ms-2 c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip> */}
               </div>
             </div>
             <hr className="hr-grey-6 my-3" />
@@ -146,14 +114,6 @@ const CreatePriceMaster = () => {
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
                   Add Fields
                 </h6>
-                {/* <Tooltip title="Lorem ipsum" placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className="ms-2 c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip> */}
               </div>
               <small className="text-grey-6 mt-1 d-block">
                 ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -368,21 +328,8 @@ const CreatePriceMaster = () => {
           >
             <p>Discard</p>
           </Link>
-
-          {/* <Link
-            to="/parameters/priceMaster"
-            className="button-lightBlue-outline py-2 px-4 ms-3"
-          >
-            <p>Save as Draft</p>
-          </Link> */}
         </div>
         <div className="d-flex w-auto px-0">
-          {/* <Link
-            to="/parameters/priceMaster"
-            className="button-lightBlue-outline py-2 px-4"
-          >
-            <p>Save & Add Another</p>
-          </Link> */}
           <Link
             to="/parameters/priceMaster/inventory"
             className="button-gradient ms-3 py-2 px-4 w-auto"

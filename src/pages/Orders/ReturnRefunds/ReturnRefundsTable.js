@@ -8,11 +8,9 @@ import {
 } from "../../../components/TableDependencies/TableDependencies";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
-import ringSmall from "../../../assets/images/ringSmall.svg";
 import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
-import ordersIcon from "../../../assets/icons/ordersIcon.svg";
 import rupeeRounded from "../../../assets/icons/rupeeRounded.svg";
 import product2 from "../../../assets/images/products/product2.jpg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
@@ -29,13 +27,8 @@ import {
   Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICON IMPORTS
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ChatIcon from "@mui/icons-material/Chat";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import CloseIcon from "@mui/icons-material/Close";
-import ReceiptIcon from "@mui/icons-material/Receipt";
-import PrintIcon from "@mui/icons-material/Print";
 import BlockIcon from "@mui/icons-material/Block";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 
@@ -239,20 +232,6 @@ const ReturnRefundsTable = () => {
   const openUser = Boolean(anchorUserEl);
   const idUser = openUser ? "simple-popover" : undefined;
   // * USER POPOVERS ENDS
-
-  // * ITEM POPOVERS STARTS
-  const [anchorItemEl, setAnchorItemEl] = React.useState(null);
-  const handleItemClick = (event) => {
-    setAnchorItemEl(event.currentTarget);
-  };
-
-  const handleItemClose = () => {
-    setAnchorItemEl(null);
-  };
-
-  const openItem = Boolean(anchorItemEl);
-  const idItem = openItem ? "simple-popover" : undefined;
-  // * ITEM POPOVERS ENDS
 
   // * ACTION POPOVERS STARTS
   const [anchorActionEl, setAnchorActionEl] = React.useState(null);

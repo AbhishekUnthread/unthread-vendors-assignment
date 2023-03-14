@@ -2,53 +2,15 @@ import React from "react";
 // ! COMPONENT IMPORTS
 // ! IMAGES IMPORTS
 import product2 from "../../assets/images/products/product2.jpg";
-import productIcon from "../../assets/icons/productIcon.svg";
-import video from "../../assets/icons/video.svg";
-import cancel from "../../assets/icons/cancel.svg";
 // ! MATERIAL IMPORTS
-import {
-  Box,
-  Tab,
-  Tabs,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Slide,
-  Popover,
-  Chip,
-  DialogTitle,
-  Rating,
-  TextareaAutosize,
-  FormControl,
-  OutlinedInput,
-  MenuItem,
-  Select,
-  FormControlLabel,
-  Checkbox,
-  Tooltip,
-} from "@mui/material";
+import { Popover, Chip } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
-import ChatIcon from "@mui/icons-material/Chat";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import BlockIcon from "@mui/icons-material/Block";
-import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
-import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
-import ReceiptIcon from "@mui/icons-material/Receipt";
 import PrintIcon from "@mui/icons-material/Print";
-
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-// ? DIALOG TRANSITION ENDS HERE
 
 const OrderProductCard = ({
   showBasicDetail,
@@ -98,20 +60,6 @@ const OrderProductCard = ({
   const openPrice = Boolean(anchorPriceEl);
   const idPrice = openPrice ? "simple-popover" : undefined;
   // * PRICE POPOVERS ENDS
-
-  // * GIFT POPOVERS STARTS
-  const [anchorGiftEl, setAnchorGiftEl] = React.useState(null);
-  const handleGiftClick = (event) => {
-    setAnchorGiftEl(event.currentTarget);
-  };
-
-  const handleGiftClose = () => {
-    setAnchorGiftEl(null);
-  };
-
-  const openGift = Boolean(anchorGiftEl);
-  const idGift = openGift ? "simple-popover" : undefined;
-  // * GIFT POPOVERS ENDS
 
   return (
     <React.Fragment>
@@ -396,34 +344,6 @@ const OrderProductCard = ({
           </div>
         </Popover>
       )}
-
-      <Popover
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        id={idGift}
-        open={openGift}
-        anchorEl={anchorGiftEl}
-        onClose={handleGiftClose}
-      >
-        <div className="d-flex py-3 px-2">
-          <img src={product2} alt="product2" className="rounded-8" width={80} />
-          <div className="d-flex flex-column justify-content-between ms-3">
-            <div>
-              <p className="fw-500 text-lightBlue">JWL Exclusive Packaging</p>
-              <small className="text-grey-6 mt-2">#GIFTWRAPPER</small>
-            </div>
-            <small className="text-blue-2 text-decoration-underline c-pointer">
-              View Image
-            </small>
-          </div>
-        </div>
-      </Popover>
 
       {showFulfillButton && (
         <React.Fragment>

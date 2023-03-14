@@ -9,7 +9,6 @@ import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import TableSearch from "../../../components/TableSearch/TableSearch";
-import FilterUsers from "../../../components/FilterUsers/FilterUsers";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import allFlag from "../../../assets/images/products/allFlag.svg";
@@ -17,8 +16,6 @@ import usaFlag from "../../../assets/images/products/usaFlag.svg";
 import ukFlag from "../../../assets/images/products/ukFlag.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import sort from "../../../assets/icons/sort.svg";
-import analyticsUp from "../../../assets/icons/analyticsUp.svg";
-import analyticsDown from "../../../assets/icons/analyticsDown.svg";
 import orders from "../../../assets/icons/sidenav/orders.svg";
 // ! MATERIAL IMPORTS
 import {
@@ -28,7 +25,6 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  OutlinedInput,
   Paper,
   Popover,
   Radio,
@@ -109,36 +105,6 @@ const DraftOrder = () => {
   const idSort = openSort ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
 
-  // * LOCATION POPOVERS STARTS
-  const [anchorLocationEl, setAnchorLocationEl] = React.useState(null);
-
-  const handleLocationClick = (event) => {
-    setAnchorLocationEl(event.currentTarget);
-  };
-
-  const handleLocationClose = () => {
-    setAnchorLocationEl(null);
-  };
-
-  const openLocation = Boolean(anchorLocationEl);
-  const idLocation = openLocation ? "simple-popover" : undefined;
-  // * LOCATION POPOVERS ENDS
-
-  // * NO OF ORDERS POPOVERS STARTS
-  const [anchorOrdersEl, setAnchorOrdersEl] = React.useState(null);
-
-  const handleOrdersClick = (event) => {
-    setAnchorOrdersEl(event.currentTarget);
-  };
-
-  const handleOrdersClose = () => {
-    setAnchorOrdersEl(null);
-  };
-
-  const openOrders = Boolean(anchorOrdersEl);
-  const idOrders = openOrders ? "simple-popover" : undefined;
-  // * NO OF ORDERS POPOVERS ENDS
-
   // * STATUS POPOVERS STARTS
   const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
 
@@ -153,21 +119,6 @@ const DraftOrder = () => {
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
   // * STATUS POPOVERS ENDS
-
-  // * DAYS POPOVERS STARTS
-  const [anchorDaysEl, setDaysEl] = React.useState(null);
-
-  const handleDaysClick = (event) => {
-    setDaysEl(event.currentTarget);
-  };
-
-  const handleDaysClose = () => {
-    setDaysEl(null);
-  };
-
-  const openDays = Boolean(anchorDaysEl);
-  const idDays = openDays ? "simple-popover" : undefined;
-  // * DAYS POPOVERS ENDS
 
   // * TAGGED WITH POPOVERS STARTS
   const [anchorTaggedWithEl, setAnchorTaggedWithEl] = React.useState(null);
@@ -218,7 +169,6 @@ const DraftOrder = () => {
 
   // ? DATE PICKER STARTS HERE
   const [dateStartValue, setDateStartValue] = React.useState(new Date());
-  const [dateEndValue, setDateEndValue] = React.useState(new Date());
   // ? DATE PICKER ENDS HERE
 
   return (

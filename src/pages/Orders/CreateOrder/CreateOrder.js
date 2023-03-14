@@ -2,28 +2,15 @@ import React from "react";
 import "./CreateOrder.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
-import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
 import TagsBox from "../../../components/TagsBox/TagsBox";
-import NotesBox from "../../../components/NotesBox/NotesBox";
-import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
-import UploadFileRounded from "../../../components/UploadFileRounded/UploadFileRounded";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
 import TabPanel from "../../../components/TabPanel/TabPanel";
-import StatusBox from "../../../components/StatusBox/StatusBox";
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
 import SearchBorder from "../../../components/SearchBorder/SearchBorder";
 // ! IMAGES IMPORTS
-import rolesSuperAdmin from "../../../assets/images/teams/rolesSuperAdmin.svg";
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import info from "../../../assets/icons/info.svg";
-import deleteRed from "../../../assets/icons/delete.svg";
-import paginationRight from "../../../assets/icons/paginationRight.svg";
-import paginationLeft from "../../../assets/icons/paginationLeft.svg";
-import userRoles from "../../../assets/icons/userRoles.svg";
-import uploadProfile from "../../../assets/icons/uploadProfile.svg";
-import user from "../../../assets/images/users/user.svg";
-import block from "../../../assets/images/users/block.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import currencyRupee from "../../../assets/icons/currencyRupee.svg";
 import currencyDollar from "../../../assets/icons/currencyDollar.svg";
@@ -43,10 +30,7 @@ import {
   OutlinedInput,
   Checkbox,
   FormControlLabel,
-  styled,
   Popover,
-  SwipeableDrawer,
-  FormGroup,
   Tooltip,
   Select,
   MenuItem,
@@ -55,21 +39,13 @@ import {
   DialogActions,
   Slide,
   TextareaAutosize,
-  TextField,
-  Autocomplete,
   DialogTitle,
   Box,
   Tabs,
   Tab,
 } from "@mui/material";
-import MuiAccordion from "@mui/material/Accordion";
-import MuiAccordionSummary from "@mui/material/AccordionSummary";
-import MuiAccordionDetails from "@mui/material/AccordionDetails";
 // ! MATERIAL ICONS IMPORTS
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
-import ChatIcon from "@mui/icons-material/Chat";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -81,217 +57,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-// ? PERMISSIONS ACCORDIAN STARTS HERE
-const Accordion = styled((props) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({
-  "&:not(:last-child)": {
-    borderBottom: 0,
-  },
-  "&:before": {
-    display: "none",
-  },
-}));
-
-const AccordionSummary = styled((props) => (
-  <MuiAccordionSummary
-    expandIcon={
-      <ArrowForwardIosSharpIcon
-        sx={{
-          fontSize: "0.9rem",
-          color: "#c8d8ff",
-        }}
-      />
-    }
-    {...props}
-  />
-))(({ theme }) => ({
-  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-    transform: "rotate(90deg)",
-  },
-  "& .MuiAccordionSummary-content": {
-    padding: "0px",
-  },
-}));
-
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: "0 16px 16px 28px",
-}));
-
-const permissionAccordionData = [
-  {
-    id: 1,
-    name: "Dashboard",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Orders",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-  {
-    id: 3,
-    name: "Products",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-  {
-    id: 4,
-    name: "Parameters",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-  {
-    id: 5,
-    name: "Users",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-  {
-    id: 6,
-    name: "Analytics",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-  {
-    id: 7,
-    name: "Functionality",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-  {
-    id: 8,
-    name: "Offers",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-  {
-    id: 9,
-    name: "Emailers",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-  {
-    id: 10,
-    name: "Teams",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-  {
-    id: 11,
-    name: "Website",
-    accDetails: [
-      { id: 101, name: "Content 1" },
-      { id: 102, name: "Content 2" },
-      { id: 103, name: "Content 3" },
-    ],
-  },
-];
-// ? PERMISSIONS ACCORDIAN ENDS HERE
-
-const groupData = [
-  { title: "No Group", value: "content1" },
-  { title: "VIP", value: "content2" },
-  { title: "VVIP", value: "content3" },
-  { title: "Wholesaler", value: "content4" },
-  { title: "Highest Orders", value: "content5" },
-  { title: "Loyal Users", value: "content6" },
-  { title: "New Users", value: "content7" },
-  { title: "Default Users", value: "content8" },
-  { title: "Guest Users", value: "content9" },
-];
-
 const CreateOrder = () => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
-  // ? ADD MEMBER DRAWER STARTS HERE
-
-  const [addProductDrawer, setAddProductDrawer] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
-
-  const toggleAddProductDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
-  };
-  // ? ADD MEMBER DRAWER ENDS HERE
-
-  // ? PERMISSIONS ACCORDIAN STARTS HERE
-  const [expanded, setExpanded] = React.useState("panel0");
-
-  const handleAccordianChange = (panel) => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : false);
-  };
-  // ? PERMISSIONS ACCORDIAN ENDS HERE
-
-  // * ACCESS POPOVERS STARTS
-  const [anchorAccessEl, setAnchorAccessEl] = React.useState(null);
-  const handleAccessClick = (event) => {
-    setAnchorAccessEl(event.currentTarget);
-  };
-  const handleAccessClose = () => {
-    setAnchorAccessEl(null);
-  };
-  const openAccess = Boolean(anchorAccessEl);
-  const idAccess = openAccess ? "simple-popover" : undefined;
-  // * ACTIVITY POPOVERS ENDS
-
-  // ? BLOCK DIALOG STARTS HERE
-  const [openBlock, setOpenBlock] = React.useState(false);
-
-  const handleBlock = () => {
-    setOpenBlock(true);
-  };
-
-  const handleBlockClose = () => {
-    setOpenBlock(false);
-  };
-  // ? BLOCK DIALOG ENDS HERE
 
   // ? GENDER SELECT STARTS HERE
   const [gender, setGender] = React.useState("");

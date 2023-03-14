@@ -12,7 +12,6 @@ import ringSmall from "../../../assets/images/ringSmall.svg";
 import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
-import ordersIcon from "../../../assets/icons/ordersIcon.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,

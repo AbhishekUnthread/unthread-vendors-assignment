@@ -12,7 +12,6 @@ import ringSmall from "../../../assets/images/ringSmall.svg";
 import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
-import ordersIcon from "../../../assets/icons/ordersIcon.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -26,7 +25,6 @@ import {
   Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICON IMPORTS
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ChatIcon from "@mui/icons-material/Chat";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -636,7 +634,6 @@ const DraftOrderTable = () => {
                     <TableCell>
                       <div className="d-flex flex-column">
                         <p className="text-lightBlue">{row.total}</p>
-                        {/* <p className="text-grey-6">via Debit Card</p> */}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -648,64 +645,6 @@ const DraftOrderTable = () => {
                         </div>
                       </div>
                     </TableCell>
-                    {/* <TableCell style={{ width: 80, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <EditOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                        <img
-                          src={verticalDots}
-                          alt="verticalDots"
-                          className="c-pointer"
-                          aria-describedby={idActions}
-                          variant="contained"
-                          onClick={handleActionClick}
-                        />
-
-                        <Popover
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "center",
-                          }}
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "center",
-                          }}
-                          id={idActions}
-                          open={openActions}
-                          anchorEl={anchorActionEl}
-                          onClose={handleActionClose}
-                        >
-                          <div className="py-2 px-2">
-                            <small className="text-grey-7 px-2">ACTIONS</small>
-                            <hr className="hr-grey-6 my-2" />
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit User
-                            </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit User Group
-                            </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Add or Remove Tags
-                            </small>
-                            <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                              <small className="text-lightBlue font2 d-block">
-                                Archive User
-                              </small>
-                              <img src={deleteRed} alt="delete" className="" />
-                            </div>
-                          </div>
-                        </Popover>
-                      </div>
-                    </TableCell> */}
                   </TableRow>
                 );
               })}
