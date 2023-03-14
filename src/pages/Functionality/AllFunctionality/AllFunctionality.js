@@ -82,14 +82,14 @@ const AllFunctionality = () => {
   return (
     <div className="container page-center">
       <h1 className="fw-600 text-lightBlue mt-5">All Functionality</h1>
-      <h5 className="fw-500 text-blue-1 mt-4">
+      <h6 className="fw-500 text-blue-1 mt-3 opacity-75">
         Streamline your website efforetless Functionality
-      </h5>
+      </h6>
 
       <Paper
-        sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
+        sx={{ width: "100%", p: 0 }}
         // className="border-grey-5 bg-black-15"
-        className="bg-black-2 shadow-none mt-5"
+        className="bg-black-2 shadow-none mt-5 mb-0"
       >
         <Box
           sx={{ width: "100%" }}
@@ -158,6 +158,7 @@ const AllFunctionality = () => {
                     setView("gridview");
                   }}
                   className="c-pointer ms-3"
+                  width={20}
                 />
               )}
               {view === "listview" && (
@@ -168,6 +169,7 @@ const AllFunctionality = () => {
                     setView("gridview");
                   }}
                   className="c-pointer ms-3"
+                  width={20}
                 />
               )}
               {view === "listview" && (
@@ -178,6 +180,7 @@ const AllFunctionality = () => {
                     setView("listview");
                   }}
                   className="c-pointer ms-3"
+                  width={20}
                 />
               )}
               {view === "gridview" && (
@@ -188,6 +191,7 @@ const AllFunctionality = () => {
                     setView("listview");
                   }}
                   className="c-pointer ms-3"
+                  width={20}
                 />
               )}
             </div>
@@ -245,10 +249,10 @@ const AllFunctionality = () => {
             </div>
           )}
           <div className="row mt-4 mx-0">
-            <div className="c-pointer col-12 bg-black-15 hover-back-two rounded-8 d-flex px-3 py-3 justify-content-between align-items-center">
+            <div className="c-pointer  border-grey-5 col-12 bg-black-15 hover-back-two rounded-8 d-flex px-3 py-3 justify-content-between align-items-center">
               <div className="d-flex">
                 <SettingsOutlinedIcon
-                  sx={{ color: "#c8d8ff", fontSize: 40 }}
+                  sx={{ color: "#c8d8ff", fontSize: 40, fontWeight: 400 }}
                   className="c-pointer me-3"
                 />
                 <div className="d-flex flex-column">

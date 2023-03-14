@@ -292,6 +292,9 @@
 .border-lightBlue {
   border: 1px solid $lightBlue;
 }
+.border-transparent {
+  border: 1px solid transparent;
+}
 
 .text-grey-6 {
   color: $grey6;
@@ -587,10 +590,11 @@ textarea {
 }
 .hover-back-two {
   transition: 0.1s all ease-in;
-  border: 1px solid transparent;
+  // border: 1px solid transparent;
   &:hover {
     background: #1c1836;
-    border: 1px solid #373357;
+    // border: 1px solid #373357;
+    border: 1px solid #9890d7;
     transition: 0.1s all ease-in;
   }
 }

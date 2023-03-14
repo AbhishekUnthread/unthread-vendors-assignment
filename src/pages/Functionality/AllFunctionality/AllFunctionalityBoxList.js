@@ -5,7 +5,7 @@ import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 const AllFunctionalityBoxList = ({ headingName, imageName, buttonName }) => {
   return (
     // <div className="bg-black-15 hover-back-two rounded-8 d-flex p-3 justify-content-between align-items-center w-100">
-    <div className="hover-back-two rounded-8 d-flex p-3 justify-content-between align-items-center w-100">
+    <div className="hover-back-two border-transparent rounded-8 d-flex p-3 justify-content-between align-items-center w-100">
       <div className="d-flex align-items-center">
         <img
           src={imageName}
