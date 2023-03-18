@@ -79,6 +79,7 @@ import CreateLabels from "./pages/Functionality/CreateLabels/CreateLabels";
 import ReturnRefunds from "./pages/Orders/ReturnRefunds/ReturnRefunds";
 import CreateReturnRefund from "./pages/Orders/CreateReturnRefund/CreateReturnRefund";
 import ReturnRequestDetails from "./pages/Orders/ReturnRequestDetails/ReturnRequestDetails";
+import ExchangeAlterationRequests from "./pages/Orders/ExchangeAlterationRequests/ExchangeAlterationRequests";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -373,6 +374,10 @@ function App(props) {
                 <Route
                   path="returnRefunds/details"
                   element={<ReturnRequestDetails />}
+                />
+                <Route
+                  path="exchangeAlterationRequests"
+                  element={<ExchangeAlterationRequests />}
                 />
               </Route>
               {/* FUNCTIONALITY ROUTES */}

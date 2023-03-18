@@ -3,8 +3,21 @@ import React from "react";
 import product2 from "../../assets/images/products/product2.jpg";
 import productIcon from "../../assets/icons/productIcon.svg";
 import jwlPackaging from "../../assets/icons/jwlPackaging.svg";
+import video from "../../assets/icons/video.svg";
+import cancel from "../../assets/icons/cancel.svg";
 // ! MATERIAL IMPORTS
-import { Popover, Chip, TextareaAutosize, Tooltip } from "@mui/material";
+import {
+  Popover,
+  Chip,
+  TextareaAutosize,
+  Tooltip,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  DialogTitle,
+  Slide,
+  Rating,
+} from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
@@ -15,6 +28,14 @@ import PrintIcon from "@mui/icons-material/Print";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import LaunchIcon from "@mui/icons-material/Launch";
+import BlockIcon from "@mui/icons-material/Block";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 
 const OrderCartDetails = ({
   showEditButton,
@@ -23,10 +44,18 @@ const OrderCartDetails = ({
   showItemAvailable,
   showActionButton,
   showFulfillButton,
+  showResolveButton,
   showQCButton,
   showTrackingBox,
   showReturnButton,
   showExchangeButton,
+  showCreateLabelButton,
+  showCreateExchangeButton,
+  showRefundAmountButton,
+  showCustomerNote,
+  showMadeOrderChip,
+  showOrderID,
+  showNoOfItems,
 }) => {
   // * PRODUCT DETAIL POPOVERS STARTS
   const [anchorProductDetailEl, setAnchorProductDetailEl] =
@@ -85,26 +114,36 @@ const OrderCartDetails = ({
   const idGift = openGift ? "simple-popover" : undefined;
   // * GIFT POPOVERS ENDS
 
-  // // ? VIEW QC DIALOG STARTS HERE
-  // const [openQc, setOpenQc] = React.useState(false);
+  // ? VIEW QC DIALOG STARTS HERE
+  const [openQc, setOpenQc] = React.useState(false);
 
-  // const handleOpenQc = () => {
-  //   setOpenQc(true);
-  // };
+  const handleOpenQc = () => {
+    setOpenQc(true);
+  };
 
-  // const handleOpenQcClose = () => {
-  //   setOpenQc(false);
-  // };
-  // // ? VIEW QC DIALOG ENDS HERE
+  const handleOpenQcClose = () => {
+    setOpenQc(false);
+  };
+  // ? VIEW QC DIALOG ENDS HERE
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row mt-4">
       <div className="d-flex justify-content-between align-items-center col-12 px-0">
         <div className="d-flex align-items-center">
           <img src={productIcon} alt="userIcon" width={16} />
-          <h6 className="text-lightBlue fw-500 ms-2">
-            Order&nbsp;:&nbsp;2&nbsp;Items
-          </h6>
+          <h6 className="text-lightBlue fw-500 ms-2">Order&nbsp;:&nbsp;</h6>
+          {showNoOfItems && (
+            <h6 className="text-lightBlue fw-500 ms-2">2&nbsp;Items</h6>
+          )}
+          {showOrderID && (
+            <h6 className="text-blue-2 fw-500 ms-2">#1234&nbsp;</h6>
+          )}
+          {showOrderID && (
+            <p className="text-lightBlue fw-500 ms-2">
+              (May 16, 2022&nbsp;at&nbsp;12:00&nbsp;am)
+            </p>
+          )}
+
           <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer ms-4">
             <small className="text-black fw-400">Order Confirm</small>
           </div>
@@ -160,21 +199,25 @@ const OrderCartDetails = ({
                 className="px-1 w-auto ms-2"
                 variant="outlined"
               />
-              <Chip
-                label="Made to Order"
-                size="small"
-                className="px-1 w-auto ms-2"
-              />
+              {showMadeOrderChip && (
+                <Chip
+                  label="Made to Order"
+                  size="small"
+                  className="px-1 w-auto ms-2"
+                />
+              )}
             </div>
-            {/*{showQCButton && <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
-            <img src={video} alt="video" width={16} className="me-2" />
-            <small
-              className="text-blue-gradient d-block"
-              onClick={handleOpenQc}
-            >
-              View QC
-            </small>
-          </div>} */}
+            {showQCButton && (
+              <div className="d-flex align-items-center rounded-3 p-2 hover-back c-pointer">
+                <img src={video} alt="video" width={16} className="me-2" />
+                <small
+                  className="text-blue-gradient d-block"
+                  onClick={handleOpenQc}
+                >
+                  View QC
+                </small>
+              </div>
+            )}
           </div>
           <div className="row justify-content-between">
             {showBasicDetail && (
@@ -284,7 +327,7 @@ const OrderCartDetails = ({
           </div>
         </div>
       ))}
-      {/* <Dialog
+      <Dialog
         open={openQc}
         TransitionComponent={Transition}
         keepMounted
@@ -429,7 +472,7 @@ const OrderCartDetails = ({
             <p className="ms-2">Reject Reviews</p>
           </button>
         </DialogActions>
-      </Dialog> */}
+      </Dialog>
 
       <Popover
         anchorOrigin={{
@@ -598,19 +641,23 @@ const OrderCartDetails = ({
       <div className="col-12 px-0">
         <div className="row">
           <div className="col-md-6">
-            <small className="text-grey-6 d-block">Customer Note:</small>
+            {showCustomerNote && (
+              <small className="text-grey-6 d-block">Customer Note:</small>
+            )}
 
-            <TextareaAutosize
-              aria-label="meta description"
-              placeholder="Type Something"
-              style={{
-                background: "#15142A",
-                color: "#c8d8ff",
-                borderRadius: 5,
-              }}
-              minRows={3}
-              className=" mt-3 w-75"
-            />
+            {showCustomerNote && (
+              <TextareaAutosize
+                aria-label="meta description"
+                placeholder="Type Something"
+                style={{
+                  background: "#15142A",
+                  color: "#c8d8ff",
+                  borderRadius: 5,
+                }}
+                minRows={3}
+                className=" mt-3 w-75"
+              />
+            )}
           </div>
           <div className="col-md-6">
             <div className="d-flex justify-content-between mt-2">
@@ -702,13 +749,23 @@ const OrderCartDetails = ({
         </div>
       </Popover>
 
-      {(showFulfillButton || showReturnButton || showExchangeButton) && (
+      {(showFulfillButton ||
+        showReturnButton ||
+        showExchangeButton ||
+        showCreateLabelButton ||
+        showRefundAmountButton ||
+        showResolveButton ||
+        showCreateExchangeButton) && (
         <React.Fragment>
           <div className="d-flex justify-content-center col-12 px-0">
             <hr className="hr-grey-6 w-100 my-3" />
           </div>
           <div className="col-12 px-0 d-flex justify-content-between">
-            {(showExchangeButton || showReturnButton) && (
+            {(showExchangeButton ||
+              showReturnButton ||
+              showCreateLabelButton ||
+              showRefundAmountButton ||
+              showCreateExchangeButton) && (
               <div className="d-flex">
                 {showReturnButton && (
                   <button className="button-lightBlue-outline py-2 px-4 w-auto me-3">
@@ -720,11 +777,33 @@ const OrderCartDetails = ({
                     <p>Exchange</p>
                   </button>
                 )}
+                {showCreateExchangeButton && (
+                  <button className="button-gradient py-2 px-4 w-auto me-3">
+                    <p>Create an Exchange</p>
+                  </button>
+                )}
+                {showCreateLabelButton && (
+                  <button className="button-gradient py-2 px-4 w-auto me-3">
+                    <p>Create Return Label</p>
+                  </button>
+                )}
+                {showRefundAmountButton && (
+                  <button className="button-lightBlue-outline py-2 px-4 w-auto">
+                    <p>Refund Amount</p>
+                  </button>
+                )}
               </div>
             )}
-            <button className="button-gradient ms-auto py-2 px-4 w-auto">
-              <p>FulFill Item</p>
-            </button>
+            {showFulfillButton && (
+              <button className="button-gradient ms-auto py-2 px-4 w-auto">
+                <p>FulFill Item</p>
+              </button>
+            )}
+            {showResolveButton && (
+              <button className="button-gradient ms-auto py-2 px-4 w-auto">
+                <p>Resolve</p>
+              </button>
+            )}
           </div>
         </React.Fragment>
       )}

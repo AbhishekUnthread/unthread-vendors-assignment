@@ -70,10 +70,18 @@ const OrderDetails = () => {
             showItemAvailable={true}
             showActionButton={true}
             showFulfillButton={true}
-            showQCButton={true}
+            showResolveButton={false}
+            showQCButton={false}
             showTrackingBox={true}
             showReturnButton={true}
             showExchangeButton={true}
+            showCreateLabelButton={false}
+            showCreateExchangeButton={false}
+            showRefundAmountButton={false}
+            showCustomerNote={true}
+            showMadeOrderChip={true}
+            showOrderID={false}
+            showNoOfItems={true}
           />
           <OrderReturnBox
             showBasicDetail={true}

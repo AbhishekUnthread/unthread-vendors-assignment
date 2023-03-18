@@ -9,7 +9,6 @@ import OrderTimelines from "../OrderTimelines";
 import OrderPayments from "../OrderPayments";
 import OrderActions from "../OrderActions";
 import OrderMoreActionsButton from "../OrderMoreActionsButton";
-import OrderReturnBox from "../OrderReturnBox";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
@@ -18,6 +17,7 @@ import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 // ! MATERIAL ICONS IMPORTS
 import BlockIcon from "@mui/icons-material/Block";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import OrderReasonsAndIssues from "../OrderReasonsAndIssues";
 
 const ReturnRequestDetails = () => {
   return (
@@ -86,22 +86,46 @@ const ReturnRequestDetails = () => {
           <OrderCartDetails
             showCartButton={false}
             showEditButton={true}
-            showBasicDetail={true}
+            showBasicDetail={false}
             showItemAvailable={true}
             showActionButton={true}
-            showFulfillButton={true}
-            showQCButton={true}
-            showTrackingBox={true}
-            showReturnButton={true}
-            showExchangeButton={true}
+            showFulfillButton={false}
+            showResolveButton={true}
+            showQCButton={false}
+            showTrackingBox={false}
+            showReturnButton={false}
+            showExchangeButton={false}
+            showCreateLabelButton={true}
+            showCreateExchangeButton={false}
+            showRefundAmountButton={true}
+            showCustomerNote={false}
+            showMadeOrderChip={false}
+            showOrderID={true}
+            showNoOfItems={false}
           />
-          <OrderReturnBox
-            showBasicDetail={true}
+
+          <OrderReasonsAndIssues showAlterationForm={false} />
+          <OrderCartDetails
+            showCartButton={false}
+            showEditButton={true}
+            showBasicDetail={false}
             showItemAvailable={true}
             showActionButton={true}
-            showQCButton={true}
-            showProductReceived={true}
+            showFulfillButton={false}
+            showResolveButton={true}
+            showQCButton={false}
+            showTrackingBox={false}
+            showReturnButton={false}
+            showExchangeButton={false}
+            showCreateLabelButton={false}
+            showCreateExchangeButton={true}
+            showRefundAmountButton={true}
+            showCustomerNote={false}
+            showMadeOrderChip={false}
+            showOrderID={true}
+            showNoOfItems={false}
           />
+          <OrderReasonsAndIssues showAlterationForm={true} />
           <OrderPayments
             showMarkAsPaidButton={false}
             showCollectPaymentButton={false}

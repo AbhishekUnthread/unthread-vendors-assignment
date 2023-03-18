@@ -41,6 +41,11 @@ export const SidebarData = [
         image: orders,
       },
       {
+        title: "Exchange & Alteration",
+        path: "/orders/exchangeAlterationRequests",
+        image: orders,
+      },
+      {
         title: "Draft",
         path: "/orders/draftOrder",
         image: orders,

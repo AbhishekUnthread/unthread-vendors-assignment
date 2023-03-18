@@ -144,7 +144,18 @@ const AbandonedCartDetails = () => {
             showItemAvailable={false}
             showActionButton={false}
             showFulfillButton={false}
-            showQCButton={true}
+            showQCButton={false}
+            showResolveButton={false}
+            showTrackingBox={false}
+            showReturnButton={false}
+            showExchangeButton={false}
+            showCreateLabelButton={false}
+            showCreateExchangeButton={false}
+            showRefundAmountButton={false}
+            showCustomerNote={false}
+            showMadeOrderChip={false}
+            showOrderID={false}
+            showNoOfItems={false}
           />
         </div>
         <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
