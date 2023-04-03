@@ -257,7 +257,7 @@ function App(props) {
           <Routes>
             {/* {admin ? ( */}
             <React.Fragment>
-              <Route path="/" element={<Navigate to="/dashboard" />} />
+              <Route path="/" element={<Navigate to="/auth" />} />
               <Route path="/dashboard" element={<Dashboard />} />
               {/* PRODUCT ROUTES */}
               <Route path="/products">
@@ -399,7 +399,7 @@ function App(props) {
                 <Route path="preOrder/create" element={<CreatePreOrder />} />
                 <Route path="labelsBadges/create" element={<CreateLabels />} />
               </Route>
-              <Route path="*" element={<Navigate to="/dashboard" />} />
+              <Route path="*" element={<Navigate to="/auth" />} />
             </React.Fragment>
             {/* ) : (
               <React.Fragment>
