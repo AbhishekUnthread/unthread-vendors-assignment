@@ -7,6 +7,11 @@
   // overflow-y: scroll;
   // height: calc(100vh - 3.4rem) !important;
 }
+.main-box__login {
+  min-height: 100vh;
+  margin-top: 0;
+  background: $black2;
+}
 
 .app-sidenav {
   .MuiPaper-root {

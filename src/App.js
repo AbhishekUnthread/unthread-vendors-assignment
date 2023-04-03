@@ -80,6 +80,8 @@ import ReturnRefunds from "./pages/Orders/ReturnRefunds/ReturnRefunds";
 import CreateReturnRefund from "./pages/Orders/CreateReturnRefund/CreateReturnRefund";
 import ReturnRequestDetails from "./pages/Orders/ReturnRequestDetails/ReturnRequestDetails";
 import ExchangeAlterationRequests from "./pages/Orders/ExchangeAlterationRequests/ExchangeAlterationRequests";
+import Login from "./pages/Auth/Login/Login";
+import Signup from "./pages/Auth/Signup/Signup";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -141,7 +143,7 @@ function App(props) {
   // const navigate = useNavigate();
 
   useEffect(() => {
-    if (location.pathname.includes("login")) {
+    if (location.pathname.includes("auth")) {
       setShowNavs(false);
     } else {
       setShowNavs(true);
@@ -249,7 +251,7 @@ function App(props) {
             p: showNavs ? 3 : 0,
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
-          className="main-box"
+          className={showNavs ? "main-box" : "main-box__login"}
         >
           {/* {showNavs && <Toolbar />} */}
           <Routes>
@@ -337,6 +339,12 @@ function App(props) {
                 <Route path="roles/create" element={<CreateRoles />} />
                 <Route path="members" element={<Members />} />
                 <Route path="members/details" element={<MemberDetails />} />
+              </Route>
+              {/* AUTH ROUTES */}
+              <Route path="/auth">
+                <Route path="" element={<Navigate to="login" />} />
+                <Route path="login" element={<Login />} />
+                <Route path="signup" element={<Signup />} />
               </Route>
               {/* OFFERS ROUTES */}
               <Route path="/offers">
