@@ -2,8 +2,55 @@ import React from "react";
 import "./Signup.scss";
 import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
+import { Link,useNavigate } from "react-router-dom";
+import { signUp } from "../services/authService";
+import  Messages from '../../../components/snackbar/snackbar.js'
+import { useDispatch } from "react-redux";
+
 
 const Signup = () => {
+  let navigate = useNavigate();
+  let dispatcher=useDispatch();
+
+  let [message,setMessage]=React.useState('')
+
+  const [formValues, setFormValues] = React.useState({
+    "email":"",
+    "password":"",
+    "username":""
+  });
+
+  const updateFormFields = (key, value) => {
+    const updatedFields = { ...formValues };
+    updatedFields[key] = value;
+    setFormValues(updatedFields);
+  };
+
+  let callApi=()=>{
+
+    let allValues=Object.values(formValues).every((v) => v)
+    if(!allValues){
+      return;
+    }
+
+    setMessage('Creating Store!')
+
+    signUp(formValues).then(res=>{
+      if(res?.error?.message){
+        setMessage(res?.error?.message)
+        return;
+      }
+
+      dispatcher({type:'',data:res})
+
+      navigate("/dashboard", { replace: true });
+
+    }).catch(err=>{
+      setMessage(err)
+    })
+  }
+
+
   return (
     <div className="container-fluid signup">
       <div className="row align-items-center justify-content-center py-5 align-items-center signup-row">
@@ -13,9 +60,58 @@ const Signup = () => {
           </h3>
           <p className="text-grey-6 text-center mt-3">
             Already have an account?&nbsp;
-            <span className="text-blue-gradient">Sign Up</span>
+            <span className="text-blue-gradient">
+              <Link               to="/auth/signin"
+>  Sign In</Link>
+             </span>
           </p>
-          <div className="row">
+
+          <div className="mt-4">
+            <p className="text-lightBlue mb-1 text-start">Username</p>
+            <FormControl className="w-100 px-0">
+              <OutlinedInput
+                placeholder="Enter Username"
+                size="small"
+                sx={{ paddingLeft: 0 }}
+                value={formValues.username}
+                onChange={(e) => updateFormFields("username", e.target.value)}
+              />
+            </FormControl>
+           
+          </div>
+         
+
+          <div className="mt-4">
+            <p className="text-lightBlue mb-1 text-start">Enter Email</p>
+            <FormControl className="w-100 px-0">
+              <OutlinedInput
+                placeholder="Enter Email"
+                size="small"
+                sx={{ paddingLeft: 0 }}
+                value={formValues.email}
+                onChange={(e) => updateFormFields("email", e.target.value)}
+              />
+            </FormControl>
+           
+          </div>
+
+        
+
+          <div className="mt-4">
+            <p className="text-lightBlue mb-1 text-start">Enter Password</p>
+            <FormControl className="w-100 px-0">
+              <OutlinedInput
+                placeholder="Enter Password"
+                size="small"
+                sx={{ paddingLeft: 0 }}
+                value={formValues.password}
+                onChange={(e) => updateFormFields("password", e.target.value)}
+              />
+            </FormControl>
+           
+          </div>
+
+          {/* <div className="row">
             <div className="col-md-6">
               <div className="mt-4">
                 <p className="text-lightBlue mb-1 text-start">
@@ -44,9 +140,9 @@ const Signup = () => {
                 </FormControl>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <p className="text-lightBlue mb-1 text-start">Mobile Number</p>
             <FormControl className="w-100 px-0">
               <OutlinedInput
@@ -56,13 +152,12 @@ const Signup = () => {
                 startAdornment={
                   <InputAdornment position="start">
                     <AppMobileCodeSelect />
-                    {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
                   </InputAdornment>
                 }
               />
             </FormControl>
-          </div>
-          <div className="mt-4">
+          </div> */}
+          {/* <div className="mt-4">
             <p className="text-lightBlue mb-1 text-start">Enter OTP</p>
             <FormControl className="w-100 px-0">
               <OutlinedInput
@@ -75,8 +170,8 @@ const Signup = () => {
               Haven't received code?&nbsp;
               <span className="text-blue-gradient">Resend in 0:59 sec</span>
             </small>
-          </div>
-          <button className="button-gradient py-2 w-100 px-3 mt-4">
+          </div> */}
+          <button onClick={callApi} className="button-gradient py-2 w-100 px-3 mt-4">
             <p>Create your Store</p>
           </button>
           <div className="d-flex row">
@@ -89,6 +184,9 @@ const Signup = () => {
           </div>
         </div>
       </div>
+
+      <Messages messageLine={message} setMessage={setMessage}></Messages>
+
     </div>
   );
 };

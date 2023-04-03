@@ -5,9 +5,56 @@ import facebook from "../../../assets/icons/facebook.svg";
 import google from "../../../assets/icons/google.svg";
 import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import {useDispatch} from 'react-redux'
+import  Messages from '../../../components/snackbar/snackbar.js'
+import { signIn } from "../services/authService";
 
 const Login = () => {
+  let navigate = useNavigate();
+
+  
+  
+  let [message,setMessage]=React.useState('')
+
+  const [formValues, setFormValues] = React.useState({
+    "identifier":"",
+    "password":"",
+  });
+
+  const updateFormFields = (key, value) => {
+    const updatedFields = { ...formValues };
+    updatedFields[key] = value;
+    setFormValues(updatedFields);
+  };
+
+  const dispatcher=useDispatch();
+
+  const updateLogin=()=>{
+
+    let allValues=Object.values(formValues).every((v) => v)
+    if(!allValues){
+      return;
+    }
+
+    setMessage('Signing In')
+   
+    signIn(formValues).then(res=>{
+      if(res?.error?.message){
+        setMessage(res?.error?.message)
+        return;
+      }
+
+      dispatcher({type:'',data:res})
+
+      navigate("/dashboard", { replace: true });
+
+    }).catch(err=>{
+      setMessage(err)
+    })
+
+  }
+
   return (
     <div className="container login">
       <div className="row align-items-center justify-content-center py-5">
@@ -32,7 +79,7 @@ const Login = () => {
               Sign Up
             </Link>
           </p>
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <p className="text-lightBlue mb-1 text-start">Mobile Number</p>
             <FormControl className="w-100 px-0">
               <OutlinedInput
@@ -42,7 +89,6 @@ const Login = () => {
                 startAdornment={
                   <InputAdornment position="start">
                     <AppMobileCodeSelect />
-                    {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
                   </InputAdornment>
                 }
               />
@@ -61,9 +107,38 @@ const Login = () => {
               Haven't received code?&nbsp;
               <span className="text-blue-gradient">Resend in 0:59 sec</span>
             </small>
+          </div> */}
+
+            <div className="mt-4">
+            <p className="text-lightBlue mb-1 text-start">Enter Email</p>
+            <FormControl className="w-100 px-0">
+              <OutlinedInput
+                placeholder="Enter Email"
+                size="small"
+                sx={{ paddingLeft: 0 }}
+                value={formValues.identifier}
+                onChange={(e) => updateFormFields("identifier", e.target.value)}
+              />
+            </FormControl>
+          
           </div>
-          <button className="button-gradient py-2 w-100 px-3 mt-4">
-            <p>Get OTP</p>
+
+          <div className="mt-4">
+            <p className="text-lightBlue mb-1 text-start">Enter Password</p>
+            <FormControl className="w-100 px-0">
+              <OutlinedInput
+                placeholder="Enter Password"
+                size="small"
+                sx={{ paddingLeft: 0 }}
+                value={formValues.password}
+                onChange={(e) => updateFormFields("password", e.target.value)}
+              />
+            </FormControl>
+          
+          </div>
+
+          <button onClick={updateLogin} className="button-gradient py-2 w-100 px-3 mt-4">
+            <p>Login</p>
           </button>
           <p className="text-grey-6 my-4">or sign in with</p>
           <div className="d-flex row">
@@ -88,6 +163,9 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <Messages messageLine={message} setMessage={setMessage}></Messages>
+
+
     </div>
   );
 };
