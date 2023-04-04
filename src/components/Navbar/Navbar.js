@@ -101,16 +101,24 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
   const dispatcher=useDispatch();
+
   const loginData=useSelector(state=>state.data)
 
+  
   React.useEffect(()=>{
-    if(!loginData){
-      navigate("/auth/login", { replace: true });
-    }
+    setTimeout(()=>{
+      if(!loginData){
+        navigate("/auth/login", { replace: true });
+      }
+    })
+   
   },[loginData])
 
+
+
+
   const logout=()=>{
-    dispatcher({type:'',data:null})
+    dispatcher({type:'userData',data:null})
 
   }
 
@@ -257,7 +265,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               className="app-navbar__profile ms-4"
             >
               <div className="d-flex flex-column justify-content-end align-items-end me-2">
-                <p className="text-lightBlue">{loginData?.user.username}</p>
+              {loginData && <p className="text-lightBlue">{loginData?.user.username}</p>}  
                 <small className="text-blue-gradient">Super Admin</small>
               </div>
               <img src={user} alt="user" width={40} />

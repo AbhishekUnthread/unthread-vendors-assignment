@@ -42,7 +42,7 @@ const Signup = () => {
         return;
       }
 
-      dispatcher({type:'',data:res})
+      dispatcher({type:'userData',data:res})
 
       navigate("/dashboard", { replace: true });
 
