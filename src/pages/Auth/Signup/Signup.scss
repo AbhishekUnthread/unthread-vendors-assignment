@@ -2,6 +2,9 @@
   min-height: 100vh;
   background: url("../../../assets/icons/signup.svg");
   background-size: cover;
+  background-position-y: bottom;
+  background-position-x: center;
+  background-repeat: no-repeat;
   &-row {
     height: 100vh;
   }
