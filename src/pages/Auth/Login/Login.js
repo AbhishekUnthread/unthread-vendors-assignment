@@ -34,6 +34,7 @@ const Login = () => {
 
     let allValues=Object.values(formValues).every((v) => v)
     if(!allValues){
+      setMessage('Please enter all fields!')
       return;
     }
 
@@ -80,7 +81,7 @@ const Login = () => {
                 Sign Up
               </Link>
             </p>
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <p className="text-lightBlue mb-1 text-start">Mobile Number</p>
               <FormControl className="w-100 px-0">
                 <OutlinedInput
@@ -90,7 +91,6 @@ const Login = () => {
                   startAdornment={
                     <InputAdornment position="start">
                       <AppMobileCodeSelect />
-                      {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
                     </InputAdornment>
                   }
                 />
@@ -109,9 +109,39 @@ const Login = () => {
                 Haven't received code?&nbsp;
                 <span className="text-blue-gradient">Resend in 0:59 sec</span>
               </small>
+            </div> */}
+
+
+                <div className="mt-4">
+              <p className="text-lightBlue mb-1 text-start">Enter Email</p>
+              <FormControl className="w-100 px-0">
+                <OutlinedInput
+                  placeholder="Enter Email"
+                  size="small"
+                  sx={{ paddingLeft: 0 }}
+                  value={formValues.identifier}
+                onChange={(e) => updateFormFields("identifier", e.target.value)}
+                />
+              </FormControl>
+            
             </div>
-            <button className="button-gradient py-2 w-100 px-3 mt-4">
-              <p>Get OTP</p>
+
+            <div className="mt-4">
+              <p className="text-lightBlue mb-1 text-start">Enter Password</p>
+              <FormControl className="w-100 px-0">
+                <OutlinedInput
+                  placeholder="Enter Password"
+                  size="small"
+                  sx={{ paddingLeft: 0 }}
+                  value={formValues.password}
+                onChange={(e) => updateFormFields("password", e.target.value)}
+                />
+              </FormControl>
+            
+            </div>
+
+            <button onClick={updateLogin} className="button-gradient py-2 w-100 px-3 mt-4">
+              <p>Login</p>
             </button>
             <p className="text-grey-6 my-4">or sign in with</p>
             <div className="d-flex row">

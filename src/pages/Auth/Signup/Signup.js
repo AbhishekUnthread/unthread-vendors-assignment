@@ -30,6 +30,7 @@ const Signup = () => {
 
     let allValues=Object.values(formValues).every((v) => v)
     if(!allValues){
+      setMessage('Please enter all fields!')
       return;
     }
 

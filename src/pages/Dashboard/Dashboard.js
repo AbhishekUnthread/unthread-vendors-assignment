@@ -10,7 +10,7 @@ const Dashboard = () => {
     if(!isLogin){
       navigate("/auth/login", { replace: true });
     }
-  },[])
+  })
   return <div>Dashboard</div>;
 };
 
