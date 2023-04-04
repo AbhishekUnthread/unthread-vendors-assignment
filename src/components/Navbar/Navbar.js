@@ -103,7 +103,11 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
   const dispatcher=useDispatch();
   const loginData=useSelector(state=>state.data)
 
-
+  React.useEffect(()=>{
+    if(!loginData){
+      navigate("/auth/login", { replace: true });
+    }
+  },[loginData])
 
   const logout=()=>{
     dispatcher({type:'',data:null})

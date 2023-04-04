@@ -62,7 +62,7 @@ const Signup = () => {
           <p className="text-grey-6 text-center mt-3">
             Already have an account?&nbsp;
             <span className="text-blue-gradient">
-              <Link               to="/auth/signin"
+              <Link               to="/auth/login"
 >  Sign In</Link>
              </span>
           </p>
