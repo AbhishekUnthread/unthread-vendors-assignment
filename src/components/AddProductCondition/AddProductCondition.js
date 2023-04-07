@@ -430,7 +430,7 @@ const AddProductCondition = () => {
         <div className="bg-black-11 rounded-8 p-3 shadow-sm">
           {likeProductRadio === "automated" && (
             <React.Fragment>
-              <div className="d-flex justify-content-between">
+              <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex align-items-center">
                   <p className="text-lightBlue me-4">Should Match:</p>
                   <RadioGroup

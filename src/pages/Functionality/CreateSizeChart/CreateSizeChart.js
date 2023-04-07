@@ -2,6 +2,8 @@ import React, { useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
+import AddProductCondition from "../../../components/AddProductCondition/AddProductCondition";
+import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import info from "../../../assets/icons/info.svg";
@@ -11,187 +13,17 @@ import sizeTape from "../../../assets/icons/sizeTape.svg";
 import sizeTable from "../../../assets/icons/sizeTable.svg";
 import makeSize from "../../../assets/icons/makeSize.svg";
 import imageAdd from "../../../assets/icons/imageAdd.svg";
-import deleteWhite from "../../../assets/icons/deleteWhite.svg";
-import editWhite from "../../../assets/icons/editWhite.svg";
-import deleteButton from "../../../assets/icons/deleteButton.svg";
-import productInfoMedia1 from "../../../assets/images/products/productInfoMedia1.svg";
-import productInfoMedia2 from "../../../assets/images/products/productInfoMedia2.svg";
 import uploadSizeChart from "../../../assets/icons/uploadSizeChart.svg";
-import featureUpload from "../../../assets/images/products/featureUpload.svg";
-import ringSmall from "../../../assets/images/ringSmall.svg";
 // ! MATERIAL IMPORTS
 import {
-  Box,
   FormControl,
-  MenuItem,
-  Select,
-  Tab,
-  Tabs,
   Tooltip,
   ToggleButton,
   ToggleButtonGroup,
   OutlinedInput,
-  TableContainer,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  TablePagination,
-  styled,
-  InputBase,
 } from "@mui/material";
-import DoneIcon from "@mui/icons-material/Done";
-import CloseIcon from "@mui/icons-material/Close";
 // ! MATERIAL ICONS IMPORTS
-import SearchIcon from "@mui/icons-material/Search";
-import AddProductCondition from "../../../components/AddProductCondition/AddProductCondition";
-import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
-
-// ? SEARCH INPUT STARTS HERE
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  "&:hover": {},
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    width: "auto",
-  },
-  height: "30.6px",
-  border: "1px solid #38395c",
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 1.5),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(0.8, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    borderRadius: "5px",
-  },
-}));
-// ? SEARCH INPUT ENDS HERE
-
-// ? TABLE STARTS HERE
-function createData(pId, productName, category, price) {
-  return { pId, productName, category, price };
-}
-
-const rows = [
-  createData(
-    1,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    2,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    3,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    4,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    5,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-];
-
-const drawerHeadCells = [
-  {
-    id: "productName",
-    numeric: false,
-    disablePadding: true,
-    label: "Product Name",
-  },
-  {
-    id: "category",
-    numeric: false,
-    disablePadding: false,
-    label: "Category",
-  },
-  {
-    id: "price",
-    numeric: false,
-    disablePadding: false,
-    label: "Price",
-  },
-  {
-    id: "action",
-    numeric: false,
-    disablePadding: false,
-    label: "Action",
-  },
-];
-
-// ? TABLE ENDS HERE
-
-// ? LIKE PRODUCTS TABLE STARTS HERE
-function createLikeProductData(pId, productName, category, price) {
-  return { pId, productName, category, price };
-}
-
-const likeHeadCells = [
-  {
-    id: "productName",
-    numeric: false,
-    disablePadding: true,
-    label: "Product Name",
-  },
-  {
-    id: "category",
-    numeric: false,
-    disablePadding: false,
-    label: "Category",
-  },
-  {
-    id: "price",
-    numeric: false,
-    disablePadding: false,
-    label: "Price",
-  },
-];
-
-const likeProductRows = [
-  createLikeProductData(
-    1,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 25,000"
-  ),
-  createLikeProductData(2, "Fringe Diamond Ring", "Gold Products", "₹ 25,000"),
-  createLikeProductData(
-    3,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 25,000"
-  ),
-];
-// ? LIKE PRODUCTS TABLE ENDS HERE
+import CloseIcon from "@mui/icons-material/Close";
 
 // ? FILE UPLOAD STARTS HERE
 const baseStyle = {
@@ -280,7 +112,7 @@ const CreateSizeChart = () => {
             />
           </Link>
 
-          <h5 className="page-heading ms-2 ps-1">Add Product</h5>
+          <h5 className="page-heading ms-2 ps-1">Create Size Chart</h5>
         </div>
         <div className="d-flex align-items-center w-auto pe-0">
           <button className="button-transparent me-1 py-2 px-3">
@@ -321,7 +153,10 @@ const CreateSizeChart = () => {
                     </Tooltip>
                   </div>
                   <FormControl className="w-100 px-0">
-                    <OutlinedInput placeholder="Enter Title" size="small" />
+                    <OutlinedInput
+                      placeholder="Enter Size Chart Name"
+                      size="small"
+                    />
                   </FormControl>
                 </div>
                 <div className="col-4">
@@ -368,15 +203,13 @@ const CreateSizeChart = () => {
                 </div>
               </div>
             </div>
-            <div className="col-12"></div>
-
-            <hr className="hr-grey-6 my-3" />
           </div>
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row mt-4">
             <div className="col-12 px-0 d-flex align-items-center">
-              <h6 className="text-lightBlue fw-600 me-3">
+              <h6 className="text-lightBlue fw-500 me-3">
                 Make Size chart for
               </h6>
+
               <ToggleButtonGroup
                 value={sizeChartView}
                 exclusive
@@ -488,6 +321,12 @@ const CreateSizeChart = () => {
               <p className="text-blue-1 ms-2 fw-500">Find my size?</p>
             </div>
             <div className="bg-black-21 rounded-8 p-3 mt-3 text-center">
+              <div className="text-end">
+                <CloseIcon
+                  sx={{ color: "#c8d8ff", fontSize: 20 }}
+                  className="c-pointer"
+                />
+              </div>
               <h4 className="text-lightBlue fw-600">Ring Size Chart</h4>
               <small className="text-grey-6 mt-3 d-block">
                 Lorem ipsum dolor, sit amet consectetur adipisicing elit. At
