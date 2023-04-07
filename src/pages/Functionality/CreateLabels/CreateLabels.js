@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
+import "./CreateLabels.scss";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
+import { ColorPicker, useColor } from "react-color-palette";
 // ! COMPONENT IMPORTS
 import AddProductCondition from "../../../components/AddProductCondition/AddProductCondition";
 import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
@@ -14,6 +16,12 @@ import sizeTable from "../../../assets/icons/sizeTable.svg";
 import text from "../../../assets/icons/text.svg";
 import imageAdd from "../../../assets/icons/imageAdd.svg";
 import uploadBadge from "../../../assets/icons/uploadBadge.svg";
+import positionTopLeft from "../../../assets/icons/positionTopLeft.svg";
+import positionTopRight from "../../../assets/icons/positionTopRight.svg";
+import positionBottomLeft from "../../../assets/icons/positionBottomLeft.svg";
+import positionBottomRight from "../../../assets/icons/positionBottomRight.svg";
+import positionCenterLeft from "../../../assets/icons/positionCenterLeft.svg";
+import positionCenterRight from "../../../assets/icons/positionCenterRight.svg";
 // ! MATERIAL IMPORTS
 import {
   FormControl,
@@ -103,6 +111,18 @@ const CreateLabels = () => {
   const handleSizeType = (event, newProduct) => {
     setSizeType(newProduct);
   };
+
+  const [labelPosition, setLabelPosition] = React.useState("topLeft");
+
+  const handleLabelPosition = (event, newProduct) => {
+    setLabelPosition(newProduct);
+  };
+
+  const [labelSize, setLabelSize] = React.useState("small");
+
+  const handleLabelSize = (event, newProduct) => {
+    setLabelSize(newProduct);
+  };
   // ? TOGGLE BUTTON ENDS HERE
 
   // ? SWITCH STARTS HERE
@@ -116,6 +136,10 @@ const CreateLabels = () => {
   const [dateStartValue, setDateStartValue] = React.useState(new Date());
   const [dateEndValue, setDateEndValue] = React.useState(new Date());
   // ? DATE PICKER ENDS HERE
+
+  // ? COLOR PICKER PALLETE STARTS HERE
+  const [color, setColor] = useColor("hex", "#121212");
+  // ? COLOR PICKER PALLETE ENDS HERE
 
   return (
     <div className="page container-fluid position-relative">
@@ -285,7 +309,7 @@ const CreateLabels = () => {
               </React.Fragment>
             ) : (
               <React.Fragment>
-                <div className="d-flex col-12 px-0 mt-3 justify-content-between">
+                <div className="d-flex col-12 px-0 mt-3 justify-content-between mb-1">
                   <div className="d-flex align-items-center">
                     <p className="text-lightBlue me-auto">Enter Text</p>
                   </div>
@@ -397,6 +421,225 @@ const CreateLabels = () => {
                   </small>
                 </ToggleButton>
               </ToggleButtonGroup>
+            </div>
+            <div className="col-12 px-0">
+              <div className="row">
+                <div className="col-md-3 mt-3">
+                  <h6 className="text-lightBlue fw-500">Label Color</h6>
+                </div>
+                <div className="col-md-9 mt-3">
+                  <div className="row">
+                    <div className="col-6">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue me-2">Background</p>
+                        <Tooltip title="Lorem ipsum" placement="top">
+                          <img
+                            src={info}
+                            alt="info"
+                            className="c-pointer"
+                            width={13.5}
+                          />
+                        </Tooltip>
+                      </div>
+                    </div>
+                    <div className="col-6">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue me-2">Text</p>
+                        <Tooltip title="Lorem ipsum" placement="top">
+                          <img
+                            src={info}
+                            alt="info"
+                            className="c-pointer"
+                            width={13.5}
+                          />
+                        </Tooltip>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-6">
+                      <ColorPicker
+                        height={150}
+                        color={color}
+                        onChange={setColor}
+                        hideHSV
+                        dark
+                        className="w-100"
+                      />
+                    </div>
+                    <div className="col-6">
+                      <ColorPicker
+                        height={150}
+                        color={color}
+                        onChange={setColor}
+                        hideHSV
+                        dark
+                        className="w-100"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-3 mt-3">
+                  <h6 className="text-lightBlue fw-500">Label Position</h6>
+                </div>
+                <div className="col-md-9 mt-3">
+                  <div className="row">
+                    {/* positionTopLeft */}
+                    <div className="col-12">
+                      <ToggleButtonGroup
+                        value={labelPosition}
+                        exclusive
+                        onChange={handleLabelPosition}
+                        aria-label="text alignment"
+                        className="productDetails-toggle"
+                      >
+                        <ToggleButton value="topLeft" aria-label="topLeft">
+                          <img
+                            src={positionTopLeft}
+                            alt="positionTopLeft"
+                            className="w-100"
+                          />
+                        </ToggleButton>
+                        <ToggleButton value="topRight" aria-label="topRight">
+                          <img
+                            src={positionTopRight}
+                            alt="positionTopRight"
+                            className="w-100"
+                          />
+                        </ToggleButton>
+                        <ToggleButton
+                          value="bottomLeft"
+                          aria-label="bottomLeft"
+                        >
+                          <img
+                            src={positionBottomLeft}
+                            alt="positionBottomLeft"
+                            className="w-100"
+                          />
+                        </ToggleButton>
+                        <ToggleButton
+                          value="bottomRight"
+                          aria-label="bottomRight"
+                        >
+                          <img
+                            src={positionBottomRight}
+                            alt="positionBottomRight"
+                            className="w-100"
+                          />
+                        </ToggleButton>
+                        <ToggleButton
+                          value="centerLeft"
+                          aria-label="centerLeft"
+                        >
+                          <img
+                            src={positionCenterLeft}
+                            alt="positionCenterLeft"
+                            className="w-100"
+                          />
+                        </ToggleButton>
+                        <ToggleButton
+                          value="centerRight"
+                          aria-label="centerRight"
+                        >
+                          <img
+                            src={positionCenterRight}
+                            alt="positionCenterRight"
+                            className="w-100"
+                          />
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-3 mt-3">
+                  <h6 className="text-lightBlue fw-500">Label Color</h6>
+                </div>
+                <div className="col-md-9 mt-3">
+                  <div className="row">
+                    <div className="col-6">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue me-2">Top</p>
+                        <Tooltip title="Lorem ipsum" placement="top">
+                          <img
+                            src={info}
+                            alt="info"
+                            className="c-pointer"
+                            width={13.5}
+                          />
+                        </Tooltip>
+                      </div>
+                    </div>
+                    <div className="col-6">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue me-2">Bottom</p>
+                        <Tooltip title="Lorem ipsum" placement="top">
+                          <img
+                            src={info}
+                            alt="info"
+                            className="c-pointer"
+                            width={13.5}
+                          />
+                        </Tooltip>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-6">
+                      <FormControl className="w-100 px-0">
+                        <OutlinedInput placeholder="Enter Top" size="small" />
+                      </FormControl>
+                    </div>
+                    <div className="col-6">
+                      <FormControl className="w-100 px-0">
+                        <OutlinedInput
+                          placeholder="Enter Bottom"
+                          size="small"
+                        />
+                      </FormControl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-3 mt-3">
+                  <h6 className="text-lightBlue fw-500">Label Position</h6>
+                </div>
+                <div className="col-md-9 mt-3">
+                  <div className="row">
+                    {/* positionTopLeft */}
+                    <div className="col-12">
+                      <ToggleButtonGroup
+                        value={labelSize}
+                        exclusive
+                        onChange={handleLabelSize}
+                        aria-label="text alignment"
+                        className="productDetails-toggle"
+                      >
+                        <ToggleButton value="small" aria-label="small">
+                          <small className="text-lightBlue">Small</small>
+                        </ToggleButton>
+                        <ToggleButton value="medium" aria-label="medium">
+                          <small className="text-lightBlue">Medium</small>
+                        </ToggleButton>
+                        <ToggleButton value="large" aria-label="large">
+                          <small className="text-lightBlue">Large</small>
+                        </ToggleButton>
+                        <ToggleButton
+                          value="extraLarge"
+                          aria-label="extraLarge"
+                        >
+                          <small className="text-lightBlue">Extra Large</small>
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <AddProductCondition />
