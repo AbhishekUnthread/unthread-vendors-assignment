@@ -24,22 +24,9 @@ import TableEditStatusButton from "../../../components/TableEditStatusButton/Tab
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 // ? TABLE STARTS HERE
-function createData(cId, categoriesName, type, noOfProducts, status) {
-  return { cId, categoriesName, type, noOfProducts, status };
-}
 
-const rows = [
-  createData(1, "Gold Produts", "Category", "1,423", "Active"),
-  createData(2, "Rings", "Sub Category", "215", "Active"),
-  createData(3, "Earings", "Sub Category", "6,542", "Active"),
-  createData(4, "Pendants", "SubCategory", "4,216", "Active"),
-  createData(5, "Necklace", "Sub Category", "225", "Active"),
-  createData(6, "Diamond Products", "Category", "845", "Active"),
-  createData(7, "Gold Coin", "Category", "985", "Active"),
-  createData(8, "Nose Pins", "Sub Category", "10", "Active"),
-  createData(9, "Bangles", "Sub Category", "251", "Active"),
-  createData(10, "Mangalsutra", "Sub Category", "451", "Active"),
-];
+
+
 
 const headCells = [
   {
@@ -53,12 +40,6 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "Type",
-  },
-  {
-    id: "noOfProducts",
-    numeric: false,
-    disablePadding: false,
-    label: "No. Of Products",
   },
   {
     id: "status",
@@ -75,7 +56,8 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const CategoriesTable = () => {
+const CategoriesTable = ({list}) => {
+  console.log(list)
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -83,7 +65,7 @@ const CategoriesTable = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -97,7 +79,7 @@ const CategoriesTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.cId);
+      const newSelected = list.map((n) => n.cId);
       setSelected(newSelected);
       return;
     }
@@ -146,8 +128,9 @@ const CategoriesTable = () => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
-          <TableMassActionButton />
+
+          {/* <TableEditStatusButton />
+          <TableMassActionButton /> */}
         </div>
       )}
       <TableContainer>
@@ -162,11 +145,11 @@ const CategoriesTable = () => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={rows.length}
+            rowCount={list.length}
             headCells={headCells}
           />
           <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
+            {stableSort(list, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row.cId);
@@ -206,21 +189,19 @@ const CategoriesTable = () => {
                         to="/parameters/categories/edit"
                       >
                         <p className="text-lightBlue rounded-circle fw-600">
-                          {row.categoriesName}
+                          {row.attributes.name}
                         </p>
                       </Link>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.type}</p>
+                      <p className="text-lightBlue">{row.attributes.type}</p>
                     </TableCell>
-                    <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.noOfProducts}</p>
-                    </TableCell>
+                  
                     <TableCell style={{ width: 120, padding: 0 }}>
                       <div className="d-flex align-items-center">
                         <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
                           <small className="text-black fw-400">
-                            {row.status}
+                            {row.attributes.status}
                           </small>
                         </div>
                       </div>
@@ -269,7 +250,7 @@ const CategoriesTable = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={list.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
