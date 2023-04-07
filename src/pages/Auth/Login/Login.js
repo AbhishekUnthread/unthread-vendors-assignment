@@ -134,6 +134,7 @@ const Login = () => {
                   size="small"
                   sx={{ paddingLeft: 0 }}
                   value={formValues.password}
+                  type="password"
                 onChange={(e) => updateFormFields("password", e.target.value)}
                 />
               </FormControl>

@@ -1,5 +1,5 @@
 
-const BASE_URL = "http://3.6.32.47:1337";
+const BASE_URL = "https://backend.unthread.in";
 
 export const signUp = (body) => { 
 
