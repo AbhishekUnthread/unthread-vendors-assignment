@@ -13,7 +13,8 @@ import { signIn } from "../services/authService";
 const Login = () => {
   let navigate = useNavigate();
 
-  
+const [showPassword, setShowPassword] = React.useState(false);
+const handleClickShowPassword = () => setShowPassword(!showPassword);
   
   let [message,setMessage]=React.useState('')
 
@@ -47,6 +48,7 @@ const Login = () => {
       }
 
       dispatcher({type:'userData',data:res})
+      sessionStorage.setItem('userData',JSON.stringify(res))
 
       navigate("/dashboard", { replace: true });
 
@@ -134,7 +136,7 @@ const Login = () => {
                   size="small"
                   sx={{ paddingLeft: 0 }}
                   value={formValues.password}
-                  type="password"
+                  type={!showPassword?'password':'text'}
                 onChange={(e) => updateFormFields("password", e.target.value)}
                 />
               </FormControl>

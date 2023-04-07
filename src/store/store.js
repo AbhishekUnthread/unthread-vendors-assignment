@@ -1,7 +1,7 @@
 import {createStore} from 'redux'
 
 let initialState={
-  data:null
+  data:sessionStorage.getItem('userData')?JSON.parse(sessionStorage.getItem('userData')):null
 }
 
 const isLogin=((state,action)=>{
