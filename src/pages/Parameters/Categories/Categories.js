@@ -31,7 +31,7 @@ import {
 } from '@mui/material';
 
 import Messages from '../../../components/snackbar/snackbar.js';
-import { callGetApi, createCategory, createSubCategory } from '../services/parameter.service';
+import { callGetApi, createCategory, createSubCategory, updateCategory, updateSubCategory } from '../services/parameter.service';
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -57,8 +57,8 @@ const Categories = () => {
 
   const handleCreateCategoryClick = (event) => {
     setAnchorCreateCategoryEl(event.currentTarget);
-    setCategoryName('')
-    setsubCategoryName('')
+    resetdata()
+
 
   };
 
@@ -115,15 +115,22 @@ const Categories = () => {
 
   const [categoryName, setCategoryName] = React.useState('');
   const [subcategoryName, setsubCategoryName] = React.useState('');
-
+  const [editData, seteditData] = React.useState('');
 
   React.useEffect(()=>{
     getcategories();
     getsubcategories()
   },[])
 
+
+  let resetdata=()=>{
+    setCategoryName('')
+    setsubCategoryName('')
+    seteditData('')
+  }
+
   let getcategories=()=>{
-   callGetApi('/api/product-categories').then((res) => {
+   callGetApi('/api/product-categories','GET').then((res) => {
      setAllCategory(res.data)
   })
   .catch((err) => {
@@ -132,12 +139,39 @@ const Categories = () => {
   }
 
   let getsubcategories=()=>{
-    callGetApi('/api/product-sub-categories').then((res) => {
+    callGetApi('/api/product-sub-categories','GET').then((res) => {
       setAllSubCategory(res.data)
     })
     .catch((err) => {
       setMessage(err);
     });
+  }
+
+  let edit=(data)=>{
+    seteditData(data)
+    if(data.attributes.type=='Category'){
+      setCategoryName(data.attributes.name)
+      handleCreateCategories()
+    }else{
+      setCategoryName('')
+      setsubCategoryName(data.attributes.name)
+      handleCreateSubCategories()
+    }
+  }
+
+  let deleteData=(data)=>{
+    let url=''
+    if(data.attributes.type=='Category'){
+      url='/api/product-categories/'+data.id
+    }else{
+      url='/api/product-sub-categories/'+data.id
+    }
+    callGetApi(url,'DELETE').then((res) => {
+      responseHandled(res)
+   })
+   .catch((err) => {
+     setMessage(err);
+   });
   }
 
   
@@ -156,20 +190,38 @@ const Categories = () => {
       },
     };
 
-    createCategory(request)
+    if(!editData){
+      createCategory(request)
       .then((res) => {
-        if (res?.error?.message) {
-          setMessage(res?.error?.message);
-          return;
-        }
-        getcategories();
-        getsubcategories()
-        handleCreateCategoriesClose();
+        responseHandled(res)
       })
       .catch((err) => {
         setMessage(err);
       });
+    }else{
+      updateCategory(request,editData.id)
+      .then((res) => {
+        responseHandled(res)
+      })
+      .catch((err) => {
+        setMessage(err);
+      });
+    }
+
+    
   };
+
+  let responseHandled=(res)=>{
+    if (res?.error?.message) {
+      setMessage(res?.error?.message);
+      return;
+    }
+    resetdata()
+    getcategories();
+    getsubcategories()
+    handleCreateCategoriesClose();
+    handleCreateSubCategoriesClose();
+  }
 
   const addupdatesubcategory=()=>{
     if (!subcategoryName || !categoryName) {
@@ -185,20 +237,24 @@ const Categories = () => {
         "product_category":categoryName
       },
     };
-
-    createSubCategory(request)
+    if(!editData){
+      createSubCategory(request)
       .then((res) => {
-        if (res?.error?.message) {
-          setMessage(res?.error?.message);
-          return;
-        }
-        getcategories();
-        getsubcategories()
-        handleCreateSubCategoriesClose();
+        responseHandled(res)
       })
       .catch((err) => {
         setMessage(err);
       });
+    }else{
+      updateSubCategory(request,editData.id)
+      .then((res) => {
+        responseHandled(res)
+      })
+      .catch((err) => {
+        setMessage(err);
+      });
+    }
+    
   }
 
   return (
@@ -364,8 +420,10 @@ const Categories = () => {
                   value={category}
                   onChange={handleCategoryChange}
                   size="small"
+                  value={categoryName}
                 >
                   {allCategory.map((data,index)=>{
+                    
                     return <MenuItem key={index}
                     onClick={(e) => setCategoryName(+e.currentTarget.dataset.value)}
                     value={data.id} sx={{ fontSize: 13, color: '#5c6d8e' }}>
@@ -458,13 +516,13 @@ const Categories = () => {
             <TableSearch  />
           </div>
           <TabPanel value={value} index={0}>
-            <CategoriesTable list={[...allCategory,...allSubCategory]}/>
+            <CategoriesTable list={[...allCategory,...allSubCategory]} edit={edit} deleteData={deleteData}/>
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <CategoriesTable list={allCategory}/>
+            <CategoriesTable list={allCategory}  edit={edit} deleteData={deleteData}/>
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <CategoriesTable list={allSubCategory} />
+            <CategoriesTable list={allSubCategory}  edit={edit} deleteData={deleteData} />
           </TabPanel>
         </Paper>
       </div>

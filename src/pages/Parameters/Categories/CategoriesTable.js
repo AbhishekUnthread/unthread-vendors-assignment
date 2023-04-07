@@ -33,7 +33,7 @@ const headCells = [
     id: "categoriesName",
     numeric: false,
     disablePadding: true,
-    label: "Categories Name",
+    label: "Name",
   },
   {
     id: "type",
@@ -56,8 +56,7 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const CategoriesTable = ({list}) => {
-  console.log(list)
+const CategoriesTable = ({list,edit,deleteData}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -209,7 +208,9 @@ const CategoriesTable = ({list}) => {
                     <TableCell style={{ width: 120, padding: 0 }}>
                       <div className="d-flex align-items-center">
                         <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
+                          <div onClick={(e)=>{
+                            edit(row)
+                          }} className="table-edit-icon rounded-4 p-2">
                             <EditOutlinedIcon
                               sx={{
                                 color: "#5c6d8e",
@@ -220,7 +221,11 @@ const CategoriesTable = ({list}) => {
                           </div>
                         </Tooltip>
                         <Tooltip title="Archive" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
+                          <div onClick={(e)=>{
+                            deleteData(row)
+                          }}
+                        
+                          className="table-edit-icon rounded-4 p-2">
                             <InventoryIcon
                               sx={{
                                 color: "#5c6d8e",

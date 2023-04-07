@@ -3,22 +3,38 @@ const BASE_URL = "https://backend.unthread.in";
 
 export const createCategory = (body) => { 
   let url=BASE_URL+'/api/product-categories'
-  return callApi(body,url)
+  return callApi(body,url,'POST')
 
 
   };
 
-  export const createSubCategory = (body) => { 
-    let url=BASE_URL+'/api/product-sub-categories'
-    return callApi(body,url)
+  export const updateCategory = (body,id) => { 
+    let url=BASE_URL+'/api/product-categories/' + id
+    return callApi(body,url,'PUT')
   
   
     };
 
+  export const createSubCategory = (body) => { 
+    let url=BASE_URL+'/api/product-sub-categories'
+    return callApi(body,url,'POST')
+  
+  
+    };
 
-  const callApi=(body,url)=>{
+    export const updateSubCategory = (body,id) => { 
+      let url=BASE_URL+'/api/product-sub-categories/' + id
+      return callApi(body,url,'PUT')
+    
+    
+      };
+
+     
+
+
+  const callApi=(body,url,method)=>{
     return fetch(url, {
-        method: "POST",
+        method,
         body:JSON.stringify(body),
         headers: {
           "Content-Type": "application/json"
@@ -31,11 +47,11 @@ export const createCategory = (body) => {
       });
   }
 
-  export const callGetApi=(appendUrl)=>{
+  export const callGetApi=(appendUrl,method)=>{
     let url=BASE_URL+appendUrl
 
     return fetch(url, {
-        method: "GET",
+        method,
         headers: {
           "Content-Type": "application/json"
         },
