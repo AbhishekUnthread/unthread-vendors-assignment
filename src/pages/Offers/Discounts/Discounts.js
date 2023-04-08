@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import DiscountsTable from "./DiscountsTable";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import TableSearch from "../../../components/TableSearch/TableSearch";
-import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -20,16 +19,11 @@ import {
   Tab,
   Tabs,
   Tooltip,
-  Autocomplete,
-  Checkbox,
   FormControl,
   FormControlLabel,
-  FormGroup,
-  OutlinedInput,
   Popover,
   Radio,
   RadioGroup,
-  TextField,
   Slide,
   Dialog,
   DialogTitle,

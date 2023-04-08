@@ -12,9 +12,6 @@ import ringSmall from "../../../assets/images/ringSmall.svg";
 import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
-import ordersIcon from "../../../assets/icons/ordersIcon.svg";
-import editButton from "../../../assets/icons/editButton.svg";
-import duplicateButton from "../../../assets/icons/duplicateButton.svg";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import cancel from "../../../assets/icons/cancel.svg";
 import product2 from "../../../assets/images/products/product2.jpg";
@@ -39,7 +36,6 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 // ! MATERIAL ICON IMPORTS
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ChatIcon from "@mui/icons-material/Chat";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";

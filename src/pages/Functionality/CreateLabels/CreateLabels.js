@@ -5,14 +5,13 @@ import { Link } from "react-router-dom";
 import { ColorPicker, useColor } from "react-color-palette";
 // ! COMPONENT IMPORTS
 import AddProductCondition from "../../../components/AddProductCondition/AddProductCondition";
-import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
+import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
+import AppReactImageGallery from "../../../components/AppReactImageGallery/AppReactImageGallery";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import info from "../../../assets/icons/info.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
-import sizeTape from "../../../assets/icons/sizeTape.svg";
-import sizeTable from "../../../assets/icons/sizeTable.svg";
 import text from "../../../assets/icons/text.svg";
 import imageAdd from "../../../assets/icons/imageAdd.svg";
 import uploadBadge from "../../../assets/icons/uploadBadge.svg";
@@ -34,10 +33,6 @@ import {
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-// ! MATERIAL ICONS IMPORTS
-import CloseIcon from "@mui/icons-material/Close";
-import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
-import AppReactImageGallery from "../../../components/AppReactImageGallery/AppReactImageGallery";
 
 // ? FILE UPLOAD STARTS HERE
 const baseStyle = {
@@ -138,7 +133,8 @@ const CreateLabels = () => {
   // ? DATE PICKER ENDS HERE
 
   // ? COLOR PICKER PALLETE STARTS HERE
-  const [color, setColor] = useColor("hex", "#121212");
+  const [backgroundColor, setBackgroundColor] = useColor("hex", "#121212");
+  const [textColor, setTextColor] = useColor("hex", "#fff");
   // ? COLOR PICKER PALLETE ENDS HERE
 
   return (
@@ -428,8 +424,12 @@ const CreateLabels = () => {
                   <h6 className="text-lightBlue fw-500">Label Color</h6>
                 </div>
                 <div className="col-md-9 mt-3">
+                  {/* <div className="row">
+                    <div className="col-6"></div>
+                    <div className="col-6"></div>
+                  </div> */}
                   <div className="row">
-                    <div className="col-6">
+                    <div className="col-auto">
                       <div className="d-flex mb-1">
                         <p className="text-lightBlue me-2">Background</p>
                         <Tooltip title="Lorem ipsum" placement="top">
@@ -441,8 +441,17 @@ const CreateLabels = () => {
                           />
                         </Tooltip>
                       </div>
+                      <ColorPicker
+                        height={150}
+                        width={240}
+                        color={backgroundColor}
+                        onChange={setBackgroundColor}
+                        hideHSV
+                        dark
+                        className="w-100"
+                      />
                     </div>
-                    <div className="col-6">
+                    <div className="col-auto">
                       <div className="d-flex mb-1">
                         <p className="text-lightBlue me-2">Text</p>
                         <Tooltip title="Lorem ipsum" placement="top">
@@ -454,24 +463,11 @@ const CreateLabels = () => {
                           />
                         </Tooltip>
                       </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-6">
                       <ColorPicker
                         height={150}
-                        color={color}
-                        onChange={setColor}
-                        hideHSV
-                        dark
-                        className="w-100"
-                      />
-                    </div>
-                    <div className="col-6">
-                      <ColorPicker
-                        height={150}
-                        color={color}
-                        onChange={setColor}
+                        width={240}
+                        color={textColor}
+                        onChange={setTextColor}
                         hideHSV
                         dark
                         className="w-100"

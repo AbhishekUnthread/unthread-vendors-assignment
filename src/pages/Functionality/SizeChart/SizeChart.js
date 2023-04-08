@@ -6,39 +6,12 @@ import SizeChartTable from "./SizeChartTable";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import ExportDialog from "../../../components/ExportDialog/ExportDialog";
-import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import TabPanel from "../../../components/TabPanel/TabPanel";
-// ! IMAGES IMPORTS
-import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 // ! MATERIAL IMPORTS
-import {
-  Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  OutlinedInput,
-  Paper,
-  Popover,
-  Slide,
-  Tab,
-  Tabs,
-  Chip,
-  Select,
-  MenuItem,
-  Tooltip,
-} from "@mui/material";
+import { Box, Paper, Tab, Tabs, Tooltip } from "@mui/material";
 // ! MATERIAL ICONS IMPORT
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-// ? DIALOG TRANSITION ENDS HERE
 
 const SizeChart = () => {
   const [value, setValue] = React.useState(0);

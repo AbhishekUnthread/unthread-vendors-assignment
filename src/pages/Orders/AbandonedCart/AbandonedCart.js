@@ -2,14 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./AbandonedCart.scss";
 // ! COMPONENT IMPORTS
+import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
 import AbandonedCartTable from "./AbandonedCartTable";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import TableSearch from "../../../components/TableSearch/TableSearch";
-import FilterUsers from "../../../components/FilterUsers/FilterUsers";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import allFlag from "../../../assets/images/products/allFlag.svg";
@@ -17,8 +16,6 @@ import usaFlag from "../../../assets/images/products/usaFlag.svg";
 import ukFlag from "../../../assets/images/products/ukFlag.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import sort from "../../../assets/icons/sort.svg";
-import analyticsUp from "../../../assets/icons/analyticsUp.svg";
-import analyticsDown from "../../../assets/icons/analyticsDown.svg";
 import orders from "../../../assets/icons/sidenav/orders.svg";
 // ! MATERIAL IMPORTS
 import {
@@ -28,7 +25,6 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  OutlinedInput,
   Paper,
   Popover,
   Radio,
@@ -43,7 +39,6 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 // ! MATERIAL ICONS IMPORT
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
 
 const locationData = [
   { title: "Content 1", value: "content1" },
@@ -139,21 +134,6 @@ const AbandonedCart = () => {
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
   // * STATUS POPOVERS ENDS
-
-  // * DAYS POPOVERS STARTS
-  const [anchorDaysEl, setDaysEl] = React.useState(null);
-
-  const handleDaysClick = (event) => {
-    setDaysEl(event.currentTarget);
-  };
-
-  const handleDaysClose = () => {
-    setDaysEl(null);
-  };
-
-  const openDays = Boolean(anchorDaysEl);
-  const idDays = openDays ? "simple-popover" : undefined;
-  // * DAYS POPOVERS ENDS
 
   // ? POPOVERS ENDS HERE
 

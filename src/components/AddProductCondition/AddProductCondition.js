@@ -13,15 +13,9 @@ import featureUpload from "../../assets/images/products/featureUpload.svg";
 import ringSmall from "../../assets/images/ringSmall.svg";
 // ! MATERIAL IMPORTS
 import {
-  Box,
   FormControl,
   MenuItem,
   Select,
-  Tab,
-  Tabs,
-  Tooltip,
-  ToggleButton,
-  ToggleButtonGroup,
   OutlinedInput,
   TableContainer,
   Table,
@@ -148,27 +142,6 @@ function createLikeProductData(pId, productName, category, price) {
   return { pId, productName, category, price };
 }
 
-const likeHeadCells = [
-  {
-    id: "productName",
-    numeric: false,
-    disablePadding: true,
-    label: "Product Name",
-  },
-  {
-    id: "category",
-    numeric: false,
-    disablePadding: false,
-    label: "Category",
-  },
-  {
-    id: "price",
-    numeric: false,
-    disablePadding: false,
-    label: "Price",
-  },
-];
-
 const likeProductRows = [
   createLikeProductData(
     1,
@@ -185,39 +158,6 @@ const likeProductRows = [
   ),
 ];
 // ? LIKE PRODUCTS TABLE ENDS HERE
-
-// ? FILE UPLOAD STARTS HERE
-const baseStyle = {
-  flex: 1,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  padding: "0",
-  borderWidth: 2,
-  borderRadius: 8,
-  borderColor: "#38395c",
-  borderStyle: "dashed",
-  //   backgroundColor: "",
-  color: "#bdbdbd",
-  outline: "none",
-  transition: "border .24s ease-in-out",
-  cursor: "pointer",
-  justifyContent: "center",
-  backgroundColor: "#1a1932",
-};
-
-const focusedStyle = {
-  borderColor: "#2196f3",
-};
-
-const acceptStyle = {
-  borderColor: "#00e676",
-};
-
-const rejectStyle = {
-  borderColor: "#ff1744",
-};
-// ? FILE UPLOAD ENDS HERE
 
 const AddProductCondition = () => {
   // ? RADIO BUTTON STARTS HERE
@@ -255,20 +195,6 @@ const AddProductCondition = () => {
   };
   // ? ADD PRODUCT DRAWER ENDS HERE
 
-  // * PRICE POPOVERS STARTS
-  const [anchorPriceEl, setAnchorPriceEl] = React.useState(null);
-  const handlePriceClick = (event) => {
-    setAnchorPriceEl(event.currentTarget);
-  };
-
-  const handlePriceClose = () => {
-    setAnchorPriceEl(null);
-  };
-
-  const openPrice = Boolean(anchorPriceEl);
-  const idPrice = openPrice ? "simple-popover" : undefined;
-  // * PRICE POPOVERS ENDS
-
   // * TABLE STARTS HERE
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("productName");
@@ -282,14 +208,14 @@ const AddProductCondition = () => {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.pId);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
+  // const handleSelectAllClick = (event) => {
+  //   if (event.target.checked) {
+  //     const newSelected = rows.map((n) => n.pId);
+  //     setSelected(newSelected);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
 
   const handleLikeSelectAllClick = (event) => {
     if (event.target.checked) {

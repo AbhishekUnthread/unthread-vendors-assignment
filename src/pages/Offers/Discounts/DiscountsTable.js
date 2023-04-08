@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -17,8 +16,6 @@ import {
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
-// !IMAGES IMPORTS
-import ringSmall from "../../../assets/images/ringSmall.svg";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";

@@ -12,7 +12,6 @@ import ringSmall from "../../../assets/images/ringSmall.svg";
 import user from "../../../assets/images/users/user.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
-import ordersIcon from "../../../assets/icons/ordersIcon.svg";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -26,7 +25,6 @@ import {
   Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICON IMPORTS
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ChatIcon from "@mui/icons-material/Chat";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";

@@ -1,7 +1,6 @@
 import React from "react";
 // ! IMAGES IMPORTS
 import product2 from "../../assets/images/products/product2.jpg";
-import productIcon from "../../assets/icons/productIcon.svg";
 import returnIcon from "../../assets/icons/returnIcon.svg";
 import video from "../../assets/icons/video.svg";
 import cancel from "../../assets/icons/cancel.svg";
@@ -10,8 +9,6 @@ import question from "../../assets/images/products/question.svg";
 import {
   Popover,
   Chip,
-  TextareaAutosize,
-  Tooltip,
   Checkbox,
   FormControlLabel,
   Dialog,
@@ -89,9 +86,9 @@ const OrderReturnBox = ({
 
   // * GIFT POPOVERS STARTS
   const [anchorGiftEl, setAnchorGiftEl] = React.useState(null);
-  const handleGiftClick = (event) => {
-    setAnchorGiftEl(event.currentTarget);
-  };
+  // const handleGiftClick = (event) => {
+  //   setAnchorGiftEl(event.currentTarget);
+  // };
 
   const handleGiftClose = () => {
     setAnchorGiftEl(null);

@@ -21,27 +21,11 @@ import allFlag from "../../../assets/images/products/allFlag.svg";
 import usaFlag from "../../../assets/images/products/usaFlag.svg";
 import ukFlag from "../../../assets/images/products/ukFlag.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
-import sort from "../../../assets/icons/sort.svg";
 import analyticsUp from "../../../assets/icons/analyticsUp.svg";
 import analyticsDown from "../../../assets/icons/analyticsDown.svg";
 import orders from "../../../assets/icons/sidenav/orders.svg";
 // ! MATERIAL IMPORTS
-import {
-  Autocomplete,
-  Box,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  OutlinedInput,
-  Paper,
-  Popover,
-  Radio,
-  RadioGroup,
-  Tab,
-  Tabs,
-  TextField,
-} from "@mui/material";
+import { Box, Paper, Popover, Tab, Tabs } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const AllOrders = () => {
@@ -63,21 +47,6 @@ const AllOrders = () => {
   const openFlag = Boolean(anchorFlagEl);
   const idFlag = openFlag ? "simple-popover" : undefined;
   // * FLAG POPOVERS ENDS
-
-  // * NO OF ORDERS POPOVERS STARTS
-  const [anchorOrdersEl, setAnchorOrdersEl] = React.useState(null);
-
-  const handleOrdersClick = (event) => {
-    setAnchorOrdersEl(event.currentTarget);
-  };
-
-  const handleOrdersClose = () => {
-    setAnchorOrdersEl(null);
-  };
-
-  const openOrders = Boolean(anchorOrdersEl);
-  const idOrders = openOrders ? "simple-popover" : undefined;
-  // * NO OF ORDERS POPOVERS ENDS
 
   // * DAYS POPOVERS STARTS
   const [anchorDaysEl, setDaysEl] = React.useState(null);

@@ -11,7 +11,7 @@ import functionalityPreOrder from "../../../assets/images/functionality/function
 import functionalityHyperlocalDelivery from "../../../assets/images/functionality/functionalityHyperlocalDelivery.svg";
 import functionalityRestrictRegion from "../../../assets/images/functionality/functionalityRestrictRegion.svg";
 import functionalityReturnRefund from "../../../assets/images/functionality/functionalityReturnRefund.svg";
-import gridView from "../../../assets/images/functionality/gridView.svg";
+// import gridView from "../../../assets/images/functionality/gridView.svg";
 import productOneInRowFilled from "../../../assets/icons/productOneInRowFilled.svg";
 import productOneInRowOutlined from "../../../assets/icons/productOneInRowOutlined.svg";
 import productTwoInRowFilled from "../../../assets/icons/productTwoInRowFilled.svg";
@@ -19,17 +19,17 @@ import productTwoInRowOutlined from "../../../assets/icons/productTwoInRowOutlin
 // ! MATERIAL IMPORTS
 import {
   Box,
-  FormControl,
-  FormControlLabel,
+  // FormControl,
+  // FormControlLabel,
   Paper,
-  Radio,
-  RadioGroup,
+  // Radio,
+  // RadioGroup,
   Tab,
   Tabs,
 } from "@mui/material";
 // ! MATERIAL ICON IMPORTS
-import GridViewIcon from "@mui/icons-material/GridView";
-import ListIcon from "@mui/icons-material/List";
+// import GridViewIcon from "@mui/icons-material/GridView";
+// import ListIcon from "@mui/icons-material/List";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 
@@ -39,45 +39,45 @@ const AllFunctionality = () => {
     setValue(newValue);
   };
 
-  const viewData = [
-    {
-      id: 1,
-      name: "gridView",
-      image: gridView,
-      // (
-      //   <GridViewIcon
-      //     sx={{ color: "#c8d8ff", fontSize: 20 }}
-      //     className="c-pointer"
-      //   />
-      // ),
-    },
-    {
-      id: 2,
-      name: "listView",
-      image: gridView,
-      // (
-      //   <ListIcon
-      //     sx={{ color: "#c8d8ff", fontSize: 20 }}
-      //     className="c-pointer"
-      //   />
-      // ),
-    },
-  ];
+  // const viewData = [
+  //   {
+  //     id: 1,
+  //     name: "gridView",
+  //     image: gridView,
+  //     // (
+  //     //   <GridViewIcon
+  //     //     sx={{ color: "#c8d8ff", fontSize: 20 }}
+  //     //     className="c-pointer"
+  //     //   />
+  //     // ),
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "listView",
+  //     image: gridView,
+  //     // (
+  //     //   <ListIcon
+  //     //     sx={{ color: "#c8d8ff", fontSize: 20 }}
+  //     //     className="c-pointer"
+  //     //   />
+  //     // ),
+  //   },
+  // ];
 
   const [view, setView] = React.useState("gridview");
-  const handleViewChange = (e) => {
-    console.log(e.target.value);
-    if (e.target.value) {
-      setView(e.target.value.toLowerCase());
-      var elems = document
-        .querySelector(".view-radio")
-        .querySelectorAll(".MuiFormControlLabel-root.active");
-      [].forEach.call(elems, function (el) {
-        el.classList.remove("active");
-      });
-      e.target.closest("label").classList.toggle("active");
-    }
-  };
+  // const handleViewChange = (e) => {
+  //   console.log(e.target.value);
+  //   if (e.target.value) {
+  //     setView(e.target.value.toLowerCase());
+  //     var elems = document
+  //       .querySelector(".view-radio")
+  //       .querySelectorAll(".MuiFormControlLabel-root.active");
+  //     [].forEach.call(elems, function (el) {
+  //       el.classList.remove("active");
+  //     });
+  //     e.target.closest("label").classList.toggle("active");
+  //   }
+  // };
 
   return (
     <div className="container page-center">

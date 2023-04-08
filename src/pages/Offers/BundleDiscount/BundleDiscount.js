@@ -2,17 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import BundleDiscountTable from "./BundleDiscountTable";
-import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import TableSearch from "../../../components/TableSearch/TableSearch";
-import ExportDialog from "../../../components/ExportDialog/ExportDialog";
-import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 // ! IMAGES IMPORTS
-import discounts from "../../../assets/icons/sidenav/discounts.svg";
 import sort from "../../../assets/icons/sort.svg";
-import cancel from "../../../assets/icons/cancel.svg";
-import productDiscount from "../../../assets/icons/productDiscount.svg";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -20,30 +14,14 @@ import {
   Tab,
   Tabs,
   Tooltip,
-  Autocomplete,
-  Checkbox,
   FormControl,
   FormControlLabel,
-  FormGroup,
-  OutlinedInput,
   Popover,
   Radio,
   RadioGroup,
-  TextField,
-  Slide,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORT
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-// ? DIALOG TRANSITION ENDS HERE
 
 const BundleDiscount = () => {
   const [value, setValue] = React.useState(0);
@@ -65,18 +43,6 @@ const BundleDiscount = () => {
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
-
-  // ? CATEGORIES DIALOG STARTS HERE
-  const [openCreateDiscount, setOpenCreateDiscount] = React.useState(false);
-
-  const handleCreateDiscount = () => {
-    setOpenCreateDiscount(true);
-  };
-
-  const handleCreateDiscountClose = () => {
-    setOpenCreateDiscount(false);
-  };
-  // ? CATEGORIES DIALOG ENDS HERE
 
   return (
     <div className="container-fluid page">

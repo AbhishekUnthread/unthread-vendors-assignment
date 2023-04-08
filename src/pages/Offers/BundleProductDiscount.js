@@ -1,28 +1,9 @@
 import React from "react";
-// ! COMPONENT IMPORTS
-import TableSearch from "../../components/TableSearch/TableSearch";
 // ! IMAGES IMPORTS
 import info from "../../assets/icons/info.svg";
 import product2 from "../../assets/images/products/product2.jpg";
 // ! MATERIAL IMPORTS
-import {
-  FormControl,
-  MenuItem,
-  Select,
-  InputAdornment,
-  OutlinedInput,
-  Checkbox,
-  FormControlLabel,
-  Chip,
-  TextField,
-  Autocomplete,
-  Tooltip,
-  ToggleButtonGroup,
-  ToggleButton,
-  RadioGroup,
-  Radio,
-  Popover,
-} from "@mui/material";
+import { FormControl, MenuItem, Select, Tooltip } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchBorder from "../../components/SearchBorder/SearchBorder";
 
