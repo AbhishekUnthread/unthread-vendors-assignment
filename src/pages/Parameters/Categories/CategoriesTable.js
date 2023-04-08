@@ -207,6 +207,7 @@ const CategoriesTable = ({list,edit,deleteData}) => {
                     </TableCell>
                     <TableCell style={{ width: 120, padding: 0 }}>
                       <div className="d-flex align-items-center">
+                        {edit &&
                         <Tooltip title="Edit" placement="top">
                           <div onClick={(e)=>{
                             edit(row)
@@ -220,7 +221,8 @@ const CategoriesTable = ({list,edit,deleteData}) => {
                             />
                           </div>
                         </Tooltip>
-                        <Tooltip title="Archive" placement="top">
+            }
+                        {edit && <Tooltip title="Archive" placement="top">
                           <div onClick={(e)=>{
                             deleteData(row)
                           }}
@@ -235,6 +237,7 @@ const CategoriesTable = ({list,edit,deleteData}) => {
                             />
                           </div>
                         </Tooltip>
+              }
                       </div>
                     </TableCell>
                   </TableRow>

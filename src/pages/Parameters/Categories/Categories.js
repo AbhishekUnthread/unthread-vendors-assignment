@@ -112,6 +112,8 @@ const Categories = () => {
   let [message, setMessage] = React.useState('');
   const [allCategory, setAllCategory] = React.useState([]);
   const [allSubCategory, setAllSubCategory] = React.useState([]);
+  const [Draft1, setCategoryDraft] = React.useState([]);
+  const [Draft2, setsubCategoryDraft] = React.useState([]);
 
   const [categoryName, setCategoryName] = React.useState('');
   const [subcategoryName, setsubCategoryName] = React.useState('');
@@ -131,8 +133,10 @@ const Categories = () => {
 
   let getcategories=()=>{
    callGetApi('/api/product-categories','GET').then((res) => {
-     setAllCategory(res.data)
-  })
+     
+     setAllCategory(res.data.filter(data=>data.attributes.status=='Active'))
+     setCategoryDraft(res.data.filter(data=>data.attributes.status!=='Active'))
+    })
   .catch((err) => {
     setMessage(err);
   });
@@ -140,7 +144,10 @@ const Categories = () => {
 
   let getsubcategories=()=>{
     callGetApi('/api/product-sub-categories','GET').then((res) => {
-      setAllSubCategory(res.data)
+      setAllSubCategory(res.data.filter(data=>data.attributes.status==='Active'))
+
+      setsubCategoryDraft(res.data.filter(data=>data.attributes.status!=='Active'))
+
     })
     .catch((err) => {
       setMessage(err);
@@ -160,23 +167,21 @@ const Categories = () => {
   }
 
   let deleteData=(data)=>{
-    let url=''
+    seteditData(data)
     if(data.attributes.type=='Category'){
-      url='/api/product-categories/'+data.id
+      setCategoryName(data.attributes.name)
+      createUpdateCategory('Draft')
     }else{
-      url='/api/product-sub-categories/'+data.id
+      setCategoryName('')
+      setsubCategoryName(data.attributes.name)
+      addupdatesubcategory('Draft')
     }
-    callGetApi(url,'DELETE').then((res) => {
-      responseHandled(res)
-   })
-   .catch((err) => {
-     setMessage(err);
-   });
+   
   }
 
   
 
-  const createUpdateCategory = () => {
+  const createUpdateCategory = (status) => {
     if (!categoryName) {
       setMessage('Please enter categoryName field');
       return;
@@ -186,7 +191,7 @@ const Categories = () => {
       data: {
         name: categoryName,
         type: 'Category',
-        status: 'Active',
+        status
       },
     };
 
@@ -211,19 +216,9 @@ const Categories = () => {
     
   };
 
-  let responseHandled=(res)=>{
-    if (res?.error?.message) {
-      setMessage(res?.error?.message);
-      return;
-    }
-    resetdata()
-    getcategories();
-    getsubcategories()
-    handleCreateCategoriesClose();
-    handleCreateSubCategoriesClose();
-  }
+  
 
-  const addupdatesubcategory=()=>{
+  const addupdatesubcategory=(status)=>{
     if (!subcategoryName || !categoryName) {
       setMessage('Please enter all fields');
       return;
@@ -233,7 +228,7 @@ const Categories = () => {
       data: {
         name: subcategoryName,
         type: 'Sub Category',
-        status: 'Active',
+        status,
         "product_category":categoryName
       },
     };
@@ -255,6 +250,18 @@ const Categories = () => {
       });
     }
     
+  }
+
+  let responseHandled=(res)=>{
+    if (res?.error?.message) {
+      setMessage(res?.error?.message);
+      return;
+    }
+    resetdata()
+    getcategories();
+    getsubcategories()
+    handleCreateCategoriesClose();
+    handleCreateSubCategoriesClose();
   }
 
   return (
@@ -370,7 +377,9 @@ const Categories = () => {
               </button>
               <button
                 className="button-gradient py-2 px-5"
-                onClick={createUpdateCategory}
+                onClick={e=>{
+                  createUpdateCategory('Active')
+                }}
               >
                 <p>Save</p>
               </button>
@@ -480,7 +489,9 @@ const Categories = () => {
               </button>
               <button
                 className="button-gradient py-2 px-5"
-                onClick={addupdatesubcategory}
+                onClick={e=>{
+                  addupdatesubcategory('Active')
+                }}
               >
                 <p>Save</p>
               </button>
@@ -510,6 +521,8 @@ const Categories = () => {
               <Tab label="All" className="tabs-head" />
               <Tab label="Categories" className="tabs-head" />
               <Tab label="Sub Categories" className="tabs-head" />
+              <Tab label="Archived" className="tabs-head" />
+
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -523,6 +536,9 @@ const Categories = () => {
           </TabPanel>
           <TabPanel value={value} index={2}>
             <CategoriesTable list={allSubCategory}  edit={edit} deleteData={deleteData} />
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+            <CategoriesTable list={[...Draft1,...Draft2]} />
           </TabPanel>
         </Paper>
       </div>
