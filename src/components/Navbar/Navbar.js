@@ -118,6 +118,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
 
 
   const logout=()=>{
+    sessionStorage.removeItem('userData')
     dispatcher({type:'userData',data:null})
 
   }

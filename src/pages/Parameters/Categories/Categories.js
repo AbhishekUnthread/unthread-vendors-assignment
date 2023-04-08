@@ -154,15 +154,33 @@ const Categories = () => {
     });
   }
 
+  let getCategoryName=(subcategory,archive)=>{
+    callGetApi('/api/product-sub-categories?populate[product_category][fields][0]=name','GET').then((res) => {
+     
+      let details=res.data.find(data=>data.id==subcategory.id)
+      setCategoryName(details.attributes.product_category.data.id)
+      setsubCategoryName(subcategory.attributes.name)
+
+      if(archive){
+        addupdatesubcategory('Draft')
+      }else{
+        handleCreateSubCategories()
+      }
+     
+     })
+   .catch((err) => {
+     setMessage(err);
+   });
+
+  }
+
   let edit=(data)=>{
     seteditData(data)
     if(data.attributes.type=='Category'){
       setCategoryName(data.attributes.name)
       handleCreateCategories()
     }else{
-      setCategoryName('')
-      setsubCategoryName(data.attributes.name)
-      handleCreateSubCategories()
+      getCategoryName(data,false)
     }
   }
 
@@ -172,9 +190,8 @@ const Categories = () => {
       setCategoryName(data.attributes.name)
       createUpdateCategory('Draft')
     }else{
-      setCategoryName('')
-      setsubCategoryName(data.attributes.name)
-      addupdatesubcategory('Draft')
+      getCategoryName(data,true)
+     
     }
    
   }
