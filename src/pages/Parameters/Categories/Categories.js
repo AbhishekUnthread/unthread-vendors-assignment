@@ -193,6 +193,18 @@ const Categories = () => {
       getCategoryName(data,true)
      
     }
+
+
+  //   let url=''
+  //   seteditData(data)
+  //   if(data.attributes.type=='Category'){
+  //     url='/api/product-categories/'+data.id
+  //   }else{
+  //     url='/api/product-sub-categories/'+data.id
+  //   }
+  //   callGetApi(url,'DELETE').then((res) => {
+  //     responseHandled(res)
+  //  })
    
   }
 
