@@ -162,7 +162,8 @@ const Categories = () => {
       setsubCategoryName(subcategory.attributes.name)
 
       if(archive){
-        addupdatesubcategory('Draft')
+        addupdatesubcategory('Draft',details.attributes.product_category.data.id,subcategory.attributes.name)
+
       }else{
         handleCreateSubCategories()
       }
@@ -247,7 +248,7 @@ const Categories = () => {
 
   
 
-  const addupdatesubcategory=(status)=>{
+  const addupdatesubcategory=(status,categoryName,subcategoryName)=>{
     if (!subcategoryName || !categoryName) {
       setMessage('Please enter all fields');
       return;
@@ -524,7 +525,7 @@ const Categories = () => {
               <button
                 className="button-gradient py-2 px-5"
                 onClick={e=>{
-                  addupdatesubcategory('Active')
+                  addupdatesubcategory('Active',categoryName,subcategoryName)
                 }}
               >
                 <p>Save</p>
