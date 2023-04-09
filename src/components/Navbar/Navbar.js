@@ -162,8 +162,8 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
         <small className="text-lightBlue ms-2">Settings</small>
       </MenuItem>
       <MenuItem onClick={handleMenuClose} className="mt-1  px-2">
-        <LogoutIcon size="small" sx={{ color: "#FC756E", fontSize: 18 }} />
-        <small onClick={logout}  className="text-red-5 ms-2">Log out</small>
+        <LogoutIcon  onClick={logout} size="small" sx={{ color: "#FC756E", fontSize: 18 }} />
+        <small  className="text-red-5 ms-2">Log out</small>
       </MenuItem>
     </Menu>
   );
