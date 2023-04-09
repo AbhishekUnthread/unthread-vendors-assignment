@@ -8,12 +8,26 @@ export const createCategory = (body) => {
 
   };
 
+  export const createTag = (body) => { 
+    let url=BASE_URL+'/api/product-vendors'
+    return callApi(body,url,'POST')
+  
+  
+    };
+
   export const updateCategory = (body,id) => { 
     let url=BASE_URL+'/api/product-categories/' + id
     return callApi(body,url,'PUT')
   
   
     };
+
+    export const updateTag = (body,id) => { 
+      let url=BASE_URL+'/api/product-vendors/' + id
+      return callApi(body,url,'PUT')
+    
+    
+      };
 
   export const createSubCategory = (body) => { 
     let url=BASE_URL+'/api/product-sub-categories'

@@ -53,6 +53,7 @@ import {
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
+import { callGetApi, createTag, updateTag } from '../services/parameter.service';
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -153,6 +154,8 @@ const TagsManager = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+ 
+
 
   // ? CATEGORY SELECT STARTS HERE
   const [category, setCategory] = React.useState("");
@@ -314,6 +317,91 @@ const TagsManager = () => {
     console.info("You clicked the delete icon.");
   };
 
+//aman
+  let [message, setMessage] = React.useState('');
+  const [allTags, setallTags] = React.useState([]);
+  const [allTagsArchived, setallTagsArchived] = React.useState([]);
+
+  const [tagName, settagName] = React.useState('');
+  const [editData, seteditData] = React.useState('');
+
+  React.useEffect(()=>{
+    gettags();
+  },[])
+
+
+  let gettags=()=>{
+    callGetApi('/api/product-vendors','GET').then((res) => {
+      setallTags(res.data.filter(data=>data.attributes.status==='Active'))
+      setallTagsArchived(res.data.filter(data=>data.attributes.status!=='Active'))
+
+     })
+   .catch((err) => {
+     setMessage(err);
+   });
+   }
+
+   let edit=(data)=>{
+
+   }
+
+   let deleteData=(data)=>{
+
+    seteditData(data)
+    settagName(data.attributes.name)
+    createupdatetag('Draft')
+
+  }
+
+  let createupdatetag=(status)=>{
+    if (!tagName) {
+      setMessage('Please enter tagName field');
+      return;
+    }
+
+    let request = {
+      data: {
+        name: tagName,
+        status
+      },
+    };
+
+    if(!editData){
+      createTag(request)
+      .then((res) => {
+        responseHandled(res)
+      })
+      .catch((err) => {
+        setMessage(err);
+      });
+    }else{
+      updateTag(request,editData.id)
+      .then((res) => {
+        responseHandled(res)
+      })
+      .catch((err) => {
+        setMessage(err);
+      });
+    }
+
+  }
+ 
+
+  let responseHandled=(res)=>{
+    if (res?.error?.message) {
+      setMessage(res?.error?.message);
+      return;
+    }
+    resetdata()
+    gettags()
+    handleCreateTagClose();
+  }
+
+  let resetdata=()=>{
+    settagName('')
+    seteditData('')
+  }
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -371,9 +459,13 @@ const TagsManager = () => {
             <DialogContent className="py-3 px-4">
               <p className="text-lightBlue mb-2">Tag Name</p>
               <FormControl className="col-7 px-0">
-                <OutlinedInput placeholder="Enter Tag Name" size="small" />
+                <OutlinedInput  
+                value={tagName}
+                onChange={(e) => settagName(e.target.value)}
+                placeholder="Enter Tag Name" size="small" />
               </FormControl>
-              <div className="d-flex">
+           
+              {/* <div className="d-flex">
                 <Chip
                   label="Silver Products"
                   onDelete={handleDelete}
@@ -386,7 +478,7 @@ const TagsManager = () => {
                   className="me-2 mt-3"
                   size="small"
                 />
-              </div>
+              </div> */}
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -398,7 +490,9 @@ const TagsManager = () => {
               </button>
               <button
                 className="button-gradient py-2 px-5"
-                onClick={handleCreateTagClose}
+                onClick={e=>{
+                  createupdatetag('Active')
+                }}
               >
                 <p>Save</p>
               </button>
@@ -884,13 +978,17 @@ const TagsManager = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />{" "}
+              <Tab label="Archived" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
           </div>
           <TabPanel value={value} index={0}>
-            <TagsManagerTable />
+            <TagsManagerTable   list={allTags}  edit={edit} deleteData={deleteData}/>
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <TagsManagerTable   list={allTagsArchived}/>
           </TabPanel>
         </Paper>
       </div>

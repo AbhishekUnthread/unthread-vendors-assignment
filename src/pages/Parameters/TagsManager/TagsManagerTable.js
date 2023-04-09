@@ -28,20 +28,9 @@ function createData(tId, tagName, noOfProducts) {
   return { tId, tagName, noOfProducts };
 }
 
-const rows = [
-  createData(1, "Express Shipping", "25"),
-  createData(2, "Try On", "25"),
-  createData(3, "Lifetime", "25"),
-  createData(4, "Rings", "25"),
-  createData(5, "Top Selling", "25"),
-  createData(6, "Best Sellers", "1,12,542"),
-  createData(7, "Tag 1", "1,12,542"),
-  createData(8, "Tag 2", "1,12,542"),
-  createData(9, "Tag 3", "1,12,542"),
-  createData(10, "Tag 4", "1,12,542"),
-];
 
-const TagsManagerTable = () => {
+
+const TagsManagerTable = ({list,edit,deleteData}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -53,13 +42,13 @@ const TagsManagerTable = () => {
       id: "tagName",
       numeric: false,
       disablePadding: true,
-      label: "Field Set Name",
+      label: "Tag Name",
     },
     {
-      id: "noOfProducts",
+      id: "status",
       numeric: false,
-      disablePadding: false,
-      label: "No. Of Fields",
+      disablePadding: true,
+      label: "Status",
     },
     {
       id: "actions",
@@ -70,7 +59,7 @@ const TagsManagerTable = () => {
   ];
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -84,7 +73,7 @@ const TagsManagerTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.tId);
+      const newSelected = list.map((n) => n.tId);
       setSelected(newSelected);
       return;
     }
@@ -149,11 +138,11 @@ const TagsManagerTable = () => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={rows.length}
+            rowCount={list.length}
             headCells={headCells}
           />
           <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
+            {stableSort(list, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row.tId);
@@ -193,16 +182,19 @@ const TagsManagerTable = () => {
                         to="/parameters/tagsManager/edit"
                       >
                         <p className="text-lightBlue rounded-circle fw-600">
-                          {row.tagName}
+                        {row.attributes.name}
                         </p>
                       </Link>
                     </TableCell>
+
                     <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.noOfProducts}</p>
+                      <p className="text-lightBlue">{row.attributes.status}</p>
                     </TableCell>
+                   
                     <TableCell style={{ width: 120, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
+
+                      {edit && <Tooltip  title="Edit" placement="top">
                           <Link
                             to="/parameters/tagsManager/edit"
                             className="table-edit-icon rounded-4 p-2"
@@ -215,8 +207,13 @@ const TagsManagerTable = () => {
                               }}
                             />
                           </Link>
-                        </Tooltip>
-                        <Tooltip title="Archive" placement="top">
+                        </Tooltip>} 
+                       
+
+                      {edit && <Tooltip 
+                         onClick={(e)=>{
+                          deleteData(row)
+                        }}  title="Archive" placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <InventoryIcon
                               sx={{
@@ -226,7 +223,7 @@ const TagsManagerTable = () => {
                               }}
                             />
                           </div>
-                        </Tooltip>
+                        </Tooltip> }  
                       </div>
                     </TableCell>
                   </TableRow>
@@ -247,7 +244,7 @@ const TagsManagerTable = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={list.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
