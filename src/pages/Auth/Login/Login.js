@@ -64,7 +64,7 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
         <div className="col-md-8 ps-md-0 ps-3">
           <h1 className="text-blue-gradient fw-bold ps-0 ps-md-5">LOGO</h1>
           <p className="text-blue-gradient mt-4 w-75 ps-0 ps-md-5">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Amet
+            TestLorem ipsum dolor, sit amet consectetur adipisicing elit. Amet
             eligendi dolor, earum nisi accusantium laboriosam non perspiciatis
             eos sed. Dicta, vitae hic. Non molestias quisquam obcaecati sed
             omnis rem est!
