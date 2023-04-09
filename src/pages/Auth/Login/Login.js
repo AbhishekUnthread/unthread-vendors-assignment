@@ -29,6 +29,12 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
     setFormValues(updatedFields);
   };
 
+  let onKeyUp=(event)=>{
+    if (event.charCode === 13) {
+      updateLogin()
+        }
+  }
+
   const dispatcher=useDispatch();
 
   const updateLogin=()=>{
@@ -122,6 +128,7 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
                   size="small"
                   sx={{ paddingLeft: 0 }}
                   value={formValues.identifier}
+                  onKeyPress={onKeyUp}
                 onChange={(e) => updateFormFields("identifier", e.target.value)}
                 />
               </FormControl>
@@ -137,7 +144,8 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
                   sx={{ paddingLeft: 0 }}
                   value={formValues.password}
                   type={!showPassword?'password':'text'}
-                onChange={(e) => updateFormFields("password", e.target.value)}
+                  onKeyPress={onKeyUp}
+                  onChange={(e) => updateFormFields("password", e.target.value)}
                 />
               </FormControl>
             

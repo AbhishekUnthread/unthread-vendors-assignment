@@ -335,12 +335,14 @@ const Categories = () => {
               >
                 Create Category
               </small>
-              <small
+             {allCategory.length ?
+               <small
                 className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
                 onClick={handleCreateSubCategories}
               >
                 Create Sub-Category
-              </small>
+              </small>:''
+             } 
             </div>
           </Popover>
 

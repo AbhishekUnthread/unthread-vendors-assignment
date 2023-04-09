@@ -28,6 +28,12 @@ const Signup = () => {
     setFormValues(updatedFields);
   };
 
+  let onKeyUp=(event)=>{
+    if (event.charCode === 13) {
+      callApi()
+        }
+  }
+
   let callApi=()=>{
 
     let allValues=Object.values(formValues).every((v) => v)
@@ -78,6 +84,7 @@ const Signup = () => {
                 size="small"
                 sx={{ paddingLeft: 0 }}
                 value={formValues.username}
+                onKeyPress={onKeyUp}
                 onChange={(e) => updateFormFields("username", e.target.value)}
               />
             </FormControl>
@@ -93,6 +100,7 @@ const Signup = () => {
                 size="small"
                 sx={{ paddingLeft: 0 }}
                 value={formValues.email}
+                onKeyPress={onKeyUp}
                 onChange={(e) => updateFormFields("email", e.target.value)}
               />
             </FormControl>
@@ -110,6 +118,7 @@ const Signup = () => {
                 sx={{ paddingLeft: 0 }}
                 value={formValues.password}
                 type={!showPassword?'password':'text'}
+                onKeyPress={onKeyUp}
                 onChange={(e) => updateFormFields("password", e.target.value)}
               />
             </FormControl>
