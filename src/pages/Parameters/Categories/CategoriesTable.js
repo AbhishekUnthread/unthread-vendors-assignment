@@ -132,139 +132,147 @@ const CategoriesTable = ({list,edit,deleteData}) => {
           <TableMassActionButton /> */}
         </div>
       )}
-      <TableContainer>
-        <Table
-          sx={{ minWidth: 750 }}
-          aria-labelledby="tableTitle"
-          size="medium"
-        >
-          <EnhancedTableHead
-            numSelected={selected.length}
-            order={order}
-            orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
-            rowCount={list.length}
-            headCells={headCells}
-          />
-          <TableBody>
-            {stableSort(list, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.cId);
-                const labelId = `enhanced-table-checkbox-${index}`;
+            {list.length?
+            <React.Fragment> 
+            <TableContainer>
+             <Table
+               sx={{ minWidth: 750 }}
+               aria-labelledby="tableTitle"
+               size="medium"
+             >
+               <EnhancedTableHead
+                 numSelected={selected.length}
+                 order={order}
+                 orderBy={orderBy}
+                 onSelectAllClick={handleSelectAllClick}
+                 onRequestSort={handleRequestSort}
+                 rowCount={list.length}
+                 headCells={headCells}
+               />
+               <TableBody>
+                 {stableSort(list, getComparator(order, orderBy))
+                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                   .map((row, index) => {
+                     const isItemSelected = isSelected(row.cId);
+                     const labelId = `enhanced-table-checkbox-${index}`;
+     
+                     return (
+                       <TableRow
+                         hover
+                         role="checkbox"
+                         aria-checked={isItemSelected}
+                         tabIndex={-1}
+                         key={row.cId}
+                         selected={isItemSelected}
+                         className="table-rows"
+                       >
+                         <TableCell padding="checkbox">
+                           <Checkbox
+                             checked={isItemSelected}
+                             inputProps={{
+                               "aria-labelledby": labelId,
+                             }}
+                             onClick={(event) => handleClick(event, row.cId)}
+                             size="small"
+                             style={{
+                               color: "#5C6D8E",
+                             }}
+                           />
+                         </TableCell>
+                         <TableCell
+                           component="th"
+                           id={labelId}
+                           scope="row"
+                           padding="none"
+                         >
+                           <Link
+                             className="text-decoration-none"
+                             to="/parameters/categories/edit"
+                           >
+                             <p className="text-lightBlue rounded-circle fw-600">
+                               {row.attributes.name}
+                             </p>
+                           </Link>
+                         </TableCell>
+                         <TableCell style={{ width: 180 }}>
+                           <p className="text-lightBlue">{row.attributes.type}</p>
+                         </TableCell>
+                       
+                         <TableCell style={{ width: 120, padding: 0 }}>
+                           <div className="d-flex align-items-center">
+                             <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
+                               <small className="text-black fw-400">
+                                 {row.attributes.status}
+                               </small>
+                             </div>
+                           </div>
+                         </TableCell>
+                         <TableCell style={{ width: 120, padding: 0 }}>
+                           <div className="d-flex align-items-center">
+                             {edit &&
+                             <Tooltip title="Edit" placement="top">
+                               <div onClick={(e)=>{
+                                 edit(row)
+                               }} className="table-edit-icon rounded-4 p-2">
+                                 <EditOutlinedIcon
+                                   sx={{
+                                     color: "#5c6d8e",
+                                     fontSize: 18,
+                                     cursor: "pointer",
+                                   }}
+                                 />
+                               </div>
+                             </Tooltip>
+                 }
+                             {edit && <Tooltip title="Archive" placement="top">
+                               <div onClick={(e)=>{
+                                 deleteData(row)
+                               }}
+                             
+                               className="table-edit-icon rounded-4 p-2">
+                                 <InventoryIcon
+                                   sx={{
+                                     color: "#5c6d8e",
+                                     fontSize: 18,
+                                     cursor: "pointer",
+                                   }}
+                                 />
+                               </div>
+                             </Tooltip>
+                   }
+                           </div>
+                         </TableCell>
+                       </TableRow>
+                     );
+                   })}
+                 {emptyRows > 0 && (
+                   <TableRow
+                     style={{
+                       height: 53 * emptyRows,
+                     }}
+                   >
+                     <TableCell colSpan={6} />
+                   </TableRow>
+                 )}
+               </TableBody>
+             </Table>
+           </TableContainer>
+           <TablePagination
+             rowsPerPageOptions={[5, 10, 25]}
+             component="div"
+             count={list.length}
+             rowsPerPage={rowsPerPage}
+             page={page}
+             onPageChange={handleChangePage}
+             onRowsPerPageChange={handleChangeRowsPerPage}
+             className="table-pagination"
+           />
+          </React.Fragment> 
 
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.cId}
-                    selected={isItemSelected}
-                    className="table-rows"
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                        onClick={(event) => handleClick(event, row.cId)}
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      <Link
-                        className="text-decoration-none"
-                        to="/parameters/categories/edit"
-                      >
-                        <p className="text-lightBlue rounded-circle fw-600">
-                          {row.attributes.name}
-                        </p>
-                      </Link>
-                    </TableCell>
-                    <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.attributes.type}</p>
-                    </TableCell>
-                  
-                    <TableCell style={{ width: 120, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.attributes.status}
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell style={{ width: 120, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        {edit &&
-                        <Tooltip title="Edit" placement="top">
-                          <div onClick={(e)=>{
-                            edit(row)
-                          }} className="table-edit-icon rounded-4 p-2">
-                            <EditOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-            }
-                        {edit && <Tooltip title="Archive" placement="top">
-                          <div onClick={(e)=>{
-                            deleteData(row)
-                          }}
-                        
-                          className="table-edit-icon rounded-4 p-2">
-                            <InventoryIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-              }
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
-              >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={list.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        className="table-pagination"
-      />
+            :'No data found'}
+
+     
+
     </React.Fragment>
   );
 };
