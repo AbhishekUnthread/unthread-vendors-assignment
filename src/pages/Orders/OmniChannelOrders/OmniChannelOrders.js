@@ -12,7 +12,6 @@ import TableSearch from "../../../components/TableSearch/TableSearch";
 import FilterOrders from "../../../components/FilterOrders/FilterOrders";
 import OrderSortFilter from "../OrderSortFilter";
 import OrderColumnsFilter from "../OrderColumnsFilter";
-import OrderTagsFilter from "../OrderTagsFilter";
 import OrderStatusFilter from "../OrderStatusFilter";
 import OrderLocationFilter from "../OrderLocationFilter";
 // ! IMAGES IMPORTS

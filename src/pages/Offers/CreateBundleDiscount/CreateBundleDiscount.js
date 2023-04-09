@@ -2,48 +2,6 @@ import React from "react";
 import "./CreateBundleDiscount.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
-import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
-import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
-import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
-import NotesBox from "../../../components/NotesBox/NotesBox";
-import TagsBox from "../../../components/TagsBox/TagsBox";
-// ! IMAGES IMPORTS
-import arrowLeft from "../../../assets/icons/arrowLeft.svg";
-import archivedGrey from "../../../assets/icons/archivedGrey.svg";
-import editGrey from "../../../assets/icons/editGrey.svg";
-import addUserUpload from "../../../assets/images/users/addUserUpload.svg";
-import paginationRight from "../../../assets/icons/paginationRight.svg";
-import paginationLeft from "../../../assets/icons/paginationLeft.svg";
-import info from "../../../assets/icons/info.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg";
-// ! MATERIAL IMPORTS
-import {
-  FormControl,
-  MenuItem,
-  Select,
-  InputAdornment,
-  OutlinedInput,
-  Checkbox,
-  FormControlLabel,
-  Chip,
-  TextField,
-  Autocomplete,
-  Tooltip,
-  ToggleButtonGroup,
-  ToggleButton,
-  RadioGroup,
-  Radio,
-  Popover,
-} from "@mui/material";
-import { DesktopDateTimePicker } from "@mui/x-date-pickers";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-// ! MATERIAL ICONS IMPORTS
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import TableSearch from "../../../components/TableSearch/TableSearch";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ProductStatusToggle from "../ProductStatusToggle";
 import MaximumDiscountUsers from "../MaximumDiscountUsers";
 import ScheduleDiscountCode from "../ScheduleDiscountCode";
@@ -51,6 +9,22 @@ import CustomerEligibility from "../CustomerEligibility";
 import ReturnAndExchangeCondition from "../ReturnAndExchangeCondition";
 import BundleProductDiscount from "../BundleProductDiscount";
 import DiscountCombination from "../DiscountCombination";
+// ! IMAGES IMPORTS
+import arrowLeft from "../../../assets/icons/arrowLeft.svg";
+import paginationRight from "../../../assets/icons/paginationRight.svg";
+import paginationLeft from "../../../assets/icons/paginationLeft.svg";
+import info from "../../../assets/icons/info.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
+// ! MATERIAL IMPORTS
+import {
+  FormControl,
+  InputAdornment,
+  OutlinedInput,
+  Tooltip,
+  Popover,
+} from "@mui/material";
+// ! MATERIAL ICONS IMPORTS
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 const CreateBundleDiscount = () => {
   // * DISCOUNT PERCENT POPOVERS STARTS

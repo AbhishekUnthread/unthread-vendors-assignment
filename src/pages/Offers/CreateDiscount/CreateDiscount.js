@@ -2,12 +2,6 @@ import React from "react";
 import "./CreateDiscount.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
-import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
-import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
-import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
-import NotesBox from "../../../components/NotesBox/NotesBox";
-import TagsBox from "../../../components/TagsBox/TagsBox";
 import ScheduleDiscountCode from "../ScheduleDiscountCode";
 import ProductStatusToggle from "../ProductStatusToggle";
 import MaximumDiscountUsers from "../MaximumDiscountUsers";
@@ -18,9 +12,6 @@ import DiscountCombination from "../DiscountCombination";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
-import archivedGrey from "../../../assets/icons/archivedGrey.svg";
-import editGrey from "../../../assets/icons/editGrey.svg";
-import addUserUpload from "../../../assets/images/users/addUserUpload.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import info from "../../../assets/icons/info.svg";
@@ -38,16 +29,11 @@ import {
   TextField,
   Autocomplete,
   Tooltip,
-  ToggleButtonGroup,
-  ToggleButton,
   RadioGroup,
   Radio,
   Popover,
   TextareaAutosize,
 } from "@mui/material";
-import { DesktopDateTimePicker } from "@mui/x-date-pickers";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -69,21 +55,6 @@ const taggedWithData = [
 ];
 
 const CreateDiscount = () => {
-  // ? GENDER SELECT STARTS HERE
-  const [gender, setGender] = React.useState("");
-
-  const handleGenderChange = (event) => {
-    setGender(event.target.value);
-  };
-  // ? GENDER SELECT ENDS HERE
-
-  // ? TOGGLE BUTTONS STARTS HERE
-  const [productStatus, setPoductStatus] = React.useState("active");
-  const handleProductStatus = (event, newProductStatus) => {
-    setPoductStatus(newProductStatus);
-  };
-  // ? TOGGLE BUTTONS ENDS HERE
-
   // ? USER ROLE SELECT STARTS HERE
   const [discountType, setDiscountType] = React.useState("");
 

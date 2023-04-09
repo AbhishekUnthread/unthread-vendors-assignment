@@ -4,8 +4,8 @@ import { NavLink } from "react-router-dom";
 // ! IMAGES IMPORTS
 import logo from "../../assets/icons/logo.svg";
 import analytics from "../../assets/icons/sidenav/analytics.svg";
-import discounts from "../../assets/icons/sidenav/discounts.svg";
-import functionality from "../../assets/icons/sidenav/functionality.svg";
+// import discounts from "../../assets/icons/sidenav/discounts.svg";
+// import functionality from "../../assets/icons/sidenav/functionality.svg";
 import globalStore from "../../assets/icons/sidenav/globalStore.svg";
 import helpCenter from "../../assets/icons/sidenav/helpCenter.svg";
 import newFeatures from "../../assets/icons/sidenav/newFeatures.svg";
