@@ -331,9 +331,11 @@ const TagsManager = () => {
 
 
   let gettags=()=>{
-    callGetApi('/api/product-vendors','GET').then((res) => {
-      setallTags(res.data.filter(data=>data.attributes.status==='Active'))
-      setallTagsArchived(res.data.filter(data=>data.attributes.status!=='Active'))
+    callGetApi('/api/product-tags','GET').then((res) => {
+      // setallTags(res.data.filter(data=>data.attributes.status==='Active'))
+      // setallTagsArchived(res.data.filter(data=>data.attributes.status!=='Active'))
+
+      setallTags(res.data)
 
      })
    .catch((err) => {
@@ -978,7 +980,7 @@ const TagsManager = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />{" "}
-              <Tab label="Archived" className="tabs-head" />
+              {/* <Tab label="Archived" className="tabs-head" /> */}
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -987,9 +989,9 @@ const TagsManager = () => {
           <TabPanel value={value} index={0}>
             <TagsManagerTable   list={allTags}  edit={edit} deleteData={deleteData}/>
           </TabPanel>
-          <TabPanel value={value} index={1}>
+          {/* <TabPanel value={value} index={1}>
             <TagsManagerTable   list={allTagsArchived}/>
-          </TabPanel>
+          </TabPanel> */}
         </Paper>
       </div>
     </div>

@@ -27,6 +27,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { callGetApi, createVendor, updateVendor } from "../services/parameter.service";
 // ! MATERIAL ICONS IMPORTS
 
 // ? DIALOG TRANSITION STARTS HERE
@@ -60,6 +61,92 @@ const Vendors = () => {
     setVendorCategory(event.target.value);
   };
   // ? VENDOR CATEGORY SELECT ENDS HERE
+
+
+  //aman
+  let [message, setMessage] = React.useState('');
+  const [allvendors, setallvendors] = React.useState([]);
+  const [allvendorsArchived, setallallvendorsArchived] = React.useState([]);
+
+  const [vendorsName, setvendorsName] = React.useState('');
+  const [editData, seteditData] = React.useState('');
+
+  React.useEffect(()=>{
+    getvendor();
+  },[])
+
+
+  let getvendor=()=>{
+    callGetApi('/api/product-vendors','GET').then((res) => {
+      setallvendors(res.data.filter(data=>data.attributes.status==='Active'))
+      setallallvendorsArchived(res.data.filter(data=>data.attributes.status!=='Active'))
+
+     })
+   .catch((err) => {
+     setMessage(err);
+   });
+   }
+
+   let edit=(data)=>{
+
+   }
+
+   let deleteData=(data)=>{
+
+    seteditData(data)
+    setvendorsName(data.attributes.name)
+    createupdatevendor('Draft')
+
+  }
+
+  let createupdatevendor=(status)=>{
+    if (!vendorsName) {
+      setMessage('Please enter vendorsName field');
+      return;
+    }
+
+    let request = {
+      data: {
+        name: vendorsName,
+        status
+      },
+    };
+
+    if(!editData){
+      createVendor(request)
+      .then((res) => {
+        responseHandled(res)
+      })
+      .catch((err) => {
+        setMessage(err);
+      });
+    }else{
+      updateVendor(request,editData.id)
+      .then((res) => {
+        responseHandled(res)
+      })
+      .catch((err) => {
+        setMessage(err);
+      });
+    }
+
+  }
+ 
+
+  let responseHandled=(res)=>{
+    if (res?.error?.message) {
+      setMessage(res?.error?.message);
+      return;
+    }
+    resetdata()
+    getvendor()
+    handleAddVendorsClose()
+  }
+
+  let resetdata=()=>{
+    setvendorsName('')
+    seteditData('')
+  }
 
   return (
     <div className="container-fluid page">
@@ -111,10 +198,13 @@ const Vendors = () => {
             <DialogContent className="py-3 px-4">
               <p className="text-lightBlue mb-2">Vendor Name</p>
               <FormControl className="col-7 px-0">
-                <OutlinedInput placeholder="Enter Vendor Name" size="small" />
+                <OutlinedInput 
+                  value={vendorsName}
+                  onChange={(e) => setvendorsName(e.target.value)}
+                placeholder="Enter Vendor Name" size="small" />
               </FormControl>
 
-              <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
+              {/* <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
               <FormControl
                 //   sx={{ m: 0, minWidth: 120, width: "100%" }}
                 size="small"
@@ -143,7 +233,7 @@ const Vendors = () => {
                     JWL 3
                   </MenuItem>
                 </Select>
-              </FormControl>
+              </FormControl> */}
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -155,7 +245,9 @@ const Vendors = () => {
               </button>
               <button
                 className="button-gradient py-2 px-5"
-                onClick={handleAddVendorsClose}
+                onClick={e=>{
+                  createupdatevendor('Active')
+                }}
               >
                 <p>Save</p>
               </button>
@@ -183,17 +275,17 @@ const Vendors = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
-              <Tab label="FLAGSHIP VENDOR" className="tabs-head" />
+              <Tab label="Archived" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
           </div>
           <TabPanel value={value} index={0}>
-            <VendorsTable />
+            <VendorsTable list={allvendors}  edit={edit} deleteData={deleteData} />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <VendorsTable />
+            <VendorsTable list={allvendorsArchived}/>
           </TabPanel>
         </Paper>
       </div>

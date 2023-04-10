@@ -44,12 +44,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
       disablePadding: true,
       label: "Tag Name",
     },
-    {
-      id: "status",
-      numeric: false,
-      disablePadding: true,
-      label: "Status",
-    },
+   
     {
       id: "actions",
       numeric: false,
@@ -187,9 +182,9 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                       </Link>
                     </TableCell>
 
-                    <TableCell style={{ width: 180 }}>
+                    {/* <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.attributes.status}</p>
-                    </TableCell>
+                    </TableCell> */}
                    
                     <TableCell style={{ width: 120, padding: 0 }}>
                       <div className="d-flex align-items-center">
@@ -210,7 +205,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                         </Tooltip>} 
                        
 
-                      {edit && <Tooltip 
+                      {/* {edit && <Tooltip 
                          onClick={(e)=>{
                           deleteData(row)
                         }}  title="Archive" placement="top">
@@ -223,7 +218,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                               }}
                             />
                           </div>
-                        </Tooltip> }  
+                        </Tooltip> }   */}
                       </div>
                     </TableCell>
                   </TableRow>
