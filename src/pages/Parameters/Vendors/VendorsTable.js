@@ -54,7 +54,7 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const VendorsTable = ({list,edit,deleteData}) => {
+const VendorsTable = ({list,editData,deleteData}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
