@@ -203,7 +203,10 @@ const VendorsTable = ({list,editData,deleteData}) => {
                       <div className="d-flex align-items-center">
                       {editData &&   <Tooltip title="Edit" placement="top">
                           <Link
-                            to="/parameters/vendors/edit"
+                          onClick={(e)=>{
+                            editData(row)
+                          }}
+                           
                             className="table-edit-icon rounded-4 p-2"
                           >
                             <EditOutlinedIcon

@@ -155,9 +155,9 @@ const Categories = () => {
   }
 
   let getCategoryName=(subcategory,archive)=>{
-    callGetApi('/api/product-sub-categories?populate[product_category][fields][0]=name','GET').then((res) => {
+    callGetApi(`/api/product-sub-categories/${subcategory.id}?populate[product_category][fields][0]=name`,'GET').then((res) => {
      
-      let details=res.data.find(data=>data.id==subcategory.id)
+      let details=res.data
       setCategoryName(details.attributes.product_category.data.id)
       setsubCategoryName(subcategory.attributes.name)
 

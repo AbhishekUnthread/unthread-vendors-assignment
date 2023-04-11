@@ -332,10 +332,9 @@ const TagsManager = () => {
 
   let gettags=()=>{
     callGetApi('/api/product-tags','GET').then((res) => {
-      // setallTags(res.data.filter(data=>data.attributes.status==='Active'))
-      // setallTagsArchived(res.data.filter(data=>data.attributes.status!=='Active'))
+      setallTags(res.data.filter(data=>data.attributes.status==='Active'))
+      setallTagsArchived(res.data.filter(data=>data.attributes.status!=='Active'))
 
-      setallTags(res.data)
 
      })
    .catch((err) => {
@@ -344,7 +343,9 @@ const TagsManager = () => {
    }
 
    let edit=(data)=>{
-
+    seteditData(data)
+    settagName(data.attributes.name)
+    handleCreateTag()
    }
 
    let deleteData=(data)=>{
@@ -441,7 +442,10 @@ const TagsManager = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">Create Tags</h5>
+                  <h5 className="text-lightBlue fw-500">
+                  {!editData?'Create Tags':'Update Tags'}
+
+                     </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -980,7 +984,7 @@ const TagsManager = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />{" "}
-              {/* <Tab label="Archived" className="tabs-head" /> */}
+              <Tab label="Archived" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -989,9 +993,9 @@ const TagsManager = () => {
           <TabPanel value={value} index={0}>
             <TagsManagerTable   list={allTags}  edit={edit} deleteData={deleteData}/>
           </TabPanel>
-          {/* <TabPanel value={value} index={1}>
+          <TabPanel value={value} index={1}>
             <TagsManagerTable   list={allTagsArchived}/>
-          </TabPanel> */}
+          </TabPanel>
         </Paper>
       </div>
     </div>

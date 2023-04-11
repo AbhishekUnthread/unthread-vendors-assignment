@@ -88,7 +88,9 @@ const Vendors = () => {
    }
 
    let edit=(data)=>{
-
+    seteditData(data)
+    setvendorsName(data.attributes.name)
+    handleAddVendors()
    }
 
    let deleteData=(data)=>{
@@ -179,7 +181,11 @@ const Vendors = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">Create Vendors</h5>
+                  <h5 className="text-lightBlue fw-500">
+                    
+                    {!editData?'Create Vendors':'Update Vendors'}
+
+                    </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain

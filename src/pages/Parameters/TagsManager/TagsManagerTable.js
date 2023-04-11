@@ -44,6 +44,12 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
       disablePadding: true,
       label: "Tag Name",
     },
+    {
+      id: "status",
+      numeric: false,
+      disablePadding: true,
+      label: "Status",
+    },
    
     {
       id: "actions",
@@ -182,19 +188,28 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                       </Link>
                     </TableCell>
 
-                    {/* <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.attributes.status}</p>
-                    </TableCell> */}
+                    <TableCell style={{ width: 140, padding: 0 }}>
+                      <div className="d-flex align-items-center">
+                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
+                          <small className="text-black fw-400">
+                          {row.attributes.status}
+                          </small>
+                        </div>
+                      </div>
+                    </TableCell>
                    
                     <TableCell style={{ width: 120, padding: 0 }}>
                       <div className="d-flex align-items-center">
 
                       {edit && <Tooltip  title="Edit" placement="top">
                           <Link
-                            to="/parameters/tagsManager/edit"
+                           onClick={(e)=>{
+                            edit(row)
+                          }}
                             className="table-edit-icon rounded-4 p-2"
                           >
                             <EditOutlinedIcon
+
                               sx={{
                                 color: "#5c6d8e",
                                 fontSize: 18,
@@ -205,7 +220,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                         </Tooltip>} 
                        
 
-                      {/* {edit && <Tooltip 
+                      {edit && <Tooltip 
                          onClick={(e)=>{
                           deleteData(row)
                         }}  title="Archive" placement="top">
@@ -218,7 +233,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                               }}
                             />
                           </div>
-                        </Tooltip> }   */}
+                        </Tooltip> }  
                       </div>
                     </TableCell>
                   </TableRow>
