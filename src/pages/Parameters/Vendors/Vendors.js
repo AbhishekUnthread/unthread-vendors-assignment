@@ -282,7 +282,7 @@ const Vendors = () => {
             <TableSearch />
           </div>
           <TabPanel value={value} index={0}>
-            <VendorsTable list={allvendors}  edit={edit} deleteData={deleteData} />
+            <VendorsTable list={allvendors}  editData={edit} deleteData={deleteData} />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <VendorsTable list={allvendorsArchived}/>
