@@ -16,6 +16,21 @@ export const signIn = (body) => {
 
 };
 
+  export const validatetoken=(appendUrl)=>{
+    let url=BASE_URL+appendUrl
+
+    return fetch(url, {
+        method:'GET',
+        headers: {
+          "Content-Type": "application/json"
+        },
+      }).then(async (response) => {
+       return await response.json();
+      }).catch(err=>{
+        throw 'Connection Error! We are unable to reach to the server'
+      });
+  }
+
 
 const callApi = (body, url) => {
   return fetch(url, {

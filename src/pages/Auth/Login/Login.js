@@ -5,14 +5,16 @@ import facebook from "../../../assets/icons/facebook.svg";
 import google from "../../../assets/icons/google.svg";
 import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import { Link,useNavigate } from "react-router-dom";
+import { Link,useNavigate,useLocation } from "react-router-dom";
 import {useDispatch} from 'react-redux'
 import  Messages from '../../../components/snackbar/snackbar.js'
-import { signIn } from "../services/authService";
+import { signIn, validatetoken } from "../services/authService";
 
 const Login = () => {
-  let navigate = useNavigate();
 
+
+
+let navigate = useNavigate();
 const [showPassword, setShowPassword] = React.useState(false);
 const handleClickShowPassword = () => setShowPassword(!showPassword);
   
@@ -48,21 +50,43 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
     setMessage('Signing In')
    
     signIn(formValues).then(res=>{
-      if(res?.error?.message){
-        setMessage(res?.error?.message)
-        return;
-      }
-
-      dispatcher({type:'userData',data:res})
-      sessionStorage.setItem('userData',JSON.stringify(res))
-
-      navigate("/dashboard", { replace: true });
-
+      responsehandled(res)
     }).catch(err=>{
       setMessage(err)
     })
 
+   
+
   }
+  let googleLogin=()=>{
+    window.open('https://backend.unthread.in/api/connect/google','_self')
+ }
+ let facebookLogin=()=>{
+  window.open('https://backend.unthread.in/api/connect/facebook','_self')
+}
+
+let responsehandled=(res)=>{
+  if(res?.error?.message){
+    setMessage(res?.error?.message)
+    return;
+  }
+  dispatcher({type:'userData',data:res})
+  sessionStorage.setItem('userData',JSON.stringify(res))
+
+  navigate("/dashboard", { replace: true });
+}
+
+React.useEffect(()=>{
+  if(sessionStorage.getItem('token')){
+    setMessage('Validating')
+    validatetoken(`/api/auth/google/callback/?id_token=${sessionStorage.getItem('token')}`).then(res=>{
+      sessionStorage.removeItem("token")
+      responsehandled(res)
+     
+    
+    })
+  }
+},[])
 
   return (
     <div className="container-fluid login">
@@ -157,13 +181,13 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
             <p className="text-grey-6 my-4">or sign in with</p>
             <div className="d-flex row">
               <div className="col-6">
-                <button className="button-lightBlue-outline w-100 px-2 py-2">
+                <button onClick={googleLogin} className="button-lightBlue-outline w-100 px-2 py-2">
                   <img src={google} alt="google" className="w-auto me-2" />
                   Google
                 </button>
               </div>
               <div className="col-6">
-                <button className="button-lightBlue-outline w-100 px-2 py-2">
+                <button onClick={facebookLogin} className="button-lightBlue-outline w-100 px-2 py-2">
                   <img src={facebook} alt="facebook" className="w-auto me-2" />
                   Facebook
                 </button>

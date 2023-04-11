@@ -12,7 +12,7 @@ import {
   Route,
   Routes,
   useLocation,
-  // useNavigate,
+  useNavigate,
 } from "react-router-dom";
 // ? COMPONETS & PAGES STARTS HERE
 import Sidenav from "./components/Sidenav/Sidenav";
@@ -122,6 +122,9 @@ function App(props) {
       },
     },
   });
+
+  
+
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [showNavs, setShowNavs] = React.useState(true);
@@ -140,7 +143,21 @@ function App(props) {
   };
 
   const location = useLocation();
-  // const navigate = useNavigate();
+
+  const search = location.search;
+  
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    const token = new URLSearchParams(search).get("id_token");
+    if(token){
+      sessionStorage.setItem('token',token)
+      sessionStorage.removeItem('userData')  
+       navigate("/auth/login");
+    }
+   
+
+  },[])
 
   useEffect(() => {
     if (location.pathname.includes("auth")) {
