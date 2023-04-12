@@ -1,7 +1,15 @@
 import {createStore} from 'redux'
 
 let initialState={
-  data:sessionStorage.getItem('userData')?JSON.parse(sessionStorage.getItem('userData')):null
+  data:sessionStorage.getItem('userData') && isJsonString(sessionStorage.getItem('userData'))?JSON.parse(sessionStorage.getItem('userData')):null
+}
+function isJsonString(str) {
+  try {
+      JSON.parse(str);
+  } catch (e) {
+      return false;
+  }
+  return true;
 }
 
 const reducerFunction=((state,action)=>{

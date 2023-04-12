@@ -148,13 +148,18 @@ function App(props) {
   
   const navigate = useNavigate();
 
+  let [loader,isLoading]=React.useState(true)
+
   useEffect(()=>{
     const token = new URLSearchParams(search).get("id_token");
-    if(token){
-      sessionStorage.setItem('token',token)
+    if(token || !sessionStorage.getItem('userData')){
+      if(token)sessionStorage.setItem('token',token)
       sessionStorage.removeItem('userData')  
        navigate("/auth/login");
+    }else{
+      navigate(location.pathname);
     }
+    isLoading(false)
    
 
   },[])
@@ -180,7 +185,8 @@ function App(props) {
 
   return (
     <ThemeProvider theme={projectTheme}>
-      <Box sx={{ display: "flex" }}>
+   {!loader?
+    <Box sx={{ display: "flex" }}>
         <CssBaseline />
         {showNavs && (
           <AppBar
@@ -274,7 +280,7 @@ function App(props) {
           <Routes>
             {/* {admin ? ( */}
             <React.Fragment>
-              <Route path="/" element={<Navigate to="/dashboard" />} />
+              {/* <Route path="/" element={<Navigate to="/dashboard" />} /> */}
               <Route path="/dashboard" element={<Dashboard />} />
               {/* PRODUCT ROUTES */}
               <Route path="/products">
@@ -427,7 +433,7 @@ function App(props) {
             )} */}
           </Routes>
         </Box>
-      </Box>
+      </Box>:''}
     </ThemeProvider>
   );
 }
