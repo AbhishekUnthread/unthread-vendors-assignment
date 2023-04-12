@@ -162,7 +162,7 @@ const CategoriesTable = ({list,edit,deleteData}) => {
                          role="checkbox"
                          aria-checked={isItemSelected}
                          tabIndex={-1}
-                         key={row.cId}
+                         key={index}
                          selected={isItemSelected}
                          className="table-rows"
                        >

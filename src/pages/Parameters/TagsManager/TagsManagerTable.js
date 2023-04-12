@@ -155,7 +155,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.tId}
+                    key={index}
                     selected={isItemSelected}
                     className="table-rows"
                   >
