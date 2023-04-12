@@ -4,7 +4,7 @@ let initialState={
   data:sessionStorage.getItem('userData')?JSON.parse(sessionStorage.getItem('userData')):null
 }
 
-const isLogin=((state,action)=>{
+const reducerFunction=((state,action)=>{
 
     switch (action.type) {
         case "userData":
@@ -18,6 +18,6 @@ const isLogin=((state,action)=>{
 })
 
 
-const store=createStore(isLogin,initialState)
+const store=createStore(reducerFunction,initialState)
 
 export default store
