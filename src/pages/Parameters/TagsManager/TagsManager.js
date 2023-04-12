@@ -323,7 +323,7 @@ const TagsManager = () => {
   const [allTagsArchived, setallTagsArchived] = React.useState([]);
 
   const [tagName, settagName] = React.useState('');
-  const [editData, seteditData] = React.useState('');
+  const [tagId, setTagId] = React.useState('');
 
   React.useEffect(()=>{
     gettags();
@@ -343,20 +343,24 @@ const TagsManager = () => {
    }
 
    let edit=(data)=>{
-    seteditData(data)
+    setTagId(data.id)
     settagName(data.attributes.name)
     handleCreateTag()
    }
 
    let deleteData=(data)=>{
 
-    seteditData(data)
+    setTagId(data)
     settagName(data.attributes.name)
-    createupdatetag('Draft')
 
+    if(data.attributes.status=='Active'){
+      createupdatetag('Draft',data.id)
+    }else{
+      createupdatetag('Active',data.id)
+    }
   }
 
-  let createupdatetag=(status)=>{
+  let createupdatetag=(status,tagId)=>{
     if (!tagName) {
       setMessage('Please enter tagName field');
       return;
@@ -369,7 +373,7 @@ const TagsManager = () => {
       },
     };
 
-    if(!editData){
+    if(!tagId){
       createTag(request)
       .then((res) => {
         responseHandled(res)
@@ -378,7 +382,7 @@ const TagsManager = () => {
         setMessage(err);
       });
     }else{
-      updateTag(request,editData.id)
+      updateTag(request,tagId)
       .then((res) => {
         responseHandled(res)
       })
@@ -402,7 +406,7 @@ const TagsManager = () => {
 
   let resetdata=()=>{
     settagName('')
-    seteditData('')
+    setTagId('')
   }
 
   return (
@@ -443,7 +447,7 @@ const TagsManager = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
-                  {!editData?'Create Tags':'Update Tags'}
+                  {!tagId?'Create Tags':'Update Tags'}
 
                      </h5>
 
@@ -497,7 +501,7 @@ const TagsManager = () => {
               <button
                 className="button-gradient py-2 px-5"
                 onClick={e=>{
-                  createupdatetag('Active')
+                  createupdatetag('Active',tagId)
                 }}
               >
                 <p>Save</p>
@@ -994,7 +998,7 @@ const TagsManager = () => {
             <TagsManagerTable   list={allTags}  edit={edit} deleteData={deleteData}/>
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <TagsManagerTable   list={allTagsArchived}/>
+            <TagsManagerTable   list={allTagsArchived} deleteData={deleteData}/>
           </TabPanel>
         </Paper>
       </div>

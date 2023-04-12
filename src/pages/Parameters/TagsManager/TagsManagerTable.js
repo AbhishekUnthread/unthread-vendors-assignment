@@ -220,10 +220,10 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                         </Tooltip>} 
                        
 
-                      {edit && <Tooltip 
+                      {deleteData && <Tooltip 
                          onClick={(e)=>{
                           deleteData(row)
-                        }}  title="Archive" placement="top">
+                        }} title={edit?'Archive':'Un-Archive'} placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <InventoryIcon
                               sx={{

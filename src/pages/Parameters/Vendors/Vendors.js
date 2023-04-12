@@ -69,7 +69,7 @@ const Vendors = () => {
   const [allvendorsArchived, setallallvendorsArchived] = React.useState([]);
 
   const [vendorsName, setvendorsName] = React.useState('');
-  const [editData, seteditData] = React.useState('');
+  const [vendorId, setvendorId] = React.useState('');
 
   React.useEffect(()=>{
     getvendor();
@@ -88,20 +88,24 @@ const Vendors = () => {
    }
 
    let edit=(data)=>{
-    seteditData(data)
+    setvendorId(data.id)
     setvendorsName(data.attributes.name)
     handleAddVendors()
    }
 
    let deleteData=(data)=>{
 
-    seteditData(data)
+    setvendorId(data.id)
     setvendorsName(data.attributes.name)
-    createupdatevendor('Draft')
+    if(data.attributes.status=='Active'){
+      createupdatevendor('Draft',data.id)
+    }else{
+      createupdatevendor('Active',data.id)
+    }
 
   }
 
-  let createupdatevendor=(status)=>{
+  let createupdatevendor=(status,id)=>{
     if (!vendorsName) {
       setMessage('Please enter vendorsName field');
       return;
@@ -114,7 +118,7 @@ const Vendors = () => {
       },
     };
 
-    if(!editData){
+    if(!id){
       createVendor(request)
       .then((res) => {
         responseHandled(res)
@@ -123,7 +127,7 @@ const Vendors = () => {
         setMessage(err);
       });
     }else{
-      updateVendor(request,editData.id)
+      updateVendor(request,id)
       .then((res) => {
         responseHandled(res)
       })
@@ -147,7 +151,7 @@ const Vendors = () => {
 
   let resetdata=()=>{
     setvendorsName('')
-    seteditData('')
+    setvendorId('')
   }
 
   return (
@@ -183,7 +187,7 @@ const Vendors = () => {
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
                     
-                    {!editData?'Create Vendors':'Update Vendors'}
+                    {!vendorId?'Create Vendors':'Update Vendors'}
 
                     </h5>
 
@@ -252,7 +256,7 @@ const Vendors = () => {
               <button
                 className="button-gradient py-2 px-5"
                 onClick={e=>{
-                  createupdatevendor('Active')
+                  createupdatevendor('Active',vendorId)
                 }}
               >
                 <p>Save</p>
@@ -291,7 +295,7 @@ const Vendors = () => {
             <VendorsTable list={allvendors}  editData={edit} deleteData={deleteData} />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <VendorsTable list={allvendorsArchived}/>
+            <VendorsTable list={allvendorsArchived} deleteData={deleteData} />
           </TabPanel>
         </Paper>
       </div>

@@ -210,7 +210,6 @@ const Categories = () => {
 
 
   //   let url=''
-  //   seteditData(data)
   //   if(data.attributes.type=='Category'){
   //     url='/api/product-categories/'+data.id
   //   }else{
@@ -346,6 +345,7 @@ const Categories = () => {
                 className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
                 onClick={handleCreateCategories}
               >
+                
                 Create Category
               </small>
              {allCategory.length ?
@@ -373,7 +373,7 @@ const Categories = () => {
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
 
-                  Category
+                  {!updateId?'Create Category':'Update Category'}
 
                   </h5>
 
@@ -447,7 +447,7 @@ const Categories = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
-                  Sub Category
+                  {updateId?'Update Sub Category':'Create Sub Category'}
 
 
                   </h5>
