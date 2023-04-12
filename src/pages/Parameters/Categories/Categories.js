@@ -117,7 +117,8 @@ const Categories = () => {
 
   const [categoryName, setCategoryName] = React.useState('');
   const [subcategoryName, setsubCategoryName] = React.useState('');
-  const [editData, seteditData] = React.useState('');
+
+  const [updateId, setUpdateId] = React.useState(false);
 
   React.useEffect(()=>{
     getcategories();
@@ -128,7 +129,7 @@ const Categories = () => {
   let resetdata=()=>{
     setCategoryName('')
     setsubCategoryName('')
-    seteditData('')
+    setUpdateId('')
   }
 
   let getcategories=()=>{
@@ -154,44 +155,56 @@ const Categories = () => {
     });
   }
 
-  let getCategoryName=(subcategory,archive)=>{
-    callGetApi(`/api/product-sub-categories/${subcategory.id}?populate[product_category][fields][0]=name`,'GET').then((res) => {
+  let getCategoryId=(subcategory)=>{
+    return new Promise((resolve,reject)=>{
+      callGetApi(`/api/product-sub-categories/${subcategory.id}?populate[product_category][fields][0]=name`,'GET').then((res) => {
      
-      let details=res.data
-      setCategoryName(details.attributes.product_category.data.id)
-      setsubCategoryName(subcategory.attributes.name)
-
-      if(archive){
-        addupdatesubcategory('Draft',details.attributes.product_category.data.id,subcategory.attributes.name)
-
-      }else{
-        handleCreateSubCategories()
-      }
+        let subcategorydetails=res.data
+        setCategoryName(subcategorydetails.attributes.product_category.data.id)
+        resolve(subcategorydetails.attributes.product_category.data.id)
      
-     })
-   .catch((err) => {
-     setMessage(err);
-   });
+       
+       })
+     .catch((err) => {
+       setMessage(err);
+     });
+    })
+   
 
   }
 
   let edit=(data)=>{
-    seteditData(data)
+    setUpdateId(data.id)
     if(data.attributes.type=='Category'){
       setCategoryName(data.attributes.name)
       handleCreateCategories()
     }else{
-      getCategoryName(data,false)
+      setsubCategoryName(data.attributes.name)
+      getCategoryId(data).then(res=>{
+        handleCreateSubCategories()
+      })
     }
   }
 
   let deleteData=(data)=>{
-    seteditData(data)
+
+   
     if(data.attributes.type=='Category'){
       setCategoryName(data.attributes.name)
-      createUpdateCategory('Draft')
+      if(data.attributes.status=='Draft'){
+        createUpdateCategory('Active',data.attributes.name,data.id)
+      }else{
+        createUpdateCategory('Draft',data.attributes.name,data.id)
+      }
     }else{
-      getCategoryName(data,true)
+      setsubCategoryName(data.attributes.name)
+       getCategoryId(data).then(categoryId=>{
+        if(data.attributes.status=='Draft'){
+          addupdatesubcategory('Active',categoryId,data.attributes.name,data.id)
+        }else{
+          addupdatesubcategory('Draft',categoryId,data.attributes.name,data.id)
+        }
+      })
      
     }
 
@@ -211,7 +224,7 @@ const Categories = () => {
 
   
 
-  const createUpdateCategory = (status) => {
+  const createUpdateCategory = (status,categoryName,id) => {
     if (!categoryName) {
       setMessage('Please enter categoryName field');
       return;
@@ -225,7 +238,7 @@ const Categories = () => {
       },
     };
 
-    if(!editData){
+    if(!id){
       createCategory(request)
       .then((res) => {
         responseHandled(res)
@@ -234,7 +247,7 @@ const Categories = () => {
         setMessage(err);
       });
     }else{
-      updateCategory(request,editData.id)
+      updateCategory(request,id)
       .then((res) => {
         responseHandled(res)
       })
@@ -248,7 +261,7 @@ const Categories = () => {
 
   
 
-  const addupdatesubcategory=(status,categoryName,subcategoryName)=>{
+  const addupdatesubcategory=(status,categoryName,subcategoryName,subCategoryId)=>{
     if (!subcategoryName || !categoryName) {
       setMessage('Please enter all fields');
       return;
@@ -262,7 +275,7 @@ const Categories = () => {
         "product_category":categoryName
       },
     };
-    if(!editData){
+    if(!subCategoryId){
       createSubCategory(request)
       .then((res) => {
         responseHandled(res)
@@ -271,7 +284,7 @@ const Categories = () => {
         setMessage(err);
       });
     }else{
-      updateSubCategory(request,editData.id)
+      updateSubCategory(request,subCategoryId)
       .then((res) => {
         responseHandled(res)
       })
@@ -360,7 +373,7 @@ const Categories = () => {
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
 
-                  {!editData?'Create Category':'Update Category'}
+                  Category
 
                   </h5>
 
@@ -414,7 +427,7 @@ const Categories = () => {
               <button
                 className="button-gradient py-2 px-5"
                 onClick={e=>{
-                  createUpdateCategory('Active')
+                  createUpdateCategory('Active',categoryName,updateId)
                 }}
               >
                 <p>Save</p>
@@ -434,7 +447,8 @@ const Categories = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
-                  {!editData?'Create Sub Category':'Update Sub Category'}
+                  Sub Category
+
 
                   </h5>
 
@@ -527,7 +541,7 @@ const Categories = () => {
               <button
                 className="button-gradient py-2 px-5"
                 onClick={e=>{
-                  addupdatesubcategory('Active',categoryName,subcategoryName)
+                  addupdatesubcategory('Active',categoryName,subcategoryName,updateId)
                 }}
               >
                 <p>Save</p>
@@ -575,7 +589,7 @@ const Categories = () => {
             <CategoriesTable list={allSubCategory}  edit={edit} deleteData={deleteData} />
           </TabPanel>
           <TabPanel value={value} index={3}>
-            <CategoriesTable list={[...Draft1,...Draft2]} />
+            <CategoriesTable list={[...Draft1,...Draft2]} deleteData={deleteData} />
           </TabPanel>
         </Paper>
       </div>

@@ -224,7 +224,7 @@ const CategoriesTable = ({list,edit,deleteData}) => {
                                </div>
                              </Tooltip>
                  }
-                             {edit && <Tooltip title="Archive" placement="top">
+                             {deleteData && <Tooltip title={edit?'Archive':'Un-Archive'} placement="top">
                                <div onClick={(e)=>{
                                  deleteData(row)
                                }}
