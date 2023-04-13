@@ -56,6 +56,8 @@ const OrderCartDetails = ({
   showMadeOrderChip,
   showOrderID,
   showNoOfItems,
+  showDetails,
+  showRestocking,
 }) => {
   // * PRODUCT DETAIL POPOVERS STARTS
   const [anchorProductDetailEl, setAnchorProductDetailEl] =
@@ -325,6 +327,25 @@ const OrderCartDetails = ({
               )}
             </div>
           </div>
+
+          {showRestocking && (
+            <div className="d-flex justify-content-center col-12 px-0">
+              <hr className="hr-grey-6 w-100 my-3" />
+            </div>
+          )}
+          {showRestocking && (
+            <div className="col-12 px-0">
+              <div className="row">
+                <div className="col-md-6">
+                  {showRestocking && (
+                    <small className="text-grey-6 d-block">
+                      Restocking item in Store Mahalaxmi, Mumbai
+                    </small>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ))}
       <Dialog
@@ -635,119 +656,129 @@ const OrderCartDetails = ({
         </Popover>
       )}
 
-      <div className="d-flex justify-content-center col-12 px-0">
-        <hr className="hr-grey-6 w-100 my-3" />
-      </div>
-      <div className="col-12 px-0">
-        <div className="row">
-          <div className="col-md-6">
-            {showCustomerNote && (
-              <small className="text-grey-6 d-block">Customer Note:</small>
-            )}
+      {(showCustomerNote || showDetails) && (
+        <div className="d-flex justify-content-center col-12 px-0">
+          <hr className="hr-grey-6 w-100 my-3" />
+        </div>
+      )}
+      {(showCustomerNote || showDetails) && (
+        <div className="col-12 px-0">
+          <div className="row">
+            <div className="col-md-6">
+              {showCustomerNote && (
+                <small className="text-grey-6 d-block">Customer Note:</small>
+              )}
 
-            {showCustomerNote && (
-              <TextareaAutosize
-                aria-label="meta description"
-                placeholder="Type Something"
-                style={{
-                  background: "#15142A",
-                  color: "#c8d8ff",
-                  borderRadius: 5,
-                }}
-                minRows={3}
-                className=" mt-3 w-75"
-              />
-            )}
-          </div>
-          <div className="col-md-6">
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">Subtotal</small>
-              <small className="text-blue-1">₹ 20,600 </small>
+              {showCustomerNote && (
+                <TextareaAutosize
+                  aria-label="meta description"
+                  placeholder="Type Something"
+                  style={{
+                    background: "#15142A",
+                    color: "#c8d8ff",
+                    borderRadius: 5,
+                  }}
+                  minRows={3}
+                  className=" mt-3 w-75"
+                />
+              )}
             </div>
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">
-                Discount <span className="text-blue-1">(JWL200OFF)</span>
-              </small>
-              <small className="text-blue-1">₹ 20,600 </small>
-            </div>
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">
-                Gift Packaging Charges&nbsp;
-                <span
-                  className="text-blue-2 c-pointer"
-                  aria-describedby={idGift}
-                  variant="contained"
-                  onClick={handleGiftClick}
+            {showDetails && (
+              <React.Fragment>
+                <div className="col-md-6">
+                  <div className="d-flex justify-content-between mt-2">
+                    <small className="text-grey-6">Subtotal</small>
+                    <small className="text-blue-1">₹ 20,600 </small>
+                  </div>
+                  <div className="d-flex justify-content-between mt-2">
+                    <small className="text-grey-6">
+                      Discount <span className="text-blue-1">(JWL200OFF)</span>
+                    </small>
+                    <small className="text-blue-1">₹ 20,600 </small>
+                  </div>
+                  <div className="d-flex justify-content-between mt-2">
+                    <small className="text-grey-6">
+                      Gift Packaging Charges&nbsp;
+                      <span
+                        className="text-blue-2 c-pointer"
+                        aria-describedby={idGift}
+                        variant="contained"
+                        onClick={handleGiftClick}
+                      >
+                        (JWL Exclusive Packaging)
+                      </span>
+                    </small>
+                    <small className="text-blue-1">₹ 20,600 </small>
+                  </div>
+                  <div className="d-flex justify-content-between mt-2">
+                    <small className="text-grey-6">
+                      GST&nbsp;<span className="text-blue-1">(3%)</span>
+                    </small>
+                    <small className="text-blue-1">₹ 350</small>
+                  </div>
+                  <div className="d-flex justify-content-between mt-2">
+                    <small className="text-grey-6">
+                      Shipping&nbsp;
+                      <span className="text-blue-1 c-pointer">
+                        (Order above ₹ 50,000)
+                      </span>
+                    </small>
+                    <small className="text-blue-1">Free</small>
+                  </div>
+                  <div className="d-flex justify-content-between mt-2">
+                    <small className="text-grey-6">
+                      Labour Charges&nbsp;
+                      <span className="text-blue-1 c-pointer">
+                        (Extra Labour Charges)
+                      </span>
+                    </small>
+                    <small className="text-blue-1">₹ 2300</small>
+                  </div>
+                  <div className="d-flex justify-content-between mt-3">
+                    <p className="text-lightBlue">Total</p>
+                    <h6 className="text-lightBlue">₹ 95,000</h6>
+                  </div>
+                </div>
+
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  id={idGift}
+                  open={openGift}
+                  anchorEl={anchorGiftEl}
+                  onClose={handleGiftClose}
                 >
-                  (JWL Exclusive Packaging)
-                </span>
-              </small>
-              <small className="text-blue-1">₹ 20,600 </small>
-            </div>
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">
-                GST&nbsp;<span className="text-blue-1">(3%)</span>
-              </small>
-              <small className="text-blue-1">₹ 350</small>
-            </div>
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">
-                Shipping&nbsp;
-                <span className="text-blue-1 c-pointer">
-                  (Order above ₹ 50,000)
-                </span>
-              </small>
-              <small className="text-blue-1">Free</small>
-            </div>
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">
-                Labour Charges&nbsp;
-                <span className="text-blue-1 c-pointer">
-                  (Extra Labour Charges)
-                </span>
-              </small>
-              <small className="text-blue-1">₹ 2300</small>
-            </div>
-            <div className="d-flex justify-content-between mt-3">
-              <p className="text-lightBlue">Total</p>
-              <h6 className="text-lightBlue">₹ 95,000</h6>
-            </div>
+                  <div className="d-flex py-3 px-2">
+                    <img
+                      src={jwlPackaging}
+                      alt="jwlPackaging"
+                      className="rounded-8"
+                      width={80}
+                    />
+                    <div className="d-flex flex-column justify-content-between ms-3">
+                      <div>
+                        <p className="fw-500 text-lightBlue">
+                          JWL Exclusive Packaging
+                        </p>
+                        <small className="text-grey-6 mt-2">#GIFTWRAPPER</small>
+                      </div>
+                      <small className="text-blue-2 text-decoration-underline c-pointer">
+                        View Image
+                      </small>
+                    </div>
+                  </div>
+                </Popover>
+              </React.Fragment>
+            )}
           </div>
         </div>
-      </div>
-
-      <Popover
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        id={idGift}
-        open={openGift}
-        anchorEl={anchorGiftEl}
-        onClose={handleGiftClose}
-      >
-        <div className="d-flex py-3 px-2">
-          <img
-            src={jwlPackaging}
-            alt="jwlPackaging"
-            className="rounded-8"
-            width={80}
-          />
-          <div className="d-flex flex-column justify-content-between ms-3">
-            <div>
-              <p className="fw-500 text-lightBlue">JWL Exclusive Packaging</p>
-              <small className="text-grey-6 mt-2">#GIFTWRAPPER</small>
-            </div>
-            <small className="text-blue-2 text-decoration-underline c-pointer">
-              View Image
-            </small>
-          </div>
-        </div>
-      </Popover>
+      )}
 
       {(showFulfillButton ||
         showReturnButton ||
