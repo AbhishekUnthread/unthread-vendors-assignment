@@ -40,6 +40,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 // ! MATERIAL ICONS IMPORTS
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TableSearch from "../../../components/TableSearch/TableSearch";
+import AppTimer from "../../../components/AppTimer/AppTimer";
 
 // ? FILE UPLOAD STARTS HERE
 const baseStyle = {
@@ -1131,6 +1132,79 @@ const CreatePreOrder = () => {
             <div>
               <small className="text-grey-6">Diamond Ring</small>
             </div>
+
+            <div className="d-flex mt-3 flex-wrap align-items-center">
+              <h6 className="text-lightBlue">₹ 85,000</h6>
+              <small className="ms-2 me-3 text-grey-6 ">
+                <s>₹ 100,000</s>
+              </small>
+              <small className="text-lightBlue">15%&nbsp;OFF</small>
+            </div>
+            <div className="bg-black-20 border-grey-5 rounded-8 py-2 px-3 mt-3">
+              <RadioGroup
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                // value={recommendedProductRadio}
+                // onChange={handleRecommendedProductRadio}
+              >
+                <FormControlLabel
+                  value="1"
+                  control={<Radio size="small" />}
+                  label="Full Payment"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
+                <div className="d-flex align-items-center w-100 justify-cotnent-between">
+                  <FormControlLabel
+                    value="2"
+                    control={<Radio size="small" />}
+                    label="Partial Payment"
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontSize: 13,
+                        color: "#c8d8ff",
+                      },
+                    }}
+                  />
+                  <p className="text-blue-gradient fw-500 ms-auto">
+                    ₹&nbsp;5,000
+                  </p>
+                </div>
+                <div className="d-flex mt-2 flex-wrap align-items-center">
+                  <small className="text-blue-1">Special Price</small>
+                  <p className="ms-2 me-3 text-lightBlue ">
+                    <s>₹&nbsp;80,000</s>
+                  </p>
+                  <small className="text-grey-6">₹&nbsp;85,000</small>
+                </div>
+                <div className="d-flex flex-column p-3 border-grey-5 rounded-8 mt-3 mb-2">
+                  <div className="d-flex mt-2 flex-wrap justify-content-between w-100">
+                    <small className="text-blue-1">Intial Payment</small>
+                    <p className="ms-2 text-lightBlue">₹&nbsp;40,000</p>
+                  </div>
+                  <div className="d-flex mt-2 flex-wrap justify-content-between w-100">
+                    <small className="text-blue-1">Final Payment</small>
+                    <p className="ms-2 text-lightBlue ">₹&nbsp;40,000</p>
+                  </div>
+                  <small className="text-grey-6 font1 mt-1">
+                    Final Payment after 1 week
+                  </small>
+                </div>
+              </RadioGroup>
+            </div>
+            <button className="button-gradient py-2 px-4 w-100 mt-3 rounded-0">
+              <h6 className="fw-500">EARLY ACCESS NOW</h6>
+            </button>
+            <div className="w-100 text-center">
+              <small className="text-grey-6 font1 mt-1">
+                Will be Delivered in 2 weeks
+              </small>
+            </div>
+            <AppTimer />
           </div>
         </div>
       </div>
