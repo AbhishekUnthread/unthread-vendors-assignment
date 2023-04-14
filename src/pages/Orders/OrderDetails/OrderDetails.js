@@ -84,6 +84,8 @@ const OrderDetails = () => {
             showDetails={true}
             showNoOfItems={true}
             showRestocking={false}
+            showConfirm={true}
+            showSelectCheckbox={false}
           />
           <OrderReturnBox
             showBasicDetail={true}

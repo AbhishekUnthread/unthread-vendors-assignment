@@ -36,10 +36,16 @@ const ReturnRefunds = () => {
           <ExportDialog dialogName={"Orders"} />
           <ImportSecondDialog dialogName={"Orders"} />
           <Link
-            to="/orders/returnRefunds/create"
+            to="/orders/returnRefunds/returns/create"
+            className="button-gradient py-2 px-4 me-2"
+          >
+            <p>+ Create Return</p>
+          </Link>
+          <Link
+            to="/orders/returnRefunds/refunds/create"
             className="button-gradient py-2 px-4"
           >
-            <p>+ Create Request</p>
+            <p>+ Create Refund</p>
           </Link>
         </div>
       </div>

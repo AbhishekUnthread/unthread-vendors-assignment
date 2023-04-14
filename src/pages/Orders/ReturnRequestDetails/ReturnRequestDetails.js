@@ -104,6 +104,8 @@ const ReturnRequestDetails = () => {
             showDetails={true}
             showNoOfItems={false}
             showRestocking={false}
+            showConfirm={true}
+            showSelectCheckbox={false}
           />
 
           <OrderReasonsAndIssues showAlterationForm={false} />
@@ -128,6 +130,8 @@ const ReturnRequestDetails = () => {
             showDetails={true}
             showNoOfItems={false}
             showRestocking={false}
+            showConfirm={true}
+            showSelectCheckbox={false}
           />
           <OrderReasonsAndIssues showAlterationForm={true} />
           <OrderPayments

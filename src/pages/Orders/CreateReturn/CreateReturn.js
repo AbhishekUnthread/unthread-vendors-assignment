@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from "@mui/material";
 
-const CreateReturnRefund = () => {
+const CreateReturn = () => {
   // ? CHECKBOX STARTS HERE
   const [checked, setChecked] = React.useState(false);
 
@@ -57,7 +57,7 @@ const CreateReturnRefund = () => {
               width={40}
             /> */}
             <div>
-              <h5 className="text-lightBlue fw-500">Refund</h5>
+              <h5 className="text-lightBlue fw-500">Create Return</h5>
               <small className="mt-2 text-blue-2">#12345</small>
             </div>
           </div>
@@ -74,7 +74,7 @@ const CreateReturnRefund = () => {
         <div className="col-lg-9">
           <OrderCartDetails
             showCartButton={false}
-            showEditButton={true}
+            showEditButton={false}
             showBasicDetail={true}
             showItemAvailable={false}
             showActionButton={false}
@@ -92,7 +92,9 @@ const CreateReturnRefund = () => {
             showOrderID={false}
             showNoOfItems={true}
             showDetails={false}
-            showRestocking={true}
+            showRestocking={false}
+            showConfirm={false}
+            showSelectCheckbox={true}
           />
 
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4 row">
@@ -287,72 +289,27 @@ const CreateReturnRefund = () => {
 
         <div className="col-lg-3 pe-0 ps-0 ps-lg-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4">
-            <h6 className="text-grey-6">Summary</h6>
+            <h6 className="text-grey-6">Returning</h6>
 
             <div className="d-flex justify-content-center col-12 px-0">
               <hr className="hr-grey-6 w-100 my-3" />
             </div>
 
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">Subtotal</small>
-              <small className="text-blue-1">₹ 20,600 </small>
-            </div>
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">
-                Discount <span className="text-blue-1">(JWL200OFF)</span>
-              </small>
-              <small className="text-blue-1">₹ 20,600 </small>
-            </div>
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">
-                Gift Packaging Charges&nbsp;
-                <span className="text-blue-2 c-pointer">
-                  (JWL Exclusive Packaging)
-                </span>
-              </small>
-              <small className="text-blue-1">₹ 20,600 </small>
-            </div>
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">
-                GST&nbsp;<span className="text-blue-1">(3%)</span>
-              </small>
-              <small className="text-blue-1">₹ 350</small>
-            </div>
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">
-                Shipping&nbsp;
-                <span className="text-blue-1 c-pointer">
-                  (Order above ₹ 50,000)
-                </span>
-              </small>
-              <small className="text-blue-1">Free</small>
-            </div>
-            <div className="d-flex justify-content-between mt-2">
-              <small className="text-grey-6">
-                Labour Charges&nbsp;
-                <span className="text-blue-1 c-pointer">
-                  (Extra Labour Charges)
-                </span>
-              </small>
-              <small className="text-blue-1">₹ 2300</small>
-            </div>
-            <div className="d-flex justify-content-between mt-3">
-              <p className="text-lightBlue">Paid By Customer</p>
-              <h6 className="text-lightBlue">₹ 95,000</h6>
-            </div>
+            {/* <div className="d-flex justify-content-between mt-2"> */}
+            <p className="text-lightBlue d-block mb-2">
+              The Fringe Diamond Ring
+            </p>
+            <p className="text-lightBlue d-block mb-2">Qty:&nbsp;1</p>
+            <small className="text-grey-6 d-block">
+              Product from Karol Bagh, Delhi
+            </small>
 
             <div className="d-flex justify-content-center col-12 px-0">
               <hr className="hr-grey-6 w-100 my-3" />
             </div>
-            <div className="d-flex justify-content-between">
-              <p className="text-lightBlue">Refunding</p>
-              <p className="text-lightBlue">₹ 90,000</p>
-            </div>
-            <div className="d-flex justify-content-between mt-3">
-              <small className="text-lightBlue">
-                ₹ 5,000 has been deducted as costing handling charges
-              </small>
-            </div>
+            <button className="button-gradient w-100 py-2 px-3">
+              <p>Return&nbsp;1&nbsp;Item</p>
+            </button>
           </div>
         </div>
       </div>
@@ -360,4 +317,4 @@ const CreateReturnRefund = () => {
   );
 };
 
-export default CreateReturnRefund;
+export default CreateReturn;

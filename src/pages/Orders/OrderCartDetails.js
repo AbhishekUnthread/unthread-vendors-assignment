@@ -5,6 +5,7 @@ import productIcon from "../../assets/icons/productIcon.svg";
 import jwlPackaging from "../../assets/icons/jwlPackaging.svg";
 import video from "../../assets/icons/video.svg";
 import cancel from "../../assets/icons/cancel.svg";
+import info from "../../assets/icons/info.svg";
 // ! MATERIAL IMPORTS
 import {
   Popover,
@@ -17,6 +18,11 @@ import {
   DialogTitle,
   Slide,
   Rating,
+  FormControlLabel,
+  Checkbox,
+  FormControl,
+  Select,
+  MenuItem,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -58,6 +64,8 @@ const OrderCartDetails = ({
   showNoOfItems,
   showDetails,
   showRestocking,
+  showConfirm,
+  showSelectCheckbox,
 }) => {
   // * PRODUCT DETAIL POPOVERS STARTS
   const [anchorProductDetailEl, setAnchorProductDetailEl] =
@@ -128,6 +136,14 @@ const OrderCartDetails = ({
   };
   // ? VIEW QC DIALOG ENDS HERE
 
+  // ? CHECKBOX STARTS HERE
+  const [checked, setChecked] = React.useState(false);
+
+  const handleCheckboxChange = (event) => {
+    setChecked(event.target.checked);
+  };
+  // ? CHECKBOX ENDS HERE
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row mt-4">
       <div className="d-flex justify-content-between align-items-center col-12 px-0">
@@ -146,9 +162,11 @@ const OrderCartDetails = ({
             </p>
           )}
 
-          <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer ms-4">
-            <small className="text-black fw-400">Order Confirm</small>
-          </div>
+          {showConfirm && (
+            <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer ms-4">
+              <small className="text-black fw-400">Order Confirm</small>
+            </div>
+          )}
         </div>
         {showEditButton && (
           <small className="text-blue-2 c-pointer">Edit Order</small>
@@ -224,16 +242,52 @@ const OrderCartDetails = ({
           <div className="row justify-content-between">
             {showBasicDetail && (
               <div className="col-3 mt-3">
-                <p className="fw-500 text-blue-2 text-decoration-underline">
-                  #12345-A
-                </p>
-                <small className="text-grey-6 mt-2 d-block">
-                  Delivery Date:&nbsp;
-                  <span className="text-lightBlue">20th May, 2022</span>
-                </small>
-                <div className="d-flex mt-3">
-                  <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer w-auto">
-                    <small className="text-black fw-400">Order Confirm</small>
+                <div className="d-flex">
+                  {showSelectCheckbox && (
+                    <div>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={checked}
+                            onChange={handleCheckboxChange}
+                            inputProps={{ "aria-label": "controlled" }}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                              width: "auto",
+                            }}
+                          />
+                        }
+                        label=""
+                        sx={{
+                          "& .MuiTypography-root": {
+                            fontSize: "0.75rem",
+                            color: "#c8d8ff",
+                            // maxWidth: "320px",
+                          },
+                        }}
+                        className="px-0 me-2"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <p className="fw-500 text-blue-2 text-decoration-underline">
+                      #12345-A
+                    </p>
+                    <small className="text-grey-6 mt-2 d-block">
+                      Delivery Date:&nbsp;
+                      <span className="text-lightBlue">20th May, 2022</span>
+                    </small>
+                    {showConfirm && (
+                      <div className="d-flex mt-3">
+                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer w-auto">
+                          <small className="text-black fw-400">
+                            Order Confirm
+                          </small>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -328,7 +382,7 @@ const OrderCartDetails = ({
             </div>
           </div>
 
-          {showRestocking && (
+          {(showRestocking || checked) && (
             <div className="d-flex justify-content-center col-12 px-0">
               <hr className="hr-grey-6 w-100 my-3" />
             </div>
@@ -344,6 +398,58 @@ const OrderCartDetails = ({
                   )}
                 </div>
               </div>
+            </div>
+          )}
+          {checked && (
+            <div className="col-12 pe-3 pe-md-0">
+              <div
+                className="d-flex align-items-center mb-1"
+                // style={{ marginBottom: "9px" }}
+              >
+                <p className="text-lightBlue">
+                  Reason for Return&nbsp;
+                  <span className="text-grey-6">(optional)</span>
+                </p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="ms-2 c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+              </div>
+              <FormControl
+                sx={{ m: 0, minWidth: 120, width: "100%" }}
+                size="small"
+              >
+                <Select
+                  labelId="demo-select-small"
+                  id="demo-select-small"
+                  // value={refundVia}
+                  // onChange={handleRefundVia}
+                  size="small"
+                >
+                  <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                    None
+                  </MenuItem>
+                  <MenuItem value={10} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                    Refund via Original Payment Mode
+                  </MenuItem>
+                  <MenuItem value={20} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                    Refund to Store Credit
+                  </MenuItem>
+                  <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                    Refund via Paypal
+                  </MenuItem>
+                  <MenuItem value={40} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                    Refund via Cash
+                  </MenuItem>
+                  <MenuItem value={50} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                    Credit coupon code
+                  </MenuItem>
+                </Select>
+              </FormControl>
             </div>
           )}
         </div>
