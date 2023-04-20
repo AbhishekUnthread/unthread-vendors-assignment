@@ -101,7 +101,11 @@ const ReturnRequestDetails = () => {
             showCustomerNote={false}
             showMadeOrderChip={false}
             showOrderID={true}
+            showDetails={true}
             showNoOfItems={false}
+            showRestocking={false}
+            showConfirm={true}
+            showSelectCheckbox={false}
           />
 
           <OrderReasonsAndIssues showAlterationForm={false} />
@@ -123,7 +127,11 @@ const ReturnRequestDetails = () => {
             showCustomerNote={false}
             showMadeOrderChip={false}
             showOrderID={true}
+            showDetails={true}
             showNoOfItems={false}
+            showRestocking={false}
+            showConfirm={true}
+            showSelectCheckbox={false}
           />
           <OrderReasonsAndIssues showAlterationForm={true} />
           <OrderPayments

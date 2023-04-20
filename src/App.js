@@ -77,11 +77,12 @@ import CreateSizeChart from "./pages/Functionality/CreateSizeChart/CreateSizeCha
 import CreatePreOrder from "./pages/Functionality/CreatePreOrder/CreatePreOrder";
 import CreateLabels from "./pages/Functionality/CreateLabels/CreateLabels";
 import ReturnRefunds from "./pages/Orders/ReturnRefunds/ReturnRefunds";
-import CreateReturnRefund from "./pages/Orders/CreateReturnRefund/CreateReturnRefund";
+import CreateRefund from "./pages/Orders/CreateRefund/CreateRefund";
 import ReturnRequestDetails from "./pages/Orders/ReturnRequestDetails/ReturnRequestDetails";
 import ExchangeAlterationRequests from "./pages/Orders/ExchangeAlterationRequests/ExchangeAlterationRequests";
 import Login from "./pages/Auth/Login/Login";
 import Signup from "./pages/Auth/Signup/Signup";
+import CreateReturn from "./pages/Orders/CreateReturn/CreateReturn.js";
 // import Users from "./pages/Users/Users";
 // ? COMPONETS & PAGES IMPORT ENDS HERE
 
@@ -399,8 +400,12 @@ function App(props) {
                 <Route path="orderDetails" element={<OrderDetails />} />
                 <Route path="returnRefunds" element={<ReturnRefunds />} />
                 <Route
-                  path="returnRefunds/create"
-                  element={<CreateReturnRefund />}
+                  path="returnRefunds/refunds/create"
+                  element={<CreateRefund />}
+                />
+                <Route
+                  path="returnRefunds/returns/create"
+                  element={<CreateReturn />}
                 />
                 <Route
                   path="returnRefunds/details"

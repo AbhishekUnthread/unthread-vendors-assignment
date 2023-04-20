@@ -156,6 +156,10 @@ const AbandonedCartDetails = () => {
             showMadeOrderChip={false}
             showOrderID={false}
             showNoOfItems={false}
+            showDetails={true}
+            showRestocking={false}
+            showConfirm={true}
+            showSelectCheckbox={false}
           />
         </div>
         <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
