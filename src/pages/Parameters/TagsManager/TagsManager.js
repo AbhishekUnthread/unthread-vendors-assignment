@@ -313,9 +313,7 @@ const TagsManager = () => {
   };
   // ? LIKE APPLY CONDITION ENDS HERE
 
-  const handleDelete = () => {
-    console.info("You clicked the delete icon.");
-  };
+ 
 
 //aman
   let [message, setMessage] = React.useState('');
@@ -403,11 +401,59 @@ const TagsManager = () => {
     gettags()
     handleCreateTagClose();
   }
+  let [multipledata, setmultipledata] = React.useState([]);
 
   let resetdata=()=>{
     settagName('')
     setTagId('')
+    setmultipledata([])
   }
+
+  let onKeyUp=(event)=>{
+    if (event.charCode === 13 && tagName) {
+      let multiple=multipledata
+
+      let duplicate=multiple.find(data=>data.toLowerCase() ==tagName.toLowerCase() )
+      if(duplicate){
+        setMessage('Please enter unique name');
+        return
+      }
+      multiple.push(tagName)
+      setmultipledata(multiple)
+      settagName('')
+        
+    }
+  }
+
+  let createUpdateMultiple=(status,array)=>{
+
+    for(let i=0;i<array.length;i++){
+      let request = {
+        data: {
+          name: array[i],
+          status
+        },
+      };
+  
+      createTag(request)
+        .then((res) => {
+          if(i==array.length-1)responseHandled(res)
+        })
+        .catch((err) => {
+          setMessage(err);
+        });
+  
+    }
+
+  }
+
+  const handleDelete = (index) => {
+    let multiple=multipledata
+    multiple.splice(index,1)
+    setmultipledata(multiple)
+  };
+
+
 
   return (
     <div className="container-fluid page">
@@ -471,24 +517,31 @@ const TagsManager = () => {
               <FormControl className="col-7 px-0">
                 <OutlinedInput  
                 value={tagName}
+                onKeyPress={onKeyUp}
                 onChange={(e) => settagName(e.target.value)}
                 placeholder="Enter Tag Name" size="small" />
               </FormControl>
            
-              {/* <div className="d-flex">
-                <Chip
-                  label="Silver Products"
-                  onDelete={handleDelete}
-                  size="small"
-                  className="mt-3 me-2"
-                />
-                <Chip
-                  label="Diamond Products"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-              </div> */}
+              <div className="d-flex">
+                
+
+                   {multipledata.map((data,index)=>{
+                    
+                    return <Chip
+                    label={data}
+                    onDelete={()=>{
+                      
+                    }}
+                    onClick={()=>{
+                      handleDelete(index)
+                     }}
+                    
+                    size="small"
+                    className="mt-3 me-2"></Chip>
+                  })}
+               
+                
+              </div>
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -501,6 +554,10 @@ const TagsManager = () => {
               <button
                 className="button-gradient py-2 px-5"
                 onClick={e=>{
+                  if(multipledata.length){
+                    createUpdateMultiple('Active',multipledata)
+                    return;
+                  }
                   createupdatetag('Active',tagId)
                 }}
               >

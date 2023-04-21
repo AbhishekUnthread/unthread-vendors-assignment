@@ -26,6 +26,7 @@ import {
   Tabs,
   Select,
   MenuItem,
+  Chip,
 } from "@mui/material";
 import { callGetApi, createVendor, updateVendor } from "../services/parameter.service";
 // ! MATERIAL ICONS IMPORTS
@@ -70,6 +71,9 @@ const Vendors = () => {
 
   const [vendorsName, setvendorsName] = React.useState('');
   const [vendorId, setvendorId] = React.useState('');
+
+  let [multipledata, setmultipledata] = React.useState([]);
+
 
   React.useEffect(()=>{
     getvendor();
@@ -152,7 +156,52 @@ const Vendors = () => {
   let resetdata=()=>{
     setvendorsName('')
     setvendorId('')
+    setmultipledata([])
   }
+
+  let onKeyUp=(event)=>{
+    if (event.charCode === 13 && vendorsName) {
+      let multiple=multipledata
+
+      let duplicate=multiple.find(data=>data.toLowerCase() ==vendorsName.toLowerCase() )
+      if(duplicate){
+        setMessage('Please enter unique name');
+        return
+      }
+      multiple.push(vendorsName)
+      setmultipledata(multiple)
+      setvendorsName('')
+        
+    }
+  }
+
+  let createUpdateMultiple=(status,array)=>{
+
+    for(let i=0;i<array.length;i++){
+      let request = {
+        data: {
+          name: array[i],
+          status
+        },
+      };
+  
+      createVendor(request)
+        .then((res) => {
+          if(i==array.length-1)responseHandled(res)
+        })
+        .catch((err) => {
+          setMessage(err);
+        });
+  
+    }
+
+  }
+
+  const handleDelete = (index) => {
+    let multiple=multipledata
+    multiple.splice(index,1)
+    setmultipledata(multiple)
+  };
 
   return (
     <div className="container-fluid page">
@@ -210,9 +259,31 @@ const Vendors = () => {
               <FormControl className="col-7 px-0">
                 <OutlinedInput 
                   value={vendorsName}
+                  onKeyPress={onKeyUp}
                   onChange={(e) => setvendorsName(e.target.value)}
                 placeholder="Enter Vendor Name" size="small" />
               </FormControl>
+
+              <div className="d-flex">
+                
+
+                   {multipledata.map((data,index)=>{
+                    
+                    return <Chip
+                    label={data}
+                    onDelete={()=>{
+                      
+                    }}
+                    onClick={()=>{
+                      handleDelete(index)
+                     }}
+                    
+                    size="small"
+                    className="mt-3 me-2"></Chip>
+                  })}
+               
+                
+              </div>
 
               {/* <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
               <FormControl
@@ -256,6 +327,10 @@ const Vendors = () => {
               <button
                 className="button-gradient py-2 px-5"
                 onClick={e=>{
+                  if(multipledata.length){
+                    createUpdateMultiple('Active',multipledata)
+                    return;
+                  }
                   createupdatevendor('Active',vendorId)
                 }}
               >

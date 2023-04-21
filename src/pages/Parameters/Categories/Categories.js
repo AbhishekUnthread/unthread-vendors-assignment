@@ -45,8 +45,10 @@ const Categories = () => {
     setValue(newValue);
   };
 
-  const handleDelete = () => {
-    console.info('You clicked the delete icon.');
+  const handleDelete = (index) => {
+    let multiple=multiplecategories
+    multiple.splice(index,1)
+    setmultiplecategories(multiple)
   };
 
   // ? POPOVERS STARTS HERE
@@ -120,6 +122,9 @@ const Categories = () => {
 
   const [updateId, setUpdateId] = React.useState(false);
 
+  let [multiplecategories, setmultiplecategories] = React.useState([]);
+
+
   React.useEffect(()=>{
     getcategories();
     getsubcategories()
@@ -130,6 +135,23 @@ const Categories = () => {
     setCategoryName('')
     setsubCategoryName('')
     setUpdateId('')
+    setmultiplecategories([])
+  }
+
+  let onKeyUpcategory=(event)=>{
+    if (event.charCode === 13 && categoryName) {
+      let multiple=multiplecategories
+
+      let duplicate=multiple.find(data=>data.toLowerCase() ==categoryName.toLowerCase() )
+      if(duplicate){
+        setMessage('Please enter unique name');
+        return
+      }
+      multiple.push(categoryName)
+      setmultiplecategories(multiple)
+      setCategoryName('')
+        
+    }
   }
 
   let getcategories=()=>{
@@ -221,6 +243,28 @@ const Categories = () => {
    
   }
 
+  let createUpdateCategoryMultiple=(status,categoryArray)=>{
+
+    for(let i=0;i<categoryArray.length;i++){
+      let request = {
+        data: {
+          name: categoryArray[i],
+          type: 'Category',
+          status
+        },
+      };
+  
+      createCategory(request)
+        .then((res) => {
+          if(i==categoryArray.length-1)responseHandled(res)
+        })
+        .catch((err) => {
+          setMessage(err);
+        });
+  
+    }
+
+  }
   
 
   const createUpdateCategory = (status,categoryName,id) => {
@@ -398,23 +442,29 @@ const Categories = () => {
                   value={categoryName}
                   onChange={(e) => setCategoryName(e.target.value)}
                   placeholder="Enter Category Name"
+                  onKeyPress={onKeyUpcategory}
                   size="small"
                 />
               </FormControl>
-              {/* <div className="d-flex">
-                <Chip
-                  label="Silver Products"
-                  onDelete={handleDelete}
-                  size="small"
-                  className="mt-3 me-2"
-                />
-                <Chip
-                  label="Diamond Products"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-              </div> */}
+              <div className="d-flex">
+                
+
+                   {multiplecategories.map((data,index)=>{
+                    
+                    return <Chip
+                    label={data}
+                    onDelete={()=>{
+                      
+                    }}
+                    onClick={()=>{
+                      handleDelete(index)
+                     }}
+                    size="small"
+                    className="mt-3 me-2"></Chip>
+                  })}
+               
+                
+              </div>
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -427,6 +477,10 @@ const Categories = () => {
               <button
                 className="button-gradient py-2 px-5"
                 onClick={e=>{
+                  if(multiplecategories.length){
+                    createUpdateCategoryMultiple('Active',multiplecategories)
+                    return;
+                  }
                   createUpdateCategory('Active',categoryName,updateId)
                 }}
               >
