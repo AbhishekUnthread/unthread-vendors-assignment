@@ -572,7 +572,7 @@ const Categories = () => {
               <Tab label="All" className="tabs-head" />
               <Tab label="Categories" className="tabs-head" />
               <Tab label="Sub Categories" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab label="Draft" className="tabs-head" />
 
             </Tabs>
           </Box>

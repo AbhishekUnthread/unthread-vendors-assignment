@@ -42,6 +42,12 @@ const headCells = [
     label: "Type",
   },
   {
+    id: "noOfProducts",
+    numeric: false,
+    disablePadding: true,
+    label: "No Of Products",
+  },
+  {
     id: "status",
     numeric: false,
     disablePadding: true,
@@ -197,11 +203,15 @@ const CategoriesTable = ({list,edit,deleteData}) => {
                          <TableCell style={{ width: 180 }}>
                            <p className="text-lightBlue">{row.attributes.type}</p>
                          </TableCell>
+
+                         <TableCell style={{ width: 180 }}>
+                         <p className="text-lightBlue">{index}</p>
+                         </TableCell>
                        
                          <TableCell style={{ width: 120, padding: 0 }}>
                            <div className="d-flex align-items-center">
-                             <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                               <small className="text-black fw-400">
+                             <div  className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.attributes.status}`}>
+                               <small   className="text-black fw-400">
                                  {row.attributes.status}
                                </small>
                              </div>

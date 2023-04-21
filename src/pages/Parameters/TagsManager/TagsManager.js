@@ -988,7 +988,7 @@ const TagsManager = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />{" "}
-              <Tab label="Archived" className="tabs-head" />
+              <Tab label="Draft" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
