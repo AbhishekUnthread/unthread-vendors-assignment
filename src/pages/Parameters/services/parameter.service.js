@@ -76,12 +76,13 @@ export const createCategory = (body) => {
   }
 
   export const callGetApi=(appendUrl,method)=>{
-    let url=BASE_URL+appendUrl
-
+    let url=BASE_URL+appendUrl + '?&sort=createdAt:DESC'
+    let token=JSON.parse(sessionStorage.getItem('userData'))
     return fetch(url, {
         method,
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          'Authorization':`Bearer ${token.jwt}`
         },
       }).then(async (response) => {
        return await response.json();
