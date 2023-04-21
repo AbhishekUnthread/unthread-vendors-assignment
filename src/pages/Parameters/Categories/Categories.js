@@ -156,9 +156,11 @@ const Categories = () => {
 
   let getcategories=()=>{
    callGetApi('/api/product-categories','GET').then((res) => {
-     
-     setAllCategory(res.data.filter(data=>data.attributes.status=='Active'))
-     setCategoryDraft(res.data.filter(data=>data.attributes.status!=='Active'))
+     if(res.data){
+      setAllCategory(res.data.filter(data=>data.attributes.status=='Active'))
+      setCategoryDraft(res.data.filter(data=>data.attributes.status!=='Active'))
+     }
+   
     })
   .catch((err) => {
     setMessage(err);
@@ -167,10 +169,11 @@ const Categories = () => {
 
   let getsubcategories=()=>{
     callGetApi('/api/product-sub-categories','GET').then((res) => {
+      if(res.data){
       setAllSubCategory(res.data.filter(data=>data.attributes.status==='Active'))
 
       setsubCategoryDraft(res.data.filter(data=>data.attributes.status!=='Active'))
-
+      }
     })
     .catch((err) => {
       setMessage(err);

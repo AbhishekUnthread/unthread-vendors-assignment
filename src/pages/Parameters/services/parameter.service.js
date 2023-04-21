@@ -76,7 +76,7 @@ export const createCategory = (body) => {
   }
 
   export const callGetApi=(appendUrl,method)=>{
-    let url=BASE_URL+appendUrl + '?&sort=createdAt:DESC'
+    let url=BASE_URL+appendUrl
 
     return fetch(url, {
         method,
