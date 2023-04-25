@@ -144,7 +144,7 @@ const App = (props) => {
     } else {
       setShowNav(true);
     }
-  }, [location, mobileOpen]);
+  }, []);
 
   const drawer = <Sidenav />;
 
