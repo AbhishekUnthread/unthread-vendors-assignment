@@ -2,24 +2,21 @@ import React from "react";
 import "./Signup.scss";
 import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signUp } from "../services/authService";
-import  Messages from '../../../components/snackbar/snackbar.js'
-import { useDispatch } from "react-redux";
-
+import Messages from "../../../components/snackbar/snackbar.js";
 
 const Signup = () => {
   let navigate = useNavigate();
-  let dispatcher=useDispatch();
 
-  let [message,setMessage]=React.useState('')
+  let [message, setMessage] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
-  
+
   const [formValues, setFormValues] = React.useState({
-    "email":"",
-    "password":"",
-    "username":""
+    email: "",
+    password: "",
+    username: "",
   });
 
   const updateFormFields = (key, value) => {
@@ -28,38 +25,36 @@ const Signup = () => {
     setFormValues(updatedFields);
   };
 
-  let onKeyUp=(event)=>{
+  let onKeyUp = (event) => {
     if (event.charCode === 13) {
-      callApi()
-        }
-  }
+      callApi();
+    }
+  };
 
-  let callApi=()=>{
-
-    let allValues=Object.values(formValues).every((v) => v)
-    if(!allValues){
-      setMessage('Please enter all fields!')
+  let callApi = () => {
+    let allValues = Object.values(formValues).every((v) => v);
+    if (!allValues) {
+      setMessage("Please enter all fields!");
       return;
     }
 
-    setMessage('Creating Store!')
+    setMessage("Creating Store!");
 
-    signUp(formValues).then(res=>{
-      if(res?.error?.message){
-        setMessage(res?.error?.message)
-        return;
-      }
+    signUp(formValues)
+      .then((res) => {
+        if (res?.error?.message) {
+          setMessage(res?.error?.message);
+          return;
+        }
 
-      dispatcher({type:'userData',data:res})
-      sessionStorage.setItem('userData',JSON.stringify(res))
+        sessionStorage.setItem("userData", JSON.stringify(res));
 
-      navigate("/dashboard", { replace: true });
-
-    }).catch(err=>{
-      setMessage(err)
-    })
-  }
-
+        navigate("/dashboard", { replace: true });
+      })
+      .catch((err) => {
+        setMessage(err);
+      });
+  };
 
   return (
     <div className="container-fluid signup">
@@ -71,9 +66,8 @@ const Signup = () => {
           <p className="text-grey-6 text-center mt-3">
             Already have an account?&nbsp;
             <span className="text-blue-gradient">
-              <Link               to="/auth/login"
->  Sign In</Link>
-             </span>
+              <Link to="/auth/login"> Sign In</Link>
+            </span>
           </p>
 
           <div className="mt-4">
@@ -88,9 +82,7 @@ const Signup = () => {
                 onChange={(e) => updateFormFields("username", e.target.value)}
               />
             </FormControl>
-           
           </div>
-         
 
           <div className="mt-4">
             <p className="text-lightBlue mb-1 text-start">Enter Email</p>
@@ -104,10 +96,7 @@ const Signup = () => {
                 onChange={(e) => updateFormFields("email", e.target.value)}
               />
             </FormControl>
-           
           </div>
-
-        
 
           <div className="mt-4">
             <p className="text-lightBlue mb-1 text-start">Enter Password</p>
@@ -117,12 +106,11 @@ const Signup = () => {
                 size="small"
                 sx={{ paddingLeft: 0 }}
                 value={formValues.password}
-                type={!showPassword?'password':'text'}
+                type={!showPassword ? "password" : "text"}
                 onKeyPress={onKeyUp}
                 onChange={(e) => updateFormFields("password", e.target.value)}
               />
             </FormControl>
-           
           </div>
 
           {/* <div className="row">
@@ -185,7 +173,10 @@ const Signup = () => {
               <span className="text-blue-gradient">Resend in 0:59 sec</span>
             </small>
           </div> */}
-          <button onClick={callApi} className="button-gradient py-2 w-100 px-3 mt-4">
+          <button
+            onClick={callApi}
+            className="button-gradient py-2 w-100 px-3 mt-4"
+          >
             <p>Create your Store</p>
           </button>
           <div className="d-flex row">
@@ -200,7 +191,6 @@ const Signup = () => {
       </div>
 
       <Messages messageLine={message} setMessage={setMessage}></Messages>
-
     </div>
   );
 };

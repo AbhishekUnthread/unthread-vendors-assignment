@@ -5,24 +5,20 @@ import facebook from "../../../assets/icons/facebook.svg";
 import google from "../../../assets/icons/google.svg";
 import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import { Link,useNavigate,useLocation } from "react-router-dom";
-import {useDispatch} from 'react-redux'
-import  Messages from '../../../components/snackbar/snackbar.js'
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import Messages from "../../../components/snackbar/snackbar.js";
 import { signIn, validatetoken } from "../services/authService";
 
 const Login = () => {
+  let navigate = useNavigate();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
 
-
-
-let navigate = useNavigate();
-const [showPassword, setShowPassword] = React.useState(false);
-const handleClickShowPassword = () => setShowPassword(!showPassword);
-  
-  let [message,setMessage]=React.useState('')
+  let [message, setMessage] = React.useState("");
 
   const [formValues, setFormValues] = React.useState({
-    "identifier":"",
-    "password":"",
+    identifier: "",
+    password: "",
   });
 
   const updateFormFields = (key, value) => {
@@ -31,62 +27,58 @@ const handleClickShowPassword = () => setShowPassword(!showPassword);
     setFormValues(updatedFields);
   };
 
-  let onKeyUp=(event)=>{
+  let onKeyUp = (event) => {
     if (event.charCode === 13) {
-      updateLogin()
-        }
-  }
+      updateLogin();
+    }
+  };
 
-  const dispatcher=useDispatch();
-
-  const updateLogin=()=>{
-
-    let allValues=Object.values(formValues).every((v) => v)
-    if(!allValues){
-      setMessage('Please enter all fields!')
+  const updateLogin = () => {
+    let allValues = Object.values(formValues).every((v) => v);
+    if (!allValues) {
+      setMessage("Please enter all fields!");
       return;
     }
 
-    setMessage('Signing In')
-   
-    signIn(formValues).then(res=>{
-      responsehandled(res)
-    }).catch(err=>{
-      setMessage(err)
-    })
+    setMessage("Signing In");
 
-   
+    signIn(formValues)
+      .then((res) => {
+        responsehandled(res);
+      })
+      .catch((err) => {
+        setMessage(err);
+      });
+  };
+  let googleLogin = () => {
+    window.open("https://backend.unthread.in/api/connect/google", "_self");
+  };
+  let facebookLogin = () => {
+    window.open("https://backend.unthread.in/api/connect/facebook", "_self");
+  };
 
-  }
-  let googleLogin=()=>{
-    window.open('https://backend.unthread.in/api/connect/google','_self')
- }
- let facebookLogin=()=>{
-  window.open('https://backend.unthread.in/api/connect/facebook','_self')
-}
+  let responsehandled = (res) => {
+    if (res?.error?.message) {
+      setMessage(res?.error?.message);
+      return;
+    }
 
-let responsehandled=(res)=>{
-  if(res?.error?.message){
-    setMessage(res?.error?.message)
-    return;
-  }
-  dispatcher({type:'userData',data:res})
-  sessionStorage.setItem('userData',JSON.stringify(res))
+    sessionStorage.setItem("userData", JSON.stringify(res));
 
-  navigate("/dashboard", { replace: true });
-}
+    navigate("/dashboard", { replace: true });
+  };
 
-React.useEffect(()=>{
-  if(sessionStorage.getItem('token')){
-    setMessage('Validating')
-    validatetoken(`/api/auth/google/callback/?id_token=${sessionStorage.getItem('token')}`).then(res=>{
-      sessionStorage.removeItem("token")
-      responsehandled(res)
-     
-    
-    })
-  }
-},[])
+  React.useEffect(() => {
+    if (sessionStorage.getItem("token")) {
+      setMessage("Validating");
+      validatetoken(
+        `/api/auth/google/callback/?id_token=${sessionStorage.getItem("token")}`
+      ).then((res) => {
+        sessionStorage.removeItem("token");
+        responsehandled(res);
+      });
+    }
+  }, []);
 
   return (
     <div className="container-fluid login">
@@ -143,8 +135,7 @@ React.useEffect(()=>{
               </small>
             </div> */}
 
-
-                <div className="mt-4">
+            <div className="mt-4">
               <p className="text-lightBlue mb-1 text-start">Enter Email</p>
               <FormControl className="w-100 px-0">
                 <OutlinedInput
@@ -153,10 +144,11 @@ React.useEffect(()=>{
                   sx={{ paddingLeft: 0 }}
                   value={formValues.identifier}
                   onKeyPress={onKeyUp}
-                onChange={(e) => updateFormFields("identifier", e.target.value)}
+                  onChange={(e) =>
+                    updateFormFields("identifier", e.target.value)
+                  }
                 />
               </FormControl>
-            
             </div>
 
             <div className="mt-4">
@@ -167,27 +159,35 @@ React.useEffect(()=>{
                   size="small"
                   sx={{ paddingLeft: 0 }}
                   value={formValues.password}
-                  type={!showPassword?'password':'text'}
+                  type={!showPassword ? "password" : "text"}
                   onKeyPress={onKeyUp}
                   onChange={(e) => updateFormFields("password", e.target.value)}
                 />
               </FormControl>
-            
             </div>
 
-            <button onClick={updateLogin} className="button-gradient py-2 w-100 px-3 mt-4">
+            <button
+              onClick={updateLogin}
+              className="button-gradient py-2 w-100 px-3 mt-4"
+            >
               <p>Login</p>
             </button>
             <p className="text-grey-6 my-4">or sign in with</p>
             <div className="d-flex row">
               <div className="col-6">
-                <button onClick={googleLogin} className="button-lightBlue-outline w-100 px-2 py-2">
+                <button
+                  onClick={googleLogin}
+                  className="button-lightBlue-outline w-100 px-2 py-2"
+                >
                   <img src={google} alt="google" className="w-auto me-2" />
                   Google
                 </button>
               </div>
               <div className="col-6">
-                <button onClick={facebookLogin} className="button-lightBlue-outline w-100 px-2 py-2">
+                <button
+                  onClick={facebookLogin}
+                  className="button-lightBlue-outline w-100 px-2 py-2"
+                >
                   <img src={facebook} alt="facebook" className="w-auto me-2" />
                   Facebook
                 </button>
@@ -203,8 +203,6 @@ React.useEffect(()=>{
         </div>
       </div>
       <Messages messageLine={message} setMessage={setMessage}></Messages>
-
-
     </div>
   );
 };

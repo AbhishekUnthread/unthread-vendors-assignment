@@ -1,12 +1,6 @@
-import * as React from "react";
-import "./App.scss";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
-import Drawer from "@mui/material/Drawer";
-// import Toolbar from "@mui/material/Toolbar";
+import { useState, useEffect } from "react";
+import { AppBar, Box, CssBaseline, Drawer } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import Navbar from "./components/Navbar/Navbar";
 import {
   Navigate,
   Route,
@@ -14,14 +8,12 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-// ? COMPONETS & PAGES STARTS HERE
+
+import "./App.scss";
+
+import Navbar from "./components/Navbar/Navbar";
 import Sidenav from "./components/Sidenav/Sidenav";
 import Dashboard from "./pages/Dashboard/Dashboard";
-// import Orders from "./pages/Orders/Orders";
-// import AddProduct from "./pages/AddProduct/AddProduct";
-// import Products from "./pages/Products/Products";
-// import Login from "./pages/Login/Login";
-import { useEffect } from "react";
 import AllProducts from "./pages/Products/AllProducts/AllProducts";
 import AddProduct from "./pages/Products/AddProduct/AddProduct";
 import AllUsers from "./pages/Users/AllUsers/AllUsers";
@@ -48,9 +40,9 @@ import MemberDetails from "./pages/Teams/MemberDetails/MemberDetails";
 import ProductsBulkEditor from "./pages/Products/ProductsBulkEditor/ProductsBulkEditor";
 import ProductReviews from "./pages/Products/ProductReviews/ProductReviews";
 import CreateReview from "./pages/Products/CreateReview/CreateReview";
-import ProductInventory from "./pages/Products/ProductIntventory/ProductIntventory";
+import ProductInventory from "./pages/Products/ProductInventory/ProductInventory";
 import CreateStore from "./pages/Products/CreateStore/CreateStore";
-import ProductInventroyDetails from "./pages/Products/ProductInventroyDetails/ProductInventroyDetails";
+import ProductInventoryDetails from "./pages/Products/ProductInventoryDetails/ProductInventoryDetails";
 import CreateDataSets from "./pages/Parameters/CreateDataSets/CreateDataSets";
 import AllOrders from "./pages/Orders/AllOrders/AllOrders";
 import CreateOrder from "./pages/Orders/CreateOrder/CreateOrder";
@@ -83,101 +75,76 @@ import ExchangeAlterationRequests from "./pages/Orders/ExchangeAlterationRequest
 import Login from "./pages/Auth/Login/Login";
 import Signup from "./pages/Auth/Signup/Signup";
 import CreateReturn from "./pages/Orders/CreateReturn/CreateReturn.js";
-// import Users from "./pages/Users/Users";
-// ? COMPONETS & PAGES IMPORT ENDS HERE
 
 const drawerWidth = 240;
 
-function App(props) {
-  let projectTheme = createTheme({
-    palette: {
-      mode: "dark",
-      primary: {
-        main: "#fff",
-      },
-      secondary: {
-        main: "#FFF",
-        // main: "#FFF2DE",
-      },
-      purple: {
-        main: "#8f5fe8",
-      },
-      // greyLight: {
-      //   main: "#f2f2f2",
-      // },
+const projectTheme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#fff",
     },
-    typography: {
-      allVariants: {
-        fontFamily: "Inter",
-      },
+    secondary: {
+      main: "#FFF",
     },
-    components: {
-      MuiTooltip: {
-        styleOverrides: {
-          tooltip: {
-            backgroundColor: "#433e73",
-            color: "",
-            border: "1px solid #433e73",
-          },
+    purple: {
+      main: "#8f5fe8",
+    },
+  },
+  typography: {
+    allVariants: {
+      fontFamily: "Inter",
+    },
+  },
+  components: {
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: "#433e73",
+          color: "",
+          border: "1px solid #433e73",
         },
       },
     },
-  });
+  },
+});
 
-  
-
+const App = (props) => {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [showNavs, setShowNavs] = React.useState(true);
 
-  //   const admin =
-  //     localStorage.getItem("persist:root") &&
-  //     JSON.parse(localStorage.getItem("persist:root")).user &&
-  //     JSON.parse(JSON.parse(localStorage.getItem("persist:root")).user)
-  //       .currentUser
-  //       ? JSON.parse(JSON.parse(localStorage.getItem("persist:root")).user)
-  //           .currentUser.isAdmin
-  //       : false;
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [showNav, setShowNav] = useState(true);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const location = useLocation();
-
   const search = location.search;
-  
-  const navigate = useNavigate();
 
-  let [loader,isLoading]=React.useState(true)
+  let [loader, isLoading] = useState(true);
 
-  useEffect(()=>{
+  useEffect(() => {
     const token = new URLSearchParams(search).get("id_token");
-    if(token || !sessionStorage.getItem('userData')){
-      if(token)sessionStorage.setItem('token',token)
-      sessionStorage.removeItem('userData')  
-       navigate("/auth/login");
-    }else{
+    if (token || !sessionStorage.getItem("userData")) {
+      if (token) sessionStorage.setItem("token", token);
+      sessionStorage.removeItem("userData");
+      navigate("/auth/login");
+    } else {
       navigate(location.pathname);
     }
-    isLoading(false)
-   
-
-  },[])
+    isLoading(false);
+  }, []);
 
   useEffect(() => {
     if (location.pathname.includes("auth")) {
-      setShowNavs(false);
+      setShowNav(false);
     } else {
-      setShowNavs(true);
+      setShowNav(true);
     }
   }, [location, mobileOpen]);
-
-  //   useEffect(() => {
-  //     if (!admin) {
-  //       navigate("/login");
-  //     }
-  //   }, [admin]);
 
   const drawer = <Sidenav />;
 
@@ -186,20 +153,20 @@ function App(props) {
 
   return (
     <ThemeProvider theme={projectTheme}>
-   {!loader?
-    <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        {showNavs && (
-          <AppBar
-            position="fixed"
-            sx={{
-              width: !mobileOpen
-                ? { sm: `calc(100% - ${drawerWidth}px)` }
-                : { sm: "100%" },
-              ml: { sm: `${drawerWidth}px` },
-            }}
-          >
-            {/* <Toolbar>
+      {!loader ? (
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          {showNav && (
+            <AppBar
+              position="fixed"
+              sx={{
+                width: !mobileOpen
+                  ? { sm: `calc(100% - ${drawerWidth}px)` }
+                  : { sm: "100%" },
+                ml: { sm: `${drawerWidth}px` },
+              }}
+            >
+              {/* <Toolbar>
             <IconButton
               color="inherit"
               aria-label="open drawer"
@@ -213,234 +180,251 @@ function App(props) {
               Responsive drawer
             </Typography>
           </Toolbar> */}
-            <Navbar
-              handleDrawerToggle={handleDrawerToggle}
-              mobileOpen={mobileOpen}
-            />
-          </AppBar>
-        )}
-        {showNavs && (
+              <Navbar
+                handleDrawerToggle={handleDrawerToggle}
+                mobileOpen={mobileOpen}
+              />
+            </AppBar>
+          )}
+          {showNav && (
+            <Box
+              component="nav"
+              // sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+              sx={{
+                width: !mobileOpen ? { sm: drawerWidth } : { sm: 0 },
+                flexShrink: { sm: 0 },
+              }}
+              aria-label="mailbox folders"
+              className="app-sidenav"
+            >
+              {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+              <Drawer
+                container={container}
+                variant="temporary"
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+                onClick={handleDrawerToggle}
+                ModalProps={{
+                  keepMounted: true, // Better open performance on mobile.
+                }}
+                sx={{
+                  display: { xs: "block", sm: "none" },
+                  "& .MuiDrawer-paper": {
+                    boxSizing: "border-box",
+                    width: drawerWidth,
+                  },
+                }}
+              >
+                {drawer}
+              </Drawer>
+              <Drawer
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  width: drawerWidth,
+                  flexShrink: 0,
+                  "& .MuiDrawer-paper": {
+                    width: drawerWidth,
+                    boxSizing: "border-box",
+                  },
+                }}
+                variant="persistent"
+                open={!mobileOpen}
+                anchor="left"
+              >
+                {drawer}
+              </Drawer>
+            </Box>
+          )}
           <Box
-            component="nav"
-            // sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+            component="main"
             sx={{
-              width: !mobileOpen ? { sm: drawerWidth } : { sm: 0 },
-              flexShrink: { sm: 0 },
+              flexGrow: 1,
+              p: showNav ? 3 : 0,
+              width: { sm: `calc(100% - ${drawerWidth}px)` },
             }}
-            aria-label="mailbox folders"
-            className="app-sidenav"
+            className={showNav ? "main-box" : "main-box__login"}
           >
-            {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-            <Drawer
-              container={container}
-              variant="temporary"
-              open={mobileOpen}
-              onClose={handleDrawerToggle}
-              onClick={handleDrawerToggle}
-              ModalProps={{
-                keepMounted: true, // Better open performance on mobile.
-              }}
-              sx={{
-                display: { xs: "block", sm: "none" },
-                "& .MuiDrawer-paper": {
-                  boxSizing: "border-box",
-                  width: drawerWidth,
-                },
-              }}
-            >
-              {drawer}
-            </Drawer>
-            <Drawer
-              sx={{
-                display: { xs: "none", sm: "block" },
-                width: drawerWidth,
-                flexShrink: 0,
-                "& .MuiDrawer-paper": {
-                  width: drawerWidth,
-                  boxSizing: "border-box",
-                },
-              }}
-              variant="persistent"
-              open={!mobileOpen}
-              anchor="left"
-            >
-              {drawer}
-            </Drawer>
+            {/* {showNav && <Toolbar />} */}
+            <Routes>
+              {/* {admin ? ( */}
+              <>
+                {/* <Route path="/" element={<Navigate to="/dashboard" />} /> */}
+                <Route path="/dashboard" element={<Dashboard />} />
+                {/* PRODUCT ROUTES */}
+                <Route path="/products">
+                  <Route path="" element={<Navigate to="allProducts" />} />
+                  <Route path="allProducts" element={<AllProducts />} />
+                  <Route
+                    path="allProducts/addProduct"
+                    element={<AddProduct />}
+                  />
+                  <Route path="bulkEditor" element={<ProductsBulkEditor />} />
+                  <Route path="reviews" element={<ProductReviews />} />
+                  <Route path="reviews/create" element={<CreateReview />} />
+                  <Route path="inventory" element={<ProductInventory />} />
+                  <Route path="inventory/create" element={<CreateStore />} />
+                  <Route
+                    path="inventory/details"
+                    element={<ProductInventoryDetails />}
+                  />
+                </Route>
+                {/* USERS ROUTES */}
+                <Route path="/users">
+                  <Route path="" element={<Navigate to="allUsers" />} />
+                  <Route path="allUsers" element={<AllUsers />} />
+                  <Route path="allUsers/add" element={<AddUser />} />
+                  <Route path="allUsers/details" element={<UserDetails />} />
+                  <Route path="userGroups" element={<UserGroups />} />
+                  <Route
+                    path="userGroups/create"
+                    element={<CreateUserGroup />}
+                  />
+                  <Route path="userEnquiries" element={<UserEnquiries />} />
+                </Route>
+                {/* PARAMETER ROUTES */}
+                <Route path="/parameters">
+                  <Route path="" element={<Navigate to="collections" />} />
+                  <Route
+                    path="additionalFields"
+                    element={<AdditionalFields />}
+                  />
+                  <Route
+                    path="additionalFields/createFieldSets"
+                    element={<CreateFieldSets />}
+                  />
+                  <Route path="categories" element={<Categories />} />
+                  <Route path="collections" element={<Collections />} />
+                  <Route
+                    path="collections/create"
+                    element={<CreateCollection />}
+                  />
+                  <Route path="variantSets" element={<VariantSets />} />
+                  <Route
+                    path="variantSets/edit"
+                    element={<CreateVariantSets />}
+                  />
+                  <Route
+                    path="variantSets/dataSets/create"
+                    element={<CreateDataSets />}
+                  />
+                  <Route path="vendors" element={<Vendors />} />
+                  <Route path="categories/edit" element={<EditVendor />} />
+                  <Route path="vendors/edit" element={<EditVendor />} />
+                  <Route path="tagsManager/edit" element={<EditVendor />} />
+                  <Route path="tagsManager" element={<TagsManager />} />
+                  <Route path="tagsManager/edit" element={<EditTags />} />
+                  <Route path="priceMaster" element={<PriceMasterLanding />} />
+                  <Route
+                    path="priceMaster/inventory"
+                    element={<PriceMaster />}
+                  />
+                  <Route
+                    path="priceMaster/create"
+                    element={<CreatePriceMaster />}
+                  />
+                  <Route
+                    path="priceMaster/metalMaster"
+                    element={<MetalPriceManager />}
+                  />
+                  <Route
+                    path="priceMaster/diamondMaster"
+                    element={<DiamondPriceManager />}
+                  />
+                  <Route
+                    path="priceMaster/makingMaster"
+                    element={<MakingChargesManager />}
+                  />
+                </Route>
+                {/* TEAM ROUTES */}
+                <Route path="/teams">
+                  <Route path="" element={<Navigate to="roles" />} />
+                  <Route path="roles" element={<Roles />} />
+                  <Route path="roles/create" element={<CreateRoles />} />
+                  <Route path="members" element={<Members />} />
+                  <Route path="members/details" element={<MemberDetails />} />
+                </Route>
+                {/* AUTH ROUTES */}
+                <Route path="/auth">
+                  <Route path="" element={<Navigate to="login" />} />
+                  <Route path="login" element={<Login />} />
+                  <Route path="signup" element={<Signup />} />
+                </Route>
+                {/* OFFERS ROUTES */}
+                <Route path="/offers">
+                  <Route path="" element={<Navigate to="discounts" />} />
+                  <Route path="discounts" element={<Discounts />} />
+                  <Route path="discounts/create" element={<CreateDiscount />} />
+                  <Route path="bundleDiscount" element={<BundleDiscount />} />
+                  <Route
+                    path="bundleDiscount/create"
+                    element={<CreateBundleDiscount />}
+                  />
+                </Route>
+                {/* ORDER ROUTES */}
+                <Route path="/orders">
+                  <Route path="" element={<Navigate to="allOrders" />} />
+                  <Route path="allOrders" element={<AllOrders />} />
+                  <Route path="allOrders/create" element={<CreateOrder />} />
+                  <Route path="allOrders/details" element={<OrderDetails />} />
+                  <Route
+                    path="omniChannelOrders"
+                    element={<OmniChannelOrders />}
+                  />
+                  <Route path="draftOrder" element={<DraftOrder />} />
+                  <Route path="abandonedCart" element={<AbandonedCart />} />
+                  <Route
+                    path="abandonedCart/details"
+                    element={<AbandonedCartDetails />}
+                  />
+                  <Route path="orderDetails" element={<OrderDetails />} />
+                  <Route path="returnRefunds" element={<ReturnRefunds />} />
+                  <Route
+                    path="returnRefunds/refunds/create"
+                    element={<CreateRefund />}
+                  />
+                  <Route
+                    path="returnRefunds/returns/create"
+                    element={<CreateReturn />}
+                  />
+                  <Route
+                    path="returnRefunds/details"
+                    element={<ReturnRequestDetails />}
+                  />
+                  <Route
+                    path="exchangeAlterationRequests"
+                    element={<ExchangeAlterationRequests />}
+                  />
+                </Route>
+                {/* FUNCTIONALITY ROUTES */}
+                <Route path="/functionality">
+                  <Route path="" element={<Navigate to="allFunctionality" />} />
+                  <Route
+                    path="allFunctionality"
+                    element={<AllFunctionality />}
+                  />
+                  <Route path="sizeChart" element={<SizeChart />} />
+                  <Route path="labelsBadges" element={<LabelsBadges />} />
+                  <Route path="preOrder" element={<PreOrder />} />
+                  <Route
+                    path="sizeChart/create"
+                    element={<CreateSizeChart />}
+                  />
+                  <Route path="preOrder/create" element={<CreatePreOrder />} />
+                  <Route
+                    path="labelsBadges/create"
+                    element={<CreateLabels />}
+                  />
+                </Route>
+                <Route path="*" element={<Navigate to="/dashboard" />} />
+              </>
+            </Routes>
           </Box>
-        )}
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            p: showNavs ? 3 : 0,
-            width: { sm: `calc(100% - ${drawerWidth}px)` },
-          }}
-          className={showNavs ? "main-box" : "main-box__login"}
-        >
-          {/* {showNavs && <Toolbar />} */}
-          <Routes>
-            {/* {admin ? ( */}
-            <React.Fragment>
-              {/* <Route path="/" element={<Navigate to="/dashboard" />} /> */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              {/* PRODUCT ROUTES */}
-              <Route path="/products">
-                <Route path="" element={<Navigate to="allProducts" />} />
-                <Route path="allProducts" element={<AllProducts />} />
-                <Route path="allProducts/addProduct" element={<AddProduct />} />
-                <Route path="bulkEditor" element={<ProductsBulkEditor />} />
-                <Route path="reviews" element={<ProductReviews />} />
-                <Route path="reviews/create" element={<CreateReview />} />
-                <Route path="inventory" element={<ProductInventory />} />
-                <Route path="inventory/create" element={<CreateStore />} />
-                <Route
-                  path="inventory/details"
-                  element={<ProductInventroyDetails />}
-                />
-              </Route>
-              {/* USERS ROUTES */}
-              <Route path="/users">
-                <Route path="" element={<Navigate to="allUsers" />} />
-                <Route path="allUsers" element={<AllUsers />} />
-                <Route path="allUsers/add" element={<AddUser />} />
-                <Route path="allUsers/details" element={<UserDetails />} />
-                <Route path="userGroups" element={<UserGroups />} />
-                <Route path="userGroups/create" element={<CreateUserGroup />} />
-                <Route path="userEnquiries" element={<UserEnquiries />} />
-              </Route>
-              {/* PARAMETER ROUTES */}
-              <Route path="/parameters">
-                <Route path="" element={<Navigate to="collections" />} />
-                <Route path="additionalFields" element={<AdditionalFields />} />
-                <Route
-                  path="additionalFields/createFieldSets"
-                  element={<CreateFieldSets />}
-                />
-                <Route path="categories" element={<Categories />} />
-                <Route path="collections" element={<Collections />} />
-                <Route
-                  path="collections/create"
-                  element={<CreateCollection />}
-                />
-                <Route path="variantSets" element={<VariantSets />} />
-                <Route
-                  path="variantSets/edit"
-                  element={<CreateVariantSets />}
-                />
-                <Route
-                  path="variantSets/dataSets/create"
-                  element={<CreateDataSets />}
-                />
-                <Route path="vendors" element={<Vendors />} />
-                <Route path="categories/edit" element={<EditVendor />} />
-                <Route path="vendors/edit" element={<EditVendor />} />
-                <Route path="tagsManager/edit" element={<EditVendor />} />
-                <Route path="tagsManager" element={<TagsManager />} />
-                <Route path="tagsManager/edit" element={<EditTags />} />
-                <Route path="priceMaster" element={<PriceMasterLanding />} />
-                <Route path="priceMaster/inventory" element={<PriceMaster />} />
-                <Route
-                  path="priceMaster/create"
-                  element={<CreatePriceMaster />}
-                />
-                <Route
-                  path="priceMaster/metalMaster"
-                  element={<MetalPriceManager />}
-                />
-                <Route
-                  path="priceMaster/diamondMaster"
-                  element={<DiamondPriceManager />}
-                />
-                <Route
-                  path="priceMaster/makingMaster"
-                  element={<MakingChargesManager />}
-                />
-              </Route>
-              {/* TEAM ROUTES */}
-              <Route path="/teams">
-                <Route path="" element={<Navigate to="roles" />} />
-                <Route path="roles" element={<Roles />} />
-                <Route path="roles/create" element={<CreateRoles />} />
-                <Route path="members" element={<Members />} />
-                <Route path="members/details" element={<MemberDetails />} />
-              </Route>
-              {/* AUTH ROUTES */}
-              <Route path="/auth">
-                <Route path="" element={<Navigate to="login" />} />
-                <Route path="login" element={<Login />} />
-                <Route path="signup" element={<Signup />} />
-              </Route>
-              {/* OFFERS ROUTES */}
-              <Route path="/offers">
-                <Route path="" element={<Navigate to="discounts" />} />
-                <Route path="discounts" element={<Discounts />} />
-                <Route path="discounts/create" element={<CreateDiscount />} />
-                <Route path="bundleDiscount" element={<BundleDiscount />} />
-                <Route
-                  path="bundleDiscount/create"
-                  element={<CreateBundleDiscount />}
-                />
-              </Route>
-              {/* ORDER ROUTES */}
-              <Route path="/orders">
-                <Route path="" element={<Navigate to="allOrders" />} />
-                <Route path="allOrders" element={<AllOrders />} />
-                <Route path="allOrders/create" element={<CreateOrder />} />
-                <Route path="allOrders/details" element={<OrderDetails />} />
-                <Route
-                  path="omniChannelOrders"
-                  element={<OmniChannelOrders />}
-                />
-                <Route path="draftOrder" element={<DraftOrder />} />
-                <Route path="abandonedCart" element={<AbandonedCart />} />
-                <Route
-                  path="abandonedCart/details"
-                  element={<AbandonedCartDetails />}
-                />
-                <Route path="orderDetails" element={<OrderDetails />} />
-                <Route path="returnRefunds" element={<ReturnRefunds />} />
-                <Route
-                  path="returnRefunds/refunds/create"
-                  element={<CreateRefund />}
-                />
-                <Route
-                  path="returnRefunds/returns/create"
-                  element={<CreateReturn />}
-                />
-                <Route
-                  path="returnRefunds/details"
-                  element={<ReturnRequestDetails />}
-                />
-                <Route
-                  path="exchangeAlterationRequests"
-                  element={<ExchangeAlterationRequests />}
-                />
-              </Route>
-              {/* FUNCTIONALITY ROUTES */}
-              <Route path="/functionality">
-                <Route path="" element={<Navigate to="allFunctionality" />} />
-                <Route path="allFunctionality" element={<AllFunctionality />} />
-                <Route path="sizeChart" element={<SizeChart />} />
-                <Route path="labelsBadges" element={<LabelsBadges />} />
-                <Route path="preOrder" element={<PreOrder />} />
-                <Route path="sizeChart/create" element={<CreateSizeChart />} />
-                <Route path="preOrder/create" element={<CreatePreOrder />} />
-                <Route path="labelsBadges/create" element={<CreateLabels />} />
-              </Route>
-              <Route path="*" element={<Navigate to="/dashboard" />} />
-            </React.Fragment>
-            {/* ) : (
-              <React.Fragment>
-                <Route path="/" element={<Navigate to="/login" />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="*" element={<Navigate to="/login" />} />
-              </React.Fragment>
-            )} */}
-          </Routes>
         </Box>
-      </Box>:''}
+      ) : (
+        ""
+      )}
     </ThemeProvider>
   );
-}
+};
 
 export default App;
