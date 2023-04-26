@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard/Dashboard";
 import AllProducts from "./pages/Products/AllProducts/AllProducts";
@@ -62,11 +62,17 @@ import ExchangeAlterationRequests from "./pages/Orders/ExchangeAlterationRequest
 import Login from "./pages/Auth/Login/Login";
 import Signup from "./pages/Auth/Signup/Signup";
 import CreateReturn from "./pages/Orders/CreateReturn/CreateReturn.js";
+import PrimaryLayout from "./layouts/PrimaryLayout";
 
 const router = createBrowserRouter([
   {
     path: "auth",
+    element: <PrimaryLayout />,
     children: [
+      {
+        index: true,
+        element: <Navigate to="login" replace={true} />,
+      },
       {
         path: "login",
         element: <Login />,
@@ -84,6 +90,10 @@ const router = createBrowserRouter([
   {
     path: "products",
     children: [
+      {
+        index: true,
+        element: <Navigate to="allProducts" replace={true} />,
+      },
       {
         path: "allProducts",
         element: <AllProducts />,
@@ -128,6 +138,10 @@ const router = createBrowserRouter([
     path: "users",
     children: [
       {
+        index: true,
+        element: <Navigate to="allUsers" replace={true} />,
+      },
+      {
         path: "allUsers",
         element: <AllUsers />,
         children: [
@@ -160,6 +174,10 @@ const router = createBrowserRouter([
   {
     path: "parameters",
     children: [
+      {
+        index: true,
+        element: <Navigate to="collections" replace={true} />,
+      },
       {
         path: "collections",
         element: <Collections />,
@@ -256,6 +274,10 @@ const router = createBrowserRouter([
     path: "teams",
     children: [
       {
+        index: true,
+        element: <Navigate to="roles" replace={true} />,
+      },
+      {
         path: "roles",
         element: <Roles />,
         children: [
@@ -281,6 +303,10 @@ const router = createBrowserRouter([
     path: "offers",
     children: [
       {
+        index: true,
+        element: <Navigate to="discounts" replace={true} />,
+      },
+      {
         path: "discounts",
         element: <Discounts />,
         children: [
@@ -305,6 +331,10 @@ const router = createBrowserRouter([
   {
     path: "orders",
     children: [
+      {
+        index: true,
+        element: <Navigate to="allOrders" replace={true} />,
+      },
       {
         path: "allOrders",
         element: <AllOrders />,
@@ -369,6 +399,10 @@ const router = createBrowserRouter([
     path: "functionality",
     children: [
       {
+        index: true,
+        element: <Navigate to="allFunctionality" replace={true} />,
+      },
+      {
         path: "allFunctionality",
         element: <AllFunctionality />,
       },
@@ -403,6 +437,10 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "*",
+    element: <Navigate to="/auth/login" replace={true} />,
   },
 ]);
 

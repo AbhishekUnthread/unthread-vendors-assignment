@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AppBar, Box, CssBaseline, Drawer } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 
 import "./App.scss";
 
