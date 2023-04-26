@@ -12,11 +12,36 @@ const checkLoginStatus = () => {
 };
 
 const loginHandler = (authDetails) => {
-  return (dispatch) => {};
+  return (dispatch) => {
+    const { accessToken, refreshToken } = authDetails;
+    const accessTokenExpirationTime =
+      Date.now() + process.env.REACT_APP_ACCESS_TOKEN_EXPIRATION_TIME;
+    const refreshTokenExpirationTime =
+      Date.now() + process.env.REACT_APP_REFRESH_TOKEN_EXPIRATION_TIME;
+
+    saveAuthToLocal({
+      accessToken,
+      refreshToken,
+      accessTokenExpirationTime,
+      refreshTokenExpirationTime,
+    });
+
+    dispatch(
+      authActions.login({
+        accessToken,
+        refreshToken,
+        accessTokenExpirationTime,
+        refreshTokenExpirationTime,
+      })
+    );
+  };
 };
 
 const logoutHandler = () => {
-  return (dispatch) => {};
+  return (dispatch) => {
+    removeAuthFromLocal();
+    dispatch(authActions.logout());
+  };
 };
 
 export { checkLoginStatus, loginHandler, logoutHandler };

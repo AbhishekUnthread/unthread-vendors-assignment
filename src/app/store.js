@@ -11,7 +11,7 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(apiSlice.middleware);
   },
-  devTools: true,
+  devTools: process.env.REACT_APP_ENV !== "dev" ? false : true,
 });
 
 export default store;
