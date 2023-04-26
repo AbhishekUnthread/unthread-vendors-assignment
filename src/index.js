@@ -4,7 +4,6 @@ import { Provider } from "react-redux";
 import { disableReactDevTools } from "@fvilers/disable-react-devtools";
 
 import App from "./App";
-import ScrollToTop from "./ScrollToTop";
 
 import store from "./app/store";
 
@@ -17,7 +16,6 @@ if (process.env.REACT_APP_ENV !== "dev") {
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      {/* <ScrollToTop /> */}
       <App />
     </Provider>
   </React.StrictMode>
