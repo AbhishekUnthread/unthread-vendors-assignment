@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { AppBar, Box, CssBaseline, Drawer } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
-  Navigate,
-  Route,
-  Routes,
+  createBrowserRouter,
+  RouterProvider,
   useLocation,
   useNavigate,
+  Navigate,
 } from "react-router-dom";
 
 import "./App.scss";
@@ -109,11 +109,351 @@ const projectTheme = createTheme({
   },
 });
 
+const router = createBrowserRouter([
+  {
+    path: "auth",
+    children: [
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "signup",
+        element: <Signup />,
+      },
+    ],
+  },
+  {
+    path: "dashboard",
+    element: <Dashboard />,
+  },
+  {
+    path: "products",
+    children: [
+      {
+        path: "allProducts",
+        element: <AllProducts />,
+        children: [
+          {
+            path: "addProduct",
+            element: <AddProduct />,
+          },
+        ],
+      },
+      {
+        path: "bulkEditor",
+        element: <ProductsBulkEditor />,
+      },
+      {
+        path: "reviews",
+        element: <ProductReviews />,
+        children: [
+          {
+            path: "create",
+            element: <CreateReview />,
+          },
+        ],
+      },
+      {
+        path: "inventory",
+        element: <ProductInventory />,
+        children: [
+          {
+            path: "create",
+            element: <CreateStore />,
+          },
+          {
+            path: "details",
+            element: <ProductInventoryDetails />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "users",
+    children: [
+      {
+        path: "allUsers",
+        element: <AllUsers />,
+        children: [
+          {
+            path: "add",
+            element: <AddUser />,
+          },
+          {
+            path: "details",
+            element: <UserDetails />,
+          },
+        ],
+      },
+      {
+        path: "userGroups",
+        element: <UserGroups />,
+        children: [
+          {
+            path: "create",
+            element: <CreateUserGroup />,
+          },
+        ],
+      },
+      {
+        path: "userEnquiries",
+        element: <UserEnquiries />,
+      },
+    ],
+  },
+  {
+    path: "parameters",
+    children: [
+      {
+        path: "collections",
+        element: <Collections />,
+        children: [
+          {
+            path: "create",
+            element: <CreateCollection />,
+          },
+        ],
+      },
+      {
+        path: "additionalFields",
+        element: <AdditionalFields />,
+        children: [
+          {
+            path: "createFieldSets",
+            element: <CreateFieldSets />,
+          },
+        ],
+      },
+      {
+        path: "categories",
+        element: <Categories />,
+        children: [
+          {
+            path: "edit",
+            element: <EditVendor />,
+          },
+        ],
+      },
+      {
+        path: "variantSets",
+        element: <VariantSets />,
+        children: [
+          {
+            path: "edit",
+            element: <CreateVariantSets />,
+          },
+          {
+            path: "dataSets/create",
+            element: <CreateDataSets />,
+          },
+        ],
+      },
+      {
+        path: "vendors",
+        element: <Vendors />,
+        children: [
+          {
+            path: "edit",
+            element: <EditVendor />,
+          },
+        ],
+      },
+      {
+        path: "tagsManager",
+        element: <TagsManager />,
+        children: [
+          {
+            path: "edit",
+            element: <EditTags />,
+          },
+        ],
+      },
+      {
+        path: "priceMaster",
+        element: <PriceMasterLanding />,
+        children: [
+          {
+            path: "inventory",
+            element: <PriceMaster />,
+          },
+          {
+            path: "create",
+            element: <CreatePriceMaster />,
+          },
+          {
+            path: "metalMaster",
+            element: <MetalPriceManager />,
+          },
+          {
+            path: "diamondMaster",
+            element: <DiamondPriceManager />,
+          },
+          {
+            path: "makingMaster",
+            element: <MakingChargesManager />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "teams",
+    children: [
+      {
+        path: "roles",
+        element: <Roles />,
+        children: [
+          {
+            path: "create",
+            element: <CreateRoles />,
+          },
+        ],
+      },
+      {
+        path: "members",
+        element: <Members />,
+        children: [
+          {
+            path: "details",
+            element: <MemberDetails />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "offers",
+    children: [
+      {
+        path: "discounts",
+        element: <Discounts />,
+        children: [
+          {
+            path: "create",
+            element: <CreateDiscount />,
+          },
+        ],
+      },
+      {
+        path: "bundleDiscount",
+        element: <BundleDiscount />,
+        children: [
+          {
+            path: "create",
+            element: <CreateBundleDiscount />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "orders",
+    children: [
+      {
+        path: "allOrders",
+        element: <AllOrders />,
+        children: [
+          {
+            path: "create",
+            element: <CreateOrder />,
+          },
+          {
+            path: "details",
+            element: <OrderDetails />,
+          },
+        ],
+      },
+      {
+        path: "omniChannelOrders",
+        element: <OmniChannelOrders />,
+      },
+      {
+        path: "draftOrder",
+        element: <DraftOrder />,
+      },
+      {
+        path: "abandonedCart",
+        element: <AbandonedCart />,
+        children: [
+          {
+            path: "details",
+            element: <AbandonedCartDetails />,
+          },
+        ],
+      },
+      {
+        path: "orderDetails",
+        element: <OrderDetails />,
+      },
+      {
+        path: "returnRefunds",
+        element: <ReturnRefunds />,
+        children: [
+          {
+            path: "refunds/create",
+            element: <CreateRefund />,
+          },
+          {
+            path: "returns/create",
+            element: <CreateReturn />,
+          },
+          {
+            path: "details",
+            element: <ReturnRequestDetails />,
+          },
+        ],
+      },
+      {
+        path: "exchangeAlterationRequests",
+        element: <ExchangeAlterationRequests />,
+      },
+    ],
+  },
+  {
+    path: "functionality",
+    children: [
+      {
+        path: "allFunctionality",
+        element: <AllFunctionality />,
+      },
+      {
+        path: "sizeChart",
+        element: <SizeChart />,
+        children: [
+          {
+            path: "create",
+            element: <CreateSizeChart />,
+          },
+        ],
+      },
+      {
+        path: "labelsBadges",
+        element: <LabelsBadges />,
+        children: [
+          {
+            path: "create",
+            element: <CreateLabels />,
+          },
+        ],
+      },
+      {
+        path: "preOrder",
+        element: <PreOrder />,
+        children: [
+          {
+            path: "create",
+            element: <CreatePreOrder />,
+          },
+        ],
+      },
+    ],
+  },
+]);
+
 const App = (props) => {
   const { window } = props;
-
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showNav, setShowNav] = useState(true);
@@ -122,31 +462,7 @@ const App = (props) => {
     setMobileOpen(!mobileOpen);
   };
 
-  const search = location.search;
-
-  let [loader, isLoading] = useState(true);
-
-  useEffect(() => {
-    const token = new URLSearchParams(search).get("id_token");
-    if (token || !sessionStorage.getItem("userData")) {
-      if (token) sessionStorage.setItem("token", token);
-      sessionStorage.removeItem("userData");
-      navigate("/auth/login");
-    } else {
-      navigate(location.pathname);
-    }
-    isLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (location.pathname.includes("auth")) {
-      setShowNav(false);
-    } else {
-      setShowNav(true);
-    }
-  }, []);
-
-  const drawer = <Sidenav />;
+  let [loader, isLoading] = useState(false);
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
@@ -180,10 +496,10 @@ const App = (props) => {
               Responsive drawer
             </Typography>
           </Toolbar> */}
-              <Navbar
+              {/* <Navbar
                 handleDrawerToggle={handleDrawerToggle}
                 mobileOpen={mobileOpen}
-              />
+              /> */}
             </AppBar>
           )}
           {showNav && (
@@ -198,7 +514,7 @@ const App = (props) => {
               className="app-sidenav"
             >
               {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-              <Drawer
+              {/* <Drawer
                 container={container}
                 variant="temporary"
                 open={mobileOpen}
@@ -215,7 +531,7 @@ const App = (props) => {
                   },
                 }}
               >
-                {drawer}
+                <Sidenav />
               </Drawer>
               <Drawer
                 sx={{
@@ -231,8 +547,8 @@ const App = (props) => {
                 open={!mobileOpen}
                 anchor="left"
               >
-                {drawer}
-              </Drawer>
+                <Sidenav />
+              </Drawer> */}
             </Box>
           )}
           <Box
@@ -244,180 +560,7 @@ const App = (props) => {
             }}
             className={showNav ? "main-box" : "main-box__login"}
           >
-            {/* {showNav && <Toolbar />} */}
-            <Routes>
-              {/* {admin ? ( */}
-              <>
-                {/* <Route path="/" element={<Navigate to="/dashboard" />} /> */}
-                <Route path="/dashboard" element={<Dashboard />} />
-                {/* PRODUCT ROUTES */}
-                <Route path="/products">
-                  <Route path="" element={<Navigate to="allProducts" />} />
-                  <Route path="allProducts" element={<AllProducts />} />
-                  <Route
-                    path="allProducts/addProduct"
-                    element={<AddProduct />}
-                  />
-                  <Route path="bulkEditor" element={<ProductsBulkEditor />} />
-                  <Route path="reviews" element={<ProductReviews />} />
-                  <Route path="reviews/create" element={<CreateReview />} />
-                  <Route path="inventory" element={<ProductInventory />} />
-                  <Route path="inventory/create" element={<CreateStore />} />
-                  <Route
-                    path="inventory/details"
-                    element={<ProductInventoryDetails />}
-                  />
-                </Route>
-                {/* USERS ROUTES */}
-                <Route path="/users">
-                  <Route path="" element={<Navigate to="allUsers" />} />
-                  <Route path="allUsers" element={<AllUsers />} />
-                  <Route path="allUsers/add" element={<AddUser />} />
-                  <Route path="allUsers/details" element={<UserDetails />} />
-                  <Route path="userGroups" element={<UserGroups />} />
-                  <Route
-                    path="userGroups/create"
-                    element={<CreateUserGroup />}
-                  />
-                  <Route path="userEnquiries" element={<UserEnquiries />} />
-                </Route>
-                {/* PARAMETER ROUTES */}
-                <Route path="/parameters">
-                  <Route path="" element={<Navigate to="collections" />} />
-                  <Route
-                    path="additionalFields"
-                    element={<AdditionalFields />}
-                  />
-                  <Route
-                    path="additionalFields/createFieldSets"
-                    element={<CreateFieldSets />}
-                  />
-                  <Route path="categories" element={<Categories />} />
-                  <Route path="collections" element={<Collections />} />
-                  <Route
-                    path="collections/create"
-                    element={<CreateCollection />}
-                  />
-                  <Route path="variantSets" element={<VariantSets />} />
-                  <Route
-                    path="variantSets/edit"
-                    element={<CreateVariantSets />}
-                  />
-                  <Route
-                    path="variantSets/dataSets/create"
-                    element={<CreateDataSets />}
-                  />
-                  <Route path="vendors" element={<Vendors />} />
-                  <Route path="categories/edit" element={<EditVendor />} />
-                  <Route path="vendors/edit" element={<EditVendor />} />
-                  <Route path="tagsManager/edit" element={<EditVendor />} />
-                  <Route path="tagsManager" element={<TagsManager />} />
-                  <Route path="tagsManager/edit" element={<EditTags />} />
-                  <Route path="priceMaster" element={<PriceMasterLanding />} />
-                  <Route
-                    path="priceMaster/inventory"
-                    element={<PriceMaster />}
-                  />
-                  <Route
-                    path="priceMaster/create"
-                    element={<CreatePriceMaster />}
-                  />
-                  <Route
-                    path="priceMaster/metalMaster"
-                    element={<MetalPriceManager />}
-                  />
-                  <Route
-                    path="priceMaster/diamondMaster"
-                    element={<DiamondPriceManager />}
-                  />
-                  <Route
-                    path="priceMaster/makingMaster"
-                    element={<MakingChargesManager />}
-                  />
-                </Route>
-                {/* TEAM ROUTES */}
-                <Route path="/teams">
-                  <Route path="" element={<Navigate to="roles" />} />
-                  <Route path="roles" element={<Roles />} />
-                  <Route path="roles/create" element={<CreateRoles />} />
-                  <Route path="members" element={<Members />} />
-                  <Route path="members/details" element={<MemberDetails />} />
-                </Route>
-                {/* AUTH ROUTES */}
-                <Route path="/auth">
-                  <Route path="" element={<Navigate to="login" />} />
-                  <Route path="login" element={<Login />} />
-                  <Route path="signup" element={<Signup />} />
-                </Route>
-                {/* OFFERS ROUTES */}
-                <Route path="/offers">
-                  <Route path="" element={<Navigate to="discounts" />} />
-                  <Route path="discounts" element={<Discounts />} />
-                  <Route path="discounts/create" element={<CreateDiscount />} />
-                  <Route path="bundleDiscount" element={<BundleDiscount />} />
-                  <Route
-                    path="bundleDiscount/create"
-                    element={<CreateBundleDiscount />}
-                  />
-                </Route>
-                {/* ORDER ROUTES */}
-                <Route path="/orders">
-                  <Route path="" element={<Navigate to="allOrders" />} />
-                  <Route path="allOrders" element={<AllOrders />} />
-                  <Route path="allOrders/create" element={<CreateOrder />} />
-                  <Route path="allOrders/details" element={<OrderDetails />} />
-                  <Route
-                    path="omniChannelOrders"
-                    element={<OmniChannelOrders />}
-                  />
-                  <Route path="draftOrder" element={<DraftOrder />} />
-                  <Route path="abandonedCart" element={<AbandonedCart />} />
-                  <Route
-                    path="abandonedCart/details"
-                    element={<AbandonedCartDetails />}
-                  />
-                  <Route path="orderDetails" element={<OrderDetails />} />
-                  <Route path="returnRefunds" element={<ReturnRefunds />} />
-                  <Route
-                    path="returnRefunds/refunds/create"
-                    element={<CreateRefund />}
-                  />
-                  <Route
-                    path="returnRefunds/returns/create"
-                    element={<CreateReturn />}
-                  />
-                  <Route
-                    path="returnRefunds/details"
-                    element={<ReturnRequestDetails />}
-                  />
-                  <Route
-                    path="exchangeAlterationRequests"
-                    element={<ExchangeAlterationRequests />}
-                  />
-                </Route>
-                {/* FUNCTIONALITY ROUTES */}
-                <Route path="/functionality">
-                  <Route path="" element={<Navigate to="allFunctionality" />} />
-                  <Route
-                    path="allFunctionality"
-                    element={<AllFunctionality />}
-                  />
-                  <Route path="sizeChart" element={<SizeChart />} />
-                  <Route path="labelsBadges" element={<LabelsBadges />} />
-                  <Route path="preOrder" element={<PreOrder />} />
-                  <Route
-                    path="sizeChart/create"
-                    element={<CreateSizeChart />}
-                  />
-                  <Route path="preOrder/create" element={<CreatePreOrder />} />
-                  <Route
-                    path="labelsBadges/create"
-                    element={<CreateLabels />}
-                  />
-                </Route>
-                <Route path="*" element={<Navigate to="/dashboard" />} />
-              </>
-            </Routes>
+            <RouterProvider router={router} />
           </Box>
         </Box>
       ) : (

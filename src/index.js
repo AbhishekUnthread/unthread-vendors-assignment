@@ -1,5 +1,5 @@
+import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { disableReactDevTools } from "@fvilers/disable-react-devtools";
 
@@ -15,10 +15,10 @@ if (process.env.REACT_APP_ENV !== "dev") {
 }
 
 createRoot(document.getElementById("root")).render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <ScrollToTop />
+  <React.StrictMode>
+    <Provider store={store}>
+      {/* <ScrollToTop /> */}
       <App />
-    </BrowserRouter>
-  </Provider>
+    </Provider>
+  </React.StrictMode>
 );
