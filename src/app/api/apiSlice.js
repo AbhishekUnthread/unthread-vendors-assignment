@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.REACT_APP_BASE_URL,
+  baseUrl: `${process.env.REACT_APP_BASE_URL}/api`,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.token;
@@ -13,7 +13,7 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReAuth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  if (result?.error?.originalStatus === 403) {
+  if (result?.error?.status === 401) {
   }
 
   return result;
@@ -21,6 +21,7 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
 
 const apiSlice = createApi({
   baseQuery: baseQueryWithReAuth,
+  tagTypes: [],
   endpoints: (builder) => ({}),
 });
 

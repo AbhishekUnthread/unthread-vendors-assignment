@@ -1,3 +1,6 @@
 {
-  "cSpell.words": ["Omni"]
+  "cSpell.words": ["Omni"],
+  "prettier.useEditorConfig": false,
+  "vsicons.associations.files": [],
+  "prettier.withNodeModules": false
 }
