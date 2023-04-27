@@ -4,7 +4,7 @@ import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
 import { Link, useNavigate } from "react-router-dom";
 import { signUp } from "../services/authService";
-import Messages from "../../../components/snackbar/snackbar.js";
+import Messages from "../../../components/Snackbar/Snackbar";
 
 const Signup = () => {
   let navigate = useNavigate();

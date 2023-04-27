@@ -12,14 +12,17 @@ import login from "../../../assets/icons/login.svg";
 import facebook from "../../../assets/icons/facebook.svg";
 import google from "../../../assets/icons/google.svg";
 
+import { useDispatch } from "react-redux";
+
 import "./Login.scss";
 
-import Messages from "../../../components/snackbar/snackbar.js";
+import Messages from "../../../components/Snackbar/Snackbar";
 
 import { signIn, validatetoken } from "../services/authService";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
 
   const toggleShowPasswordHandler = () =>

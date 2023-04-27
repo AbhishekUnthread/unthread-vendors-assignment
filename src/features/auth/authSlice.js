@@ -20,24 +20,20 @@ const authSlice = createSlice({
         refreshTokenExpirationTime,
       } = action.payload;
 
-      state = {
-        ...state,
-        accessToken,
-        refreshToken,
-        accessTokenExpirationTime,
-        refreshTokenExpirationTime,
-        isLoggedIn: true,
-      };
+      state.accessToken = accessToken;
+      state.refreshToken = refreshToken;
+      state.accessTokenExpirationTime = accessTokenExpirationTime;
+      state.refreshTokenExpirationTime = refreshTokenExpirationTime;
+      state.isLoggedIn = true;
     },
     logout(state) {
-      state = {
-        ...state,
-        accessToken: null,
-        refreshToken: null,
-        accessTokenExpirationTime: null,
-        refreshTokenExpirationTime: null,
-        isLoggedIn: false,
-      };
+      state.accessToken = initialAuthState.accessToken;
+      state.refreshToken = initialAuthState.refreshToken;
+      state.accessTokenExpirationTime =
+        initialAuthState.accessTokenExpirationTime;
+      state.refreshTokenExpirationTime =
+        initialAuthState.refreshTokenExpirationTime;
+      state.isLoggedIn = false;
     },
   },
 });

@@ -30,7 +30,7 @@ import {
   MenuItem,
 } from '@mui/material';
 
-import Messages from '../../../components/snackbar/snackbar.js';
+import Messages from '../../../components/Snackbar/Snackbar';
 import { callGetApi, createCategory, createSubCategory, updateCategory, updateSubCategory } from '../services/parameter.service';
 
 // ? DIALOG TRANSITION STARTS HERE
