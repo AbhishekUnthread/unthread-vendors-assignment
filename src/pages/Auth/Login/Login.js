@@ -1,22 +1,33 @@
-import React from "react";
-import "./Login.scss";
+import { useState, useEffect } from "react";
+import {
+  FormControl,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+
 import login from "../../../assets/icons/login.svg";
 import facebook from "../../../assets/icons/facebook.svg";
 import google from "../../../assets/icons/google.svg";
-import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
-import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+
+import "./Login.scss";
+
 import Messages from "../../../components/snackbar/snackbar.js";
+
 import { signIn, validatetoken } from "../services/authService";
 
 const Login = () => {
-  let navigate = useNavigate();
-  const [showPassword, setShowPassword] = React.useState(false);
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
-  let [message, setMessage] = React.useState("");
+  const toggleShowPasswordHandler = () =>
+    setShowPassword((prevState) => !prevState);
 
-  const [formValues, setFormValues] = React.useState({
+  let [message, setMessage] = useState("dsdsa");
+
+  const [formValues, setFormValues] = useState({
     identifier: "",
     password: "",
   });
@@ -68,7 +79,7 @@ const Login = () => {
     navigate("/dashboard", { replace: true });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (sessionStorage.getItem("token")) {
       setMessage("Validating");
       validatetoken(
@@ -105,36 +116,6 @@ const Login = () => {
                 Sign Up
               </Link>
             </p>
-            {/* <div className="mt-4">
-              <p className="text-lightBlue mb-1 text-start">Mobile Number</p>
-              <FormControl className="w-100 px-0">
-                <OutlinedInput
-                  placeholder="Enter Mobile Number"
-                  size="small"
-                  sx={{ paddingLeft: 0 }}
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <AppMobileCodeSelect />
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-            </div>
-            <div className="mt-4">
-              <p className="text-lightBlue mb-1 text-start">Enter OTP</p>
-              <FormControl className="w-100 px-0">
-                <OutlinedInput
-                  placeholder="Enter four digit OTP"
-                  size="small"
-                  sx={{ paddingLeft: 0 }}
-                />
-              </FormControl>
-              <small className="d-block mt-2 text-start text-lightBlue">
-                Haven't received code?&nbsp;
-                <span className="text-blue-gradient">Resend in 0:59 sec</span>
-              </small>
-            </div> */}
-
             <div className="mt-4">
               <p className="text-lightBlue mb-1 text-start">Enter Email</p>
               <FormControl className="w-100 px-0">
@@ -142,11 +123,6 @@ const Login = () => {
                   placeholder="Enter Email"
                   size="small"
                   sx={{ paddingLeft: 0 }}
-                  value={formValues.identifier}
-                  onKeyPress={onKeyUp}
-                  onChange={(e) =>
-                    updateFormFields("identifier", e.target.value)
-                  }
                 />
               </FormControl>
             </div>
@@ -158,36 +134,36 @@ const Login = () => {
                   placeholder="Enter Password"
                   size="small"
                   sx={{ paddingLeft: 0 }}
-                  value={formValues.password}
                   type={!showPassword ? "password" : "text"}
-                  onKeyPress={onKeyUp}
-                  onChange={(e) => updateFormFields("password", e.target.value)}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={toggleShowPasswordHandler}
+                        type="button"
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
                 />
               </FormControl>
             </div>
 
-            <button
-              onClick={updateLogin}
-              className="button-gradient py-2 w-100 px-3 mt-4"
-            >
+            <button className="button-gradient py-2 w-100 px-3 mt-4">
               <p>Login</p>
             </button>
             <p className="text-grey-6 my-4">or sign in with</p>
             <div className="d-flex row">
               <div className="col-6">
-                <button
-                  onClick={googleLogin}
-                  className="button-lightBlue-outline w-100 px-2 py-2"
-                >
+                <button className="button-lightBlue-outline w-100 px-2 py-2">
                   <img src={google} alt="google" className="w-auto me-2" />
                   Google
                 </button>
               </div>
               <div className="col-6">
-                <button
-                  onClick={facebookLogin}
-                  className="button-lightBlue-outline w-100 px-2 py-2"
-                >
+                <button className="button-lightBlue-outline w-100 px-2 py-2">
                   <img src={facebook} alt="facebook" className="w-auto me-2" />
                   Facebook
                 </button>

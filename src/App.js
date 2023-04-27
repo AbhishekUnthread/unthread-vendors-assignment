@@ -1,4 +1,5 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 
 import "./App.scss";
@@ -39,6 +40,7 @@ const projectTheme = createTheme({
 const App = () => {
   return (
     <ThemeProvider theme={projectTheme}>
+      <CssBaseline />
       <RouterProvider router={router} />
     </ThemeProvider>
   );

@@ -67,7 +67,6 @@ import PrimaryLayout from "./layouts/PrimaryLayout";
 const router = createBrowserRouter([
   {
     path: "auth",
-    element: <PrimaryLayout />,
     children: [
       {
         index: true,
@@ -84,363 +83,368 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "dashboard",
-    element: <Dashboard />,
-  },
-  {
-    path: "products",
+    element: <PrimaryLayout />,
     children: [
       {
-        index: true,
-        element: <Navigate to="allProducts" replace={true} />,
+        path: "dashboard",
+        element: <Dashboard />,
       },
       {
-        path: "allProducts",
-        element: <AllProducts />,
+        path: "products",
         children: [
           {
-            path: "addProduct",
-            element: <AddProduct />,
-          },
-        ],
-      },
-      {
-        path: "bulkEditor",
-        element: <ProductsBulkEditor />,
-      },
-      {
-        path: "reviews",
-        element: <ProductReviews />,
-        children: [
-          {
-            path: "create",
-            element: <CreateReview />,
-          },
-        ],
-      },
-      {
-        path: "inventory",
-        element: <ProductInventory />,
-        children: [
-          {
-            path: "create",
-            element: <CreateStore />,
+            index: true,
+            element: <Navigate to="allProducts" replace={true} />,
           },
           {
-            path: "details",
-            element: <ProductInventoryDetails />,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    path: "users",
-    children: [
-      {
-        index: true,
-        element: <Navigate to="allUsers" replace={true} />,
-      },
-      {
-        path: "allUsers",
-        element: <AllUsers />,
-        children: [
-          {
-            path: "add",
-            element: <AddUser />,
+            path: "allProducts",
+            element: <AllProducts />,
+            children: [
+              {
+                path: "addProduct",
+                element: <AddProduct />,
+              },
+            ],
           },
           {
-            path: "details",
-            element: <UserDetails />,
-          },
-        ],
-      },
-      {
-        path: "userGroups",
-        element: <UserGroups />,
-        children: [
-          {
-            path: "create",
-            element: <CreateUserGroup />,
-          },
-        ],
-      },
-      {
-        path: "userEnquiries",
-        element: <UserEnquiries />,
-      },
-    ],
-  },
-  {
-    path: "parameters",
-    children: [
-      {
-        index: true,
-        element: <Navigate to="collections" replace={true} />,
-      },
-      {
-        path: "collections",
-        element: <Collections />,
-        children: [
-          {
-            path: "create",
-            element: <CreateCollection />,
-          },
-        ],
-      },
-      {
-        path: "additionalFields",
-        element: <AdditionalFields />,
-        children: [
-          {
-            path: "createFieldSets",
-            element: <CreateFieldSets />,
-          },
-        ],
-      },
-      {
-        path: "categories",
-        element: <Categories />,
-        children: [
-          {
-            path: "edit",
-            element: <EditVendor />,
-          },
-        ],
-      },
-      {
-        path: "variantSets",
-        element: <VariantSets />,
-        children: [
-          {
-            path: "edit",
-            element: <CreateVariantSets />,
+            path: "bulkEditor",
+            element: <ProductsBulkEditor />,
           },
           {
-            path: "dataSets/create",
-            element: <CreateDataSets />,
+            path: "reviews",
+            element: <ProductReviews />,
+            children: [
+              {
+                path: "create",
+                element: <CreateReview />,
+              },
+            ],
           },
-        ],
-      },
-      {
-        path: "vendors",
-        element: <Vendors />,
-        children: [
-          {
-            path: "edit",
-            element: <EditVendor />,
-          },
-        ],
-      },
-      {
-        path: "tagsManager",
-        element: <TagsManager />,
-        children: [
-          {
-            path: "edit",
-            element: <EditTags />,
-          },
-        ],
-      },
-      {
-        path: "priceMaster",
-        element: <PriceMasterLanding />,
-        children: [
           {
             path: "inventory",
-            element: <PriceMaster />,
-          },
-          {
-            path: "create",
-            element: <CreatePriceMaster />,
-          },
-          {
-            path: "metalMaster",
-            element: <MetalPriceManager />,
-          },
-          {
-            path: "diamondMaster",
-            element: <DiamondPriceManager />,
-          },
-          {
-            path: "makingMaster",
-            element: <MakingChargesManager />,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    path: "teams",
-    children: [
-      {
-        index: true,
-        element: <Navigate to="roles" replace={true} />,
-      },
-      {
-        path: "roles",
-        element: <Roles />,
-        children: [
-          {
-            path: "create",
-            element: <CreateRoles />,
+            element: <ProductInventory />,
+            children: [
+              {
+                path: "create",
+                element: <CreateStore />,
+              },
+              {
+                path: "details",
+                element: <ProductInventoryDetails />,
+              },
+            ],
           },
         ],
       },
       {
-        path: "members",
-        element: <Members />,
+        path: "users",
         children: [
           {
-            path: "details",
-            element: <MemberDetails />,
+            index: true,
+            element: <Navigate to="allUsers" replace={true} />,
+          },
+          {
+            path: "allUsers",
+            element: <AllUsers />,
+            children: [
+              {
+                path: "add",
+                element: <AddUser />,
+              },
+              {
+                path: "details",
+                element: <UserDetails />,
+              },
+            ],
+          },
+          {
+            path: "userGroups",
+            element: <UserGroups />,
+            children: [
+              {
+                path: "create",
+                element: <CreateUserGroup />,
+              },
+            ],
+          },
+          {
+            path: "userEnquiries",
+            element: <UserEnquiries />,
           },
         ],
       },
-    ],
-  },
-  {
-    path: "offers",
-    children: [
       {
-        index: true,
-        element: <Navigate to="discounts" replace={true} />,
-      },
-      {
-        path: "discounts",
-        element: <Discounts />,
+        path: "parameters",
         children: [
           {
-            path: "create",
-            element: <CreateDiscount />,
+            index: true,
+            element: <Navigate to="collections" replace={true} />,
+          },
+          {
+            path: "collections",
+            element: <Collections />,
+            children: [
+              {
+                path: "create",
+                element: <CreateCollection />,
+              },
+            ],
+          },
+          {
+            path: "additionalFields",
+            element: <AdditionalFields />,
+            children: [
+              {
+                path: "createFieldSets",
+                element: <CreateFieldSets />,
+              },
+            ],
+          },
+          {
+            path: "categories",
+            element: <Categories />,
+            children: [
+              {
+                path: "edit",
+                element: <EditVendor />,
+              },
+            ],
+          },
+          {
+            path: "variantSets",
+            element: <VariantSets />,
+            children: [
+              {
+                path: "edit",
+                element: <CreateVariantSets />,
+              },
+              {
+                path: "dataSets/create",
+                element: <CreateDataSets />,
+              },
+            ],
+          },
+          {
+            path: "vendors",
+            element: <Vendors />,
+            children: [
+              {
+                path: "edit",
+                element: <EditVendor />,
+              },
+            ],
+          },
+          {
+            path: "tagsManager",
+            element: <TagsManager />,
+            children: [
+              {
+                path: "edit",
+                element: <EditTags />,
+              },
+            ],
+          },
+          {
+            path: "priceMaster",
+            element: <PriceMasterLanding />,
+            children: [
+              {
+                path: "inventory",
+                element: <PriceMaster />,
+              },
+              {
+                path: "create",
+                element: <CreatePriceMaster />,
+              },
+              {
+                path: "metalMaster",
+                element: <MetalPriceManager />,
+              },
+              {
+                path: "diamondMaster",
+                element: <DiamondPriceManager />,
+              },
+              {
+                path: "makingMaster",
+                element: <MakingChargesManager />,
+              },
+            ],
           },
         ],
       },
       {
-        path: "bundleDiscount",
-        element: <BundleDiscount />,
+        path: "teams",
         children: [
           {
-            path: "create",
-            element: <CreateBundleDiscount />,
+            index: true,
+            element: <Navigate to="roles" replace={true} />,
+          },
+          {
+            path: "roles",
+            element: <Roles />,
+            children: [
+              {
+                path: "create",
+                element: <CreateRoles />,
+              },
+            ],
+          },
+          {
+            path: "members",
+            element: <Members />,
+            children: [
+              {
+                path: "details",
+                element: <MemberDetails />,
+              },
+            ],
           },
         ],
       },
-    ],
-  },
-  {
-    path: "orders",
-    children: [
       {
-        index: true,
-        element: <Navigate to="allOrders" replace={true} />,
-      },
-      {
-        path: "allOrders",
-        element: <AllOrders />,
+        path: "offers",
         children: [
           {
-            path: "create",
-            element: <CreateOrder />,
+            index: true,
+            element: <Navigate to="discounts" replace={true} />,
           },
           {
-            path: "details",
+            path: "discounts",
+            element: <Discounts />,
+            children: [
+              {
+                path: "create",
+                element: <CreateDiscount />,
+              },
+            ],
+          },
+          {
+            path: "bundleDiscount",
+            element: <BundleDiscount />,
+            children: [
+              {
+                path: "create",
+                element: <CreateBundleDiscount />,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: "orders",
+        children: [
+          {
+            index: true,
+            element: <Navigate to="allOrders" replace={true} />,
+          },
+          {
+            path: "allOrders",
+            element: <AllOrders />,
+            children: [
+              {
+                path: "create",
+                element: <CreateOrder />,
+              },
+              {
+                path: "details",
+                element: <OrderDetails />,
+              },
+            ],
+          },
+          {
+            path: "omniChannelOrders",
+            element: <OmniChannelOrders />,
+          },
+          {
+            path: "draftOrder",
+            element: <DraftOrder />,
+          },
+          {
+            path: "abandonedCart",
+            element: <AbandonedCart />,
+            children: [
+              {
+                path: "details",
+                element: <AbandonedCartDetails />,
+              },
+            ],
+          },
+          {
+            path: "orderDetails",
             element: <OrderDetails />,
           },
+          {
+            path: "returnRefunds",
+            element: <ReturnRefunds />,
+            children: [
+              {
+                path: "refunds/create",
+                element: <CreateRefund />,
+              },
+              {
+                path: "returns/create",
+                element: <CreateReturn />,
+              },
+              {
+                path: "details",
+                element: <ReturnRequestDetails />,
+              },
+            ],
+          },
+          {
+            path: "exchangeAlterationRequests",
+            element: <ExchangeAlterationRequests />,
+          },
         ],
       },
       {
-        path: "omniChannelOrders",
-        element: <OmniChannelOrders />,
-      },
-      {
-        path: "draftOrder",
-        element: <DraftOrder />,
-      },
-      {
-        path: "abandonedCart",
-        element: <AbandonedCart />,
+        path: "functionality",
         children: [
           {
-            path: "details",
-            element: <AbandonedCartDetails />,
+            index: true,
+            element: <Navigate to="allFunctionality" replace={true} />,
+          },
+          {
+            path: "allFunctionality",
+            element: <AllFunctionality />,
+          },
+          {
+            path: "sizeChart",
+            element: <SizeChart />,
+            children: [
+              {
+                path: "create",
+                element: <CreateSizeChart />,
+              },
+            ],
+          },
+          {
+            path: "labelsBadges",
+            element: <LabelsBadges />,
+            children: [
+              {
+                path: "create",
+                element: <CreateLabels />,
+              },
+            ],
+          },
+          {
+            path: "preOrder",
+            element: <PreOrder />,
+            children: [
+              {
+                path: "create",
+                element: <CreatePreOrder />,
+              },
+            ],
           },
         ],
       },
       {
-        path: "orderDetails",
-        element: <OrderDetails />,
-      },
-      {
-        path: "returnRefunds",
-        element: <ReturnRefunds />,
-        children: [
-          {
-            path: "refunds/create",
-            element: <CreateRefund />,
-          },
-          {
-            path: "returns/create",
-            element: <CreateReturn />,
-          },
-          {
-            path: "details",
-            element: <ReturnRequestDetails />,
-          },
-        ],
-      },
-      {
-        path: "exchangeAlterationRequests",
-        element: <ExchangeAlterationRequests />,
+        path: "*",
+        element: <Navigate to="/auth/login" replace={true} />,
       },
     ],
-  },
-  {
-    path: "functionality",
-    children: [
-      {
-        index: true,
-        element: <Navigate to="allFunctionality" replace={true} />,
-      },
-      {
-        path: "allFunctionality",
-        element: <AllFunctionality />,
-      },
-      {
-        path: "sizeChart",
-        element: <SizeChart />,
-        children: [
-          {
-            path: "create",
-            element: <CreateSizeChart />,
-          },
-        ],
-      },
-      {
-        path: "labelsBadges",
-        element: <LabelsBadges />,
-        children: [
-          {
-            path: "create",
-            element: <CreateLabels />,
-          },
-        ],
-      },
-      {
-        path: "preOrder",
-        element: <PreOrder />,
-        children: [
-          {
-            path: "create",
-            element: <CreatePreOrder />,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    path: "*",
-    element: <Navigate to="/auth/login" replace={true} />,
   },
 ]);
 

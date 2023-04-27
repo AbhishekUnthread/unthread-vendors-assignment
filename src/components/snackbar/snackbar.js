@@ -5,28 +5,22 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
- 
-const Messages = ({messageLine,setMessage}) => {
+const Messages = ({ messageLine, setMessage }) => {
+  return (
+    <React.Fragment>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        open={messageLine ? true : false}
+        autoHideDuration={200000}
+        onClose={() => setMessage("")}
+      >
+        <Alert>{messageLine}</Alert>
+      </Snackbar>
+    </React.Fragment>
+  );
+};
 
-    return (
-    
-        <React.Fragment>
-         <Snackbar
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "center",
-            }}
-            open={messageLine?true:false}
-            autoHideDuration={2000}
-            onClose={() => setMessage('')}
-          >
-            <Alert>{messageLine}</Alert>
-          </Snackbar>
-        </React.Fragment>
-          
-    
-      );
-
- }
-
- export default Messages;
+export default Messages;
