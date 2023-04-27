@@ -2,6 +2,8 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 
+import Messages from "./components/Snackbar/Snackbar";
+
 import "./App.scss";
 
 import router from "./routes";
@@ -42,6 +44,7 @@ const App = () => {
     <ThemeProvider theme={projectTheme}>
       <CssBaseline />
       <RouterProvider router={router} />
+      <Messages />
     </ThemeProvider>
   );
 };

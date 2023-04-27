@@ -1,19 +1,21 @@
-import { forwardRef, useEffect } from "react";
+import { forwardRef } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { useSelector, useDispatch } from "react-redux";
+
+import { snackbarActions } from "../../features/snackbar/snackbarSlice";
 
 const Alert = forwardRef((props, ref) => {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const Messages = ({ messageLine, setMessage }) => {
+const Messages = () => {
   const snackbarDetails = useSelector((state) => state.snackbar);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log({ snackbarDetails });
-  }, [snackbarDetails]);
+  const closeSnackbarHandler = () => {
+    dispatch(snackbarActions.reset());
+  };
 
   return (
     <Snackbar
@@ -21,11 +23,11 @@ const Messages = ({ messageLine, setMessage }) => {
         vertical: "bottom",
         horizontal: "center",
       }}
-      open={messageLine ? true : false}
-      autoHideDuration={200000}
-      onClose={() => setMessage("")}
+      open={snackbarDetails.open}
+      autoHideDuration={snackbarDetails.duration}
+      onClose={closeSnackbarHandler}
     >
-      <Alert variant={snackbarDetails.type}>{messageLine}</Alert>
+      <Alert variant={snackbarDetails.type}>{snackbarDetails.message}</Alert>
     </Snackbar>
   );
 };

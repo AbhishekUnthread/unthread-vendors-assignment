@@ -12,6 +12,7 @@ import login from "../../../assets/icons/login.svg";
 import facebook from "../../../assets/icons/facebook.svg";
 import google from "../../../assets/icons/google.svg";
 
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { useDispatch } from "react-redux";
 
 import "./Login.scss";
