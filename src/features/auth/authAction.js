@@ -7,54 +7,36 @@ import {
   removeAuthFromLocal,
 } from "../../utils/storage";
 
+const logoutHandler = () => {
+  return (dispatch) => {
+    removeAuthFromLocal();
+    dispatch(authActions.logout());
+  };
+};
+
 const checkLoginStatus = () => {
   return (dispatch) => {
     const authDetails = getAuthFromLocal();
-    console.log(authDetails);
-    // if (
-    //   authDetails?.accessToken &&
-    //   authDetails?.refreshToken &&
-    //   authDetails?.accessTokenExpirationTime &&
-    //   authDetails?.refreshTokenExpirationTime &&
-    //   authDetails?.userId
-    // ) {
-    //   const {
-    //     accessToken,
-    //     refreshToken,
-    //     accessTokenExpirationTime,
-    //     refreshTokenExpirationTime,
-    //     userId,
-    //   } = authDetails;
-    //   const accessTokenExpired = checkTimeIsExpired(accessTokenExpirationTime);
-    //   const refreshTokenExpired = checkTimeIsExpired(
-    //     refreshTokenExpirationTime
-    //   );
-    //   if (accessTokenExpired) {
-    //     removeAuthFromLocal();
-    //     dispatch(authActions.logout());
-    //     return;
-    //   }
-    //   if (refreshTokenExpired) {
-    //     // return;
-    //   }
-    //   dispatch(
-    //     authActions.login({
-    //       accessToken,
-    //       refreshToken,
-    //       accessTokenExpirationTime,
-    //       refreshTokenExpirationTime,
-    //       userId,
-    //     })
-    //   );
-    //   const autoLogoutTime = calculateRemainingTime(accessTokenExpirationTime);
-    //   setTimeout(() => {
-    //     removeAuthFromLocal();
-    //     dispatch(authActions.logout());
-    //   }, autoLogoutTime);
-    //   return;
-    // }
-    // removeAuthFromLocal();
-    // dispatch(authActions.logout());
+    if (authDetails) {
+      const accessTokenExpired = checkTimeIsExpired(
+        authDetails.accessTokenExpirationTime
+      );
+
+      if (accessTokenExpired) {
+        dispatch(logoutHandler);
+        return;
+      }
+
+      dispatch(authActions.login(authDetails));
+      const autoLogoutTime = calculateRemainingTime(
+        authDetails.accessTokenExpirationTime
+      );
+      setTimeout(() => {
+        dispatch(logoutHandler);
+      }, autoLogoutTime);
+      return;
+    }
+    dispatch(logoutHandler);
   };
 };
 
@@ -80,18 +62,11 @@ const loginHandler = (authDetails) => {
         refreshTokenExpirationTime,
       })
     );
-    // const autoLogoutTime = calculateRemainingTime(accessTokenExpirationTime);
-    // setTimeout(() => {
-    //   removeAuthFromLocal();
-    //   dispatch(authActions.logout());
-    // }, autoLogoutTime);
-  };
-};
 
-const logoutHandler = () => {
-  return (dispatch) => {
-    removeAuthFromLocal();
-    dispatch(authActions.logout());
+    const autoLogoutTime = calculateRemainingTime(accessTokenExpirationTime);
+    setTimeout(() => {
+      dispatch(logoutHandler);
+    }, autoLogoutTime);
   };
 };
 
