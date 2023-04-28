@@ -6,8 +6,18 @@ import {
   removeUserFromLocal,
 } from "../../utils/storage";
 
-const setUserHandler = () => {
-  return (dispatch) => {};
+const setUserHandler = (userDetails) => {
+  return (dispatch) => {
+    saveUserToLocal(userDetails);
+    dispatch(userActions.set(userDetails));
+  };
 };
 
-export { setUserHandler };
+const resetUserHandler = () => {
+  return (dispatch) => {
+    removeUserFromLocal();
+    dispatch(userActions.reset());
+  };
+};
+
+export { setUserHandler, resetUserHandler };

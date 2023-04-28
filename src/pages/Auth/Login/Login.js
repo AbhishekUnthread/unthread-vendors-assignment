@@ -24,6 +24,7 @@ import {
 } from "../../../features/snackbar/snackbarAction";
 import { useLoginMutation } from "../../../features/auth/authApiSlice";
 import { loginHandler } from "../../../features/auth/authAction";
+import { setUserHandler } from "../../../features/user/userAction";
 
 import "./Login.scss";
 
@@ -49,10 +50,6 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
-  const [credentials, setCredentials] = useState({
-    identifier: "",
-    password: "",
-  });
 
   const [
     login,
@@ -66,8 +63,8 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      identifier: credentials.identifier,
-      password: credentials.password,
+      identifier: "",
+      password: "",
     },
     enableReinitialize: true,
     validationSchema: loginValidationSchema,
@@ -98,6 +95,7 @@ const Login = () => {
         user: { email, id, provider, username },
       } = loginData;
       dispatch(loginHandler({ accessToken, refreshToken: "" }));
+      dispatch(setUserHandler({ email, id, provider, username }));
       dispatch(showSuccess({ message: "Logged in successful" }));
       navigate("/dashboard", { replace: true });
     }

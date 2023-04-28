@@ -71,7 +71,6 @@ const loginHandler = (authDetails) => {
       accessTokenExpirationTime,
       refreshTokenExpirationTime,
     });
-
     dispatch(
       authActions.login({
         accessToken,
