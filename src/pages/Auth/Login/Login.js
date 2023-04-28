@@ -4,96 +4,97 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
+  FormHelperText,
 } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { Link, useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import * as Yup from "yup";
+import YupPassword from "yup-password";
+import { useFormik } from "formik";
 
-import login from "../../../assets/icons/login.svg";
+import loginImage from "../../../assets/icons/login.svg";
 import facebook from "../../../assets/icons/facebook.svg";
 import google from "../../../assets/icons/google.svg";
 
-import { showSuccess } from "../../../features/snackbar/snackbarAction";
-import { useDispatch } from "react-redux";
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import { useLoginMutation } from "../../../features/auth/authApiSlice";
 
 import "./Login.scss";
 
-import Messages from "../../../components/Snackbar/Snackbar";
+YupPassword(Yup);
 
-import { signIn, validatetoken } from "../services/authService";
+const loginValidationSchema = Yup.object({
+  identifier: Yup.string()
+    .trim()
+    .email("email is not valid")
+    .required("required"),
+  password: Yup.string()
+    .trim()
+    // .password()
+    // .min(8, "must be minimum 8 characters")
+    // .minLowercase(1, "must include 1 lowercase letter")
+    // .minUppercase(1, "must include 1 uppercase letter")
+    // .minSymbols(1, "must include 1 special letter")
+    // .minNumbers(1, "must include 1 number letter")
+    .required("required"),
+});
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
-
-  const toggleShowPasswordHandler = () =>
-    setShowPassword((prevState) => !prevState);
-
-  let [message, setMessage] = useState("dsdsa");
-
-  const [formValues, setFormValues] = useState({
+  const [credentials, setCredentials] = useState({
     identifier: "",
     password: "",
   });
 
-  const updateFormFields = (key, value) => {
-    const updatedFields = { ...formValues };
-    updatedFields[key] = value;
-    setFormValues(updatedFields);
-  };
+  const [
+    login,
+    {
+      data: loginData,
+      isSuccess: loginIsSuccess,
+      isLoading: loginIsLoading,
+      error: loginError,
+    },
+  ] = useLoginMutation();
 
-  let onKeyUp = (event) => {
-    if (event.charCode === 13) {
-      updateLogin();
-    }
-  };
+  const formik = useFormik({
+    initialValues: {
+      identifier: credentials.identifier,
+      password: credentials.password,
+    },
+    enableReinitialize: true,
+    validationSchema: loginValidationSchema,
+    onSubmit: async (values) => {
+      login(values)
+        .unwrap()
+        .then(() => formik.resetForm());
+    },
+  });
 
-  const updateLogin = () => {
-    let allValues = Object.values(formValues).every((v) => v);
-    if (!allValues) {
-      setMessage("Please enter all fields!");
-      return;
-    }
-
-    setMessage("Signing In");
-
-    signIn(formValues)
-      .then((res) => {
-        responsehandled(res);
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-  };
-  let googleLogin = () => {
-    window.open("https://backend.unthread.in/api/connect/google", "_self");
-  };
-  let facebookLogin = () => {
-    window.open("https://backend.unthread.in/api/connect/facebook", "_self");
-  };
-
-  let responsehandled = (res) => {
-    if (res?.error?.message) {
-      setMessage(res?.error?.message);
-      return;
-    }
-
-    sessionStorage.setItem("userData", JSON.stringify(res));
-
-    navigate("/dashboard", { replace: true });
-  };
+  const toggleShowPasswordHandler = () =>
+    setShowPassword((prevState) => !prevState);
 
   useEffect(() => {
-    if (sessionStorage.getItem("token")) {
-      setMessage("Validating");
-      validatetoken(
-        `/api/auth/google/callback/?id_token=${sessionStorage.getItem("token")}`
-      ).then((res) => {
-        sessionStorage.removeItem("token");
-        responsehandled(res);
-      });
+    if (loginError) {
+      if (loginError.data?.error?.message) {
+        dispatch(showError({ message: loginError.data.error.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
-  }, []);
+
+    if (loginIsSuccess) {
+      dispatch(showSuccess({ message: "Logged in successful" }));
+    }
+  }, [loginError, loginIsSuccess, loginData, dispatch]);
 
   return (
     <div className="container-fluid login">
@@ -106,7 +107,7 @@ const Login = () => {
             eos sed. Dicta, vitae hic. Non molestias quisquam obcaecati sed
             omnis rem est!
           </p>
-          <img src={login} alt="login" className="w-100 login-image" />
+          <img src={loginImage} alt="login" className="w-100 login-image" />
         </div>
         <div className="col-md-4 pe-md-5 pe-3">
           <div className="login-box border-grey-5 rounded-8 px-4 py-5 justify-content-center text-center">
@@ -120,44 +121,69 @@ const Login = () => {
                 Sign Up
               </Link>
             </p>
-            <div className="mt-4">
-              <p className="text-lightBlue mb-1 text-start">Enter Email</p>
-              <FormControl className="w-100 px-0">
-                <OutlinedInput
-                  placeholder="Enter Email"
-                  size="small"
-                  sx={{ paddingLeft: 0 }}
-                />
-              </FormControl>
-            </div>
+            <form noValidate onSubmit={formik.handleSubmit}>
+              <div className="mt-4">
+                <p className="text-lightBlue mb-1 text-start">Enter Email</p>
+                <FormControl className="w-100 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Email"
+                    size="small"
+                    sx={{ paddingLeft: 0 }}
+                    type="email"
+                    name="identifier"
+                    value={formik.values.identifier}
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                  />
+                  {!!formik.touched.identifier && formik.errors.identifier && (
+                    <FormHelperText error>
+                      {formik.errors.identifier}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </div>
+              <div className="mt-4">
+                <p className="text-lightBlue mb-1 text-start">Enter Password</p>
+                <FormControl className="w-100 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Password"
+                    size="small"
+                    sx={{ paddingLeft: 0 }}
+                    type={!showPassword ? "password" : "text"}
+                    name="password"
+                    value={formik.values.password}
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={toggleShowPasswordHandler}
+                          type="button"
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                  {!!formik.touched.password && formik.errors.password && (
+                    <FormHelperText error>
+                      {formik.errors.password}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </div>
 
-            <div className="mt-4">
-              <p className="text-lightBlue mb-1 text-start">Enter Password</p>
-              <FormControl className="w-100 px-0">
-                <OutlinedInput
-                  placeholder="Enter Password"
-                  size="small"
-                  sx={{ paddingLeft: 0 }}
-                  type={!showPassword ? "password" : "text"}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={toggleShowPasswordHandler}
-                        type="button"
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-            </div>
-
-            <button className="button-gradient py-2 w-100 px-3 mt-4">
-              <p>Login</p>
-            </button>
+              <LoadingButton
+                loading={loginIsLoading}
+                disabled={loginIsLoading || loginIsSuccess}
+                type="submit"
+                className="button-gradient py-2 w-100 px-3 mt-4"
+              >
+                <p>Login</p>
+              </LoadingButton>
+            </form>
             <p className="text-grey-6 my-4">or sign in with</p>
             <div className="d-flex row">
               <div className="col-6">
@@ -182,7 +208,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <Messages messageLine={message} setMessage={setMessage}></Messages>
     </div>
   );
 };

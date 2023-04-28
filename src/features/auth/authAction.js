@@ -5,7 +5,7 @@ import {
   saveAuthToLocal,
   getAuthFromLocal,
   removeAuthFromLocal,
-} from "../../../helpers/storage";
+} from "../../utils/storage";
 
 const checkLoginStatus = () => {
   return (dispatch) => {
