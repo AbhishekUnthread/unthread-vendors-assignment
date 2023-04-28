@@ -23,6 +23,7 @@ import {
   showError,
 } from "../../../features/snackbar/snackbarAction";
 import { useLoginMutation } from "../../../features/auth/authApiSlice";
+import { loginHandler } from "../../../features/auth/authAction";
 
 import "./Login.scss";
 
@@ -92,9 +93,15 @@ const Login = () => {
     }
 
     if (loginIsSuccess) {
+      const {
+        jwt: accessToken,
+        user: { email, id, provider, username },
+      } = loginData;
+      dispatch(loginHandler({ accessToken, refreshToken: "" }));
       dispatch(showSuccess({ message: "Logged in successful" }));
+      navigate("/dashboard", { replace: true });
     }
-  }, [loginError, loginIsSuccess, loginData, dispatch]);
+  }, [loginError, loginIsSuccess, loginData, dispatch, navigate]);
 
   return (
     <div className="container-fluid login">

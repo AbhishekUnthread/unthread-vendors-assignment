@@ -15,7 +15,7 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReAuth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  if (result?.error?.status === 400) {
+  if (result?.error?.status === 401) {
     api.dispatch(logoutHandler());
   }
 
