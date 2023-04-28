@@ -9,7 +9,8 @@ import {
 
 const checkLoginStatus = () => {
   return (dispatch) => {
-    // const authDetails = getAuthFromLocal();
+    const authDetails = getAuthFromLocal();
+    console.log(authDetails);
     // if (
     //   authDetails?.accessToken &&
     //   authDetails?.refreshToken &&

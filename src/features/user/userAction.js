@@ -1,10 +1,24 @@
 import { userActions } from "./userSlice";
+import { authActions } from "../auth/authSlice";
 
 import {
   saveUserToLocal,
   getUserFromLocal,
   removeUserFromLocal,
+  removeAuthFromLocal,
 } from "../../utils/storage";
+
+const checkUserStatus = () => {
+  return (dispatch) => {
+    const userDetails = getUserFromLocal();
+    if (!userDetails) {
+      removeAuthFromLocal();
+      dispatch(authActions.logout());
+      return;
+    }
+    dispatch(userActions.set(userDetails));
+  };
+};
 
 const setUserHandler = (userDetails) => {
   return (dispatch) => {
@@ -20,4 +34,4 @@ const resetUserHandler = () => {
   };
 };
 
-export { setUserHandler, resetUserHandler };
+export { setUserHandler, resetUserHandler, checkUserStatus };
