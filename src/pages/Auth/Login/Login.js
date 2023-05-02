@@ -7,8 +7,8 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { Link, useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
@@ -68,7 +68,7 @@ const Login = () => {
     },
     enableReinitialize: true,
     validationSchema: loginValidationSchema,
-    onSubmit: async (values) => {
+    onSubmit: (values) => {
       login(values)
         .unwrap()
         .then(() => formik.resetForm());

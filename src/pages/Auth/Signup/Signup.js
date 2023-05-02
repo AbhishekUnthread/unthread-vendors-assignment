@@ -1,60 +1,99 @@
-import React from "react";
-import "./Signup.scss";
-import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
-import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
+import { useState, useEffect } from "react";
+import {
+  FormControl,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  FormHelperText,
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
-import { signUp } from "../services/authService";
-import Messages from "../../../components/Snackbar/Snackbar";
+import { useDispatch } from "react-redux";
+import * as Yup from "yup";
+import YupPassword from "yup-password";
+import { useFormik } from "formik";
+
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import { useSignUpMutation } from "../../../features/auth/authApiSlice";
+
+import "./Signup.scss";
+
+YupPassword(Yup);
+
+const signUpValidationSchema = Yup.object({
+  email: Yup.string().trim().email("email is not valid").required("required"),
+  password: Yup.string()
+    .trim()
+    // .password()
+    // .min(8, "must be minimum 8 characters")
+    // .minLowercase(1, "must include 1 lowercase letter")
+    // .minUppercase(1, "must include 1 uppercase letter")
+    // .minSymbols(1, "must include 1 special letter")
+    // .minNumbers(1, "must include 1 number letter")
+    .required("required"),
+  username: Yup.string().trim().min(3).required("required"),
+});
 
 const Signup = () => {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
 
-  let [message, setMessage] = React.useState("");
-  const [showPassword, setShowPassword] = React.useState(false);
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const [
+    signUp,
+    {
+      data: signUpData,
+      isSuccess: signUpIsSuccess,
+      isLoading: signUpIsLoading,
+      error: signUpError,
+    },
+  ] = useSignUpMutation();
 
-  const [formValues, setFormValues] = React.useState({
-    email: "",
-    password: "",
-    username: "",
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      username: "",
+    },
+    enableReinitialize: true,
+    validationSchema: signUpValidationSchema,
+    onSubmit: (values) => {
+      signUp(values)
+        .unwrap()
+        .then(() => formik.resetForm());
+    },
   });
 
-  const updateFormFields = (key, value) => {
-    const updatedFields = { ...formValues };
-    updatedFields[key] = value;
-    setFormValues(updatedFields);
-  };
+  const toggleShowPasswordHandler = () =>
+    setShowPassword((prevState) => !prevState);
 
-  let onKeyUp = (event) => {
-    if (event.charCode === 13) {
-      callApi();
-    }
-  };
-
-  let callApi = () => {
-    let allValues = Object.values(formValues).every((v) => v);
-    if (!allValues) {
-      setMessage("Please enter all fields!");
-      return;
+  useEffect(() => {
+    if (signUpError) {
+      if (signUpError.data?.error?.message) {
+        dispatch(showError({ message: signUpError.data.error.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
 
-    setMessage("Creating Store!");
-
-    signUp(formValues)
-      .then((res) => {
-        if (res?.error?.message) {
-          setMessage(res?.error?.message);
-          return;
-        }
-
-        sessionStorage.setItem("userData", JSON.stringify(res));
-
-        navigate("/dashboard", { replace: true });
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-  };
+    if (signUpIsSuccess) {
+      console.log(signUpData);
+      // const {
+      //   jwt: accessToken,
+      //   user: { email, id, provider, username },
+      // } = signUpData;
+      // dispatch(signUpHandler({ accessToken, refreshToken: "" }));
+      // dispatch(setUserHandler({ email, id, provider, username }));
+      // dispatch(showSuccess({ message: "Logged in successful" }));
+      // navigate("/dashboard", { replace: true });
+    }
+  }, [signUpError, signUpIsSuccess, signUpData, dispatch, navigate]);
 
   return (
     <div className="container-fluid signup">
@@ -70,115 +109,87 @@ const Signup = () => {
             </span>
           </p>
 
-          <div className="mt-4">
-            <p className="text-lightBlue mb-1 text-start">Username</p>
-            <FormControl className="w-100 px-0">
-              <OutlinedInput
-                placeholder="Enter Username"
-                size="small"
-                sx={{ paddingLeft: 0 }}
-                value={formValues.username}
-                onKeyPress={onKeyUp}
-                onChange={(e) => updateFormFields("username", e.target.value)}
-              />
-            </FormControl>
-          </div>
-
-          <div className="mt-4">
-            <p className="text-lightBlue mb-1 text-start">Enter Email</p>
-            <FormControl className="w-100 px-0">
-              <OutlinedInput
-                placeholder="Enter Email"
-                size="small"
-                sx={{ paddingLeft: 0 }}
-                value={formValues.email}
-                onKeyPress={onKeyUp}
-                onChange={(e) => updateFormFields("email", e.target.value)}
-              />
-            </FormControl>
-          </div>
-
-          <div className="mt-4">
-            <p className="text-lightBlue mb-1 text-start">Enter Password</p>
-            <FormControl className="w-100 px-0">
-              <OutlinedInput
-                placeholder="Enter Password"
-                size="small"
-                sx={{ paddingLeft: 0 }}
-                value={formValues.password}
-                type={!showPassword ? "password" : "text"}
-                onKeyPress={onKeyUp}
-                onChange={(e) => updateFormFields("password", e.target.value)}
-              />
-            </FormControl>
-          </div>
-
-          {/* <div className="row">
-            <div className="col-md-6">
-              <div className="mt-4">
-                <p className="text-lightBlue mb-1 text-start">
-                  Enter First Name
-                </p>
-                <FormControl className="w-100 px-0">
-                  <OutlinedInput
-                    placeholder="Your First Name"
-                    size="small"
-                    sx={{ paddingLeft: 0 }}
-                  />
-                </FormControl>
-              </div>
+          <form noValidate onSubmit={formik.handleSubmit}>
+            <div className="mt-4">
+              <p className="text-lightBlue mb-1 text-start">Username</p>
+              <FormControl className="w-100 px-0">
+                <OutlinedInput
+                  placeholder="Enter Username"
+                  size="small"
+                  sx={{ paddingLeft: 0 }}
+                  name="username"
+                  value={formik.values.username}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                />
+                {!!formik.touched.username && formik.errors.username && (
+                  <FormHelperText error>
+                    {formik.errors.username}
+                  </FormHelperText>
+                )}
+              </FormControl>
             </div>
-            <div className="col-md-6">
-              <div className="mt-4">
-                <p className="text-lightBlue mb-1 text-start">
-                  Enter Last Name
-                </p>
-                <FormControl className="w-100 px-0">
-                  <OutlinedInput
-                    placeholder="Your Last Name"
-                    size="small"
-                    sx={{ paddingLeft: 0 }}
-                  />
-                </FormControl>
-              </div>
-            </div>
-          </div> */}
 
-          {/* <div className="mt-4">
-            <p className="text-lightBlue mb-1 text-start">Mobile Number</p>
-            <FormControl className="w-100 px-0">
-              <OutlinedInput
-                placeholder="Enter Mobile Number"
-                size="small"
-                sx={{ paddingLeft: 0 }}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <AppMobileCodeSelect />
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-          </div> */}
-          {/* <div className="mt-4">
-            <p className="text-lightBlue mb-1 text-start">Enter OTP</p>
-            <FormControl className="w-100 px-0">
-              <OutlinedInput
-                placeholder="Enter four digit OTP"
-                size="small"
-                sx={{ paddingLeft: 0 }}
-              />
-            </FormControl>
-            <small className="d-block mt-2 text-start text-lightBlue">
-              Haven't received code?&nbsp;
-              <span className="text-blue-gradient">Resend in 0:59 sec</span>
-            </small>
-          </div> */}
-          <button
-            onClick={callApi}
-            className="button-gradient py-2 w-100 px-3 mt-4"
-          >
-            <p>Create your Store</p>
-          </button>
+            <div className="mt-4">
+              <p className="text-lightBlue mb-1 text-start">Enter Email</p>
+              <FormControl className="w-100 px-0">
+                <OutlinedInput
+                  placeholder="Enter Email"
+                  size="small"
+                  sx={{ paddingLeft: 0 }}
+                  type="email"
+                  name="email"
+                  value={formik.values.email}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                />
+                {!!formik.touched.email && formik.errors.email && (
+                  <FormHelperText error>{formik.errors.email}</FormHelperText>
+                )}
+              </FormControl>
+            </div>
+
+            <div className="mt-4">
+              <p className="text-lightBlue mb-1 text-start">Enter Password</p>
+              <FormControl className="w-100 px-0">
+                <OutlinedInput
+                  placeholder="Enter Password"
+                  size="small"
+                  sx={{ paddingLeft: 0 }}
+                  type={!showPassword ? "password" : "text"}
+                  name="password"
+                  value={formik.values.password}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={toggleShowPasswordHandler}
+                        type="button"
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                {!!formik.touched.password && formik.errors.password && (
+                  <FormHelperText error>
+                    {formik.errors.password}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </div>
+            <LoadingButton
+              loading={signUpIsLoading}
+              disabled={signUpIsLoading || signUpIsSuccess}
+              type="submit"
+              className="button-gradient py-2 w-100 px-3 mt-4"
+            >
+              <p>Create your Store</p>
+            </LoadingButton>
+          </form>
           <div className="d-flex row">
             <div className="col-12 mt-4 text-center d-flex justify-content-center">
               <small className="text-grey-6 w-75 d-block text-center">
@@ -189,8 +200,6 @@ const Signup = () => {
           </div>
         </div>
       </div>
-
-      <Messages messageLine={message} setMessage={setMessage}></Messages>
     </div>
   );
 };
