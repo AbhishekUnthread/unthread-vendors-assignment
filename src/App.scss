@@ -7,6 +7,17 @@
   // overflow-y: scroll;
   // height: calc(100vh - 3.4rem) !important;
 }
+
+.main-box-secondary {
+  background: $black2;
+}
+
+.loader {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+}
+
 .main-box__login {
   min-height: 100vh;
   margin-top: 0;

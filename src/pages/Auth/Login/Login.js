@@ -22,7 +22,10 @@ import {
   showSuccess,
   showError,
 } from "../../../features/snackbar/snackbarAction";
-import { useLoginMutation } from "../../../features/auth/authApiSlice";
+import {
+  useLoginMutation,
+  useGoogleLoginQuery,
+} from "../../../features/auth/authApiSlice";
 import { loginHandler } from "../../../features/auth/authAction";
 import { setUserHandler } from "../../../features/user/userAction";
 
@@ -31,10 +34,7 @@ import "./Login.scss";
 YupPassword(Yup);
 
 const loginValidationSchema = Yup.object({
-  identifier: Yup.string()
-    .trim()
-    .email("email is not valid")
-    .required("required"),
+  email: Yup.string().trim().email("email is not valid").required("required"),
   password: Yup.string()
     .trim()
     // .password()
@@ -50,6 +50,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
+  const [googleLogin, setGoogleLogin] = useState(false);
 
   const [
     login,
@@ -61,9 +62,16 @@ const Login = () => {
     },
   ] = useLoginMutation();
 
+  useGoogleLoginQuery(
+    {},
+    {
+      skip: !googleLogin,
+    }
+  );
+
   const formik = useFormik({
     initialValues: {
-      identifier: "",
+      email: "",
       password: "",
     },
     enableReinitialize: true,
@@ -78,10 +86,12 @@ const Login = () => {
   const toggleShowPasswordHandler = () =>
     setShowPassword((prevState) => !prevState);
 
+  const googleLoginHandler = () => setGoogleLogin(true);
+
   useEffect(() => {
     if (loginError) {
-      if (loginError.data?.error?.message) {
-        dispatch(showError({ message: loginError.data.error.message }));
+      if (loginError.data?.message) {
+        dispatch(showError({ message: loginError.data.message }));
       } else {
         dispatch(
           showError({ message: "Something went wrong!, please try again" })
@@ -91,11 +101,13 @@ const Login = () => {
 
     if (loginIsSuccess) {
       const {
-        jwt: accessToken,
-        user: { email, id, provider, username },
+        data: {
+          data: { userId, userName, email },
+          Authorization: accessToken,
+        },
       } = loginData;
       dispatch(loginHandler({ accessToken, refreshToken: "" }));
-      dispatch(setUserHandler({ email, id, provider, username }));
+      dispatch(setUserHandler({ email, userId, userName }));
       dispatch(showSuccess({ message: "Logged in successful" }));
       navigate("/dashboard", { replace: true });
     }
@@ -135,15 +147,13 @@ const Login = () => {
                     size="small"
                     sx={{ paddingLeft: 0 }}
                     type="email"
-                    name="identifier"
-                    value={formik.values.identifier}
+                    name="email"
+                    value={formik.values.email}
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                   />
-                  {!!formik.touched.identifier && formik.errors.identifier && (
-                    <FormHelperText error>
-                      {formik.errors.identifier}
-                    </FormHelperText>
+                  {!!formik.touched.email && formik.errors.email && (
+                    <FormHelperText error>{formik.errors.email}</FormHelperText>
                   )}
                 </FormControl>
               </div>
@@ -192,7 +202,10 @@ const Login = () => {
             <p className="text-grey-6 my-4">or sign in with</p>
             <div className="d-flex row">
               <div className="col-6">
-                <button className="button-lightBlue-outline w-100 px-2 py-2">
+                <button
+                  onClick={googleLoginHandler}
+                  className="button-lightBlue-outline w-100 px-2 py-2"
+                >
                   <img src={google} alt="google" className="w-auto me-2" />
                   Google
                 </button>

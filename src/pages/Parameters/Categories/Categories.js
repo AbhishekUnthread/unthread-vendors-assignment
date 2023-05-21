@@ -1,17 +1,4 @@
-import React from 'react';
-import '../../Products/AllProducts/AllProducts.scss';
-// ! COMPONENT IMPORTS
-import CategoriesTable from './CategoriesTable';
-import TableSearch from '../../../components/TableSearch/TableSearch';
-import ViewTutorial from '../../../components/ViewTutorial/ViewTutorial';
-import ViewLogsDrawer from '../../../components/ViewLogsDrawer/ViewLogsDrawer';
-import ExportDialog from '../../../components/ExportDialog/ExportDialog';
-import ImportSecondDialog from '../../../components/ImportSecondDialog/ImportSecondDialog';
-import TabPanel from '../../../components/TabPanel/TabPanel';
-// ! IMAGES IMPORTS
-import cancel from '../../../assets/icons/cancel.svg';
-import parameters from '../../../assets/icons/sidenav/parameters.svg';
-// ! MATERIAL IMPORTS
+import { forwardRef, useState, useEffect } from "react";
 import {
   Box,
   Dialog,
@@ -20,6 +7,7 @@ import {
   DialogTitle,
   FormControl,
   OutlinedInput,
+  FormHelperText,
   Paper,
   Popover,
   Slide,
@@ -28,330 +16,152 @@ import {
   Chip,
   Select,
   MenuItem,
-} from '@mui/material';
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { useDispatch } from "react-redux";
+import * as Yup from "yup";
+import { useFormik } from "formik";
 
-import Messages from '../../../components/Snackbar/Snackbar';
-import { callGetApi, createCategory, createSubCategory, updateCategory, updateSubCategory } from '../services/parameter.service';
+import CategoriesTable from "./CategoriesTable";
+import TableSearch from "../../../components/TableSearch/TableSearch";
+import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
+import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
+import ExportDialog from "../../../components/ExportDialog/ExportDialog";
+import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
+import TabPanel from "../../../components/TabPanel/TabPanel";
 
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
+import cancel from "../../../assets/icons/cancel.svg";
+import parameters from "../../../assets/icons/sidenav/parameters.svg";
+
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import {
+  useGetAllCategoriesQuery,
+  useGetAllSubCategoriesQuery,
+} from "../../../features/parameters/categories/categoriesApiSlice";
+
+import "../../Products/AllProducts/AllProducts.scss";
+
+const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-// ? DIALOG TRANSITION ENDS HERE
 
 const Categories = () => {
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const handleDelete = (index) => {
-    let multiple=multiplecategories
-    multiple.splice(index,1)
-    setmultiplecategories(multiple)
-  };
-
-  // ? POPOVERS STARTS HERE
-
-  // * CREATE CATEGORY POPOVERS STARTS
-  const [anchorCreateCategoryEl, setAnchorCreateCategoryEl] =
-    React.useState(null);
-
-  const handleCreateCategoryClick = (event) => {
-    setAnchorCreateCategoryEl(event.currentTarget);
-    resetdata()
-
-
-  };
-
-  const handleCreateCategoryClose = () => {
-    setAnchorCreateCategoryEl(null);
-  };
-
-  const openCreateCategory = Boolean(anchorCreateCategoryEl);
-  const idCreateCategory = openCreateCategory ? 'simple-popover' : undefined;
-  // * CREATE CATEGORY POPOVERS ENDS
-
-  // ? POPOVERS ENDS HERE
-
-  // ? CATEGORIES DIALOG STARTS HERE
-  const [openCreateCategories, setOpenCreateCategories] = React.useState(false);
-
-  const handleCreateCategories = () => {
-    setAnchorCreateCategoryEl(null);
-    setOpenCreateCategories(true);
-  };
-
-  const handleCreateCategoriesClose = () => {
-    setOpenCreateCategories(false);
-  };
-  // ? CATEGORIES DIALOG ENDS HERE
-
-  // ? SUB CATEGORIES DIALOG STARTS HERE
-  const [openCreateSubCategories, setOpenCreateSubCategories] =
-    React.useState(false);
-
-  const handleCreateSubCategories = () => {
-    setAnchorCreateCategoryEl(null);
-    setOpenCreateSubCategories(true);
-  };
-
-  const handleCreateSubCategoriesClose = () => {
-    setOpenCreateSubCategories(false);
-  };
-  // ? SUB CATEGORIES DIALOG ENDS HERE
-
-  // ? CATEGORY SELECT STARTS HERE
-  const [category, setCategory] = React.useState('');
-
-  const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
-  };
-  // ? CATEGORY SELECT ENDS HERE
-
-  //Aman
-
-  let [message, setMessage] = React.useState('');
-  const [allCategory, setAllCategory] = React.useState([]);
-  const [allSubCategory, setAllSubCategory] = React.useState([]);
-  const [Draft1, setCategoryDraft] = React.useState([]);
-  const [Draft2, setsubCategoryDraft] = React.useState([]);
-
-  const [categoryName, setCategoryName] = React.useState('');
-  const [subcategoryName, setsubCategoryName] = React.useState('');
-
-  const [updateId, setUpdateId] = React.useState(false);
-
-  let [multiplecategories, setmultiplecategories] = React.useState([]);
-
-
-  React.useEffect(()=>{
-    getcategories();
-    getsubcategories()
-  },[])
-
-
-  let resetdata=()=>{
-    setCategoryName('')
-    setsubCategoryName('')
-    setUpdateId('')
-    setmultiplecategories([])
-  }
-
-  let onKeyUpcategory=(event)=>{
-    if (event.charCode === 13 && categoryName) {
-      let multiple=multiplecategories
-
-      let duplicate=multiple.find(data=>data.toLowerCase() ==categoryName.toLowerCase() )
-      if(duplicate){
-        setMessage('Please enter unique name');
-        return
-      }
-      multiple.push(categoryName)
-      setmultiplecategories(multiple)
-      setCategoryName('')
-        
-    }
-  }
-
-  let getcategories=()=>{
-   callGetApi('/api/product-categories','GET').then((res) => {
-     if(res.data){
-      setAllCategory(res.data.filter(data=>data.attributes.status=='Active'))
-      setCategoryDraft(res.data.filter(data=>data.attributes.status!=='Active'))
-     }
-   
-    })
-  .catch((err) => {
-    setMessage(err);
+  const dispatch = useDispatch();
+  const [categoryType, setCategoryType] = useState(0);
+  const [categoriesStatus, setCategoriesStatus] = useState("Active");
+  const [categoryList, setCategoryList] = useState([]);
+  const [error, setError] = useState(false);
+  const [pagination, setPagination] = useState({
+    start: 0,
+    limit: 10,
+    total: null,
   });
-  }
 
-  let getsubcategories=()=>{
-    callGetApi('/api/product-sub-categories','GET').then((res) => {
-      if(res.data){
-      setAllSubCategory(res.data.filter(data=>data.attributes.status==='Active'))
+  const {
+    data: categoriesData,
+    isLoading: categoriesIsLoading,
+    isSuccess: categoriesIsSuccess,
+    error: categoriesError,
+  } = useGetAllCategoriesQuery(
+    {
+      "populate[products][fields][0]": "id",
+      "filters[status][$eq]": categoriesStatus,
+      "pagination[start]": pagination.start,
+      "pagination[limit]": pagination.limit,
+    },
+    {
+      skip: categoryType === 2,
+    }
+  );
+  const {
+    data: subCategoriesData,
+    isLoading: subCategoriesIsLoading,
+    isSuccess: subCategoriesIsSuccess,
+    error: subCategoriesError,
+  } = useGetAllSubCategoriesQuery(
+    {
+      "populate[products][fields][0]": "id",
+      "filters[status][$eq]": categoriesStatus,
+      "pagination[start]": pagination.start,
+      "pagination[limit]": pagination.limit,
+    },
+    {
+      skip: categoryType === 1,
+    }
+  );
 
-      setsubCategoryDraft(res.data.filter(data=>data.attributes.status!=='Active'))
-      }
-    })
-    .catch((err) => {
-      setMessage(err);
+  const changeCategoryTypeHandler = (event, tabIndex) => {
+    setCategoryType(tabIndex);
+    setPagination({
+      start: 0,
+      limit: 10,
+      total: null,
     });
-  }
-
-  let getCategoryId=(subcategory)=>{
-    return new Promise((resolve,reject)=>{
-      callGetApi(`/api/product-sub-categories/${subcategory.id}?populate[product_category][fields][0]=name`,'GET').then((res) => {
-     
-        let subcategorydetails=res.data
-        setCategoryName(subcategorydetails.attributes.product_category.data.id)
-        resolve(subcategorydetails.attributes.product_category.data.id)
-     
-       
-       })
-     .catch((err) => {
-       setMessage(err);
-     });
-    })
-   
-
-  }
-
-  let edit=(data)=>{
-    setUpdateId(data.id)
-    if(data.attributes.type=='Category'){
-      setCategoryName(data.attributes.name)
-      handleCreateCategories()
-    }else{
-      setsubCategoryName(data.attributes.name)
-      getCategoryId(data).then(res=>{
-        handleCreateSubCategories()
-      })
+    if (tabIndex === 3) {
+      setCategoriesStatus("Draft");
+    } else {
+      setCategoriesStatus("Active");
     }
-  }
-
-  let deleteData=(data)=>{
-
-   
-    if(data.attributes.type=='Category'){
-      setCategoryName(data.attributes.name)
-      if(data.attributes.status=='Draft'){
-        createUpdateCategory('Active',data.attributes.name,data.id)
-      }else{
-        createUpdateCategory('Draft',data.attributes.name,data.id)
-      }
-    }else{
-      setsubCategoryName(data.attributes.name)
-       getCategoryId(data).then(categoryId=>{
-        if(data.attributes.status=='Draft'){
-          addupdatesubcategory('Active',categoryId,data.attributes.name,data.id)
-        }else{
-          addupdatesubcategory('Draft',categoryId,data.attributes.name,data.id)
-        }
-      })
-     
-    }
-
-
-  //   let url=''
-  //   if(data.attributes.type=='Category'){
-  //     url='/api/product-categories/'+data.id
-  //   }else{
-  //     url='/api/product-sub-categories/'+data.id
-  //   }
-  //   callGetApi(url,'DELETE').then((res) => {
-  //     responseHandled(res)
-  //  })
-   
-  }
-
-  let createUpdateCategoryMultiple=(status,categoryArray)=>{
-
-    for(let i=0;i<categoryArray.length;i++){
-      let request = {
-        data: {
-          name: categoryArray[i],
-          type: 'Category',
-          status
-        },
-      };
-  
-      createCategory(request)
-        .then((res) => {
-          if(i==categoryArray.length-1)responseHandled(res)
-        })
-        .catch((err) => {
-          setMessage(err);
-        });
-  
-    }
-
-  }
-  
-
-  const createUpdateCategory = (status,categoryName,id) => {
-    if (!categoryName) {
-      setMessage('Please enter categoryName field');
-      return;
-    }
-
-    let request = {
-      data: {
-        name: categoryName,
-        type: 'Category',
-        status
-      },
-    };
-
-    if(!id){
-      createCategory(request)
-      .then((res) => {
-        responseHandled(res)
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-    }else{
-      updateCategory(request,id)
-      .then((res) => {
-        responseHandled(res)
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-    }
-
-    
   };
 
-  
-
-  const addupdatesubcategory=(status,categoryName,subcategoryName,subCategoryId)=>{
-    if (!subcategoryName || !categoryName) {
-      setMessage('Please enter all fields');
-      return;
+  useEffect(() => {
+    if (categoriesError) {
+      setError(true);
+      if (categoriesError.data?.error?.message) {
+        dispatch(showError({ message: categoriesError.data.error.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
-
-    let request = {
-      data: {
-        name: subcategoryName,
-        type: 'Sub Category',
-        status,
-        "product_category":categoryName
-      },
-    };
-    if(!subCategoryId){
-      createSubCategory(request)
-      .then((res) => {
-        responseHandled(res)
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-    }else{
-      updateSubCategory(request,subCategoryId)
-      .then((res) => {
-        responseHandled(res)
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
+    if (subCategoriesError) {
+      setError(true);
+      if (subCategoriesError.data?.error?.message) {
+        dispatch(showError({ message: subCategoriesError.data.error.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
-    
-  }
-
-  let responseHandled=(res)=>{
-    if (res?.error?.message) {
-      setMessage(res?.error?.message);
-      return;
+    if (categoryType === 0 || categoryType === 3) {
+      if (categoriesIsSuccess && subCategoriesIsSuccess) {
+        setError(false);
+        setCategoryList([...categoriesData.data, ...subCategoriesData.data]);
+      } else {
+        setCategoryList([]);
+      }
     }
-    resetdata()
-    getcategories();
-    getsubcategories()
-    handleCreateCategoriesClose();
-    handleCreateSubCategoriesClose();
-  }
+    if (categoryType === 1) {
+      if (categoriesIsSuccess) {
+        setError(false);
+        setCategoryList(categoriesData.data);
+      } else {
+        setCategoryList([]);
+      }
+    }
+    if (categoryType === 2) {
+      if (subCategoriesIsSuccess) {
+        setError(false);
+        setCategoryList(subCategoriesData.data);
+      } else {
+        setCategoryList([]);
+      }
+    }
+  }, [
+    categoriesData,
+    subCategoriesData,
+    categoriesIsSuccess,
+    subCategoriesIsSuccess,
+    categoriesError,
+    subCategoriesError,
+    categoryType,
+    dispatch,
+  ]);
 
   return (
     <div className="container-fluid page">
@@ -360,57 +170,45 @@ const Categories = () => {
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
           <ViewLogsDrawer
-            headingName={'Parameters / Categories'}
+            headingName={"Parameters / Categories"}
             icon={parameters}
           />
-          <ExportDialog dialogName={'Categories'} />
-          <ImportSecondDialog dialogName={'Categories'} />
+          <ExportDialog dialogName={"Categories"} />
+          <ImportSecondDialog dialogName={"Categories"} />
           <button
             to="/parameters/createFieldSets"
             className="button-gradient py-2 px-4 c-pointer"
-            onClick={handleCreateCategoryClick}
           >
             <p>+ Create</p>
           </button>
 
           <Popover
             anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
+              vertical: "bottom",
+              horizontal: "left",
             }}
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
+              vertical: "top",
+              horizontal: "left",
             }}
-            id={idCreateCategory}
-            open={openCreateCategory}
-            anchorEl={anchorCreateCategoryEl}
-            onClose={handleCreateCategoryClose}
           >
             <div className="py-2 px-1">
-              <small
-                className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
-                onClick={handleCreateCategories}
-              >
-                
+              <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                 Create Category
               </small>
-             {allCategory.length ?
-               <small
-                className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
-                onClick={handleCreateSubCategories}
-              >
-                Create Sub-Category
-              </small>:''
-             } 
+              {/* {allCategory.length ? (
+                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                  Create Sub-Category
+                </small>
+              ) : (
+                ""
+              )} */}
             </div>
           </Popover>
 
           <Dialog
-            open={openCreateCategories}
             TransitionComponent={Transition}
             keepMounted
-            onClose={handleCreateCategoriesClose}
             aria-describedby="alert-dialog-slide-description"
             maxWidth="sm"
             fullWidth={true}
@@ -418,11 +216,7 @@ const Categories = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">
-
-                  {!updateId?'Create Category':'Update Category'}
-
-                  </h5>
+                  <h5 className="text-lightBlue fw-500">{"Update Category"}</h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -432,7 +226,6 @@ const Categories = () => {
                   src={cancel}
                   alt="cancel"
                   width={30}
-                  onClick={handleCreateCategoriesClose}
                   className="c-pointer"
                 />
               </div>
@@ -441,61 +234,23 @@ const Categories = () => {
             <DialogContent className="py-3 px-4">
               <p className="text-lightBlue mb-2">Category Name</p>
               <FormControl className="col-7 px-0">
-                <OutlinedInput
-                  value={categoryName}
-                  onChange={(e) => setCategoryName(e.target.value)}
-                  placeholder="Enter Category Name"
-                  onKeyPress={onKeyUpcategory}
-                  size="small"
-                />
+                <OutlinedInput placeholder="Enter Category Name" size="small" />
               </FormControl>
-              <div className="d-flex">
-                
-
-                   {multiplecategories.map((data,index)=>{
-                    
-                    return <Chip
-                    label={data}
-                    onDelete={()=>{
-                      
-                    }}
-                    onClick={()=>{
-                      handleDelete(index)
-                     }}
-                    size="small"
-                    className="mt-3 me-2"></Chip>
-                  })}
-               
-                
-              </div>
+              <div className="d-flex"></div>
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
-              <button
-                className="button-grey py-2 px-5"
-                onClick={handleCreateCategoriesClose}
-              >
+              <button className="button-grey py-2 px-5">
                 <p className="text-lightBlue">Cancel</p>
               </button>
-              <button
-                className="button-gradient py-2 px-5"
-                onClick={e=>{
-                  if(multiplecategories.length){
-                    createUpdateCategoryMultiple('Active',multiplecategories)
-                    return;
-                  }
-                  createUpdateCategory('Active',categoryName,updateId)
-                }}
-              >
+              <button className="button-gradient py-2 px-5">
                 <p>Save</p>
               </button>
             </DialogActions>
           </Dialog>
           <Dialog
-            open={openCreateSubCategories}
             TransitionComponent={Transition}
             keepMounted
-            onClose={handleCreateSubCategoriesClose}
             aria-describedby="alert-dialog-slide-description"
             maxWidth="sm"
             fullWidth={true}
@@ -504,9 +259,7 @@ const Categories = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
-                  {updateId?'Update Sub Category':'Create Sub Category'}
-
-
+                    {"Create Sub Category"}
                   </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
@@ -517,7 +270,6 @@ const Categories = () => {
                   src={cancel}
                   alt="cancel"
                   width={30}
-                  onClick={handleCreateSubCategoriesClose}
                   className="c-pointer"
                 />
               </div>
@@ -534,73 +286,23 @@ const Categories = () => {
                 <Select
                   labelId="demo-select-small"
                   id="demo-select-small"
-                  value={category}
-                  onChange={handleCategoryChange}
                   size="small"
-                  value={categoryName}
-                >
-                  {allCategory.map((data,index)=>{
-                    
-                    return <MenuItem key={index}
-                    onClick={(e) => setCategoryName(+e.currentTarget.dataset.value)}
-                    value={data.id} sx={{ fontSize: 13, color: '#5c6d8e' }}>
-                     {data.attributes.name}
-                   </MenuItem>
-                  })}
-                 
-                 
-                </Select>
+                ></Select>
               </FormControl>
               <p className="text-lightBlue mb-2 mt-3">Sub Category</p>
               <FormControl className="col-md-7 px-0">
                 <OutlinedInput
                   placeholder="Enter Sub Category Name"
                   size="small"
-                  value={subcategoryName}
-                  onChange={(e) => setsubCategoryName(e.target.value)}
                 />
               </FormControl>
-              {/* <div className="d-flex">
-                <Chip
-                  label="Rings"
-                  onDelete={handleDelete}
-                  size="small"
-                  className="mt-3 me-2"
-                />
-                <Chip
-                  label="Bangles"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-                <Chip
-                  label="Necklace"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-                <Chip
-                  label="Necklace Sets"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-              </div> */}
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
-              <button
-                className="button-grey py-2 px-5"
-                onClick={handleCreateSubCategoriesClose}
-              >
+              <button className="button-grey py-2 px-5">
                 <p className="text-lightBlue">Cancel</p>
               </button>
-              <button
-                className="button-gradient py-2 px-5"
-                onClick={e=>{
-                  addupdatesubcategory('Active',categoryName,subcategoryName,updateId)
-                }}
-              >
+              <button className="button-gradient py-2 px-5">
                 <p>Save</p>
               </button>
             </DialogActions>
@@ -610,19 +312,19 @@ const Categories = () => {
 
       <div className="row mt-4">
         <Paper
-          sx={{ width: '100%', mb: 2, mt: 0, p: 0 }}
+          sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
           className="border-grey-5 bg-black-15"
         >
           <Box
-            sx={{ width: '100%' }}
+            sx={{ width: "100%" }}
             className="d-flex justify-content-between tabs-header-box"
           >
             {/* variant="scrollable"
               scrollButtons
               allowScrollButtonsMobile */}
             <Tabs
-              value={value}
-              onChange={handleChange}
+              value={categoryType}
+              onChange={changeCategoryTypeHandler}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
@@ -630,28 +332,29 @@ const Categories = () => {
               <Tab label="Categories" className="tabs-head" />
               <Tab label="Sub Categories" className="tabs-head" />
               <Tab label="Draft" className="tabs-head" />
-
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch  />
+            <TableSearch />
           </div>
-          <TabPanel value={value} index={0}>
-            <CategoriesTable list={[...allCategory,...allSubCategory]} edit={edit} deleteData={deleteData}/>
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <CategoriesTable list={allCategory}  edit={edit} deleteData={deleteData}/>
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            <CategoriesTable list={allSubCategory}  edit={edit} deleteData={deleteData} />
-          </TabPanel>
-          <TabPanel value={value} index={3}>
-            <CategoriesTable list={[...Draft1,...Draft2]} deleteData={deleteData} />
-          </TabPanel>
+          {
+            <>
+              <TabPanel value={categoryType} index={0}>
+                <CategoriesTable error={error} list={categoryList} />
+              </TabPanel>
+              <TabPanel value={categoryType} index={1}>
+                <CategoriesTable error={error} list={categoryList} />
+              </TabPanel>
+              <TabPanel value={categoryType} index={2}>
+                <CategoriesTable error={error} list={categoryList} />
+              </TabPanel>
+              <TabPanel value={categoryType} index={3}>
+                <CategoriesTable error={error} list={categoryList} />
+              </TabPanel>
+            </>
+          }
         </Paper>
       </div>
-
-      <Messages messageLine={message} setMessage={setMessage}></Messages>
     </div>
   );
 };

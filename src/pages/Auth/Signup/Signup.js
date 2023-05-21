@@ -19,6 +19,8 @@ import {
   showError,
 } from "../../../features/snackbar/snackbarAction";
 import { useSignUpMutation } from "../../../features/auth/authApiSlice";
+import { loginHandler } from "../../../features/auth/authAction";
+import { setUserHandler } from "../../../features/user/userAction";
 
 import "./Signup.scss";
 
@@ -35,7 +37,7 @@ const signUpValidationSchema = Yup.object({
     // .minSymbols(1, "must include 1 special letter")
     // .minNumbers(1, "must include 1 number letter")
     .required("required"),
-  username: Yup.string().trim().min(3).required("required"),
+  userName: Yup.string().trim().min(3).required("required"),
 });
 
 const Signup = () => {
@@ -57,7 +59,7 @@ const Signup = () => {
     initialValues: {
       email: "",
       password: "",
-      username: "",
+      userName: "",
     },
     enableReinitialize: true,
     validationSchema: signUpValidationSchema,
@@ -73,8 +75,8 @@ const Signup = () => {
 
   useEffect(() => {
     if (signUpError) {
-      if (signUpError.data?.error?.message) {
-        dispatch(showError({ message: signUpError.data.error.message }));
+      if (signUpError.data?.message) {
+        dispatch(showError({ message: signUpError.data.message }));
       } else {
         dispatch(
           showError({ message: "Something went wrong!, please try again" })
@@ -83,15 +85,16 @@ const Signup = () => {
     }
 
     if (signUpIsSuccess) {
-      console.log(signUpData);
-      // const {
-      //   jwt: accessToken,
-      //   user: { email, id, provider, username },
-      // } = signUpData;
-      // dispatch(signUpHandler({ accessToken, refreshToken: "" }));
-      // dispatch(setUserHandler({ email, id, provider, username }));
-      // dispatch(showSuccess({ message: "Logged in successful" }));
-      // navigate("/dashboard", { replace: true });
+      const {
+        data: {
+          data: { userId, userName, email },
+          Authorization: accessToken,
+        },
+      } = signUpData;
+      dispatch(loginHandler({ accessToken, refreshToken: "" }));
+      dispatch(setUserHandler({ email, userId, userName }));
+      dispatch(showSuccess({ message: "Signup in successful" }));
+      navigate("/dashboard", { replace: true });
     }
   }, [signUpError, signUpIsSuccess, signUpData, dispatch, navigate]);
 
@@ -117,14 +120,14 @@ const Signup = () => {
                   placeholder="Enter Username"
                   size="small"
                   sx={{ paddingLeft: 0 }}
-                  name="username"
-                  value={formik.values.username}
+                  name="userName"
+                  value={formik.values.userName}
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                 />
-                {!!formik.touched.username && formik.errors.username && (
+                {!!formik.touched.userName && formik.errors.userName && (
                   <FormHelperText error>
-                    {formik.errors.username}
+                    {formik.errors.userName}
                   </FormHelperText>
                 )}
               </FormControl>

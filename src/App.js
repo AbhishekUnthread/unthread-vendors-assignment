@@ -43,7 +43,7 @@ const App = () => {
   return (
     <ThemeProvider theme={projectTheme}>
       <CssBaseline />
-      <RouterProvider router={router} />
+      <RouterProvider router={router()} />
       <Messages />
     </ThemeProvider>
   );

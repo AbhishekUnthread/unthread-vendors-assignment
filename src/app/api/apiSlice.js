@@ -3,10 +3,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { logoutHandler } from "../../features/auth/authAction";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${process.env.REACT_APP_BASE_URL}/api`,
+  // baseUrl: process.env.REACT_APP_BASE_URL,
+  baseUrl: "",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
-    const token = getState().auth.token;
+    const token = getState().auth.accessToken;
     token && headers.set("authorization", `Bearer ${token}`);
     return headers;
   },
@@ -24,7 +25,7 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
 
 const apiSlice = createApi({
   baseQuery: baseQueryWithReAuth,
-  tagTypes: [],
+  tagTypes: ["Categories", "SubCategories", "Products"],
   endpoints: (builder) => ({}),
 });
 

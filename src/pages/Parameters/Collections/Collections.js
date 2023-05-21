@@ -1,6 +1,8 @@
-import React from "react";
+import { useState, useReducer } from "react";
 import { Link } from "react-router-dom";
-// ! COMPONENT IMPORTS
+import { Box, Paper, Tab, Tabs, Tooltip } from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
 import CollectionsTable from "./CollectionsTable";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import TableSearch from "../../../components/TableSearch/TableSearch";
@@ -8,15 +10,53 @@ import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
-// ! IMAGES IMPORTS
+
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
-// ! MATERIAL IMPORTS
-import { Box, Paper, Tab, Tabs, Tooltip } from "@mui/material";
-// ! MATERIAL ICONS IMPORT
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
+import { useGetAllCollectionsQuery } from "../../../features/parameters/collections/collectionsApiSlice";
+
+const initialCollectionState = {
+  status: "",
+  start: 0,
+  limit: 10,
+  total: null,
+};
+
+const collectionsReducer = (state, action) => {
+  switch (action.type) {
+    case "STATUS": {
+      return {
+        ...state,
+        status: action.payload,
+      };
+    }
+    default: {
+      return initialCollectionState;
+    }
+  }
+};
 
 const Collections = () => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [collectionsStatus, setCollectionsStatus] = useState("");
+  const [collectionState, collectionDispatch] = useReducer(
+    collectionsReducer,
+    initialCollectionState
+  );
+
+  const {
+    data: collectionData,
+    isLoading: collectionIsLoading,
+    isSuccess: collectionIsSuccess,
+    error: collectionError,
+    isError: collectionIsError,
+  } = useGetAllCollectionsQuery({
+    "populate[products][fields][0]": "id",
+    "filters[status][$eq]": collectionState.status,
+    "pagination[start]": collectionState.start,
+    "pagination[limit]": collectionState.limit,
+  });
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -39,10 +79,7 @@ const Collections = () => {
           />
           <ExportDialog dialogName={"Collections"} />
           <ImportSecondDialog dialogName={"Collections"} />
-          <Link
-            to="/parameters/collections/create"
-            className="button-gradient py-2 px-4 ms-3"
-          >
+          <Link to="create" className="button-gradient py-2 px-4 ms-3">
             <p>+ Create Collection</p>
           </Link>
         </div>

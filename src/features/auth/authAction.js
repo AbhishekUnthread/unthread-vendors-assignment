@@ -17,13 +17,15 @@ const logoutHandler = () => {
 const checkLoginStatus = () => {
   return (dispatch) => {
     const authDetails = getAuthFromLocal();
+
     if (authDetails) {
       const accessTokenExpired = checkTimeIsExpired(
         authDetails.accessTokenExpirationTime
       );
 
       if (accessTokenExpired) {
-        dispatch(logoutHandler);
+        removeAuthFromLocal();
+        dispatch(authActions.logout());
         return;
       }
 
@@ -32,11 +34,14 @@ const checkLoginStatus = () => {
         authDetails.accessTokenExpirationTime
       );
       setTimeout(() => {
-        dispatch(logoutHandler);
+        removeAuthFromLocal();
+        dispatch(authActions.logout());
       }, autoLogoutTime);
       return;
     }
-    dispatch(logoutHandler);
+
+    removeAuthFromLocal();
+    dispatch(authActions.logout());
   };
 };
 
@@ -44,9 +49,9 @@ const loginHandler = (authDetails) => {
   return (dispatch) => {
     const { accessToken, refreshToken } = authDetails;
     const accessTokenExpirationTime =
-      Date.now() + process.env.REACT_APP_ACCESS_TOKEN_EXPIRATION_TIME;
+      Date.now() + +process.env.REACT_APP_ACCESS_TOKEN_EXPIRATION_TIME;
     const refreshTokenExpirationTime =
-      Date.now() + process.env.REACT_APP_REFRESH_TOKEN_EXPIRATION_TIME;
+      Date.now() + +process.env.REACT_APP_REFRESH_TOKEN_EXPIRATION_TIME;
 
     saveAuthToLocal({
       accessToken,
@@ -65,7 +70,8 @@ const loginHandler = (authDetails) => {
 
     const autoLogoutTime = calculateRemainingTime(accessTokenExpirationTime);
     setTimeout(() => {
-      dispatch(logoutHandler);
+      removeAuthFromLocal();
+      dispatch(authActions.logout());
     }, autoLogoutTime);
   };
 };
