@@ -77,7 +77,9 @@ const EnhancedTableHead = (props) => {
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            {headCell.id !== "actions" ? (
+                          <p className="text-lightBlue">{headCell.label}</p>
+
+            {/* {headCell.id !== "actions" ? (
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : "asc"}
@@ -94,7 +96,7 @@ const EnhancedTableHead = (props) => {
               </TableSortLabel>
             ) : (
               <p className="text-lightBlue">{headCell.label}</p>
-            )}
+            )} */}
           </TableCell>
         ))}
       </TableRow>

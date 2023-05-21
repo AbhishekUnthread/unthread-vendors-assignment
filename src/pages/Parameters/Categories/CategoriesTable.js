@@ -24,29 +24,13 @@ import TableEditStatusButton from "../../../components/TableEditStatusButton/Tab
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 // ? TABLE STARTS HERE
-function createData(cId, categoriesName, type, noOfProducts, status) {
-  return { cId, categoriesName, type, noOfProducts, status };
-}
-
-const rows = [
-  createData(1, "Gold Produts", "Category", "1,423", "Active"),
-  createData(2, "Rings", "Sub Category", "215", "Active"),
-  createData(3, "Earings", "Sub Category", "6,542", "Active"),
-  createData(4, "Pendants", "SubCategory", "4,216", "Active"),
-  createData(5, "Necklace", "Sub Category", "225", "Active"),
-  createData(6, "Diamond Products", "Category", "845", "Active"),
-  createData(7, "Gold Coin", "Category", "985", "Active"),
-  createData(8, "Nose Pins", "Sub Category", "10", "Active"),
-  createData(9, "Bangles", "Sub Category", "251", "Active"),
-  createData(10, "Mangalsutra", "Sub Category", "451", "Active"),
-];
 
 const headCells = [
   {
     id: "categoriesName",
     numeric: false,
     disablePadding: true,
-    label: "Categories Name",
+    label: "Name",
   },
   {
     id: "type",
@@ -57,8 +41,8 @@ const headCells = [
   {
     id: "noOfProducts",
     numeric: false,
-    disablePadding: false,
-    label: "No. Of Products",
+    disablePadding: true,
+    label: "No Of Products",
   },
   {
     id: "status",
@@ -75,7 +59,7 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const CategoriesTable = () => {
+const CategoriesTable = ({ list, edit, deleteData, error }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -83,7 +67,7 @@ const CategoriesTable = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -97,7 +81,7 @@ const CategoriesTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.cId);
+      const newSelected = list.map((n) => n.cId);
       setSelected(newSelected);
       return;
     }
@@ -146,136 +130,170 @@ const CategoriesTable = () => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
-          <TableMassActionButton />
+
+          {/* <TableEditStatusButton />
+          <TableMassActionButton /> */}
         </div>
       )}
-      <TableContainer>
-        <Table
-          sx={{ minWidth: 750 }}
-          aria-labelledby="tableTitle"
-          size="medium"
-        >
-          <EnhancedTableHead
-            numSelected={selected.length}
-            order={order}
-            orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
-            rowCount={rows.length}
-            headCells={headCells}
-          />
-          <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.cId);
-                const labelId = `enhanced-table-checkbox-${index}`;
-
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.cId}
-                    selected={isItemSelected}
-                    className="table-rows"
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                        onClick={(event) => handleClick(event, row.cId)}
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      <Link
-                        className="text-decoration-none"
-                        to="/parameters/categories/edit"
-                      >
-                        <p className="text-lightBlue rounded-circle fw-600">
-                          {row.categoriesName}
-                        </p>
-                      </Link>
-                    </TableCell>
-                    <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.type}</p>
-                    </TableCell>
-                    <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.noOfProducts}</p>
-                    </TableCell>
-                    <TableCell style={{ width: 120, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.status}
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell style={{ width: 120, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <EditOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                        <Tooltip title="Archive" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <InventoryIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
+      {!error ? (
+        list.length ? (
+          <React.Fragment>
+            <TableContainer>
+              <Table
+                sx={{ minWidth: 750 }}
+                aria-labelledby="tableTitle"
+                size="medium"
               >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        className="table-pagination"
-      />
+                <EnhancedTableHead
+                  numSelected={selected.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={handleSelectAllClick}
+                  onRequestSort={handleRequestSort}
+                  rowCount={list.length}
+                  headCells={headCells}
+                />
+                <TableBody>
+                  {stableSort(list, getComparator(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => {
+                      const isItemSelected = isSelected(row.cId);
+                      const labelId = `enhanced-table-checkbox-${index}`;
+
+                      return (
+                        <TableRow
+                          hover
+                          role="checkbox"
+                          aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          key={index}
+                          selected={isItemSelected}
+                          className="table-rows"
+                        >
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              checked={isItemSelected}
+                              inputProps={{
+                                "aria-labelledby": labelId,
+                              }}
+                              onClick={(event) => handleClick(event, row.cId)}
+                              size="small"
+                              style={{
+                                color: "#5C6D8E",
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell
+                            component="th"
+                            id={labelId}
+                            scope="row"
+                            padding="none"
+                          >
+                            <Link
+                              className="text-decoration-none"
+                              to="/parameters/categories/edit"
+                            >
+                              <p className="text-lightBlue rounded-circle fw-600">
+                                {row.attributes.name}
+                              </p>
+                            </Link>
+                          </TableCell>
+                          <TableCell style={{ width: 180 }}>
+                            <p className="text-lightBlue">
+                              {row.attributes.type}
+                            </p>
+                          </TableCell>
+
+                          <TableCell style={{ width: 180 }}>
+                            <p className="text-lightBlue">{index}</p>
+                          </TableCell>
+
+                          <TableCell style={{ width: 120, padding: 0 }}>
+                            <div className="d-flex align-items-center">
+                              <div
+                                className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.attributes.status}`}
+                              >
+                                <small className="text-black fw-400">
+                                  {row.attributes.status}
+                                </small>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell style={{ width: 120, padding: 0 }}>
+                            <div className="d-flex align-items-center">
+                              {edit && (
+                                <Tooltip title="Edit" placement="top">
+                                  <div
+                                    onClick={(e) => {
+                                      edit(row);
+                                    }}
+                                    className="table-edit-icon rounded-4 p-2"
+                                  >
+                                    <EditOutlinedIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </div>
+                                </Tooltip>
+                              )}
+                              {deleteData && (
+                                <Tooltip
+                                  title={edit ? "Archive" : "Un-Archive"}
+                                  placement="top"
+                                >
+                                  <div
+                                    onClick={(e) => {
+                                      deleteData(row);
+                                    }}
+                                    className="table-edit-icon rounded-4 p-2"
+                                  >
+                                    <InventoryIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </div>
+                                </Tooltip>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  {emptyRows > 0 && (
+                    <TableRow
+                      style={{
+                        height: 53 * emptyRows,
+                      }}
+                    >
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[10, 20, 30]}
+              component="div"
+              count={list.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              className="table-pagination"
+            />
+          </React.Fragment>
+        ) : (
+          "No data found"
+        )
+      ) : (
+        <></>
+      )}
     </React.Fragment>
   );
 };

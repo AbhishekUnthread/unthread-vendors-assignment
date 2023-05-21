@@ -28,6 +28,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import { Link, useNavigate } from "react-router-dom";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -73,7 +74,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 // ? SEARCH INPUT ENDS HERE
 
 const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
-  // const [lightTheme, setLightTheme] = React.useState(false);
+  let navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -83,10 +84,6 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  // const handleTheme = () => {
-  //   setLightTheme(!lightTheme);
-  // };
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -99,6 +96,10 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const logout = () => {
+    sessionStorage.removeItem("userData");
   };
 
   const menuId = "primary-search-account-menu";
@@ -139,7 +140,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
         />
         <small className="text-lightBlue ms-2">Settings</small>
       </MenuItem>
-      <MenuItem onClick={handleMenuClose} className="mt-1  px-2">
+      <MenuItem onClick={logout} className="mt-1  px-2">
         <LogoutIcon size="small" sx={{ color: "#FC756E", fontSize: 18 }} />
         <small className="text-red-5 ms-2">Log out</small>
       </MenuItem>
@@ -244,7 +245,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               className="app-navbar__profile ms-4"
             >
               <div className="d-flex flex-column justify-content-end align-items-end me-2">
-                <p className="text-lightBlue">Saniya Shaikh</p>
+                {/* {loginData && <p className="text-lightBlue">{loginData?.user.username}</p>}   */}
                 <small className="text-blue-gradient">Super Admin</small>
               </div>
               <img src={user} alt="user" width={40} />

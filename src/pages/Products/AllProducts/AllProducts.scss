@@ -23,6 +23,13 @@
     background: $green1;
     font-weight: 600;
   }
+  &-Active {
+    background: $green1;
+    font-weight: 600;
+  }&-Draft {
+    background: red;
+    font-weight: 600;
+  }
   &-rows {
     p {
       font-size: $font2 !important;

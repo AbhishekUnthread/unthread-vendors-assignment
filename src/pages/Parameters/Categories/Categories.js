@@ -1,17 +1,4 @@
-import React from "react";
-import "../../Products/AllProducts/AllProducts.scss";
-// ! COMPONENT IMPORTS
-import CategoriesTable from "./CategoriesTable";
-import TableSearch from "../../../components/TableSearch/TableSearch";
-import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
-import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import ExportDialog from "../../../components/ExportDialog/ExportDialog";
-import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
-import TabPanel from "../../../components/TabPanel/TabPanel";
-// ! IMAGES IMPORTS
-import cancel from "../../../assets/icons/cancel.svg";
-import parameters from "../../../assets/icons/sidenav/parameters.svg";
-// ! MATERIAL IMPORTS
+import { forwardRef, useState, useEffect } from "react";
 import {
   Box,
   Dialog,
@@ -20,6 +7,7 @@ import {
   DialogTitle,
   FormControl,
   OutlinedInput,
+  FormHelperText,
   Paper,
   Popover,
   Slide,
@@ -29,77 +17,151 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { useDispatch } from "react-redux";
+import * as Yup from "yup";
+import { useFormik } from "formik";
 
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
+import CategoriesTable from "./CategoriesTable";
+import TableSearch from "../../../components/TableSearch/TableSearch";
+import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
+import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
+import ExportDialog from "../../../components/ExportDialog/ExportDialog";
+import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
+import TabPanel from "../../../components/TabPanel/TabPanel";
+
+import cancel from "../../../assets/icons/cancel.svg";
+import parameters from "../../../assets/icons/sidenav/parameters.svg";
+
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import {
+  useGetAllCategoriesQuery,
+  useGetAllSubCategoriesQuery,
+} from "../../../features/parameters/categories/categoriesApiSlice";
+
+import "../../Products/AllProducts/AllProducts.scss";
+
+const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-// ? DIALOG TRANSITION ENDS HERE
 
 const Categories = () => {
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const dispatch = useDispatch();
+  const [categoryType, setCategoryType] = useState(0);
+  const [categoriesStatus, setCategoriesStatus] = useState("Active");
+  const [categoryList, setCategoryList] = useState([]);
+  const [error, setError] = useState(false);
+  const [pagination, setPagination] = useState({
+    start: 0,
+    limit: 10,
+    total: null,
+  });
+
+  const {
+    data: categoriesData,
+    isLoading: categoriesIsLoading,
+    isSuccess: categoriesIsSuccess,
+    error: categoriesError,
+  } = useGetAllCategoriesQuery(
+    {
+      "populate[products][fields][0]": "id",
+      "filters[status][$eq]": categoriesStatus,
+      "pagination[start]": pagination.start,
+      "pagination[limit]": pagination.limit,
+    },
+    {
+      skip: categoryType === 2,
+    }
+  );
+  const {
+    data: subCategoriesData,
+    isLoading: subCategoriesIsLoading,
+    isSuccess: subCategoriesIsSuccess,
+    error: subCategoriesError,
+  } = useGetAllSubCategoriesQuery(
+    {
+      "populate[products][fields][0]": "id",
+      "filters[status][$eq]": categoriesStatus,
+      "pagination[start]": pagination.start,
+      "pagination[limit]": pagination.limit,
+    },
+    {
+      skip: categoryType === 1,
+    }
+  );
+
+  const changeCategoryTypeHandler = (event, tabIndex) => {
+    setCategoryType(tabIndex);
+    setPagination({
+      start: 0,
+      limit: 10,
+      total: null,
+    });
+    if (tabIndex === 3) {
+      setCategoriesStatus("Draft");
+    } else {
+      setCategoriesStatus("Active");
+    }
   };
 
-  const handleDelete = () => {
-    console.info("You clicked the delete icon.");
-  };
-
-  // ? POPOVERS STARTS HERE
-
-  // * CREATE CATEGORY POPOVERS STARTS
-  const [anchorCreateCategoryEl, setAnchorCreateCategoryEl] =
-    React.useState(null);
-
-  const handleCreateCategoryClick = (event) => {
-    setAnchorCreateCategoryEl(event.currentTarget);
-  };
-
-  const handleCreateCategoryClose = () => {
-    setAnchorCreateCategoryEl(null);
-  };
-
-  const openCreateCategory = Boolean(anchorCreateCategoryEl);
-  const idCreateCategory = openCreateCategory ? "simple-popover" : undefined;
-  // * CREATE CATEGORY POPOVERS ENDS
-
-  // ? POPOVERS ENDS HERE
-
-  // ? CATEGORIES DIALOG STARTS HERE
-  const [openCreateCategories, setOpenCreateCategories] = React.useState(false);
-
-  const handleCreateCategories = () => {
-    setAnchorCreateCategoryEl(null);
-    setOpenCreateCategories(true);
-  };
-
-  const handleCreateCategoriesClose = () => {
-    setOpenCreateCategories(false);
-  };
-  // ? CATEGORIES DIALOG ENDS HERE
-
-  // ? SUB CATEGORIES DIALOG STARTS HERE
-  const [openCreateSubCategories, setOpenCreateSubCategories] =
-    React.useState(false);
-
-  const handleCreateSubCategories = () => {
-    setAnchorCreateCategoryEl(null);
-    setOpenCreateSubCategories(true);
-  };
-
-  const handleCreateSubCategoriesClose = () => {
-    setOpenCreateSubCategories(false);
-  };
-  // ? SUB CATEGORIES DIALOG ENDS HERE
-
-  // ? CATEGORY SELECT STARTS HERE
-  const [category, setCategory] = React.useState("");
-
-  const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
-  };
-  // ? CATEGORY SELECT ENDS HERE
+  useEffect(() => {
+    if (categoriesError) {
+      setError(true);
+      if (categoriesError.data?.error?.message) {
+        dispatch(showError({ message: categoriesError.data.error.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+    if (subCategoriesError) {
+      setError(true);
+      if (subCategoriesError.data?.error?.message) {
+        dispatch(showError({ message: subCategoriesError.data.error.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+    if (categoryType === 0 || categoryType === 3) {
+      if (categoriesIsSuccess && subCategoriesIsSuccess) {
+        setError(false);
+        setCategoryList([...categoriesData.data, ...subCategoriesData.data]);
+      } else {
+        setCategoryList([]);
+      }
+    }
+    if (categoryType === 1) {
+      if (categoriesIsSuccess) {
+        setError(false);
+        setCategoryList(categoriesData.data);
+      } else {
+        setCategoryList([]);
+      }
+    }
+    if (categoryType === 2) {
+      if (subCategoriesIsSuccess) {
+        setError(false);
+        setCategoryList(subCategoriesData.data);
+      } else {
+        setCategoryList([]);
+      }
+    }
+  }, [
+    categoriesData,
+    subCategoriesData,
+    categoriesIsSuccess,
+    subCategoriesIsSuccess,
+    categoriesError,
+    subCategoriesError,
+    categoryType,
+    dispatch,
+  ]);
 
   return (
     <div className="container-fluid page">
@@ -116,7 +178,6 @@ const Categories = () => {
           <button
             to="/parameters/createFieldSets"
             className="button-gradient py-2 px-4 c-pointer"
-            onClick={handleCreateCategoryClick}
           >
             <p>+ Create</p>
           </button>
@@ -130,32 +191,24 @@ const Categories = () => {
               vertical: "top",
               horizontal: "left",
             }}
-            id={idCreateCategory}
-            open={openCreateCategory}
-            anchorEl={anchorCreateCategoryEl}
-            onClose={handleCreateCategoryClose}
           >
             <div className="py-2 px-1">
-              <small
-                className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
-                onClick={handleCreateCategories}
-              >
+              <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                 Create Category
               </small>
-              <small
-                className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
-                onClick={handleCreateSubCategories}
-              >
-                Create Sub-Category
-              </small>
+              {/* {allCategory.length ? (
+                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                  Create Sub-Category
+                </small>
+              ) : (
+                ""
+              )} */}
             </div>
           </Popover>
 
           <Dialog
-            open={openCreateCategories}
             TransitionComponent={Transition}
             keepMounted
-            onClose={handleCreateCategoriesClose}
             aria-describedby="alert-dialog-slide-description"
             maxWidth="sm"
             fullWidth={true}
@@ -163,7 +216,7 @@ const Categories = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">Create Categories</h5>
+                  <h5 className="text-lightBlue fw-500">{"Update Category"}</h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -173,7 +226,6 @@ const Categories = () => {
                   src={cancel}
                   alt="cancel"
                   width={30}
-                  onClick={handleCreateCategoriesClose}
                   className="c-pointer"
                 />
               </div>
@@ -184,42 +236,21 @@ const Categories = () => {
               <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Category Name" size="small" />
               </FormControl>
-              <div className="d-flex">
-                <Chip
-                  label="Silver Products"
-                  onDelete={handleDelete}
-                  size="small"
-                  className="mt-3 me-2"
-                />
-                <Chip
-                  label="Diamond Products"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-              </div>
+              <div className="d-flex"></div>
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
-              <button
-                className="button-grey py-2 px-5"
-                onClick={handleCreateCategoriesClose}
-              >
+              <button className="button-grey py-2 px-5">
                 <p className="text-lightBlue">Cancel</p>
               </button>
-              <button
-                className="button-gradient py-2 px-5"
-                onClick={handleCreateCategoriesClose}
-              >
+              <button className="button-gradient py-2 px-5">
                 <p>Save</p>
               </button>
             </DialogActions>
           </Dialog>
           <Dialog
-            open={openCreateSubCategories}
             TransitionComponent={Transition}
             keepMounted
-            onClose={handleCreateSubCategoriesClose}
             aria-describedby="alert-dialog-slide-description"
             maxWidth="sm"
             fullWidth={true}
@@ -228,7 +259,7 @@ const Categories = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
-                    Create Sub Categories
+                    {"Create Sub Category"}
                   </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
@@ -239,7 +270,6 @@ const Categories = () => {
                   src={cancel}
                   alt="cancel"
                   width={30}
-                  onClick={handleCreateSubCategoriesClose}
                   className="c-pointer"
                 />
               </div>
@@ -256,23 +286,8 @@ const Categories = () => {
                 <Select
                   labelId="demo-select-small"
                   id="demo-select-small"
-                  value={category}
-                  onChange={handleCategoryChange}
                   size="small"
-                >
-                  <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                    None
-                  </MenuItem>
-                  <MenuItem value={10} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                    Gold Products
-                  </MenuItem>
-                  <MenuItem value={20} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                    Silver Products
-                  </MenuItem>
-                  <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                    Diamond Products
-                  </MenuItem>
-                </Select>
+                ></Select>
               </FormControl>
               <p className="text-lightBlue mb-2 mt-3">Sub Category</p>
               <FormControl className="col-md-7 px-0">
@@ -281,45 +296,13 @@ const Categories = () => {
                   size="small"
                 />
               </FormControl>
-              <div className="d-flex">
-                <Chip
-                  label="Rings"
-                  onDelete={handleDelete}
-                  size="small"
-                  className="mt-3 me-2"
-                />
-                <Chip
-                  label="Bangles"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-                <Chip
-                  label="Necklace"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-                <Chip
-                  label="Necklace Sets"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-              </div>
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
-              <button
-                className="button-grey py-2 px-5"
-                onClick={handleCreateSubCategoriesClose}
-              >
+              <button className="button-grey py-2 px-5">
                 <p className="text-lightBlue">Cancel</p>
               </button>
-              <button
-                className="button-gradient py-2 px-5"
-                onClick={handleCreateSubCategoriesClose}
-              >
+              <button className="button-gradient py-2 px-5">
                 <p>Save</p>
               </button>
             </DialogActions>
@@ -340,28 +323,36 @@ const Categories = () => {
               scrollButtons
               allowScrollButtonsMobile */}
             <Tabs
-              value={value}
-              onChange={handleChange}
+              value={categoryType}
+              onChange={changeCategoryTypeHandler}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
               <Tab label="Categories" className="tabs-head" />
               <Tab label="Sub Categories" className="tabs-head" />
+              <Tab label="Draft" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
           </div>
-          <TabPanel value={value} index={0}>
-            <CategoriesTable />
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <CategoriesTable />
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            <CategoriesTable />
-          </TabPanel>
+          {
+            <>
+              <TabPanel value={categoryType} index={0}>
+                <CategoriesTable error={error} list={categoryList} />
+              </TabPanel>
+              <TabPanel value={categoryType} index={1}>
+                <CategoriesTable error={error} list={categoryList} />
+              </TabPanel>
+              <TabPanel value={categoryType} index={2}>
+                <CategoriesTable error={error} list={categoryList} />
+              </TabPanel>
+              <TabPanel value={categoryType} index={3}>
+                <CategoriesTable error={error} list={categoryList} />
+              </TabPanel>
+            </>
+          }
         </Paper>
       </div>
     </div>

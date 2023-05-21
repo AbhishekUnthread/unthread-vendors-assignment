@@ -26,7 +26,13 @@ import {
   Tabs,
   Select,
   MenuItem,
+  Chip,
 } from "@mui/material";
+import {
+  callGetApi,
+  createVendor,
+  updateVendor,
+} from "../services/parameter.service";
 // ! MATERIAL ICONS IMPORTS
 
 // ? DIALOG TRANSITION STARTS HERE
@@ -61,6 +67,141 @@ const Vendors = () => {
   };
   // ? VENDOR CATEGORY SELECT ENDS HERE
 
+  //aman
+  let [message, setMessage] = React.useState("");
+  const [allvendors, setallvendors] = React.useState([]);
+  const [allvendorsArchived, setallallvendorsArchived] = React.useState([]);
+
+  const [vendorsName, setvendorsName] = React.useState("");
+  const [vendorId, setvendorId] = React.useState("");
+
+  let [multipledata, setmultipledata] = React.useState([]);
+
+  React.useEffect(() => {
+    getvendor();
+  }, []);
+
+  let getvendor = () => {
+    callGetApi("/api/product-vendors", "GET")
+      .then((res) => {
+        setallvendors(
+          res.data.filter((data) => data.attributes.status === "Active")
+        );
+        setallallvendorsArchived(
+          res.data.filter((data) => data.attributes.status !== "Active")
+        );
+      })
+      .catch((err) => {
+        setMessage(err);
+      });
+  };
+
+  let edit = (data) => {
+    setvendorId(data.id);
+    setvendorsName(data.attributes.name);
+    handleAddVendors();
+  };
+
+  let deleteData = (data) => {
+    setvendorId(data.id);
+    setvendorsName(data.attributes.name);
+    if (data.attributes.status == "Active") {
+      createupdatevendor("Draft", data.id);
+    } else {
+      createupdatevendor("Active", data.id);
+    }
+  };
+
+  let createupdatevendor = (status, id) => {
+    if (!vendorsName) {
+      setMessage("Please enter vendorsName field");
+      return;
+    }
+
+    let request = {
+      data: {
+        name: vendorsName,
+        status,
+      },
+    };
+
+    if (!id) {
+      createVendor(request)
+        .then((res) => {
+          responseHandled(res);
+        })
+        .catch((err) => {
+          setMessage(err);
+        });
+    } else {
+      updateVendor(request, id)
+        .then((res) => {
+          responseHandled(res);
+        })
+        .catch((err) => {
+          setMessage(err);
+        });
+    }
+  };
+
+  let responseHandled = (res) => {
+    if (res?.error?.message) {
+      setMessage(res?.error?.message);
+      return;
+    }
+    resetdata();
+    getvendor();
+    handleAddVendorsClose();
+  };
+
+  let resetdata = () => {
+    setvendorsName("");
+    setvendorId("");
+    setmultipledata([]);
+  };
+
+  let onKeyUp = (event) => {
+    if (event.charCode === 13 && vendorsName) {
+      let multiple = multipledata;
+
+      let duplicate = multiple.find(
+        (data) => data.toLowerCase() == vendorsName.toLowerCase()
+      );
+      if (duplicate) {
+        setMessage("Please enter unique name");
+        return;
+      }
+      multiple.push(vendorsName);
+      setmultipledata(multiple);
+      setvendorsName("");
+    }
+  };
+
+  let createUpdateMultiple = (status, array) => {
+    for (let i = 0; i < array.length; i++) {
+      let request = {
+        data: {
+          name: array[i],
+          status,
+        },
+      };
+
+      createVendor(request)
+        .then((res) => {
+          if (i == array.length - 1) responseHandled(res);
+        })
+        .catch((err) => {
+          setMessage(err);
+        });
+    }
+  };
+
+  const handleDelete = (index) => {
+    let multiple = multipledata;
+    multiple.splice(index, 1);
+    setmultipledata(multiple);
+  };
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -92,7 +233,9 @@ const Vendors = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">Create Vendors</h5>
+                  <h5 className="text-lightBlue fw-500">
+                    {!vendorId ? "Create Vendors" : "Update Vendors"}
+                  </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -111,10 +254,32 @@ const Vendors = () => {
             <DialogContent className="py-3 px-4">
               <p className="text-lightBlue mb-2">Vendor Name</p>
               <FormControl className="col-7 px-0">
-                <OutlinedInput placeholder="Enter Vendor Name" size="small" />
+                <OutlinedInput
+                  value={vendorsName}
+                  onKeyPress={onKeyUp}
+                  onChange={(e) => setvendorsName(e.target.value)}
+                  placeholder="Enter Vendor Name"
+                  size="small"
+                />
               </FormControl>
 
-              <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
+              <div className="d-flex">
+                {multipledata.map((data, index) => {
+                  return (
+                    <Chip
+                      label={data}
+                      onDelete={() => {}}
+                      onClick={() => {
+                        handleDelete(index);
+                      }}
+                      size="small"
+                      className="mt-3 me-2"
+                    ></Chip>
+                  );
+                })}
+              </div>
+
+              {/* <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
               <FormControl
                 //   sx={{ m: 0, minWidth: 120, width: "100%" }}
                 size="small"
@@ -143,7 +308,7 @@ const Vendors = () => {
                     JWL 3
                   </MenuItem>
                 </Select>
-              </FormControl>
+              </FormControl> */}
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -155,7 +320,13 @@ const Vendors = () => {
               </button>
               <button
                 className="button-gradient py-2 px-5"
-                onClick={handleAddVendorsClose}
+                onClick={(e) => {
+                  if (multipledata.length) {
+                    createUpdateMultiple("Active", multipledata);
+                    return;
+                  }
+                  createupdatevendor("Active", vendorId);
+                }}
               >
                 <p>Save</p>
               </button>
@@ -183,17 +354,21 @@ const Vendors = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
-              <Tab label="FLAGSHIP VENDOR" className="tabs-head" />
+              <Tab label="Draft" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
           </div>
           <TabPanel value={value} index={0}>
-            <VendorsTable />
+            <VendorsTable
+              list={allvendors}
+              editData={edit}
+              deleteData={deleteData}
+            />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <VendorsTable />
+            <VendorsTable list={allvendorsArchived} deleteData={deleteData} />
           </TabPanel>
         </Paper>
       </div>

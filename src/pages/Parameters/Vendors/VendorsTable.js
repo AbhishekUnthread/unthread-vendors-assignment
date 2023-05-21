@@ -28,12 +28,7 @@ function createData(vId, vendorsName, noOfProducts, status) {
   return { vId, vendorsName, noOfProducts, status };
 }
 
-const rows = [
-  createData(1, "JWL 1", "521", "Active"),
-  createData(2, "Other Brands", "215", "Active"),
-  createData(3, "JWL 3", "6,542", "Active"),
-  createData(4, "JWL 4", "4,214", "Active"),
-];
+
 
 const headCells = [
   {
@@ -45,9 +40,10 @@ const headCells = [
   {
     id: "noOfProducts",
     numeric: false,
-    disablePadding: false,
-    label: "No. Of Products",
+    disablePadding: true,
+    label: "No Of Products",
   },
+ 
   {
     id: "status",
     numeric: false,
@@ -64,7 +60,7 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const VendorsTable = () => {
+const VendorsTable = ({list,editData,deleteData}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -72,7 +68,7 @@ const VendorsTable = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -86,7 +82,7 @@ const VendorsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.vId);
+      const newSelected = list.map((n) => n.vId);
       setSelected(newSelected);
       return;
     }
@@ -151,11 +147,11 @@ const VendorsTable = () => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={rows.length}
+            rowCount={list.length}
             headCells={headCells}
           />
           <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
+            {stableSort(list, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row.vId);
@@ -167,7 +163,7 @@ const VendorsTable = () => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.vId}
+                    key={index}
                     selected={isItemSelected}
                     className="table-rows"
                   >
@@ -195,28 +191,34 @@ const VendorsTable = () => {
                         to="/parameters/vendors/edit"
                       >
                         <p className="text-lightBlue rounded-circle fw-600">
-                          {row.vendorsName}
-                        </p>
+                        {row.attributes.name}                        </p>
                       </Link>
                     </TableCell>
-                    <TableCell style={{ width: 280 }}>
-                      <p className="text-lightBlue">{row.noOfProducts}</p>
-                    </TableCell>
+
+                    <TableCell style={{ width: 180 }}>
+                           <p className="text-lightBlue">{index}</p>
+                         </TableCell>
+                    
+                   
 
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
+                        <div
+                         className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.attributes.status}`}>
                           <small className="text-black fw-400">
-                            {row.status}
+                          {row.attributes.status}
                           </small>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell style={{ width: 120, padding: 0 }}>
+                  <TableCell style={{ width: 120, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
+                      {editData &&   <Tooltip title="Edit" placement="top">
                           <Link
-                            to="/parameters/vendors/edit"
+                          onClick={(e)=>{
+                            editData(row)
+                          }}
+                           
                             className="table-edit-icon rounded-4 p-2"
                           >
                             <EditOutlinedIcon
@@ -227,8 +229,11 @@ const VendorsTable = () => {
                               }}
                             />
                           </Link>
-                        </Tooltip>
-                        <Tooltip title="Archive" placement="top">
+                        </Tooltip>}  
+ 
+                    {deleteData &&  <Tooltip  onClick={(e)=>{
+                          deleteData(row)
+                        }}  title={editData?'Archive':'Un-Archive'} placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <InventoryIcon
                               sx={{
@@ -238,7 +243,8 @@ const VendorsTable = () => {
                               }}
                             />
                           </div>
-                        </Tooltip>
+                        </Tooltip>}  
+                     
                       </div>
                     </TableCell>
                   </TableRow>
@@ -259,7 +265,7 @@ const VendorsTable = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={list.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
