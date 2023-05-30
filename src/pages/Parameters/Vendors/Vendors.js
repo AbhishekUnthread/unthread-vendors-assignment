@@ -27,12 +27,16 @@ import {
   Select,
   MenuItem,
   Chip,
+  FormHelperText
 } from "@mui/material";
 import {
   callGetApi,
   createVendor,
   updateVendor,
 } from "../services/parameter.service";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 // ! MATERIAL ICONS IMPORTS
 
 // ? DIALOG TRANSITION STARTS HERE
@@ -40,6 +44,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 // ? DIALOG TRANSITION ENDS HERE
+
+const vendorScehma = Yup.object({
+  name: Yup.string().required("required"),
+  description: Yup.string().required("required"),
+  status: Yup.string(),
+});
 
 const Vendors = () => {
   const [value, setValue] = React.useState(0);
@@ -59,148 +69,25 @@ const Vendors = () => {
   };
   // ? VENDORS DIALOG ENDS HERE
 
-  // ? VENDOR CATEGORY SELECT STARTS HERE
-  const [vendorCategory, setVendorCategory] = React.useState("");
-
-  const handleVendorCategoryChange = (event) => {
-    setVendorCategory(event.target.value);
-  };
-  // ? VENDOR CATEGORY SELECT ENDS HERE
+  
 
   //aman
-  let [message, setMessage] = React.useState("");
-  const [allvendors, setallvendors] = React.useState([]);
-  const [allvendorsArchived, setallallvendorsArchived] = React.useState([]);
 
-  const [vendorsName, setvendorsName] = React.useState("");
-  const [vendorId, setvendorId] = React.useState("");
 
-  let [multipledata, setmultipledata] = React.useState([]);
 
-  React.useEffect(() => {
-    getvendor();
-  }, []);
-
-  let getvendor = () => {
-    callGetApi("/api/product-vendors", "GET")
-      .then((res) => {
-        setallvendors(
-          res.data.filter((data) => data.attributes.status === "Active")
-        );
-        setallallvendorsArchived(
-          res.data.filter((data) => data.attributes.status !== "Active")
-        );
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-  };
-
-  let edit = (data) => {
-    setvendorId(data.id);
-    setvendorsName(data.attributes.name);
-    handleAddVendors();
-  };
-
-  let deleteData = (data) => {
-    setvendorId(data.id);
-    setvendorsName(data.attributes.name);
-    if (data.attributes.status == "Active") {
-      createupdatevendor("Draft", data.id);
-    } else {
-      createupdatevendor("Active", data.id);
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      description: "",
+      status:'active'
+    },
+    enableReinitialize: true,
+    validationSchema: vendorScehma,
+    onSubmit:(values)=>{
+      console.log(values)
     }
-  };
+  })
 
-  let createupdatevendor = (status, id) => {
-    if (!vendorsName) {
-      setMessage("Please enter vendorsName field");
-      return;
-    }
-
-    let request = {
-      data: {
-        name: vendorsName,
-        status,
-      },
-    };
-
-    if (!id) {
-      createVendor(request)
-        .then((res) => {
-          responseHandled(res);
-        })
-        .catch((err) => {
-          setMessage(err);
-        });
-    } else {
-      updateVendor(request, id)
-        .then((res) => {
-          responseHandled(res);
-        })
-        .catch((err) => {
-          setMessage(err);
-        });
-    }
-  };
-
-  let responseHandled = (res) => {
-    if (res?.error?.message) {
-      setMessage(res?.error?.message);
-      return;
-    }
-    resetdata();
-    getvendor();
-    handleAddVendorsClose();
-  };
-
-  let resetdata = () => {
-    setvendorsName("");
-    setvendorId("");
-    setmultipledata([]);
-  };
-
-  let onKeyUp = (event) => {
-    if (event.charCode === 13 && vendorsName) {
-      let multiple = multipledata;
-
-      let duplicate = multiple.find(
-        (data) => data.toLowerCase() == vendorsName.toLowerCase()
-      );
-      if (duplicate) {
-        setMessage("Please enter unique name");
-        return;
-      }
-      multiple.push(vendorsName);
-      setmultipledata(multiple);
-      setvendorsName("");
-    }
-  };
-
-  let createUpdateMultiple = (status, array) => {
-    for (let i = 0; i < array.length; i++) {
-      let request = {
-        data: {
-          name: array[i],
-          status,
-        },
-      };
-
-      createVendor(request)
-        .then((res) => {
-          if (i == array.length - 1) responseHandled(res);
-        })
-        .catch((err) => {
-          setMessage(err);
-        });
-    }
-  };
-
-  const handleDelete = (index) => {
-    let multiple = multipledata;
-    multiple.splice(index, 1);
-    setmultipledata(multiple);
-  };
 
   return (
     <div className="container-fluid page">
@@ -234,7 +121,7 @@ const Vendors = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
-                    {!vendorId ? "Create Vendors" : "Update Vendors"}
+                    Vendors
                   </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
@@ -251,33 +138,54 @@ const Vendors = () => {
               </div>
             </DialogTitle>
             <hr className="hr-grey-6 my-0" />
+
+            <form noValidate onSubmit={formik.handleSubmit}>
+
+          
             <DialogContent className="py-3 px-4">
               <p className="text-lightBlue mb-2">Vendor Name</p>
               <FormControl className="col-7 px-0">
                 <OutlinedInput
-                  value={vendorsName}
-                  onKeyPress={onKeyUp}
-                  onChange={(e) => setvendorsName(e.target.value)}
+                
                   placeholder="Enter Vendor Name"
                   size="small"
+                  name="name"
+                  value={formik.values.name}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
                 />
+                 { formik.errors.name && (
+                  <FormHelperText error>
+                    {formik.errors.name}
+                  </FormHelperText>
+                )}
               </FormControl>
 
-              <div className="d-flex">
-                {multipledata.map((data, index) => {
-                  return (
+              <p className="text-lightBlue mb-2">Description</p>
+              <FormControl className="col-7 px-0">
+                <OutlinedInput
+                
+                  placeholder="Enter Description"
+                  size="small"
+                  value={formik.values.description}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  name="description"
+                />
+                 { formik.errors.description && (
+                  <FormHelperText error>
+                    {formik.errors.description}
+                  </FormHelperText>
+                )}
+              </FormControl>
+
+              {/* <div className="d-flex">
                     <Chip
-                      label={data}
-                      onDelete={() => {}}
-                      onClick={() => {
-                        handleDelete(index);
-                      }}
+                      label='Hi'
                       size="small"
                       className="mt-3 me-2"
                     ></Chip>
-                  );
-                })}
-              </div>
+              </div> */}
 
               {/* <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
               <FormControl
@@ -310,7 +218,9 @@ const Vendors = () => {
                 </Select>
               </FormControl> */}
             </DialogContent>
+          
             <hr className="hr-grey-6 my-0" />
+           
             <DialogActions className="d-flex justify-content-between px-4 py-3">
               <button
                 className="button-grey py-2 px-5"
@@ -320,17 +230,15 @@ const Vendors = () => {
               </button>
               <button
                 className="button-gradient py-2 px-5"
-                onClick={(e) => {
-                  if (multipledata.length) {
-                    createUpdateMultiple("Active", multipledata);
-                    return;
-                  }
-                  createupdatevendor("Active", vendorId);
-                }}
+                type="submit"
+
               >
                 <p>Save</p>
               </button>
             </DialogActions>
+
+            </form>
+         
           </Dialog>
         </div>
       </div>
@@ -361,14 +269,12 @@ const Vendors = () => {
             <TableSearch />
           </div>
           <TabPanel value={value} index={0}>
-            <VendorsTable
-              list={allvendors}
-              editData={edit}
-              deleteData={deleteData}
-            />
+            {/* <VendorsTable
+             
+            /> */}
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <VendorsTable list={allvendorsArchived} deleteData={deleteData} />
+            {/* <VendorsTable /> */}
           </TabPanel>
         </Paper>
       </div>
