@@ -79,7 +79,7 @@ const Login = () => {
     onSubmit: (values) => {
       login(values)
         .unwrap()
-        .then(() => formik.resetForm());
+        .then(() => formik.resetForm()).catch(err=>{});
     },
   });
 

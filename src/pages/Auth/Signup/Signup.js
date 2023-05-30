@@ -66,7 +66,7 @@ const Signup = () => {
     onSubmit: (values) => {
       signUp(values)
         .unwrap()
-        .then(() => formik.resetForm());
+        .then(() => formik.resetForm()).catch(err=>{});
     },
   });
 
