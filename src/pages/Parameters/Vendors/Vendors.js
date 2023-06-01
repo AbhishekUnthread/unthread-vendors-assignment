@@ -125,7 +125,7 @@ const Vendors = () => {
                   </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
-                    ⓘ Some Dummy Content to explain
+                    ⓘ Some Dummy Content to explain 
                   </small>
                 </div>
                 <img
