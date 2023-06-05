@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../../Products/AllProducts/AllProducts.scss";
 // ! COMPONENT IMPORTS
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -36,6 +36,9 @@ import {
 } from "../services/parameter.service";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useDispatch ,useSelector} from "react-redux";
+import {addVendors} from '../../../features/vendors/vendorSlice'
+import { getVendors } from "../../../features/vendors/vendorSlice";
 
 // ! MATERIAL ICONS IMPORTS
 
@@ -73,7 +76,10 @@ const Vendors = () => {
 
   //aman
 
-
+  const dispatch=useDispatch()
+  dispatch(addVendors(['aman']))
+  const allVendors=useSelector(getVendors)
+ 
 
   const formik = useFormik({
     initialValues: {
