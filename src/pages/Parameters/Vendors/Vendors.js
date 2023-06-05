@@ -78,6 +78,8 @@ const Vendors = () => {
 
   const dispatch=useDispatch()
   dispatch(addVendors(['aman']))
+
+  
   const allVendors=useSelector(getVendors)
  
 
