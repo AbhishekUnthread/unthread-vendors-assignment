@@ -64,7 +64,7 @@ const CategoriesTable = ({ list, edit, deleteData, error }) => {
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -157,7 +157,7 @@ const CategoriesTable = ({ list, edit, deleteData, error }) => {
                   {stableSort(list, getComparator(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
-                      const isItemSelected = isSelected(row.cId);
+                      const isItemSelected = isSelected(row._id);
                       const labelId = `enhanced-table-checkbox-${index}`;
 
                       return (
@@ -176,7 +176,7 @@ const CategoriesTable = ({ list, edit, deleteData, error }) => {
                               inputProps={{
                                 "aria-labelledby": labelId,
                               }}
-                              onClick={(event) => handleClick(event, row.cId)}
+                              onClick={(event) => handleClick(event, row._id)}
                               size="small"
                               style={{
                                 color: "#5C6D8E",
@@ -194,14 +194,12 @@ const CategoriesTable = ({ list, edit, deleteData, error }) => {
                               to="/parameters/categories/edit"
                             >
                               <p className="text-lightBlue rounded-circle fw-600">
-                                {row.attributes.name}
+                                {row.name}
                               </p>
                             </Link>
                           </TableCell>
                           <TableCell style={{ width: 180 }}>
-                            <p className="text-lightBlue">
-                              {row.attributes.type}
-                            </p>
+                            <p className="text-lightBlue">{row.type}</p>
                           </TableCell>
 
                           <TableCell style={{ width: 180 }}>
@@ -211,10 +209,10 @@ const CategoriesTable = ({ list, edit, deleteData, error }) => {
                           <TableCell style={{ width: 120, padding: 0 }}>
                             <div className="d-flex align-items-center">
                               <div
-                                className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.attributes.status}`}
+                                className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.status}`}
                               >
                                 <small className="text-black fw-400">
-                                  {row.attributes.status}
+                                  {row.status}
                                 </small>
                               </div>
                             </div>

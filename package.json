@@ -68,6 +68,5 @@
   },
   "devDependencies": {
     "node-sass": "^7.0.3"
-  },
-  "proxy": "https://dkxcdun6x7.execute-api.ap-south-1.amazonaws.com/dev"
+  }
 }
