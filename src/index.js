@@ -1,16 +1,22 @@
+import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import App from "./App";
-import "./index.scss";
-import ScrollToTop from "./ScrollToTop";
 import { Provider } from "react-redux";
-import store from './store/store'
+import { disableReactDevTools } from "@fvilers/disable-react-devtools";
+
+import App from "./App";
+
+import store from "./app/store";
+
+import "./index.scss";
+
+if (process.env.REACT_APP_ENV !== "dev") {
+  disableReactDevTools();
+}
 
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <ScrollToTop />
-     <Provider store={store}>
-        <App />
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
     </Provider>
-  </BrowserRouter>
+  </React.StrictMode>
 );

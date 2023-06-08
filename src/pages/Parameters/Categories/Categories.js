@@ -1,17 +1,4 @@
-import React from 'react';
-import '../../Products/AllProducts/AllProducts.scss';
-// ! COMPONENT IMPORTS
-import CategoriesTable from './CategoriesTable';
-import TableSearch from '../../../components/TableSearch/TableSearch';
-import ViewTutorial from '../../../components/ViewTutorial/ViewTutorial';
-import ViewLogsDrawer from '../../../components/ViewLogsDrawer/ViewLogsDrawer';
-import ExportDialog from '../../../components/ExportDialog/ExportDialog';
-import ImportSecondDialog from '../../../components/ImportSecondDialog/ImportSecondDialog';
-import TabPanel from '../../../components/TabPanel/TabPanel';
-// ! IMAGES IMPORTS
-import cancel from '../../../assets/icons/cancel.svg';
-import parameters from '../../../assets/icons/sidenav/parameters.svg';
-// ! MATERIAL IMPORTS
+import { forwardRef, useState, useEffect, useReducer } from "react";
 import {
   Box,
   Dialog,
@@ -20,6 +7,7 @@ import {
   DialogTitle,
   FormControl,
   OutlinedInput,
+  FormHelperText,
   Paper,
   Popover,
   Slide,
@@ -28,330 +16,331 @@ import {
   Chip,
   Select,
   MenuItem,
-} from '@mui/material';
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { useDispatch } from "react-redux";
+import * as Yup from "yup";
+import { useFormik } from "formik";
 
-import Messages from '../../../components/snackbar/snackbar.js';
-import { callGetApi, createCategory, createSubCategory, updateCategory, updateSubCategory } from '../services/parameter.service';
+import CategoriesTable from "./CategoriesTable";
+import TableSearch from "../../../components/TableSearch/TableSearch";
+import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
+import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
+import ExportDialog from "../../../components/ExportDialog/ExportDialog";
+import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
+import TabPanel from "../../../components/TabPanel/TabPanel";
 
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
+import cancel from "../../../assets/icons/cancel.svg";
+import parameters from "../../../assets/icons/sidenav/parameters.svg";
+
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import {
+  useGetAllCategoriesQuery,
+  useGetAllSubCategoriesQuery,
+  useCreateCategoryMutation,
+  useCreateSubCategoryMutation,
+  useDeleteCategoryMutation,
+  useDeleteSubCategoryMutation,
+  useEditCategoryMutation,
+  useEditSubCategoryMutation,
+} from "../../../features/parameters/categories/categoriesApiSlice";
+
+import "../../Products/AllProducts/AllProducts.scss";
+
+const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-// ? DIALOG TRANSITION ENDS HERE
+
+const categoryValidationSchema = Yup.object({
+  name: Yup.string().trim().min(3).required("required"),
+  description: Yup.string().trim().min(3).optional(),
+  status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
+});
+const subCategoryValidationSchema = Yup.object({
+  name: Yup.string().trim().min(3).required("required"),
+  description: Yup.string().trim().min(3).optional(),
+  status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
+  categoryId: Yup.string().required("required"),
+});
 
 const Categories = () => {
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const dispatch = useDispatch();
+  const [categoryType, setCategoryType] = useState(0);
+  const [categoryList, setCategoryList] = useState([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateSubModal, setShowCreateSubModal] = useState(false);
+  const [showCreatePopover, setShowCreatePopover] = useState(null);
+  const [error, setError] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
 
-  const handleDelete = (index) => {
-    let multiple=multiplecategories
-    multiple.splice(index,1)
-    setmultiplecategories(multiple)
-  };
+  const {
+    data: categoriesData,
+    isLoading: categoriesIsLoading,
+    isSuccess: categoriesIsSuccess,
+    error: categoriesError,
+  } = useGetAllCategoriesQuery();
+  const {
+    data: subCategoriesData,
+    isLoading: subCategoriesIsLoading,
+    isSuccess: subCategoriesIsSuccess,
+    error: subCategoriesError,
+  } = useGetAllSubCategoriesQuery();
+  const [
+    createCategory,
+    {
+      isLoading: createCategoryIsLoading,
+      isSuccess: createCategoryIsSuccess,
+      error: createCategoryError,
+    },
+  ] = useCreateCategoryMutation();
+  const [
+    createSubCategory,
+    {
+      isLoading: createSubCategoryIsLoading,
+      isSuccess: createSubCategoryIsSuccess,
+      error: createSubCategoryError,
+    },
+  ] = useCreateSubCategoryMutation();
+  const [
+    deleteCategory,
+    {
+      isLoading: deleteCategoryIsLoading,
+      isSuccess: deleteCategoryIsSuccess,
+      error: deleteCategoryError,
+    },
+  ] = useDeleteCategoryMutation();
+  const [
+    deleteSubCategory,
+    {
+      isLoading: deleteSubCategoryIsLoading,
+      isSuccess: deleteSubCategoryIsSuccess,
+      error: deleteSubCategoryError,
+    },
+  ] = useDeleteSubCategoryMutation();
+  const [
+    editCategory,
+    {
+      isLoading: editCategoryIsLoading,
+      isSuccess: editCategoryIsSuccess,
+      error: editCategoryError,
+    },
+  ] = useEditCategoryMutation();
+  const [
+    editSubCategory,
+    {
+      isLoading: editSubCategoryIsLoading,
+      isSuccess: editSubCategoryIsSuccess,
+      error: editSubCategoryError,
+    },
+  ] = useEditSubCategoryMutation();
 
-  // ? POPOVERS STARTS HERE
-
-  // * CREATE CATEGORY POPOVERS STARTS
-  const [anchorCreateCategoryEl, setAnchorCreateCategoryEl] =
-    React.useState(null);
-
-  const handleCreateCategoryClick = (event) => {
-    setAnchorCreateCategoryEl(event.currentTarget);
-    resetdata()
-
-
-  };
-
-  const handleCreateCategoryClose = () => {
-    setAnchorCreateCategoryEl(null);
-  };
-
-  const openCreateCategory = Boolean(anchorCreateCategoryEl);
-  const idCreateCategory = openCreateCategory ? 'simple-popover' : undefined;
-  // * CREATE CATEGORY POPOVERS ENDS
-
-  // ? POPOVERS ENDS HERE
-
-  // ? CATEGORIES DIALOG STARTS HERE
-  const [openCreateCategories, setOpenCreateCategories] = React.useState(false);
-
-  const handleCreateCategories = () => {
-    setAnchorCreateCategoryEl(null);
-    setOpenCreateCategories(true);
-  };
-
-  const handleCreateCategoriesClose = () => {
-    setOpenCreateCategories(false);
-  };
-  // ? CATEGORIES DIALOG ENDS HERE
-
-  // ? SUB CATEGORIES DIALOG STARTS HERE
-  const [openCreateSubCategories, setOpenCreateSubCategories] =
-    React.useState(false);
-
-  const handleCreateSubCategories = () => {
-    setAnchorCreateCategoryEl(null);
-    setOpenCreateSubCategories(true);
-  };
-
-  const handleCreateSubCategoriesClose = () => {
-    setOpenCreateSubCategories(false);
-  };
-  // ? SUB CATEGORIES DIALOG ENDS HERE
-
-  // ? CATEGORY SELECT STARTS HERE
-  const [category, setCategory] = React.useState('');
-
-  const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
-  };
-  // ? CATEGORY SELECT ENDS HERE
-
-  //Aman
-
-  let [message, setMessage] = React.useState('');
-  const [allCategory, setAllCategory] = React.useState([]);
-  const [allSubCategory, setAllSubCategory] = React.useState([]);
-  const [Draft1, setCategoryDraft] = React.useState([]);
-  const [Draft2, setsubCategoryDraft] = React.useState([]);
-
-  const [categoryName, setCategoryName] = React.useState('');
-  const [subcategoryName, setsubCategoryName] = React.useState('');
-
-  const [updateId, setUpdateId] = React.useState(false);
-
-  let [multiplecategories, setmultiplecategories] = React.useState([]);
-
-
-  React.useEffect(()=>{
-    getcategories();
-    getsubcategories()
-  },[])
-
-
-  let resetdata=()=>{
-    setCategoryName('')
-    setsubCategoryName('')
-    setUpdateId('')
-    setmultiplecategories([])
-  }
-
-  let onKeyUpcategory=(event)=>{
-    if (event.charCode === 13 && categoryName) {
-      let multiple=multiplecategories
-
-      let duplicate=multiple.find(data=>data.toLowerCase() ==categoryName.toLowerCase() )
-      if(duplicate){
-        setMessage('Please enter unique name');
-        return
+  const categoryFormik = useFormik({
+    initialValues: {
+      name: "",
+      description: "some description",
+      status: "active",
+    },
+    enableReinitialize: true,
+    validationSchema: categoryValidationSchema,
+    onSubmit: (values) => {
+      if (isEditing) {
+        editCategory({ id: editId, details: values })
+          .unwrap()
+          .then(() => categoryFormik.resetForm());
+      } else {
+        createCategory(values)
+          .unwrap()
+          .then(() => categoryFormik.resetForm());
       }
-      multiple.push(categoryName)
-      setmultiplecategories(multiple)
-      setCategoryName('')
-        
-    }
-  }
-
-  let getcategories=()=>{
-   callGetApi('/api/product-categories','GET').then((res) => {
-     if(res.data){
-      setAllCategory(res.data.filter(data=>data.attributes.status=='Active'))
-      setCategoryDraft(res.data.filter(data=>data.attributes.status!=='Active'))
-     }
-   
-    })
-  .catch((err) => {
-    setMessage(err);
+    },
   });
-  }
-
-  let getsubcategories=()=>{
-    callGetApi('/api/product-sub-categories','GET').then((res) => {
-      if(res.data){
-      setAllSubCategory(res.data.filter(data=>data.attributes.status==='Active'))
-
-      setsubCategoryDraft(res.data.filter(data=>data.attributes.status!=='Active'))
+  const subCategoryFormik = useFormik({
+    initialValues: {
+      name: "",
+      description: "some description",
+      status: "active",
+      categoryId: "",
+    },
+    enableReinitialize: true,
+    validationSchema: subCategoryValidationSchema,
+    onSubmit: (values) => {
+      if (isEditing) {
+        editSubCategory({ id: editId, details: values })
+          .unwrap()
+          .then(() => subCategoryFormik.resetForm());
+      } else {
+        createSubCategory(values)
+          .unwrap()
+          .then(() => subCategoryFormik.resetForm());
       }
-    })
-    .catch((err) => {
-      setMessage(err);
-    });
-  }
+    },
+  });
 
-  let getCategoryId=(subcategory)=>{
-    return new Promise((resolve,reject)=>{
-      callGetApi(`/api/product-sub-categories/${subcategory.id}?populate[product_category][fields][0]=name`,'GET').then((res) => {
-     
-        let subcategorydetails=res.data
-        setCategoryName(subcategorydetails.attributes.product_category.data.id)
-        resolve(subcategorydetails.attributes.product_category.data.id)
-     
-       
-       })
-     .catch((err) => {
-       setMessage(err);
-     });
-    })
-   
-
-  }
-
-  let edit=(data)=>{
-    setUpdateId(data.id)
-    if(data.attributes.type=='Category'){
-      setCategoryName(data.attributes.name)
-      handleCreateCategories()
-    }else{
-      setsubCategoryName(data.attributes.name)
-      getCategoryId(data).then(res=>{
-        handleCreateSubCategories()
-      })
+  const changeCategoryTypeHandler = (event, tabIndex) => {
+    setCategoryType(tabIndex);
+    if (tabIndex === 0) {
+      setCategoryList(
+        [...categoriesData.data.data, ...subCategoriesData.data.data].sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        )
+      );
     }
-  }
-
-  let deleteData=(data)=>{
-
-   
-    if(data.attributes.type=='Category'){
-      setCategoryName(data.attributes.name)
-      if(data.attributes.status=='Draft'){
-        createUpdateCategory('Active',data.attributes.name,data.id)
-      }else{
-        createUpdateCategory('Draft',data.attributes.name,data.id)
-      }
-    }else{
-      setsubCategoryName(data.attributes.name)
-       getCategoryId(data).then(categoryId=>{
-        if(data.attributes.status=='Draft'){
-          addupdatesubcategory('Active',categoryId,data.attributes.name,data.id)
-        }else{
-          addupdatesubcategory('Draft',categoryId,data.attributes.name,data.id)
-        }
-      })
-     
+    if (tabIndex === 1) {
+      setCategoryList(categoriesData.data.data);
     }
-
-
-  //   let url=''
-  //   if(data.attributes.type=='Category'){
-  //     url='/api/product-categories/'+data.id
-  //   }else{
-  //     url='/api/product-sub-categories/'+data.id
-  //   }
-  //   callGetApi(url,'DELETE').then((res) => {
-  //     responseHandled(res)
-  //  })
-   
-  }
-
-  let createUpdateCategoryMultiple=(status,categoryArray)=>{
-
-    for(let i=0;i<categoryArray.length;i++){
-      let request = {
-        data: {
-          name: categoryArray[i],
-          type: 'Category',
-          status
-        },
-      };
-  
-      createCategory(request)
-        .then((res) => {
-          if(i==categoryArray.length-1)responseHandled(res)
-        })
-        .catch((err) => {
-          setMessage(err);
-        });
-  
+    if (tabIndex === 2) {
+      setCategoryList(subCategoriesData.data.data);
     }
-
-  }
-  
-
-  const createUpdateCategory = (status,categoryName,id) => {
-    if (!categoryName) {
-      setMessage('Please enter categoryName field');
-      return;
-    }
-
-    let request = {
-      data: {
-        name: categoryName,
-        type: 'Category',
-        status
-      },
-    };
-
-    if(!id){
-      createCategory(request)
-      .then((res) => {
-        responseHandled(res)
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-    }else{
-      updateCategory(request,id)
-      .then((res) => {
-        responseHandled(res)
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-    }
-
-    
   };
 
-  
+  const toggleCreateModalHandler = () => {
+    setShowCreateModal((prevState) => !prevState);
+    setShowCreatePopover(null);
+    categoryFormik.resetForm();
+    setIsEditing(false);
+    setEditId(null);
+  };
 
-  const addupdatesubcategory=(status,categoryName,subcategoryName,subCategoryId)=>{
-    if (!subcategoryName || !categoryName) {
-      setMessage('Please enter all fields');
-      return;
+  const toggleCreateSubModalHandler = () => {
+    setShowCreateSubModal((prevState) => !prevState);
+    setShowCreatePopover(null);
+    subCategoryFormik.resetForm();
+    setIsEditing(false);
+    setEditId(null);
+  };
+
+  const toggleCreatePopoverHandler = (e) => {
+    setShowCreatePopover((prevState) => (prevState ? null : e.currentTarget));
+  };
+
+  const deleteCategoryHandler = (data) => {
+    if (categoryType === 0) {
+      if (data.categoryId) {
+        deleteSubCategory(data._id);
+      } else {
+        deleteCategory(data._id);
+      }
+    }
+    if (categoryType === 1) {
+      deleteCategory(data._id);
+    }
+    if (categoryType === 2) {
+      deleteSubCategory(data._id);
+    }
+  };
+
+  const editCategoryHandler = (data) => {
+    setIsEditing(true);
+    setEditId(data._id);
+    if (categoryType === 0) {
+      if (data.categoryId) {
+        setShowCreateSubModal((prevState) => !prevState);
+        subCategoryFormik.setFieldValue("name", data.name);
+        subCategoryFormik.setFieldValue("categoryId", data.categoryId);
+      } else {
+        setShowCreateModal((prevState) => !prevState);
+        categoryFormik.setFieldValue("name", data.name);
+      }
+    }
+    if (categoryType === 1) {
+      setShowCreateModal((prevState) => !prevState);
+      categoryFormik.setFieldValue("name", data.name);
+    }
+    if (categoryType === 2) {
+      setShowCreateSubModal((prevState) => !prevState);
+      subCategoryFormik.setFieldValue("name", data.name);
+      subCategoryFormik.setFieldValue("categoryId", data.categoryId);
+    }
+  };
+
+  useEffect(() => {
+    if (categoriesError) {
+      setError(true);
+      if (categoriesError.data?.message) {
+        dispatch(showError({ message: categoriesError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+    if (subCategoriesError) {
+      setError(true);
+      if (subCategoriesError.data?.message) {
+        dispatch(showError({ message: subCategoriesError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
 
-    let request = {
-      data: {
-        name: subcategoryName,
-        type: 'Sub Category',
-        status,
-        "product_category":categoryName
-      },
-    };
-    if(!subCategoryId){
-      createSubCategory(request)
-      .then((res) => {
-        responseHandled(res)
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-    }else{
-      updateSubCategory(request,subCategoryId)
-      .then((res) => {
-        responseHandled(res)
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
+    if (createCategoryError) {
+      setError(true);
+      if (createCategoryError.data?.message) {
+        dispatch(showError({ message: createCategoryError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
-    
-  }
+    if (createSubCategoryError) {
+      setError(true);
+      if (createSubCategoryError.data?.message) {
+        dispatch(showError({ message: createSubCategoryError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
 
-  let responseHandled=(res)=>{
-    if (res?.error?.message) {
-      setMessage(res?.error?.message);
-      return;
+    if (categoriesIsSuccess && subCategoriesIsSuccess) {
+      setError(false);
+
+      if (categoryType === 0) {
+        setCategoryList(
+          [...categoriesData.data.data, ...subCategoriesData.data.data].sort(
+            (a, b) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          )
+        );
+      }
+      if (categoryType === 1) {
+        setCategoryList(categoriesData.data.data);
+      }
+      if (categoryType === 2) {
+        setCategoryList(subCategoriesData.data.data);
+      }
     }
-    resetdata()
-    getcategories();
-    getsubcategories()
-    handleCreateCategoriesClose();
-    handleCreateSubCategoriesClose();
-  }
+    if (createCategoryIsSuccess || editCategoryIsSuccess) {
+      setShowCreateModal(false);
+    }
+    if (createSubCategoryIsSuccess || editSubCategoryIsSuccess) {
+      setShowCreateSubModal(false);
+    }
+  }, [
+    categoriesData,
+    subCategoriesData,
+    categoriesIsSuccess,
+    subCategoriesIsSuccess,
+    categoriesError,
+    subCategoriesError,
+    createCategoryIsSuccess,
+    createCategoryError,
+    createSubCategoryIsSuccess,
+    createSubCategoryError,
+    editCategoryIsSuccess,
+    editSubCategoryIsSuccess,
+    categoryType,
+    dispatch,
+  ]);
 
   return (
     <div className="container-fluid page">
@@ -360,69 +349,66 @@ const Categories = () => {
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
           <ViewLogsDrawer
-            headingName={'Parameters / Categories'}
+            headingName={"Parameters / Categories"}
             icon={parameters}
           />
-          <ExportDialog dialogName={'Categories'} />
-          <ImportSecondDialog dialogName={'Categories'} />
-          <button
-            to="/parameters/createFieldSets"
-            className="button-gradient py-2 px-4 c-pointer"
-            onClick={handleCreateCategoryClick}
-          >
-            <p>+ Create</p>
-          </button>
+          <ExportDialog dialogName={"Categories"} />
+          <ImportSecondDialog dialogName={"Categories"} />
+          <div>
+            <button
+              onClick={toggleCreatePopoverHandler}
+              className="button-gradient py-2 px-4 c-pointer"
+            >
+              <p>+ Create</p>
+            </button>
 
-          <Popover
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-            id={idCreateCategory}
-            open={openCreateCategory}
-            anchorEl={anchorCreateCategoryEl}
-            onClose={handleCreateCategoryClose}
-          >
-            <div className="py-2 px-1">
-              <small
-                className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
-                onClick={handleCreateCategories}
-              >
-                
-                Create Category
-              </small>
-             {allCategory.length ?
-               <small
-                className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
-                onClick={handleCreateSubCategories}
-              >
-                Create Sub-Category
-              </small>:''
-             } 
-            </div>
-          </Popover>
+            <Popover
+              open={Boolean(showCreatePopover)}
+              anchorEl={showCreatePopover}
+              onClose={toggleCreatePopoverHandler}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <div className="py-2 px-1">
+                <small
+                  onClick={toggleCreateModalHandler}
+                  className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                >
+                  Create Category
+                </small>
+                {categoriesData?.data?.data.length && (
+                  <small
+                    onClick={toggleCreateSubModalHandler}
+                    className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                  >
+                    Create Sub-Category
+                  </small>
+                )}
+              </div>
+            </Popover>
+          </div>
 
           <Dialog
-            open={openCreateCategories}
             TransitionComponent={Transition}
             keepMounted
-            onClose={handleCreateCategoriesClose}
             aria-describedby="alert-dialog-slide-description"
             maxWidth="sm"
             fullWidth={true}
+            open={showCreateModal}
+            onClose={toggleCreateModalHandler}
           >
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">
-
-                  {!updateId?'Create Category':'Update Category'}
-
-                  </h5>
+                  <h5 className="text-lightBlue fw-500">{`${
+                    isEditing ? "Edit" : "Create"
+                  } Category`}</h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -432,81 +418,67 @@ const Categories = () => {
                   src={cancel}
                   alt="cancel"
                   width={30}
-                  onClick={handleCreateCategoriesClose}
                   className="c-pointer"
+                  onClick={toggleCreateModalHandler}
                 />
               </div>
             </DialogTitle>
             <hr className="hr-grey-6 my-0" />
-            <DialogContent className="py-3 px-4">
-              <p className="text-lightBlue mb-2">Category Name</p>
-              <FormControl className="col-7 px-0">
-                <OutlinedInput
-                  value={categoryName}
-                  onChange={(e) => setCategoryName(e.target.value)}
-                  placeholder="Enter Category Name"
-                  onKeyPress={onKeyUpcategory}
-                  size="small"
-                />
-              </FormControl>
-              <div className="d-flex">
-                
-
-                   {multiplecategories.map((data,index)=>{
-                    
-                    return <Chip
-                    label={data}
-                    onDelete={()=>{
-                      
-                    }}
-                    onClick={()=>{
-                      handleDelete(index)
-                     }}
+            <form noValidate onSubmit={categoryFormik.handleSubmit}>
+              <DialogContent className="py-3 px-4">
+                <p className="text-lightBlue mb-2">Category Name</p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Category Name"
                     size="small"
-                    className="mt-3 me-2"></Chip>
-                  })}
-               
-                
-              </div>
-            </DialogContent>
-            <hr className="hr-grey-6 my-0" />
-            <DialogActions className="d-flex justify-content-between px-4 py-3">
-              <button
-                className="button-grey py-2 px-5"
-                onClick={handleCreateCategoriesClose}
-              >
-                <p className="text-lightBlue">Cancel</p>
-              </button>
-              <button
-                className="button-gradient py-2 px-5"
-                onClick={e=>{
-                  if(multiplecategories.length){
-                    createUpdateCategoryMultiple('Active',multiplecategories)
-                    return;
-                  }
-                  createUpdateCategory('Active',categoryName,updateId)
-                }}
-              >
-                <p>Save</p>
-              </button>
-            </DialogActions>
+                    name="name"
+                    value={categoryFormik.values.name}
+                    onBlur={categoryFormik.handleBlur}
+                    onChange={categoryFormik.handleChange}
+                  />
+                  {!!categoryFormik.touched.name &&
+                    categoryFormik.errors.name && (
+                      <FormHelperText error>
+                        {categoryFormik.errors.name}
+                      </FormHelperText>
+                    )}
+                </FormControl>
+                <div className="d-flex"></div>
+              </DialogContent>
+              <hr className="hr-grey-6 my-0" />
+              <DialogActions className="d-flex justify-content-between px-4 py-3">
+                <button
+                  onClick={toggleCreateModalHandler}
+                  type="button"
+                  className="button-grey py-2 px-5"
+                >
+                  <p className="text-lightBlue">Cancel</p>
+                </button>
+                <LoadingButton
+                  loading={createCategoryIsLoading || editCategoryIsLoading}
+                  disabled={createCategoryIsLoading || editCategoryIsLoading}
+                  type="submit"
+                  className="button-gradient py-2 px-5"
+                >
+                  <p>Save</p>
+                </LoadingButton>
+              </DialogActions>
+            </form>
           </Dialog>
           <Dialog
-            open={openCreateSubCategories}
             TransitionComponent={Transition}
             keepMounted
-            onClose={handleCreateSubCategoriesClose}
             aria-describedby="alert-dialog-slide-description"
             maxWidth="sm"
             fullWidth={true}
+            open={showCreateSubModal}
+            onClose={toggleCreateSubModalHandler}
           >
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
-                  {updateId?'Update Sub Category':'Create Sub Category'}
-
-
+                    {`${isEditing ? "Edit" : "Update"} Sub Category`}
                   </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
@@ -517,141 +489,153 @@ const Categories = () => {
                   src={cancel}
                   alt="cancel"
                   width={30}
-                  onClick={handleCreateSubCategoriesClose}
                   className="c-pointer"
+                  onClick={toggleCreateSubModalHandler}
                 />
               </div>
             </DialogTitle>
             <hr className="hr-grey-6 my-0" />
 
-            <DialogContent className="py-3 px-4">
-              <p className="text-lightBlue mb-2">Select Category</p>
-              <FormControl
-                //   sx={{ m: 0, minWidth: 120, width: "100%" }}
-                size="small"
-                className="col-md-7"
-              >
-                <Select
-                  labelId="demo-select-small"
-                  id="demo-select-small"
-                  value={category}
-                  onChange={handleCategoryChange}
+            <form noValidate onSubmit={subCategoryFormik.handleSubmit}>
+              <DialogContent className="py-3 px-4">
+                <p className="text-lightBlue mb-2">Select Category</p>
+                <FormControl
+                  //   sx={{ m: 0, minWidth: 120, width: "100%" }}
                   size="small"
-                  value={categoryName}
+                  className="col-md-7"
                 >
-                  {allCategory.map((data,index)=>{
-                    
-                    return <MenuItem key={index}
-                    onClick={(e) => setCategoryName(+e.currentTarget.dataset.value)}
-                    value={data.id} sx={{ fontSize: 13, color: '#5c6d8e' }}>
-                     {data.attributes.name}
-                   </MenuItem>
-                  })}
-                 
-                 
-                </Select>
-              </FormControl>
-              <p className="text-lightBlue mb-2 mt-3">Sub Category</p>
-              <FormControl className="col-md-7 px-0">
-                <OutlinedInput
-                  placeholder="Enter Sub Category Name"
-                  size="small"
-                  value={subcategoryName}
-                  onChange={(e) => setsubCategoryName(e.target.value)}
-                />
-              </FormControl>
-              {/* <div className="d-flex">
-                <Chip
-                  label="Rings"
-                  onDelete={handleDelete}
-                  size="small"
-                  className="mt-3 me-2"
-                />
-                <Chip
-                  label="Bangles"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-                <Chip
-                  label="Necklace"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-                <Chip
-                  label="Necklace Sets"
-                  onDelete={handleDelete}
-                  className="me-2 mt-3"
-                  size="small"
-                />
-              </div> */}
-            </DialogContent>
-            <hr className="hr-grey-6 my-0" />
-            <DialogActions className="d-flex justify-content-between px-4 py-3">
-              <button
-                className="button-grey py-2 px-5"
-                onClick={handleCreateSubCategoriesClose}
-              >
-                <p className="text-lightBlue">Cancel</p>
-              </button>
-              <button
-                className="button-gradient py-2 px-5"
-                onClick={e=>{
-                  addupdatesubcategory('Active',categoryName,subcategoryName,updateId)
-                }}
-              >
-                <p>Save</p>
-              </button>
-            </DialogActions>
+                  {categoriesData?.data?.data && (
+                    <Select
+                      labelId="demo-select-small"
+                      id="demo-select-small"
+                      size="small"
+                      MenuProps={{ PaperProps: { sx: { maxHeight: 150 } } }}
+                      name="categoryId"
+                      value={subCategoryFormik.values.categoryId}
+                      onBlur={subCategoryFormik.handleBlur}
+                      onChange={subCategoryFormik.handleChange}
+                    >
+                      <MenuItem key={""} value={"Select Category"}>
+                        Select Category
+                      </MenuItem>
+                      {categoriesData.data.data.map((option) => (
+                        <MenuItem key={option._id} value={option._id}>
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                  {!!subCategoryFormik.touched.categoryId &&
+                    subCategoryFormik.errors.categoryId && (
+                      <FormHelperText error>
+                        {subCategoryFormik.errors.categoryId}
+                      </FormHelperText>
+                    )}
+                </FormControl>
+                <p className="text-lightBlue mb-2 mt-3">Sub Category</p>
+                <FormControl className="col-md-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Sub Category Name"
+                    size="small"
+                    name="name"
+                    value={subCategoryFormik.values.name}
+                    onBlur={subCategoryFormik.handleBlur}
+                    onChange={subCategoryFormik.handleChange}
+                  />
+                  {!!subCategoryFormik.touched.name &&
+                    subCategoryFormik.errors.name && (
+                      <FormHelperText error>
+                        {subCategoryFormik.errors.name}
+                      </FormHelperText>
+                    )}
+                </FormControl>
+              </DialogContent>
+              <hr className="hr-grey-6 my-0" />
+              <DialogActions className="d-flex justify-content-between px-4 py-3">
+                <button
+                  onClick={toggleCreateSubModalHandler}
+                  type="button"
+                  className="button-grey py-2 px-5"
+                >
+                  <p className="text-lightBlue">Cancel</p>
+                </button>
+                <LoadingButton
+                  loading={
+                    createSubCategoryIsLoading || editSubCategoryIsLoading
+                  }
+                  disabled={
+                    createSubCategoryIsLoading || editSubCategoryIsLoading
+                  }
+                  type="submit"
+                  className="button-gradient py-2 px-5"
+                >
+                  <p>Save</p>
+                </LoadingButton>
+              </DialogActions>
+            </form>
           </Dialog>
         </div>
       </div>
 
       <div className="row mt-4">
         <Paper
-          sx={{ width: '100%', mb: 2, mt: 0, p: 0 }}
+          sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
           className="border-grey-5 bg-black-15"
         >
           <Box
-            sx={{ width: '100%' }}
+            sx={{ width: "100%" }}
             className="d-flex justify-content-between tabs-header-box"
           >
             {/* variant="scrollable"
               scrollButtons
               allowScrollButtonsMobile */}
             <Tabs
-              value={value}
-              onChange={handleChange}
+              value={categoryType}
+              onChange={changeCategoryTypeHandler}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
               <Tab label="Categories" className="tabs-head" />
               <Tab label="Sub Categories" className="tabs-head" />
-              <Tab label="Draft" className="tabs-head" />
-
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch  />
+            <TableSearch />
           </div>
-          <TabPanel value={value} index={0}>
-            <CategoriesTable list={[...allCategory,...allSubCategory]} edit={edit} deleteData={deleteData}/>
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <CategoriesTable list={allCategory}  edit={edit} deleteData={deleteData}/>
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            <CategoriesTable list={allSubCategory}  edit={edit} deleteData={deleteData} />
-          </TabPanel>
-          <TabPanel value={value} index={3}>
-            <CategoriesTable list={[...Draft1,...Draft2]} deleteData={deleteData} />
-          </TabPanel>
+          {
+            <>
+              <TabPanel value={categoryType} index={0}>
+                <CategoriesTable
+                  isLoading={categoriesIsLoading || subCategoriesIsLoading}
+                  deleteData={deleteCategoryHandler}
+                  error={error}
+                  list={categoryList}
+                  edit={editCategoryHandler}
+                />
+              </TabPanel>
+              <TabPanel value={categoryType} index={1}>
+                <CategoriesTable
+                  isLoading={categoriesIsLoading}
+                  deleteData={deleteCategoryHandler}
+                  error={error}
+                  list={categoryList}
+                  edit={editCategoryHandler}
+                />
+              </TabPanel>
+              <TabPanel value={categoryType} index={2}>
+                <CategoriesTable
+                  isLoading={subCategoriesIsLoading}
+                  deleteData={deleteCategoryHandler}
+                  error={error}
+                  list={categoryList}
+                  edit={editCategoryHandler}
+                />
+              </TabPanel>
+            </>
+          }
         </Paper>
       </div>
-
-      <Messages messageLine={message} setMessage={setMessage}></Messages>
     </div>
   );
 };

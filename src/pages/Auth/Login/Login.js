@@ -1,92 +1,117 @@
-import React from "react";
-import "./Login.scss";
-import login from "../../../assets/icons/login.svg";
+import { useState, useEffect } from "react";
+import {
+  FormControl,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  FormHelperText,
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import * as Yup from "yup";
+import YupPassword from "yup-password";
+import { useFormik } from "formik";
+
+import loginImage from "../../../assets/icons/login.svg";
 import facebook from "../../../assets/icons/facebook.svg";
 import google from "../../../assets/icons/google.svg";
-import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
-import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import { Link,useNavigate,useLocation } from "react-router-dom";
-import {useDispatch} from 'react-redux'
-import  Messages from '../../../components/snackbar/snackbar.js'
-import { signIn, validatetoken } from "../services/authService";
+
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import {
+  useLoginMutation,
+  useGoogleLoginQuery,
+} from "../../../features/auth/authApiSlice";
+import { loginHandler } from "../../../features/auth/authAction";
+import { setUserHandler } from "../../../features/user/userAction";
+
+import "./Login.scss";
+
+YupPassword(Yup);
+
+const loginValidationSchema = Yup.object({
+  email: Yup.string().trim().email("email is not valid").required("required"),
+  password: Yup.string()
+    .trim()
+    // .password()
+    // .min(8, "must be minimum 8 characters")
+    // .minLowercase(1, "must include 1 lowercase letter")
+    // .minUppercase(1, "must include 1 uppercase letter")
+    // .minSymbols(1, "must include 1 special letter")
+    // .minNumbers(1, "must include 1 number letter")
+    .required("required"),
+});
 
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
+  const [googleLogin, setGoogleLogin] = useState(false);
 
+  const [
+    login,
+    {
+      data: loginData,
+      isSuccess: loginIsSuccess,
+      isLoading: loginIsLoading,
+      error: loginError,
+    },
+  ] = useLoginMutation();
 
+  useGoogleLoginQuery(
+    {},
+    {
+      skip: !googleLogin,
+    }
+  );
 
-let navigate = useNavigate();
-const [showPassword, setShowPassword] = React.useState(false);
-const handleClickShowPassword = () => setShowPassword(!showPassword);
-  
-  let [message,setMessage]=React.useState('')
-
-  const [formValues, setFormValues] = React.useState({
-    "identifier":"",
-    "password":"",
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    enableReinitialize: true,
+    validationSchema: loginValidationSchema,
+    onSubmit: (values) => {
+      login(values)
+        .unwrap()
+        .then(() => formik.resetForm());
+    },
   });
 
-  const updateFormFields = (key, value) => {
-    const updatedFields = { ...formValues };
-    updatedFields[key] = value;
-    setFormValues(updatedFields);
-  };
+  const toggleShowPasswordHandler = () =>
+    setShowPassword((prevState) => !prevState);
 
-  let onKeyUp=(event)=>{
-    if (event.charCode === 13) {
-      updateLogin()
-        }
-  }
+  const googleLoginHandler = () => setGoogleLogin(true);
 
-  const dispatcher=useDispatch();
-
-  const updateLogin=()=>{
-
-    let allValues=Object.values(formValues).every((v) => v)
-    if(!allValues){
-      setMessage('Please enter all fields!')
-      return;
+  useEffect(() => {
+    if (loginError) {
+      if (loginError.data?.message) {
+        dispatch(showError({ message: loginError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
 
-    setMessage('Signing In')
-   
-    signIn(formValues).then(res=>{
-      responsehandled(res)
-    }).catch(err=>{
-      setMessage(err)
-    })
-
-   
-
-  }
-  let googleLogin=()=>{
-    window.open('https://backend.unthread.in/api/connect/google','_self')
- }
- let facebookLogin=()=>{
-  window.open('https://backend.unthread.in/api/connect/facebook','_self')
-}
-
-let responsehandled=(res)=>{
-  if(res?.error?.message){
-    setMessage(res?.error?.message)
-    return;
-  }
-  dispatcher({type:'userData',data:res})
-  sessionStorage.setItem('userData',JSON.stringify(res))
-
-  navigate("/dashboard", { replace: true });
-}
-
-React.useEffect(()=>{
-  if(sessionStorage.getItem('token')){
-    setMessage('Validating')
-    validatetoken(`/api/auth/google/callback/?id_token=${sessionStorage.getItem('token')}`).then(res=>{
-      sessionStorage.removeItem("token")
-      responsehandled(res)
-     
-    
-    })
-  }
-},[])
+    if (loginIsSuccess) {
+      const {
+        data: {
+          data: { userId, userName, email },
+          Authorization: accessToken,
+        },
+      } = loginData;
+      dispatch(loginHandler({ accessToken, refreshToken: "" }));
+      dispatch(setUserHandler({ email, userId, userName }));
+      dispatch(showSuccess({ message: "Logged in successful" }));
+      navigate("/dashboard", { replace: true });
+    }
+  }, [loginError, loginIsSuccess, loginData, dispatch, navigate]);
 
   return (
     <div className="container-fluid login">
@@ -99,7 +124,7 @@ React.useEffect(()=>{
             eos sed. Dicta, vitae hic. Non molestias quisquam obcaecati sed
             omnis rem est!
           </p>
-          <img src={login} alt="login" className="w-100 login-image" />
+          <img src={loginImage} alt="login" className="w-100 login-image" />
         </div>
         <div className="col-md-4 pe-md-5 pe-3">
           <div className="login-box border-grey-5 rounded-8 px-4 py-5 justify-content-center text-center">
@@ -113,81 +138,80 @@ React.useEffect(()=>{
                 Sign Up
               </Link>
             </p>
-            {/* <div className="mt-4">
-              <p className="text-lightBlue mb-1 text-start">Mobile Number</p>
-              <FormControl className="w-100 px-0">
-                <OutlinedInput
-                  placeholder="Enter Mobile Number"
-                  size="small"
-                  sx={{ paddingLeft: 0 }}
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <AppMobileCodeSelect />
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-            </div>
-            <div className="mt-4">
-              <p className="text-lightBlue mb-1 text-start">Enter OTP</p>
-              <FormControl className="w-100 px-0">
-                <OutlinedInput
-                  placeholder="Enter four digit OTP"
-                  size="small"
-                  sx={{ paddingLeft: 0 }}
-                />
-              </FormControl>
-              <small className="d-block mt-2 text-start text-lightBlue">
-                Haven't received code?&nbsp;
-                <span className="text-blue-gradient">Resend in 0:59 sec</span>
-              </small>
-            </div> */}
+            <form noValidate onSubmit={formik.handleSubmit}>
+              <div className="mt-4">
+                <p className="text-lightBlue mb-1 text-start">Enter Email</p>
+                <FormControl className="w-100 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Email"
+                    size="small"
+                    sx={{ paddingLeft: 0 }}
+                    type="email"
+                    name="email"
+                    value={formik.values.email}
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                  />
+                  {!!formik.touched.email && formik.errors.email && (
+                    <FormHelperText error>{formik.errors.email}</FormHelperText>
+                  )}
+                </FormControl>
+              </div>
+              <div className="mt-4">
+                <p className="text-lightBlue mb-1 text-start">Enter Password</p>
+                <FormControl className="w-100 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Password"
+                    size="small"
+                    sx={{ paddingLeft: 0 }}
+                    type={!showPassword ? "password" : "text"}
+                    name="password"
+                    value={formik.values.password}
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={toggleShowPasswordHandler}
+                          type="button"
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                  {!!formik.touched.password && formik.errors.password && (
+                    <FormHelperText error>
+                      {formik.errors.password}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </div>
 
-
-                <div className="mt-4">
-              <p className="text-lightBlue mb-1 text-start">Enter Email</p>
-              <FormControl className="w-100 px-0">
-                <OutlinedInput
-                  placeholder="Enter Email"
-                  size="small"
-                  sx={{ paddingLeft: 0 }}
-                  value={formValues.identifier}
-                  onKeyPress={onKeyUp}
-                onChange={(e) => updateFormFields("identifier", e.target.value)}
-                />
-              </FormControl>
-            
-            </div>
-
-            <div className="mt-4">
-              <p className="text-lightBlue mb-1 text-start">Enter Password</p>
-              <FormControl className="w-100 px-0">
-                <OutlinedInput
-                  placeholder="Enter Password"
-                  size="small"
-                  sx={{ paddingLeft: 0 }}
-                  value={formValues.password}
-                  type={!showPassword?'password':'text'}
-                  onKeyPress={onKeyUp}
-                  onChange={(e) => updateFormFields("password", e.target.value)}
-                />
-              </FormControl>
-            
-            </div>
-
-            <button onClick={updateLogin} className="button-gradient py-2 w-100 px-3 mt-4">
-              <p>Login</p>
-            </button>
+              <LoadingButton
+                loading={loginIsLoading}
+                disabled={loginIsLoading || loginIsSuccess}
+                type="submit"
+                className="button-gradient py-2 w-100 px-3 mt-4"
+              >
+                <p>Login</p>
+              </LoadingButton>
+            </form>
             <p className="text-grey-6 my-4">or sign in with</p>
             <div className="d-flex row">
               <div className="col-6">
-                <button onClick={googleLogin} className="button-lightBlue-outline w-100 px-2 py-2">
+                <button
+                  onClick={googleLoginHandler}
+                  className="button-lightBlue-outline w-100 px-2 py-2"
+                >
                   <img src={google} alt="google" className="w-auto me-2" />
                   Google
                 </button>
               </div>
               <div className="col-6">
-                <button onClick={facebookLogin} className="button-lightBlue-outline w-100 px-2 py-2">
+                <button className="button-lightBlue-outline w-100 px-2 py-2">
                   <img src={facebook} alt="facebook" className="w-auto me-2" />
                   Facebook
                 </button>
@@ -202,9 +226,6 @@ React.useEffect(()=>{
           </div>
         </div>
       </div>
-      <Messages messageLine={message} setMessage={setMessage}></Messages>
-
-
     </div>
   );
 };

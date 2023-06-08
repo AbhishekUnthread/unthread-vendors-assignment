@@ -28,8 +28,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import {useDispatch,useSelector} from 'react-redux'
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -86,8 +85,6 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  
-
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
@@ -100,28 +97,10 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-  const dispatcher=useDispatch();
 
-  const loginData=useSelector(state=>state.data)
-
-  
-  React.useEffect(()=>{
-    setTimeout(()=>{
-      if(!loginData){
-        navigate("/auth/login", { replace: true });
-      }
-    })
-   
-  },[loginData])
-
-
-
-
-  const logout=()=>{
-    sessionStorage.removeItem('userData')
-    dispatcher({type:'userData',data:null})
-
-  }
+  const logout = () => {
+    sessionStorage.removeItem("userData");
+  };
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -161,9 +140,9 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
         />
         <small className="text-lightBlue ms-2">Settings</small>
       </MenuItem>
-      <MenuItem  onClick={logout} className="mt-1  px-2">
-        <LogoutIcon  size="small" sx={{ color: "#FC756E", fontSize: 18 }} />
-        <small  className="text-red-5 ms-2">Log out</small>
+      <MenuItem onClick={logout} className="mt-1  px-2">
+        <LogoutIcon size="small" sx={{ color: "#FC756E", fontSize: 18 }} />
+        <small className="text-red-5 ms-2">Log out</small>
       </MenuItem>
     </Menu>
   );
@@ -266,7 +245,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               className="app-navbar__profile ms-4"
             >
               <div className="d-flex flex-column justify-content-end align-items-end me-2">
-              {loginData && <p className="text-lightBlue">{loginData?.user.username}</p>}  
+                {/* {loginData && <p className="text-lightBlue">{loginData?.user.username}</p>}   */}
                 <small className="text-blue-gradient">Super Admin</small>
               </div>
               <img src={user} alt="user" width={40} />
