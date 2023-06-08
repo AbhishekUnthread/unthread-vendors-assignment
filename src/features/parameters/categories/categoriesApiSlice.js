@@ -66,6 +66,22 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["SubCategories"],
     }),
+    editCategory: builder.mutation({
+      query: ({ id, details }) => ({
+        url: `/parameters/category/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+    editSubCategory: builder.mutation({
+      query: ({ id, details }) => ({
+        url: `/parameters/subCategory/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      invalidatesTags: ["SubCategories"],
+    }),
   }),
 });
 
@@ -76,4 +92,6 @@ export const {
   useCreateSubCategoryMutation,
   useDeleteCategoryMutation,
   useDeleteSubCategoryMutation,
+  useEditCategoryMutation,
+  useEditSubCategoryMutation,
 } = categoriesApiSlice;

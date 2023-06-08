@@ -59,7 +59,7 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const CategoriesTable = ({ list, edit, deleteData, error }) => {
+const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -238,10 +238,7 @@ const CategoriesTable = ({ list, edit, deleteData, error }) => {
                                 </Tooltip>
                               )}
                               {deleteData && (
-                                <Tooltip
-                                  title={edit ? "Archive" : "Un-Archive"}
-                                  placement="top"
-                                >
+                                <Tooltip title={"Delete"} placement="top">
                                   <div
                                     onClick={(e) => {
                                       deleteData(row);
@@ -286,8 +283,12 @@ const CategoriesTable = ({ list, edit, deleteData, error }) => {
               className="table-pagination"
             />
           </React.Fragment>
+        ) : isLoading ? (
+          <span className="d-flex justify-content-center m-3">Loading...</span>
         ) : (
-          "No data found"
+          <span className="d-flex justify-content-center m-3">
+            No data found
+          </span>
         )
       ) : (
         <></>
