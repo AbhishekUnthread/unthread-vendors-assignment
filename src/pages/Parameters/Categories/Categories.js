@@ -44,6 +44,8 @@ import {
   useCreateSubCategoryMutation,
   useDeleteCategoryMutation,
   useDeleteSubCategoryMutation,
+  useEditCategoryMutation,
+  useEditSubCategoryMutation,
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
@@ -72,6 +74,8 @@ const Categories = () => {
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
   const [showCreatePopover, setShowCreatePopover] = useState(null);
   const [error, setError] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
 
   const {
     data: categoriesData,
@@ -117,6 +121,22 @@ const Categories = () => {
       error: deleteSubCategoryError,
     },
   ] = useDeleteSubCategoryMutation();
+  const [
+    editCategory,
+    {
+      isLoading: editCategoryIsLoading,
+      isSuccess: editCategoryIsSuccess,
+      error: editCategoryError,
+    },
+  ] = useEditCategoryMutation();
+  const [
+    editSubCategory,
+    {
+      isLoading: editSubCategoryIsLoading,
+      isSuccess: editSubCategoryIsSuccess,
+      error: editSubCategoryError,
+    },
+  ] = useEditSubCategoryMutation();
 
   const categoryFormik = useFormik({
     initialValues: {
@@ -127,9 +147,15 @@ const Categories = () => {
     enableReinitialize: true,
     validationSchema: categoryValidationSchema,
     onSubmit: (values) => {
-      createCategory(values)
-        .unwrap()
-        .then(() => categoryFormik.resetForm());
+      if (isEditing) {
+        editCategory({ id: editId, details: values })
+          .unwrap()
+          .then(() => categoryFormik.resetForm());
+      } else {
+        createCategory(values)
+          .unwrap()
+          .then(() => categoryFormik.resetForm());
+      }
     },
   });
   const subCategoryFormik = useFormik({
@@ -142,9 +168,15 @@ const Categories = () => {
     enableReinitialize: true,
     validationSchema: subCategoryValidationSchema,
     onSubmit: (values) => {
-      createSubCategory(values)
-        .unwrap()
-        .then(() => subCategoryFormik.resetForm());
+      if (isEditing) {
+        editSubCategory({ id: editId, details: values })
+          .unwrap()
+          .then(() => subCategoryFormik.resetForm());
+      } else {
+        createSubCategory(values)
+          .unwrap()
+          .then(() => subCategoryFormik.resetForm());
+      }
     },
   });
 
@@ -170,11 +202,16 @@ const Categories = () => {
     setShowCreateModal((prevState) => !prevState);
     setShowCreatePopover(null);
     categoryFormik.resetForm();
+    setIsEditing(false);
+    setEditId(null);
   };
 
   const toggleCreateSubModalHandler = () => {
     setShowCreateSubModal((prevState) => !prevState);
     setShowCreatePopover(null);
+    subCategoryFormik.resetForm();
+    setIsEditing(false);
+    setEditId(null);
   };
 
   const toggleCreatePopoverHandler = (e) => {
@@ -194,6 +231,30 @@ const Categories = () => {
     }
     if (categoryType === 2) {
       deleteSubCategory(data._id);
+    }
+  };
+
+  const editCategoryHandler = (data) => {
+    setIsEditing(true);
+    setEditId(data._id);
+    if (categoryType === 0) {
+      if (data.categoryId) {
+        setShowCreateSubModal((prevState) => !prevState);
+        subCategoryFormik.setFieldValue("name", data.name);
+        subCategoryFormik.setFieldValue("categoryId", data.categoryId);
+      } else {
+        setShowCreateModal((prevState) => !prevState);
+        categoryFormik.setFieldValue("name", data.name);
+      }
+    }
+    if (categoryType === 1) {
+      setShowCreateModal((prevState) => !prevState);
+      categoryFormik.setFieldValue("name", data.name);
+    }
+    if (categoryType === 2) {
+      setShowCreateSubModal((prevState) => !prevState);
+      subCategoryFormik.setFieldValue("name", data.name);
+      subCategoryFormik.setFieldValue("categoryId", data.categoryId);
     }
   };
 
@@ -258,10 +319,10 @@ const Categories = () => {
         setCategoryList(subCategoriesData.data.data);
       }
     }
-    if (createCategoryIsSuccess) {
+    if (createCategoryIsSuccess || editCategoryIsSuccess) {
       setShowCreateModal(false);
     }
-    if (createSubCategoryIsSuccess) {
+    if (createSubCategoryIsSuccess || editSubCategoryIsSuccess) {
       setShowCreateSubModal(false);
     }
   }, [
@@ -275,6 +336,9 @@ const Categories = () => {
     createCategoryError,
     createSubCategoryIsSuccess,
     createSubCategoryError,
+    editCategoryIsSuccess,
+    editSubCategoryIsSuccess,
+    categoryType,
     dispatch,
   ]);
 
@@ -342,7 +406,9 @@ const Categories = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">{"Create Category"}</h5>
+                  <h5 className="text-lightBlue fw-500">{`${
+                    isEditing ? "Edit" : "Create"
+                  } Category`}</h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -389,8 +455,8 @@ const Categories = () => {
                   <p className="text-lightBlue">Cancel</p>
                 </button>
                 <LoadingButton
-                  loading={createCategoryIsLoading}
-                  disabled={createCategoryIsLoading}
+                  loading={createCategoryIsLoading || editCategoryIsLoading}
+                  disabled={createCategoryIsLoading || editCategoryIsLoading}
                   type="submit"
                   className="button-gradient py-2 px-5"
                 >
@@ -412,7 +478,7 @@ const Categories = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
-                    {"Create Sub Category"}
+                    {`${isEditing ? "Edit" : "Update"} Sub Category`}
                   </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
@@ -494,8 +560,12 @@ const Categories = () => {
                   <p className="text-lightBlue">Cancel</p>
                 </button>
                 <LoadingButton
-                  loading={createSubCategoryIsLoading}
-                  disabled={createSubCategoryIsLoading}
+                  loading={
+                    createSubCategoryIsLoading || editSubCategoryIsLoading
+                  }
+                  disabled={
+                    createSubCategoryIsLoading || editSubCategoryIsLoading
+                  }
                   type="submit"
                   className="button-gradient py-2 px-5"
                 >
@@ -537,23 +607,29 @@ const Categories = () => {
             <>
               <TabPanel value={categoryType} index={0}>
                 <CategoriesTable
+                  isLoading={categoriesIsLoading || subCategoriesIsLoading}
                   deleteData={deleteCategoryHandler}
                   error={error}
                   list={categoryList}
+                  edit={editCategoryHandler}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={1}>
                 <CategoriesTable
+                  isLoading={categoriesIsLoading}
                   deleteData={deleteCategoryHandler}
                   error={error}
                   list={categoryList}
+                  edit={editCategoryHandler}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={2}>
                 <CategoriesTable
+                  isLoading={subCategoriesIsLoading}
                   deleteData={deleteCategoryHandler}
                   error={error}
                   list={categoryList}
+                  edit={editCategoryHandler}
                 />
               </TabPanel>
             </>
