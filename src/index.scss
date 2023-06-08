@@ -1,23 +1,69 @@
-@import "./styles/global";
+@import "./styles/variables";
 
 * {
-  font-family: "Inter", sans-serif !important;
+  font-family: "Inter", sans-serif;
+  // font-family: "Inter", sans-serif !important;
+  // font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  //   Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
 }
+
+// body {
+//   overflow: auto !important;
+// }
 
 .c-pointer {
   cursor: pointer;
 }
 
 .page {
-  // height: 8.5rem;
-  // padding: 2rem 1.5rem 0 1.5rem;
-  // background: $blue1;
-  // margin: -24px -36px -48px -36px;
-  display: flex;
-  justify-content: space-between;
-  // align-items: center;
-  // }
+  &-heading {
+    font-size: $font7;
+    color: $lightBlue;
+    font-weight: 500;
+  }
 }
+.page-center {
+  min-height: calc(100vh - 104px);
+  display: flex;
+  align-items: center;
+  // justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.columns {
+  .MuiTypography-root {
+    font-size: $font2;
+    color: $lightBlue;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+// ::-webkit-scrollbar:hover {
+//   ::-webkit-scrollbar {
+//     width: 10px;
+//   }
+// }
+
+::-webkit-scrollbar-track {
+  background: #0e0d21;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5c6d8e;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c8d8ff;
+}
+
+// *:hover::-webkit-scrollbar {
+//   width: 8px;
+// }
 
 // .MuiOutlinedInput-notchedOutline {
 //   border-color: white !important;

@@ -2,14 +2,12 @@
 
 .app-navbar {
   background: $black2 !important;
-}
-
-.toggle-icon {
-  // background-color: $white1 !important;
-  border: 1px solid $grey1 !important;
-  margin-left: -1rem;
-}
-
-.profile-button {
-  border-radius: 5px !important;
+  box-shadow: none !important;
+  &__toggle {
+    // border: 1px solid $grey1 !important;
+    margin-left: -2rem;
+  }
+  &__profile {
+    border-radius: 5px !important;
+  }
 }

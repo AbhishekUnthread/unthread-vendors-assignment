@@ -1,9 +1,21 @@
-@import "../../../styles/global";
+@import "../../../styles/variables";
 
-.row-selected-chip {
-  background: $black6;
-  width: auto;
-  border-radius: 5px;
+.product {
+  &-button__box {
+    background: $black13;
+    border-radius: 5px;
+  }
+}
+
+.filter {
+  &-icon {
+    margin-left: 20rem;
+  }
+  &-buttons {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
 }
 
 .table {
@@ -11,11 +23,16 @@
     background: $green1;
     font-weight: 600;
   }
-}
-
-.product {
-  &-button__box {
-    background: $black6;
-    border-radius: 5px;
+  &-Active {
+    background: $green1;
+    font-weight: 600;
+  }&-Draft {
+    background: red;
+    font-weight: 600;
+  }
+  &-rows {
+    p {
+      font-size: $font2 !important;
+    }
   }
 }

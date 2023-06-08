@@ -1,40 +1,52 @@
 import * as React from "react";
-import { styled, alpha } from "@mui/material/styles";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
+import { styled } from "@mui/material/styles";
+import "./Navbar.scss";
+// ! IMAGES IMPORTS
+import user from "../../assets/icons/user.svg";
+import menuClose from "../../assets/icons/sidenav/menuClose.svg";
+import menuOpen from "../../assets/icons/sidenav/menuOpen.svg";
+// ! MATERIAL IMPORTS
+import {
+  AppBar,
+  Badge,
+  Box,
+  IconButton,
+  InputBase,
+  Menu,
+  MenuItem,
+  Toolbar,
+} from "@mui/material";
+// ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import user from "../../assets/icons/user.svg";
-import "./Navbar.scss";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import AppNavbarNotes from "../AppNavbarNotes/AppNavbarNotes";
+import AppNavbarNotifications from "../AppNavbarNotifications/AppNavbarNotifications";
+import LogoutIcon from "@mui/icons-material/Logout";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import { Link, useNavigate } from "react-router-dom";
 
+// ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  // backgroundColor: alpha(theme.palette.common.white, 0.15),
   "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    // backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: "#1c1b33",
   },
-  marginRight: theme.spacing(2),
   marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     width: "auto",
   },
+  backgroundColor: "#1c1b33",
+  height: "37.6px",
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -45,24 +57,24 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  paddingLeft: theme.spacing(1.5),
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
+    padding: theme.spacing(1.2, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
+    borderRadius: "5px",
   },
 }));
+// ? SEARCH INPUT ENDS HERE
 
 const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
-  const [lightTheme, setLightTheme] = React.useState(false);
+  let navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -71,10 +83,6 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const handleTheme = () => {
-    setLightTheme(!lightTheme);
   };
 
   const handleMobileMenuClose = () => {
@@ -88,6 +96,10 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const logout = () => {
+    sessionStorage.removeItem("userData");
   };
 
   const menuId = "primary-search-account-menu";
@@ -107,8 +119,31 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose} className="px-2">
+        <PersonOutlineOutlinedIcon
+          size="small"
+          sx={{ color: "#c8d8ff", fontSize: 18 }}
+        />
+        <small className="text-lightBlue ms-2">My Account</small>
+      </MenuItem>
+      <MenuItem onClick={handleMenuClose} className="mt-1  px-2">
+        <HelpOutlineOutlinedIcon
+          size="small"
+          sx={{ color: "#c8d8ff", fontSize: 18 }}
+        />
+        <small className="text-lightBlue ms-2">Help & Support</small>
+      </MenuItem>
+      <MenuItem onClick={handleMenuClose} className="mt-1 px-2">
+        <SettingsOutlinedIcon
+          size="small"
+          sx={{ color: "#c8d8ff", fontSize: 18 }}
+        />
+        <small className="text-lightBlue ms-2">Settings</small>
+      </MenuItem>
+      <MenuItem onClick={logout} className="mt-1  px-2">
+        <LogoutIcon size="small" sx={{ color: "#FC756E", fontSize: 18 }} />
+        <small className="text-red-5 ms-2">Log out</small>
+      </MenuItem>
     </Menu>
   );
 
@@ -131,8 +166,8 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
     >
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
+          <Badge badgeContent={4} color="purple" size="small">
+            <DescriptionOutlinedIcon sx={{ color: "#c8d8ff" }} size="small" />
           </Badge>
         </IconButton>
         <p>Messages</p>
@@ -143,8 +178,8 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
           aria-label="show 17 new notifications"
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
+          <Badge badgeContent={17} color="purple" size="small">
+            <NotificationsNoneIcon size="small" sx={{ color: "#c8d8ff" }} />
           </Badge>
         </IconButton>
         <p>Notifications</p>
@@ -175,28 +210,20 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
             aria-label="open drawer"
             sx={{ mr: 0 }}
             onClick={() => handleDrawerToggle()}
-            className="toggle-icon"
+            className="app-navbar__toggle"
           >
             {!mobileOpen ? (
-              <KeyboardArrowLeftIcon />
+              <img src={menuOpen} alt="menuOpen" />
             ) : (
-              <KeyboardArrowRightIcon />
+              <img src={menuClose} alt="menuClose" />
             )}
           </IconButton>
-          {/* <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            MUI
-          </Typography> */}
           <Search>
             <SearchIconWrapper>
-              <SearchIcon />
+              <SearchIcon sx={{ color: "#c8d8ff" }} />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Global Search"
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
@@ -205,32 +232,8 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
             sx={{ display: { xs: "none", md: "flex" } }}
             className="align-items-center"
           >
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-              onClick={handleTheme}
-            >
-              {lightTheme ? <LightModeIcon /> : <DarkModeIcon />}
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <AppNavbarNotes />
+            <AppNavbarNotifications />
             <IconButton
               size="large"
               edge="end"
@@ -239,12 +242,11 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
               color="inherit"
-              className="profile-button ms-4"
+              className="app-navbar__profile ms-4"
             >
-              {/* <AccountCircle /> */}
               <div className="d-flex flex-column justify-content-end align-items-end me-2">
-                <h6 className="text-lighBlue">Saniya Shaikh</h6>
-                <p className="text-blue-gradient">Super Admin</p>
+                {/* {loginData && <p className="text-lightBlue">{loginData?.user.username}</p>}   */}
+                <small className="text-blue-gradient">Super Admin</small>
               </div>
               <img src={user} alt="user" width={40} />
             </IconButton>
@@ -258,7 +260,7 @@ const Navbar = ({ handleDrawerToggle, mobileOpen }) => {
               onClick={handleMobileMenuOpen}
               color="inherit"
             >
-              <MoreIcon />
+              <MoreIcon sx={{ color: "#c8d8ff" }} />
             </IconButton>
           </Box>
         </Toolbar>

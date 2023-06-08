@@ -1,0 +1,41 @@
+.ag-theme-alpine-dark {
+  --ag-foreground-color: #c8d8ff;
+  --ag-background-color: rgba(255, 255, 255, 0.03);
+  --ag-odd-row-background-color: rgba(255, 255, 255, 0.03);
+  //   --ag-odd-row-background-color: #444952;
+  --ag-header-column-resize-handle-color: #c8d8ff;
+  --ag-borders: none;
+  --ag-font-size: 0.75rem;
+  --ag-font-family: "Inter" sans-serif;
+
+  //   --ag-header-cell-hover-background-color: rgb(80, 40, 140);
+  //   --ag-header-cell-moving-background-color: rgb(80, 40, 140);
+  --ag-header-foreground-color: #c8d8ff;
+  --ag-header-background-color: #1a1932;
+
+  //   --ag-grid-size: 4px;
+  // --ag-list-item-height: 80px;
+  --ag-row-height: 60px;
+
+  .ag-pinned-left-cols-container {
+    border-right: 1px solid #38395c;
+  }
+  .ag-header-cell {
+    font-size: 14px;
+    font-weight: 500;
+    font-family: "Inter" sans-serif;
+  }
+  .ag-cell {
+    height: 60px;
+  }
+  .ag-row {
+    border-bottom: 1px solid #38395c;
+  }
+  .ag-row-hover {
+    // background-color: #191c24;
+    // opacity: 1;
+
+    // background-color: #c8d8ff;
+    // background-color: black;
+  }
+}
