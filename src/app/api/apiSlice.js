@@ -3,8 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { logoutHandler } from "../../features/auth/authAction";
 
 const baseQuery = fetchBaseQuery({
-  // baseUrl: process.env.REACT_APP_BASE_URL,
-  baseUrl: "",
+  baseUrl: process.env.REACT_APP_BASE_URL,
+  // baseUrl: "",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.accessToken;
