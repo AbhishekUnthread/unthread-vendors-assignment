@@ -5,7 +5,6 @@ import { logoutHandler } from "../../features/auth/authAction";
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.REACT_APP_BASE_URL,
   // baseUrl: "",
-  credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.accessToken;
     token && headers.set("authorization", `Bearer ${token}`);
