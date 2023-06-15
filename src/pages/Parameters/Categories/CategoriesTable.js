@@ -81,7 +81,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = list.map((n) => n.cId);
+      const newSelected = list.map((n) => n._id);
       setSelected(newSelected);
       return;
     }

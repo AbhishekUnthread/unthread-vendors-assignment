@@ -1,4 +1,4 @@
-import { useState, useReducer } from "react";
+import { forwardRef, useState, useEffect, useReducer } from "react";
 import { Link } from "react-router-dom";
 import { Box, Paper, Tab, Tabs, Tooltip } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -13,7 +13,27 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 
-import { useGetAllCollectionsQuery } from "../../../features/parameters/collections/collectionsApiSlice";
+import { LoadingButton } from "@mui/lab";
+import { useDispatch } from "react-redux";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+
+import {
+  useGetAllCollectionsQuery,
+  useCreateCollectionMutation,
+  useDeleteCollectionMutation,
+  useEditCollectionMutation,
+} from "../../../features/parameters/collections/collectionsApiSlice";
+
+const eventHandler = (e) => {
+  e.stopPropagation();
+  console.log(e.target);
+};
 
 const initialCollectionState = {
   status: "",
@@ -50,12 +70,7 @@ const Collections = () => {
     isSuccess: collectionIsSuccess,
     error: collectionError,
     isError: collectionIsError,
-  } = useGetAllCollectionsQuery({
-    "populate[products][fields][0]": "id",
-    "filters[status][$eq]": collectionState.status,
-    "pagination[start]": collectionState.start,
-    "pagination[limit]": collectionState.limit,
-  });
+  } = useGetAllCollectionsQuery();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
