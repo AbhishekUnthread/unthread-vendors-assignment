@@ -200,12 +200,10 @@ const router = () => {
                 {
                   path: "collections",
                   element: <Collections />,
-                  children: [
-                    {
-                      path: "create",
-                      element: <CreateCollection />,
-                    },
-                  ],
+                },
+                {
+                  path: "collections/create",
+                  element: <CreateCollection />,
                 },
                 {
                   path: "additionalFields",

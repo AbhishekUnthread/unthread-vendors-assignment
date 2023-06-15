@@ -62,7 +62,6 @@ const CreateFieldSets = () => {
               className="c-pointer"
             />
           </Link>
-
           <h5 className="page-heading ms-2 ps-1">Create Field Sets</h5>
         </div>
       </div>
@@ -76,7 +75,6 @@ const CreateFieldSets = () => {
               </FormControl>
             </div>
           </div>
-
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row features mt-4">
             <div className="d-flex justify-content-between mb-2 px-0">
               <div>
@@ -88,7 +86,7 @@ const CreateFieldSets = () => {
                     <img
                       src={info}
                       alt="info"
-                      className=" c-pointer"
+                      className="c-pointer"
                       width={13.5}
                     />
                   </Tooltip>

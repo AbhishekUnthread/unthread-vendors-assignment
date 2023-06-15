@@ -1,4 +1,10 @@
-import React from "react";
+import {
+  forwardRef,
+  useState,
+  useEffect,
+  useReducer,
+  useSyncExternalStore,
+} from "react";
 import "../../Products/AllProducts/AllProducts.scss";
 // ! COMPONENT IMPORTS
 import TagsManagerTable from "./TagsManagerTable";
@@ -52,11 +58,24 @@ import {
   Chip,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
+import { LoadingButton } from "@mui/lab";
+import { useDispatch } from "react-redux";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
 import SearchIcon from "@mui/icons-material/Search";
-import { callGetApi, createTag, updateTag } from '../services/parameter.service';
+import {
+  useGetAllTagsQuery,
+  useCreateTagMutation,
+  useDeleteTagMutation,
+  useEditTagMutation,
+} from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 
 // ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
+const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 // ? DIALOG TRANSITION ENDS HERE
@@ -149,312 +168,13 @@ const likeHeadCells = [
 
 // ? TABLE ENDS HERE
 
+const tagsValidationSchema = Yup.object({
+  name: Yup.string().trim().min(3).required("required"),
+  description: Yup.string().trim().min(3).required(),
+  status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
+});
+
 const TagsManager = () => {
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
- 
-
-
-  // ? CATEGORY SELECT STARTS HERE
-  const [category, setCategory] = React.useState("");
-
-  const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
-  };
-  // ? CATEGORY SELECT ENDS HERE
-
-  // ? CREATE TAG DIALOG STARTS HERE
-  const [openCreateTag, setOpenCreateTag] = React.useState(false);
-
-  const handleCreateTag = () => {
-    setOpenCreateTag(true);
-  };
-
-  const handleCreateTagClose = () => {
-    setOpenCreateTag(false);
-  };
-  // ? CREATE TAG DIALOG ENDS HERE
-
-  // ? FILTER DRAWER STARTS HERE
-  const [state, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
-
-  const toggleBulkTagDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setState({ ...state, [anchor]: open });
-  };
-  // ? FILTER DRAWER ENDS HERE
-
-  // ? RADIO BUTTON STARTS HERE
-  const [likeMatchRadio, setLikeMatchRadio] = React.useState("allCondition");
-  const handleLikeMatchRadio = (event) => {
-    setLikeMatchRadio(event.target.value);
-  };
-
-  // ? RADIO BUTTON ENDS HERE
-
-  // * TABLE STARTS HERE
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("productName");
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
-
-  const handleLikeSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = likeProductRows.map((n) => n.pId);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  const emptyRows =
-    page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - likeProductRows.length)
-      : 0;
-  // * TABLE ENDS HERE
-
-  // ? SIZE SELECT STARTS HERE
-  const [field, setField] = React.useState("price");
-
-  const handleFieldChange = (event) => {
-    setField(event.target.value);
-  };
-  // ? SIZE SELECT ENDS HERE
-
-  // ? OPERATOR SELECT STARTS HERE
-  const [operator, setOperator] = React.useState("equals");
-
-  const handleOperatorChange = (event) => {
-    setOperator(event.target.value);
-  };
-  // ? OPERATOR SELECT ENDS HERE
-
-  // ? CHECKBOX STARTS HERE
-  const [checked, setChecked] = React.useState(false);
-
-  const handleCheckboxChange = (event) => {
-    setChecked(event.target.checked);
-  };
-  // ? CHECKBOX ENDS HERE
-
-  // ? LIKE ADD CONDITION STARTS HERE
-  const [likeAddCondition, setLikeAddCondition] = React.useState(false);
-  const handleLikeAddCondition = () => {
-    if (!likeAddCondition) {
-      setLikeAddCondition(true);
-    } else {
-      setLikeAddCondition(false);
-      setLikeApplyCondition(false);
-    }
-  };
-  // ? LIKE ADD CONDITION ENDS HERE
-
-  // ? LIKE APPLY CONDITION STARTS HERE
-  const [likeApplyCondition, setLikeApplyCondition] = React.useState(false);
-  const handleLikeApplyCondition = () => {
-    if (likeApplyCondition) {
-      setLikeApplyCondition(false);
-    } else {
-      setLikeApplyCondition(true);
-      setLikeAddCondition(false);
-    }
-  };
-  // ? LIKE APPLY CONDITION ENDS HERE
-
- 
-
-//aman
-  let [message, setMessage] = React.useState('');
-  const [allTags, setallTags] = React.useState([]);
-  const [allTagsArchived, setallTagsArchived] = React.useState([]);
-
-  const [tagName, settagName] = React.useState('');
-  const [tagId, setTagId] = React.useState('');
-
-  React.useEffect(()=>{
-    gettags();
-  },[])
-
-
-  let gettags=()=>{
-    callGetApi('/api/product-tags','GET').then((res) => {
-      setallTags(res.data.filter(data=>data.attributes.status==='Active'))
-      setallTagsArchived(res.data.filter(data=>data.attributes.status!=='Active'))
-
-
-     })
-   .catch((err) => {
-     setMessage(err);
-   });
-   }
-
-   let edit=(data)=>{
-    setTagId(data.id)
-    settagName(data.attributes.name)
-    handleCreateTag()
-   }
-
-   let deleteData=(data)=>{
-
-    setTagId(data)
-    settagName(data.attributes.name)
-
-    if(data.attributes.status=='Active'){
-      createupdatetag('Draft',data.id)
-    }else{
-      createupdatetag('Active',data.id)
-    }
-  }
-
-  let createupdatetag=(status,tagId)=>{
-    if (!tagName) {
-      setMessage('Please enter tagName field');
-      return;
-    }
-
-    let request = {
-      data: {
-        name: tagName,
-        status
-      },
-    };
-
-    if(!tagId){
-      createTag(request)
-      .then((res) => {
-        responseHandled(res)
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-    }else{
-      updateTag(request,tagId)
-      .then((res) => {
-        responseHandled(res)
-      })
-      .catch((err) => {
-        setMessage(err);
-      });
-    }
-
-  }
- 
-
-  let responseHandled=(res)=>{
-    if (res?.error?.message) {
-      setMessage(res?.error?.message);
-      return;
-    }
-    resetdata()
-    gettags()
-    handleCreateTagClose();
-  }
-  let [multipledata, setmultipledata] = React.useState([]);
-
-  let resetdata=()=>{
-    settagName('')
-    setTagId('')
-    setmultipledata([])
-  }
-
-  let onKeyUp=(event)=>{
-    if (event.charCode === 13 && tagName) {
-      let multiple=multipledata
-
-      let duplicate=multiple.find(data=>data.toLowerCase() ==tagName.toLowerCase() )
-      if(duplicate){
-        setMessage('Please enter unique name');
-        return
-      }
-      multiple.push(tagName)
-      setmultipledata(multiple)
-      settagName('')
-        
-    }
-  }
-
-  let createUpdateMultiple=(status,array)=>{
-
-    for(let i=0;i<array.length;i++){
-      let request = {
-        data: {
-          name: array[i],
-          status
-        },
-      };
-  
-      createTag(request)
-        .then((res) => {
-          if(i==array.length-1)responseHandled(res)
-        })
-        .catch((err) => {
-          setMessage(err);
-        });
-  
-    }
-
-  }
-
-  const handleDelete = (index) => {
-    let multiple=multipledata
-    multiple.splice(index,1)
-    setmultipledata(multiple)
-  };
-
-
-
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -467,24 +187,16 @@ const TagsManager = () => {
           />
           <ExportDialog dialogName={"Tag Manager"} />
           <ImportSecondDialog dialogName={"Tag Manager"} />
-          <button
-            className="button-lightBlue-outline py-2 px-4 ms-3"
-            onClick={toggleBulkTagDrawer("right", true)}
-          >
+          <button className="button-lightBlue-outline py-2 px-4 ms-3">
             <p>Bulk Add Tags</p>
           </button>
-          <button
-            className="button-gradient py-2 px-4 ms-3"
-            onClick={handleCreateTag}
-          >
+          <button className="button-gradient py-2 px-4 ms-3">
             <p>+ Create Tag</p>
           </button>
 
           <Dialog
-            open={openCreateTag}
             TransitionComponent={Transition}
             keepMounted
-            onClose={handleCreateTagClose}
             aria-describedby="alert-dialog-slide-description"
             maxWidth="sm"
             fullWidth={true}
@@ -493,9 +205,8 @@ const TagsManager = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
-                  {!tagId?'Create Tags':'Update Tags'}
-
-                     </h5>
+                    {true ? "Create Tags" : "Update Tags"}
+                  </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -505,7 +216,6 @@ const TagsManager = () => {
                   src={cancel}
                   alt="cancel"
                   width={30}
-                  onClick={handleCreateTagClose}
                   className="c-pointer"
                 />
               </div>
@@ -515,64 +225,35 @@ const TagsManager = () => {
             <DialogContent className="py-3 px-4">
               <p className="text-lightBlue mb-2">Tag Name</p>
               <FormControl className="col-7 px-0">
-                <OutlinedInput  
-                value={tagName}
-                onKeyPress={onKeyUp}
-                onChange={(e) => settagName(e.target.value)}
-                placeholder="Enter Tag Name" size="small" />
+                <OutlinedInput placeholder="Enter Tag Name" size="small" />
               </FormControl>
-           
-              <div className="d-flex">
-                
 
-                   {multipledata.map((data,index)=>{
-                    
-                    return <Chip
-                    label={data}
-                    onDelete={()=>{
-                      
-                    }}
-                    onClick={()=>{
-                      handleDelete(index)
-                     }}
-                    
-                    size="small"
-                    className="mt-3 me-2"></Chip>
-                  })}
-               
-                
+              <div className="d-flex">
+                {[].map((data, index) => {
+                  return (
+                    <Chip
+                      label={data}
+                      onDelete={() => {}}
+                      onClick={() => {}}
+                      size="small"
+                      className="mt-3 me-2"
+                    ></Chip>
+                  );
+                })}
               </div>
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
-              <button
-                className="button-grey py-2 px-5"
-                onClick={handleCreateTagClose}
-              >
+              <button className="button-grey py-2 px-5">
                 <p className="text-lightBlue">Cancel</p>
               </button>
-              <button
-                className="button-gradient py-2 px-5"
-                onClick={e=>{
-                  if(multipledata.length){
-                    createUpdateMultiple('Active',multipledata)
-                    return;
-                  }
-                  createupdatetag('Active',tagId)
-                }}
-              >
+              <button className="button-gradient py-2 px-5">
                 <p>Save</p>
               </button>
             </DialogActions>
           </Dialog>
 
-          <SwipeableDrawer
-            anchor="right"
-            open={state["right"]}
-            onClose={toggleBulkTagDrawer("right", false)}
-            onOpen={toggleBulkTagDrawer("right", true)}
-            className="bulk-drawer"
-          >
+          <SwipeableDrawer anchor="right" className="bulk-drawer">
             <div className="d-flex flex-column bulk-top">
               <div className="d-flex justify-content-between pt-3 px-3 ms-2 me-1">
                 <div className="d-flex flex-column w-100">
@@ -586,7 +267,6 @@ const TagsManager = () => {
                   src={cancel}
                   alt="cancel"
                   className="c-pointer filter-icon"
-                  onClick={toggleBulkTagDrawer("right", false)}
                 />
               </div>
               <hr className="hr-grey-6 my-3 w-100" />
@@ -598,8 +278,6 @@ const TagsManager = () => {
                 <Select
                   labelId="demo-select-small"
                   id="demo-select-small"
-                  value={category}
-                  onChange={handleCategoryChange}
                   size="small"
                 >
                   <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
@@ -631,8 +309,6 @@ const TagsManager = () => {
                       row
                       aria-labelledby="demo-row-radio-buttons-group-label"
                       name="row-radio-buttons-group"
-                      value={likeMatchRadio}
-                      onChange={handleLikeMatchRadio}
                       className="features-radio"
                     >
                       <FormControlLabel
@@ -659,10 +335,7 @@ const TagsManager = () => {
                       />
                     </RadioGroup>
                   </div>
-                  <button
-                    className="button-gradient py-1 px-4"
-                    onClick={handleLikeAddCondition}
-                  >
+                  <button className="button-gradient py-1 px-4">
                     <p>Add Condition</p>
                   </button>
                 </div>
@@ -670,8 +343,6 @@ const TagsManager = () => {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={checked}
-                        onChange={handleCheckboxChange}
                         inputProps={{ "aria-label": "controlled" }}
                         size="small"
                         style={{
@@ -692,14 +363,12 @@ const TagsManager = () => {
                   />
                   <p className="text-lightBlue c-pointer">Action</p>
                 </div>
-                {likeApplyCondition && (
+                {true && (
                   <div className="d-flex px-3 justify-content-between align-items-center">
                     <div className="d-flex align-items-center">
                       <FormControlLabel
                         control={
                           <Checkbox
-                            checked={checked}
-                            onChange={handleCheckboxChange}
                             inputProps={{ "aria-label": "controlled" }}
                             size="small"
                             style={{
@@ -734,7 +403,7 @@ const TagsManager = () => {
                     </div>
                   </div>
                 )}
-                {likeAddCondition && (
+                {true && (
                   <div className="row">
                     <div className="col-sm-6 col-md-3 mt-3 mb-1 ps-4">
                       <p className="text-lightBlue mb-1">Field</p>
@@ -743,8 +412,6 @@ const TagsManager = () => {
                         <Select
                           labelId="demo-select-small"
                           id="demo-select-small"
-                          value={field}
-                          onChange={handleFieldChange}
                           size="small"
                         >
                           <MenuItem
@@ -787,8 +454,6 @@ const TagsManager = () => {
                         <Select
                           labelId="demo-select-small"
                           id="demo-select-small"
-                          value={operator}
-                          onChange={handleOperatorChange}
                           size="small"
                         >
                           <MenuItem
@@ -835,16 +500,10 @@ const TagsManager = () => {
                       </FormControl>
                     </div>
                     <div className="col-sm-6 col-md-3 mt-3 mb-1">
-                      <button
-                        className="button-gradient py-1 px-3 w-100 mb-2"
-                        onClick={handleLikeApplyCondition}
-                      >
+                      <button className="button-gradient py-1 px-3 w-100 mb-2">
                         <p>Apply</p>
                       </button>
-                      <button
-                        className="button-lightBlue-outline py-1 px-3 w-100"
-                        onClick={handleLikeApplyCondition}
-                      >
+                      <button className="button-lightBlue-outline py-1 px-3 w-100">
                         <p>Cancel</p>
                       </button>
                     </div>
@@ -852,8 +511,8 @@ const TagsManager = () => {
                 )}
               </div>
 
-              {likeApplyCondition && (
-                <React.Fragment>
+              {true && (
+                <>
                   <div className="col-12 mt-3">
                     <div className="row align-items-center">
                       <div className="col-md-12  py-2">
@@ -882,111 +541,91 @@ const TagsManager = () => {
                         size="medium"
                       >
                         <EnhancedTableHead
-                          numSelected={selected.length}
-                          order={order}
-                          orderBy={orderBy}
-                          onSelectAllClick={handleLikeSelectAllClick}
-                          onRequestSort={handleRequestSort}
                           rowCount={likeProductRows.length}
                           headCells={likeHeadCells}
                         />
                         <TableBody>
-                          {stableSort(
-                            likeProductRows,
-                            getComparator(order, orderBy)
-                          )
-                            .slice(
-                              page * rowsPerPage,
-                              page * rowsPerPage + rowsPerPage
-                            )
-                            .map((row, index) => {
-                              const isItemSelected = isSelected(row.pId);
-                              const labelId = `enhanced-table-checkbox-${index}`;
+                          {[].map((row, index) => {
+                            const labelId = `enhanced-table-checkbox-${index}`;
 
-                              return (
-                                <TableRow
-                                  hover
-                                  role="checkbox"
-                                  aria-checked={isItemSelected}
-                                  tabIndex={-1}
-                                  key={row.pId}
-                                  selected={isItemSelected}
+                            return (
+                              <TableRow
+                                hover
+                                role="checkbox"
+                                tabIndex={-1}
+                                key={row.pId}
+                              >
+                                <TableCell padding="checkbox">
+                                  <Checkbox
+                                    color="primary"
+                                    inputProps={{
+                                      "aria-labelledby": labelId,
+                                    }}
+                                    size="small"
+                                    style={{
+                                      color: "#5C6D8E",
+                                      marginRight: 0,
+                                    }}
+                                  />
+                                </TableCell>
+                                <TableCell
+                                  component="th"
+                                  id={labelId}
+                                  scope="row"
+                                  padding="none"
                                 >
-                                  <TableCell padding="checkbox">
-                                    <Checkbox
-                                      color="primary"
-                                      checked={isItemSelected}
-                                      inputProps={{
-                                        "aria-labelledby": labelId,
-                                      }}
-                                      size="small"
-                                      onClick={(event) =>
-                                        handleClick(event, row.pId)
-                                      }
-                                      style={{
-                                        color: "#5C6D8E",
-                                        marginRight: 0,
-                                      }}
+                                  <div className="d-flex align-items-center my-2">
+                                    <img
+                                      src={ringSmall}
+                                      alt="ringSmall"
+                                      className="me-2"
+                                      height={45}
+                                      width={45}
                                     />
-                                  </TableCell>
-                                  <TableCell
-                                    component="th"
-                                    id={labelId}
-                                    scope="row"
-                                    padding="none"
-                                  >
-                                    <div className="d-flex align-items-center my-2">
-                                      <img
-                                        src={ringSmall}
-                                        alt="ringSmall"
-                                        className="me-2"
-                                        height={45}
-                                        width={45}
-                                      />
-                                      <div>
-                                        <p className="text-lightBlue fw-600">
-                                          {row.productName}
-                                        </p>
-                                        <small className="mt-2 text-grey-6">
-                                          SKU: TFDR012345
-                                        </small>
-                                      </div>
-                                    </div>
-                                  </TableCell>
-                                  <TableCell>
-                                    <p className="text-lightBlue">
-                                      {row.category}
-                                    </p>
-                                  </TableCell>
-                                  <TableCell>
-                                    <div className="d-flex align-items-center c-pointer ">
-                                      <p className="text-lightBlue">
-                                        {row.price}
+                                    <div>
+                                      <p className="text-lightBlue fw-600">
+                                        {row.productName}
                                       </p>
+                                      <small className="mt-2 text-grey-6">
+                                        SKU: TFDR012345
+                                      </small>
                                     </div>
-                                  </TableCell>
-                                  <TableCell>
-                                    <div className="d-flex align-items-center c-pointer ">
-                                      <img
-                                        src={deleteButton}
-                                        alt="deleteButton"
-                                        width={75}
-                                        className="c-pointer"
-                                      />
-                                    </div>
-                                  </TableCell>
-                                </TableRow>
-                              );
-                            })}
-                          {emptyRows > 0 && (
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <p className="text-lightBlue">
+                                    {row.category}
+                                  </p>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="d-flex align-items-center c-pointer ">
+                                    <p className="text-lightBlue">
+                                      {row.price}
+                                    </p>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="d-flex align-items-center c-pointer ">
+                                    <img
+                                      src={deleteButton}
+                                      alt="deleteButton"
+                                      width={75}
+                                      className="c-pointer"
+                                    />
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                          {
                             <TableRow
                               style={{
-                                height: 53 * emptyRows,
+                                height: 53,
                               }}
                             >
                               <TableCell colSpan={6} />
                             </TableRow>
-                          )}
+                          }
                         </TableBody>
                       </Table>
                     </TableContainer>
@@ -994,31 +633,21 @@ const TagsManager = () => {
                       rowsPerPageOptions={[5, 10, 25]}
                       component="div"
                       count={likeProductRows.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
                       className="table-pagination"
                     />
                   </div>
-                </React.Fragment>
+                </>
               )}
             </div>
 
             <div className="d-flex flex-column py-3 px-4 bulk-buttons">
               <hr className="hr-grey-6 my-3 w-100" />
               <div className="d-flex justify-content-between">
-                <button
-                  className="button-gradient py-2 px-5 w-auto "
-                  onClick={toggleBulkTagDrawer("right", false)}
-                >
+                <button className="button-gradient py-2 px-5 w-auto ">
                   <p>Add to 53 Products</p>
                 </button>
-                <button
-                  className="button-lightBlue-outline py-2 px-4"
-                  onClick={toggleBulkTagDrawer("right", false)}
-                >
-                  ><p>Cancel</p>
+                <button className="button-lightBlue-outline py-2 px-4">
+                  <p>Cancel</p>
                 </button>
               </div>
             </div>
@@ -1038,12 +667,7 @@ const TagsManager = () => {
             {/* variant="scrollable"
               scrollButtons
               allowScrollButtonsMobile */}
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              aria-label="scrollable force tabs example"
-              className="tabs"
-            >
+            <Tabs aria-label="scrollable force tabs example" className="tabs">
               <Tab label="All" className="tabs-head" />{" "}
               <Tab label="Draft" className="tabs-head" />
             </Tabs>
@@ -1051,11 +675,11 @@ const TagsManager = () => {
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
           </div>
-          <TabPanel value={value} index={0}>
-            <TagsManagerTable   list={allTags}  edit={edit} deleteData={deleteData}/>
+          <TabPanel index={0}>
+            <TagsManagerTable />
           </TabPanel>
-          <TabPanel value={value} index={1}>
-            <TagsManagerTable   list={allTagsArchived} deleteData={deleteData}/>
+          <TabPanel index={1}>
+            <TagsManagerTable />
           </TabPanel>
         </Paper>
       </div>

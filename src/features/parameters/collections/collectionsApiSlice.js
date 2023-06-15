@@ -14,12 +14,41 @@ export const collectionApiSlice = apiSlice.injectEndpoints({
         }
 
         return {
-          url: `/product-collections${queryString}`,
+          url: `/parameters/collection${queryString}`,
         };
       },
-      providesTags: ["Collection"],
+      providesTags: ["Collections"],
+    }),
+    createCollection: builder.mutation({
+      query: (collectionDetails) => ({
+        url: "/parameters/collection",
+        method: "POST",
+        body: collectionDetails,
+      }),
+      invalidatesTags: ["Collections"],
+    }),
+    deleteCollection: builder.mutation({
+      query: (collectionId) => ({
+        url: `/parameters/collection/${collectionId}`,
+        method: "DELETE",
+        body: collectionId,
+      }),
+      invalidatesTags: ["Collections"],
+    }),
+    editCollection: builder.mutation({
+      query: ({ id, details }) => ({
+        url: `/parameters/collection/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      invalidatesTags: ["Collections"],
     }),
   }),
 });
 
-export const { useGetAllCollectionsQuery } = collectionApiSlice;
+export const {
+  useGetAllCollectionsQuery,
+  useCreateCollectionMutation,
+  useDeleteCollectionMutation,
+  useEditCollectionMutation,
+} = collectionApiSlice;
