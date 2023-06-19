@@ -73,6 +73,7 @@ const Vendors = () => {
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
   } = useGetAllVendorsQuery();
+
   const [
     createVendor,
     {
@@ -204,7 +205,6 @@ const Vendors = () => {
           >
             <p>+ Add Vendors</p>
           </button>
-
           <Dialog
             TransitionComponent={Transition}
             keepMounted
