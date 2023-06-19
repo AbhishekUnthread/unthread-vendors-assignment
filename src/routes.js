@@ -111,17 +111,15 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to="allProducts" replace={true} />,
+                  element: <Navigate to=" " replace={true} />,
                 },
                 {
                   path: "allProducts",
                   element: <AllProducts />,
-                  children: [
-                    {
-                      path: "addProduct",
-                      element: <AddProduct />,
-                    },
-                  ],
+                },
+                {
+                  path: "allProducts/addProduct",
+                  element: <ProductsBulkEditor />,
                 },
                 {
                   path: "bulkEditor",
@@ -130,26 +128,23 @@ const router = () => {
                 {
                   path: "reviews",
                   element: <ProductReviews />,
-                  children: [
-                    {
-                      path: "create",
-                      element: <CreateReview />,
-                    },
-                  ],
+                },
+
+                {
+                  path: "reviews/create",
+                  element: <CreateReview />,
                 },
                 {
                   path: "inventory",
                   element: <ProductInventory />,
-                  children: [
-                    {
-                      path: "create",
-                      element: <CreateStore />,
-                    },
-                    {
-                      path: "details",
-                      element: <ProductInventoryDetails />,
-                    },
-                  ],
+                },
+                {
+                  path: "inventory/create",
+                  element: <CreateStore />,
+                },
+                {
+                  path: "inventory/details",
+                  element: <ProductInventoryDetails />,
                 },
               ],
             },
@@ -163,26 +158,22 @@ const router = () => {
                 {
                   path: "allUsers",
                   element: <AllUsers />,
-                  children: [
-                    {
-                      path: "add",
-                      element: <AddUser />,
-                    },
-                    {
-                      path: "details",
-                      element: <UserDetails />,
-                    },
-                  ],
+                },
+                {
+                  path: "allUsers/add",
+                  element: <AddUser />,
+                },
+                {
+                  path: "allUsers/details",
+                  element: <UserDetails />,
                 },
                 {
                   path: "userGroups",
                   element: <UserGroups />,
-                  children: [
-                    {
-                      path: "create",
-                      element: <CreateUserGroup />,
-                    },
-                  ],
+                },
+                {
+                  path: "userGroups/create",
+                  element: <CreateUserGroup />,
                 },
                 {
                   path: "userEnquiries",
@@ -208,82 +199,70 @@ const router = () => {
                 {
                   path: "additionalFields",
                   element: <AdditionalFields />,
-                  children: [
-                    {
-                      path: "createFieldSets",
-                      element: <CreateFieldSets />,
-                    },
-                  ],
+                },
+                {
+                  path: "additionalFields/createFieldSets",
+                  element: <CreateFieldSets />,
                 },
                 {
                   path: "categories",
                   element: <Categories />,
-                  children: [
-                    {
-                      path: "edit",
-                      element: <EditVendor />,
-                    },
-                  ],
+                },
+                {
+                  path: "categories/edit",
+                  element: <EditVendor />,
                 },
                 {
                   path: "variantSets",
                   element: <VariantSets />,
-                  children: [
-                    {
-                      path: "edit",
-                      element: <CreateVariantSets />,
-                    },
-                    {
-                      path: "dataSets/create",
-                      element: <CreateDataSets />,
-                    },
-                  ],
+                },
+                {
+                  path: "variantSets/edit",
+                  element: <CreateVariantSets />,
+                },
+                {
+                  path: "variantSets/dataSets/create",
+                  element: <CreateDataSets />,
                 },
                 {
                   path: "vendors",
                   element: <Vendors />,
-                  children: [
-                    {
-                      path: "edit",
-                      element: <EditVendor />,
-                    },
-                  ],
+                },
+                {
+                  path: "vendors/edit",
+                  element: <EditVendor />,
                 },
                 {
                   path: "tagsManager",
                   element: <TagsManager />,
-                  children: [
-                    {
-                      path: "edit",
-                      element: <EditTags />,
-                    },
-                  ],
+                },
+                {
+                  path: "tagsManager/edit",
+                  element: <EditTags />,
                 },
                 {
                   path: "priceMaster",
                   element: <PriceMasterLanding />,
-                  children: [
-                    {
-                      path: "inventory",
-                      element: <PriceMaster />,
-                    },
-                    {
-                      path: "create",
-                      element: <CreatePriceMaster />,
-                    },
-                    {
-                      path: "metalMaster",
-                      element: <MetalPriceManager />,
-                    },
-                    {
-                      path: "diamondMaster",
-                      element: <DiamondPriceManager />,
-                    },
-                    {
-                      path: "makingMaster",
-                      element: <MakingChargesManager />,
-                    },
-                  ],
+                },
+                {
+                  path: "priceMaster/inventory",
+                  element: <PriceMaster />,
+                },
+                {
+                  path: "priceMaster/create",
+                  element: <CreatePriceMaster />,
+                },
+                {
+                  path: "priceMaster/metalMaster",
+                  element: <MetalPriceManager />,
+                },
+                {
+                  path: "priceMaster/diamondMaster",
+                  element: <DiamondPriceManager />,
+                },
+                {
+                  path: "priceMaster/makingMaster",
+                  element: <MakingChargesManager />,
                 },
               ],
             },
