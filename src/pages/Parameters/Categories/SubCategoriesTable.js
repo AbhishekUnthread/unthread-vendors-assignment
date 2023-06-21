@@ -27,22 +27,22 @@ import TableMassActionButton from "../../../components/TableMassActionButton/Tab
 
 const headCells = [
   {
-    id: "categoriesName",
+    id: "subCategoriesName",
     numeric: false,
     disablePadding: true,
-    label: "Categories Name",
+    label: "Sub Categories Name",
+  },
+  {
+    id: "parentCategory",
+    numeric: false,
+    disablePadding: true,
+    label: "Parent Category",
   },
   {
     id: "noOfProducts",
     numeric: false,
     disablePadding: true,
-    label: "No. Of Products",
-  },
-  {
-    id: "noOfSubCategories",
-    numeric: false,
-    disablePadding: true,
-    label: "No. of Sub-Categories",
+    label: "No. of Products",
   },
   {
     id: "status",
@@ -59,7 +59,7 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
+const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -297,4 +297,4 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
   );
 };
 
-export default CategoriesTable;
+export default SubCategoriesTable;
