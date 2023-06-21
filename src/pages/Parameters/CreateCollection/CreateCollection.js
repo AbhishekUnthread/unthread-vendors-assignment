@@ -233,19 +233,19 @@ const CreateCollection = () => {
 
   const collectionFormik = useFormik({
     initialValues: {
-      title: ""
+      title: "",
     },
     enableReinitialize: true,
     validationSchema: collectionValidationSchema,
     onSubmit: (values) => {
-      console.log(values, 'values')
+      console.log(values, "values");
       createCollection(values)
         .unwrap()
         .then(() => collectionFormik.resetForm());
     },
   });
 
-  console.log(collectionFormik, 'collectionFormik');
+  console.log(collectionFormik, "collectionFormik");
 
   useEffect(() => {
     if (createCollectionError) {
@@ -258,10 +258,7 @@ const CreateCollection = () => {
         );
       }
     }
-  }, [
-    createCollectionError,
-    dispatch,
-  ]);
+  }, [createCollectionError, dispatch]);
 
   // ? RADIO BUTTON STARTS HERE
   const [likeProductRadio, setLikeProductRadio] = React.useState("automated");
@@ -489,9 +486,9 @@ const CreateCollection = () => {
                   </Tooltip>
                 </div>
                 <FormControl className="w-100 px-0">
-                  <OutlinedInput 
-                    placeholder="Enter Group Name" 
-                    size="small" 
+                  <OutlinedInput
+                    placeholder="Enter Group Name"
+                    size="small"
                     value={collectionFormik.values.title}
                     onBlur={collectionFormik.handleBlur}
                     onChange={collectionFormik.handleChange}
@@ -667,7 +664,11 @@ const CreateCollection = () => {
                               width={30}
                               className="me-1"
                             />
-                            <img src={deleteWhite} alt="deleteWhite" width={30} />
+                            <img
+                              src={deleteWhite}
+                              alt="deleteWhite"
+                              width={30}
+                            />
                           </div>
                         </div>
                       )}
@@ -1006,7 +1007,10 @@ const CreateCollection = () => {
                   />
                   <TableBody>
                     {stableSort(rows, getComparator(order, orderBy))
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
                       .map((row, index) => {
                         const isItemSelected = isSelected(row.pId);
                         const labelId = `enhanced-table-checkbox-${index}`;
@@ -1096,7 +1100,9 @@ const CreateCollection = () => {
                                   </small>
                                   <div className="d-flex align-items-center justify-content-between mb-2 mt-3 text-grey-6">
                                     <small>Metal Price</small>
-                                    <small className="ms-2">₹&nbsp;15,000</small>
+                                    <small className="ms-2">
+                                      ₹&nbsp;15,000
+                                    </small>
                                   </div>
                                   <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
                                     <small>Diamond Price</small>
