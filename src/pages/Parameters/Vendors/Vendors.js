@@ -72,7 +72,7 @@ const Vendors = () => {
     isLoading: vendorsIsLoading,
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
-  } = useGetAllVendorsQuery();
+  } = useGetAllVendorsQuery({ createdAt: -1 });
 
   const [
     createVendor,

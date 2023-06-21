@@ -29,6 +29,7 @@ import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import TabPanel from "../../../components/TabPanel/TabPanel";
+import SubCategoriesTable from "./SubCategoriesTable";
 
 import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
@@ -82,7 +83,7 @@ const Categories = () => {
     isLoading: categoriesIsLoading,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery();
+  } = useGetAllCategoriesQuery({ createdAt: -1 });
   const {
     data: subCategoriesData,
     isLoading: subCategoriesIsLoading,
@@ -595,9 +596,9 @@ const Categories = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
               <Tab label="Categories" className="tabs-head" />
               <Tab label="Sub Categories" className="tabs-head" />
+              <Tab label="Archived" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -615,7 +616,7 @@ const Categories = () => {
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={1}>
-                <CategoriesTable
+                <SubCategoriesTable
                   isLoading={categoriesIsLoading}
                   deleteData={deleteCategoryHandler}
                   error={error}

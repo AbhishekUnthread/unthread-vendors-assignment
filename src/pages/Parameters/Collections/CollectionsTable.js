@@ -42,7 +42,7 @@ const rows = [
   createData(8, "Collection 8", "503", "Active"),
 ];
 
-const CollectionsTable = () => {
+const CollectionsTable = ({ list, error, isLoading }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -77,7 +77,7 @@ const CollectionsTable = () => {
   ];
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -91,7 +91,7 @@ const CollectionsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.cId);
+      const newSelected = list.map((n) => n.cId);
       setSelected(newSelected);
       return;
     }
@@ -156,11 +156,11 @@ const CollectionsTable = () => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={rows.length}
+            rowCount={list.length}
             headCells={headCells}
           />
           <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
+            {stableSort(list, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row.cId);
@@ -201,20 +201,20 @@ const CollectionsTable = () => {
                       >
                         <div className="d-flex align-items-center py-2">
                           <img
-                            src={ringSmall}
+                            src={row.mediaUrl}
                             alt="ringSmall"
                             className="me-2"
                             height={45}
                             width={45}
                           />
                           <p className="text-lightBlue rounded-circle fw-600">
-                            {row.collectionsName}
+                            {row.title}
                           </p>
                         </div>
                       </Link>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
-                      <p className="text-lightBlue">{row.noOfProducts}</p>
+                      <p className="text-lightBlue">{row.totalProduct}</p>
                     </TableCell>
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
@@ -280,7 +280,7 @@ const CollectionsTable = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={list.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
