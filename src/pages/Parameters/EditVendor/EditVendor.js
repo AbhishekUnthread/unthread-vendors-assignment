@@ -108,26 +108,40 @@ const EditVendor = () => {
         description: vendorNotes, // Vendor description
         status: vendorStatus?vendorStatus:"active" // Vendor status
       }).unwrap().then(() => {
-        navigate("/parameters/vendors"); // Navigating to vendors page after successful edit
+        navigate("/parameters/vendors"); // Navigating to vendors page after successful creation
       });
      }
     };
     
     const handleSubmitAndAddAnother = () => {
-      // Calling Vendor edit API
-      editVendor({
-        id: vendorId, // ID of the vendor
-        details: {
-          isFlagShip: vendorFlagShip, // Flagship status of the vendor
+      if(vendorId !== "")
+      {
+        // Calling Vendor edit API
+        editVendor({
+          id: vendorId, // ID of the vendor
+          details: {
+            isFlagShip: vendorFlagShip, // Flagship status of the vendor
+            showFilter: checked, // Whether to show filters
+            name: vendorName, // Vendor name
+            description: vendorNotes, // Vendor description
+            status: vendorStatus?vendorStatus:"active" // Vendor status
+          }
+        }).unwrap().then(() => {
+          navigate("/parameters/vendors/edit"); // Navigating to edit page after successful edit     
+          
+        });
+      }
+      else{
+        createVendor({
           showFilter: checked, // Whether to show filters
           name: vendorName, // Vendor name
           description: vendorNotes, // Vendor description
           status: vendorStatus?vendorStatus:"active" // Vendor status
-        }
-      }).unwrap().then(() => {
-        navigate("/parameters/vendors/edit"); // Navigating to edit page after successful edit     
-        
-      });
+        }).unwrap().then(() => {
+          navigate("/parameters/vendors/edit"); // Navigating to vendors page after successful creation
+        });
+      }
+     
       setVendorName(''); // Resetting the vendor name  
       dispatch(updateVendorId(""));
     };
