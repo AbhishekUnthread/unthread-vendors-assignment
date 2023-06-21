@@ -1,13 +1,17 @@
 import React from "react";
 import { TextareaAutosize } from "@mui/material";
 
-const NotesBox = () => {
+const NotesBox = ({name,value,onChange}) => {
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h6 className="text-lightBlue fw-500">Notes</h6>
       </div>
       <TextareaAutosize
+        name={name}
+        value={value}
+        onChange={onChange}
         aria-label="meta description"
         placeholder="Type Something"
         style={{

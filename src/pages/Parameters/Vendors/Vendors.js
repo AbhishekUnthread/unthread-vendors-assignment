@@ -1,4 +1,5 @@
-import { forwardRef, useState, useEffect, useReducer } from "react";
+import React, { forwardRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../Products/AllProducts/AllProducts.scss";
 // ! COMPONENT IMPORTS
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -28,6 +29,8 @@ import {
   MenuItem,
   Chip,
   FormHelperText,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -41,8 +44,8 @@ import {
   useGetAllVendorsQuery,
   useCreateVendorMutation,
   useDeleteVendorMutation,
-  useEditVendorMutation,
 } from "../../../features/parameters/vendors/vendorsApiSlice";
+import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 
 // ! MATERIAL ICONS IMPORTS
 
@@ -60,19 +63,21 @@ const vendorValidationSchema = Yup.object({
 
 const Vendors = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [vendorType, setVendorType] = useState(0);
   const [vendorList, setVendorList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editId, setEditId] = useState(null);
 
-  const {
-    data: vendorsData,
-    isLoading: vendorsIsLoading,
-    isSuccess: vendorsIsSuccess,
-    error: vendorsError,
-  } = useGetAllVendorsQuery();
+
+const {
+  data: vendorsData, // Data received from the useGetAllVendorsQuery hook
+  isLoading: vendorsIsLoading, // Loading state of the vendors data
+  isSuccess: vendorsIsSuccess, // Success state of the vendors data
+  error: vendorsError, // Error state of the vendors data
+} = useGetAllVendorsQuery({ createdAt:"-1" }); // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
+
 
   const [
     createVendor,
@@ -90,33 +95,21 @@ const Vendors = () => {
       error: deleteVendorError,
     },
   ] = useDeleteVendorMutation();
-  const [
-    editVendor,
-    {
-      isLoading: editVendorIsLoading,
-      isSuccess: editVendorIsSuccess,
-      error: editVendorError,
-    },
-  ] = useEditVendorMutation();
 
+  
   const vendorFormik = useFormik({
     initialValues: {
       name: "",
       description: "",
       status: "active",
+      showFilter : true,
     },
     enableReinitialize: true,
     validationSchema: vendorValidationSchema,
     onSubmit: (values) => {
-      if (isEditing) {
-        editVendor({ id: editId, details: values })
-          .unwrap()
-          .then(() => vendorFormik.resetForm());
-      } else {
         createVendor(values)
           .unwrap()
           .then(() => vendorFormik.resetForm());
-      }
     },
   });
 
@@ -124,22 +117,24 @@ const Vendors = () => {
     setShowCreateModal((prevState) => !prevState);
     vendorFormik.resetForm();
     setIsEditing(false);
-    setEditId(null);
+    // setEditId(null);
   };
 
   const deleteVendorHandler = (data) => {
-    deleteVendor(data._id);
+    deleteVendor(data?._id);
   };
 
-  const editCategoryHandler = (data) => {
+  const editCategoryPageNavigationHandler = (data) => {
+    // Set the flag to indicate that editing is in progress
     setIsEditing(true);
-    setEditId(data._id);
-    setShowCreateModal((prevState) => !prevState);
-    vendorFormik.setFieldValue("name", data.name);
-    vendorFormik.setFieldValue("description", data.description);
+    // Dispatch an action to update the vendor ID
+    dispatch(updateVendorId(data._id)); //have to update corresponding vendor id
+    // Navigate to the "edit" page
+    navigate("edit");
+ 
   };
 
-  const changeVendorTypeHandler = (event, tabIndex) => {
+  const changeVendorTypeHandler = (_event, tabIndex) => {
     setVendorType(tabIndex);
   };
 
@@ -164,8 +159,9 @@ const Vendors = () => {
         );
       }
     }
-    if (createVendorIsSuccess || editVendorIsSuccess) {
+    if (createVendorIsSuccess) {
       setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Vendor created successfully" }));
     }
     if (vendorsIsSuccess) {
       setError(false);
@@ -182,7 +178,6 @@ const Vendors = () => {
     vendorsError,
     createVendorIsSuccess,
     createVendorError,
-    editVendorIsSuccess,
     vendorType,
     dispatch,
   ]);
@@ -272,6 +267,31 @@ const Vendors = () => {
                       </FormHelperText>
                     )}
                 </FormControl>
+                <br/>
+                <FormControlLabel
+                        control={
+                          <Checkbox
+                            name="showFilter"
+                            checked={vendorFormik.values.showFilter}
+                            onChange={vendorFormik.handleChange}
+                            inputProps={{ "aria-label": "controlled" }}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                              width: "auto",
+                            }}
+                          />
+                        }
+                        label="Include in Filters"
+                        sx={{
+                          "& .MuiTypography-root": {
+                            fontSize: "0.875rem",
+                            color: "#c8d8ff",
+                          },
+                        }}
+                        className=" px-0"
+                 />
 
                 {/* <div className="d-flex">
                     <Chip
@@ -324,8 +344,8 @@ const Vendors = () => {
                   <p className="text-lightBlue">Cancel</p>
                 </button>
                 <LoadingButton
-                  loading={createVendorIsLoading || editVendorIsLoading}
-                  disabled={createVendorIsLoading || editVendorIsLoading}
+                  loading={createVendorIsLoading}
+                  disabled={createVendorIsLoading}
                   className="button-gradient py-2 px-5"
                   type="submit"
                 >
@@ -368,7 +388,7 @@ const Vendors = () => {
               deleteData={deleteVendorHandler}
               error={error}
               list={vendorList}
-              edit={editCategoryHandler}
+              edit={editCategoryPageNavigationHandler}
             />
           </TabPanel>
           <TabPanel value={vendorType} index={1}>
@@ -377,7 +397,7 @@ const Vendors = () => {
               deleteData={deleteVendorHandler}
               error={error}
               list={vendorList}
-              edit={editCategoryHandler}
+              edit={editCategoryPageNavigationHandler}
             />
           </TabPanel>
         </Paper>
