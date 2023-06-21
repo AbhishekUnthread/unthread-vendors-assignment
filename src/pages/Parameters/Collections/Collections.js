@@ -72,7 +72,7 @@ const Collections = () => {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
-    error: collectionError
+    error: collectionError,
   } = useGetAllCollectionsQuery({ createdAt: -1 });
 
   const handleChange = (event, newValue) => {
@@ -165,10 +165,18 @@ const Collections = () => {
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <CollectionsTable />
+            <CollectionsTable
+              isLoading={collectionIsLoading}
+              error={error}
+              list={collectionList}
+            />
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <CollectionsTable />
+            <CollectionsTable
+              isLoading={collectionIsLoading}
+              error={error}
+              list={collectionList}
+            />
           </TabPanel>
         </Paper>
       </div>
