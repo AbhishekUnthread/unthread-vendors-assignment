@@ -31,6 +31,9 @@ import {
   FormHelperText,
   FormControlLabel,
   Checkbox,
+  RadioGroup,
+  Radio,
+  Popover,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -46,6 +49,7 @@ import {
   useDeleteVendorMutation,
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+import sort from "../../../assets/icons/sort.svg";
 
 // ! MATERIAL ICONS IMPORTS
 
@@ -178,6 +182,44 @@ const Vendors = () => {
     vendorType,
     dispatch,
   ]);
+ // * SORT POPOVERS STARTS HERE
+  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+  const [selectedSortOption, setSelectedSortOption] = React.useState(null);
+
+  const handleSortClick = (event) => {
+    setAnchorSortEl(event.currentTarget);
+  };
+
+  const handleSortClose = () => {
+    setAnchorSortEl(null);
+  };
+
+  const handleSortRadioChange = (event) => {
+    setSelectedSortOption(event.target.value);
+    setAnchorSortEl(null); // Close the popover after selecting a value
+  };
+
+  console.log("selectedSortOption",selectedSortOption);
+  const openSort = Boolean(anchorSortEl);
+  const idSort = openSort ? "simple-popover" : undefined;
+
+
+ // * SORT POPOVERS ENDS
+
+  // * STATUS POPOVERS STARTS HERE
+  const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
+
+  const handleStatusClick = (event) => {
+    setAnchorStatusEl(event.currentTarget);
+  };
+
+  const handleStatusClose = () => {
+    setAnchorStatusEl(null);
+  };
+
+  const openStatus = Boolean(anchorStatusEl);
+  const idStatus = openSort ? "simple-popover" : undefined;
+ // * STATUS POPOVERS ENDS
 
   return (
     <div className="container-fluid page">
@@ -378,6 +420,104 @@ const Vendors = () => {
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortEl}
+                onClose={handleSortClose}
+                className="columns"
+              >
+              <FormControl className="px-2 py-1">
+                <RadioGroup
+                  aria-labelledby="demo-controlled-radio-buttons-group"
+                  name="controlled-radio-buttons-group"
+                  value={selectedSortOption}
+                  onChange={handleSortRadioChange}
+                >
+                  <FormControlLabel
+                    value="alphabeticalAtoZ"
+                    control={<Radio size="small" />}
+                    label="Alphabetical (A-Z)"
+                  />
+                  <FormControlLabel
+                    value="alphabeticalZtoA"
+                    control={<Radio size="small" />}
+                    label="Alphabetical (Z-A)"
+                  />
+                  <FormControlLabel
+                    value="oldestToNewest"
+                    control={<Radio size="small" />}
+                    label="Oldest to Newest"
+                  />
+                  <FormControlLabel
+                    value="newestToOldest"
+                    control={<Radio size="small" />}
+                    label="Newest to Oldest"
+                  />
+                </RadioGroup>
+              </FormControl>
+              </Popover>
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idStatus}
+                variant="contained"
+                onClick={handleStatusClick}
+              >
+                <small className="text-lightBlue me-2">Status</small>
+                {/* <img src={sort} alt="sort" className="" /> */}
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idStatus}
+                open={openStatus}
+                anchorEl={anchorStatusEl}
+                onClose={handleStatusClose}
+                className="columns"
+              >
+                <FormControl className="px-2 py-1">
+                  <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    // value={value}
+                    // onChange={handleSortRadioChange}
+                  >
+                    <FormControlLabel
+                      value="active"
+                      control={<Radio size="small" />}
+                      label="Active"
+                    />
+                    <FormControlLabel
+                      value="archive"
+                      control={<Radio size="small" />}
+                      label="Archive"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Popover>
           </div>
           <TabPanel value={vendorType} index={0}>
             <VendorsTable
