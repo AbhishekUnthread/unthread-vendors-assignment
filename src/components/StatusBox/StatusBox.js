@@ -25,7 +25,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const StatusBox = ({ headingName, showSchedule,value,handleProductStatus}) => {
+const StatusBox = ({ headingName, showSchedule,value,handleProductStatus, defaultValue=['active','In-active']}) => {
 
   const showScheduleData = showSchedule ? false : true;
   // ? TOGGLE BUTTONS STARTS HERE
@@ -67,23 +67,23 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus}) => {
         exclusive
       >
         <ToggleButton
-          value="active"
+          value={defaultValue[0]}
           aria-label="active"
           style={{ width: "50%" }}
           className="productInfo-toggle__active"
         >
           <div className="d-flex">
-            <p className="text-grey-6">Active</p>
+            <p className="text-grey-6">{defaultValue?.[0] || "Active"}</p>
           </div>
         </ToggleButton>
         <ToggleButton
-          value="archived"
+          value={defaultValue[1]}
           aria-label="inactive"
           style={{ width: "50%" }}
           className="productInfo-toggle__draft"
         >
           <div className="d-flex">
-            <p className="text-grey-6">In-Active</p>
+            <p className="text-grey-6">{defaultValue?.[1] ||"In-Active"}</p>
           </div>
         </ToggleButton>
       </ToggleButtonGroup>
