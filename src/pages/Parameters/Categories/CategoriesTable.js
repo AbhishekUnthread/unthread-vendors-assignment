@@ -2,30 +2,42 @@ import React from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
-  EnhancedTableHead,
+  EnhancedTableHead
+} from "../../../components/TableDependencies/TableDependencies";
+import {
+  EnhancedTableHeadSubTable,
   stableSort,
   getComparator,
-} from "../../../components/TableDependencies/TableDependencies";
+} from "../../../components/TableDependenciesSubTable/TableDependenciesSubTable";
+
 // ! MATERIAL IMPORTS
 import {
+  Box,
   Checkbox,
+  Collapse,
+  IconButton,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  TableHead,
   TablePagination,
   TableRow,
   Tooltip,
+  Typography
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 // ? TABLE STARTS HERE
 
-const headCells = [
+const mainHeadCells = [
   {
     id: "categoriesName",
     numeric: false,
@@ -57,7 +69,61 @@ const headCells = [
     label: "Actions",
   },
 ];
+
+const headCells = [
+  {
+    id: "subCategoriesName",
+    numeric: false,
+    disablePadding: true,
+    label: "Sub Categories",
+  },
+  {
+    id: "noOfProducts",
+    numeric: false,
+    disablePadding: true,
+    label: "No Of Products",
+  },
+  {
+    id: "status",
+    numeric: false,
+    disablePadding: true,
+    label: "Status",
+  },
+  {
+    id: "actions",
+    numeric: false,
+    disablePadding: true,
+    label: "Actions",
+  },
+];
 // ? TABLE ENDS HERE
+
+function createData(name, calories, fat, carbs, protein, price) {
+  return {
+    name,
+    calories,
+    fat,
+    carbs,
+    protein,
+    price,
+    history: [
+      {
+        date: '2020-01-05',
+        customerId: '11091700',
+        amount: 3,
+      },
+      {
+        date: '2020-01-02',
+        customerId: 'Anonymous',
+        amount: 1,
+      },
+    ],
+  };
+}
+
+const rows = [
+  createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
+];
 
 const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
   const [order, setOrder] = React.useState("asc");
@@ -65,6 +131,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [open, setOpen] = React.useState(false);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -144,14 +211,14 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                 aria-labelledby="tableTitle"
                 size="medium"
               >
-                <EnhancedTableHead
+                <EnhancedTableHeadSubTable
                   numSelected={selected.length}
                   order={order}
                   orderBy={orderBy}
                   onSelectAllClick={handleSelectAllClick}
                   onRequestSort={handleRequestSort}
                   rowCount={list.length}
-                  headCells={headCells}
+                  mainHeadCells={mainHeadCells}
                 />
                 <TableBody>
                   {stableSort(list, getComparator(order, orderBy))
@@ -161,103 +228,256 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                       const labelId = `enhanced-table-checkbox-${index}`;
 
                       return (
-                        <TableRow
-                          hover
-                          role="checkbox"
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={index}
-                          selected={isItemSelected}
-                          className="table-rows"
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              inputProps={{
-                                "aria-labelledby": labelId,
-                              }}
-                              onClick={(event) => handleClick(event, row._id)}
-                              size="small"
-                              style={{
-                                color: "#5C6D8E",
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell
-                            component="th"
-                            id={labelId}
-                            scope="row"
-                            padding="none"
+                        <React.Fragment>
+                          <TableRow
+                            hover
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={index}
+                            selected={isItemSelected}
+                            className="table-rows"
+                            sx={{ "& > *": { borderBottom: "unset" } }}
                           >
-                            <Link
-                              className="text-decoration-none"
-                              to="/parameters/categories/edit"
-                            >
-                              <p className="text-lightBlue rounded-circle fw-600">
-                                {row.name}
-                              </p>
-                            </Link>
-                          </TableCell>
-                          <TableCell style={{ width: 180 }}>
-                            <p className="text-lightBlue">{row.type}</p>
-                          </TableCell>
-
-                          <TableCell style={{ width: 180 }}>
-                            <p className="text-lightBlue">{index}</p>
-                          </TableCell>
-
-                          <TableCell style={{ width: 120, padding: 0 }}>
-                            <div className="d-flex align-items-center">
-                              <div
-                                className={`rounded-pill d-flex  px-2 py-1 c-pointer table-status`}
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                checked={isItemSelected}
+                                inputProps={{
+                                  "aria-labelledby": labelId,
+                                }}
+                                onClick={(event) => handleClick(event, row._id)}
+                                size="small"
+                                style={{
+                                  color: "#5C6D8E",
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <IconButton
+                                aria-label="expand row"
+                                size="small"
+                                onClick={() => setOpen(!open)}
                               >
-                                <small className="text-black fw-400">
-                                  {row.status}
-                                </small>
+                                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                              </IconButton>
+                            </TableCell>
+                            <TableCell
+                              component="th"
+                              id={labelId}
+                              scope="row"
+                              padding="none"
+                            >
+                              <Link
+                                className="text-decoration-none"
+                                to="/parameters/categories/edit"
+                              >
+                                <p className="text-lightBlue rounded-circle fw-600">
+                                  {row.name}
+                                </p>
+                              </Link>
+                            </TableCell>
+                            <TableCell style={{ width: 180 }}>
+                              <p className="text-lightBlue">{row.type}</p>
+                            </TableCell>
+
+                            <TableCell style={{ width: 180 }}>
+                              <p className="text-lightBlue">{index}</p>
+                            </TableCell>
+
+                            <TableCell style={{ width: 120, padding: 0 }}>
+                              <div className="d-flex align-items-center">
+                                <div
+                                  className={`rounded-pill d-flex  px-2 py-1 c-pointer table-status`}
+                                >
+                                  <small className="text-black fw-400">
+                                    {row.status}
+                                  </small>
+                                </div>
+
                               </div>
-                            </div>
-                          </TableCell>
-                          <TableCell style={{ width: 120, padding: 0 }}>
-                            <div className="d-flex align-items-center">
-                              {edit && (
-                                <Tooltip title="Edit" placement="top">
-                                  <div
-                                    onClick={(e) => {
-                                      edit(row);
-                                    }}
-                                    className="table-edit-icon rounded-4 p-2"
-                                  >
-                                    <EditOutlinedIcon
-                                      sx={{
-                                        color: "#5c6d8e",
-                                        fontSize: 18,
-                                        cursor: "pointer",
+                            </TableCell>
+                            <TableCell style={{ width: 120, padding: 0 }}>
+                              <div className="d-flex align-items-center">
+                                {edit && (
+                                  <Tooltip title="Edit" placement="top">
+                                    <div
+                                      onClick={(e) => {
+                                        edit(row);
                                       }}
-                                    />
-                                  </div>
-                                </Tooltip>
-                              )}
-                              {deleteData && (
-                                <Tooltip title={"Delete"} placement="top">
-                                  <div
-                                    onClick={(e) => {
-                                      deleteData(row);
-                                    }}
-                                    className="table-edit-icon rounded-4 p-2"
-                                  >
-                                    <InventoryIcon
-                                      sx={{
-                                        color: "#5c6d8e",
-                                        fontSize: 18,
-                                        cursor: "pointer",
+                                      className="table-edit-icon rounded-4 p-2"
+                                    >
+                                      <EditOutlinedIcon
+                                        sx={{
+                                          color: "#5c6d8e",
+                                          fontSize: 18,
+                                          cursor: "pointer",
+                                        }}
+                                      />
+                                    </div>
+                                  </Tooltip>
+                                )}
+                                {deleteData && (
+                                  <Tooltip title={"Delete"} placement="top">
+                                    <div
+                                      onClick={(e) => {
+                                        deleteData(row);
                                       }}
-                                    />
-                                  </div>
-                                </Tooltip>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
+                                      className="table-edit-icon rounded-4 p-2"
+                                    >
+                                      <InventoryIcon
+                                        sx={{
+                                          color: "#5c6d8e",
+                                          fontSize: 18,
+                                          cursor: "pointer",
+                                        }}
+                                      />
+                                    </div>
+                                  </Tooltip>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                              <Collapse in={open} timeout="auto" unmountOnExit>
+                                <React.Fragment>
+                                  <TableContainer>
+                                    <Table
+                                      sx={{ minWidth: 750 }}
+                                      aria-labelledby="tableTitle"
+                                      size="medium"
+                                    >
+                                      <EnhancedTableHead
+                                        numSelected={selected.length}
+                                        order={order}
+                                        orderBy={orderBy}
+                                        onSelectAllClick={handleSelectAllClick}
+                                        onRequestSort={handleRequestSort}
+                                        rowCount={list.length}
+                                        headCells={headCells}
+                                      />
+                                      <TableBody>
+                                        {stableSort(list, getComparator(order, orderBy))
+                                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                          .map((row, index) => {
+                                            const isItemSelected = isSelected(row._id);
+                                            const labelId = `enhanced-table-checkbox-${index}`;
+
+                                            return (
+                                                <TableRow
+                                                  hover
+                                                  role="checkbox"
+                                                  aria-checked={isItemSelected}
+                                                  tabIndex={-1}
+                                                  key={index}
+                                                  selected={isItemSelected}
+                                                  className="table-rows"
+                                                  sx={{ "& > *": { borderBottom: "unset" } }}
+                                                >
+                                                  <TableCell padding="checkbox">
+                                                    <Checkbox
+                                                      checked={isItemSelected}
+                                                      inputProps={{
+                                                        "aria-labelledby": labelId,
+                                                      }}
+                                                      onClick={(event) => handleClick(event, row._id)}
+                                                      size="small"
+                                                      style={{
+                                                        color: "#5C6D8E",
+                                                      }}
+                                                    />
+                                                  </TableCell>
+                                                  <TableCell
+                                                    component="th"
+                                                    id={labelId}
+                                                    scope="row"
+                                                    padding="none"
+                                                  >
+                                                    <Link
+                                                      className="text-decoration-none"
+                                                      to="/parameters/categories/edit"
+                                                    >
+                                                      <p className="text-lightBlue rounded-circle fw-600">
+                                                        {row.name}
+                                                      </p>
+                                                    </Link>
+                                                  </TableCell>
+
+                                                  <TableCell style={{ width: 180 }}>
+                                                    <p className="text-lightBlue">{index}</p>
+                                                  </TableCell>
+
+                                                  <TableCell style={{ width: 120, padding: 0 }}>
+                                                    <div className="d-flex align-items-center">
+                                                      <div
+                                                        className={`rounded-pill d-flex  px-2 py-1 c-pointer table-status`}
+                                                      >
+                                                        <small className="text-black fw-400">
+                                                          {row.status}
+                                                        </small>
+                                                      </div>
+                                                    </div>
+                                                  </TableCell>
+                                                  <TableCell style={{ width: 120, padding: 0 }}>
+                                                    <div className="d-flex align-items-center">
+                                                      {edit && (
+                                                        <Tooltip title="Edit" placement="top">
+                                                          <div
+                                                            onClick={(e) => {
+                                                              edit(row);
+                                                            }}
+                                                            className="table-edit-icon rounded-4 p-2"
+                                                          >
+                                                            <EditOutlinedIcon
+                                                              sx={{
+                                                                color: "#5c6d8e",
+                                                                fontSize: 18,
+                                                                cursor: "pointer",
+                                                              }}
+                                                            />
+                                                          </div>
+                                                        </Tooltip>
+                                                      )}
+                                                      {deleteData && (
+                                                        <Tooltip title={"Delete"} placement="top">
+                                                          <div
+                                                            onClick={(e) => {
+                                                              deleteData(row);
+                                                            }}
+                                                            className="table-edit-icon rounded-4 p-2"
+                                                          >
+                                                            <InventoryIcon
+                                                              sx={{
+                                                                color: "#5c6d8e",
+                                                                fontSize: 18,
+                                                                cursor: "pointer",
+                                                              }}
+                                                            />
+                                                          </div>
+                                                        </Tooltip>
+                                                      )}
+                                                    </div>
+                                                  </TableCell>
+                                                </TableRow>
+                                            );
+                                          })}
+                                        {emptyRows > 0 && (
+                                          <TableRow
+                                            style={{
+                                              height: 53 * emptyRows,
+                                            }}
+                                          >
+                                            <TableCell colSpan={6} />
+                                          </TableRow>
+                                        )}
+                                      </TableBody>
+                                    </Table>
+                                  </TableContainer>
+                                </React.Fragment>
+                              </Collapse>
+                            </TableCell>
+                          </TableRow>
+                        </React.Fragment>
                       );
                     })}
                   {emptyRows > 0 && (
