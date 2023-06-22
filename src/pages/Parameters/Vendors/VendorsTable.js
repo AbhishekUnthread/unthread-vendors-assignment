@@ -206,7 +206,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
                               <div
                                 className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.status}`}
                               >
-                                <small className="text-black fw-400">
+                                <small className="text-lightBlue fw-400">
                                   {row.status}
                                 </small>
                               </div>
