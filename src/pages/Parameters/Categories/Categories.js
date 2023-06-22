@@ -1,5 +1,7 @@
+import React, { useMemo } from "react";
 import { forwardRef, useState, useEffect, useReducer } from "react";
 import {
+  Autocomplete,
   Box,
   Dialog,
   DialogActions,
@@ -13,6 +15,7 @@ import {
   Slide,
   Tab,
   Tabs,
+  TextField,
   Chip,
   Select,
   MenuItem,
@@ -33,6 +36,8 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 
 import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
+import sort from "../../../assets/icons/sort.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
 
 import {
   showSuccess,
@@ -66,6 +71,21 @@ const subCategoryValidationSchema = Yup.object({
   status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
   categoryId: Yup.string().required("required"),
 });
+
+const vendorData = [
+  { title: "Content 1", value: "content1" },
+  { title: "Content 2", value: "content2" },
+  { title: "Content 3", value: "content3" },
+  { title: "Content 4", value: "content4" },
+  { title: "Content 5", value: "content5" },
+  { title: "Content 6", value: "content6" },
+  { title: "Content 7", value: "content7" },
+  { title: "Content 8", value: "content8" },
+  { title: "Content 9", value: "content9" },
+  { title: "Content 10", value: "content10" },
+  { title: "Content 11", value: "content11" },
+  { title: "Content 12", value: "content12" },
+];
 
 const Categories = () => {
   const dispatch = useDispatch();
@@ -218,6 +238,37 @@ const Categories = () => {
   const toggleCreatePopoverHandler = (e) => {
     setShowCreatePopover((prevState) => (prevState ? null : e.currentTarget));
   };
+  
+ 
+  // * SORT POPOVERS STARTS
+  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+
+  const handleSortClick = (event) => {
+    setAnchorSortEl(event.currentTarget);
+  };
+
+  const handleSortClose = () => {
+    setAnchorSortEl(null);
+  };
+
+  const openSort = Boolean(anchorSortEl);
+  const idSort = openSort ? "simple-popover" : undefined;
+  // * SORT POPOVERS ENDS
+
+  // * VENDOR POPOVERS STARTS
+  const [anchorVendorEl, setAnchorVendorEl] = React.useState(null);
+
+  const handleVendorClick = (event) => {
+    setAnchorVendorEl(event.currentTarget);
+  };
+
+  const handleVendorClose = () => {
+    setAnchorVendorEl(null);
+  };
+
+  const openVendor = Boolean(anchorVendorEl);
+  const idVendor = openVendor ? "simple-popover" : undefined;
+  // * VENDOR POPOVERS ENDS
 
   const deleteCategoryHandler = (data) => {
     if (categoryType === 0) {
@@ -603,6 +654,69 @@ const Categories = () => {
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
+            <div className="d-flex">
+              <div className="d-flex product-button__box ms-2">
+                <button
+                  className="button-grey py-2 px-3 d-none d-md-block"
+                  aria-describedby={idVendor}
+                  variant="contained"
+                  onClick={handleVendorClick}
+                >
+                  <small className="text-lightBlue">Status</small>
+                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                </button>
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  id={idVendor}
+                  open={openVendor}
+                  anchorEl={anchorVendorEl}
+                  onClose={handleVendorClose}
+                >
+                  <div className="py-2">
+                    <Autocomplete
+                      id="free-solo-demo"
+                      freeSolo
+                      size="small"
+                      options={vendorData}
+                      getOptionLabel={(option) => option.title}
+                      renderOption={(props, option) => (
+                        <li {...props}>
+                          <small className="text-lightBlue my-1">
+                            {option.title}
+                          </small>
+                        </li>
+                      )}
+                      sx={{
+                        width: 200,
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder="Search"
+                          inputRef={(input) => input?.focus()}
+                        />
+                      )}
+                    />
+                  </div>
+                </Popover>
+              </div>
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+            </div>
           </div>
           {
             <>
