@@ -20,6 +20,7 @@ import {
   useCreateVendorMutation,
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
 
 
 const EditVendor = () => {
@@ -32,6 +33,14 @@ const EditVendor = () => {
   const [vendorFlagShip, setVendorFlagShip] = useState("")
   const [checked, setChecked] = React.useState(false);
   const vendorId = useSelector((state)=>state.vendor.vendorId)
+  const [products,setProducts] = React.useState([])
+
+  const {
+    data : vendorProductsData,
+    isLoading:vendorProductsDataIsLoading,
+    isSuccess:vendorProductsDataIsSuccess,
+    error:vendorProductsDataErro
+  }= useGetAllProductsQuery({id:vendorId});
 
   const [
     createVendor,
@@ -58,6 +67,12 @@ const EditVendor = () => {
   ] = useEditVendorMutation();
   
   useEffect(() => {
+
+    if(vendorProductsDataIsSuccess)
+    {
+      setProducts(vendorProductsData)
+    }
+
     if (vendorsIsSuccess && vendorId !== "") {
       // If vendorsIsSuccess is true, set the vendor name based on the data from the API response
       setVendorName(vendorsData.data.data[0].name);
@@ -66,9 +81,8 @@ const EditVendor = () => {
       setVendorStatus(vendorsData.data.data[0].status)
       
     }
-  }, [vendorsIsSuccess]);
+  }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData]);
   
-
     const vendorNotesChange=(event)=>{
       setVendorNotes(event.target.value);
     }
@@ -159,7 +173,7 @@ const EditVendor = () => {
               className="c-pointer"
             />
           </Link>
-          <h5 className="page-heading ms-2 ps-1">JWL 1</h5>
+          <h5 className="page-heading ms-2 ps-1">{vendorName}</h5>
         </div>
 
         <div className="d-flex align-items-center w-auto pe-0">
@@ -234,11 +248,18 @@ const EditVendor = () => {
                 Add Products
               </h6>
             </div>
-            <AddProducts />
+            <AddProducts 
+            isLoading={vendorProductsDataIsLoading}
+            list={products}
+            />
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox  value={vendorStatus} handleProductStatus={vendorStatusChange} headingName={"Status"} />
+          <StatusBox  value={vendorStatus} 
+           headingName={"Status"}
+           handleProductStatus={vendorStatusChange}
+           defaultValue={['active','archived']}
+            />
           <NotesBox name="note" value={vendorNotes} onChange={vendorNotesChange} />
         </div>
       </div>
@@ -251,12 +272,12 @@ const EditVendor = () => {
             <p>Discard</p>
           </Link>
 
-          <Link
+          {/* <Link
             to="/parameters/vendors"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
-          </Link>
+          </Link> */}
         </div>
         <div className="d-flex w-auto px-0">
           <Link

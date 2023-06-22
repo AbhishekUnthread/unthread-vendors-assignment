@@ -73,13 +73,60 @@ const Vendors = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedSortOption, setSelectedSortOption] = React.useState(null);
+  const [selectedStatusOption, setSelectedStatusOption] = React.useState(null);
+  const [searchValue, setSearchValue] = React.useState("");
+  const [values, setValues] = React.useState([]);
+
+  const handleDelete = (value) => {
+    setValues((prevValues) => prevValues.filter((v) => v !== value));
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      setValues((prevValues) => [...prevValues, event.target.value]);
+       // Clear the input field after adding the value
+      vendorFormik.values.name =''
+    }
+  };
+
+//Initializes an empty object to store the query parameters.
+  const queryParameters = {};
+
+// Check selectedSortOption
+if (selectedSortOption) {
+  // Check alphabetical sort options
+  if (selectedSortOption === "alphabeticalAtoZ" || selectedSortOption === "alphabeticalZtoA") {
+    queryParameters.alphabetical = selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
+  }
+  // Check createdAt sort options
+  else if (selectedSortOption === "oldestToNewest" || selectedSortOption === "newestToOldest") {
+    queryParameters.createdAt = selectedSortOption === "oldestToNewest" ? "1" : "-1";
+  }
+}
+
+// Check selectedStatusOption
+if (selectedStatusOption !== null) {
+  queryParameters.status = selectedStatusOption;
+}
+
+if(searchValue)
+{
+  queryParameters.name = searchValue;
+}
+
+// Check if both selectedSortOption and selectedStatusOption are null
+if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
+  queryParameters.createdAt = "-1"; // Set default createdAt value
+}
 
   const {
     data: vendorsData, // Data received from the useGetAllVendorsQuery hook
     isLoading: vendorsIsLoading, // Loading state of the vendors data
     isSuccess: vendorsIsSuccess, // Success state of the vendors data
     error: vendorsError, // Error state of the vendors data
-  } = useGetAllVendorsQuery({ createdAt: "-1" }); // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
+  } = useGetAllVendorsQuery(queryParameters, { enabled: Object.keys(queryParameters).length > 0 }); 
+  // The `enabled` option determines whether the useGetAllVendorsQuery hook should be enabled or disabled based on the presence of query parameters.
+  // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
 
   const [
     createVendor,
@@ -184,7 +231,6 @@ const Vendors = () => {
   ]);
  // * SORT POPOVERS STARTS HERE
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
-  const [selectedSortOption, setSelectedSortOption] = React.useState(null);
 
   const handleSortClick = (event) => {
     setAnchorSortEl(event.currentTarget);
@@ -198,11 +244,9 @@ const Vendors = () => {
     setSelectedSortOption(event.target.value);
     setAnchorSortEl(null); // Close the popover after selecting a value
   };
-
-  console.log("selectedSortOption",selectedSortOption);
+  
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
-
 
  // * SORT POPOVERS ENDS
 
@@ -217,9 +261,20 @@ const Vendors = () => {
     setAnchorStatusEl(null);
   };
 
+  const handleStatusRadioChange = (event) => {
+    setSelectedStatusOption(event.target.value);
+    setAnchorStatusEl(null); // Close the popover after selecting a value
+  };
+
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openSort ? "simple-popover" : undefined;
  // * STATUS POPOVERS ENDS
+
+
+
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  };
 
   return (
     <div className="container-fluid page">
@@ -281,6 +336,7 @@ const Vendors = () => {
                     value={vendorFormik.values.name}
                     onBlur={vendorFormik.handleBlur}
                     onChange={vendorFormik.handleChange}
+                    onKeyDown={handleKeyDown}
                   />
                   {!!vendorFormik.touched.name && vendorFormik.errors.name && (
                     <FormHelperText error>
@@ -288,7 +344,18 @@ const Vendors = () => {
                     </FormHelperText>
                   )}
                 </FormControl>
-
+                <div className="d-flex">
+                {values.map((value, index) => (
+    <Chip
+      key={index}
+      label={value}
+      onDelete={() => handleDelete(value)}
+      size="small"
+      className="mt-3 me-2 px-1"
+    />
+  ))}
+            </div>
+            <br/>
                 <p className="text-lightBlue mb-2">Description</p>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
@@ -419,7 +486,7 @@ const Vendors = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
               <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idSort}
@@ -502,8 +569,8 @@ const Vendors = () => {
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
-                    // value={value}
-                    // onChange={handleSortRadioChange}
+                    value={selectedStatusOption}
+                    onChange={handleStatusRadioChange}
                   >
                     <FormControlLabel
                       value="active"
@@ -511,7 +578,7 @@ const Vendors = () => {
                       label="Active"
                     />
                     <FormControlLabel
-                      value="archive"
+                      value="archived"
                       control={<Radio size="small" />}
                       label="Archive"
                     />

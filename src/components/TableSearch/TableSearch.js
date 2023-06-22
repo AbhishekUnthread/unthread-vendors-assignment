@@ -46,7 +46,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 // ? SEARCH INPUT ENDS HERE
 
-const TableSearch = () => {
+const TableSearch = ({searchValue,handleSearchChange}) => {
   return (
     <Search>
       <SearchIconWrapper>
@@ -55,6 +55,8 @@ const TableSearch = () => {
       <StyledInputBase
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
+        value={searchValue}
+        onChange={handleSearchChange}
       />
     </Search>
   );
