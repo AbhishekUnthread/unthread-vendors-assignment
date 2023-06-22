@@ -11,18 +11,6 @@ import {
 import clock from "../../assets/icons/clock.svg";
 
 const VisibilityBox = () => {
-    
-  // ? SCHEDULE PRODUCT DIALOG STARTS HERE
-  const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
-
-  const handelScheduleProduct = () => {
-    setOpenScheduleProduct(true);
-  };
-
-  const handelScheduleProductClose = () => {
-    setOpenScheduleProduct(false);
-  };
-  // ? SCHEDULE PRODUCT DIALOG ENDS HERE
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4">
@@ -39,7 +27,7 @@ const VisibilityBox = () => {
             </RadioGroup>
         </FormControl>
         <FormGroup>
-            <FormControlLabel  control={<Checkbox defaultChecked size="small" />} label="Schedule Visibility" />
+            <FormControlLabel control={<Checkbox defaultChecked size="small" />} label="Schedule Visibility" />
         </FormGroup>
     </div>
   );
