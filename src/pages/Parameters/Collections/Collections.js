@@ -57,7 +57,11 @@ const collectionsReducer = (state, action) => {
 };
 
 const Collections = () => {
+  const dispatch = useDispatch();
   const [value, setValue] = useState(0);
+  const [error, setError] = useState(false);
+  const [collectionList, setCollectionList] = useState([]);
+  const [collectionType, setCollectionType] = useState(0);
   const [collectionsStatus, setCollectionsStatus] = useState("");
   const [collectionState, collectionDispatch] = useReducer(
     collectionsReducer,
@@ -69,12 +73,39 @@ const Collections = () => {
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-    isError: collectionIsError,
-  } = useGetAllCollectionsQuery();
+  } = useGetAllCollectionsQuery({ createdAt: -1 });
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    if (collectionError) {
+      setError(true);
+      if (collectionError?.data?.message) {
+        dispatch(showError({ message: collectionError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+    if (collectionIsSuccess) {
+      setError(false);
+      if (collectionType === 0) {
+        setCollectionList(collectionData.data.data);
+      }
+      if (collectionType === 1) {
+        setCollectionList(collectionData.data.data);
+      }
+    }
+  }, [
+    collectionData,
+    collectionIsSuccess,
+    collectionError,
+    collectionType,
+    dispatch,
+  ]);
 
   return (
     <div className="container-fluid page">
@@ -127,13 +158,25 @@ const Collections = () => {
             <TableSearch />
           </div>
           <TabPanel value={value} index={0}>
-            <CollectionsTable />
+            <CollectionsTable
+              isLoading={collectionIsLoading}
+              error={error}
+              list={collectionList}
+            />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <CollectionsTable />
+            <CollectionsTable
+              isLoading={collectionIsLoading}
+              error={error}
+              list={collectionList}
+            />
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <CollectionsTable />
+            <CollectionsTable
+              isLoading={collectionIsLoading}
+              error={error}
+              list={collectionList}
+            />
           </TabPanel>
         </Paper>
       </div>

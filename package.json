@@ -38,6 +38,8 @@
     "react-timer-hook": "^3.0.5",
     "recharts": "^2.4.3",
     "redux": "^4.2.1",
+    "resolve-url-loader": "^5.0.0",
+    "sass": "^1.63.4",
     "web-vitals": "^2.1.4",
     "yup": "^1.1.1",
     "yup-password": "^0.2.2",
@@ -66,8 +68,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "node-sass": "^7.0.3"
   }
 }

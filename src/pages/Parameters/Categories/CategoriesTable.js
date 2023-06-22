@@ -42,19 +42,19 @@ const mainHeadCells = [
     id: "categoriesName",
     numeric: false,
     disablePadding: true,
-    label: "Name",
-  },
-  {
-    id: "type",
-    numeric: false,
-    disablePadding: false,
-    label: "Type",
+    label: "Categories Name",
   },
   {
     id: "noOfProducts",
     numeric: false,
     disablePadding: true,
-    label: "No Of Products",
+    label: "No. Of Products",
+  },
+  {
+    id: "noOfSubCategories",
+    numeric: false,
+    disablePadding: true,
+    label: "No. of Sub-Categories",
   },
   {
     id: "status",
@@ -293,6 +293,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                     {row.status}
                                   </small>
                                 </div>
+
                               </div>
                             </TableCell>
                             <TableCell style={{ width: 120, padding: 0 }}>

@@ -35,14 +35,14 @@ const headCells = [
   {
     id: "parentCategory",
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: "Parent Category",
   },
   {
     id: "noOfProducts",
     numeric: false,
     disablePadding: true,
-    label: "No Of Products",
+    label: "No. of Products",
   },
   {
     id: "status",
