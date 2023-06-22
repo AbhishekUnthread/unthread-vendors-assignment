@@ -234,6 +234,7 @@ const CreateCollection = () => {
   const collectionFormik = useFormik({
     initialValues: {
       title: "",
+      description:""
     },
     enableReinitialize: true,
     validationSchema: collectionValidationSchema,
@@ -508,7 +509,10 @@ const CreateCollection = () => {
                     />
                   </Tooltip>
                 </div>
-                <AppTextEditor />
+                <AppTextEditor
+                setFieldValue={(val) => collectionFormik.setFieldValue("description", val)}
+                value={collectionFormik.values.description}
+                 />
               </div>
             </div>
 
