@@ -70,14 +70,12 @@ const Vendors = () => {
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-
-const {
-  data: vendorsData, // Data received from the useGetAllVendorsQuery hook
-  isLoading: vendorsIsLoading, // Loading state of the vendors data
-  isSuccess: vendorsIsSuccess, // Success state of the vendors data
-  error: vendorsError, // Error state of the vendors data
-} = useGetAllVendorsQuery({ createdAt:"-1" }); // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
-
+  const {
+    data: vendorsData, // Data received from the useGetAllVendorsQuery hook
+    isLoading: vendorsIsLoading, // Loading state of the vendors data
+    isSuccess: vendorsIsSuccess, // Success state of the vendors data
+    error: vendorsError, // Error state of the vendors data
+  } = useGetAllVendorsQuery({ createdAt: "-1" }); // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
 
   const [
     createVendor,
@@ -102,14 +100,14 @@ const {
       name: "",
       description: "",
       status: "active",
-      showFilter : true,
+      showFilter: true,
     },
     enableReinitialize: true,
     validationSchema: vendorValidationSchema,
     onSubmit: (values) => {
-        createVendor(values)
-          .unwrap()
-          .then(() => vendorFormik.resetForm());
+      createVendor(values)
+        .unwrap()
+        .then(() => vendorFormik.resetForm());
     },
   });
 
@@ -131,7 +129,6 @@ const {
     dispatch(updateVendorId(data._id)); //have to update corresponding vendor id
     // Navigate to the "edit" page
     navigate("edit");
- 
   };
 
   const changeVendorTypeHandler = (_event, tabIndex) => {
@@ -267,31 +264,31 @@ const {
                       </FormHelperText>
                     )}
                 </FormControl>
-                <br/>
+                <br />
                 <FormControlLabel
-                        control={
-                          <Checkbox
-                            name="showFilter"
-                            checked={vendorFormik.values.showFilter}
-                            onChange={vendorFormik.handleChange}
-                            inputProps={{ "aria-label": "controlled" }}
-                            size="small"
-                            style={{
-                              color: "#5C6D8E",
-                              marginRight: 0,
-                              width: "auto",
-                            }}
-                          />
-                        }
-                        label="Include in Filters"
-                        sx={{
-                          "& .MuiTypography-root": {
-                            fontSize: "0.875rem",
-                            color: "#c8d8ff",
-                          },
-                        }}
-                        className=" px-0"
-                 />
+                  control={
+                    <Checkbox
+                      name="showFilter"
+                      checked={vendorFormik.values.showFilter}
+                      onChange={vendorFormik.handleChange}
+                      inputProps={{ "aria-label": "controlled" }}
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                        marginRight: 0,
+                        width: "auto",
+                      }}
+                    />
+                  }
+                  label="Include in Filters"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: "0.875rem",
+                      color: "#c8d8ff",
+                    },
+                  }}
+                  className=" px-0"
+                />
 
                 {/* <div className="d-flex">
                     <Chip

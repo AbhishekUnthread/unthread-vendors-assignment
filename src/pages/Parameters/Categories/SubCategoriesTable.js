@@ -199,7 +199,7 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                             </Link>
                           </TableCell>
                           <TableCell style={{ width: 180 }}>
-                            <p className="text-lightBlue">{row.type}</p>
+                            <p className="text-lightBlue">{row.parentCategory}</p>
                           </TableCell>
 
                           <TableCell style={{ width: 180 }}>

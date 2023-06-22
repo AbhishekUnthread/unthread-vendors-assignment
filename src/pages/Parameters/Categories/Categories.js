@@ -23,13 +23,13 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 
 import CategoriesTable from "./CategoriesTable";
+import SubCategoriesTable from "./SubCategoriesTable";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import TabPanel from "../../../components/TabPanel/TabPanel";
-import SubCategoriesTable from "./SubCategoriesTable";
 
 import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
@@ -625,7 +625,7 @@ const Categories = () => {
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={2}>
-                <CategoriesTable
+                <SubCategoriesTable
                   isLoading={subCategoriesIsLoading}
                   deleteData={deleteCategoryHandler}
                   error={error}
