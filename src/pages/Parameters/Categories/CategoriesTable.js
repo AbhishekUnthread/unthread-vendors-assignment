@@ -299,20 +299,20 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                               <div className="d-flex align-items-center">
                                 {edit && (
                                   <Tooltip title="Edit" placement="top">
-                                    <div
-                                      onClick={(e) => {
-                                        edit(row);
-                                      }}
-                                      className="table-edit-icon rounded-4 p-2"
+                                    <Link
+                                      className="text-decoration-none"
+                                      to="/parameters/categories/edit"
                                     >
-                                      <EditOutlinedIcon
-                                        sx={{
-                                          color: "#5c6d8e",
-                                          fontSize: 18,
-                                          cursor: "pointer",
-                                        }}
-                                      />
-                                    </div>
+                                      <div className="table-edit-icon rounded-4 p-2">
+                                        <EditOutlinedIcon
+                                          sx={{
+                                            color: "#5c6d8e",
+                                            fontSize: 18,
+                                            cursor: "pointer",
+                                          }}
+                                        />
+                                      </div>
+                                    </Link>
                                   </Tooltip>
                                 )}
                                 {deleteData && (
