@@ -65,6 +65,7 @@ import Signup from "./pages/Auth/Signup/Signup";
 import CreateReturn from "./pages/Orders/CreateReturn/CreateReturn.js";
 import PrimaryLayout from "./layouts/PrimaryLayout";
 import ActionLayout from "./layouts/ActionLayout";
+import EditCategories from "./pages/Parameters/Categories/EditCategories/EditCategories";
 
 const router = () => {
   const loginStatus = store.getState().auth.isLoggedIn;
@@ -210,7 +211,7 @@ const router = () => {
                 },
                 {
                   path: "categories/edit",
-                  element: <EditVendor />,
+                  element: <EditCategories />,
                 },
                 {
                   path: "variantSets",
