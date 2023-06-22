@@ -1,4 +1,5 @@
-import React from "react"; // ! MATERIAL IMPORTS
+import React from "react"; 
+// ! MATERIAL IMPORTS
 // ! IMAGES IMPORTS
 import info from "../../assets/icons/info.svg";
 import clock from "../../assets/icons/clock.svg";
@@ -24,13 +25,16 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const StatusBox = ({ headingName, showSchedule }) => {
+const StatusBox = ({ headingName, showSchedule,value,handleProductStatus}) => {
+
   const showScheduleData = showSchedule ? false : true;
   // ? TOGGLE BUTTONS STARTS HERE
-  const [productStatus, setPoductStatus] = React.useState("active");
-  const handleProductStatus = (event, newProductStatus) => {
-    setPoductStatus(newProductStatus);
-  };
+  // const [productStatus, setPoductStatus] = React.useState("active");
+
+  // const handleProductStatus = (event, newProductStatus) => {
+  //   setPoductStatus(newProductStatus);
+  // };
+
   // ? TOGGLE BUTTONS ENDS HERE
 
   // ? SCHEDULE PRODUCT DIALOG STARTS HERE
@@ -55,7 +59,7 @@ const StatusBox = ({ headingName, showSchedule }) => {
       </div>
 
       <ToggleButtonGroup
-        value={productStatus}
+        value={value}
         onChange={handleProductStatus}
         aria-label="text formatting"
         className="row d-flex px-2 productInfo-toggle"
@@ -73,7 +77,7 @@ const StatusBox = ({ headingName, showSchedule }) => {
           </div>
         </ToggleButton>
         <ToggleButton
-          value="inactive"
+          value="archived"
           aria-label="inactive"
           style={{ width: "50%" }}
           className="productInfo-toggle__draft"

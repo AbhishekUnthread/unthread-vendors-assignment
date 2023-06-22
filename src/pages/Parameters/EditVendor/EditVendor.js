@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import "./EditVendor.scss";
-import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import StatusBox from "../../../components/StatusBox/StatusBox";
@@ -11,9 +12,141 @@ import info from "../../../assets/icons/info.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 // ! MATERIAL IMPORTS
-import { FormControl, OutlinedInput, Tooltip } from "@mui/material";
+import { Checkbox, FormControl, FormControlLabel, OutlinedInput, Tooltip } from "@mui/material";
+
+import {
+  useGetAllVendorsQuery,
+  useEditVendorMutation,
+  useCreateVendorMutation,
+} from "../../../features/parameters/vendors/vendorsApiSlice";
+import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+
 
 const EditVendor = () => {
+
+  const navigate= useNavigate();
+  const dispatch = useDispatch();
+  const [vendorName, setVendorName] = useState("")
+  const [vendorNotes, setVendorNotes] = useState("")
+  const [vendorStatus, setVendorStatus] = useState("active")
+  const [vendorFlagShip, setVendorFlagShip] = useState("")
+  const [checked, setChecked] = React.useState(false);
+  const vendorId = useSelector((state)=>state.vendor.vendorId)
+
+  const [
+    createVendor,
+    {
+      isLoading: createVendorIsLoading,
+      isSuccess: createVendorIsSuccess,
+      error: createVendorError,
+    },
+  ] = useCreateVendorMutation();
+
+  const {
+    data: vendorsData,
+    isLoading: vendorsIsLoading,
+    isSuccess: vendorsIsSuccess,
+    error: vendorsError,
+  } = useGetAllVendorsQuery({ createdAt:"-1",id:vendorId });
+
+  const [
+    editVendor,
+    { data: editData,
+      isLoading: editVendorIsLoading,
+      isSuccess: editVendorIsSuccess,
+      error: editVendorError },
+  ] = useEditVendorMutation();
+  
+  useEffect(() => {
+    if (vendorsIsSuccess && vendorId !== "") {
+      // If vendorsIsSuccess is true, set the vendor name based on the data from the API response
+      setVendorName(vendorsData.data.data[0].name);
+      setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
+      setVendorNotes(vendorsData.data.data[0].description)
+      setVendorStatus(vendorsData.data.data[0].status)
+      
+    }
+  }, [vendorsIsSuccess]);
+  
+
+    const vendorNotesChange=(event)=>{
+      setVendorNotes(event.target.value);
+    }
+    const vendorStatusChange=(event,vendorStatus)=>{
+      setVendorStatus(vendorStatus);
+    }   
+
+    const handleNameChange = (event) => {
+      setVendorName(event.target.value); // Updating the vendor name based on the input value
+    };
+
+    const handleFilterChange=(event)=>{
+      setChecked(event.target.checked);
+    }
+    const handleSubmit = () => {
+     if(vendorId !== "")
+     {
+       // Calling Vendor edit API
+       editVendor({
+        id: vendorId, // ID of the vendor
+        details: {
+          isFlagShip: vendorFlagShip, // Flagship status of the vendor
+          showFilter: checked, // Whether to show filters
+          name: vendorName, // Vendor name
+          description: vendorNotes, // Vendor description
+          status: vendorStatus?vendorStatus:"active" // Vendor status
+        }
+      }).unwrap().then(() => {
+        navigate("/parameters/vendors"); // Navigating to vendors page after successful edit
+      });
+     }
+     else
+     {
+      createVendor({
+        showFilter: checked, // Whether to show filters
+        name: vendorName, // Vendor name
+        description: vendorNotes, // Vendor description
+        status: vendorStatus?vendorStatus:"active" // Vendor status
+      }).unwrap().then(() => {
+        navigate("/parameters/vendors"); // Navigating to vendors page after successful creation
+      });
+     }
+    };
+    
+    const handleSubmitAndAddAnother = () => {
+      if(vendorId !== "")
+      {
+        // Calling Vendor edit API
+        editVendor({
+          id: vendorId, // ID of the vendor
+          details: {
+            isFlagShip: vendorFlagShip, // Flagship status of the vendor
+            showFilter: checked, // Whether to show filters
+            name: vendorName, // Vendor name
+            description: vendorNotes, // Vendor description
+            status: vendorStatus?vendorStatus:"active" // Vendor status
+          }
+        }).unwrap().then(() => {
+          navigate("/parameters/vendors/edit"); // Navigating to edit page after successful edit     
+          
+        });
+      }
+      else{
+        createVendor({
+          showFilter: checked, // Whether to show filters
+          name: vendorName, // Vendor name
+          description: vendorNotes, // Vendor description
+          status: vendorStatus?vendorStatus:"active" // Vendor status
+        }).unwrap().then(() => {
+          navigate("/parameters/vendors/edit"); // Navigating to vendors page after successful creation
+        });
+      }
+     
+      setVendorName(''); // Resetting the vendor name  
+      dispatch(updateVendorId(""));
+    };
+    
+
   return (
     <div className="page container-fluid position-relative user-group">
       <div className="row justify-content-between">
@@ -66,8 +199,32 @@ const EditVendor = () => {
                 </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
-                <OutlinedInput placeholder="Enter Group Name" size="small" />
+                <OutlinedInput placeholder={vendorName} value={vendorName} onChange={handleNameChange}size="small" />
               </FormControl>
+              <FormControlLabel
+                        control={
+                          <Checkbox
+                            name="showFilter"
+                            checked={checked}
+                            onChange={handleFilterChange}
+                            inputProps={{ "aria-label": "controlled" }}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                              width: "auto",
+                            }}
+                          />
+                        }
+                        label="Include in Filters"
+                        sx={{
+                          "& .MuiTypography-root": {
+                            fontSize: "0.875rem",
+                            color: "#c8d8ff",
+                          },
+                        }}
+                        className=" px-0"
+                 />
             </div>
           </div>
 
@@ -81,8 +238,8 @@ const EditVendor = () => {
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox headingName={"Status"} />
-          <NotesBox />
+          <StatusBox  value={vendorStatus} handleProductStatus={vendorStatusChange} headingName={"Status"} />
+          <NotesBox name="note" value={vendorNotes} onChange={vendorNotesChange} />
         </div>
       </div>
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
@@ -105,12 +262,14 @@ const EditVendor = () => {
           <Link
             to="/parameters/vendors"
             className="button-lightBlue-outline py-2 px-4"
+            onClick={handleSubmitAndAddAnother}
           >
             <p>Save & Add Another</p>
           </Link>
           <Link
-            to="/parameters/vendors"
+            to="#"
             className="button-gradient ms-3 py-2 px-4 w-auto"
+            onClick={handleSubmit}
           >
             <p>Save</p>
           </Link>
