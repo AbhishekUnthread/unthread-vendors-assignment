@@ -11,6 +11,7 @@ import TabPanel from "../../../../components/TabPanel/TabPanel";
 import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox";
 import SEOToggler from "../../../../components/SEOToggler/SEOToggler";
 import VisibilityBox from "../../../../components/VisibilityBox/VisibilityBox";
+import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
 import info from "../../../../assets/icons/info.svg";
@@ -156,37 +157,7 @@ const EditSubCategories = () => {
           <NotesBox />
         </div>
       </div>
-      <div className="row create-buttons pt-5 pb-3 justify-content-between">
-        <div className="d-flex w-auto px-0">
-          <Link
-            to="/parameters/vendors"
-            className="button-red-outline py-2 px-4"
-          >
-            <p>Discard</p>
-          </Link>
-
-          <Link
-            to="/parameters/vendors"
-            className="button-lightBlue-outline py-2 px-4 ms-3"
-          >
-            <p>Save as Draft</p>
-          </Link>
-        </div>
-        <div className="d-flex w-auto px-0">
-          <Link
-            to="/parameters/vendors"
-            className="button-lightBlue-outline py-2 px-4"
-          >
-            <p>Save & Add Another</p>
-          </Link>
-          <Link
-            to="/parameters/vendors"
-            className="button-gradient ms-3 py-2 px-4 w-auto"
-          >
-            <p>Save</p>
-          </Link>
-        </div>
-      </div>
+      <SaveFooter />
     </div>
   );
 };
