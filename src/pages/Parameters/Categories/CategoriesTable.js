@@ -2,8 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
-  EnhancedTableHead
-} from "../../../components/TableDependencies/TableDependencies";
+  EnhancedTableGapHead
+} from "../../../components/TableDependenciesWithGap/TableDependenciesWithGap"
 import {
   EnhancedTableHeadSubTable,
   stableSort,
@@ -192,7 +192,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
             <small className="text-lightBlue">
               {selected.length} categories are selected&nbsp;
               <span
-                className="text-blue-2 c-pointer"
+                className="text-blue-2 c-pointer ml-10"
                 onClick={() => setSelected([])}
               >
                 (Clear Selection)
@@ -261,9 +261,9 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                 onClick={() => setOpen(!open)}
                               >
                                 {open ? (
-                                  <PlayArrowIcon style={{ transform: 'rotate(90deg)' }}  />
+                                  <PlayArrowIcon style={{ transform: 'rotate(90deg)', fontSize: '15px' }} />
                                 ) : (
-                                  <PlayArrowIcon/>
+                                  <PlayArrowIcon style={{ fontSize: '15px' }} />
                                 )}               
                               </IconButton>
                             </TableCell>
@@ -357,7 +357,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                             </TableCell>
                           </TableRow>
                           <TableRow>
-                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
                               <Collapse in={open} timeout="auto" unmountOnExit>
                                 <React.Fragment>
                                   <TableContainer>
@@ -366,7 +366,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                       aria-labelledby="tableTitle"
                                       size="medium"
                                     >
-                                      <EnhancedTableHead
+                                      <EnhancedTableGapHead
                                         numSelected={selected.length}
                                         order={order}
                                         orderBy={orderBy}
@@ -393,6 +393,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                                   className="table-rows"
                                                   sx={{ "& > *": { borderBottom: "unset" } }}
                                                 >
+                                                  <TableCell />
                                                   <TableCell padding="checkbox">
                                                     <Checkbox
                                                       checked={isItemSelected}
@@ -447,13 +448,18 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                                             }}
                                                             className="table-edit-icon rounded-4 p-2"
                                                           >
-                                                            <EditOutlinedIcon
-                                                              sx={{
-                                                                color: "#5c6d8e",
-                                                                fontSize: 18,
-                                                                cursor: "pointer",
-                                                              }}
-                                                            />
+                                                            <Link
+                                                              className="text-decoration-none"
+                                                              to="/parameters/subCategories/edit"
+                                                            >
+                                                              <EditOutlinedIcon
+                                                                sx={{
+                                                                  color: "#5c6d8e",
+                                                                  fontSize: 18,
+                                                                  cursor: "pointer",
+                                                                }}
+                                                              />
+                                                            </Link>
                                                           </div>
                                                         </Tooltip>
                                                       )}
