@@ -227,7 +227,6 @@ const TagsManager = () => {
               <FormControl className="col-7 px-0">
                 <OutlinedInput placeholder="Enter Tag Name" size="small" />
               </FormControl>
-
               <div className="d-flex">
                 {[].map((data, index) => {
                   return (

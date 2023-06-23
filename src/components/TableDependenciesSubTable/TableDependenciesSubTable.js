@@ -74,7 +74,7 @@ const EnhancedTableHeadSubTable = (props) => {
             }}
           />
         </TableCell>
-        <TableCell />
+        <TableCell style={{width: '80px'}}/>
         {mainHeadCells.map((headCell) => (
           <TableCell
             key={headCell.id}

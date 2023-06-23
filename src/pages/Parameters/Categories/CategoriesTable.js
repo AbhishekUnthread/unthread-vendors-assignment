@@ -30,11 +30,8 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -182,6 +179,11 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+   const toggleCreateSubModalHandler = () => {
+    // setShowCreateSubModal((prevState) => !prevState);
+    // setShowCreatePopover(null);
+  };
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -258,7 +260,11 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                 size="small"
                                 onClick={() => setOpen(!open)}
                               >
-                                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                                {open ? (
+                                  <PlayArrowIcon style={{ transform: 'rotate(90deg)' }}  />
+                                ) : (
+                                  <PlayArrowIcon/>
+                                )}               
                               </IconButton>
                             </TableCell>
                             <TableCell
@@ -298,6 +304,19 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                             </TableCell>
                             <TableCell style={{ width: 120, padding: 0 }}>
                               <div className="d-flex align-items-center">
+                                {edit && (
+                                  <Tooltip title="Edit" placement="top" onClick={toggleCreateSubModalHandler}>
+                                    <div className="table-edit-icon rounded-4 p-2">
+                                      <AddCircleOutlineIcon
+                                        sx={{
+                                          color: "#5c6d8e",
+                                          fontSize: 18,
+                                          cursor: "pointer",
+                                        }}
+                                      />
+                                    </div>
+                                  </Tooltip>
+                                )}
                                 {edit && (
                                   <Tooltip title="Edit" placement="top">
                                     <Link

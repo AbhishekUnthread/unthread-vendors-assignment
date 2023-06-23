@@ -495,7 +495,19 @@ const Categories = () => {
                       </FormHelperText>
                     )}
                 </FormControl>
-                <div className="d-flex"></div>
+                <div className="d-flex">
+                  {[].map((data, index) => {
+                    return (
+                      <Chip
+                        label={data}
+                        onDelete={() => {}}
+                        onClick={() => {}}
+                        size="small"
+                        className="mt-3 me-2"
+                      ></Chip>
+                    );
+                  })}
+                </div>
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -601,6 +613,20 @@ const Categories = () => {
                       </FormHelperText>
                     )}
                 </FormControl>
+
+                <div className="d-flex">
+                {[].map((data, index) => {
+                    return (
+                      <Chip
+                        label={data}
+                        onDelete={() => {}}
+                        onClick={() => {}}
+                        size="small"
+                        className="mt-3 me-2"
+                      ></Chip>
+                    );
+                  })}
+                </div>
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
