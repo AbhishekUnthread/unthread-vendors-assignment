@@ -2,6 +2,7 @@ import React from "react";
 import "../../EditVendor/EditVendor.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
+import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import NotesBox from "../../../../components/NotesBox/NotesBox";
 import StatusBox from "../../../../components/StatusBox/StatusBox";
 import AddCategoriesProducts from "../../../../components/AddCategoriesProducts/AddCategoriesProducts";
@@ -20,7 +21,10 @@ import addMedia from "../../../../assets/icons/addMedia.svg";
 import { 
   Autocomplete,
   Box,
+  Checkbox,
   FormControl,
+  FormControlLabel,
+  FormGroup,
   OutlinedInput,
   Paper,
   Popover,
@@ -93,6 +97,23 @@ const EditCategories = () => {
                 <OutlinedInput placeholder="Gold Products" size="small" />
               </FormControl>
             </div>
+            <FormGroup>
+              <FormControlLabel control={<Checkbox defaultChecked size="small" />} label="Include in Filters" />
+            </FormGroup>
+            <div className="col-12 mt-3 px-0">
+                <div className="d-flex  mb-1">
+                  <p className="text-lightBlue me-2">Description</p>
+                  <Tooltip title="Lorem ipsum" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className=" c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
+                </div>
+                <AppTextEditor />
+              </div>
           </div>
 
           <div className="border-grey-5 rounded-8 p-3 row features mt-4">
