@@ -12,7 +12,6 @@ import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox
 import SEOToggler from "../../../../components/SEOToggler/SEOToggler";
 import VisibilityBox from "../../../../components/VisibilityBox/VisibilityBox";
 import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
-import AddHeader from "../../../../components/AddHeader/AddHeader";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
 import info from "../../../../assets/icons/info.svg";
@@ -36,7 +35,7 @@ import {
   Tooltip
 } from "@mui/material";
 
-const EditCategories = () => {
+const EditSubCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
@@ -49,13 +48,51 @@ const EditCategories = () => {
 
   return (
     <div className="page container-fluid position-relative user-group">
-      <AddHeader headerName={"Gold Products"}/>
+      <div className="row justify-content-between">
+        <div className="d-flex align-items-center w-auto ps-0">
+          <Link to="/parameters/vendors" className="d-flex">
+            <img
+              src={arrowLeft}
+              alt="arrowLeft"
+              width={9}
+              className="c-pointer"
+            />
+          </Link>
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex flex-column ">
+                <h5 className="page-heading ms-2 ps-1">Rings</h5>
+                <small className="text-grey-6 mt-1 d-block" style={{marginLeft: '10px'}}>
+                    Parent Category: Gold Products
+                    <span className="text-blue-2 c-pointer">(Change)</span>
+                </small>
+            </div>
+          </div>
+        </div>
+
+        <div className="d-flex align-items-center w-auto pe-0">
+          <button className="button-transparent me-1 py-2 px-3">
+            <p className="text-lightBlue">Duplicate</p>
+          </button>
+          <img
+            src={paginationLeft}
+            alt="paginationLeft"
+            className="c-pointer"
+            width={30}
+          />
+          <img
+            src={paginationRight}
+            alt="paginationRight"
+            className="c-pointer"
+            width={30}
+          />
+        </div>
+      </div>
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue me-2">Category Name</p>
+                <p className="text-lightBlue me-2">Sub-Category Name</p>
                 <Tooltip title="Lorem ipsum" placement="top">
                   <img
                     src={info}
@@ -66,33 +103,9 @@ const EditCategories = () => {
                 </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
-                <OutlinedInput placeholder="Gold Products" size="small" />
+                <OutlinedInput placeholder="Rings" size="small" />
               </FormControl>
             </div>
-            <FormGroup>
-              <div className="d-flex align-items-center mt-3 col-12 px-0">
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      inputProps={{ "aria-label": "controlled" }}
-                      size="small"
-                      style={{
-                        color: "#5C6D8E",
-                        marginRight: 0,
-                      }}
-                    />
-                  }
-                  label="Include in Filters"
-                  sx={{
-                    "& .MuiTypography-root": {
-                      fontSize: 13,
-                      color: "#c8d8ff",
-                    },
-                  }}
-                />
-                <span className="text-blue-2 c-pointer">(manage)</span>
-              </div>
-            </FormGroup>
             <div className="col-12 mt-3 px-0">
                 <div className="d-flex  mb-1">
                   <p className="text-lightBlue me-2">Description</p>
@@ -121,7 +134,6 @@ const EditCategories = () => {
                 className="tabs"
               >
                 <Tab label="All Products" className="tabs-head" />
-                <Tab label="Sub Categories" className="tabs-head" />
               </Tabs>
             </Box>
             <div className="d-flex justify-content-between mb-2 px-0">
@@ -131,16 +143,13 @@ const EditCategories = () => {
                   <TabPanel value={categoryType} index={0}>
                     <AddCategoriesProducts />
                   </TabPanel>
-                  <TabPanel value={categoryType} index={1}>
-                    <AddSubCategoriesProducts />
-                  </TabPanel>
                 </>
               }
           </div>
           <SEOToggler />
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox headingName={"Category Status"} />
+          <StatusBox headingName={"Sub-Category Status"} />
           <VisibilityBox />
           <div className="mt-4">
             <UploadMediaBox imageName={addMedia} headingName={"Media"} />
@@ -153,4 +162,4 @@ const EditCategories = () => {
   );
 };
 
-export default EditCategories;
+export default EditSubCategories;
