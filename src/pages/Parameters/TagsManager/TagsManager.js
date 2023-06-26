@@ -56,6 +56,7 @@ import {
   TablePagination,
   TableRow,
   Chip,
+  FormHelperText,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import { LoadingButton } from "@mui/lab";
@@ -73,6 +74,8 @@ import {
   useDeleteTagMutation,
   useEditTagMutation,
 } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
+import { useNavigate } from "react-router-dom";
+import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = forwardRef(function Transition(props, ref) {
@@ -170,11 +173,95 @@ const likeHeadCells = [
 
 const tagsValidationSchema = Yup.object({
   name: Yup.string().trim().min(3).required("required"),
-  description: Yup.string().trim().min(3).required(),
-  status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
+  // description: Yup.string().trim().min(3).required(),
+  // status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
 });
 
 const TagsManager = () => {
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [tagsType, setTagsType] = useState(0);
+  const [tagsList, setTagsList] = useState([]);
+  const [error, setError] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const changeTagsTypeHandler
+   = (_event, tabIndex) => {
+    setTagsType(tabIndex);
+  };
+  const[deleteTags,
+  {
+    isLoading: deleteTagsIsLoading, 
+    isSuccess: deleteTagsIsSuccess, 
+    error: deleteTagsError, 
+  }]= useDeleteTagMutation();
+
+const[createTag,
+{
+  isLoading: createTagsIsLoading, 
+  isSuccess: createTagsIsSuccess, 
+  error:createTagsError, 
+}]= useCreateTagMutation();
+
+  const{
+      data: tagsData,
+      isLoading: tagsIsLoading, 
+      isSuccess: tagsIsSuccess, 
+      error: tagsError, 
+      }=useGetAllTagsQuery({createdAt:-1});
+    
+    useEffect(() => {
+      if (tagsError) {
+        setError(true);
+        if (tagsError?.data?.message) {
+          dispatch(showError({ message: tagsError.data.message }));
+        } else {
+          dispatch(
+            showError({ message: "Something went wrong!, please try again" })
+          );
+        }
+      }
+      if (tagsIsSuccess) {
+        setError(false);
+        if (tagsType === 0) {
+          setTagsList(tagsData.data.data);
+        }
+        if (tagsType === 1) {
+          setTagsList(tagsData.data.data);
+        }
+      }
+      if (createTagsIsSuccess) {
+        setShowCreateModal(false);
+        dispatch(showSuccess({ message: "Vendor created successfully" }));
+      }
+      
+    }, [tagsType,tagsIsSuccess,tagsError,tagsData])
+    
+    const editTagsPageNavigationHandler = (data) => {
+      dispatch(updateTagId(data._id)); 
+      navigate('edit');
+    };
+
+  const deleteTagsHandler = (data) => {
+      deleteTags(data?._id);
+    };
+  
+  const toggleCreateModalHandler = () => {
+    setShowCreateModal((prevState) => !prevState);
+    TagFormik.resetForm();
+  };
+  const TagFormik = useFormik({
+    initialValues: {
+      name : "",
+      status:"active",
+      showFilter:true,
+    },
+    enableReinitialize: true,
+    validationSchema: tagsValidationSchema,
+    onSubmit: (values) => {
+      createTag(values);
+    },
+  });
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -190,7 +277,10 @@ const TagsManager = () => {
           <button className="button-lightBlue-outline py-2 px-4 ms-3">
             <p>Bulk Add Tags</p>
           </button>
-          <button className="button-gradient py-2 px-4 ms-3">
+          <button
+           className="button-gradient py-2 px-4 ms-3" 
+           onClick={toggleCreateModalHandler}
+           >
             <p>+ Create Tag</p>
           </button>
 
@@ -200,6 +290,7 @@ const TagsManager = () => {
             aria-describedby="alert-dialog-slide-description"
             maxWidth="sm"
             fullWidth={true}
+            open={showCreateModal}
           >
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
@@ -217,18 +308,31 @@ const TagsManager = () => {
                   alt="cancel"
                   width={30}
                   className="c-pointer"
+                  onClick={toggleCreateModalHandler}
                 />
               </div>
             </DialogTitle>
             <hr className="hr-grey-6 my-0" />
-
+            <form noValidate onSubmit={TagFormik.handleSubmit}>
             <DialogContent className="py-3 px-4">
               <p className="text-lightBlue mb-2">Tag Name</p>
               <FormControl className="col-7 px-0">
-                <OutlinedInput placeholder="Enter Tag Name" size="small" />
+                <OutlinedInput
+                 placeholder="Enter Tag Name" 
+                 size="small"
+                 name="name"
+                 value={TagFormik.values.name}
+                 onChange={TagFormik.handleChange}
+                 onBlur={TagFormik.handleBlur}
+                  />
+                {!!TagFormik.touched.name && TagFormik.errors.name && (
+                    <FormHelperText error>
+                        {TagFormik.errors.name}
+                    </FormHelperText>
+                  )}
               </FormControl>
 
-              <div className="d-flex">
+              {/* <div className="d-flex">
                 {[].map((data, index) => {
                   return (
                     <Chip
@@ -240,17 +344,27 @@ const TagsManager = () => {
                     ></Chip>
                   );
                 })}
-              </div>
+              </div> */}
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
               <button className="button-grey py-2 px-5">
-                <p className="text-lightBlue">Cancel</p>
+                <p 
+                className="text-lightBlue"
+                onClick={toggleCreateModalHandler}
+                >
+                Cancel</p>
               </button>
-              <button className="button-gradient py-2 px-5">
+              <LoadingButton 
+              className="button-gradient py-2 px-5"
+              // loading={createTagsIsLoading}
+              // disabled={createTagsIsLoading}
+              type="submit"
+              >
                 <p>Save</p>
-              </button>
+              </LoadingButton>
             </DialogActions>
+            </form>
           </Dialog>
 
           <SwipeableDrawer anchor="right" className="bulk-drawer">
@@ -667,7 +781,11 @@ const TagsManager = () => {
             {/* variant="scrollable"
               scrollButtons
               allowScrollButtonsMobile */}
-            <Tabs aria-label="scrollable force tabs example" className="tabs">
+            <Tabs 
+            value={tagsType}
+            onChange={changeTagsTypeHandler}
+            aria-label="scrollable force tabs example" 
+            className="tabs">
               <Tab label="All" className="tabs-head" />{" "}
               <Tab label="Draft" className="tabs-head" />
             </Tabs>
@@ -675,11 +793,23 @@ const TagsManager = () => {
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
           </div>
-          <TabPanel index={0}>
-            <TagsManagerTable />
+          <TabPanel value={tagsType} index={0}>
+            <TagsManagerTable 
+              isLoading={tagsIsLoading}
+              deleteData={deleteTagsHandler}
+              error={error}
+              list={tagsList}
+              edit={editTagsPageNavigationHandler}
+            />
           </TabPanel>
-          <TabPanel index={1}>
-            <TagsManagerTable />
+          <TabPanel value={tagsType} index={1}>
+            <TagsManagerTable
+              isLoading={tagsIsLoading}
+              deleteData={deleteTagsHandler}
+              error={error}
+              list={tagsList}
+              edit={editTagsPageNavigationHandler}
+             />
           </TabPanel>
         </Paper>
       </div>

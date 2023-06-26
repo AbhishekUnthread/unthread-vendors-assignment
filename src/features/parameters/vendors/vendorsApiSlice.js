@@ -26,6 +26,14 @@ export const vendorsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Vendors"],
     }),
+    bulkCreateVendor: builder.mutation({
+      query: (vendorsDetail) => ({
+        url: "/parameters/vendor/bulkCreate",
+        method: "POST",
+        body: vendorsDetail,
+      }),
+      invalidatesTags: ["Vendors"],
+    }),
     deleteVendor: builder.mutation({
       query: (vendorId) => ({
         url: `/parameters/vendor/${vendorId}`,
@@ -50,4 +58,5 @@ export const {
   useCreateVendorMutation,
   useDeleteVendorMutation,
   useEditVendorMutation,
+  useBulkCreateVendorMutation
 } = vendorsApiSlice;

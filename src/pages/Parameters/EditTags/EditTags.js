@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./EditTags.scss";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import StatusBox from "../../../components/StatusBox/StatusBox";
@@ -11,14 +11,130 @@ import info from "../../../assets/icons/info.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 // ! MATERIAL IMPORTS
-import { FormControl, OutlinedInput, Tooltip } from "@mui/material";
+import { Checkbox, FormControl, FormControlLabel, OutlinedInput, Tooltip } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { useCreateTagMutation, useEditTagMutation, useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
+import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
+
 
 const EditTags = () => {
+  const [tagName,setTagName] = React.useState("");
+  const tagId = useSelector((state)=>state.tags.tagId);
+  const [tagStatus, setTagStatus] = React.useState("active")
+  const [tagNotes,setTagNotes] = React.useState("")
+  const navigate = useNavigate();
+  const [checked, setChecked] = React.useState(false);
+  const dispatch = useDispatch();
+  // const [showFilter, setShowFilter] = React.useState(false);
+
+  const{
+    data: tagsData,
+    isLoading: tagsIsLoading, 
+    isSuccess: tagsIsSuccess, 
+    error: tagsError, 
+    }=useGetAllTagsQuery({createdAt:-1, id:tagId});
+
+    const[editTag,{
+      data: editData,
+      isLoading: editTagIsLoading,
+      isSuccess: editTagIsSuccess,
+      error: editTagError, 
+    }]=useEditTagMutation();
+
+    const[createTag,
+      {
+        isLoading: createTagsIsLoading, 
+        isSuccess: createTagsIsSuccess, 
+        error:createTagsError, 
+      }]= useCreateTagMutation();
+
+    useEffect(() => {
+      if(tagsIsSuccess && tagId !== "")
+      {
+        setTagName(tagsData.data.data[0].name)
+        setTagNotes(tagsData.data.data[0].notes)
+        setTagStatus(tagsData.data.data[0].status)
+        setChecked(tagsData.data.data[0].showFilter)
+      }
+    }, [tagsIsSuccess])
+
+
+    const handleNameChange = (event) => {
+      setTagName(event.target.value); // Updating the vendor name based on the input value
+    };
+    const tagStatusChange=(event,tagStatus)=>{
+      setTagStatus(tagStatus);
+    }   
+    const tagNotesChange=(event)=>{
+      setTagNotes(event.target.value);
+    }
+    const handleFilterChange=(event)=>{
+      setChecked(event.target.checked);
+    }
+
+    const handleSubmit = () => {
+      if(tagId !== "")
+      {
+        editTag({
+         id: tagId, 
+         details: {
+           showFilter: checked, 
+           name: tagName, 
+           notes: tagNotes, 
+           status: tagStatus?tagStatus:"active" 
+         }
+       }).unwrap().then(() => {
+         navigate("/parameters/tagsManager"); 
+       });
+      }
+      else
+      {
+        createTag({
+          showFilter: checked, 
+          name: tagName, 
+          notes: tagNotes, 
+          status: tagStatus?tagStatus:"active" 
+       }).unwrap().then(() => {
+         navigate("/parameters/tagsManager"); 
+       });
+      }
+     };
+
+     const handleSubmitAndAddAnother = () => {
+      if(tagId !== "")
+      {
+        editTag({
+          id: tagId, 
+          details: {
+            showFilter: checked, 
+            name: tagName, 
+            notes: tagNotes, 
+            status: tagStatus?tagStatus:"active" 
+          }
+        }).unwrap().then(() => {
+          navigate("/parameters/tagsManager/edit");             
+        });
+      }
+      else{
+        createTag({
+          showFilter: checked, 
+          name: tagName, 
+          notes: tagNotes, 
+          status: tagStatus?tagStatus:"active" 
+        }).unwrap().then(() => {
+          navigate("/parameters/tagsManager/edit"); 
+        });
+      }
+     
+      setTagName(''); 
+      dispatch(updateTagId(""));
+    };
+
   return (
     <div className="page container-fluid position-relative user-group">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/parameters/vendors" className="d-flex">
+          <Link to="/parameters/tagsManager" className="d-flex">
             <img
               src={arrowLeft}
               alt="arrowLeft"
@@ -26,7 +142,7 @@ const EditTags = () => {
               className="c-pointer"
             />
           </Link>
-          <h5 className="page-heading ms-2 ps-1">Edit Tag</h5>
+          <h5 className="page-heading ms-2 ps-1">{tagName}</h5>
         </div>
 
         <div className="d-flex align-items-center w-auto pe-0">
@@ -66,8 +182,32 @@ const EditTags = () => {
                 </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
-                <OutlinedInput placeholder="Enter Tag Name" size="small" />
+                <OutlinedInput placeholder="Enter Tag Name" size="small" value={tagName} onChange={handleNameChange}/>
               </FormControl>
+              <FormControlLabel
+                        control={
+                          <Checkbox
+                            name="showFilter"
+                            checked={checked}
+                            onChange={handleFilterChange}
+                            inputProps={{ "aria-label": "controlled" }}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                              width: "auto",
+                            }}
+                          />
+                        }
+                        label="Include in Filters"
+                        sx={{
+                          "& .MuiTypography-root": {
+                            fontSize: "0.875rem",
+                            color: "#c8d8ff",
+                          },
+                        }}
+                        className=" px-0"
+                 />
             </div>
           </div>
 
@@ -81,33 +221,40 @@ const EditTags = () => {
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox headingName={"Tag Status"} />
-          <NotesBox />
+          <StatusBox  value={tagStatus} 
+           headingName={"Tag Status"}
+           handleProductStatus={tagStatusChange}
+           defaultValue={['active','archived']}
+            />
+          <NotesBox name="note" value={tagNotes} onChange={tagNotesChange} />
+
         </div>
       </div>
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
-          <Link to="/users/allUsers" className="button-red-outline py-2 px-4">
+          <Link to="/parameters/tagsManager" className="button-red-outline py-2 px-4">
             <p>Discard</p>
           </Link>
 
-          <Link
-            to="/users/allUsers"
+          {/* <Link
+            to="/parameters/tagsManager"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
-          </Link>
+          </Link> */}
         </div>
         <div className="d-flex w-auto px-0">
           <Link
-            to="/users/allUsers"
+            to="#"
             className="button-lightBlue-outline py-2 px-4"
+            onClick={handleSubmitAndAddAnother}
           >
             <p>Save & Add Another</p>
           </Link>
           <Link
-            to="/users/allUsers"
+            to="#"
             className="button-gradient ms-3 py-2 px-4 w-auto"
+            onClick={handleSubmit}
           >
             <p>Save</p>
           </Link>

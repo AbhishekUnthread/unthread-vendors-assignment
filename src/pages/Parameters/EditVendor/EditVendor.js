@@ -156,7 +156,7 @@ const EditVendor = () => {
         });
       }
      
-      setVendorName(''); // Resetting the vendor name  
+      setVendorName(''); 
       dispatch(updateVendorId(""));
     };
     

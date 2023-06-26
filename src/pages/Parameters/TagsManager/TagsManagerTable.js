@@ -30,7 +30,8 @@ function createData(tId, tagName, noOfProducts) {
 
 
 
-const TagsManagerTable = ({list,edit,deleteData}) => {
+const 
+TagsManagerTable = ({list,edit,deleteData,isLoading,error}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -80,7 +81,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = list.map((n) => n.tId);
+      const newSelected = list.map((n) => n._id);
       setSelected(newSelected);
       return;
     }
@@ -133,6 +134,9 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
           <TableMassActionButton />
         </div>
       )}
+      {!error ? (
+        list.length ? (
+        <>
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}
@@ -152,7 +156,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
             {stableSort(list, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const isItemSelected = isSelected(row.tId);
+                const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -171,7 +175,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.tId)}
+                        onClick={(event) => handleClick(event, row._id)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -189,7 +193,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                         to="/parameters/tagsManager/edit"
                       >
                         <p className="text-lightBlue rounded-circle fw-600">
-                        {row.attributes.name}
+                        {row.name}
                         </p>
                       </Link>
                     </TableCell>
@@ -200,10 +204,10 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
 
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <div                          className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.attributes.status}`}>
+                        <div className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.status}`}>
 
-                          <small className="text-black fw-400">
-                          {row.attributes.status}
+                          <small className="text-lightBlue fw-400">
+                          {row.status}
                           </small>
                         </div>
                       </div>
@@ -234,7 +238,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                       {deleteData && <Tooltip 
                          onClick={(e)=>{
                           deleteData(row)
-                        }} title={edit?'Archive':'Un-Archive'} placement="top">
+                        }} title={edit?'Delete':'Un-Archive'} placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <InventoryIcon
                               sx={{
@@ -272,6 +276,16 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
         onRowsPerPageChange={handleChangeRowsPerPage}
         className="table-pagination"
       />
+      </>): isLoading ? (
+          <span className="d-flex justify-content-center m-3">Loading...</span>
+        ) : (
+          <span className="d-flex justify-content-center m-3">
+            No data found
+          </span>
+        )
+      ) : (
+        <></>
+      )}
     </React.Fragment>
   );
 };

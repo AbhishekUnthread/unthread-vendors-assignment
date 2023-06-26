@@ -47,6 +47,7 @@ import {
   useGetAllVendorsQuery,
   useCreateVendorMutation,
   useDeleteVendorMutation,
+  useBulkCreateVendorMutation,
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import sort from "../../../assets/icons/sort.svg";
@@ -60,9 +61,10 @@ const Transition = forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 const vendorValidationSchema = Yup.object({
-  name: Yup.string().trim().min(3).required("required"),
-  description: Yup.string().trim().min(3).required(),
-  status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
+  name: Yup.string(),
+  bulkVendor : Yup.array().min(1).required("required"),
+  // description: Yup.string().trim().min(3).required(),
+  // status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
 });
 
 const Vendors = () => {
@@ -76,16 +78,19 @@ const Vendors = () => {
   const [selectedSortOption, setSelectedSortOption] = React.useState(null);
   const [selectedStatusOption, setSelectedStatusOption] = React.useState(null);
   const [searchValue, setSearchValue] = React.useState("");
-  const [values, setValues] = React.useState([]);
+  const [bulkVendorsValue, setBulkVendorsValue] = React.useState([]);
 
   const handleDelete = (value) => {
-    setValues((prevValues) => prevValues.filter((v) => v !== value));
+    setBulkVendorsValue((prevValues) => prevValues.filter((v) => v.name !== value));
   };
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      setValues((prevValues) => [...prevValues, event.target.value]);
+      event.preventDefault();
+      // setBulkVendorsValue((prevValues) => [...prevValues, {name:event.target.value, status:"active", showFilter:true}]);
        // Clear the input field after adding the value
-      vendorFormik.values.name =''
+       vendorFormik.setFieldValue("bulkVendor",[...vendorFormik.values.bulkVendor,{name:event.target.value, status:"active", showFilter:true}])
+      vendorFormik.setFieldValue("name","") 
+      console.log("bulk vendor",vendorFormik.values.bulkVendor)
     }
   };
 
@@ -136,6 +141,16 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
       error: createVendorError,
     },
   ] = useCreateVendorMutation();
+
+  const [
+    bulkCreateVendor,
+    {
+      isLoading: bulkCreateVendorIsLoading,
+      isSuccess: bulkCreateVendorIsSuccess,
+      error: bulkCreateVendorError,
+    },
+  ] =useBulkCreateVendorMutation();
+
   const [
     deleteVendor,
     {
@@ -149,18 +164,24 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
   const vendorFormik = useFormik({
     initialValues: {
       name: "",
-      description: "",
-      status: "active",
-      showFilter: true,
+      bulkVendor:[],
+      // description: "",
+      // status: "active",
+      // showFilter: true,
     },
     enableReinitialize: true,
     validationSchema: vendorValidationSchema,
     onSubmit: (values) => {
-      createVendor(values)
+      console.log("valueshbk", values)
+      
+        bulkCreateVendor(values.bulkVendor)
         .unwrap()
-        .then(() => vendorFormik.resetForm());
+        .then(()=>vendorFormik.resetForm());
     },
   });
+
+
+  
 
   const toggleCreateModalHandler = () => {
     setShowCreateModal((prevState) => !prevState);
@@ -211,6 +232,10 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Vendor created successfully" }));
     }
+    if (bulkCreateVendorIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Vendors created successfully" }));
+    }
     if (vendorsIsSuccess) {
       setError(false);
       if (vendorType === 0) {
@@ -227,6 +252,7 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
     createVendorIsSuccess,
     createVendorError,
     vendorType,
+    bulkCreateVendorIsSuccess,
     dispatch,
   ]);
  // * SORT POPOVERS STARTS HERE
@@ -275,6 +301,13 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
   };
+
+
+  const handleBulkVendor = ()=>
+  {
+    vendorFormik.setFieldValue("bulkVendor",[...vendorFormik.values.bulkVendor,{name:vendorFormik.values.name, status:"active", showFilter:true}])
+    vendorFormik.setFieldValue("name","") 
+  }
 
   return (
     <div className="container-fluid page">
@@ -334,28 +367,28 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
                     size="small"
                     name="name"
                     value={vendorFormik.values.name}
-                    onBlur={vendorFormik.handleBlur}
+                    // onBlur={vendorFormik.handleBlur}
                     onChange={vendorFormik.handleChange}
                     onKeyDown={handleKeyDown}
                   />
-                  {!!vendorFormik.touched.name && vendorFormik.errors.name && (
+                  {!!vendorFormik.touched.name && vendorFormik.errors.bulkVendor && (
                     <FormHelperText error>
-                      {vendorFormik.errors.name}
+                      {vendorFormik.errors.bulkVendor}
                     </FormHelperText>
                   )}
                 </FormControl>
                 <div className="d-flex">
-                {values.map((value, index) => (
+                {vendorFormik.values.bulkVendor.map((value, index) => (
     <Chip
       key={index}
-      label={value}
-      onDelete={() => handleDelete(value)}
+      label={value.name}
+      onDelete={() => handleDelete(value.name)}
       size="small"
       className="mt-3 me-2 px-1"
     />
   ))}
             </div>
-            <br/>
+            {/* <br/>
                 <p className="text-lightBlue mb-2">Description</p>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
@@ -372,7 +405,7 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
                         {vendorFormik.errors.description}
                       </FormHelperText>
                     )}
-                </FormControl>
+                </FormControl> */}
                 <br />
                 <FormControlLabel
                   control={
@@ -454,6 +487,7 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
                   disabled={createVendorIsLoading}
                   className="button-gradient py-2 px-5"
                   type="submit"
+                  onClick={handleBulkVendor}
                 >
                   <p>Save</p>
                 </LoadingButton>

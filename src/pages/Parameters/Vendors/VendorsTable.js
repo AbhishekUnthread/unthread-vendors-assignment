@@ -269,7 +269,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[10, 20, 30]}
+              rowsPerPageOptions={[5, 10, 25]}
               component="div"
               count={list.length}
               rowsPerPage={rowsPerPage}
