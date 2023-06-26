@@ -9,7 +9,7 @@ import AddCategoriesProducts from "../../../../components/AddCategoriesProducts/
 import AddSubCategoriesProducts from "../../../../components/AddSubCategoriesProduct/AddSubCategoriesProduct";
 import TabPanel from "../../../../components/TabPanel/TabPanel";
 import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox";
-import SEOToggler from "../../../../components/SEOToggler/SEOToggler";
+import SEO from "../../../Products/AddProduct/SEO/SEO";
 import VisibilityBox from "../../../../components/VisibilityBox/VisibilityBox";
 import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
 import AddHeader from "../../../../components/AddHeader/AddHeader";
@@ -49,7 +49,7 @@ const EditSubCategories = () => {
 
   return (
     <div className="page container-fluid position-relative user-group">
-      <AddHeader headerName={"Rings"} subHeading={"Parent Category: Gold Products"} subHighlightstext={"(Change)"}/>
+      <AddHeader headerName={"Rings"} subHeading={"Parent Category: Gold Products"} subHighlightstext={"(Change)"} navigateLink={"/parameters/categories"} />
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -109,7 +109,7 @@ const EditSubCategories = () => {
                 </>
               }
           </div>
-          <SEOToggler />
+          <SEO />
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
           <StatusBox headingName={"Sub-Category Status"} />
