@@ -5,15 +5,11 @@ import { visuallyHidden } from "@mui/utils";
 import {
   Box,
   Checkbox,
-  IconButton,
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
 } from "@mui/material";
-
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -43,7 +39,7 @@ const stableSort = (array, comparator) => {
   return stabilizedThis.map((el) => el[0]);
 };
 
-const EnhancedTableHeadSubTable = (props) => {
+const EnhancedTableGapHead = (props) => {
   const {
     onSelectAllClick,
     order,
@@ -51,15 +47,16 @@ const EnhancedTableHeadSubTable = (props) => {
     numSelected,
     rowCount,
     onRequestSort,
-    mainHeadCells,
+    headCells,
   } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
 
   return (
-    <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+    <TableHead>
+      <TableRow>
+        <TableCell style={{width:'40px'}}/>
         <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -74,8 +71,7 @@ const EnhancedTableHeadSubTable = (props) => {
             }}
           />
         </TableCell>
-        <TableCell style={{width: '80px'}}/>
-        {mainHeadCells.map((headCell) => (
+        {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? "right" : "left"}
@@ -86,11 +82,11 @@ const EnhancedTableHeadSubTable = (props) => {
           </TableCell>
         ))}
       </TableRow>
-    </React.Fragment>
+    </TableHead>
   );
 };
 
-EnhancedTableHeadSubTable.propTypes = {
+EnhancedTableGapHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
@@ -100,4 +96,4 @@ EnhancedTableHeadSubTable.propTypes = {
 };
 // ? TABLE ENDS HERE
 
-export { EnhancedTableHeadSubTable, stableSort, getComparator };
+export { EnhancedTableGapHead, stableSort, getComparator };

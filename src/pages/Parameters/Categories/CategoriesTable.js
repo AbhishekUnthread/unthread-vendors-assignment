@@ -2,8 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
-  EnhancedTableHead
-} from "../../../components/TableDependencies/TableDependencies";
+  EnhancedTableGapHead
+} from "../../../components/TableDependenciesWithGap/TableDependenciesWithGap"
 import {
   EnhancedTableHeadSubTable,
   stableSort,
@@ -30,11 +30,8 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -98,33 +95,6 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-function createData(name, calories, fat, carbs, protein, price) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3,
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1,
-      },
-    ],
-  };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-];
-
 const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
@@ -182,6 +152,11 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+   const toggleCreateSubModalHandler = () => {
+    // setShowCreateSubModal((prevState) => !prevState);
+    // setShowCreatePopover(null);
+  };
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -190,7 +165,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
             <small className="text-lightBlue">
               {selected.length} categories are selected&nbsp;
               <span
-                className="text-blue-2 c-pointer"
+                className="text-blue-2 c-pointer ml-10"
                 onClick={() => setSelected([])}
               >
                 (Clear Selection)
@@ -258,7 +233,11 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                 size="small"
                                 onClick={() => setOpen(!open)}
                               >
-                                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                                {open ? (
+                                  <PlayArrowIcon style={{ transform: 'rotate(90deg)', fontSize: '15px' }} />
+                                ) : (
+                                  <PlayArrowIcon style={{ fontSize: '15px' }} />
+                                )}               
                               </IconButton>
                             </TableCell>
                             <TableCell
@@ -299,6 +278,19 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                             <TableCell style={{ width: 120, padding: 0 }}>
                               <div className="d-flex align-items-center">
                                 {edit && (
+                                  <Tooltip title="Edit" placement="top" onClick={toggleCreateSubModalHandler}>
+                                    <div className="table-edit-icon rounded-4 p-2">
+                                      <AddCircleOutlineIcon
+                                        sx={{
+                                          color: "#5c6d8e",
+                                          fontSize: 18,
+                                          cursor: "pointer",
+                                        }}
+                                      />
+                                    </div>
+                                  </Tooltip>
+                                )}
+                                {edit && (
                                   <Tooltip title="Edit" placement="top">
                                     <Link
                                       className="text-decoration-none"
@@ -338,7 +330,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                             </TableCell>
                           </TableRow>
                           <TableRow>
-                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
                               <Collapse in={open} timeout="auto" unmountOnExit>
                                 <React.Fragment>
                                   <TableContainer>
@@ -347,7 +339,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                       aria-labelledby="tableTitle"
                                       size="medium"
                                     >
-                                      <EnhancedTableHead
+                                      <EnhancedTableGapHead
                                         numSelected={selected.length}
                                         order={order}
                                         orderBy={orderBy}
@@ -374,6 +366,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                                   className="table-rows"
                                                   sx={{ "& > *": { borderBottom: "unset" } }}
                                                 >
+                                                  <TableCell />
                                                   <TableCell padding="checkbox">
                                                     <Checkbox
                                                       checked={isItemSelected}
@@ -428,13 +421,18 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                                             }}
                                                             className="table-edit-icon rounded-4 p-2"
                                                           >
-                                                            <EditOutlinedIcon
-                                                              sx={{
-                                                                color: "#5c6d8e",
-                                                                fontSize: 18,
-                                                                cursor: "pointer",
-                                                              }}
-                                                            />
+                                                            <Link
+                                                              className="text-decoration-none"
+                                                              to="/parameters/subCategories/edit"
+                                                            >
+                                                              <EditOutlinedIcon
+                                                                sx={{
+                                                                  color: "#5c6d8e",
+                                                                  fontSize: 18,
+                                                                  cursor: "pointer",
+                                                                }}
+                                                              />
+                                                            </Link>
                                                           </div>
                                                         </Tooltip>
                                                       )}
