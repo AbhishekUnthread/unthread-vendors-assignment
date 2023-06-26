@@ -22,12 +22,31 @@ const VisibilityBox = () => {
                 aria-labelledby="demo-radio-buttons-group-label"
                 name="radio-buttons-group"
             >
-                <FormControlLabel value="Visible" control={<Radio />} label="Visible in frontend" />
-                <FormControlLabel value="hidden" control={<Radio />} label="Hidden from website" />
+                <FormControlLabel value="Visible" control={<Radio />} 
+                  label="Visible in frontend" 
+                  sx={{
+                      "& .MuiTypography-root": {
+                        color: "#c8d8ff",
+                      },
+                    }} 
+                />
+                <FormControlLabel value="hidden" control={<Radio />} label="Hidden from website" 
+                  sx={{
+                    "& .MuiTypography-root": {
+                      color: "#c8d8ff",
+                    },
+                  }}
+                />
             </RadioGroup>
         </FormControl>
         <FormGroup>
-            <FormControlLabel control={<Checkbox defaultChecked size="small" />} label="Schedule Visibility" />
+            <FormControlLabel control={<Checkbox defaultChecked size="small" />} label="Schedule Visibility"
+            sx={{
+              "& .MuiTypography-root": {
+                color: "#c8d8ff",
+              },
+            }}
+            />
         </FormGroup>
     </div>
   );
