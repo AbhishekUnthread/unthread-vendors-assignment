@@ -19,6 +19,11 @@ import {
   Chip,
   Select,
   MenuItem,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  TableHead,
+  Typography
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -97,13 +102,28 @@ const Categories = () => {
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
+  const [sortFilter, setSortFilter] = React.useState(null);
+  const [statusFilter, setStatusFilter] = React.useState("")
+  const filterParameter = {};
+
+  if (sortFilter) {
+    if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
+      filterParameter.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+    }
+    else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
+      filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+    }
+  }
+
+  console.log(filterParameter, 'filterParameter');
 
   const {
     data: categoriesData,
     isLoading: categoriesIsLoading,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({ createdAt: -1 });
+  } = useGetAllCategoriesQuery({ ...filterParameter, status: `${statusFilter}`});
   const {
     data: subCategoriesData,
     isLoading: subCategoriesIsLoading,
@@ -251,24 +271,32 @@ const Categories = () => {
     setAnchorSortEl(null);
   };
 
+  const handleSortRadio = (event) => {
+    setSortFilter(event.target.value);
+    setAnchorSortEl(null);
+  }
+
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
 
-  // * VENDOR POPOVERS STARTS
-  const [anchorVendorEl, setAnchorVendorEl] = React.useState(null);
-
-  const handleVendorClick = (event) => {
-    setAnchorVendorEl(event.currentTarget);
+  // * STATUS POPOVERS STARTS
+  const handleStatusClick = (event) => {
+    setAnchorStatusEl(event.currentTarget);
   };
 
-  const handleVendorClose = () => {
-    setAnchorVendorEl(null);
+  const handleStatusClose = () => {
+    setAnchorStatusEl(null);
   };
 
-  const openVendor = Boolean(anchorVendorEl);
-  const idVendor = openVendor ? "simple-popover" : undefined;
-  // * VENDOR POPOVERS ENDS
+  const handleStatusChange = (event) => {
+    setStatusFilter(event.target.value)
+    setAnchorStatusEl(null)
+  }
+
+  const openStatus = Boolean(anchorStatusEl);
+  const idStatus = openStatus ? "simple-popover" : undefined;
+  // * STATUS POPOVERS ENDS
 
   const deleteCategoryHandler = (data) => {
     if (categoryType === 0) {
@@ -681,58 +709,60 @@ const Categories = () => {
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
             <div className="d-flex">
-              <div className="d-flex product-button__box ms-2">
-                <button
-                  className="button-grey py-2 px-3 d-none d-md-block"
-                  aria-describedby={idVendor}
-                  variant="contained"
-                  onClick={handleVendorClick}
-                >
-                  <small className="text-lightBlue">Status</small>
-                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
-                </button>
-                <Popover
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  id={idVendor}
-                  open={openVendor}
-                  anchorEl={anchorVendorEl}
-                  onClose={handleVendorClose}
-                >
-                  <div className="py-2">
-                    <Autocomplete
-                      id="free-solo-demo"
-                      freeSolo
-                      size="small"
-                      options={vendorData}
-                      getOptionLabel={(option) => option.title}
-                      renderOption={(props, option) => (
-                        <li {...props}>
-                          <small className="text-lightBlue my-1">
-                            {option.title}
-                          </small>
-                        </li>
-                      )}
-                      sx={{
-                        width: 200,
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          placeholder="Search"
-                          inputRef={(input) => input?.focus()}
-                        />
-                      )}
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idStatus}
+                variant="contained"
+                onClick={handleStatusClick}
+              >
+                <small className="text-lightBlue me-2">Status</small>
+                <img src={arrowDown} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idStatus}
+                open={openStatus}
+                anchorEl={anchorStatusEl}
+                onClose={handleStatusClose}
+                className="columns"
+              >
+                <FormControl className="px-2 py-1">
+                  <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    value={statusFilter}
+                    onChange={handleStatusChange}
+                  >
+                    <FormControlLabel
+                      value="active"
+                      control={<Radio size="small" />}
+                      label="Active"
                     />
-                  </div>
-                </Popover>
-              </div>
+                    <FormControlLabel
+                      value="inActive"
+                      control={<Radio size="small" />}
+                      label="In-Active"
+                    />
+                    <FormControlLabel
+                      value="scheduled"
+                      control={<Radio size="small" />}
+                      label="Scheduled"
+                    />
+                    <FormControlLabel
+                      value="archived"
+                      control={<Radio size="small" />}
+                      label="Archived"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Popover>
               <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idSort}
@@ -742,6 +772,51 @@ const Categories = () => {
                 <small className="text-lightBlue me-2">Sort</small>
                 <img src={sort} alt="sort" className="" />
               </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortEl}
+                onClose={handleSortClose}
+                className="columns"
+              >
+                <FormControl className="px-2 py-1">
+                  <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    value={sortFilter}
+                    onChange={handleSortRadio}
+                  >
+                    <FormControlLabel
+                      value="oldestToNewest"
+                      control={<Radio size="small" />}
+                      label="Oldest to Newest"
+                    />
+                    <FormControlLabel
+                      value="newestToOldest"
+                      control={<Radio size="small" />}
+                      label="Newest to Oldest"
+                    />
+                    <FormControlLabel
+                      value="alphabeticalAtoZ"
+                      control={<Radio size="small" />}
+                      label="Alphabetical (A-Z)"
+                    />
+                    <FormControlLabel
+                      value="alphabeticalZtoA"
+                      control={<Radio size="small" />}
+                      label="Alphabetical (Z-A)"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Popover>
             </div>
           </div>
           {

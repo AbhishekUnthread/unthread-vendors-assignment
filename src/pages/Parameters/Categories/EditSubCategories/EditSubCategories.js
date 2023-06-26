@@ -12,6 +12,7 @@ import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox
 import SEOToggler from "../../../../components/SEOToggler/SEOToggler";
 import VisibilityBox from "../../../../components/VisibilityBox/VisibilityBox";
 import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
+import AddHeader from "../../../../components/AddHeader/AddHeader";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
 import info from "../../../../assets/icons/info.svg";
@@ -48,45 +49,7 @@ const EditSubCategories = () => {
 
   return (
     <div className="page container-fluid position-relative user-group">
-      <div className="row justify-content-between">
-        <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/parameters/vendors" className="d-flex">
-            <img
-              src={arrowLeft}
-              alt="arrowLeft"
-              width={9}
-              className="c-pointer"
-            />
-          </Link>
-          <div className="d-flex justify-content-between align-items-center">
-            <div className="d-flex flex-column ">
-                <h5 className="page-heading ms-2 ps-1">Rings</h5>
-                <small className="text-grey-6 mt-1 d-block" style={{marginLeft: '10px'}}>
-                    Parent Category: Gold Products
-                    <span className="text-blue-2 c-pointer">(Change)</span>
-                </small>
-            </div>
-          </div>
-        </div>
-
-        <div className="d-flex align-items-center w-auto pe-0">
-          <button className="button-transparent me-1 py-2 px-3">
-            <p className="text-lightBlue">Duplicate</p>
-          </button>
-          <img
-            src={paginationLeft}
-            alt="paginationLeft"
-            className="c-pointer"
-            width={30}
-          />
-          <img
-            src={paginationRight}
-            alt="paginationRight"
-            className="c-pointer"
-            width={30}
-          />
-        </div>
-      </div>
+      <AddHeader headerName={"Rings"} subHeading={"Parent Category: Gold Products"} subHighlightstext={"(Change)"}/>
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
