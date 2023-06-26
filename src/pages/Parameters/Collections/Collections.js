@@ -80,13 +80,34 @@ const Collections = () => {
     collectionsReducer,
     initialCollectionState
   );
+  const [sortFilter, setSortFilter] = React.useState(null);
+  const [statusFilter, setStatusFilter] = React.useState("")
+  const filterParameter = {};
+
+  if (sortFilter) {
+    if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
+      filterParameter.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+    }
+    else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
+      filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+    }
+  }
 
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({ createdAt: -1 });
+  } = useGetAllCollectionsQuery({ ...filterParameter, status: `${statusFilter}`});
+
+  const [
+    deleteCollection,
+    {
+      isLoading: deleteCollectionIsLoading,
+      isSuccess: deleteCollectionIsSuccess,
+      error: deleteCollectionError,
+    },
+  ] = useDeleteCollectionMutation();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -103,6 +124,11 @@ const Collections = () => {
     setAnchorSortEl(null);
   };
 
+  const handleSortRadio = (event) => {
+    setSortFilter(event.target.value);
+    setAnchorSortEl(null);
+  }
+
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
@@ -117,9 +143,27 @@ const Collections = () => {
     setAnchorStatusEl(null);
   };
 
+  const handleStatusChange = (event) => {
+    setStatusFilter(event.target.value)
+    setAnchorStatusEl(null)
+  }
+
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
   // * STATUS POPOVERS ENDS
+
+  
+  const deleteCollectionHandler = (data) => {
+    if (collectionType === 0) {
+      deleteCollection(data._id);
+    }
+    if (collectionType === 1) {
+      deleteCollection(data._id);
+    }
+    if (collectionType === 2) {
+      deleteCollection(data._id);
+    }
+  };
 
   useEffect(() => {
     if (collectionError) {
@@ -224,6 +268,8 @@ const Collections = () => {
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
+                    value={statusFilter}
+                    onChange={handleStatusChange}
                   >
                     <FormControlLabel
                       value="active"
@@ -276,6 +322,8 @@ const Collections = () => {
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
+                    value={sortFilter}
+                    onChange={handleSortRadio}
                   >
                     <FormControlLabel
                       value="oldestToNewest"
@@ -304,6 +352,7 @@ const Collections = () => {
           </div>
           <TabPanel value={value} index={0}>
             <CollectionsTable
+              deleteData={deleteCollectionHandler}
               isLoading={collectionIsLoading}
               error={error}
               list={collectionList}
@@ -311,6 +360,7 @@ const Collections = () => {
           </TabPanel>
           <TabPanel value={value} index={1}>
             <CollectionsTable
+              deleteData={deleteCollectionHandler}
               isLoading={collectionIsLoading}
               error={error}
               list={collectionList}
@@ -318,6 +368,7 @@ const Collections = () => {
           </TabPanel>
           <TabPanel value={value} index={2}>
             <CollectionsTable
+              deleteData={deleteCollectionHandler}
               isLoading={collectionIsLoading}
               error={error}
               list={collectionList}
