@@ -103,14 +103,27 @@ const Categories = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
   const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
+  const [sortFilter, setSortFilter] = React.useState(null);
+  const [statusFilter, setStatusFilter] = React.useState("")
+  const filterParameter = {};
 
-  console.log(anchorStatusEl, 'anchorStatusEl');
+  if (sortFilter) {
+    if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
+      filterParameter.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+    }
+    else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
+      filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+    }
+  }
+
+  console.log(filterParameter, 'filterParameter');
+
   const {
     data: categoriesData,
     isLoading: categoriesIsLoading,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({ createdAt: -1, status: `${anchorStatusEl}`});
+  } = useGetAllCategoriesQuery({ ...filterParameter, status: `${statusFilter}`});
   const {
     data: subCategoriesData,
     isLoading: subCategoriesIsLoading,
@@ -258,6 +271,11 @@ const Categories = () => {
     setAnchorSortEl(null);
   };
 
+  const handleSortRadio = (event) => {
+    setSortFilter(event.target.value);
+    setAnchorSortEl(null);
+  }
+
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
@@ -272,7 +290,8 @@ const Categories = () => {
   };
 
   const handleStatusChange = (event) => {
-    setAnchorStatusEl(event.currentTarget.value)
+    setStatusFilter(event.target.value)
+    setAnchorStatusEl(null)
   }
 
   const openStatus = Boolean(anchorStatusEl);
@@ -718,7 +737,7 @@ const Categories = () => {
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
-                    value={anchorStatusEl}
+                    value={statusFilter}
                     onChange={handleStatusChange}
                   >
                     <FormControlLabel
@@ -772,24 +791,26 @@ const Categories = () => {
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
+                    value={sortFilter}
+                    onChange={handleSortRadio}
                   >
                     <FormControlLabel
-                      value="productName"
+                      value="oldestToNewest"
                       control={<Radio size="small" />}
                       label="Oldest to Newest"
                     />
                     <FormControlLabel
-                      value="category"
+                      value="newestToOldest"
                       control={<Radio size="small" />}
                       label="Newest to Oldest"
                     />
                     <FormControlLabel
-                      value="subCategory"
+                      value="alphabeticalAtoZ"
                       control={<Radio size="small" />}
                       label="Alphabetical (A-Z)"
                     />
                     <FormControlLabel
-                      value="vendor"
+                      value="alphabeticalZtoA"
                       control={<Radio size="small" />}
                       label="Alphabetical (Z-A)"
                     />
