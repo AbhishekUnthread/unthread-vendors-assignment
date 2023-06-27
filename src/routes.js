@@ -65,6 +65,9 @@ import Signup from "./pages/Auth/Signup/Signup";
 import CreateReturn from "./pages/Orders/CreateReturn/CreateReturn.js";
 import PrimaryLayout from "./layouts/PrimaryLayout";
 import ActionLayout from "./layouts/ActionLayout";
+import EditCategories from "./pages/Parameters/Categories/EditCategories/EditCategories";
+import EditSubCategories from "./pages/Parameters/Categories/EditSubCategories/EditSubCategories";
+import ProductTabs from "./pages/Parameters/ProductTabs/ProductTabs";
 
 const router = () => {
   const loginStatus = store.getState().auth.isLoggedIn;
@@ -119,7 +122,7 @@ const router = () => {
                 },
                 {
                   path: "allProducts/addProduct",
-                  element: <ProductsBulkEditor />,
+                  element: <AddProduct />,
                 },
                 {
                   path: "bulkEditor",
@@ -197,6 +200,10 @@ const router = () => {
                   element: <CreateCollection />,
                 },
                 {
+                  path: "productTabs",
+                  element: <ProductTabs />,
+                },
+                {
                   path: "additionalFields",
                   element: <AdditionalFields />,
                 },
@@ -210,7 +217,11 @@ const router = () => {
                 },
                 {
                   path: "categories/edit",
-                  element: <EditVendor />,
+                  element: <EditCategories />,
+                },
+                {
+                  path: "subCategories/edit",
+                  element: <EditSubCategories />,
                 },
                 {
                   path: "variantSets",

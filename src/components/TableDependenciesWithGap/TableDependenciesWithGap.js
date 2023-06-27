@@ -39,7 +39,7 @@ const stableSort = (array, comparator) => {
   return stabilizedThis.map((el) => el[0]);
 };
 
-const EnhancedTableHead = (props) => {
+const EnhancedTableGapHead = (props) => {
   const {
     onSelectAllClick,
     order,
@@ -56,6 +56,7 @@ const EnhancedTableHead = (props) => {
   return (
     <TableHead>
       <TableRow>
+        <TableCell style={{width:'40px'}}/>
         <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -78,25 +79,6 @@ const EnhancedTableHead = (props) => {
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <p className="text-lightBlue">{headCell.label}</p>
-
-            {/* {headCell.id !== "actions" ? (
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-              >
-                <p className="text-lightBlue">{headCell.label}</p>
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            ) : (
-              <p className="text-lightBlue">{headCell.label}</p>
-            )} */}
           </TableCell>
         ))}
       </TableRow>
@@ -104,7 +86,7 @@ const EnhancedTableHead = (props) => {
   );
 };
 
-EnhancedTableHead.propTypes = {
+EnhancedTableGapHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
@@ -114,4 +96,4 @@ EnhancedTableHead.propTypes = {
 };
 // ? TABLE ENDS HERE
 
-export { EnhancedTableHead, stableSort, getComparator };
+export { EnhancedTableGapHead, stableSort, getComparator };

@@ -1,5 +1,7 @@
+import React, { useMemo } from "react";
 import { forwardRef, useState, useEffect, useReducer } from "react";
 import {
+  Autocomplete,
   Box,
   Dialog,
   DialogActions,
@@ -13,9 +15,15 @@ import {
   Slide,
   Tab,
   Tabs,
+  TextField,
   Chip,
   Select,
   MenuItem,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  TableHead,
+  Typography
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -33,6 +41,8 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 
 import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
+import sort from "../../../assets/icons/sort.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
 
 import {
   showSuccess,
@@ -67,6 +77,21 @@ const subCategoryValidationSchema = Yup.object({
   categoryId: Yup.string().required("required"),
 });
 
+const vendorData = [
+  { title: "Content 1", value: "content1" },
+  { title: "Content 2", value: "content2" },
+  { title: "Content 3", value: "content3" },
+  { title: "Content 4", value: "content4" },
+  { title: "Content 5", value: "content5" },
+  { title: "Content 6", value: "content6" },
+  { title: "Content 7", value: "content7" },
+  { title: "Content 8", value: "content8" },
+  { title: "Content 9", value: "content9" },
+  { title: "Content 10", value: "content10" },
+  { title: "Content 11", value: "content11" },
+  { title: "Content 12", value: "content12" },
+];
+
 const Categories = () => {
   const dispatch = useDispatch();
   const [categoryType, setCategoryType] = useState(0);
@@ -77,13 +102,28 @@ const Categories = () => {
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
+  const [sortFilter, setSortFilter] = React.useState(null);
+  const [statusFilter, setStatusFilter] = React.useState("")
+  const filterParameter = {};
+
+  if (sortFilter) {
+    if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
+      filterParameter.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+    }
+    else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
+      filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+    }
+  }
+
+  console.log(filterParameter, 'filterParameter');
 
   const {
     data: categoriesData,
     isLoading: categoriesIsLoading,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({ createdAt: -1 });
+  } = useGetAllCategoriesQuery({ ...filterParameter, status: `${statusFilter}`});
   const {
     data: subCategoriesData,
     isLoading: subCategoriesIsLoading,
@@ -218,6 +258,45 @@ const Categories = () => {
   const toggleCreatePopoverHandler = (e) => {
     setShowCreatePopover((prevState) => (prevState ? null : e.currentTarget));
   };
+  
+ 
+  // * SORT POPOVERS STARTS
+  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+
+  const handleSortClick = (event) => {
+    setAnchorSortEl(event.currentTarget);
+  };
+
+  const handleSortClose = () => {
+    setAnchorSortEl(null);
+  };
+
+  const handleSortRadio = (event) => {
+    setSortFilter(event.target.value);
+    setAnchorSortEl(null);
+  }
+
+  const openSort = Boolean(anchorSortEl);
+  const idSort = openSort ? "simple-popover" : undefined;
+  // * SORT POPOVERS ENDS
+
+  // * STATUS POPOVERS STARTS
+  const handleStatusClick = (event) => {
+    setAnchorStatusEl(event.currentTarget);
+  };
+
+  const handleStatusClose = () => {
+    setAnchorStatusEl(null);
+  };
+
+  const handleStatusChange = (event) => {
+    setStatusFilter(event.target.value)
+    setAnchorStatusEl(null)
+  }
+
+  const openStatus = Boolean(anchorStatusEl);
+  const idStatus = openStatus ? "simple-popover" : undefined;
+  // * STATUS POPOVERS ENDS
 
   const deleteCategoryHandler = (data) => {
     if (categoryType === 0) {
@@ -444,7 +523,19 @@ const Categories = () => {
                       </FormHelperText>
                     )}
                 </FormControl>
-                <div className="d-flex"></div>
+                <div className="d-flex">
+                  {[].map((data, index) => {
+                    return (
+                      <Chip
+                        label={data}
+                        onDelete={() => {}}
+                        onClick={() => {}}
+                        size="small"
+                        className="mt-3 me-2"
+                      ></Chip>
+                    );
+                  })}
+                </div>
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -550,6 +641,20 @@ const Categories = () => {
                       </FormHelperText>
                     )}
                 </FormControl>
+
+                <div className="d-flex">
+                {[].map((data, index) => {
+                    return (
+                      <Chip
+                        label={data}
+                        onDelete={() => {}}
+                        onClick={() => {}}
+                        size="small"
+                        className="mt-3 me-2"
+                      ></Chip>
+                    );
+                  })}
+                </div>
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -603,6 +708,116 @@ const Categories = () => {
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
+            <div className="d-flex">
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idStatus}
+                variant="contained"
+                onClick={handleStatusClick}
+              >
+                <small className="text-lightBlue me-2">Status</small>
+                <img src={arrowDown} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idStatus}
+                open={openStatus}
+                anchorEl={anchorStatusEl}
+                onClose={handleStatusClose}
+                className="columns"
+              >
+                <FormControl className="px-2 py-1">
+                  <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    value={statusFilter}
+                    onChange={handleStatusChange}
+                  >
+                    <FormControlLabel
+                      value="active"
+                      control={<Radio size="small" />}
+                      label="Active"
+                    />
+                    <FormControlLabel
+                      value="inActive"
+                      control={<Radio size="small" />}
+                      label="In-Active"
+                    />
+                    <FormControlLabel
+                      value="scheduled"
+                      control={<Radio size="small" />}
+                      label="Scheduled"
+                    />
+                    <FormControlLabel
+                      value="archived"
+                      control={<Radio size="small" />}
+                      label="Archived"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Popover>
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortEl}
+                onClose={handleSortClose}
+                className="columns"
+              >
+                <FormControl className="px-2 py-1">
+                  <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    value={sortFilter}
+                    onChange={handleSortRadio}
+                  >
+                    <FormControlLabel
+                      value="oldestToNewest"
+                      control={<Radio size="small" />}
+                      label="Oldest to Newest"
+                    />
+                    <FormControlLabel
+                      value="newestToOldest"
+                      control={<Radio size="small" />}
+                      label="Newest to Oldest"
+                    />
+                    <FormControlLabel
+                      value="alphabeticalAtoZ"
+                      control={<Radio size="small" />}
+                      label="Alphabetical (A-Z)"
+                    />
+                    <FormControlLabel
+                      value="alphabeticalZtoA"
+                      control={<Radio size="small" />}
+                      label="Alphabetical (Z-A)"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Popover>
+            </div>
           </div>
           {
             <>
