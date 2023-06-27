@@ -7,7 +7,10 @@ import SEO from "../../Products/AddProduct/SEO/SEO";
 import TagsBox from "../../../components/TagsBox/TagsBox";
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
+import UploadBanner from "../../../components/UploadBanner/UploadBanner";
 import StatusBox from "../../../components/StatusBox/StatusBox";
+import VisibilityBox from '../../../components/VisibilityBox/VisibilityBox'
+import AddHeader from "../../../components/AddHeader/AddHeader"
 import {
   EnhancedTableHead,
   stableSort,
@@ -35,6 +38,7 @@ import {
   OutlinedInput,
   Checkbox,
   FormControlLabel,
+  FormGroup,
   styled,
   InputBase,
   Popover,
@@ -427,54 +431,19 @@ const CreateCollection = () => {
   return (
     <form noValidate onSubmit={collectionFormik.handleSubmit}>
       <div className="page container-fluid position-relative user-group">
-        <div className="row justify-content-between">
-          <div className="d-flex align-items-center w-auto ps-0">
-            <Link to="/parameters/collections" className="d-flex">
-              <img
-                src={arrowLeft}
-                alt="arrowLeft"
-                width={9}
-                className="c-pointer"
-              />
-            </Link>
-
-            <h5 className="page-heading ms-2 ps-1">Create Collection</h5>
-          </div>
-
-          <div className="d-flex align-items-center w-auto pe-0">
-            <button className="button-transparent me-1 py-2 px-3">
-              <p className="text-lightBlue">Duplicate</p>
-            </button>
-            <button className="button-transparent me-1 py-2 px-3">
-              <p className="text-lightBlue">Preview</p>
-            </button>
-            <img
-              src={paginationLeft}
-              alt="paginationLeft"
-              className="c-pointer"
-              width={30}
-            />
-            <img
-              src={paginationRight}
-              alt="paginationRight"
-              className="c-pointer"
-              width={30}
-            />
-          </div>
-        </div>
+        <AddHeader headerName={"Create Collection"} previewButton={"Preveiw"} navigateLink={"/parameters/collections"}/>
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-              {/* <div className="d-flex col-12 px-0 justify-content-between">
+              <div className="d-flex col-12 px-0 justify-content-between">
                 <div className="d-flex align-items-center">
                   <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
                     Collection Information
                   </h6>
                 </div>
               </div>
-              <hr className="hr-grey-6 mt-3 mb-0" /> */}
 
-              <div className="col-md-12 px-0">
+              <div className="col-md-12 px-0 mt-3">
                 <div className="d-flex mb-1">
                   <p className="text-lightBlue me-2">Collection Title</p>
                   <Tooltip title="Lorem ipsum" placement="top">
@@ -488,7 +457,7 @@ const CreateCollection = () => {
                 </div>
                 <FormControl className="w-100 px-0">
                   <OutlinedInput
-                    placeholder="Enter Group Name"
+                    placeholder="Mirosa Collection"
                     size="small"
                     value={collectionFormik.values.title}
                     onBlur={collectionFormik.handleBlur}
@@ -496,6 +465,30 @@ const CreateCollection = () => {
                     name="title"
                   />
                 </FormControl>
+                <FormGroup>
+                  <div className="d-flex align-items-center col-12 px-0">
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          inputProps={{ "aria-label": "controlled" }}
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                            marginRight: 0,
+                          }}
+                        />
+                      }
+                      label="Include in Filters"
+                      sx={{
+                        "& .MuiTypography-root": {
+                          fontSize: 13,
+                          color: "#c8d8ff",
+                        },
+                      }}
+                    />
+                    <span className="text-blue-2 c-pointer">(manage)</span>
+                  </div>
+                </FormGroup>
               </div>
               <div className="col-12 mt-3 px-0">
                 <div className="d-flex  mb-1">
@@ -523,7 +516,6 @@ const CreateCollection = () => {
                 </h6>
               </div>
               <div className="d-flex align-items-center col-12 px-0 mb-2">
-                <p className="text-grey-6 me-4 px-0">Select Products Through</p>
                 <RadioGroup
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
@@ -1171,11 +1163,14 @@ const CreateCollection = () => {
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
             <StatusBox headingName={"Collection Status"} />
+            <VisibilityBox />
             <div className="mt-4">
               <UploadMediaBox imageName={addMedia} headingName={"Media"} />
             </div>
+            <div className="mt-4">
+              <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />
+            </div>
             <NotesBox />
-            <TagsBox />
           </div>
         </div>
         <div className="row create-buttons pt-5 pb-3 justify-content-between">

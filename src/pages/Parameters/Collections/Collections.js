@@ -1,6 +1,17 @@
-import { forwardRef, useState, useEffect, useReducer } from "react";
+import React, { forwardRef, useState, useEffect, useReducer } from "react";
 import { Link } from "react-router-dom";
-import { Box, Paper, Tab, Tabs, Tooltip } from "@mui/material";
+import { 
+  Box,
+  FormControl,
+  FormControlLabel,
+  Paper,
+  Popover,
+  Radio,
+  RadioGroup,
+  Tab,
+  Tabs,
+  Tooltip
+} from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import CollectionsTable from "./CollectionsTable";
@@ -12,6 +23,8 @@ import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
+import sort from "../../../assets/icons/sort.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
 
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -79,6 +92,35 @@ const Collections = () => {
     setValue(newValue);
   };
 
+   // * SORT POPOVERS STARTS
+  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+
+  const handleSortClick = (event) => {
+    setAnchorSortEl(event.currentTarget);
+  };
+
+  const handleSortClose = () => {
+    setAnchorSortEl(null);
+  };
+
+  const openSort = Boolean(anchorSortEl);
+  const idSort = openSort ? "simple-popover" : undefined;
+  // * SORT POPOVERS ENDS
+
+  // * STATUS POPOVERS STARTS
+  const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
+  const handleStatusClick = (event) => {
+    setAnchorStatusEl(event.currentTarget);
+  };
+
+  const handleStatusClose = () => {
+    setAnchorStatusEl(null);
+  };
+
+  const openStatus = Boolean(anchorStatusEl);
+  const idStatus = openStatus ? "simple-popover" : undefined;
+  // * STATUS POPOVERS ENDS
+
   useEffect(() => {
     if (collectionError) {
       setError(true);
@@ -119,10 +161,6 @@ const Collections = () => {
         </Tooltip>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
-          <ViewLogsDrawer
-            headingName={"Parameters / Collections"}
-            icon={parameters}
-          />
           <ExportDialog dialogName={"Collections"} />
           <ImportSecondDialog dialogName={"Collections"} />
           <Link to="create" className="button-gradient py-2 px-4 ms-3">
@@ -151,11 +189,118 @@ const Collections = () => {
             >
               <Tab label="All" className="tabs-head" />
               <Tab label="Active" className="tabs-head" />
-              <Tab label="Draft" className="tabs-head" />
+              <Tab label="In-Active" className="tabs-head" />
+              <Tab label="Archieved" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch />
+             <div className="d-flex">
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idStatus}
+                variant="contained"
+                onClick={handleStatusClick}
+              >
+                <small className="text-lightBlue me-2">Status</small>
+                <img src={arrowDown} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idStatus}
+                open={openStatus}
+                anchorEl={anchorStatusEl}
+                onClose={handleStatusClose}
+                className="columns"
+              >
+                <FormControl className="px-2 py-1">
+                  <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                  >
+                    <FormControlLabel
+                      value="active"
+                      control={<Radio size="small" />}
+                      label="Active"
+                    />
+                    <FormControlLabel
+                      value="inActive"
+                      control={<Radio size="small" />}
+                      label="In-Active"
+                    />
+                    <FormControlLabel
+                      value="scheduled"
+                      control={<Radio size="small" />}
+                      label="Scheduled"
+                    />
+                    <FormControlLabel
+                      value="archived"
+                      control={<Radio size="small" />}
+                      label="Archived"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Popover>
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortEl}
+                onClose={handleSortClose}
+                className="columns"
+              >
+                <FormControl className="px-2 py-1">
+                  <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                  >
+                    <FormControlLabel
+                      value="oldestToNewest"
+                      control={<Radio size="small" />}
+                      label="Oldest to Newest"
+                    />
+                    <FormControlLabel
+                      value="newestToOldest"
+                      control={<Radio size="small" />}
+                      label="Newest to Oldest"
+                    />
+                    <FormControlLabel
+                      value="alphabeticalAtoZ"
+                      control={<Radio size="small" />}
+                      label="Alphabetical (A-Z)"
+                    />
+                    <FormControlLabel
+                      value="alphabeticalZtoA"
+                      control={<Radio size="small" />}
+                      label="Alphabetical (Z-A)"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Popover>
+            </div>
           </div>
           <TabPanel value={value} index={0}>
             <CollectionsTable
