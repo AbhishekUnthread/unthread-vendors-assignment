@@ -122,7 +122,7 @@ const router = () => {
                 },
                 {
                   path: "allProducts/addProduct",
-                  element: <ProductsBulkEditor />,
+                  element: <AddProduct />,
                 },
                 {
                   path: "bulkEditor",

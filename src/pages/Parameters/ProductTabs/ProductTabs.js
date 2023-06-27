@@ -1,14 +1,5 @@
 import { forwardRef, useState, useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
-// ! COMPONENT IMPORTS
-import TabPanel from "../../../components/TabPanel/TabPanel";
-import ProductTabsTable from "./ProductTabsTable";
-import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
-import TableSearch from "../../../components/TableSearch/TableSearch";
-// ! IMAGES IMPORTS
-import cancel from "../../../assets/icons/cancel.svg";
-import parameters from "../../../assets/icons/sidenav/parameters.svg";
-// ! MATERIAL IMPORTS
 import {
   Box,
   Dialog,
@@ -29,13 +20,18 @@ import {
   Checkbox,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import {
-  showSuccess,
-  showError,
-} from "../../../features/snackbar/snackbarAction";
+import { useDispatch } from "react-redux";
+
+import TabPanel from "../../../components/TabPanel/TabPanel";
+import ProductTabsTable from "./ProductTabsTable";
+import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
+import TableSearch from "../../../components/TableSearch/TableSearch";
+import PageTitleBar from "../../../components/PageTitleBar/PageTitleBar";
+
+import cancel from "../../../assets/icons/cancel.svg";
+import parameters from "../../../assets/icons/sidenav/parameters.svg";
 
 import {
   useGetAllProductTabsQuery,
@@ -44,9 +40,16 @@ import {
   useEditProductTabMutation,
 } from "../../../features/parameters/productTabs/productTabsApiSlice";
 
-// ! MATERIAL ICONS IMPORTS
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
 
-// ? DIALOG TRANSITION STARTS HERE
+const TAB_LIST = [
+  { id: 1, label: "all" },
+  { id: 2, label: "archived" },
+];
+
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -78,19 +81,15 @@ const ProductTabs = () => {
     isSuccess: productsTabIsSuccess,
   } = useGetAllProductTabsQuery(queryFilterState);
 
-  console.log(productsTabData);
-
   return (
     <div className="container-fluid page">
-      <div className="row justify-content-between align-items-center">
-        <h4 className="page-heading w-auto ps-0">Product Tabs</h4>
-        <div className="d-flex align-items-center w-auto pe-0">
-          <ViewTutorial />
-          <button className="button-gradient py-2 px-4 ms-3 c-pointer">
-            <p>+ Create New Tab</p>
-          </button>
-        </div>
-      </div>
+      <PageTitleBar
+        title="Product Tabs"
+        onTutorial={() => {}}
+        onSettings={() => {}}
+        onCreate={() => {}}
+        createBtnText="+ Create New Tab"
+      />
 
       <div className="row mt-4">
         <Paper
@@ -101,16 +100,16 @@ const ProductTabs = () => {
             sx={{ width: "100%" }}
             className="d-flex justify-content-between tabs-header-box"
           >
-            {/* variant="scrollable"
-              scrollButtons
-              allowScrollButtonsMobile */}
             <Tabs
               value={0}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              {TAB_LIST.map((tab) => {
+                return (
+                  <Tab key={tab.id} label={tab.label} className="tabs-head" />
+                );
+              })}
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
