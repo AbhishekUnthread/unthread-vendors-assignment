@@ -104,6 +104,11 @@ export const SidebarData = [
         path: "/parameters/categories",
         image: parameters,
       },
+      // {
+      //   title: "Product Tabs",
+      //   path: "/parameters/productTabs",
+      //   image: parameters,
+      // },
       {
         title: "Vendors",
         path: "/parameters/vendors",
