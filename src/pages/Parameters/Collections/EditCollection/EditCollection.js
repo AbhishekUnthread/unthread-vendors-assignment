@@ -245,6 +245,8 @@ const EditCollection = () => {
   const [collectionDescription, setCollectionDescription] = useState("");
   const [collectionVisibility, setCollectionVisibility] = useState(false);
   const [collectionFilter, setCollectionFilter] = useState(false);
+  const [collectionDuplicateTitle, setCollectionDuplicateTitle] = useState("");
+  const [duplicateDescription, setDuplicateDescription] = useState(false)
   const collectionId = useSelector((state)=>state.collection.collectionId)
 
   const {
@@ -292,7 +294,7 @@ const EditCollection = () => {
         id: collectionId,
         details : {
           title: collectionTitle, 
-          showFilter: collectionFilter, 
+          filter: collectionFilter, 
           description: collectionDescription, 
           status: collectionStatus ? collectionStatus : "active", 
           isVisibleFrontend: collectionVisibility,
@@ -306,7 +308,7 @@ const EditCollection = () => {
     }else {
       createCollection({
         title: collectionTitle, 
-        showFilter: collectionFilter, 
+        filter: collectionFilter, 
         description: collectionDescription, 
         status: collectionStatus ? collectionStatus : "active", 
         isVisibleFrontend: collectionVisibility,
@@ -387,6 +389,13 @@ const EditCollection = () => {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const handleSchedule = (start, end) => {
+    setStartDate(start);
+    setEndDate(end);
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -509,23 +518,38 @@ const EditCollection = () => {
   const handelDuplicateCollectionClose = () => {
     setOpenDuplicateCollection(false);
   };
+
+  const handleDuplicateTitleChange = (event) => {
+    setCollectionDuplicateTitle(event.target.value);
+  };
+
+  const scheduleDuplicateCollection = () => {
+    const collectionData = {
+      title: collectionDuplicateTitle,
+      filter: collectionFilter,
+      status: collectionStatus ? collectionStatus : "active",
+      isVisibleFrontend: collectionVisibility,
+      notes: collectionNote,
+    };
+
+    if (duplicateDescription === true) {
+      collectionData.description = collectionDescription;
+    }
+
+    createCollection(collectionData)
+      .unwrap()
+      .then(() => {
+        setOpenDuplicateCollection(false);
+      });
+  };
   // ? DUPLICATE COLLECTION DIALOG ENDS HERE
 
   return (
-    // <form>
       <div className="page container-fluid position-relative user-group">
-        <AddHeader headerName={collectionTitle} previewButton={"Preveiw"} navigateLink={"/parameters/collections"} handleDuplicate={handleDuplicate}/>
+        <AddHeader headerName={collectionTitle} previewButton={"Preveiw"} navigateLink={"/parameters/collections"} duplicateButton={"Duplicate"} handleDuplicate={handleDuplicate}/>
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-              {/* <div className="d-flex col-12 px-0 justify-content-between">
-                <div className="d-flex align-items-center">
-                  <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                    Collection Information
-                  </h6>
-                </div>
-              </div> */}
-
               <div className="col-md-12 px-0 mt-3">
                 <div className="d-flex mb-1">
                   <p className="text-lightBlue me-2">Collection Title</p>
@@ -1245,7 +1269,9 @@ const EditCollection = () => {
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
             <StatusBox headingName={"Collection Status"} 
-              value={collectionStatus} handleProductStatus={(_,val)=>setCollectionStatus(val)} toggleData={['active','scheduled']} 
+              value={collectionStatus} 
+              handleProductStatus={(val)=>setCollectionStatus(val)}
+              handleSchedule={handleSchedule}
             />
             <VisibilityBox value={collectionVisibility} onChange={(_,val)=>setCollectionVisibility(val)}/>
             <div className="mt-4">
@@ -1296,10 +1322,10 @@ const EditCollection = () => {
             {/* </Link> */}
           </div>
         </div>
-        <Dialog
+      <Dialog
         open={openDuplicateCollection}
         TransitionComponent={Transition}
-        // keepMounted
+        keepMounted
         onClose={handelDuplicateCollectionClose}
         aria-describedby="alert-dialog-slide-description"
         maxWidth="sm"
@@ -1338,6 +1364,8 @@ const EditCollection = () => {
               placeholder="Mirosa Collection_copy"
               size="small"
               name="title"
+              value={collectionDuplicateTitle}
+              onChange={handleDuplicateTitleChange}
             />
           </FormControl>
           <hr className="hr-grey-6 my-0" />
@@ -1349,6 +1377,8 @@ const EditCollection = () => {
               control={
                 <Checkbox
                   name="filter"
+                  checked={duplicateDescription}
+                  onChange={(e)=>setDuplicateDescription(e.target.checked)}
                   inputProps={{ "aria-label": "controlled" }}
                   size="small"
                   style={{
@@ -1357,7 +1387,7 @@ const EditCollection = () => {
                   }}
                 />
               }
-              label="Include in Filters"
+              label="Description"
               sx={{
                 "& .MuiTypography-root": {
                   fontSize: 13,
@@ -1377,7 +1407,7 @@ const EditCollection = () => {
                   }}
                 />
               }
-              label="Include in Filters"
+              label="Products"
               sx={{
                 "& .MuiTypography-root": {
                   fontSize: 13,
@@ -1397,7 +1427,7 @@ const EditCollection = () => {
                   }}
                 />
               }
-              label="Include in Filters"
+              label="Up Selling Banners"
               sx={{
                 "& .MuiTypography-root": {
                   fontSize: 13,
@@ -1418,7 +1448,7 @@ const EditCollection = () => {
             </button>
             <button
               className="button-gradient py-2 px-5"
-              onClick={handelDuplicateCollectionClose}
+              onClick={scheduleDuplicateCollection}
             >
               <p>Schedule</p>
             </button>

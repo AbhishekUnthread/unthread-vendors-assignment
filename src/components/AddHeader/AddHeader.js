@@ -6,7 +6,7 @@ import arrowLeft from "../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../assets/icons/paginationLeft.svg";
 
-const AddHeader = ({headerName, subHeading, subHighlightstext, navigateLink, previewButton, handleDuplicate}) => {
+const AddHeader = ({headerName, subHeading, subHighlightstext, navigateLink, previewButton, duplicateButton, handleDuplicate}) => {
 
   return (
     <div className="row justify-content-between">
@@ -32,7 +32,7 @@ const AddHeader = ({headerName, subHeading, subHighlightstext, navigateLink, pre
 
         <div className="d-flex align-items-center w-auto pe-0">
           <button className="button-transparent me-1 py-2 px-3" onClick={handleDuplicate}>
-            <p className="text-lightBlue">Duplicate</p>
+            <p className="text-lightBlue">{duplicateButton}</p>
           </button>
           <button className="button-transparent me-1 py-2 px-3">
             <p className="text-lightBlue">{previewButton}</p>

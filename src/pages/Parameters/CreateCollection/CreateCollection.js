@@ -237,8 +237,6 @@ const CreateCollection = () => {
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
 
-  console.log(startDate, 'startDate');
-
   const handleSchedule = (start, end) => {
     setStartDate(start);
     setEndDate(end);
