@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect, useReducer } from "react";
 import "./CreateCollection.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import UseFileUpload from "../../../features/fileUpload/fileUploadHook";
 // ! COMPONENT IMPORTS
@@ -228,6 +228,7 @@ const collectionValidationSchema = Yup.object({
 
 const CreateCollection = () => {
   const dispatch = useDispatch();
+  let navigate = useNavigate();
   const [error, setError] = useState(false);
   const [collectionStatus, setCollectionStatus] = React.useState("active");
   const [startDate, setStartDate] = useState(null);
@@ -235,6 +236,8 @@ const CreateCollection = () => {
   const [visibleFrontend, setVisibleFrontend] = useState()
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
+
+  console.log(startDate, 'startDate');
 
   const handleSchedule = (start, end) => {
     setStartDate(start);
@@ -245,19 +248,22 @@ const CreateCollection = () => {
     setVisibleFrontend(value);
   }
 
-   const {
+  const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
   } = useGetAllCollectionsQuery({ createdAt: "-1", id: collectionId });
 
-  const [uploadFile, {
-    data,
-    isLoading,
-    isSuccess,
-    isError
-  }] = UseFileUpload()
+  const [
+    uploadFile, 
+    {
+      data,
+      isLoading,
+      isSuccess,
+      isError
+    }
+  ] = UseFileUpload();
   
   const [
     createCollection,
@@ -271,7 +277,7 @@ const CreateCollection = () => {
   const collectionFormik = useFormik({
     initialValues: {
       title: "",
-      // description: "",
+      description: "",
       status: startDate === null ? collectionStatus : "scheduled",
       ...(startDate !== null && endDate !== null &&
       { startDate: new Date(startDate), endDate: new Date(endDate) }),
@@ -286,6 +292,7 @@ const CreateCollection = () => {
       createCollection(values)
         .unwrap()
         .then(() => collectionFormik.resetForm());
+        navigate("/parameters/collections");
     },
   });
 
@@ -1225,6 +1232,7 @@ const CreateCollection = () => {
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
             <StatusBox value={collectionStatus} headingName={"Collection Status"} 
+              titleName={"Collection"}
               handleProductStatus={(event, newStatus) => {
                 setCollectionStatus(newStatus)
               }}
