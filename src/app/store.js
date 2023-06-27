@@ -5,6 +5,7 @@ import authReducer from "../features/auth/authSlice";
 import snackbarReducer from "../features/snackbar/snackbarSlice";
 import userReducer from "../features/user/userSlice";
 import vendorReducer from "../features/parameters/vendors/vendorSlice";
+import categoryReducer from "../features/parameters/categories/categorySlice";
 
 const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ const store = configureStore({
     snackbar: snackbarReducer,
     user: userReducer,
     vendor:vendorReducer,
+    category:categoryReducer,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(apiSlice.middleware);
