@@ -47,7 +47,10 @@ const [categoryName, setCategoryName] = useState("");
 const [categoryDescription, setCategoryDescription] = useState("");
 const [categoryStatus, setCategoryStatus] = useState("active");
 const [categoryNotes,setCategoryNotes] = useState('')
+const [startDate, setStartDate] = useState('')
+const [endDate, setEndDate] = useState('')  
 const [categoryVisibility, setCategoryVisibility] = useState(false);
+const [categoryMediaUrl,setCategoryMediaUrl] = useState('')
 const [checked, setChecked] =  useState(false);
 const categoryId = useSelector((state) => state.category.categoryId);
 
@@ -87,21 +90,16 @@ useEffect(() => {
     setCategoryVisibility(categoriesData.data.data[0].isVisibleFrontend)
     setCategoryNotes(categoriesData.data.data[0].notes)
     setChecked(categoriesData.data.data[0].showFilter)
+    setStartDate(categoriesData.data.data[0].startDate)
+    setEndDate(categoriesData.data.data[0].endDate)
+    setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl)
   }
 }, [categoriesIsSuccess]);
 
 
 
-const categoryStatusChange = (event, categoryStatus) => {
-  setCategoryStatus(categoryStatus);
-};
-
 const handleNameChange = (event) => {
   setCategoryName(event.target.value); // Updating the category name based on the input value
-};
-
-const handleFilterChange = (event) => {
-  setChecked(event.target.checked);
 };
 
 const handleSubmit = () => {
@@ -113,9 +111,12 @@ const handleSubmit = () => {
         showFilter: checked, // Whether to show filters
         name: categoryName, // Category name
         description: categoryDescription, // Category description
-        status: categoryStatus ? categoryStatus : "active", // Category status
+        status: categoryStatus , // Category status
         isVisibleFrontend: categoryVisibility,
       notes: categoryNotes,
+      startDate:startDate,
+      endDate:endDate,
+      mediaUrl:categoryMediaUrl,
       },
     })
       .unwrap()
@@ -127,9 +128,12 @@ const handleSubmit = () => {
       showFilter: checked, // Whether to show filters
       name: categoryName, // Category name
       description: categoryDescription, // Category description
-      status: categoryStatus ? categoryStatus : "active", // Category status
+      status: categoryStatus , // Category status
       isVisibleFrontend: categoryVisibility,
       notes: categoryNotes,
+      startDate:startDate,
+      endDate:endDate,
+      mediaUrl:categoryMediaUrl,
     })
       .unwrap()
       .then(() => {
@@ -147,9 +151,12 @@ const handleSubmitAndAddAnother = () => {
         showFilter: checked, // Whether to show filters
         name: categoryName, // Category name
         description: categoryDescription, // Category description
-        status: categoryStatus ? categoryStatus : "active", // Category status,
+        status: categoryStatus , // Category status,
         isVisibleFrontend: categoryVisibility,
         notes: categoryNotes,
+        startDate:startDate,
+      endDate:endDate,
+      mediaUrl:categoryMediaUrl,
       },
     })
       .unwrap()
@@ -161,9 +168,12 @@ const handleSubmitAndAddAnother = () => {
       showFilter: checked, // Whether to show filters
       name: categoryName, // Category name
       description: categoryDescription, // Category description
-      status: categoryStatus ? categoryStatus : "active", // Category status
+      status: categoryStatus , // Category status
       isVisibleFrontend: categoryVisibility,
       notes: categoryNotes,
+      startDate:startDate,
+      endDate:endDate,
+      mediaUrl:categoryMediaUrl,
     })
       .unwrap()
       .then(() => {
@@ -290,10 +300,21 @@ const resetValues = () => {
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox headingName={"Category Status"} value={categoryStatus} handleProductStatus={(_,val)=>setCategoryStatus(val)} toggleData={['active','scheduled']} />
-          <VisibilityBox value={categoryVisibility} onChange={(_,val)=>setCategoryVisibility(val)} />
+          <StatusBox
+           headingName={"Category Status"}
+            value={categoryStatus} 
+            handleProductStatus={(_,val)=>setCategoryStatus(val)} 
+            toggleData={['active','scheduled']}
+             />
+          <VisibilityBox value={categoryVisibility}
+           visibilityChange={(_,val)=>setCategoryVisibility(val)}
+           startDate={startDate}
+           endDate={endDate}
+           StartDateChange={setStartDate}
+           EndDateChange={setEndDate}
+            />
           <div className="mt-4">
-            <UploadMediaBox imageName={addMedia} headingName={"Media"}  />
+            <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl}  />
           </div>
           <NotesBox  name={'notes'} value={categoryNotes} onChange={(e)=> setCategoryNotes(e.target.value)}/>
         </div>

@@ -10,7 +10,7 @@ const AppTextEditor = ({ value, setFieldValue }) => {
 
   const prepareDraft = (value) => {
     const draft = htmlToDraft(value);
-    const contentState = ContentState.createFromBlockArray(draft.contentBlocks);
+    const contentState = ContentState.createFromBlockArray(draft.contentBlocks,draft.entityMap);
     const editorState = EditorState.createWithContent(contentState);
     return editorState;
   };
@@ -19,6 +19,8 @@ const AppTextEditor = ({ value, setFieldValue }) => {
     value ? prepareDraft(value) : EditorState.createEmpty()
   );
 
+  console.log(editorState)
+
   const onEditorStateChange = (editorState) => {
     const forFormik = draftToHtml(
       convertToRaw(editorState.getCurrentContent())
@@ -26,6 +28,7 @@ const AppTextEditor = ({ value, setFieldValue }) => {
     setFieldValue(forFormik);
     setEditorState(editorState);
   };
+
 
     return(
       <Editor

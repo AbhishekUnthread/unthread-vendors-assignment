@@ -27,7 +27,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const StatusBox = ({ headingName, showSchedule,value,handleProductStatus,toggleData=['Active','In-Active']}) => {
 
-  const showScheduleData = showSchedule ? false : true;
+  const showScheduleData = showSchedule === undefined ? false : true;
+  console.log(showSchedule)
   // ? TOGGLE BUTTONS STARTS HERE
   // const [productStatus, setPoductStatus] = React.useState("active");
 

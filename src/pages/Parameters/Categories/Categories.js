@@ -184,6 +184,7 @@ const Categories = () => {
       name: "",
       description: "some description",
       status: "active",
+      showFilter:true
     },
     enableReinitialize: true,
     validationSchema: categoryValidationSchema,
