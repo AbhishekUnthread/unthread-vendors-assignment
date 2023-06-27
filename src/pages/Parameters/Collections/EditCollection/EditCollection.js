@@ -1,8 +1,6 @@
 import React, { forwardRef, useState, useEffect, useReducer } from "react";
-import "./CreateCollection.scss";
+import "../../CreateCollection/CreateCollection.scss";
 import { Link } from "react-router-dom";
-
-import UseFileUpload from "../../../features/fileUpload/fileUploadHook";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
 import SEO from "../../Products/AddProduct/SEO/SEO";
@@ -225,13 +223,13 @@ const collectionValidationSchema = Yup.object({
   title: Yup.string().trim().min(3).required("required"),
 });
 
-const CreateCollection = () => {
+const EditCollection = () => {
   const dispatch = useDispatch();
   const [error, setError] = useState(false);
   const [collectionStatus, setCollectionStatus] = React.useState("active");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [visibleFrontend, setVisibleFrontend] = useState()
+  const [visibleFrontend, setVisibleFrontend] = useState(null)
   
   const handleSchedule = (start, end) => {
     setStartDate(start);
@@ -242,13 +240,14 @@ const CreateCollection = () => {
     setVisibleFrontend(value);
   }
 
-  const [uploadFile, {
-    data,
-    isLoading,
-    isSuccess,
-    isError
-  }] = UseFileUpload()
-  
+  const {
+    data: collectionData,
+    isLoading: collectionIsLoading,
+    isSuccess: collectionIsSuccess,
+    error: collectionError,
+  } = useGetAllCollectionsQuery({ createdAt:"-1" });
+
+
   const [
     createCollection,
     {
@@ -262,9 +261,9 @@ const CreateCollection = () => {
     initialValues: {
       title: "",
       // description: "",
-      status: startDate === null ? collectionStatus : "scheduled",
-      ...(startDate !== null && endDate !== null &&
-      { startDate: new Date(startDate), endDate: new Date(endDate) }),
+      status: collectionStatus,
+      startDate: startDate,
+      endDate: endDate,
       isVisibleFrontend: visibleFrontend,
       filter: true,
       notes: "",
@@ -1237,10 +1236,10 @@ const CreateCollection = () => {
             >
               <p>Save & Add Another</p>
             </Link>
-            <Link
+            {/* <Link
               to="/parameters/collections"
               className="button-gradient ms-3 py-2 px-4 w-auto"
-            >
+            > */}
               <LoadingButton
                 loading={createCollectionIsLoading}
                 disabled={createCollectionIsLoading}
@@ -1249,7 +1248,7 @@ const CreateCollection = () => {
               >
                 <p>Save</p>
               </LoadingButton>
-            </Link>
+            {/* </Link> */}
           </div>
         </div>
       </div>
@@ -1257,4 +1256,4 @@ const CreateCollection = () => {
   );
 };
 
-export default CreateCollection;
+export default EditCollection;

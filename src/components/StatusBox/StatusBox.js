@@ -25,9 +25,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const StatusBox = ({ headingName, showSchedule,value,handleProductStatus}) => {
+const StatusBox = ({ headingName, showSchedule,value,handleProductStatus, handleSchedule }) => {
 
   const showScheduleData = showSchedule ? false : true;
+  
   // ? TOGGLE BUTTONS STARTS HERE
   // const [productStatus, setPoductStatus] = React.useState("active");
 
@@ -36,6 +37,12 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus}) => {
   // };
 
   // ? TOGGLE BUTTONS ENDS HERE
+
+  
+  // ? DATE PICKER STARTS HERE
+  const [dateStartValue, setDateStartValue] = React.useState(new Date());
+  const [dateEndValue, setDateEndValue] = React.useState(new Date());
+  // ? DATE PICKER ENDS HERE
 
   // ? SCHEDULE PRODUCT DIALOG STARTS HERE
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
@@ -46,12 +53,12 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus}) => {
 
   const handelScheduleProductClose = () => {
     setOpenScheduleProduct(false);
+    if (dateStartValue && dateEndValue) {
+      handleSchedule(dateStartValue, dateEndValue); 
+    }
   };
   // ? SCHEDULE PRODUCT DIALOG ENDS HERE
 
-  // ? DATE PICKER STARTS HERE
-  const [dateStartValue, setDateStartValue] = React.useState(new Date());
-  // ? DATE PICKER ENDS HERE
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3">
       <div className="d-flex align-items-center justify-content-between">
@@ -77,7 +84,7 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus}) => {
           </div>
         </ToggleButton>
         <ToggleButton
-          value="archived"
+          value="in-active"
           aria-label="inactive"
           style={{ width: "50%" }}
           className="productInfo-toggle__draft"
@@ -153,9 +160,9 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus}) => {
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker
-              value={dateStartValue}
+              value={dateEndValue}
               onChange={(newValue) => {
-                setDateStartValue(newValue);
+                setDateEndValue(newValue);
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
             />

@@ -3,12 +3,22 @@ import { Link } from "react-router-dom";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  OutlinedInput,
+  Slide,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TablePagination,
   TableRow,
+  TextField,
   Tooltip,
 } from "@mui/material";
 // ! COMPONENT IMPORTS
@@ -19,12 +29,26 @@ import {
 } from "../../../components/TableDependencies/TableDependencies";
 // !IMAGES IMPORTS
 import ringSmall from "../../../assets/images/ringSmall.svg";
+import info from "../../../assets/icons/info.svg";
+import clock from "../../../assets/icons/clock.svg";
+import cancel from "../../../assets/icons/cancel.svg";
+
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+
+import { DesktopDateTimePicker } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 
 // ? TABLE STARTS HERE
 function createData(cId, collectionsName, noOfProducts, status, actions) {
@@ -124,6 +148,18 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
+
+   // ? DUPLICATE COLLECTION DIALOG STARTS HERE
+  const [openDuplicateCollection, setOpenDuplicateCollection] = React.useState(false);
+
+  const handelDuplicateCollection = () => {
+    setOpenDuplicateCollection(true);
+  };
+
+  const handelDuplicateCollectionClose = () => {
+    setOpenDuplicateCollection(false);
+  };
+  // ? DUPLICATE COLLECTION DIALOG ENDS HERE
 
   return (
     <React.Fragment>
@@ -239,7 +275,9 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                           </div>
                         </Tooltip>
                         <Tooltip title="Copy" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
+                          <div className="table-edit-icon rounded-4 p-2"
+                            onClick={handelDuplicateCollection}
+                          >
                             <ContentCopyIcon
                               sx={{
                                 color: "#5c6d8e",
@@ -283,6 +321,137 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog
+        open={openDuplicateCollection}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handelDuplicateCollectionClose}
+        aria-describedby="alert-dialog-slide-description"
+        maxWidth="sm"
+        fullWidth={true}
+      >
+        <DialogTitle>
+          <div className="d-flex justify-content-between align-items-center">
+            <h5 className="text-lightBlue fw-500">Duplicate Collection</h5>
+            <img
+              src={cancel}
+              alt="cancel"
+              width={30}
+              onClick={handelDuplicateCollectionClose}
+              className="c-pointer"
+            />
+          </div>
+          <Tooltip title="Lorem ipsum" placement="top">
+            <img
+                src={info}
+                alt="info"
+                className=" c-pointer"
+                width={13.5}
+            />
+          </Tooltip>
+          <small className="mt-1 text-grey-6 font1">
+            These banner will be see no PLP page as promotional banner
+          </small>
+        </DialogTitle>
+        <hr className="hr-grey-6 my-0" />
+        <DialogContent className="py-3 px-4 schedule-product">
+          <div className="d-flex mb-1">
+            <p className="text-lightBlue me-2">Collection Title</p>
+          </div>
+          <FormControl className="w-100 px-0">
+            <OutlinedInput
+              placeholder="Mirosa Collection_copy"
+              size="small"
+              name="title"
+            />
+          </FormControl>
+          <hr className="hr-grey-6 my-0" />
+          <div className="d-flex mb-1 mt-3">
+            <p className="text-lightBlue me-2">What to Include in this Duplicate</p>
+          </div>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="filter"
+                  inputProps={{ "aria-label": "controlled" }}
+                  size="small"
+                  style={{
+                    color: "#5C6D8E",
+                    marginRight: 0,
+                  }}
+                />
+              }
+              label="Include in Filters"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#99a6c0",
+                },
+              }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="filter"
+                  inputProps={{ "aria-label": "controlled" }}
+                  size="small"
+                  style={{
+                    color: "#5C6D8E",
+                    marginRight: 0,
+                  }}
+                />
+              }
+              label="Include in Filters"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#99a6c0",
+                },
+              }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="filter"
+                  inputProps={{ "aria-label": "controlled" }}
+                  size="small"
+                  style={{
+                    color: "#5C6D8E",
+                    marginRight: 0,
+                  }}
+                />
+              }
+              label="Include in Filters"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#99a6c0",
+                },
+              }}
+            />
+          </FormGroup>
+        </DialogContent>
+        <hr className="hr-grey-6 my-0" />
+        <DialogActions className="d-flex flex-column justify-content-start px-4 py-3">
+          <div className="d-flex justify-content-between w-100">
+            <button
+              className="button-grey py-2 px-5"
+              onClick={handelDuplicateCollectionClose}
+            >
+              <p className="text-lightBlue">Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-5"
+              onClick={handelDuplicateCollectionClose}
+            >
+              <p>Schedule</p>
+            </button>
+          </div>
+        </DialogActions>
+      </Dialog>
+
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
