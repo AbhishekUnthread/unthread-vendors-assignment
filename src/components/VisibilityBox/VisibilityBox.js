@@ -10,15 +10,7 @@ import {
 } from "@mui/material";
 import clock from "../../assets/icons/clock.svg";
 
-const VisibilityBox = ({frontendVisibility}) => {
-  const [frontendVisible, setFrontendVisible] = React.useState()
-
-  const handleVisibility = (event) => {
-    setFrontendVisible(event.target.value)
-    if(frontendVisible){
-      frontendVisibility(frontendVisible)
-    }
-  }
+const VisibilityBox = () => {
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4">
@@ -29,10 +21,8 @@ const VisibilityBox = ({frontendVisibility}) => {
             <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
                 name="radio-buttons-group"
-                value={frontendVisible}
-                onChange={handleVisibility}
             >
-                <FormControlLabel value="true" control={<Radio />} 
+                <FormControlLabel value="Visible" control={<Radio />} 
                   label="Visible in frontend" 
                   sx={{
                       "& .MuiTypography-root": {
@@ -40,7 +30,7 @@ const VisibilityBox = ({frontendVisibility}) => {
                       },
                     }} 
                 />
-                <FormControlLabel value="false" control={<Radio />} label="Hidden from website" 
+                <FormControlLabel value="hidden" control={<Radio />} label="Hidden from website" 
                   sx={{
                     "& .MuiTypography-root": {
                       color: "#c8d8ff",

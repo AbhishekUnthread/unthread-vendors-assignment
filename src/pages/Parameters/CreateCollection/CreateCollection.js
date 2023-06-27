@@ -57,9 +57,10 @@ import {
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
+import { updateCollectionId } from '../../../features/parameters/collections/collectionSlice'
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LoadingButton } from "@mui/lab";
 import moment from "moment";
 
@@ -232,7 +233,9 @@ const CreateCollection = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [visibleFrontend, setVisibleFrontend] = useState()
-  
+  const [collectionList, setCollectionList] = useState()
+  const collectionId = useSelector((state) => state.collection.collectionId);
+
   const handleSchedule = (start, end) => {
     setStartDate(start);
     setEndDate(end);
@@ -241,6 +244,13 @@ const CreateCollection = () => {
   const frontendVisibility = (value) => {
     setVisibleFrontend(value);
   }
+
+   const {
+    data: collectionData,
+    isLoading: collectionIsLoading,
+    isSuccess: collectionIsSuccess,
+    error: collectionError,
+  } = useGetAllCollectionsQuery({ createdAt: "-1", id: collectionId });
 
   const [uploadFile, {
     data,
@@ -278,8 +288,6 @@ const CreateCollection = () => {
         .then(() => collectionFormik.resetForm());
     },
   });
-
-  console.log(collectionFormik.values, "collectionFormik");
 
   useEffect(() => {
     if (createCollectionError) {
@@ -457,6 +465,28 @@ const CreateCollection = () => {
   };
   // ? LIKE APPLY CONDITION ENDS HERE
 
+   useEffect(() => {
+    if (collectionError) {
+      setError(true);
+      if (collectionError?.data?.message) {
+        dispatch(showError({ message: collectionError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+    if (collectionIsSuccess) {
+      setError(false);
+        setCollectionList(collectionData.data.data);
+    }
+  }, [
+    collectionData,
+    collectionIsSuccess,
+    collectionError,
+    dispatch,
+  ]);
+
   return (
     <form noValidate onSubmit={collectionFormik.handleSubmit}>
       <div className="page container-fluid position-relative user-group">
@@ -464,13 +494,13 @@ const CreateCollection = () => {
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-              <div className="d-flex col-12 px-0 justify-content-between">
+              {/* <div className="d-flex col-12 px-0 justify-content-between">
                 <div className="d-flex align-items-center">
                   <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
                     Collection Information
                   </h6>
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-md-12 px-0 mt-3">
                 <div className="d-flex mb-1">
@@ -1237,10 +1267,10 @@ const CreateCollection = () => {
             >
               <p>Save & Add Another</p>
             </Link>
-            <Link
+            {/* <Link
               to="/parameters/collections"
               className="button-gradient ms-3 py-2 px-4 w-auto"
-            >
+            > */}
               <LoadingButton
                 loading={createCollectionIsLoading}
                 disabled={createCollectionIsLoading}
@@ -1249,7 +1279,7 @@ const CreateCollection = () => {
               >
                 <p>Save</p>
               </LoadingButton>
-            </Link>
+            {/* </Link> */}
           </div>
         </div>
       </div>

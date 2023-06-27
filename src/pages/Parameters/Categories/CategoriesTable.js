@@ -32,6 +32,8 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { useDispatch } from "react-redux";
+import { updateCategoryId } from "../../../features/parameters/categories/categorySlice";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -102,6 +104,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = React.useState(false);
+  const dispatch = useDispatch()
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -295,6 +298,9 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                     <Link
                                       className="text-decoration-none"
                                       to="/parameters/categories/edit"
+                                      onClick={()=>{
+                                        dispatch(updateCategoryId(row._id))
+                                      }}
                                     >
                                       <div className="table-edit-icon rounded-4 p-2">
                                         <EditOutlinedIcon
@@ -389,6 +395,9 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                                     <Link
                                                       className="text-decoration-none"
                                                       to="/parameters/categories/edit"
+                                                      onClick={()=>{
+                                                        dispatch(updateCategoryId(row._id))
+                                                      }}
                                                     >
                                                       <p className="text-lightBlue rounded-circle fw-600">
                                                         {row.name}

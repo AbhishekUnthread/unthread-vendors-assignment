@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../EditVendor/EditVendor.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import NotesBox from "../../../../components/NotesBox/NotesBox";
@@ -35,9 +35,155 @@ import {
   TextField,
   Tooltip
 } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
+import { useCreateCategoryMutation, useEditCategoryMutation, useGetAllCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
 
 const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
+  const navigate = useNavigate();
+const dispatch = useDispatch();
+const [categoryName, setCategoryName] = useState("");
+const [categoryDescription, setCategoryDescription] = useState("");
+const [categoryStatus, setCategoryStatus] = useState("active");
+const [categoryNotes,setCategoryNotes] = useState('')
+const [categoryVisibility, setCategoryVisibility] = useState(false);
+const [checked, setChecked] =  useState(false);
+const categoryId = useSelector((state) => state.category.categoryId);
+
+
+const [
+  createCategory,
+  {
+    isLoading: createCategoryIsLoading,
+    isSuccess: createCategoryIsSuccess,
+    error: createCategoryError,
+  },
+] = useCreateCategoryMutation();
+
+const {
+  data: categoriesData,
+  isLoading: categoriesIsLoading,
+  isSuccess: categoriesIsSuccess,
+  error: categoriesError,
+} = useGetAllCategoriesQuery({ createdAt: "-1", id: categoryId });
+
+const [
+  editCategory,
+  {
+    data: editData,
+    isLoading: editCategoryIsLoading,
+    isSuccess: editCategoryIsSuccess,
+    error: editCategoryError,
+  },
+] = useEditCategoryMutation();
+
+useEffect(() => {
+  if (categoriesIsSuccess && categoryId !== "") {
+    // If categoriesIsSuccess is true, set the category name based on the data from the API response
+    setCategoryName(categoriesData.data.data[0].name);
+    setCategoryDescription(categoriesData.data.data[0].description);
+    setCategoryStatus(categoriesData.data.data[0].status);
+    setCategoryVisibility(categoriesData.data.data[0].isVisibleFrontend)
+    setCategoryNotes(categoriesData.data.data[0].notes)
+    setChecked(categoriesData.data.data[0].showFilter)
+  }
+}, [categoriesIsSuccess]);
+
+
+
+const categoryStatusChange = (event, categoryStatus) => {
+  setCategoryStatus(categoryStatus);
+};
+
+const handleNameChange = (event) => {
+  setCategoryName(event.target.value); // Updating the category name based on the input value
+};
+
+const handleFilterChange = (event) => {
+  setChecked(event.target.checked);
+};
+
+const handleSubmit = () => {
+  if (categoryId !== "") {
+    // Calling Category edit API
+    editCategory({
+      id: categoryId, // ID of the category
+      details: {
+        showFilter: checked, // Whether to show filters
+        name: categoryName, // Category name
+        description: categoryDescription, // Category description
+        status: categoryStatus ? categoryStatus : "active", // Category status
+        isVisibleFrontend: categoryVisibility,
+      notes: categoryNotes,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        navigate("/parameters/categories"); // Navigating to categories page after successful edit
+      });
+  } else {
+    createCategory({
+      showFilter: checked, // Whether to show filters
+      name: categoryName, // Category name
+      description: categoryDescription, // Category description
+      status: categoryStatus ? categoryStatus : "active", // Category status
+      isVisibleFrontend: categoryVisibility,
+      notes: categoryNotes,
+    })
+      .unwrap()
+      .then(() => {
+        navigate("/parameters/categories"); // Navigating to categories page after successful creation
+      });
+  }
+};
+
+const handleSubmitAndAddAnother = () => {
+  if (categoryId !== "") {
+    // Calling Category edit API
+    editCategory({
+      id: categoryId, // ID of the category
+      details: {
+        showFilter: checked, // Whether to show filters
+        name: categoryName, // Category name
+        description: categoryDescription, // Category description
+        status: categoryStatus ? categoryStatus : "active", // Category status,
+        isVisibleFrontend: categoryVisibility,
+        notes: categoryNotes,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        navigate("/parameters/categories/edit"); // Navigating to edit page after successful edit
+      });
+  } else {
+    createCategory({
+      showFilter: checked, // Whether to show filters
+      name: categoryName, // Category name
+      description: categoryDescription, // Category description
+      status: categoryStatus ? categoryStatus : "active", // Category status
+      isVisibleFrontend: categoryVisibility,
+      notes: categoryNotes,
+    })
+      .unwrap()
+      .then(() => {
+        navigate("/parameters/categories/edit"); // Navigating to categories page after successful creation
+      });
+  }
+
+  resetValues() // Resetting the category 
+  dispatch(updateCategoryId(""));
+};
+
+const resetValues = () => {
+  setCategoryName("");
+  setCategoryDescription("");
+  setCategoryStatus("active");
+  setCategoryNotes("");
+  setCategoryVisibility(false);
+  setChecked(false);
+};
+
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryType(tabIndex);
@@ -66,7 +212,7 @@ const EditCategories = () => {
                 </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
-                <OutlinedInput placeholder="Gold Products" size="small" />
+                <OutlinedInput value={categoryName} onChange={handleNameChange} placeholder="Gold Products" size="small" />
               </FormControl>
             </div>
             <FormGroup>
@@ -75,6 +221,8 @@ const EditCategories = () => {
                   control={
                     <Checkbox
                       inputProps={{ "aria-label": "controlled" }}
+                      checked={checked}
+                      onChange={(e)=>setChecked(e.target.checked)}
                       size="small"
                       style={{
                         color: "#5C6D8E",
@@ -105,7 +253,7 @@ const EditCategories = () => {
                     />
                   </Tooltip>
                 </div>
-                <AppTextEditor />
+                <AppTextEditor value={categoryDescription} setFieldValue={(val)=>setCategoryDescription(val)} />
               </div>
           </div>
 
@@ -142,15 +290,15 @@ const EditCategories = () => {
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox headingName={"Category Status"} />
-          <VisibilityBox />
+          <StatusBox headingName={"Category Status"} value={categoryStatus} handleProductStatus={(_,val)=>setCategoryStatus(val)} toggleData={['active','scheduled']} />
+          <VisibilityBox value={categoryVisibility} onChange={(_,val)=>setCategoryVisibility(val)} />
           <div className="mt-4">
-            <UploadMediaBox imageName={addMedia} headingName={"Media"} />
+            <UploadMediaBox imageName={addMedia} headingName={"Media"}  />
           </div>
-          <NotesBox />
+          <NotesBox  name={'notes'} value={categoryNotes} onChange={(e)=> setCategoryNotes(e.target.value)}/>
         </div>
       </div>
-      <SaveFooter />
+      <SaveFooter handleSubmit={handleSubmit} handleSubmitAndAddAnother={handleSubmitAndAddAnother} />
     </div>
   );
 };

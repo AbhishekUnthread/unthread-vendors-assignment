@@ -25,10 +25,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const StatusBox = ({ headingName, showSchedule,value,handleProductStatus, handleSchedule }) => {
+const StatusBox = ({ headingName, showSchedule,value,handleProductStatus,toggleData=['Active','In-Active']}) => {
 
   const showScheduleData = showSchedule ? false : true;
-  
   // ? TOGGLE BUTTONS STARTS HERE
   // const [productStatus, setPoductStatus] = React.useState("active");
 
@@ -37,12 +36,6 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus, handle
   // };
 
   // ? TOGGLE BUTTONS ENDS HERE
-
-  
-  // ? DATE PICKER STARTS HERE
-  const [dateStartValue, setDateStartValue] = React.useState(new Date());
-  const [dateEndValue, setDateEndValue] = React.useState(new Date());
-  // ? DATE PICKER ENDS HERE
 
   // ? SCHEDULE PRODUCT DIALOG STARTS HERE
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
@@ -53,12 +46,12 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus, handle
 
   const handelScheduleProductClose = () => {
     setOpenScheduleProduct(false);
-    if (dateStartValue && dateEndValue) {
-      handleSchedule(dateStartValue, dateEndValue); 
-    }
   };
   // ? SCHEDULE PRODUCT DIALOG ENDS HERE
 
+  // ? DATE PICKER STARTS HERE
+  const [dateStartValue, setDateStartValue] = React.useState(new Date());
+  // ? DATE PICKER ENDS HERE
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3">
       <div className="d-flex align-items-center justify-content-between">
@@ -74,23 +67,23 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus, handle
         exclusive
       >
         <ToggleButton
-          value="active"
+          value={toggleData[0]}
           aria-label="active"
           style={{ width: "50%" }}
           className="productInfo-toggle__active"
         >
           <div className="d-flex">
-            <p className="text-grey-6">Active</p>
+            <p className="text-grey-6">{toggleData[0]}</p>
           </div>
         </ToggleButton>
         <ToggleButton
-          value="in-active"
+          value={toggleData[1]}
           aria-label="inactive"
           style={{ width: "50%" }}
           className="productInfo-toggle__draft"
         >
           <div className="d-flex">
-            <p className="text-grey-6">In-Active</p>
+            <p className="text-grey-6">{toggleData[1]}</p>
           </div>
         </ToggleButton>
       </ToggleButtonGroup>
@@ -160,9 +153,9 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus, handle
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker
-              value={dateEndValue}
+              value={dateStartValue}
               onChange={(newValue) => {
-                setDateEndValue(newValue);
+                setDateStartValue(newValue);
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
             />

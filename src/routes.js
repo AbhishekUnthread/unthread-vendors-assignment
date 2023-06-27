@@ -67,6 +67,7 @@ import PrimaryLayout from "./layouts/PrimaryLayout";
 import ActionLayout from "./layouts/ActionLayout";
 import EditCategories from "./pages/Parameters/Categories/EditCategories/EditCategories";
 import EditSubCategories from "./pages/Parameters/Categories/EditSubCategories/EditSubCategories";
+import EditCollection from "./pages/Parameters/Collections/EditCollection/EditCollection";
 
 const router = () => {
   const loginStatus = store.getState().auth.isLoggedIn;
@@ -197,6 +198,10 @@ const router = () => {
                 {
                   path: "collections/create",
                   element: <CreateCollection />,
+                },
+                {
+                  path: "collections/edit",
+                  element: <EditCollection />,
                 },
                 {
                   path: "additionalFields",

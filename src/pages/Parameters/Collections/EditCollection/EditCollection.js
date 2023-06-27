@@ -1,36 +1,40 @@
 import React, { forwardRef, useState, useEffect, useReducer } from "react";
 import "../../CreateCollection/CreateCollection.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // ! COMPONENT IMPORTS
-import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
-import SEO from "../../Products/AddProduct/SEO/SEO";
-import TagsBox from "../../../components/TagsBox/TagsBox";
-import NotesBox from "../../../components/NotesBox/NotesBox";
-import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
-import UploadBanner from "../../../components/UploadBanner/UploadBanner";
-import StatusBox from "../../../components/StatusBox/StatusBox";
-import VisibilityBox from '../../../components/VisibilityBox/VisibilityBox'
-import AddHeader from "../../../components/AddHeader/AddHeader"
+import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
+import SEO from "../../../Products/AddProduct/SEO/SEO";
+import TagsBox from "../../../../components/TagsBox/TagsBox";
+import NotesBox from "../../../../components/NotesBox/NotesBox";
+import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox";
+import UploadBanner from "../../../../components/UploadBanner/UploadBanner";
+import StatusBox from "../../../../components/StatusBox/StatusBox";
+import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox'
+import AddHeader from "../../../../components/AddHeader/AddHeader"
 import {
   EnhancedTableHead,
   stableSort,
   getComparator,
-} from "../../../components/TableDependencies/TableDependencies";
+} from "../../../../components/TableDependencies/TableDependencies";
 // ! IMAGES IMPORTS
-import arrowLeft from "../../../assets/icons/arrowLeft.svg";
-import info from "../../../assets/icons/info.svg";
-import cancel from "../../../assets/icons/cancel.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg";
-import featureUpload from "../../../assets/images/products/featureUpload.svg";
-import ringSmall from "../../../assets/images/ringSmall.svg";
-import deleteWhite from "../../../assets/icons/deleteWhite.svg";
-import editWhite from "../../../assets/icons/editWhite.svg";
-import deleteButton from "../../../assets/icons/deleteButton.svg";
-import paginationRight from "../../../assets/icons/paginationRight.svg";
-import paginationLeft from "../../../assets/icons/paginationLeft.svg";
-import addMedia from "../../../assets/icons/addMedia.svg";
+import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
+import info from "../../../../assets/icons/info.svg";
+import cancel from "../../../../assets/icons/cancel.svg";
+import arrowDown from "../../../../assets/icons/arrowDown.svg";
+import featureUpload from "../../../../assets/images/products/featureUpload.svg";
+import ringSmall from "../../../../assets/images/ringSmall.svg";
+import deleteWhite from "../../../../assets/icons/deleteWhite.svg";
+import editWhite from "../../../../assets/icons/editWhite.svg";
+import deleteButton from "../../../../assets/icons/deleteButton.svg";
+import paginationRight from "../../../../assets/icons/paginationRight.svg";
+import paginationLeft from "../../../../assets/icons/paginationLeft.svg";
+import addMedia from "../../../../assets/icons/addMedia.svg";
 // ! MATERIAL IMPORTS
 import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   MenuItem,
   Select,
@@ -40,6 +44,7 @@ import {
   FormControlLabel,
   FormGroup,
   styled,
+  Slide,
   InputBase,
   Popover,
   TableContainer,
@@ -57,21 +62,28 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LoadingButton } from "@mui/lab";
 import moment from "moment";
+import { updateCollectionId } from "../../../../features/parameters/collections/collectionSlice";
 
 import {
   showSuccess,
   showError,
-} from "../../../features/snackbar/snackbarAction";
+} from "../../../../features/snackbar/snackbarAction";
 
 import {
   useGetAllCollectionsQuery,
   useCreateCollectionMutation,
   useDeleteCollectionMutation,
   useEditCollectionMutation,
-} from "../../../features/parameters/collections/collectionsApiSlice";
+} from "../../../../features/parameters/collections/collectionsApiSlice";
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -225,28 +237,24 @@ const collectionValidationSchema = Yup.object({
 
 const EditCollection = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [error, setError] = useState(false);
+  const [collectionTitle, setCollectionTitle] = useState("");
+  const [collectionNote, setCollectionNote] = useState("");
   const [collectionStatus, setCollectionStatus] = React.useState("active");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [visibleFrontend, setVisibleFrontend] = useState(null)
-  
-  const handleSchedule = (start, end) => {
-    setStartDate(start);
-    setEndDate(end);
-  };
-
-  const frontendVisibility = (value) => {
-    setVisibleFrontend(value);
-  }
+  const [collectionDescription, setCollectionDescription] = useState("");
+  const [collectionVisibility, setCollectionVisibility] = useState(false);
+  const [collectionFilter, setCollectionFilter] = useState(false);
+  const collectionId = useSelector((state)=>state.collection.collectionId)
 
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({ createdAt:"-1" });
+  } = useGetAllCollectionsQuery({ createdAt:"-1", id: collectionId });
 
+  const newCollectionData = collectionData?.data?.data[0];
 
   const [
     createCollection,
@@ -257,28 +265,59 @@ const EditCollection = () => {
     },
   ] = useCreateCollectionMutation();
 
-  const collectionFormik = useFormik({
-    initialValues: {
-      title: "",
-      // description: "",
-      status: collectionStatus,
-      startDate: startDate,
-      endDate: endDate,
-      isVisibleFrontend: visibleFrontend,
-      filter: true,
-      notes: "",
-    },
-    enableReinitialize: true,
-    validationSchema: collectionValidationSchema,
-    onSubmit: (values) => {
-      console.log(values, "values");
-      createCollection(values)
-        .unwrap()
-        .then(() => collectionFormik.resetForm());
-    },
-  });
+  const [
+    editCollection,
+    {
+      data: editData,
+      isLoading: editCollectionIsLoading,
+      isSuccess: editCollectionIsSuccess,
+      error: editCollectionError,
+    }
+  ] = useEditCollectionMutation();
 
-  console.log(collectionFormik.values, "collectionFormik");
+  useEffect(() => {
+    if (collectionIsSuccess) {
+      setCollectionTitle(newCollectionData?.title);
+      setCollectionDescription(newCollectionData?.description);
+      setCollectionStatus(newCollectionData?.status);
+      setCollectionVisibility(newCollectionData?.isVisibleFrontend)
+      setCollectionNote(newCollectionData?.notes)
+      setCollectionFilter(newCollectionData?.filter)
+    }
+  }, [collectionIsSuccess]);
+
+  const handleSubmit = () => {
+    if (collectionId !== "") {
+      editCollection({
+        id: collectionId,
+        details : {
+          title: collectionTitle, 
+          showFilter: collectionFilter, 
+          description: collectionDescription, 
+          status: collectionStatus ? collectionStatus : "active", 
+          isVisibleFrontend: collectionVisibility,
+          notes: collectionNote,
+        }
+      })
+        .unwrap()
+        .then(() => {
+          navigate("/parameters/collection"); 
+        });
+    }else {
+      createCollection({
+        title: collectionTitle, 
+        showFilter: collectionFilter, 
+        description: collectionDescription, 
+        status: collectionStatus ? collectionStatus : "active", 
+        isVisibleFrontend: collectionVisibility,
+        notes: collectionNote,
+      })
+        .unwrap()
+        .then(() => {
+          navigate("/parameters/collection");
+        });
+    }
+  }
 
   useEffect(() => {
     if (createCollectionError) {
@@ -456,20 +495,36 @@ const EditCollection = () => {
   };
   // ? LIKE APPLY CONDITION ENDS HERE
 
+  const handleTitleChange = (event) => {
+    setCollectionTitle(event.target.value);
+  };
+
+   // ? DUPLICATE COLLECTION DIALOG STARTS HERE
+  const [openDuplicateCollection, setOpenDuplicateCollection] = React.useState(false);
+
+  const handleDuplicate = () => {
+    setOpenDuplicateCollection(true);
+  };
+
+  const handelDuplicateCollectionClose = () => {
+    setOpenDuplicateCollection(false);
+  };
+  // ? DUPLICATE COLLECTION DIALOG ENDS HERE
+
   return (
-    <form noValidate onSubmit={collectionFormik.handleSubmit}>
+    // <form>
       <div className="page container-fluid position-relative user-group">
-        <AddHeader headerName={"Create Collection"} previewButton={"Preveiw"} navigateLink={"/parameters/collections"}/>
+        <AddHeader headerName={collectionTitle} previewButton={"Preveiw"} navigateLink={"/parameters/collections"} handleDuplicate={handleDuplicate}/>
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-              <div className="d-flex col-12 px-0 justify-content-between">
+              {/* <div className="d-flex col-12 px-0 justify-content-between">
                 <div className="d-flex align-items-center">
                   <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
                     Collection Information
                   </h6>
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-md-12 px-0 mt-3">
                 <div className="d-flex mb-1">
@@ -487,9 +542,8 @@ const EditCollection = () => {
                   <OutlinedInput
                     placeholder="Mirosa Collection"
                     size="small"
-                    value={collectionFormik.values.title}
-                    onBlur={collectionFormik.handleBlur}
-                    onChange={collectionFormik.handleChange}
+                    value={collectionTitle}
+                    onChange={handleTitleChange}
                     name="title"
                   />
                 </FormControl>
@@ -499,9 +553,9 @@ const EditCollection = () => {
                       control={
                         <Checkbox
                           name="filter"
-                          checked={collectionFormik.values.filter}
-                          onChange={collectionFormik.handleChange}
                           inputProps={{ "aria-label": "controlled" }}
+                          checked={collectionFilter}
+                          onChange={(e)=>setCollectionFilter(e.target.checked)}
                           size="small"
                           style={{
                             color: "#5C6D8E",
@@ -533,10 +587,7 @@ const EditCollection = () => {
                     />
                   </Tooltip>
                 </div>
-                <AppTextEditor
-                setFieldValue={(val) => collectionFormik.setFieldValue("description", val)}
-                value={collectionFormik.values.description}
-                 />
+                <AppTextEditor value={collectionDescription} setFieldValue={(value)=>setCollectionDescription(value)} />
               </div>
             </div>
 
@@ -1193,13 +1244,10 @@ const EditCollection = () => {
             </SwipeableDrawer>
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
-            <StatusBox value={collectionStatus} headingName={"Collection Status"} 
-              handleProductStatus={(event, newStatus) => {
-                setCollectionStatus(newStatus)
-              }}
-              handleSchedule={handleSchedule}
+            <StatusBox headingName={"Collection Status"} 
+              value={collectionStatus} handleProductStatus={(_,val)=>setCollectionStatus(val)} toggleData={['active','scheduled']} 
             />
-            <VisibilityBox frontendVisibility={frontendVisibility}/>
+            <VisibilityBox value={collectionVisibility} onChange={(_,val)=>setCollectionVisibility(val)}/>
             <div className="mt-4">
               <UploadMediaBox imageName={addMedia} headingName={"Media"} />
             </div>
@@ -1208,8 +1256,7 @@ const EditCollection = () => {
             </div>
             <NotesBox 
               name={"notes"}
-              onChange={collectionFormik.handleChange} 
-              value={collectionFormik.values.notes}
+              value={collectionNote} onChange={(e)=> setCollectionNote(e.target.value)}
             />
           </div>
         </div>
@@ -1241,18 +1288,144 @@ const EditCollection = () => {
               className="button-gradient ms-3 py-2 px-4 w-auto"
             > */}
               <LoadingButton
-                loading={createCollectionIsLoading}
-                disabled={createCollectionIsLoading}
                 className="button-gradient py-2 px-5"
-                type="submit"
+                onClick={handleSubmit}
               >
                 <p>Save</p>
               </LoadingButton>
             {/* </Link> */}
           </div>
         </div>
+        <Dialog
+        open={openDuplicateCollection}
+        TransitionComponent={Transition}
+        // keepMounted
+        onClose={handelDuplicateCollectionClose}
+        aria-describedby="alert-dialog-slide-description"
+        maxWidth="sm"
+        fullWidth={true}
+      >
+        <DialogTitle>
+          <div className="d-flex justify-content-between align-items-center">
+            <h5 className="text-lightBlue fw-500">Duplicate Collection</h5>
+            <img
+              src={cancel}
+              alt="cancel"
+              width={30}
+              onClick={handelDuplicateCollectionClose}
+              className="c-pointer"
+            />
+          </div>
+          <Tooltip title="Lorem ipsum" placement="top">
+            <img
+                src={info}
+                alt="info"
+                className=" c-pointer"
+                width={13.5}
+            />
+          </Tooltip>
+          <small className="mt-1 text-grey-6 font1">
+            These banner will be see no PLP page as promotional banner
+          </small>
+        </DialogTitle>
+        <hr className="hr-grey-6 my-0" />
+        <DialogContent className="py-3 px-4 schedule-product">
+          <div className="d-flex mb-1">
+            <p className="text-lightBlue me-2">Collection Title</p>
+          </div>
+          <FormControl className="w-100 px-0">
+            <OutlinedInput
+              placeholder="Mirosa Collection_copy"
+              size="small"
+              name="title"
+            />
+          </FormControl>
+          <hr className="hr-grey-6 my-0" />
+          <div className="d-flex mb-1 mt-3">
+            <p className="text-lightBlue me-2">What to Include in this Duplicate</p>
+          </div>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="filter"
+                  inputProps={{ "aria-label": "controlled" }}
+                  size="small"
+                  style={{
+                    color: "#5C6D8E",
+                    marginRight: 0,
+                  }}
+                />
+              }
+              label="Include in Filters"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#99a6c0",
+                },
+              }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="filter"
+                  inputProps={{ "aria-label": "controlled" }}
+                  size="small"
+                  style={{
+                    color: "#5C6D8E",
+                    marginRight: 0,
+                  }}
+                />
+              }
+              label="Include in Filters"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#99a6c0",
+                },
+              }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="filter"
+                  inputProps={{ "aria-label": "controlled" }}
+                  size="small"
+                  style={{
+                    color: "#5C6D8E",
+                    marginRight: 0,
+                  }}
+                />
+              }
+              label="Include in Filters"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#99a6c0",
+                },
+              }}
+            />
+          </FormGroup>
+        </DialogContent>
+        <hr className="hr-grey-6 my-0" />
+        <DialogActions className="d-flex flex-column justify-content-start px-4 py-3">
+          <div className="d-flex justify-content-between w-100">
+            <button
+              className="button-grey py-2 px-5"
+              onClick={handelDuplicateCollectionClose}
+            >
+              <p className="text-lightBlue">Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-5"
+              onClick={handelDuplicateCollectionClose}
+            >
+              <p>Schedule</p>
+            </button>
+          </div>
+        </DialogActions>
+      </Dialog>
       </div>
-    </form>
   );
 };
 
