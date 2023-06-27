@@ -302,9 +302,7 @@ const EditCollection = () => {
         }
       })
         .unwrap()
-        .then(() => {
-          navigate("/parameters/collection"); 
-        });
+        navigate("/parameters/collections");
     }else {
       createCollection({
         title: collectionTitle, 
@@ -315,9 +313,7 @@ const EditCollection = () => {
         notes: collectionNote,
       })
         .unwrap()
-        .then(() => {
-          navigate("/parameters/collection");
-        });
+        navigate("/parameters/collection");
     }
   }
 
