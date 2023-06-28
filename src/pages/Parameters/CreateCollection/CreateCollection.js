@@ -231,9 +231,9 @@ const CreateCollection = () => {
   let navigate = useNavigate();
   const [error, setError] = useState(false);
   const [collectionStatus, setCollectionStatus] = React.useState("active");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [visibleFrontend, setVisibleFrontend] = useState()
+  const [startDate1, setStartDate] = useState(null);
+  const [endDate1, setEndDate] = useState(null);
+  const [visibleFrontend, setVisibleFrontend] = useState("visible")
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
 
@@ -241,9 +241,9 @@ const CreateCollection = () => {
     setStartDate(start);
     setEndDate(end);
   };
-
-  const frontendVisibility = (value) => {
-    setVisibleFrontend(value);
+  
+  const handleVisiblility = (value) => {
+    collectionFormik?.setFieldValue("visibleFrontend", value);
   }
 
   const {
@@ -276,10 +276,10 @@ const CreateCollection = () => {
     initialValues: {
       title: "",
       description: "",
-      status: startDate === null ? collectionStatus : "scheduled",
-      ...(startDate !== null && endDate !== null &&
-      { startDate: new Date(startDate), endDate: new Date(endDate) }),
-      isVisibleFrontend: visibleFrontend,
+      status: startDate1 === null ? collectionStatus : "scheduled",
+      ...(startDate1 !== null && endDate1 !== null &&
+      { startDate1: new Date(startDate1), endDate1: new Date(endDate1) }),
+      isVisibleFrontend: true,
       filter: true,
       notes: "",
     },
@@ -1235,8 +1235,10 @@ const CreateCollection = () => {
                 setCollectionStatus(newStatus)
               }}
               handleSchedule={handleSchedule}
+              startDate1={startDate1}
+              endDate1={endDate1}
             />
-            <VisibilityBox frontendVisibility={frontendVisibility}/>
+            <VisibilityBox name={"isVisibleFrontend"} visibleFrontend={visibleFrontend} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
             <div className="mt-4">
               <UploadMediaBox imageName={addMedia} headingName={"Media"} />
             </div>

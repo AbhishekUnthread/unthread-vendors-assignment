@@ -246,7 +246,9 @@ const EditCollection = () => {
   const [collectionVisibility, setCollectionVisibility] = useState(false);
   const [collectionFilter, setCollectionFilter] = useState(false);
   const [collectionDuplicateTitle, setCollectionDuplicateTitle] = useState("");
-  const [duplicateDescription, setDuplicateDescription] = useState(false)
+  const [duplicateDescription, setDuplicateDescription] = useState(false);
+  const [startDate1, setStartDate1] = useState(null)
+  const [endDate1, setEndDate1] = useState(null)
   const collectionId = useSelector((state)=>state.collection.collectionId)
 
   const {
@@ -257,6 +259,8 @@ const EditCollection = () => {
   } = useGetAllCollectionsQuery({ createdAt:"-1", id: collectionId });
 
   const newCollectionData = collectionData?.data?.data[0];
+
+  console.log(newCollectionData, 'newCollectionData');
 
   const [
     createCollection,
@@ -285,6 +289,8 @@ const EditCollection = () => {
       setCollectionVisibility(newCollectionData?.isVisibleFrontend)
       setCollectionNote(newCollectionData?.notes)
       setCollectionFilter(newCollectionData?.filter)
+      setStartDate1(newCollectionData.startDate);
+      setEndDate1(newCollectionData?.endDate)
     }
   }, [collectionIsSuccess]);
 
@@ -1268,6 +1274,8 @@ const EditCollection = () => {
               value={collectionStatus} 
               handleProductStatus={(val)=>setCollectionStatus(val)}
               handleSchedule={handleSchedule}
+              startDate1={startDate1}
+              endDate1={endDate1}
             />
             <VisibilityBox value={collectionVisibility} onChange={(_,val)=>setCollectionVisibility(val)}/>
             <div className="mt-4">
@@ -1446,7 +1454,7 @@ const EditCollection = () => {
               className="button-gradient py-2 px-5"
               onClick={scheduleDuplicateCollection}
             >
-              <p>Schedule</p>
+              <p>Save</p>
             </button>
           </div>
         </DialogActions>

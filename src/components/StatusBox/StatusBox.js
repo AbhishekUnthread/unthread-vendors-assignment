@@ -18,6 +18,7 @@ import {
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import moment from "moment";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -25,7 +26,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, handleSchedule, toggleData=['active','in-active']}) => {
+const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, handleSchedule, toggleData=['active','in-active'], startDate1, endDate1}) => {
 
   const showScheduleData = showSchedule ? false : true;
   // ? TOGGLE BUTTONS STARTS HERE
@@ -41,6 +42,14 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
+
+  const startDateNew = moment(startDate1).format("DD/MM/YYYY")
+  const startTime = moment(startDate1).format("HH:MM a")
+  const endDateNew = moment(endDate1).format("DD/MM/YYYY")
+  const endTime = moment(endDate1).format("HH:MM a")
+
+  console.log(startDate1, 'startDate1')
+  console.log(endDate1, 'endDate1')
 
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);
@@ -93,7 +102,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         <div className="d-flex align-items-center mt-2 c-pointer">
           <img src={clock} alt="clock" className="me-1" width={12} />
           <small className="text-blue-2" onClick={handelScheduleProduct}>
-            Schedule
+            Schedule {startDate1 == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate1 == null ? '' : `till ${endDateNew} at ${endTime}` }
           </small>
         </div>
       )}

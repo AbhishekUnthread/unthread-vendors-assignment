@@ -84,6 +84,8 @@ const Collections = () => {
   const [statusFilter, setStatusFilter] = React.useState("")
   const filterParameter = {};
 
+  console.log(collectionType, 'collectionType');
+
   if (sortFilter) {
     if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
       filterParameter.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
@@ -183,6 +185,7 @@ const Collections = () => {
       }
       if (collectionType === 1) {
         setCollectionList(collectionData.data.data);
+        console.log(collectionList, 'collectionList')
       }
     }
   }, [
@@ -277,7 +280,7 @@ const Collections = () => {
                       label="Active"
                     />
                     <FormControlLabel
-                      value="inActive"
+                      value="in-active"
                       control={<Radio size="small" />}
                       label="In-Active"
                     />
