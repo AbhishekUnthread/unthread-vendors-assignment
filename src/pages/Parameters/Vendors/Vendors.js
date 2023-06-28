@@ -34,6 +34,8 @@ import {
   RadioGroup,
   Radio,
   Popover,
+  Autocomplete,
+  FormGroup,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -74,6 +76,7 @@ const Vendors = () => {
   const [selectedStatusOption, setSelectedStatusOption] = React.useState(null);
   const [searchValue, setSearchValue] = React.useState("");
   const [multipleVendors,setMultipleVendors] = React.useState([]);
+  const [anchorColumnsEl, setAnchorColumnsEl] = React.useState(null);
 
     const vendorValidationSchema = Yup.object({
     name: Yup.string().trim().min(3).required("Required"),
@@ -234,6 +237,8 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
   }, [bulkCreateVendorIsSuccess,dispatch])
   
 
+  console.log("fwfwfeqf",vendorList)
+  
   useEffect(() => {
     if (vendorsError) {
       setError(true);
@@ -297,6 +302,7 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
     setSelectedSortOption(event.target.value);
     setAnchorSortEl(null); // Close the popover after selecting a value
   };
+    console.log({url:selectedSortOption})
   
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
@@ -345,7 +351,21 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
       });
     }
   };
+  const openColumns = Boolean(anchorColumnsEl);
+  const idColumns = openColumns ? "simple-popover" : undefined;
 
+  const handleColumnsClose = () => {
+    setAnchorColumnsEl(null);
+  };
+  
+  const handleColumnsClick = (event) => {
+    setAnchorColumnsEl(event.currentTarget);
+  };
+  const handleSortCheckboxChange = (event) => {
+    const { value, checked } = event.target;
+    setSelectedSortOption(checked ? value : null);
+    setAnchorSortEl(null);
+  };
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -558,7 +578,7 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
-              <button
+              {/* <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idSort}
                 variant="contained"
@@ -567,6 +587,7 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
                 <small className="text-lightBlue me-2">Sort</small>
                 <img src={sort} alt="sort" className="" />
               </button>
+
               <Popover
                 anchorOrigin={{
                   vertical: "bottom",
@@ -611,7 +632,97 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
                   />
                 </RadioGroup>
               </FormControl>
+              </Popover> */}
+
+
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idColumns}
+                variant="contained"
+                onClick={handleColumnsClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              
+
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idColumns}
+                open={openColumns}
+                anchorEl={anchorColumnsEl}
+                onClose={handleColumnsClose}
+                className="columns"
+              >
+                <FormGroup className="px-2 py-1"                   
+                  onChange={handleSortCheckboxChange}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Alphabetical (A-Z)"
+                    value="alphabeticalAtoZ"
+                    className="me-0"
+                    checked={selectedSortOption === "alphabeticalAtoZ"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Alphabetical (Z-A)"
+                    className="me-0"
+                    value="alphabeticalZtoA"
+                    checked={selectedSortOption === "alphabeticalZtoA"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Oldest to Newest"
+                    className="me-0"
+                    value="oldestToNewest"
+                    checked={selectedSortOption === "oldestToNewest"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Newest to Oldest"
+                    className="me-0"
+                    value="newestToOldest"
+                    checked={selectedSortOption === "newestToOldest"}
+                  />
+                </FormGroup>
               </Popover>
+
               <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idStatus}
