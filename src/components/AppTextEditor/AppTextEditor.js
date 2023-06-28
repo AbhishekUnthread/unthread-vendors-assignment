@@ -19,8 +19,6 @@ const AppTextEditor = ({ value, setFieldValue }) => {
     value ? prepareDraft(value) : EditorState.createEmpty()
   );
 
-  console.log(editorState)
-
   const onEditorStateChange = (editorState) => {
     const forFormik = draftToHtml(
       convertToRaw(editorState.getCurrentContent())
