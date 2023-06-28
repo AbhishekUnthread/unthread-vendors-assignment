@@ -18,6 +18,7 @@ import {
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import moment from "moment";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -25,7 +26,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const StatusBox = ({ headingName, showSchedule,value,handleProductStatus,toggleData=['Active','In-Active']}) => {
+
+const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, handleSchedule, toggleData=['active','in-active'], startDate1, endDate1}) => {
+
 
   const showScheduleData = showSchedule === undefined ? false : true;
   // ? TOGGLE BUTTONS STARTS HERE
@@ -39,19 +42,29 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus,toggleD
 
   // ? SCHEDULE PRODUCT DIALOG STARTS HERE
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
+  const [startDate, setStartDate] = React.useState(new Date());
+  const [endDate, setEndDate] = React.useState(new Date());
+
+  const startDateNew = moment(startDate1).format("DD/MM/YYYY")
+  const startTime = moment(startDate1).format("HH:MM a")
+  const endDateNew = moment(endDate1).format("DD/MM/YYYY")
+  const endTime = moment(endDate1).format("HH:MM a")
+
+  console.log(startDate1, 'startDate1')
+  console.log(endDate1, 'endDate1')
 
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);
   };
 
-  const handelScheduleProductClose = () => {
-    setOpenScheduleProduct(false);
-  };
+ const handelScheduleProductClose = () => {
+  setOpenScheduleProduct(false);
+  if (startDate && endDate) {
+    handleSchedule(startDate, endDate); // Call the handleSchedule prop with the selected dates
+  }
+};
   // ? SCHEDULE PRODUCT DIALOG ENDS HERE
 
-  // ? DATE PICKER STARTS HERE
-  const [dateStartValue, setDateStartValue] = React.useState(new Date());
-  // ? DATE PICKER ENDS HERE
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3">
       <div className="d-flex align-items-center justify-content-between">
@@ -79,6 +92,7 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus,toggleD
         <ToggleButton
           value={toggleData[1]}
           aria-label="inactive"
+
           style={{ width: "50%" }}
           className="productInfo-toggle__draft"
         >
@@ -91,7 +105,7 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus,toggleD
         <div className="d-flex align-items-center mt-2 c-pointer">
           <img src={clock} alt="clock" className="me-1" width={12} />
           <small className="text-blue-2" onClick={handelScheduleProduct}>
-            Schedule
+            Schedule {startDate1 == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate1 == null ? '' : `till ${endDateNew} at ${endTime}` }
           </small>
         </div>
       )}
@@ -107,7 +121,7 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus,toggleD
       >
         <DialogTitle>
           <div className="d-flex justify-content-between align-items-center">
-            <h5 className="text-lightBlue fw-500">Schedule Product</h5>
+            <h5 className="text-lightBlue fw-500">Schedule {titleName}</h5>
             <img
               src={cancel}
               alt="cancel"
@@ -132,9 +146,9 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus,toggleD
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker
-              value={dateStartValue}
+              value={startDate}
               onChange={(newValue) => {
-                setDateStartValue(newValue);
+                setStartDate(newValue);
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
             />
@@ -153,9 +167,9 @@ const StatusBox = ({ headingName, showSchedule,value,handleProductStatus,toggleD
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker
-              value={dateStartValue}
+              value={endDate}
               onChange={(newValue) => {
-                setDateStartValue(newValue);
+                setEndDate(newValue);
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
             />

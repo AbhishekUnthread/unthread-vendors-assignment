@@ -23,7 +23,11 @@ const AppTextEditor = ({ value, setFieldValue }) => {
     const forFormik = draftToHtml(
       convertToRaw(editorState.getCurrentContent())
     );
-    setFieldValue(forFormik);
+    const parser = new DOMParser();
+    const parsedHtml = parser.parseFromString(forFormik, "text/html");
+    const plainText = parsedHtml.body.textContent || ""; // Extract plain text from parsed HTML
+
+    setFieldValue(plainText);
     setEditorState(editorState);
   };
 

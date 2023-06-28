@@ -205,7 +205,7 @@ const EditCategories = () => {
 
   return (
     <div className="page container-fluid position-relative user-group">
-      <AddHeader headerName={"Gold Products"} navigateLink={"/parameters/categories"} />
+      <AddHeader headerName={categoryName || ""} navigateLink={"/parameters/categories"} />
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">

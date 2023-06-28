@@ -199,12 +199,13 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                             </Link>
                           </TableCell>
                           <TableCell style={{ width: 180 }}>
-                            <p className="text-lightBlue">{row.parentCategory}</p>
+                            <p className="text-lightBlue">{row.category?.[0]?.name}</p>
                           </TableCell>
 
                           <TableCell style={{ width: 180 }}>
-                            <p className="text-lightBlue">{index}</p>
+                            <p className="text-lightBlue">{row.totalProduct}</p>
                           </TableCell>
+                          {console.log(row)}
 
                           <TableCell style={{ width: 120, padding: 0 }}>
                             <div className="d-flex align-items-center">
