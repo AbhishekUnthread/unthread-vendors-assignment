@@ -73,6 +73,7 @@ import {
   useCreateTagMutation,
   useDeleteTagMutation,
   useEditTagMutation,
+  useBulkCreateTagMutation,
 } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { useNavigate } from "react-router-dom";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
@@ -171,19 +172,43 @@ const likeHeadCells = [
 
 // ? TABLE ENDS HERE
 
-const tagsValidationSchema = Yup.object({
-  name: Yup.string().trim().min(3).required("required"),
-  // description: Yup.string().trim().min(3).required(),
-  // status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
-});
-
 const TagsManager = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [tagsType, setTagsType] = useState(0);
   const [tagsList, setTagsList] = useState([]);
   const [error, setError] = useState(false);
+  const [multipleTags,setMultipleTags] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  
+  const tagsValidationSchema = Yup.object({
+    name: Yup.string().trim().min(3).required("Required"),
+    // name: Yup.string().min(3, 'Name must be at least 3 characters long').required('Name is required'),
+    // description: Yup.string().trim().min(3).required(),
+    // status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
+    // name: Yup.string()
+    // .when('multipleTags', {
+    //   is: (multipleTags) => !multipleTags || multipleTags.length === 0,
+    //   then: Yup.string()
+    //     .trim()
+    //     .min(3, 'Name must be at least 3 characters long')
+    //     .required('Name is required when tags are empty'),
+    //   otherwise: Yup.string()
+    //     .trim()
+    //     .min(3, 'Name must be at least 3 characters long'),
+    // }),
+  });
+
+  const multipleTagsSchema = Yup.object({
+    name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
+  });
+  
+  const[editTag,{
+    data: editData,
+    isLoading: editTagIsLoading,
+    isSuccess: editTagIsSuccess,
+    error: editTagError, 
+  }]=useEditTagMutation();
 
   const changeTagsTypeHandler
    = (_event, tabIndex) => {
@@ -203,12 +228,29 @@ const[createTag,
   error:createTagsError, 
 }]= useCreateTagMutation();
 
-  const{
-      data: tagsData,
-      isLoading: tagsIsLoading, 
-      isSuccess: tagsIsSuccess, 
-      error: tagsError, 
-      }=useGetAllTagsQuery({createdAt:-1});
+const[bulkCreateTag,{
+  isLoading: bulkCreateTagsIsLoading, 
+  isSuccess: bulkCreateTagsIsSuccess, 
+  error:bulkCreateTagsError, 
+  
+}]=useBulkCreateTagMutation();
+
+const queryOptions =
+  tagsType === 0
+    ? { createdAt: -1 }
+    : tagsType === 1
+    ? { status: "draft" }
+    : tagsType === 2
+    ? { status: "active" }
+    : {};
+
+const {
+  data: tagsData,
+  isLoading: tagsIsLoading,
+  isSuccess: tagsIsSuccess,
+  error: tagsError,
+} = useGetAllTagsQuery(queryOptions);
+
     
     useEffect(() => {
       if (tagsError) {
@@ -229,10 +271,18 @@ const[createTag,
         if (tagsType === 1) {
           setTagsList(tagsData.data.data);
         }
+        if(tagsType==2){
+          setTagsList(tagsData.data.data);
+        }
       }
       if (createTagsIsSuccess) {
         setShowCreateModal(false);
         dispatch(showSuccess({ message: "Vendor created successfully" }));
+      }
+      if(bulkCreateTagsIsSuccess)
+      {
+        setShowCreateModal(false);
+        dispatch(showSuccess({ message: "Vendors created successfully" }));
       }
       
     }, [tagsType,tagsIsSuccess,tagsError,tagsData])
@@ -242,14 +292,25 @@ const[createTag,
       navigate('edit');
     };
 
-  const deleteTagsHandler = (data) => {
-      deleteTags(data?._id);
+    const ArchiveTagsHandler = (data) => {
+      const newStatus = data?.status === "draft" ? "active" : "draft";
+      editTag({
+        id: data?._id,
+        details: {
+          status: newStatus,
+        },
+      });
     };
+    
   
   const toggleCreateModalHandler = () => {
     setShowCreateModal((prevState) => !prevState);
     TagFormik.resetForm();
+    setMultipleTags([]);
+    TagFormik.setFieldTouched('name', false);
+    TagFormik.setFieldError('name', '');
   };
+  
   const TagFormik = useFormik({
     initialValues: {
       name : "",
@@ -257,11 +318,38 @@ const[createTag,
       showFilter:true,
     },
     enableReinitialize: true,
-    validationSchema: tagsValidationSchema,
+    validationSchema: multipleTags.length > 0 ? multipleTagsSchema : tagsValidationSchema,
+    
     onSubmit: (values) => {
-      createTag(values);
+      if(multipleTags.length>0)
+      {
+        bulkCreateTag(multipleTags)
+      }
+      else{
+        createTag(values);
+      }
     },
   });
+
+  const handleAddMultiple = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      TagFormik.validateForm().then(() => {
+        if (TagFormik.isValid && TagFormik.values.name !== '') {
+          TagFormik.setFieldTouched('name', true);
+          setMultipleTags((prevValues) => [
+            ...prevValues,
+            { name: TagFormik.values.name, status: 'active', filter: TagFormik.values.showFilter },
+          ]);
+          TagFormik.resetForm();
+        }
+      });
+    }
+  };
+  
+  const handleDelete = (value) => {
+    setMultipleTags((prevValues) => prevValues.filter((v) => v.name !== value));
+  };
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -315,7 +403,7 @@ const[createTag,
             <hr className="hr-grey-6 my-0" />
             <form noValidate onSubmit={TagFormik.handleSubmit}>
             <DialogContent className="py-3 px-4">
-              <p className="text-lightBlue mb-2">Tag Name</p>
+              <p className="text-lightBlue mb-2">Create Tags</p>
               <FormControl className="col-7 px-0">
                 <OutlinedInput
                  placeholder="Enter Tag Name" 
@@ -324,6 +412,7 @@ const[createTag,
                  value={TagFormik.values.name}
                  onChange={TagFormik.handleChange}
                  onBlur={TagFormik.handleBlur}
+                 onKeyDown={handleAddMultiple}
                   />
                 {!!TagFormik.touched.name && TagFormik.errors.name && (
                     <FormHelperText error>
@@ -332,29 +421,54 @@ const[createTag,
                   )}
               </FormControl>
 
-              {/* <div className="d-flex">
-                {[].map((data, index) => {
+              <div className="d-flex">
+                {multipleTags && multipleTags.map((data, index) => {
                   return (
                     <Chip
-                      label={data}
-                      onDelete={() => {}}
+                      label={data.name}
+                      onDelete={() => handleDelete(data.name)}
                       onClick={() => {}}
                       size="small"
                       className="mt-3 me-2"
                     ></Chip>
                   );
                 })}
-              </div> */}
+              </div>
+              <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="showFilter"
+                      checked={TagFormik.values.showFilter}
+                      onChange={TagFormik.handleChange}
+                      inputProps={{ "aria-label": "controlled" }}
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                        marginRight: 0,
+                        width: "auto",
+                      }}
+                    />
+                  }
+                  label="Include in Filters"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: "0.875rem",
+                      color: "#c8d8ff",
+                    },
+                  }}
+                  className=" px-0"
+                />
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
-              <button className="button-grey py-2 px-5">
-                <p 
-                className="text-lightBlue"
-                onClick={toggleCreateModalHandler}
+            
+                <button
+                  className="button-grey py-2 px-5"
+                  onClick={toggleCreateModalHandler}
+                  type="button"
                 >
-                Cancel</p>
-              </button>
+                  <p className="text-lightBlue">Cancel</p>
+                </button>
               <LoadingButton 
               className="button-gradient py-2 px-5"
               // loading={createTagsIsLoading}
@@ -788,6 +902,7 @@ const[createTag,
             className="tabs">
               <Tab label="All" className="tabs-head" />{" "}
               <Tab label="Draft" className="tabs-head" />
+              <Tab label="Active" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -796,7 +911,7 @@ const[createTag,
           <TabPanel value={tagsType} index={0}>
             <TagsManagerTable 
               isLoading={tagsIsLoading}
-              deleteData={deleteTagsHandler}
+              deleteData={ArchiveTagsHandler}
               error={error}
               list={tagsList}
               edit={editTagsPageNavigationHandler}
@@ -805,7 +920,16 @@ const[createTag,
           <TabPanel value={tagsType} index={1}>
             <TagsManagerTable
               isLoading={tagsIsLoading}
-              deleteData={deleteTagsHandler}
+              deleteData={ArchiveTagsHandler}
+              error={error}
+              list={tagsList}
+              edit={editTagsPageNavigationHandler}
+             />
+          </TabPanel>
+          <TabPanel value={tagsType} index={2}>
+            <TagsManagerTable
+              isLoading={tagsIsLoading}
+              deleteData={ArchiveTagsHandler}
               error={error}
               list={tagsList}
               edit={editTagsPageNavigationHandler}

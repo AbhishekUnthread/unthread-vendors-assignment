@@ -48,9 +48,11 @@ import {
   useCreateVendorMutation,
   useDeleteVendorMutation,
   useBulkCreateVendorMutation,
+  useEditVendorMutation,
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import sort from "../../../assets/icons/sort.svg";
+
 
 // ! MATERIAL ICONS IMPORTS
 
@@ -59,13 +61,6 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 // ? DIALOG TRANSITION ENDS HERE
-
-const vendorValidationSchema = Yup.object({
-  name: Yup.string(),
-  bulkVendor : Yup.array().min(1).required("required"),
-  // description: Yup.string().trim().min(3).required(),
-  // status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
-});
 
 const Vendors = () => {
   const dispatch = useDispatch();
@@ -78,21 +73,21 @@ const Vendors = () => {
   const [selectedSortOption, setSelectedSortOption] = React.useState(null);
   const [selectedStatusOption, setSelectedStatusOption] = React.useState(null);
   const [searchValue, setSearchValue] = React.useState("");
-  const [bulkVendorsValue, setBulkVendorsValue] = React.useState([]);
+  const [multipleVendors,setMultipleVendors] = React.useState([]);
+
+    const vendorValidationSchema = Yup.object({
+    name: Yup.string().trim().min(3).required("Required"),
+  // description: Yup.string().trim().min(3).required(),
+  // status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
+});
+  const multipleVendorsSchema = Yup.object({
+  name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
+  });
 
   const handleDelete = (value) => {
-    setBulkVendorsValue((prevValues) => prevValues.filter((v) => v.name !== value));
+    setMultipleVendors((prevValues) => prevValues.filter((v) => v.name !== value));
   };
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      // setBulkVendorsValue((prevValues) => [...prevValues, {name:event.target.value, status:"active", showFilter:true}]);
-       // Clear the input field after adding the value
-       vendorFormik.setFieldValue("bulkVendor",[...vendorFormik.values.bulkVendor,{name:event.target.value, status:"active", showFilter:true}])
-      vendorFormik.setFieldValue("name","") 
-      console.log("bulk vendor",vendorFormik.values.bulkVendor)
-    }
-  };
+
 
 //Initializes an empty object to store the query parameters.
   const queryParameters = {};
@@ -124,14 +119,28 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
   queryParameters.createdAt = "-1"; // Set default createdAt value
 }
 
+const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
+  : vendorType === 1 ? { status: "draft" }
+  : vendorType === 2 ? { status: "active" }
+  : {};
+
   const {
     data: vendorsData, // Data received from the useGetAllVendorsQuery hook
     isLoading: vendorsIsLoading, // Loading state of the vendors data
     isSuccess: vendorsIsSuccess, // Success state of the vendors data
     error: vendorsError, // Error state of the vendors data
-  } = useGetAllVendorsQuery(queryParameters, { enabled: Object.keys(queryParameters).length > 0 }); 
+  } = useGetAllVendorsQuery({...queryParameters,...vendorTypeQuery}, { enabled: Object.keys(queryParameters).length > 0 }); 
   // The `enabled` option determines whether the useGetAllVendorsQuery hook should be enabled or disabled based on the presence of query parameters.
   // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
+
+  const [
+    editVendor,
+    { data: editData,
+      isLoading: editVendorIsLoading,
+      isSuccess: editVendorIsSuccess,
+      error: editVendorError },
+  ] = useEditVendorMutation();
+
 
   const [
     createVendor,
@@ -163,35 +172,45 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
   
   const vendorFormik = useFormik({
     initialValues: {
-      name: "",
-      bulkVendor:[],
+         name: "",
       // description: "",
-      // status: "active",
-      // showFilter: true,
+      status: "active",
+      showFilter: true,
     },
     enableReinitialize: true,
-    validationSchema: vendorValidationSchema,
-    onSubmit: (values) => {
-      console.log("valueshbk", values)
-      
-        bulkCreateVendor(values.bulkVendor)
-        .unwrap()
-        .then(()=>vendorFormik.resetForm());
+    validationSchema: multipleVendors.length > 0 ? multipleVendorsSchema : vendorValidationSchema,
+    onSubmit: (values) => {  
+      if(multipleVendors.length>0)
+      {
+        bulkCreateVendor(multipleVendors)
+      }
+      else
+      {
+        createVendor(values)
+      }
     },
   });
 
-
-  
 
   const toggleCreateModalHandler = () => {
     setShowCreateModal((prevState) => !prevState);
     vendorFormik.resetForm();
     setIsEditing(false);
-    // setEditId(null);
+    setMultipleVendors([]);
+    vendorFormik.setFieldTouched('name', false);
+    vendorFormik.setFieldError('name', '');
+
   };
 
-  const deleteVendorHandler = (data) => {
-    deleteVendor(data?._id);
+  const ArchiveTagsHandler = (data) => {
+    const newStatus = data?.status === "draft" ? "active" : "draft";
+    editVendor({
+      id: data?._id,
+      details: {
+        status: newStatus,
+        showFilter:true
+      },
+    });
   };
 
   const editCategoryPageNavigationHandler = (data) => {
@@ -206,6 +225,14 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
   const changeVendorTypeHandler = (_event, tabIndex) => {
     setVendorType(tabIndex);
   };
+
+  useEffect(() => {
+    if (bulkCreateVendorIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Vendors created successfully" }));
+    }
+  }, [bulkCreateVendorIsSuccess,dispatch])
+  
 
   useEffect(() => {
     if (vendorsError) {
@@ -232,16 +259,17 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Vendor created successfully" }));
     }
-    if (bulkCreateVendorIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Vendors created successfully" }));
-    }
+
     if (vendorsIsSuccess) {
       setError(false);
       if (vendorType === 0) {
         setVendorList(vendorsData.data.data);
       }
       if (vendorType === 1) {
+        setVendorList(vendorsData.data.data);
+      }
+      if(vendorType === 2)
+      {
         setVendorList(vendorsData.data.data);
       }
     }
@@ -252,7 +280,6 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
     createVendorIsSuccess,
     createVendorError,
     vendorType,
-    bulkCreateVendorIsSuccess,
     dispatch,
   ]);
  // * SORT POPOVERS STARTS HERE
@@ -303,11 +330,21 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
   };
 
 
-  const handleBulkVendor = ()=>
-  {
-    vendorFormik.setFieldValue("bulkVendor",[...vendorFormik.values.bulkVendor,{name:vendorFormik.values.name, status:"active", showFilter:true}])
-    vendorFormik.setFieldValue("name","") 
-  }
+  const handleAddMultiple = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      vendorFormik.validateForm().then(() => {
+        if (vendorFormik.isValid && vendorFormik.values.name !== '') {
+          vendorFormik.setFieldTouched('name', true);
+          setMultipleVendors((prevValues) => [
+            ...prevValues,
+            { name: vendorFormik.values.name, status: 'active', showFilter: vendorFormik.values.showFilter },
+          ]);
+          vendorFormik.resetForm();
+        }
+      });
+    }
+  };
 
   return (
     <div className="container-fluid page">
@@ -360,52 +397,23 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
 
             <form noValidate onSubmit={vendorFormik.handleSubmit}>
               <DialogContent className="py-3 px-4">
-                <p className="text-lightBlue mb-2">Vendor Name</p>
+                <p className="text-lightBlue mb-2">Vendor Name *</p>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
                     placeholder="Enter Vendor Name"
                     size="small"
                     name="name"
                     value={vendorFormik.values.name}
-                    // onBlur={vendorFormik.handleBlur}
+                    onBlur={vendorFormik.handleBlur}
                     onChange={vendorFormik.handleChange}
-                    onKeyDown={handleKeyDown}
+                    onKeyDown={handleAddMultiple}
                   />
-                  {!!vendorFormik.touched.name && vendorFormik.errors.bulkVendor && (
+                  {!!vendorFormik.touched.name && vendorFormik.errors.name && (
                     <FormHelperText error>
-                      {vendorFormik.errors.bulkVendor}
+                      {vendorFormik.errors.name}
                     </FormHelperText>
                   )}
                 </FormControl>
-                <div className="d-flex">
-                {vendorFormik.values.bulkVendor.map((value, index) => (
-    <Chip
-      key={index}
-      label={value.name}
-      onDelete={() => handleDelete(value.name)}
-      size="small"
-      className="mt-3 me-2 px-1"
-    />
-  ))}
-            </div>
-            {/* <br/>
-                <p className="text-lightBlue mb-2">Description</p>
-                <FormControl className="col-7 px-0">
-                  <OutlinedInput
-                    placeholder="Enter Description"
-                    size="small"
-                    value={vendorFormik.values.description}
-                    onBlur={vendorFormik.handleBlur}
-                    onChange={vendorFormik.handleChange}
-                    name="description"
-                  />
-                  {!!vendorFormik.touched.description &&
-                    vendorFormik.errors.description && (
-                      <FormHelperText error>
-                        {vendorFormik.errors.description}
-                      </FormHelperText>
-                    )}
-                </FormControl> */}
                 <br />
                 <FormControlLabel
                   control={
@@ -431,6 +439,35 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
                   }}
                   className=" px-0"
                 />
+                <div >
+                {multipleVendors && multipleVendors.map((value, index) => (
+                <Chip
+                  key={index}
+                  label={value.name}
+                  onDelete={() => handleDelete(value.name)}
+                  size="small"
+                  className="mt-3 me-2 px-1"
+                />
+              ))}
+                </div>
+            {/* <br/>
+                <p className="text-lightBlue mb-2">Description</p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Description"
+                    size="small"
+                    value={vendorFormik.values.description}
+                    onBlur={vendorFormik.handleBlur}
+                    onChange={vendorFormik.handleChange}
+                    name="description"
+                  />
+                  {!!vendorFormik.touched.description &&
+                    vendorFormik.errors.description && (
+                      <FormHelperText error>
+                        {vendorFormik.errors.description}
+                      </FormHelperText>
+                    )}
+                </FormControl> */}
 
                 {/* <div className="d-flex">
                     <Chip
@@ -487,7 +524,6 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
                   disabled={createVendorIsLoading}
                   className="button-gradient py-2 px-5"
                   type="submit"
-                  onClick={handleBulkVendor}
                 >
                   <p>Save</p>
                 </LoadingButton>
@@ -517,6 +553,7 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
             >
               <Tab label="All" className="tabs-head" />
               <Tab label="Draft" className="tabs-head" />
+              <Tab label="Active" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -623,7 +660,7 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
           <TabPanel value={vendorType} index={0}>
             <VendorsTable
               isLoading={vendorsIsLoading}
-              deleteData={deleteVendorHandler}
+              deleteData={ArchiveTagsHandler}
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
@@ -632,7 +669,16 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
           <TabPanel value={vendorType} index={1}>
             <VendorsTable
               isLoading={vendorsIsLoading}
-              deleteData={deleteVendorHandler}
+              deleteData={ArchiveTagsHandler}
+              error={error}
+              list={vendorList}
+              edit={editCategoryPageNavigationHandler}
+            />
+          </TabPanel>
+          <TabPanel value={vendorType} index={2}>
+            <VendorsTable
+              isLoading={vendorsIsLoading}
+              deleteData={ArchiveTagsHandler}
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}

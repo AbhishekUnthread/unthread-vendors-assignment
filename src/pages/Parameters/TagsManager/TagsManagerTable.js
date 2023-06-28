@@ -87,6 +87,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error}) => {
     }
     setSelected([]);
   };
+  
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -235,10 +236,10 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error}) => {
                         </Tooltip>} 
                        
 
-                      {deleteData && <Tooltip 
+                       {deleteData && <Tooltip 
                          onClick={(e)=>{
                           deleteData(row)
-                        }} title={edit?'Delete':'Un-Archive'} placement="top">
+                        }} title={row.status==="active"?'Archive':'Un-Archive'} placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <InventoryIcon
                               sx={{

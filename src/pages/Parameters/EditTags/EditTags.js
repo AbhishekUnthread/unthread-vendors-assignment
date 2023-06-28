@@ -171,7 +171,7 @@ const EditTags = () => {
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
-                <p className="text-lightBlue me-2">Express Shipping</p>
+                <p className="text-lightBlue me-2">Tag Name</p>
                 <Tooltip title="Lorem ipsum" placement="top">
                   <img
                     src={info}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
@@ -22,6 +22,9 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import { useBulkEditVendorMutation } from "../../../features/parameters/vendors/vendorsApiSlice";
+import { useDispatch } from "react-redux";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
 
 // ? TABLE STARTS HERE
 function createData(vId, vendorsName, noOfProducts, status) {
@@ -64,6 +67,49 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [state, setState] = React.useState([]);
+  const dispatch = useDispatch();
+
+  const[bulkEdit,
+  {
+    data: bulkEditVendor,
+    isLoading: bulkVendorEditLoading,
+    isSuccess: bulkVendorEditIsSuccess,
+    error: bulkVendorEditError,
+  }]=useBulkEditVendorMutation();
+
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
+
+  useEffect(() => {
+    // Update the state only if the selectedStatus state has a value
+    if (selectedStatus !== null) {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as Draft") {
+          return {
+            id,
+            status: "draft",
+          };
+        } else {
+          return {
+            id,
+            status: "", // Set a default value here if needed
+          };
+        }
+      });
+      setState(newState);
+      bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      setSelectedStatus(null);
+    }
+  }, [selected, selectedStatus]);
+  
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -129,7 +175,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
           <TableMassActionButton />
         </div>
       )}
@@ -233,24 +279,20 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
                                 </Tooltip>
                               )}
 
-                              {deleteData && (
-                                <Tooltip title={"Delete"} placement="top">
-                                  <div
-                                    onClick={(e) => {
-                                      deleteData(row);
-                                    }}
-                                    className="table-edit-icon rounded-4 p-2"
-                                  >
-                                    <InventoryIcon
-                                      sx={{
-                                        color: "#5c6d8e",
-                                        fontSize: 18,
-                                        cursor: "pointer",
-                                      }}
-                                    />
-                                  </div>
-                                </Tooltip>
-                              )}
+                              {deleteData && <Tooltip 
+                         onClick={(e)=>{
+                          deleteData(row)
+                        }} title={row.status==="active"?'Archive':'Un-Archive'} placement="top">
+                          <div className="table-edit-icon rounded-4 p-2">
+                            <InventoryIcon
+                              sx={{
+                                color: "#5c6d8e",
+                                fontSize: 18,
+                                cursor: "pointer",
+                              }}
+                            />
+                          </div>
+                        </Tooltip> } 
                             </div>
                           </TableCell>
                         </TableRow>
