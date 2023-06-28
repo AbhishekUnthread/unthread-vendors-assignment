@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 // ! MATERIAL IMPORTS
@@ -38,7 +38,8 @@ import { updateCollectionId } from "../../../features/parameters/collections/col
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-
+import { useBulkEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
 // ? TABLE STARTS HERE
 function createData(cId, collectionsName, noOfProducts, status, actions) {
   return { cId, collectionsName, noOfProducts, status, actions };
@@ -56,12 +57,29 @@ const rows = [
 ];
 
 const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  let navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [state, setState] = React.useState([]);
+
+  const [
+    editCollection,
+    {
+      data: editData,
+      isLoading: editCollectionIsLoading,
+      isSuccess: editCollectionIsSuccess,
+      error: editCollectionError,
+    }
+  ] = useBulkEditCollectionMutation();
+
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };  
 
   const headCells = [
     {
@@ -154,7 +172,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
           <TableMassActionButton />
         </div>
       )}
@@ -242,23 +260,20 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
                         <Tooltip title="Edit" placement="top">
-                          <Link
-                            className="text-decoration-none"
-                            to="/parameters/collections/edit"
-                            onClick={()=>{
-                              dispatch(updateCollectionId(row._id))
-                            }}
+                          <div className="table-edit-icon rounded-4 p-2" 
+                              onClick={()=>{
+                                dispatch(updateCollectionId(row._id));
+                                navigate("/parameters/collections/edit")
+                              }}
                           >
-                            <div className="table-edit-icon rounded-4 p-2">
-                              <EditOutlinedIcon
-                                sx={{
-                                  color: "#5c6d8e",
-                                  fontSize: 18,
-                                  cursor: "pointer",
-                                }}
-                              />
-                            </div>
-                          </Link>
+                            <EditOutlinedIcon
+                              sx={{
+                                color: "#5c6d8e",
+                                fontSize: 18,
+                                cursor: "pointer",
+                              }}
+                            />
+                          </div>
                         </Tooltip>
                         <Tooltip title="Copy" placement="top">
                           <div className="table-edit-icon rounded-4 p-2">

@@ -22,18 +22,18 @@ const SaveFooter = ({handleSubmit,handleSubmitAndAddAnother}) => {
         </Link>
     </div>
     <div className="d-flex w-auto px-0">
-        <Link
+        <button
         onClick={handleSubmitAndAddAnother}
         className="button-lightBlue-outline py-2 px-4"
         >
         <p>Save & Add Another</p>
-        </Link>
-        <Link
-        onClick={handleSubmit}
-        className="button-gradient ms-3 py-2 px-4 w-auto"
+        </button>
+        <button
+          onClick={handleSubmit}
+          className="button-gradient ms-3 py-2 px-4 w-auto"
         >
         <p>Save</p>
-        </Link>
+        </button>
     </div>
     </div>
   );

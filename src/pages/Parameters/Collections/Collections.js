@@ -81,10 +81,19 @@ const Collections = () => {
     initialCollectionState
   );
   const [sortFilter, setSortFilter] = React.useState(null);
-  const [statusFilter, setStatusFilter] = React.useState("")
+  const [statusFilter, setStatusFilter] = React.useState("");
+  const [searchValue, setSearchValue] = useState("");
+
   const filterParameter = {};
 
-  console.log(collectionType, 'collectionType');
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  }
+  
+  const handleStatusChange = (event) => {
+    setStatusFilter(event.target.value)
+    setAnchorStatusEl(null)
+  }
 
   if (sortFilter) {
     if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
@@ -95,12 +104,27 @@ const Collections = () => {
     }
   }
 
+  
+const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
+  : collectionType === 1 ? { status: "active" }
+  : collectionType === 2 ? { createdAt: -1, status: "in-active" }
+  : {};
+
+  const filterParams = { ...filterParameter, ...collectionTypeQuery };
+  if (searchValue) {
+    filterParams.title = searchValue;
+  }
+
+  if (collectionType === 0) {
+    filterParams.status = statusFilter;
+  }
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({ ...filterParameter, status: `${statusFilter}`});
+  } = useGetAllCollectionsQuery({...filterParams}, { enabled: Object.keys(filterParameter).length > 0 });
 
   const [
     deleteCollection,
@@ -111,8 +135,8 @@ const Collections = () => {
     },
   ] = useDeleteCollectionMutation();
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleTabChange = (event, tabIndex) => {
+    setCollectionType(tabIndex);
   };
 
    // * SORT POPOVERS STARTS
@@ -144,11 +168,6 @@ const Collections = () => {
   const handleStatusClose = () => {
     setAnchorStatusEl(null);
   };
-
-  const handleStatusChange = (event) => {
-    setStatusFilter(event.target.value)
-    setAnchorStatusEl(null)
-  }
 
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
@@ -185,7 +204,9 @@ const Collections = () => {
       }
       if (collectionType === 1) {
         setCollectionList(collectionData.data.data);
-        console.log(collectionList, 'collectionList')
+      }
+      if (collectionType === 2) {
+        setCollectionList(collectionData.data.data);
       }
     }
   }, [
@@ -225,12 +246,9 @@ const Collections = () => {
             sx={{ width: "100%" }}
             className="d-flex justify-content-between tabs-header-box"
           >
-            {/* variant="scrollable"
-              scrollButtons
-              allowScrollButtonsMobile */}
             <Tabs
-              value={value}
-              onChange={handleChange}
+              value={collectionType}
+              onChange={handleTabChange}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
@@ -241,7 +259,7 @@ const Collections = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange}/>
              <div className="d-flex">
               <button
                 className="button-grey py-2 px-3 ms-2"
@@ -353,7 +371,7 @@ const Collections = () => {
               </Popover>
             </div>
           </div>
-          <TabPanel value={value} index={0}>
+          <TabPanel value={collectionType} index={0}>
             <CollectionsTable
               deleteData={deleteCollectionHandler}
               isLoading={collectionIsLoading}
@@ -361,7 +379,7 @@ const Collections = () => {
               list={collectionList}
             />
           </TabPanel>
-          <TabPanel value={value} index={1}>
+          <TabPanel value={collectionType} index={1}>
             <CollectionsTable
               deleteData={deleteCollectionHandler}
               isLoading={collectionIsLoading}
@@ -369,7 +387,7 @@ const Collections = () => {
               list={collectionList}
             />
           </TabPanel>
-          <TabPanel value={value} index={2}>
+          <TabPanel value={collectionType} index={2}>
             <CollectionsTable
               deleteData={deleteCollectionHandler}
               isLoading={collectionIsLoading}

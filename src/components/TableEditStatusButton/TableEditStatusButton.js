@@ -3,12 +3,19 @@ import { Popover } from "@mui/material";
 // ! IMAGES IMPORTS
 import arrowDown from "../../assets/icons/arrowDown.svg";
 
-const TableEditStatusButton = () => {
+const TableEditStatusButton = ({onSelect, headingName, defaultValue=['active','In-active']}) => {
   // * EDIT STATUS POPOVERS STARTS
   const [anchorEditStatusEl, setAnchorEditStatusEl] = React.useState(null);
+
   const handleEditStatusClick = (event) => {
     setAnchorEditStatusEl(event.currentTarget);
   };
+
+  const handleStatusSelect = (status) => {
+    onSelect(status); // Call the callback function passed from the parent component
+    handleEditStatusClose();
+  };
+  
   const handleEditStatusClose = () => {
     setAnchorEditStatusEl(null);
   };
@@ -24,7 +31,7 @@ const TableEditStatusButton = () => {
         variant="contained"
         onClick={handleEditStatusClick}
       >
-        <small className="text-lightBlue">Edit Status</small>
+        <small className="text-lightBlue">{headingName}</small>
         <img src={arrowDown} alt="arrowDown" className="ms-2" />
       </button>
 
@@ -43,11 +50,11 @@ const TableEditStatusButton = () => {
         onClose={handleEditStatusClose}
       >
         <div className="py-2 px-1">
-          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-            Set as Active
+          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back" onClick={() => handleStatusSelect(defaultValue[0])}>
+          {defaultValue[0]}
           </small>
-          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-            Set as Draft
+          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back" onClick={() => handleStatusSelect(defaultValue[1])}>
+          {defaultValue[1]}
           </small>
         </div>
       </Popover>

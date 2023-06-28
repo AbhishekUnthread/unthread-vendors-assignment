@@ -4,12 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import SEO from "../../../Products/AddProduct/SEO/SEO";
-import TagsBox from "../../../../components/TagsBox/TagsBox";
 import NotesBox from "../../../../components/NotesBox/NotesBox";
 import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox";
 import UploadBanner from "../../../../components/UploadBanner/UploadBanner";
 import StatusBox from "../../../../components/StatusBox/StatusBox";
-import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox'
+import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
+import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
 import AddHeader from "../../../../components/AddHeader/AddHeader"
 import {
   EnhancedTableHead,
@@ -17,7 +17,6 @@ import {
   getComparator,
 } from "../../../../components/TableDependencies/TableDependencies";
 // ! IMAGES IMPORTS
-import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
 import info from "../../../../assets/icons/info.svg";
 import cancel from "../../../../assets/icons/cancel.svg";
 import arrowDown from "../../../../assets/icons/arrowDown.svg";
@@ -26,8 +25,6 @@ import ringSmall from "../../../../assets/images/ringSmall.svg";
 import deleteWhite from "../../../../assets/icons/deleteWhite.svg";
 import editWhite from "../../../../assets/icons/editWhite.svg";
 import deleteButton from "../../../../assets/icons/deleteButton.svg";
-import paginationRight from "../../../../assets/icons/paginationRight.svg";
-import paginationLeft from "../../../../assets/icons/paginationLeft.svg";
 import addMedia from "../../../../assets/icons/addMedia.svg";
 // ! MATERIAL IMPORTS
 import {
@@ -61,11 +58,8 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
 import * as Yup from "yup";
-import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { LoadingButton } from "@mui/lab";
-import moment from "moment";
-import { updateCollectionId } from "../../../../features/parameters/collections/collectionSlice";
 
 import {
   showSuccess,
@@ -1290,41 +1284,9 @@ const EditCollection = () => {
             />
           </div>
         </div>
-        <div className="row create-buttons pt-5 pb-3 justify-content-between">
-          <div className="d-flex w-auto px-0">
-            <Link
-              to="/parameters/collections"
-              className="button-red-outline py-2 px-4"
-            >
-              <p>Discard</p>
-            </Link>
 
-            <Link
-              to="/parameters/collections"
-              className="button-lightBlue-outline py-2 px-4 ms-3"
-            >
-              <p>Save as Draft</p>
-            </Link>
-          </div>
-          <div className="d-flex w-auto px-0">
-            <Link
-              to="/parameters/collections"
-              className="button-lightBlue-outline py-2 px-4"
-            >
-              <p>Save & Add Another</p>
-            </Link>
-            {/* <Link
-              to="/parameters/collections"
-              className="button-gradient ms-3 py-2 px-4 w-auto"
-            > */}
-              <LoadingButton
-                className="button-gradient py-2 px-5"
-                onClick={handleSubmit}
-              >
-                <p>Save</p>
-              </LoadingButton>
-            {/* </Link> */}
-          </div>
+        <div className="row create-buttons pt-5 pb-3 justify-content-between">
+          <SaveFooter handleSubmit={handleSubmit} />          
         </div>
       <Dialog
         open={openDuplicateCollection}

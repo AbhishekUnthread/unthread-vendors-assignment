@@ -286,7 +286,6 @@ const CreateCollection = () => {
     enableReinitialize: true,
     validationSchema: collectionValidationSchema,
     onSubmit: (values) => {
-      console.log(values, "values");
       createCollection(values)
         .unwrap()
         .then(() => collectionFormik.resetForm());
