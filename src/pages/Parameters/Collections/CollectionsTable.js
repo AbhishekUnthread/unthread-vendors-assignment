@@ -42,7 +42,7 @@ const rows = [
   createData(8, "Collection 8", "503", "Active"),
 ];
 
-const CollectionsTable = ({ list, error, isLoading }) => {
+const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -249,8 +249,13 @@ const CollectionsTable = ({ list, error, isLoading }) => {
                             />
                           </div>
                         </Tooltip>
+                        {deleteData && (
                         <Tooltip title="Archive" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
+                          <div className="table-edit-icon rounded-4 p-2"
+                            onClick={(e) => {
+                              deleteData(row);
+                            }}
+                          >
                             <InventoryIcon
                               sx={{
                                 color: "#5c6d8e",
@@ -260,6 +265,7 @@ const CollectionsTable = ({ list, error, isLoading }) => {
                             />
                           </div>
                         </Tooltip>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
