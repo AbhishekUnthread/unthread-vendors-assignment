@@ -38,7 +38,7 @@ import { updateCollectionId } from "../../../features/parameters/collections/col
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { useBulkEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
+import { useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 // ? TABLE STARTS HERE
 function createData(cId, collectionsName, noOfProducts, status, actions) {
@@ -67,8 +67,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [state, setState] = React.useState([]);
 
-  console.log(list, 'kdfldskl;')
-
   const [
     editCollection,
     {
@@ -77,7 +75,16 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
       isSuccess: editCollectionIsSuccess,
       error: editCollectionError,
     }
-  ] = useBulkEditCollectionMutation();
+  ] = useEditCollectionMutation();
+
+  const handleArchive = (collectionId) => {
+    editCollection({
+        id: collectionId,
+        details : {
+          status: "draft"
+        }
+      })
+  }
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -254,7 +261,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                       <div className="d-flex align-items-center">
                         <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
                           <small className="text-black fw-400">
-                            {row.status}
+                            {row.status == "active" ? "Acitve" : row.status == "in-active" ? "In-Active" : "Archived" }
                           </small>
                         </div>
                       </div>
@@ -288,12 +295,12 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                             />
                           </div>
                         </Tooltip>
-                        {deleteData && (
                         <Tooltip title="Archive" placement="top">
                           <div className="table-edit-icon rounded-4 p-2"
-                            onClick={(e) => {
-                              deleteData(row);
-                            }}
+                            onClick={() => {
+                              handleArchive(row._id)
+                              }
+                            }
                           >
                             <InventoryIcon
                               sx={{
@@ -304,7 +311,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                             />
                           </div>
                         </Tooltip>
-                        )}
                       </div>
                     </TableCell>
                   </TableRow>

@@ -246,8 +246,6 @@ const EditCollection = () => {
   const collectionId = useSelector((state)=>state.collection.collectionId)
   const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
 
-  console.log(collectionVisibility, 'collectionVisibility')
-
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
