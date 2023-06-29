@@ -309,20 +309,12 @@ const Categories = () => {
   // * STATUS POPOVERS ENDS
 
   const deleteCategoryHandler = (data) => {
-    if (categoryType === 0) {
-      if (data.categoryId) {
-        deleteSubCategory(data._id);
-      } else {
-        deleteCategory(data._id);
-      }
-    }
-    if (categoryType === 1) {
-      deleteCategory(data._id);
-    }
-    if (categoryType === 2) {
-      deleteSubCategory(data._id);
-    }
+        deleteCategory(data._id);  
   };
+
+  const deleteSubCategoryHandler = (data)=>{
+    deleteSubCategory(data._id)
+  }
 
   const editCategoryHandler = (data) => {
     setIsEditing(true);
@@ -865,6 +857,7 @@ const Categories = () => {
                 <CategoriesTable
                   isLoading={categoriesIsLoading || subCategoriesIsLoading}
                   deleteData={deleteCategoryHandler}
+                  deleteSubData={deleteSubCategoryHandler}
                   error={error}
                   list={categoryList}
                   edit={editCategoryHandler}
@@ -873,7 +866,7 @@ const Categories = () => {
               <TabPanel value={categoryType} index={1}>
                 <SubCategoriesTable
                   isLoading={subCategoriesIsLoading}
-                  deleteData={deleteCategoryHandler}
+                  deleteData={deleteSubCategoryHandler}
                   error={error}
                   list={subCategoryList}
                   edit={editCategoryHandler}
@@ -891,7 +884,7 @@ const Categories = () => {
               <TabPanel value={categoryType} index={3}>
               <SubCategoriesTable
                   isLoading={subCategoriesIsLoading}
-                  deleteData={deleteCategoryHandler}
+                  deleteData={deleteSubCategoryHandler}
                   error={error}
                   list={subCategoryList}
                   edit={editCategoryHandler}

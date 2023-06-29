@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState ,useId} from "react";
 import "./SEO.scss";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
@@ -16,8 +16,9 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 
-const SEO = ({ handleSeoChange }) => {
+const SEO = ({name,value, handleSeoChange }) => {
   const [multipleTags, setMultipleTags] = useState([]);
+  const id = useId();
   // ? CHECKBOX STARTS HERE
   const [checked, setChecked] = React.useState(true);
 
@@ -35,8 +36,32 @@ const SEO = ({ handleSeoChange }) => {
       metaKeywords: "",
     },
     enableReinitialize: true,
-    onSubmit: (values) => {},
   });
+
+  useEffect(()=>{
+    if(value){
+      seoFormik.setFieldValue("title",value.title)
+      seoFormik.setFieldValue("urlHandle",value.urlHandle)
+      seoFormik.setFieldValue("description",value.description)
+      seoFormik.setFieldValue('slug',value.slug)
+      setMultipleTags(value.metaKeywords || [])
+    }else{
+      seoFormik.setFieldValue("title",name)
+    }
+  },[value,name])
+
+  useEffect(()=>{
+    handleSeoChange({
+      ...seoFormik.values,
+      metaKeywords:multipleTags,
+      slug: value?.slug ? value.slug : generateUniqueId(seoFormik.values.title)
+    })
+    console.log({
+      ...seoFormik.values,
+      metaKeywords:multipleTags,
+      slug: value?.slug ? value.slug : generateUniqueId(seoFormik.values.title)
+    })
+  },[seoFormik.values])
 
   // ? SWITCH STARTS HERE
   const [checkedSwitch, setCheckedSwitch] = React.useState(true);
@@ -55,7 +80,7 @@ const SEO = ({ handleSeoChange }) => {
             ...prevValues,
             seoFormik.values.metaKeywords,
           ]);
-          seoFormik.resetForm();
+          seoFormik.setFieldValue('metaKeywords',"")
         }
       });
     }
@@ -64,6 +89,15 @@ const SEO = ({ handleSeoChange }) => {
   const handleDelete = (value) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
+
+  function generateUniqueId(name="") {
+    
+  
+    const formattedName = name?.toLowerCase()?.replace(/\s+/g, '-');
+    const finalId = `${formattedName}${id}`;
+  
+    return finalId;
+  }
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">

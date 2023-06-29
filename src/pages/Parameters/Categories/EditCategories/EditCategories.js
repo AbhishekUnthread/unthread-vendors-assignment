@@ -50,6 +50,7 @@ const EditCategories = () => {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [categoryVisibility, setCategoryVisibility] = useState(false);
+  const [categorySeo,setCategorySeo] = useState({})
   const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
   const [checked, setChecked] = useState(false);
   const categoryId = useSelector((state) => state.category.categoryId);
@@ -93,6 +94,7 @@ const EditCategories = () => {
       setStartDate(categoriesData.data.data[0].startDate)
       setEndDate(categoriesData.data.data[0].endDate)
       setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl)
+      setCategorySeo(categoriesData.data.data[0].seo)
     }
   }, [categoriesIsSuccess]);
 
@@ -117,6 +119,7 @@ const EditCategories = () => {
           startDate: startDate,
           endDate: endDate,
           mediaUrl: categoryMediaUrl,
+          seo: categorySeo,
         },
       })
         .unwrap()
@@ -134,6 +137,7 @@ const EditCategories = () => {
         startDate: startDate,
         endDate: endDate,
         mediaUrl: categoryMediaUrl,
+        seo: categorySeo,
       })
         .unwrap()
         .then(() => {
@@ -157,6 +161,7 @@ const EditCategories = () => {
           startDate: startDate,
           endDate: endDate,
           mediaUrl: categoryMediaUrl,
+          seo: categorySeo,
         },
       })
         .unwrap()
@@ -174,6 +179,7 @@ const EditCategories = () => {
         startDate: startDate,
         endDate: endDate,
         mediaUrl: categoryMediaUrl,
+        seo: categorySeo,
       })
         .unwrap()
         .then(() => {
@@ -296,7 +302,7 @@ const EditCategories = () => {
             }
           </div>
           <div className="mt-4">
-            <SEO />
+            <SEO name={categoryName} value={categorySeo} handleSeoChange={setCategorySeo} />
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">

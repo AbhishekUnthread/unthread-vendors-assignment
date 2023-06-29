@@ -98,7 +98,7 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
+const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoading }) => {
   const dispatch = useDispatch()
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
@@ -119,7 +119,10 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
   });
 
   useEffect(()=>{
-    setSubCategoryList(subCategoriesData?.data?.data);
+    if(subCategoriesData?.data?.data){
+
+      setSubCategoryList(subCategoriesData?.data?.data);
+    }
   },[subCategoriesIsSuccess,subCategoriesData])
 
   const emptyRows =
@@ -386,7 +389,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                         orderBy={orderBy}
                                         onSelectAllClick={handleSelectAllClick}
                                         onRequestSort={handleRequestSort}
-                                        rowCount={subCategoryList.length}
+                                        rowCount={subCategoryList?.length}
                                         headCells={headCells}
                                       />
                                       <TableBody>
@@ -430,10 +433,10 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                                   >
                                                     <Link
                                                       className="text-decoration-none"
-                                                      to="/parameters/categories/edit"
-                                                      onClick={()=>{
-                                                        dispatch(updateCategoryId(row._id))
-                                                      }}
+                                                      // to="/parameters/categories/edit"
+                                                      // onClick={()=>{
+                                                      //   dispatch(updateCategoryId(row._id))
+                                                      // }}
                                                     >
                                                       <p className="text-lightBlue rounded-circle fw-600">
                                                         {row.name}
@@ -442,7 +445,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                                   </TableCell>
 
                                                   <TableCell style={{ width: 180 }}>
-                                                    <p className="text-lightBlue">{index}</p>
+                                                    <p className="text-lightBlue">{row.totalProduct}</p>
                                                   </TableCell>
 
                                                   <TableCell style={{ width: 120, padding: 0 }}>
@@ -481,11 +484,11 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                                           </div>
                                                         </Tooltip>
                                                       )}
-                                                      {deleteData && (
+                                                      {deleteSubData && (
                                                         <Tooltip title={"Delete"} placement="top">
                                                           <div
                                                             onClick={(e) => {
-                                                              deleteData(row);
+                                                              deleteSubData(row);
                                                             }}
                                                             className="table-edit-icon rounded-4 p-2"
                                                           >
