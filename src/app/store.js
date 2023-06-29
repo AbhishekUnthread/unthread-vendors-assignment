@@ -9,6 +9,7 @@ import tagsReducer from "../features/parameters/tagsManager/tagsManagerSlice"
 import categoryReducer from "../features/parameters/categories/categorySlice";
 import collectionReducer from "../features/parameters/collections/collectionSlice"
 
+
 const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
