@@ -244,6 +244,9 @@ const EditCollection = () => {
   const [startDate1, setStartDate1] = useState(null)
   const [endDate1, setEndDate1] = useState(null)
   const collectionId = useSelector((state)=>state.collection.collectionId)
+  const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
+
+  console.log(collectionVisibility, 'collectionVisibility')
 
   const {
     data: collectionData,
@@ -253,8 +256,6 @@ const EditCollection = () => {
   } = useGetAllCollectionsQuery({ createdAt:"-1", id: collectionId });
 
   const newCollectionData = collectionData?.data?.data[0];
-
-  console.log(newCollectionData, 'newCollectionData');
 
   const [
     createCollection,
@@ -285,6 +286,7 @@ const EditCollection = () => {
       setCollectionFilter(newCollectionData?.filter)
       setStartDate1(newCollectionData.startDate);
       setEndDate1(newCollectionData?.endDate)
+      setCategoryMediaUrl(newCollectionData?.mediaUrl)
     }
   }, [collectionIsSuccess]);
 
@@ -299,6 +301,7 @@ const EditCollection = () => {
           status: collectionStatus ? collectionStatus : "active", 
           isVisibleFrontend: collectionVisibility,
           notes: collectionNote,
+          mediaUrl: categoryMediaUrl,
         }
       })
         .unwrap()
@@ -311,6 +314,7 @@ const EditCollection = () => {
         status: collectionStatus ? collectionStatus : "active", 
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
+        mediaUrl: categoryMediaUrl,
       })
         .unwrap()
         navigate("/parameters/collection");
@@ -1273,7 +1277,7 @@ const EditCollection = () => {
             />
             <VisibilityBox value={collectionVisibility} onChange={(_,val)=>setCollectionVisibility(val)}/>
             <div className="mt-4">
-              <UploadMediaBox imageName={addMedia} headingName={"Media"} />
+              <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} />
             </div>
             <div className="mt-4">
               <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />

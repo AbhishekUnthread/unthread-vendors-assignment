@@ -1,7 +1,8 @@
 import { FormControl, OutlinedInput, Popover, Tooltip } from "@mui/material";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import info from "../../assets/icons/info.svg";
+import UseFileUpload from "../../features/fileUpload/fileUploadHook";
 
 // ? FILE UPLOAD STARTS HERE
 const baseStyle = {
@@ -35,14 +36,31 @@ const rejectStyle = {
 };
 // ? FILE UPLOAD ENDS HERE
 
-const UploadMediaBox = ({ imageName, headingName }) => {
+const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
+
+  const [inputUrl,setInputUrl] =useState('')
+ const  [uploadFile, uploadState] = UseFileUpload()
   // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
       accept: {
         "image/*": [".jpeg", ".jpg", ".png"],
       },
+    onDrop: acceptedFiles => {
+      uploadFile({file:acceptedFiles[0]})
+    }
     });
+
+    useEffect(()=>{
+      if(uploadState.data?.url){
+        UploadChange(uploadState.data?.url)
+      }else{
+        UploadChange(inputUrl)
+      }
+    },[uploadState,inputUrl])
+
+    console.log(inputUrl,'inputUrl');
+    console.log(uploadState,'uploadState');
 
   const style = useMemo(
     () => ({
@@ -107,10 +125,10 @@ const UploadMediaBox = ({ imageName, headingName }) => {
               </Tooltip>
             </div>
             <FormControl className="px-0">
-              <OutlinedInput placeholder="Enter URL Link" size="small" />
+              <OutlinedInput value={inputUrl} onChange={e=> setInputUrl(e.target.value)} placeholder="Enter URL Link" size="small" />
             </FormControl>
             {/* <div className="d-flex"> */}
-            <button className="ms-auto button-gradient py-1 px-4 mt-3">
+            <button onClick={handleSaveFilterClose} className="ms-auto button-gradient py-1 px-4 mt-3">
               <p>Add Media</p>
             </button>
             {/* </div> */}
@@ -126,7 +144,7 @@ const UploadMediaBox = ({ imageName, headingName }) => {
           //   event.target.value = null;
           // }}
         />
-        <img src={imageName} className="w-100" alt="" />
+        <img src={uploadState?.data ? uploadState?.data?.url : imageName} className="w-100" style={{height: "150px"}} alt="" />
       </div>
     </div>
   );

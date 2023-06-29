@@ -236,6 +236,7 @@ const CreateCollection = () => {
   const [visibleFrontend, setVisibleFrontend] = useState("visible")
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
+  const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
 
   const handleSchedule = (start, end) => {
     setStartDate(start);
@@ -278,10 +279,11 @@ const CreateCollection = () => {
       description: "",
       status: startDate1 === null ? collectionStatus : "scheduled",
       ...(startDate1 !== null && endDate1 !== null &&
-      { startDate1: new Date(startDate1), endDate1: new Date(endDate1) }),
+      { startDate: new Date(startDate1), endDate: new Date(endDate1) }),
       isVisibleFrontend: true,
       filter: true,
       notes: "",
+      mediaUrl: categoryMediaUrl,
     },
     enableReinitialize: true,
     validationSchema: collectionValidationSchema,
@@ -1239,7 +1241,7 @@ const CreateCollection = () => {
             />
             <VisibilityBox name={"isVisibleFrontend"} visibleFrontend={visibleFrontend} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
             <div className="mt-4">
-              <UploadMediaBox imageName={addMedia} headingName={"Media"} />
+              <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} />
             </div>
             <div className="mt-4">
               <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />

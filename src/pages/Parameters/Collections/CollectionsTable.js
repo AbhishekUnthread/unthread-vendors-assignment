@@ -67,6 +67,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [state, setState] = React.useState([]);
 
+  console.log(list, 'kdfldskl;')
+
   const [
     editCollection,
     {

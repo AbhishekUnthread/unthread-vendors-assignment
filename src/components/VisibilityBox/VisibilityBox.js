@@ -10,15 +10,13 @@ import {
 } from "@mui/material";
 import clock from "../../assets/icons/clock.svg";
 
-const VisibilityBox = ({ visibleFrontend, onChange }) => {
-  const [selectedValue, setSelectedValue] = React.useState(visibleFrontend);
+const VisibilityBox = ({ value, onChange }) => {
+  const [selectedValue, setSelectedValue] = React.useState(value);
 
   const handleRadioChange = (event) => {
-    console.log(event.target.value, 'event.target.value');
     setSelectedValue(event.target.value);
     onChange(event.target.value);
   };
-  console.log(visibleFrontend, 'visibleFrontend')
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4">
@@ -29,9 +27,8 @@ const VisibilityBox = ({ visibleFrontend, onChange }) => {
             <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
                 name="radio-buttons-group"
-                          value={selectedValue}
-
-                          onChange={handleRadioChange}
+                value={selectedValue}
+                onChange={handleRadioChange}
             >
                 <FormControlLabel value={true} control={<Radio />} 
                   label="Visible in frontend" 
