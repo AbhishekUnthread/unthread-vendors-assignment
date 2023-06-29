@@ -296,7 +296,7 @@ const EditCategories = () => {
                   <AddCategoriesProducts />
                 </TabPanel>
                 <TabPanel value={categoryType} index={1}>
-                  <AddSubCategoriesProducts />
+                  <AddSubCategoriesProducts id={categoryId} />
                 </TabPanel>
               </>
             }
