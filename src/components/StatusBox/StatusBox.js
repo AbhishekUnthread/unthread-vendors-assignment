@@ -26,9 +26,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
+
 const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, handleSchedule, toggleData=['active','in-active'], startDate1, endDate1}) => {
 
-  const showScheduleData = showSchedule ? false : true;
+
+  const showScheduleData = showSchedule === undefined ? false : true;
   // ? TOGGLE BUTTONS STARTS HERE
   // const [productStatus, setPoductStatus] = React.useState("active");
 
@@ -89,7 +91,8 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         </ToggleButton>
         <ToggleButton
           value={toggleData[1]}
-          aria-label="in-active"
+          aria-label="inactive"
+
           style={{ width: "50%" }}
           className="productInfo-toggle__draft"
         >

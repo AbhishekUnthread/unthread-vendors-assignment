@@ -10,7 +10,7 @@ const AppTextEditor = ({ value, setFieldValue }) => {
 
   const prepareDraft = (value) => {
     const draft = htmlToDraft(value);
-    const contentState = ContentState.createFromBlockArray(draft.contentBlocks);
+    const contentState = ContentState.createFromBlockArray(draft.contentBlocks,draft.entityMap);
     const editorState = EditorState.createWithContent(contentState);
     return editorState;
   };
@@ -30,6 +30,7 @@ const AppTextEditor = ({ value, setFieldValue }) => {
     setFieldValue(plainText);
     setEditorState(editorState);
   };
+
 
     return(
       <Editor
