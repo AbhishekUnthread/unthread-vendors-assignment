@@ -76,7 +76,6 @@ const Vendors = () => {
   const [selectedStatusOption, setSelectedStatusOption] = React.useState(null);
   const [searchValue, setSearchValue] = React.useState("");
   const [multipleVendors,setMultipleVendors] = React.useState([]);
-  const [anchorColumnsEl, setAnchorColumnsEl] = React.useState(null);
 
     const vendorValidationSchema = Yup.object({
     name: Yup.string().trim().min(3).required("Required"),
@@ -122,8 +121,23 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
   queryParameters.createdAt = "-1"; // Set default createdAt value
 }
 
-const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
-  : vendorType === 1 ? { status: "draft" }
+// if(vendorType === 0)
+// {
+//   queryParameters.createdAt = "-1"
+// }
+// else if(vendorType === 1)
+// {
+//   queryParameters.status = "draft"
+// }
+// else if(vendorType === 2)
+// {
+//   queryParameters.status = "draft"
+// }
+// else{
+//   queryParameters ={};
+// }
+
+const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
   : vendorType === 2 ? { status: "active" }
   : {};
 
@@ -288,47 +302,46 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
     dispatch,
   ]);
  // * SORT POPOVERS STARTS HERE
-  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+  // const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
-  const handleSortClick = (event) => {
-    setAnchorSortEl(event.currentTarget);
-  };
+  // const handleSortClick = (event) => {
+  //   setAnchorSortEl(event.currentTarget);
+  // };
 
-  const handleSortClose = () => {
-    setAnchorSortEl(null);
-  };
+  // const handleSortClose = () => {
+  //   setAnchorSortEl(null);
+  // };
 
-  const handleSortRadioChange = (event) => {
-    setSelectedSortOption(event.target.value);
-    setAnchorSortEl(null); // Close the popover after selecting a value
-  };
-    console.log({url:selectedSortOption})
+  // const handleSortRadioChange = (event) => {
+  //   setSelectedSortOption(event.target.value);
+  //   setAnchorSortEl(null); // Close the popover after selecting a value
+  // };
+
   
-  const openSort = Boolean(anchorSortEl);
-  const idSort = openSort ? "simple-popover" : undefined;
+  // const openSort = Boolean(anchorSortEl);
+  // const idSort = openSort ? "simple-popover" : undefined;
 
  // * SORT POPOVERS ENDS
 
   // * STATUS POPOVERS STARTS HERE
-  const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
+  // const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
 
-  const handleStatusClick = (event) => {
-    setAnchorStatusEl(event.currentTarget);
-  };
+  // const handleStatusClick = (event) => {
+  //   setAnchorStatusEl(event.currentTarget);
+  // };
 
-  const handleStatusClose = () => {
-    setAnchorStatusEl(null);
-  };
+  // const handleStatusClose = () => {
+  //   setAnchorStatusEl(null);
+  // };
 
-  const handleStatusRadioChange = (event) => {
-    setSelectedStatusOption(event.target.value);
-    setAnchorStatusEl(null); // Close the popover after selecting a value
-  };
+  // const handleStatusRadioChange = (event) => {
+  //   setSelectedStatusOption(event.target.value);
+  //   setAnchorStatusEl(null); // Close the popover after selecting a value
+  // };
 
-  const openStatus = Boolean(anchorStatusEl);
-  const idStatus = openSort ? "simple-popover" : undefined;
+  // const openStatus = Boolean(anchorStatusEl);
+  // const idStatus = openStatus ? "simple-popover" : undefined;
  // * STATUS POPOVERS ENDS
-
 
 
   const handleSearchChange = (event) => {
@@ -351,21 +364,46 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
       });
     }
   };
-  const openColumns = Boolean(anchorColumnsEl);
-  const idColumns = openColumns ? "simple-popover" : undefined;
 
-  const handleColumnsClose = () => {
-    setAnchorColumnsEl(null);
+   // * SORT POPOVERS STARTS HERE
+  const [anchorSortE1, setAnchorSortE1] = React.useState(null);
+  const openSort = Boolean(anchorSortE1);
+  const idSort = openSort ? "simple-popover" : undefined;
+
+  const handleSortClose = () => {
+    setAnchorSortE1(null);
   };
   
-  const handleColumnsClick = (event) => {
-    setAnchorColumnsEl(event.currentTarget);
+  const handleSortClick = (event) => {
+    setAnchorSortE1(event.currentTarget);
   };
   const handleSortCheckboxChange = (event) => {
     const { value, checked } = event.target;
     setSelectedSortOption(checked ? value : null);
-    setAnchorSortEl(null);
+    setAnchorSortE1(null);
   };
+   // * SORT POPOVERS ENDS
+
+  // * STATUS POPOVERS STARTS HERE
+  const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
+  const handleStatusClick = (event) => {
+    setAnchorStatusEl(event.currentTarget);
+  };
+
+  const handleStatusClose = () => {
+    setAnchorStatusEl(null);
+  };
+
+  const handleStatusCheckboxChange = (event) => {
+    const { value, checked } = event.target;
+    setSelectedStatusOption(checked ? value : null);
+    setAnchorStatusEl(null); // Close the popover after selecting a value
+  };
+
+  const openStatus = Boolean(anchorStatusEl);
+  const idStatus = openStatus ? "simple-popover" : undefined;
+ // * STATUS POPOVERS ENDS
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -497,7 +535,7 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
                     ></Chip>
               </div> */}
 
-                {/* <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
+                 {/* <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
               <FormControl
                 //   sx={{ m: 0, minWidth: 120, width: "100%" }}
                 size="small"
@@ -526,7 +564,7 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
                     JWL 3
                   </MenuItem>
                 </Select>
-              </FormControl> */}
+              </FormControl>  */}
               </DialogContent>
 
               <hr className="hr-grey-6 my-0" />
@@ -587,7 +625,6 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
                 <small className="text-lightBlue me-2">Sort</small>
                 <img src={sort} alt="sort" className="" />
               </button>
-
               <Popover
                 anchorOrigin={{
                   vertical: "bottom",
@@ -633,19 +670,14 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
                 </RadioGroup>
               </FormControl>
               </Popover> */}
-
-
-              <button
+              {/* <button
                 className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idColumns}
+                aria-describedby={idStatus}
                 variant="contained"
-                onClick={handleColumnsClick}
+                onClick={handleStatusClick}
               >
-                <small className="text-lightBlue me-2">Sort</small>
-                <img src={sort} alt="sort" className="" />
+                <small className="text-lightBlue me-2">Status</small>
               </button>
-              
-
               <Popover
                 anchorOrigin={{
                   vertical: "bottom",
@@ -655,10 +687,55 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
                   vertical: "top",
                   horizontal: "center",
                 }}
-                id={idColumns}
-                open={openColumns}
-                anchorEl={anchorColumnsEl}
-                onClose={handleColumnsClose}
+                id={idStatus}
+                open={openStatus}
+                anchorEl={anchorStatusEl}
+                onClose={handleStatusClose}
+                className="columns"
+              >
+                <FormControl className="px-2 py-1">
+                  <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    value={selectedStatusOption}
+                    onChange={handleStatusRadioChange}
+                  >
+                    <FormControlLabel
+                      value="active"
+                      control={<Radio size="small" />}
+                      label="Active"
+                    />
+                    <FormControlLabel
+                      value="archived"
+                      control={<Radio size="small" />}
+                      label="Archive"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Popover> */}
+
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortE1}
+                onClose={handleSortClose}
                 className="columns"
               >
                 <FormGroup className="px-2 py-1"                   
@@ -722,7 +799,6 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
                   />
                 </FormGroup>
               </Popover>
-
               <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idStatus}
@@ -730,7 +806,6 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
                 onClick={handleStatusClick}
               >
                 <small className="text-lightBlue me-2">Status</small>
-                {/* <img src={sort} alt="sort" className="" /> */}
               </button>
               <Popover
                 anchorOrigin={{
@@ -747,26 +822,40 @@ const vendorTypeQuery = vendorType === 0 ? { createdAt: -1 }
                 onClose={handleStatusClose}
                 className="columns"
               >
-                <FormControl className="px-2 py-1">
-                  <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    value={selectedStatusOption}
-                    onChange={handleStatusRadioChange}
-                  >
-                    <FormControlLabel
-                      value="active"
-                      control={<Radio size="small" />}
-                      label="Active"
-                    />
-                    <FormControlLabel
-                      value="archived"
-                      control={<Radio size="small" />}
-                      label="Archive"
-                    />
-                  </RadioGroup>
-                </FormControl>
+                <FormGroup className="px-2 py-1"                   
+                  onChange={handleStatusCheckboxChange}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Active"
+                    value="active"
+                    className="me-0"
+                    checked={selectedStatusOption === "active"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Archived"
+                    className="me-0"
+                    value="archived"
+                    checked={selectedStatusOption === "archived"}
+                  />
+                </FormGroup>
               </Popover>
+
           </div>
           <TabPanel value={vendorType} index={0}>
             <VendorsTable

@@ -224,7 +224,7 @@ const EditTags = () => {
           <StatusBox  value={tagStatus} 
            headingName={"Tag Status"}
            handleProductStatus={tagStatusChange}
-           defaultValue={['active','archived']}
+           toggleData={['active','archived']}
             />
           <NotesBox name="note" value={tagNotes} onChange={tagNotesChange} />
 

@@ -258,7 +258,7 @@ const EditVendor = () => {
           <StatusBox  value={vendorStatus} 
            headingName={"Status"}
            handleProductStatus={vendorStatusChange}
-           defaultValue={['active','archived']}
+           toggleData={['active','archived']}
             />
           <NotesBox name="note" value={vendorNotes} onChange={vendorNotesChange} />
         </div>

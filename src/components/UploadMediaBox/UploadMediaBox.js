@@ -1,8 +1,7 @@
 import { FormControl, OutlinedInput, Popover, Tooltip } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 import info from "../../assets/icons/info.svg";
-import UseFileUpload from "../../features/fileUpload/fileUploadHook";
 
 // ? FILE UPLOAD STARTS HERE
 const baseStyle = {
@@ -36,28 +35,14 @@ const rejectStyle = {
 };
 // ? FILE UPLOAD ENDS HERE
 
-const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
-
-  const [inputUrl,setInputUrl] =useState('')
- const  [uploadFile, uploadState] = UseFileUpload()
+const UploadMediaBox = ({ imageName, headingName }) => {
   // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
       accept: {
         "image/*": [".jpeg", ".jpg", ".png"],
       },
-    onDrop: acceptedFiles => {
-      uploadFile({file:acceptedFiles[0]})
-    }
     });
-
-    useEffect(()=>{
-      if(uploadState.data?.url){
-        UploadChange(uploadState.data?.url)
-      }else{
-        UploadChange(inputUrl)
-      }
-    },[uploadState,inputUrl])
 
   const style = useMemo(
     () => ({
@@ -122,10 +107,10 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
               </Tooltip>
             </div>
             <FormControl className="px-0">
-              <OutlinedInput value={inputUrl} onChange={e=> setInputUrl(e.target.value)} placeholder="Enter URL Link" size="small" />
+              <OutlinedInput placeholder="Enter URL Link" size="small" />
             </FormControl>
             {/* <div className="d-flex"> */}
-            <button onClick={handleSaveFilterClose} className="ms-auto button-gradient py-1 px-4 mt-3">
+            <button className="ms-auto button-gradient py-1 px-4 mt-3">
               <p>Add Media</p>
             </button>
             {/* </div> */}
