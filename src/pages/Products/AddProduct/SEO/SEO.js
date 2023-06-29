@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./SEO.scss";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
@@ -7,14 +7,17 @@ import { AntSwitch } from "../../../../components/AntSwitch/AntSwitch";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
+  Chip,
   FormControl,
   FormControlLabel,
   OutlinedInput,
   TextareaAutosize,
   Tooltip,
 } from "@mui/material";
+import { useFormik } from "formik";
 
-const SEO = () => {
+const SEO = ({ handleSeoChange }) => {
+  const [multipleTags, setMultipleTags] = useState([]);
   // ? CHECKBOX STARTS HERE
   const [checked, setChecked] = React.useState(true);
 
@@ -23,12 +26,44 @@ const SEO = () => {
   };
   // ? CHECKBOX ENDS HERE
 
+  const seoFormik = useFormik({
+    initialValues: {
+      slug: "",
+      title: "",
+      urlHandle: "",
+      description: "",
+      metaKeywords: "",
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {},
+  });
+
   // ? SWITCH STARTS HERE
   const [checkedSwitch, setCheckedSwitch] = React.useState(true);
   const handleSwitchChange = (event) => {
     setCheckedSwitch(event.target.checked);
   };
   // ? SWITCH ENDS HERE
+
+  const handleAddMultiple = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      seoFormik.validateForm().then(() => {
+        if (seoFormik.values.metaKeywords !== "") {
+          seoFormik.setFieldTouched("metaKeywords", true);
+          setMultipleTags((prevValues) => [
+            ...prevValues,
+            seoFormik.values.metaKeywords,
+          ]);
+          seoFormik.resetForm();
+        }
+      });
+    }
+  };
+
+  const handleDelete = (value) => {
+    setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
+  };
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
@@ -87,9 +122,12 @@ const SEO = () => {
               </small>
               <FormControl className="col-12 px-0">
                 <OutlinedInput
+                  name="title"
                   placeholder="Please enter page title"
                   size="small"
-                  defaultValue="Rings by JWL"
+                  value={seoFormik.values.title}
+                  onChange={seoFormik.handleChange}
+                  onBlur={seoFormik.handleBlur}
                 />
               </FormControl>
               <small className="mt-1 text-grey-6 col-12 px-0">
@@ -99,6 +137,7 @@ const SEO = () => {
                 Meta Description
               </small>
               <TextareaAutosize
+                name="description"
                 aria-label="meta description"
                 placeholder="Please enter meta description"
                 style={{
@@ -107,8 +146,9 @@ const SEO = () => {
                   borderRadius: 5,
                 }}
                 minRows={5}
-                defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-        ut labore et dolore magna aliqua."
+                value={seoFormik.values.description}
+                onChange={seoFormik.handleChange}
+                onBlur={seoFormik.handleBlur}
                 className="col-12"
               />
               <small className="mt-1 text-grey-6 col-12 px-0">
@@ -119,9 +159,12 @@ const SEO = () => {
               </small>
               <FormControl className="col-12 px-0">
                 <OutlinedInput
-                  placeholder="Please enter page title"
+                  name="urlHandle"
+                  placeholder="Please enter Url"
                   size="small"
-                  defaultValue="http://JWLewellers.com/rings-by-JWLewellers"
+                  value={seoFormik.values.urlHandle}
+                  onChange={seoFormik.handleChange}
+                  onBlur={seoFormik.handleBlur}
                 />
               </FormControl>
 
@@ -129,7 +172,29 @@ const SEO = () => {
                 Meta Keywords
               </small>
               <FormControl className="col-12 px-0">
-                <OutlinedInput placeholder="Enter keywords" size="small" />
+                <OutlinedInput
+                  name="metaKeywords"
+                  value={seoFormik.values.metaKeywords}
+                  onChange={seoFormik.handleChange}
+                  onBlur={seoFormik.handleBlur}
+                  onKeyDown={handleAddMultiple}
+                  placeholder="Enter keywords"
+                  size="small"
+                />
+                <div className="d-flex">
+                  {multipleTags &&
+                    multipleTags.map((data) => {
+                      return (
+                        <Chip
+                          label={data}
+                          onDelete={() => handleDelete(data)}
+                          onClick={() => {}}
+                          size="small"
+                          className="mt-3 me-2"
+                        ></Chip>
+                      );
+                    })}
+                </div>
               </FormControl>
             </React.Fragment>
           )}
@@ -138,16 +203,13 @@ const SEO = () => {
             <div className="d-flex flex-column p-3">
               <p className="text-lightBlue">Metadata Preview</p>
               <small className="text-lightBlue mt-3 mb-2 fw-500">
-                Rings by JWL
+                {seoFormik.values.title}
               </small>
               <small className="text-blue-2">
-                http://JWLewellers.com/rings-by-JWLewellers
+                {seoFormik.values.urlHandle}
               </small>
               <small className="mt-2 text-grey-6">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque
-                sapiente officiis incidunt voluptas amet. Explicabo eaque ipsam
-                neque ut deserunt libero, culpa doloribus aut debitis obcaecati
-                cupiditate. Doloribus, odit facere.
+                {seoFormik.values.description}
               </small>
             </div>
           </div>

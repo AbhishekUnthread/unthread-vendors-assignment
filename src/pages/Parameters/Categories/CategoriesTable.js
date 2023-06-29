@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
@@ -34,6 +34,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useDispatch } from "react-redux";
 import { updateCategoryId } from "../../../features/parameters/categories/categorySlice";
+import { useGetAllSubCategoriesQuery } from "../../../features/parameters/categories/categoriesApiSlice";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -98,13 +99,28 @@ const headCells = [
 // ? TABLE ENDS HERE
 
 const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
+  const dispatch = useDispatch()
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [open, setOpen] = React.useState(false);
-  const dispatch = useDispatch()
+  const [open, setOpen] = useState([]);
+  const [subCategoryList,setSubCategoryList] = useState([])
+  const [filterParameter,setFilterParameter] = useState({})
+
+  const {
+    data: subCategoriesData,
+    isLoading: subCategoriesIsLoading,
+    isSuccess: subCategoriesIsSuccess,
+    error: subCategoriesError,
+  } = useGetAllSubCategoriesQuery({
+    ...filterParameter
+  });
+
+  useEffect(()=>{
+    setSubCategoryList(subCategoriesData?.data?.data);
+  },[subCategoriesIsSuccess,subCategoriesData])
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -118,7 +134,6 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelected = list.map((n) => n._id);
@@ -159,6 +174,25 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
     // setShowCreateSubModal((prevState) => !prevState);
     // setShowCreatePopover(null);
   };
+
+  function handleTableRowChange(row){
+    let categoryId= {}
+    categoryId.categoryId = row._id
+   setFilterParameter(categoryId)
+  if(open.length === 0){
+    let item = [...open]
+    item.push(row._id)
+    setOpen(item)
+  }
+  if(open.length > 0 && open.includes(row._id)){
+    setOpen(item=> item.filter(i=> i !== row._id))
+  }
+  if(open.length > 0 && !open.includes(row._id)){
+    let item = [...open]
+    item.push(row._id)
+    setOpen(item)
+  }
+ }
 
   return (
     <React.Fragment>
@@ -206,7 +240,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                       const labelId = `enhanced-table-checkbox-${index}`;
 
                       return (
-                        <React.Fragment>
+                        <React.Fragment key={row._id}>
                           <TableRow
                             hover
                             role="checkbox"
@@ -234,9 +268,9 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                               <IconButton
                                 aria-label="expand row"
                                 size="small"
-                                onClick={() => setOpen(!open)}
+                                onClick={() => handleTableRowChange(row)}
                               >
-                                {open ? (
+                                {(open.length >0 && open.includes(row._id)) ? (
                                   <PlayArrowIcon style={{ transform: 'rotate(90deg)', fontSize: '15px' }} />
                                 ) : (
                                   <PlayArrowIcon style={{ fontSize: '15px' }} />
@@ -259,11 +293,12 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                               </Link>
                             </TableCell>
                             <TableCell style={{ width: 180 }}>
-                              <p className="text-lightBlue">{row.type}</p>
+                            <p className="text-lightBlue">{row.totalProduct}</p>
                             </TableCell>
 
                             <TableCell style={{ width: 180 }}>
-                              <p className="text-lightBlue">{row.totalProduct}</p>
+                            <p className="text-lightBlue">{row.totalSubCategory}</p>
+                              
                             </TableCell>
 
                             <TableCell style={{ width: 120, padding: 0 }}>
@@ -337,7 +372,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                           </TableRow>
                           <TableRow>
                             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
-                              <Collapse in={open} timeout="auto" unmountOnExit>
+                              <Collapse in={open.includes(row._id)} timeout="auto" unmountOnExit>
                                 <React.Fragment>
                                   <TableContainer>
                                     <Table
@@ -351,18 +386,19 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                         orderBy={orderBy}
                                         onSelectAllClick={handleSelectAllClick}
                                         onRequestSort={handleRequestSort}
-                                        rowCount={list.length}
+                                        rowCount={subCategoryList.length}
                                         headCells={headCells}
                                       />
                                       <TableBody>
-                                        {stableSort(list, getComparator(order, orderBy))
+                                        {stableSort(subCategoryList, getComparator(order, orderBy))
                                           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                           .map((row, index) => {
                                             const isItemSelected = isSelected(row._id);
                                             const labelId = `enhanced-table-checkbox-${index}`;
 
                                             return (
-                                                <TableRow
+                                               <React.Fragment key={row._id}>
+                                                 <TableRow
                                                   hover
                                                   role="checkbox"
                                                   aria-checked={isItemSelected}
@@ -466,6 +502,7 @@ const CategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                                     </div>
                                                   </TableCell>
                                                 </TableRow>
+                                               </React.Fragment>
                                             );
                                           })}
                                         {emptyRows > 0 && (

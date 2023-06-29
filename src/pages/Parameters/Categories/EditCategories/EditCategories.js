@@ -266,7 +266,7 @@ const EditCategories = () => {
               <AppTextEditor value={categoryDescription} setFieldValue={(val) => setCategoryDescription(val)} />
             </div>
           </div>
-
+          
           <div className="border-grey-5 rounded-8 p-3 row features mt-4">
             <Box
               sx={{ width: "100%" }}
@@ -314,7 +314,7 @@ const EditCategories = () => {
             EndDateChange={setEndDate}
           />
           <div className="mt-4">
-            <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} />
+            <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} imageValue={categoryMediaUrl} />
           </div>
           <NotesBox name={'notes'} value={categoryNotes} onChange={(e) => setCategoryNotes(e.target.value)} />
         </div>

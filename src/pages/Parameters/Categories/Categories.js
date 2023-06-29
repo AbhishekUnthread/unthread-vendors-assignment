@@ -113,7 +113,6 @@ const Categories = () => {
     }
   }
 
-  console.log(filterParameter, "filterParameter");
 
   const {
     data: categoriesData,
@@ -241,20 +240,13 @@ const Categories = () => {
   const changeCategoryTypeHandler = (event, tabIndex) => {
     console.log(tabIndex)
     setCategoryType(tabIndex);
-    if (tabIndex === 2) {
-      setCategoryList(
-        [...categoriesData.data.data, ...subCategoriesData.data.data].sort(
-          (a, b) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-        )
-      );
+    if (tabIndex === 2 ||tabIndex === 3) {
+      setStatusFilter('draft')
     }
-    if (tabIndex === 0) {
-      setCategoryList(categoriesData.data.data);
+    if (tabIndex === 0 || tabIndex === 1)  {
+      setStatusFilter("")
     }
-    if (tabIndex === 1) {
-      setSubCategoryList(subCategoriesData.data.data)
-    }
+    
   };
 
   const toggleCreateModalHandler = () => {
@@ -406,10 +398,13 @@ const Categories = () => {
         setCategoryList(categoriesData.data.data);
       }
       if (categoryType === 1) {
-        setCategoryList(categoriesData.data.data);
+        setSubCategoryList(subCategoriesData.data.data);
       }
       if (categoryType === 2) {
-        setCategoryList(subCategoriesData.data.data);
+        setCategoryList(categoriesData.data.data);
+      }
+      if (categoryType === 3) {
+        setSubCategoryList(subCategoriesData.data.data);
       }
     }
     if (createCategoryIsSuccess || editCategoryIsSuccess) {
@@ -747,7 +742,8 @@ const Categories = () => {
             >
               <Tab label="Categories" className="tabs-head" />
               <Tab label="Sub Categories" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab label="Archived Categories" className="tabs-head" />
+              <Tab label="Archived Sub Categories" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -790,7 +786,7 @@ const Categories = () => {
                       label="Active"
                     />
                     <FormControlLabel
-                      value="inActive"
+                      value="in-active"
                       control={<Radio size="small" />}
                       label="In-Active"
                     />
@@ -800,7 +796,7 @@ const Categories = () => {
                       label="Scheduled"
                     />
                     <FormControlLabel
-                      value="archived"
+                      value="draft"
                       control={<Radio size="small" />}
                       label="Archived"
                     />
@@ -876,7 +872,7 @@ const Categories = () => {
               </TabPanel>
               <TabPanel value={categoryType} index={1}>
                 <SubCategoriesTable
-                  isLoading={categoriesIsLoading}
+                  isLoading={subCategoriesIsLoading}
                   deleteData={deleteCategoryHandler}
                   error={error}
                   list={subCategoryList}
@@ -884,7 +880,16 @@ const Categories = () => {
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={2}>
-                <SubCategoriesTable
+              <CategoriesTable
+                  isLoading={categoriesIsLoading}
+                  deleteData={deleteCategoryHandler}
+                  error={error}
+                  list={categoryList}
+                  edit={editCategoryHandler}
+                />
+              </TabPanel>
+              <TabPanel value={categoryType} index={3}>
+              <SubCategoriesTable
                   isLoading={subCategoriesIsLoading}
                   deleteData={deleteCategoryHandler}
                   error={error}
