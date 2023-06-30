@@ -252,6 +252,10 @@ const CreateCollection = () => {
     collectionFormik?.setFieldValue("mediaUrl", value);
   }
 
+  const handleProductStatus = (value, status) => {
+    collectionFormik?.setFieldValue("status", status);
+  }
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
@@ -281,7 +285,7 @@ const CreateCollection = () => {
   const collectionFormik = useFormik({
     initialValues: {
       title: "",
-      description: "",
+      // description: "",
       status: startDate1 === null ? collectionStatus : "scheduled",
       ...(startDate1 !== null && endDate1 !== null &&
       { startDate: new Date(startDate1), endDate: new Date(endDate1) }),
@@ -1235,11 +1239,10 @@ const CreateCollection = () => {
             </SwipeableDrawer>
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
-            <StatusBox value={collectionStatus} headingName={"Collection Status"} 
+            <StatusBox name={"status"}
+              value={collectionFormik?.values?.status} headingName={"Collection Status"} 
               titleName={"Collection"}
-              handleProductStatus={(event, newStatus) => {
-                setCollectionStatus(newStatus)
-              }}
+              handleProductStatus={handleProductStatus}
               handleSchedule={handleSchedule}
               startDate1={startDate1}
               endDate1={endDate1}
@@ -1266,25 +1269,8 @@ const CreateCollection = () => {
             >
               <p>Discard</p>
             </Link>
-
-            <Link
-              to="/parameters/collections"
-              className="button-lightBlue-outline py-2 px-4 ms-3"
-            >
-              <p>Save as Draft</p>
-            </Link>
           </div>
           <div className="d-flex w-auto px-0">
-            <Link
-              to="/parameters/collections"
-              className="button-lightBlue-outline py-2 px-4"
-            >
-              <p>Save & Add Another</p>
-            </Link>
-            {/* <Link
-              to="/parameters/collections"
-              className="button-gradient ms-3 py-2 px-4 w-auto"
-            > */}
               <LoadingButton
                 loading={createCollectionIsLoading}
                 disabled={createCollectionIsLoading}
@@ -1293,7 +1279,6 @@ const CreateCollection = () => {
               >
                 <p>Save</p>
               </LoadingButton>
-            {/* </Link> */}
           </div>
         </div>
       </div>

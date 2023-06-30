@@ -1272,7 +1272,9 @@ const EditCollection = () => {
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
             <StatusBox headingName={"Collection Status"} 
               value={collectionStatus} 
-              handleProductStatus={(val)=>setCollectionStatus(val)}
+               handleProductStatus={(event, newStatus) => {
+                setCollectionStatus(newStatus)
+              }}
               handleSchedule={handleSchedule}
               startDate1={startDate1}
               endDate1={endDate1}
