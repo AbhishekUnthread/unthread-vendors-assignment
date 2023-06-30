@@ -63,7 +63,15 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading,bulkEdit }) => {
+const SubCategoriesTable = ({
+  list,
+  edit,
+  deleteData,
+  error,
+  isLoading,
+  bulkEdit,
+  archived,
+}) => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
@@ -149,7 +157,11 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading,bulkEdit 
           };
         }
       });
-      bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      bulkEdit({ updates: newState })
+        .unwrap()
+        .then(() =>
+          dispatch(showSuccess({ message: " Status updated successfully" }))
+        );
       setSelectedStatus(null);
     }
   }, [selected, selectedStatus]);
@@ -284,7 +296,7 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading,bulkEdit 
                           </TableCell>
                           <TableCell style={{ width: 120, padding: 0 }}>
                             <div className="d-flex align-items-center">
-                              {edit && (
+                              {edit && archived && (
                                 <Tooltip title="Edit" placement="top">
                                   <Link
                                     className="text-decoration-none"

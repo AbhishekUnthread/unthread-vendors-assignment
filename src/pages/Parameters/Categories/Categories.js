@@ -965,6 +965,7 @@ const Categories = () => {
                   list={categoryList}
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditCategory}
+                  archived={true}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={1}>
@@ -975,6 +976,7 @@ const Categories = () => {
                   list={subCategoryList}
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditSubCategory}
+                  archived={true}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={2}>
@@ -985,6 +987,7 @@ const Categories = () => {
                   list={categoryList}
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditCategory}
+                  archived={false}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={3}>
@@ -995,6 +998,7 @@ const Categories = () => {
                   list={subCategoryList}
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditSubCategory}
+                  archived={false}
                 />
               </TabPanel>
             </>

@@ -36,6 +36,7 @@ import { useGetAllSubCategoriesQuery } from "../../../features/parameters/catego
 import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import DeleteIcon from '@mui/icons-material/Delete';
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -107,7 +108,8 @@ const CategoriesTable = ({
   error,
   isLoading,
   subModalOpenHandler,
-  bulkEdit
+  bulkEdit,
+  archived,
 }) => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
@@ -395,7 +397,7 @@ const CategoriesTable = ({
                             </TableCell>
                             <TableCell style={{ width: 120, padding: 0 }}>
                               <div className="d-flex align-items-center">
-                                {edit && (
+                                {edit && archived && (
                                   <Tooltip
                                     title="Add Sub Category"
                                     placement="top"
@@ -412,7 +414,7 @@ const CategoriesTable = ({
                                     </div>
                                   </Tooltip>
                                 )}
-                                {edit && (
+                                {edit && archived && (
                                   <Tooltip title="Edit" placement="top">
                                     <Link
                                       className="text-decoration-none"
