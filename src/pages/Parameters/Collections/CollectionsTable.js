@@ -38,7 +38,7 @@ import { updateCollectionId } from "../../../features/parameters/collections/col
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
+import { useBulkEditCollectionMutation, useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 // ? TABLE STARTS HERE
 function createData(cId, collectionsName, noOfProducts, status, actions) {
@@ -77,6 +77,16 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
     }
   ] = useEditCollectionMutation();
 
+  const[
+    bulkEditCollection,
+    {
+      data: bulkEditCollections,
+      isLoading: bulkCollectionEditLoading,
+      isSuccess: bulkCollectionEditIsSuccess,
+      error: bulkCollectionEditError,
+    }
+  ] = useBulkEditCollectionMutation();
+
   const handleArchive = (collectionId) => {
     editCollection({
         id: collectionId,
@@ -85,6 +95,44 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
         }
       })
   }
+
+  useEffect(() => {
+    // Update the state only if the selectedStatus state has a value
+    if (selectedStatus !== null) {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as In-Active") {
+          return {
+            id,
+            status: "in-active",
+          };
+        } else if (selectedStatus === "Set as Draft") {
+          return {
+            id,
+            status: "draft",
+          };
+        } else {
+          return {
+            id,
+            status: "", 
+          };
+        }
+      });
+      setState(newState);
+                  console.log(newState, 'newState')
+
+      const requestData = {
+        updates: newState
+      };
+            console.log(requestData, 'requestData')
+      bulkEditCollection(requestData).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      setSelectedStatus(null);
+    }
+  }, [selected, selectedStatus]);
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -181,10 +229,12 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
-          <TableMassActionButton />
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as In-Active','Set as Draft']} headingName="Edit Status"/>
         </div>
       )}
+      {!error ? (
+        list.length ? (
+        <>
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}
@@ -204,7 +254,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
             {stableSort(list, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const isItemSelected = isSelected(row.cId);
+                const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -213,7 +263,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.cId}
+                    key={index}
                     selected={isItemSelected}
                     className="table-rows"
                   >
@@ -223,7 +273,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.cId)}
+                        onClick={(event) => handleClick(event, row._id)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -259,9 +309,9 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                     </TableCell>
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
+                        <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "draft" ? "#C8D8FF" : "#FEE1A3"}}>
                           <small className="text-black fw-400">
-                            {row.status == "active" ? "Acitve" : row.status == "in-active" ? "In-Active" : "Archived" }
+                            {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "draft" ? "Archived" : "Scheduled"}
                           </small>
                         </div>
                       </div>
@@ -339,6 +389,17 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
         onRowsPerPageChange={handleChangeRowsPerPage}
         className="table-pagination"
       />
+      </>
+      ) : isLoading ? (
+            <span className="d-flex justify-content-center m-3">Loading...</span>
+          ) : (
+            <span className="d-flex justify-content-center m-3">
+              No data found
+            </span>
+          )
+        ) : (
+          <></>
+        )}
     </React.Fragment>
   );
 };
