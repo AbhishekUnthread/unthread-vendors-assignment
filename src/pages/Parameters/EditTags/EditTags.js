@@ -17,6 +17,7 @@ import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormContro
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateTagMutation, useEditTagMutation, useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -59,14 +60,20 @@ const EditTags = () => {
       }]= useCreateTagMutation();
 
     useEffect(() => {
+
+      if(editTagIsSuccess)
+      {
+        dispatch(showSuccess({ message: "Tag updtaed successfully" }));
+      }
+
       if(tagsIsSuccess && tagId !== "")
       {
         setTagName(tagsData.data.data[0].name)
         setTagNotes(tagsData.data.data[0].notes)
-        setTagStatus(tagsData.data.data[0].status)
+        // setTagStatus(tagsData.data.data[0].status)
         setChecked(tagsData.data.data[0].showFilter)
       }
-    }, [tagsIsSuccess])
+    }, [tagsIsSuccess,editTagIsSuccess])
 
 
     const handleNameChange = (event) => {
@@ -91,7 +98,7 @@ const EditTags = () => {
            showFilter: checked, 
            name: tagName, 
            notes: tagNotes, 
-           status: tagStatus?tagStatus:"active" 
+          //  status: tagStatus?tagStatus:"active" 
          }
        }).unwrap().then(() => {
          navigate("/parameters/tagsManager"); 
@@ -103,7 +110,7 @@ const EditTags = () => {
           showFilter: checked, 
           name: tagName, 
           notes: tagNotes, 
-          status: tagStatus?tagStatus:"active" 
+          // status: tagStatus?tagStatus:"active" 
        }).unwrap().then(() => {
          navigate("/parameters/tagsManager"); 
        });
@@ -130,7 +137,7 @@ const EditTags = () => {
           showFilter: checked, 
           name: tagName, 
           notes: tagNotes, 
-          status: tagStatus?tagStatus:"active" 
+          // status: tagStatus?tagStatus:"active" 
         }).unwrap().then(() => {
           navigate("/parameters/tagsManager/edit"); 
         });
@@ -160,7 +167,7 @@ const EditTags = () => {
          const TagData = {
            name: tagDuplicateName,
            showFilter:checked ? checked : true ,
-           status: tagStatus ? tagStatus : "active",
+          //  status: tagStatus ? tagStatus : "active",
          };
      
          if (duplicateDescription === true) {
@@ -171,6 +178,7 @@ const EditTags = () => {
            .unwrap()
            .then(() => {
              setOpenDuplicateTag(false);
+             navigate("/parameters/tagsManager")
            });
        };
        // ? DUPLICATE VENDOR DIALOG ENDS HERE
@@ -194,9 +202,9 @@ const EditTags = () => {
           <button className="button-transparent me-1 py-2 px-3" onClick={handleDuplicate}>
             <p className="text-lightBlue">Duplicate</p>
           </button>
-          <button className="button-transparent me-1 py-2 px-3">
-            <p className="text-lightBlue">Preview</p>
-          </button>
+          {/* <button className="button-transparent me-1 py-2 px-3">
+            <p className="text-lightBlue">Archive</p>
+          </button> */}
           <img
             src={paginationLeft}
             alt="paginationLeft"
@@ -256,7 +264,7 @@ const EditTags = () => {
             </div>
           </div>
 
-          <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-4">
+          <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features">
             <div className="d-flex justify-content-between mb-2 px-0">
               <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
                 Add Products
@@ -266,11 +274,11 @@ const EditTags = () => {
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox  value={tagStatus} 
+          {/* <StatusBox  value={tagStatus} 
            headingName={"Tag Status"}
            handleProductStatus={tagStatusChange}
            toggleData={['active','archived']}
-            />
+            /> */}
           <NotesBox name="note" value={tagNotes} onChange={tagNotesChange} />
 
         </div>

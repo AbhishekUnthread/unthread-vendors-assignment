@@ -72,10 +72,12 @@ const Vendors = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedSortOption, setSelectedSortOption] = React.useState(null);
+  const [selectedSortOption, setSelectedSortOption] = React.useState("newestToOldest");
   const [selectedStatusOption, setSelectedStatusOption] = React.useState(null);
   const [searchValue, setSearchValue] = React.useState("");
   const [multipleVendors,setMultipleVendors] = React.useState([]);
+  const [totalCount,setTotalCount] = React.useState([]);
+
 
     const vendorValidationSchema = Yup.object({
     name: Yup.string().trim().min(3).required("Required"),
@@ -122,7 +124,7 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
 }
 
 const vendorTypeQuery = vendorType === 1 ? { status: "active" }
-  : vendorType === 2 ? { status: "draft" } : vendorType === 3 ? { status: "archived" }
+  : vendorType === 2 ? { status: "in-active" } : vendorType === 3 ? { status: "archieved" }
   : {};
 
   const {
@@ -176,7 +178,7 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
          name: "",
       // description: "",
       status: "active",
-      showFilter: true,
+      showFilter: false,
     },
     enableReinitialize: true,
     validationSchema: multipleVendors.length > 0 ? multipleVendorsSchema : vendorValidationSchema,
@@ -204,7 +206,7 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
   };
 
   const ArchiveTagsHandler = (data) => {
-    const newStatus = data?.status === "draft" ? "active" : "draft";
+    const newStatus = data?.status === "archieved" ? "active" : "archieved";
     editVendor({
       id: data?._id,
       details: {
@@ -237,6 +239,12 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
 
   
   useEffect(() => {
+
+    if(editVendorIsSuccess)
+    {
+      dispatch(showSuccess({ message: "Status updtaed successfully" }));
+    }
+
     if (vendorsError) {
       setError(true);
       if (vendorsError?.data?.message) {
@@ -266,13 +274,21 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
       setError(false);
       if (vendorType === 0) {
         setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
       }
       if (vendorType === 1) {
         setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
       }
       if(vendorType === 2)
       {
         setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
+      }
+      if(vendorType === 3)
+      {
+        setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
       }
     }
   }, [
@@ -600,6 +616,63 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
+            <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idStatus}
+                variant="contained"
+                onClick={handleStatusClick}
+              >
+                <small className="text-lightBlue me-2">Status</small>
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idStatus}
+                open={openStatus}
+                anchorEl={anchorStatusEl}
+                onClose={handleStatusClose}
+                className="columns"
+              >
+                <FormGroup className="px-2 py-1"                   
+                  onChange={handleStatusCheckboxChange}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Active"
+                    value="active"
+                    className="me-0"
+                    checked={selectedStatusOption === "active"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Archived"
+                    className="me-0"
+                    value="archived"
+                    checked={selectedStatusOption === "archived"}
+                  />
+                </FormGroup>
+              </Popover>
+
               <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idSort}
@@ -632,6 +705,16 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
                   onChange={handleSortRadioChange}
                 >
                   <FormControlLabel
+                    value="newestToOldest"
+                    control={<Radio size="small" />}
+                    label="Newest to Oldest"
+                  />
+                  <FormControlLabel
+                    value="oldestToNewest"
+                    control={<Radio size="small" />}
+                    label="Oldest to Newest"
+                  />
+                  <FormControlLabel
                     value="alphabeticalAtoZ"
                     control={<Radio size="small" />}
                     label="Alphabetical (A-Z)"
@@ -641,16 +724,7 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
                     control={<Radio size="small" />}
                     label="Alphabetical (Z-A)"
                   />
-                  <FormControlLabel
-                    value="oldestToNewest"
-                    control={<Radio size="small" />}
-                    label="Oldest to Newest"
-                  />
-                  <FormControlLabel
-                    value="newestToOldest"
-                    control={<Radio size="small" />}
-                    label="Newest to Oldest"
-                  />
+
                 </RadioGroup>
               </FormControl>
               </Popover>
@@ -783,62 +857,7 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
                   />
                 </FormGroup>
               </Popover> */}
-              <button
-                className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idStatus}
-                variant="contained"
-                onClick={handleStatusClick}
-              >
-                <small className="text-lightBlue me-2">Status</small>
-              </button>
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idStatus}
-                open={openStatus}
-                anchorEl={anchorStatusEl}
-                onClose={handleStatusClose}
-                className="columns"
-              >
-                <FormGroup className="px-2 py-1"                   
-                  onChange={handleStatusCheckboxChange}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        defaultChecked
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Active"
-                    value="active"
-                    className="me-0"
-                    checked={selectedStatusOption === "active"}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Archived"
-                    className="me-0"
-                    value="archived"
-                    checked={selectedStatusOption === "archived"}
-                  />
-                </FormGroup>
-              </Popover>
+
 
           </div>
           <TabPanel value={vendorType} index={0}>
@@ -848,6 +867,7 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
+              totalCount={totalCount}
             />
           </TabPanel>
           <TabPanel value={vendorType} index={1}>
@@ -857,6 +877,8 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
+              totalCount={totalCount}
+
             />
           </TabPanel>
           <TabPanel value={vendorType} index={2}>
@@ -866,6 +888,8 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
+              totalCount={totalCount}
+
             />
           </TabPanel>
           <TabPanel value={vendorType} index={3}>
@@ -875,6 +899,8 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
+              totalCount={totalCount}
+
             />
           </TabPanel>
         </Paper>

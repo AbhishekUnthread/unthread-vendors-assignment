@@ -36,6 +36,7 @@ import { useDispatch } from "react-redux";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { LoadingButton } from "@mui/lab";
 import question from "../../../assets/icons/question.svg"
+import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 
 // ? TABLE STARTS HERE
 function createData(vId, vendorsName, noOfProducts, status) {
@@ -77,7 +78,7 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
+const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -86,6 +87,8 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const [archive, setArchive] = React.useState(false);
+  const [name, setName] = React.useState(false);
+
 
 
   const [state, setState] = React.useState([]);
@@ -94,6 +97,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
   const toggleArchiveModalHandler = (row) => {
     setShowCreateModal((prevState) => !prevState);
     setArchive(row);
+    setName(row?.name);
   };
 
   const[bulkEdit,
@@ -182,6 +186,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -281,13 +286,22 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
                             <p className="text-lightBlue">{row.totalProduct}</p>
                           </TableCell>
 
-                          <TableCell style={{ width: 140, padding: 0 }}>
+                          {/* <TableCell style={{ width: 140, padding: 0 }}>
                             <div className="d-flex align-items-center">
                               <div
                                 className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.status}`}
                               >
-                                <small className="text-lightBlue fw-400">
-                                  {row.status}
+                                <small className="text-black fw-400">
+                                  {row.status == "active" ? "Acitve" : row.status == "in-active" ? "In-Active" : "Archived" }
+                                </small>
+                              </div>
+                            </div>
+                          </TableCell> */}
+                          <TableCell style={{ width: 140, padding: 0 }}>
+                            <div className="d-flex align-items-center">
+                              <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"}}>
+                                <small className="text-black fw-400">
+                                  {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "archieved" ? "Archived" : "Scheduled"}
                                 </small>
                               </div>
                             </div>
@@ -358,7 +372,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={list.length}
+              count={totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -376,57 +390,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
       ) : (
         <></>
       )}
-      <Dialog
-        TransitionComponent={Transition}
-        keepMounted
-        aria-describedby="alert-dialog-slide-description"
-        maxWidth="sm"
-        fullWidth={true}
-        open={showCreateModal}
-        onClose={toggleArchiveModalHandler}
-      >
-        <hr className="hr-grey-6 my-0" />
-        <DialogContent className="py-3 px-4">
-          <Box
-            sx={{
-              display: "block",
-              marginLeft: "auto",
-              marginRight: "auto",
-              width: "50%",
-            }}
-          >
-            <img src={question} alt="questionMark" />
-          </Box>
-          <Typography
-            variant="h5"
-            align="center"
-            sx={{ color: "lightBlue", marginBottom: 2 }}
-          >
-            Are you sure you want to Archive?
-          </Typography>
-
-          <br />
-        </DialogContent>
-
-        <hr className="hr-grey-6 my-0" />
-
-        <DialogActions className="d-flex justify-content-between px-4 py-3">
-          <button
-            className="button-grey py-2 px-5"
-            onClick={toggleArchiveModalHandler}
-            type="button"
-          >
-            <p className="text-lightBlue">No</p>
-          </button>
-          <LoadingButton
-            className="button-gradient py-2 px-5"
-            type="button"
-            onClick={handleArchive}
-          >
-            <p>Yes</p>
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
+      <DeleteModal showCreateModal={showCreateModal} toggleArchiveModalHandler={toggleArchiveModalHandler} handleArchive={handleArchive} name={name} />
     </React.Fragment>
   );
 };

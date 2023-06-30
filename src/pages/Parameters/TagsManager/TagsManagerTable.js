@@ -33,6 +33,7 @@ import { useDispatch } from "react-redux";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { LoadingButton } from "@mui/lab";
 import question from "../../../assets/icons/question.svg"
+import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 
 
 // ? TABLE STARTS HERE
@@ -47,7 +48,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 const 
-TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit}) => {
+TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -57,6 +58,8 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit}) => {
   const [state, setState] = React.useState([]);
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const [archive, setArchive] = React.useState(false);
+  const [name, setName] = React.useState(false);
+
 
   const dispatch = useDispatch();
 
@@ -76,12 +79,12 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit}) => {
       disablePadding: true,
       label: "No Of Products",
     },
-    {
-      id: "status",
-      numeric: false,
-      disablePadding: true,
-      label: "Status",
-    },
+    // {
+    //   id: "status",
+    //   numeric: false,
+    //   disablePadding: true,
+    //   label: "Status",
+    // },
    
     {
       id: "actions",
@@ -175,6 +178,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit}) => {
   const toggleArchiveModalHandler = (row) => {
     setShowCreateModal((prevState) => !prevState);
     setArchive(row);
+    setName(row?.name);
   };
 
   const handleArchive =()=>{
@@ -267,9 +271,9 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit}) => {
 
                     <TableCell style={{ width: 180 }}>
                     <p className="text-lightBlue">{row.totalProduct}</p>
-                         </TableCell>
+                    </TableCell>
 
-                    <TableCell style={{ width: 140, padding: 0 }}>
+                    {/* <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
                         <div className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.status}`}>
 
@@ -278,7 +282,16 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit}) => {
                           </small>
                         </div>
                       </div>
-                    </TableCell>
+                    </TableCell> */}
+                    {/* <TableCell style={{ width: 140, padding: 0 }}>
+                            <div className="d-flex align-items-center">
+                              <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "draft" ? "#C8D8FF" : "#FEE1A3"}}>
+                                <small className="text-black fw-400">
+                                  {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "draft" ? "Archived" : "Scheduled"}
+                                </small>
+                              </div>
+                            </div>
+                    </TableCell> */}
                    
                     <TableCell style={{ width: 120, padding: 0 }}>
                       <div className="d-flex align-items-center">
@@ -338,7 +351,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit}) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={list.length}
+        count={totalCount}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -355,57 +368,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit}) => {
       ) : (
         <></>
       )}
-      <Dialog
-        TransitionComponent={Transition}
-        keepMounted
-        aria-describedby="alert-dialog-slide-description"
-        maxWidth="sm"
-        fullWidth={true}
-        open={showCreateModal}
-        onClose={toggleArchiveModalHandler}
-      >
-        <hr className="hr-grey-6 my-0" />
-        <DialogContent className="py-3 px-4">
-          <Box
-            sx={{
-              display: "block",
-              marginLeft: "auto",
-              marginRight: "auto",
-              width: "50%",
-            }}
-          >
-            <img src={question} alt="questionMark" />
-          </Box>
-          <Typography
-            variant="h5"
-            align="center"
-            sx={{ color: "lightBlue", marginBottom: 2 }}
-          >
-            Are you sure you want to Archive?
-          </Typography>
-
-          <br />
-        </DialogContent>
-
-        <hr className="hr-grey-6 my-0" />
-
-        <DialogActions className="d-flex justify-content-between px-4 py-3">
-          <button
-            className="button-grey py-2 px-5"
-            onClick={toggleArchiveModalHandler}
-            type="button"
-          >
-            <p className="text-lightBlue">No</p>
-          </button>
-          <LoadingButton
-            className="button-gradient py-2 px-5"
-            type="button"
-            onClick={handleArchive}
-          >
-            <p>Yes</p>
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
+      <DeleteModal showCreateModal={showCreateModal} toggleArchiveModalHandler={toggleArchiveModalHandler} handleArchive={handleArchive} name={name} />
 
     </React.Fragment>
 

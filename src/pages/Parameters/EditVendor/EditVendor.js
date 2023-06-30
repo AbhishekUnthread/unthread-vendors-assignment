@@ -23,6 +23,7 @@ import {
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -86,6 +87,10 @@ const EditVendor = () => {
   ] = useEditVendorMutation();
   
   useEffect(() => {
+    if(editVendorIsSuccess)
+    {
+      dispatch(showSuccess({ message: "Vendor updtaed successfully" }));
+    }
 
     if(vendorProductsDataIsSuccess)
     {
@@ -113,7 +118,7 @@ const EditVendor = () => {
       // setStartDate1(vendorsData.data.data[0].startDate)
       // setEndDate1(vendorsData.data.data[0].endDate)
     }
-  }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index]);
+  }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess]);
 
   const getNextVendorId = () => {
     setVendorIndex(prevIndex => (prevIndex + 1) % vendorsData.data.data.length);
@@ -269,9 +274,9 @@ const EditVendor = () => {
           <button className="button-transparent me-1 py-2 px-3" onClick={handleDuplicate}>
             <p className="text-lightBlue">Duplicate</p>
           </button>
-          <button className="button-transparent me-1 py-2 px-3">
+          {/* <button className="button-transparent me-1 py-2 px-3">
             <p className="text-lightBlue">Preview</p>
-          </button>
+          </button> */}
           <img
             src={paginationLeft}
             alt="paginationLeft"
@@ -425,7 +430,7 @@ const EditVendor = () => {
         <hr className="hr-grey-6 my-0" />
         <DialogContent className="py-3 px-4 schedule-product">
           <div className="d-flex mb-1">
-            <p className="text-lightBlue me-2">Vendor Name</p>
+            <p className="text-lightBlue me-2">Vendor Name*</p>
           </div>
           <FormControl className="w-100 px-0">
             <OutlinedInput

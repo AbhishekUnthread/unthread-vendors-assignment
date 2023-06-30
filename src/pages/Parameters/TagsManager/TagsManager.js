@@ -183,8 +183,9 @@ const TagsManager = () => {
   const [tagsList, setTagsList] = useState([]);
   const [error, setError] = useState(false);
   const [multipleTags,setMultipleTags] = useState([]);
-  const [selectedSortOption, setSelectedSortOption] = React.useState(null);
+  const [selectedSortOption, setSelectedSortOption] = React.useState("newestToOldest");
   const [searchValue, setSearchValue] = useState("");
+  const [totalCount,setTotalCount] = React.useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -229,8 +230,7 @@ const TagsManager = () => {
   if (!selectedSortOption && !searchValue) {
     queryParameters.createdAt = "-1"; // Set default createdAt value
   }
-  const TagTypeQuery = tagsType === 1 ? { status: "active" }
-  : tagsType === 2 ? { status: "draft" } :tagsType === 3 ? { status: "inactive" }
+  const TagTypeQuery = tagsType === 1 ? { status: "archieved" }
   : {};
   
   const[editTag,{
@@ -311,12 +311,11 @@ const {
         setError(false);
         if (tagsType === 0) {
           setTagsList(tagsData.data.data);
+          setTotalCount(tagsData.data.totalCount);
         }
         if (tagsType === 1) {
           setTagsList(tagsData.data.data);
-        }
-        if(tagsType==2){
-          setTagsList(tagsData.data.data);
+          setTotalCount(tagsData.data.totalCount);
         }
       }
 
@@ -338,7 +337,7 @@ const {
     };
 
     const ArchiveTagsHandler = (data) => {
-      const newStatus = data?.status === "draft" ? "active" : "draft";
+      const newStatus = data?.status === "archieved" ? "active" : "archieved";
       editTag({
         id: data?._id,
         details: {
@@ -512,20 +511,7 @@ const {
                     </FormHelperText>
                   )}
               </FormControl>
-
-              <div className="d-flex">
-                {multipleTags && multipleTags.map((data, index) => {
-                  return (
-                    <Chip
-                      label={data.name}
-                      onDelete={() => handleDelete(data.name)}
-                      onClick={() => {}}
-                      size="small"
-                      className="mt-3 me-2"
-                    ></Chip>
-                  );
-                })}
-              </div>
+              <br />
               <FormControlLabel
                   control={
                     <Checkbox
@@ -550,6 +536,20 @@ const {
                   }}
                   className=" px-0"
                 />
+              <div className="d-flex">
+                {multipleTags && multipleTags.map((data, index) => {
+                  return (
+                    <Chip
+                      label={data.name}
+                      onDelete={() => handleDelete(data.name)}
+                      onClick={() => {}}
+                      size="small"
+                      className="mt-3 me-2"
+                    ></Chip>
+                  );
+                })}
+              </div>
+
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -993,9 +993,7 @@ const {
             aria-label="scrollable force tabs example" 
             className="tabs">
               <Tab label="All" className="tabs-head" />{" "}
-              <Tab label="Active" className="tabs-head" />
-              <Tab label="In-Active" className="tabs-head" />
-              <Tab label="Draft" className="tabs-head" />
+              <Tab label="Archive" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -1032,6 +1030,16 @@ const {
                   onChange={handleSortRadioChange}
                 >
                   <FormControlLabel
+                    value="newestToOldest"
+                    control={<Radio size="small" />}
+                    label="Newest to Oldest"
+                  />
+                  <FormControlLabel
+                    value="oldestToNewest"
+                    control={<Radio size="small" />}
+                    label="Oldest to Newest"
+                  />
+                  <FormControlLabel
                     value="alphabeticalAtoZ"
                     control={<Radio size="small" />}
                     label="Alphabetical (A-Z)"
@@ -1041,16 +1049,7 @@ const {
                     control={<Radio size="small" />}
                     label="Alphabetical (Z-A)"
                   />
-                  <FormControlLabel
-                    value="oldestToNewest"
-                    control={<Radio size="small" />}
-                    label="Oldest to Newest"
-                  />
-                  <FormControlLabel
-                    value="newestToOldest"
-                    control={<Radio size="small" />}
-                    label="Newest to Oldest"
-                  />
+
                 </RadioGroup>
               </FormControl>
               </Popover>
@@ -1149,6 +1148,7 @@ const {
               list={tagsList}
               edit={editTagsPageNavigationHandler}
               bulkEdit={bulkEdit}
+              totalCount={totalCount}
             />
           </TabPanel>
           <TabPanel value={tagsType} index={1}>
@@ -1158,24 +1158,7 @@ const {
               error={error}
               list={tagsList}
               edit={editTagsPageNavigationHandler}
-             />
-          </TabPanel>
-          <TabPanel value={tagsType} index={2}>
-            <TagsManagerTable
-              isLoading={tagsIsLoading}
-              deleteData={ArchiveTagsHandler}
-              error={error}
-              list={tagsList}
-              edit={editTagsPageNavigationHandler}
-             />
-          </TabPanel>
-          <TabPanel value={tagsType} index={3}>
-            <TagsManagerTable
-              isLoading={tagsIsLoading}
-              deleteData={ArchiveTagsHandler}
-              error={error}
-              list={tagsList}
-              edit={editTagsPageNavigationHandler}
+              totalCount={totalCount}
              />
           </TabPanel>
         </Paper>
