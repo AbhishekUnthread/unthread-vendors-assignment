@@ -5,6 +5,9 @@ import { useDispatch } from "react-redux";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
   Slide,
   Table,
   TableBody,
@@ -40,6 +43,14 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useBulkEditCollectionMutation, useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import question from '../../../assets/images/products/question.svg'
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
+
 // ? TABLE STARTS HERE
 function createData(cId, collectionsName, noOfProducts, status, actions) {
   return { cId, collectionsName, noOfProducts, status, actions };
@@ -66,6 +77,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [state, setState] = React.useState([]);
+  const [collectionId, setCollectionId] = React.useState('')
 
   const [
     editCollection,
@@ -87,13 +99,9 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
     }
   ] = useBulkEditCollectionMutation();
 
-  const handleArchive = (collectionId) => {
-    editCollection({
-        id: collectionId,
-        details : {
-          status: "draft"
-        }
-      })
+  const handleArchive = (id) => {
+    setArchivedModal(true);
+    setCollectionId(id);
   }
 
   useEffect(() => {
@@ -213,6 +221,23 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  const [openArchivedModal, setArchivedModal] = React.useState(false);
+
+
+  const handleArchivedModalClose = () => {
+    setArchivedModal(false);
+     editCollection({
+        id: collectionId,
+        details : {
+          status: "draft"
+        }
+    })
+  }
+
+  const handleModalClose = () => {
+    setArchivedModal(false);
+  };
 
   return (
     <React.Fragment>
@@ -400,6 +425,43 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
         ) : (
           <></>
         )}
+
+        <Dialog
+          open={openArchivedModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleModalClose}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={question} alt="question" width={200} />
+            <div className="row"></div>
+            {/* <h6 className="text-lightBlue mt-3 mb-2">
+              You have unsaved changes.
+            </h6> */}
+            <h6 className="text-lightBlue mt-2 mb-2">
+              Are you sure you want to Archive this?
+            </h6>
+            <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+            </div>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-between px-4 pb-4">
+            <button
+              className="button-red-outline py-2 px-3 me-5"
+              onClick={handleModalClose}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-3 ms-5"
+              onClick={handleArchivedModalClose}
+            >
+              <p>Archived</p>
+            </button>
+          </DialogActions>
+        </Dialog>
     </React.Fragment>
   );
 };

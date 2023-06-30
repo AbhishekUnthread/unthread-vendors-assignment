@@ -237,6 +237,7 @@ const CreateCollection = () => {
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
   const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
+  const [categorySeo,setCategorySeo] = useState({})
 
   const handleSchedule = (start, end) => {
     setStartDate(start);
@@ -1026,7 +1027,7 @@ const CreateCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO />
+              <SEO name={collectionFormik.values.title} value={categorySeo} handleSeoChange={setCategorySeo} />
             </div>
 
             <SwipeableDrawer
