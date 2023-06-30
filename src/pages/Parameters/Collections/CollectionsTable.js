@@ -44,6 +44,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useBulkEditCollectionMutation, useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import question from '../../../assets/images/products/question.svg'
+import DeleteIcon from '@mui/icons-material/Delete';
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -67,7 +68,7 @@ const rows = [
   createData(8, "Collection 8", "503", "Active"),
 ];
 
-const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
+const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
@@ -121,7 +122,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
         } else if (selectedStatus === "Set as Draft") {
           return {
             id,
-            status: "draft",
+            status: "archived",
           };
         } else {
           return {
@@ -224,13 +225,21 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
 
   const [openArchivedModal, setArchivedModal] = React.useState(false);
 
-
   const handleArchivedModalClose = () => {
     setArchivedModal(false);
      editCollection({
         id: collectionId,
         details : {
-          status: "draft"
+          status: "archieved"
+        }
+    })
+  }
+
+  const handleUnArchive = (unArchivedId) => {
+    editCollection({
+        id: unArchivedId,
+        details : {
+          status: "in-active"
         }
     })
   }
@@ -334,60 +343,100 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                     </TableCell>
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "draft" ? "#C8D8FF" : "#FEE1A3"}}>
+                        <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"}}>
                           <small className="text-black fw-400">
-                            {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "draft" ? "Archived" : "Scheduled"}
+                            {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "archieved" ? "Archived" : "Scheduled"}
                           </small>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell style={{ width: 140, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2" 
-                              onClick={()=>{
-                                dispatch(updateCollectionId(row._id));
-                                navigate("/parameters/collections/edit")
-                              }}
-                          >
-                            <EditOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                        <Tooltip title="Copy" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <ContentCopyIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                        <Tooltip title="Archive" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2"
-                            onClick={() => {
-                              handleArchive(row._id)
+                    {row.status == "archieved" ?
+                      <TableCell style={{ width: 140, padding: 0 }}>
+                         <div className="d-flex align-items-center">
+                          {deleteData && (
+                          <Tooltip title="Edit" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2" 
+                                onClick={(e) => {
+                                  deleteData(row);
+                                }}
+                            >
+                              <DeleteIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                          )}
+                          <Tooltip title="Archive" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2"
+                              onClick={() => {
+                                handleUnArchive(row._id)
+                                }
                               }
-                            }
-                          >
-                            <InventoryIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                      </div>
-                    </TableCell>
+                            >
+                              <InventoryIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+                      :
+                      <TableCell style={{ width: 140, padding: 0 }}>
+                        <div className="d-flex align-items-center">
+                          <Tooltip title="Edit" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2" 
+                                onClick={()=>{
+                                  dispatch(updateCollectionId(row._id));
+                                  navigate("/parameters/collections/edit")
+                                }}
+                            >
+                              <EditOutlinedIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                          <Tooltip title="Copy" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2">
+                              <ContentCopyIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                          <Tooltip title="Archive" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2"
+                              onClick={() => {
+                                handleArchive(row._id)
+                                }
+                              }
+                            >
+                              <InventoryIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                        </div>
+                      </TableCell>                   
+                    }
                   </TableRow>
                 );
               })}
@@ -407,7 +456,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={list.length}
+        count={pageLength}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

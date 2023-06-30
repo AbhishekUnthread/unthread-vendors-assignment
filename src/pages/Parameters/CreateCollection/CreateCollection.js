@@ -239,7 +239,14 @@ const CreateCollection = () => {
   const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
   const [categorySeo,setCategorySeo] = useState({})
 
+  console.log(startDate1, 'startDatfdse1')
+  console.log(endDate1, 'endDatsfde1')
+
+
   const handleSchedule = (start, end) => {
+      console.log(start, 'startDatfdse1')
+  console.log(end, 'endDatsfde1')
+
     setStartDate(start);
     setEndDate(end);
   };
