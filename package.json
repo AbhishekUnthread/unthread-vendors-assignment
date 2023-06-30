@@ -18,6 +18,7 @@
     "@testing-library/user-event": "^13.5.0",
     "ag-grid-community": "^29.1.0",
     "ag-grid-react": "^29.1.0",
+    "draft-convert": "^2.1.13",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "formik": "^2.2.9",
