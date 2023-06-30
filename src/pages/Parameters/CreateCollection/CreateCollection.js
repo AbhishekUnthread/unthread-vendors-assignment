@@ -236,18 +236,13 @@ const CreateCollection = () => {
   const [visibleFrontend, setVisibleFrontend] = useState("visible")
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
-  const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
   const [categorySeo,setCategorySeo] = useState({});
   const [appTextEditor, setAppTextEditor] = useState("<p></p>")
 
-
-  const handleSchedule = (start, end) => {
-      console.log(start, 'startDatfdse1')
-  console.log(end, 'endDatsfde1')
-
-    setStartDate(start);
-    setEndDate(end);
-  };
+  const clearDate = () => {
+    setStartDate(null);
+    setEndDate(null);
+  }  
   
   const handleVisiblility = (value) => {
     collectionFormik?.setFieldValue("visibleFrontend", value);
@@ -306,6 +301,7 @@ const CreateCollection = () => {
         .unwrap()
         .then(() => collectionFormik.resetForm());
         navigate("/parameters/collections");
+        dispatch(showSuccess({ message: "Created this collection successfully" }));
     },
   });
 
@@ -510,10 +506,6 @@ const CreateCollection = () => {
     collectionError,
     dispatch,
   ]);
-
-  const handleTextEditor = (value) => {
-    collectionFormik.setFieldValue("description", value)
-  }
 
   return (
     <form noValidate onSubmit={collectionFormik.handleSubmit}>
@@ -1253,15 +1245,16 @@ const CreateCollection = () => {
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
             <StatusBox 
+              showSchedule={true}
               name={"status"}
               value={collectionFormik?.values?.status} headingName={"Collection Status"} 
               titleName={"Collection"}
               handleProductStatus={handleProductStatus}
-              handleSchedule={handleSchedule}
               startDate={startDate1}
               endDate={endDate1}
               handleStartDate={setStartDate}
               handleEndDate={setEndDate}
+              clearDate={clearDate}
             />
             <VisibilityBox name={"isVisibleFrontend"} visibleFrontend={visibleFrontend} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
             <div className="mt-4">

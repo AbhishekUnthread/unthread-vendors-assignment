@@ -231,6 +231,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
           status: "archieved"
         }
     })
+    dispatch(showSuccess({ message: "Archived this collection successfully" }));
   }
 
   const handleUnArchive = (unArchivedId) => {
@@ -240,6 +241,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
           status: "in-active"
         }
     })
+    dispatch(showSuccess({ message: "Un-Archived this collection successfully" }));
   }
 
   const handleModalClose = () => {
@@ -365,6 +367,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
                             <div className="table-edit-icon rounded-4 p-2" 
                                 onClick={(e) => {
                                   deleteData(row);
+                                  dispatch(showSuccess({ message: "Deleted this collection successfully" }));
                                 }}
                             >
                               <DeleteIcon
