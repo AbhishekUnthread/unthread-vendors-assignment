@@ -13,7 +13,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
           }
         }
         return {
-          url: `/product-inventories${queryString}`,
+          url: `/products${queryString}`,
         };
       },
       providesTags: ["Products"],

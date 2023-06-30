@@ -26,6 +26,14 @@ export const vendorsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Vendors"],
     }),
+    bulkCreateVendor: builder.mutation({
+      query: (vendorsDetail) => ({
+        url: "/parameters/vendor/bulkCreate",
+        method: "POST",
+        body: vendorsDetail,
+      }),
+      invalidatesTags: ["Vendors"],
+    }),
     deleteVendor: builder.mutation({
       query: (vendorId) => ({
         url: `/parameters/vendor/${vendorId}`,
@@ -42,6 +50,14 @@ export const vendorsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Vendors"],
     }),
+    bulkEditVendor:builder.mutation({
+      query: (updates) => ({
+        url: `/parameters/vendor/bulkUpdate`,
+        method: "PUT",
+        body: updates,
+      }),
+      invalidatesTags: ["Vendors"],
+    }),
   }),
 });
 
@@ -50,4 +66,6 @@ export const {
   useCreateVendorMutation,
   useDeleteVendorMutation,
   useEditVendorMutation,
+  useBulkCreateVendorMutation,
+  useBulkEditVendorMutation,
 } = vendorsApiSlice;

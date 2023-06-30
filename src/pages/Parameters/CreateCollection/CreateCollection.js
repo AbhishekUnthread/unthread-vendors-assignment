@@ -236,14 +236,31 @@ const CreateCollection = () => {
   const [visibleFrontend, setVisibleFrontend] = useState("visible")
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
+  const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
+  const [categorySeo,setCategorySeo] = useState({})
+
+  console.log(startDate1, 'startDatfdse1')
+  console.log(endDate1, 'endDatsfde1')
+
 
   const handleSchedule = (start, end) => {
+      console.log(start, 'startDatfdse1')
+  console.log(end, 'endDatsfde1')
+
     setStartDate(start);
     setEndDate(end);
   };
   
   const handleVisiblility = (value) => {
     collectionFormik?.setFieldValue("visibleFrontend", value);
+  }
+
+  const handleMediaUrl = (value) => {
+    collectionFormik?.setFieldValue("mediaUrl", value);
+  }
+
+  const handleProductStatus = (value, status) => {
+    collectionFormik?.setFieldValue("status", status);
   }
 
   const {
@@ -275,13 +292,14 @@ const CreateCollection = () => {
   const collectionFormik = useFormik({
     initialValues: {
       title: "",
-      description: "",
+      // description: "",
       status: startDate1 === null ? collectionStatus : "scheduled",
       ...(startDate1 !== null && endDate1 !== null &&
-      { startDate1: new Date(startDate1), endDate1: new Date(endDate1) }),
+      { startDate: new Date(startDate1), endDate: new Date(endDate1) }),
       isVisibleFrontend: true,
       filter: true,
       notes: "",
+      mediaUrl: "",
     },
     enableReinitialize: true,
     validationSchema: collectionValidationSchema,
@@ -508,7 +526,7 @@ const CreateCollection = () => {
 
               <div className="col-md-12 px-0 mt-3">
                 <div className="d-flex mb-1">
-                  <p className="text-lightBlue me-2">Collection Title</p>
+                  <p className="text-lightBlue me-2">Collection Title *</p>
                   <Tooltip title="Lorem ipsum" placement="top">
                     <img
                       src={info}
@@ -1020,7 +1038,7 @@ const CreateCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO />
+              <SEO name={collectionFormik.values.title} value={categorySeo} handleSeoChange={setCategorySeo} />
             </div>
 
             <SwipeableDrawer
@@ -1228,18 +1246,17 @@ const CreateCollection = () => {
             </SwipeableDrawer>
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
-            <StatusBox value={collectionStatus} headingName={"Collection Status"} 
+            <StatusBox name={"status"}
+              value={collectionFormik?.values?.status} headingName={"Collection Status"} 
               titleName={"Collection"}
-              handleProductStatus={(event, newStatus) => {
-                setCollectionStatus(newStatus)
-              }}
+              handleProductStatus={handleProductStatus}
               handleSchedule={handleSchedule}
               startDate1={startDate1}
               endDate1={endDate1}
             />
             <VisibilityBox name={"isVisibleFrontend"} visibleFrontend={visibleFrontend} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
             <div className="mt-4">
-              <UploadMediaBox imageName={addMedia} headingName={"Media"} />
+              <UploadMediaBox name={"mediaUrl"}  value={collectionFormik?.values?.mediaUrl}  imageName={addMedia} headingName={"Media"} UploadChange={handleMediaUrl} />
             </div>
             <div className="mt-4">
               <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />
@@ -1259,25 +1276,8 @@ const CreateCollection = () => {
             >
               <p>Discard</p>
             </Link>
-
-            <Link
-              to="/parameters/collections"
-              className="button-lightBlue-outline py-2 px-4 ms-3"
-            >
-              <p>Save as Draft</p>
-            </Link>
           </div>
           <div className="d-flex w-auto px-0">
-            <Link
-              to="/parameters/collections"
-              className="button-lightBlue-outline py-2 px-4"
-            >
-              <p>Save & Add Another</p>
-            </Link>
-            {/* <Link
-              to="/parameters/collections"
-              className="button-gradient ms-3 py-2 px-4 w-auto"
-            > */}
               <LoadingButton
                 loading={createCollectionIsLoading}
                 disabled={createCollectionIsLoading}
@@ -1286,7 +1286,6 @@ const CreateCollection = () => {
               >
                 <p>Save</p>
               </LoadingButton>
-            {/* </Link> */}
           </div>
         </div>
       </div>

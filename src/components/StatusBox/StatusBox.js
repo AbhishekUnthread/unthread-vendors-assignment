@@ -43,15 +43,12 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
   // ? SCHEDULE PRODUCT DIALOG STARTS HERE
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
   const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState(new Date());
+  const [endDate, setEndDate] = React.useState();
 
   const startDateNew = moment(startDate1).format("DD/MM/YYYY")
   const startTime = moment(startDate1).format("HH:MM a")
   const endDateNew = moment(endDate1).format("DD/MM/YYYY")
   const endTime = moment(endDate1).format("HH:MM a")
-
-  console.log(startDate1, 'startDate1')
-  console.log(endDate1, 'endDate1')
 
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);

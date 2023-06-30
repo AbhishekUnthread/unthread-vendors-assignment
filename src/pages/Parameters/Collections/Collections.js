@@ -76,6 +76,7 @@ const Collections = () => {
   const [collectionList, setCollectionList] = useState([]);
   const [collectionType, setCollectionType] = useState(0);
   const [collectionsStatus, setCollectionsStatus] = useState("");
+  const [pageLength, setPageLegnth] = useState();
   const [collectionState, collectionDispatch] = useReducer(
     collectionsReducer,
     initialCollectionState
@@ -108,6 +109,7 @@ const Collections = () => {
 const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
   : collectionType === 1 ? { status: "active" }
   : collectionType === 2 ? { createdAt: -1, status: "in-active" }
+  : collectionType === 3 ? { createdAt: -1, status: "archieved" }
   : {};
 
   const filterParams = { ...filterParameter, ...collectionTypeQuery };
@@ -184,6 +186,9 @@ const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
     if (collectionType === 2) {
       deleteCollection(data._id);
     }
+    if (collectionType === 3) {
+      deleteCollection(data._id);
+    }
   };
 
   useEffect(() => {
@@ -201,12 +206,19 @@ const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
       setError(false);
       if (collectionType === 0) {
         setCollectionList(collectionData.data.data);
+        setPageLegnth(collectionData.data.totalCount)
       }
       if (collectionType === 1) {
         setCollectionList(collectionData.data.data);
+        setPageLegnth(collectionData.data.totalCount)
       }
       if (collectionType === 2) {
         setCollectionList(collectionData.data.data);
+        setPageLegnth(collectionData.data.totalCount)
+      }
+      if (collectionType === 3) {
+        setCollectionList(collectionData.data.data);
+        setPageLegnth(collectionData.data.totalCount)
       }
     }
   }, [
@@ -377,6 +389,7 @@ const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
               isLoading={collectionIsLoading}
               error={error}
               list={collectionList}
+              pageLength={pageLength}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={1}>
@@ -385,6 +398,7 @@ const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
               isLoading={collectionIsLoading}
               error={error}
               list={collectionList}
+              pageLength={pageLength}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={2}>
@@ -393,6 +407,16 @@ const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
               isLoading={collectionIsLoading}
               error={error}
               list={collectionList}
+              pageLength={pageLength}
+            />
+          </TabPanel>
+          <TabPanel value={collectionType} index={3}>
+            <CollectionsTable
+              deleteData={deleteCollectionHandler}
+              isLoading={collectionIsLoading}
+              error={error}
+              list={collectionList}
+              pageLength={pageLength}
             />
           </TabPanel>
         </Paper>
