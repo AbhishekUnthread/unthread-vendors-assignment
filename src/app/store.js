@@ -8,6 +8,7 @@ import vendorReducer from "../features/parameters/vendors/vendorSlice";
 import categoryReducer from "../features/parameters/categories/categorySlice";
 import collectionReducer from "../features/parameters/collections/collectionSlice"
 
+
 const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,

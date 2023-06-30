@@ -58,7 +58,7 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
         UploadChange(inputUrl)
       }
     },[uploadState,inputUrl])
-    
+
   const style = useMemo(
     () => ({
       ...baseStyle,
