@@ -247,6 +247,10 @@ const CreateCollection = () => {
     collectionFormik?.setFieldValue("visibleFrontend", value);
   }
 
+  const handleMediaUrl = (value) => {
+    collectionFormik?.setFieldValue("mediaUrl", value);
+  }
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
@@ -283,7 +287,7 @@ const CreateCollection = () => {
       isVisibleFrontend: true,
       filter: true,
       notes: "",
-      mediaUrl: categoryMediaUrl,
+      mediaUrl: "",
     },
     enableReinitialize: true,
     validationSchema: collectionValidationSchema,
@@ -510,7 +514,7 @@ const CreateCollection = () => {
 
               <div className="col-md-12 px-0 mt-3">
                 <div className="d-flex mb-1">
-                  <p className="text-lightBlue me-2">Collection Title</p>
+                  <p className="text-lightBlue me-2">Collection Title *</p>
                   <Tooltip title="Lorem ipsum" placement="top">
                     <img
                       src={info}
@@ -1241,7 +1245,7 @@ const CreateCollection = () => {
             />
             <VisibilityBox name={"isVisibleFrontend"} visibleFrontend={visibleFrontend} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
             <div className="mt-4">
-              <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} />
+              <UploadMediaBox name={"mediaUrl"}  value={collectionFormik?.values?.mediaUrl}  imageName={addMedia} headingName={"Media"} UploadChange={handleMediaUrl} />
             </div>
             <div className="mt-4">
               <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />
