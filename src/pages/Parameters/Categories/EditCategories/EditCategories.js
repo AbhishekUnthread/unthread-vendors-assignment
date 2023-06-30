@@ -313,11 +313,8 @@ const EditCategories = () => {
             toggleData={['active', 'scheduled']}
           />
           <VisibilityBox value={categoryVisibility}
-            visibilityChange={(_, val) => setCategoryVisibility(val)}
-            startDate={startDate}
-            endDate={endDate}
-            StartDateChange={setStartDate}
-            EndDateChange={setEndDate}
+            onChange={(_, val) => setCategoryVisibility(val)}
+            
           />
           <div className="mt-4">
             <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} imageValue={categoryMediaUrl} />
