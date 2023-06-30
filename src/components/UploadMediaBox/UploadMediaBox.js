@@ -141,7 +141,7 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
           //   event.target.value = null;
           // }}
         />
-        <img src={imageName} className="w-100" alt="" />
+        <img src={uploadState?.data ? uploadState?.data?.url : imageName} className="w-100" style={{height: "150px"}} alt="" />
       </div>
     </div>
   );

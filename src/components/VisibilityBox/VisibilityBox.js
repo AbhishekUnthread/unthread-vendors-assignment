@@ -22,26 +22,13 @@ import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-// ? DIALOG TRANSITION ENDS HERE
+const VisibilityBox = ({ value, onChange }) => {
+  const [selectedValue, setSelectedValue] = React.useState(value);
 
-const VisibilityBox = ({value,visibilityChange,startDate,endDate,StartDateChange,EndDateChange}) => {
-
-    // ? SCHEDULE  DIALOG STARTS HERE
-    const [openSchedule, setOpenSchedule] = React.useState(false);
-
-    function handelScheduleClose(){
-      setOpenSchedule(false)
-    }
-  
-    // ? SCHEDULE  DIALOG ENDS HERE
-
-    // ? DATE PICKER STARTS HERE
-  const [dateStartValue, setDateStartValue] = React.useState(new Date());
-  // ? DATE PICKER ENDS HERE
+  const handleRadioChange = (event) => {
+    setSelectedValue(event.target.value);
+    onChange(event.target.value);
+  };
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4">
@@ -52,8 +39,8 @@ const VisibilityBox = ({value,visibilityChange,startDate,endDate,StartDateChange
             <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
                 name="radio-buttons-group"
-                value={value}
-                onChange={visibilityChange}
+                value={selectedValue}
+                onChange={handleRadioChange}
             >
                 <FormControlLabel value={true} control={<Radio />} 
                   label="Visible in frontend" 
