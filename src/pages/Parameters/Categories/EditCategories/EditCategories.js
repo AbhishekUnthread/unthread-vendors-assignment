@@ -20,7 +20,7 @@ import paginationRight from "../../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../../assets/icons/paginationLeft.svg";
 import addMedia from "../../../../assets/icons/addMedia.svg";
 // ! MATERIAL IMPORTS
-import { 
+import {
   Autocomplete,
   Box,
   Checkbox,
@@ -42,147 +42,157 @@ import { useCreateCategoryMutation, useEditCategoryMutation, useGetAllCategories
 const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
   const navigate = useNavigate();
-const dispatch = useDispatch();
-const [categoryName, setCategoryName] = useState("");
-const [categoryDescription, setCategoryDescription] = useState("");
-const [categoryStatus, setCategoryStatus] = useState("active");
-const [categoryNotes,setCategoryNotes] = useState('')
-const [categoryVisibility, setCategoryVisibility] = useState(false);
-const [checked, setChecked] =  useState(false);
-const categoryId = useSelector((state) => state.category.categoryId);
+  const dispatch = useDispatch();
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryDescription, setCategoryDescription] = useState("");
+  const [categoryStatus, setCategoryStatus] = useState("active");
+  const [categoryNotes, setCategoryNotes] = useState('')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [categoryVisibility, setCategoryVisibility] = useState(false);
+  const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
+  const [checked, setChecked] = useState(false);
+  const categoryId = useSelector((state) => state.category.categoryId);
 
 
-const [
-  createCategory,
-  {
-    isLoading: createCategoryIsLoading,
-    isSuccess: createCategoryIsSuccess,
-    error: createCategoryError,
-  },
-] = useCreateCategoryMutation();
+  const [
+    createCategory,
+    {
+      isLoading: createCategoryIsLoading,
+      isSuccess: createCategoryIsSuccess,
+      error: createCategoryError,
+    },
+  ] = useCreateCategoryMutation();
 
-const {
-  data: categoriesData,
-  isLoading: categoriesIsLoading,
-  isSuccess: categoriesIsSuccess,
-  error: categoriesError,
-} = useGetAllCategoriesQuery({ createdAt: "-1", id: categoryId });
+  const {
+    data: categoriesData,
+    isLoading: categoriesIsLoading,
+    isSuccess: categoriesIsSuccess,
+    error: categoriesError,
+  } = useGetAllCategoriesQuery({ createdAt: "-1", id: categoryId });
 
-const [
-  editCategory,
-  {
-    data: editData,
-    isLoading: editCategoryIsLoading,
-    isSuccess: editCategoryIsSuccess,
-    error: editCategoryError,
-  },
-] = useEditCategoryMutation();
+  const [
+    editCategory,
+    {
+      data: editData,
+      isLoading: editCategoryIsLoading,
+      isSuccess: editCategoryIsSuccess,
+      error: editCategoryError,
+    },
+  ] = useEditCategoryMutation();
 
-useEffect(() => {
-  if (categoriesIsSuccess && categoryId !== "") {
-    // If categoriesIsSuccess is true, set the category name based on the data from the API response
-    setCategoryName(categoriesData.data.data[0].name);
-    setCategoryDescription(categoriesData.data.data[0].description);
-    setCategoryStatus(categoriesData.data.data[0].status);
-    setCategoryVisibility(categoriesData.data.data[0].isVisibleFrontend)
-    setCategoryNotes(categoriesData.data.data[0].notes)
-    setChecked(categoriesData.data.data[0].showFilter)
-  }
-}, [categoriesIsSuccess]);
+  useEffect(() => {
+    if (categoriesIsSuccess && categoryId !== "") {
+      // If categoriesIsSuccess is true, set the category name based on the data from the API response
+      setCategoryName(categoriesData.data.data[0].name);
+      setCategoryDescription(categoriesData.data.data[0].description);
+      setCategoryStatus(categoriesData.data.data[0].status);
+      setCategoryVisibility(categoriesData.data.data[0].isVisibleFrontend)
+      setCategoryNotes(categoriesData.data.data[0].notes)
+      setChecked(categoriesData.data.data[0].showFilter)
+      setStartDate(categoriesData.data.data[0].startDate)
+      setEndDate(categoriesData.data.data[0].endDate)
+      setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl)
+    }
+  }, [categoriesIsSuccess]);
 
 
 
-const categoryStatusChange = (event, categoryStatus) => {
-  setCategoryStatus(categoryStatus);
-};
+  const handleNameChange = (event) => {
+    setCategoryName(event.target.value); // Updating the category name based on the input value
+  };
 
-const handleNameChange = (event) => {
-  setCategoryName(event.target.value); // Updating the category name based on the input value
-};
-
-const handleFilterChange = (event) => {
-  setChecked(event.target.checked);
-};
-
-const handleSubmit = () => {
-  if (categoryId !== "") {
-    // Calling Category edit API
-    editCategory({
-      id: categoryId, // ID of the category
-      details: {
+  const handleSubmit = () => {
+    if (categoryId !== "") {
+      // Calling Category edit API
+      editCategory({
+        id: categoryId, // ID of the category
+        details: {
+          showFilter: checked, // Whether to show filters
+          name: categoryName, // Category name
+          description: categoryDescription, // Category description
+          status: categoryStatus, // Category status
+          isVisibleFrontend: categoryVisibility,
+          notes: categoryNotes,
+          startDate: startDate,
+          endDate: endDate,
+          mediaUrl: categoryMediaUrl,
+        },
+      })
+        .unwrap()
+        .then(() => {
+          navigate("/parameters/categories"); // Navigating to categories page after successful edit
+        });
+    } else {
+      createCategory({
         showFilter: checked, // Whether to show filters
         name: categoryName, // Category name
         description: categoryDescription, // Category description
-        status: categoryStatus ? categoryStatus : "active", // Category status
-        isVisibleFrontend: categoryVisibility,
-      notes: categoryNotes,
-      },
-    })
-      .unwrap()
-      .then(() => {
-        navigate("/parameters/categories"); // Navigating to categories page after successful edit
-      });
-  } else {
-    createCategory({
-      showFilter: checked, // Whether to show filters
-      name: categoryName, // Category name
-      description: categoryDescription, // Category description
-      status: categoryStatus ? categoryStatus : "active", // Category status
-      isVisibleFrontend: categoryVisibility,
-      notes: categoryNotes,
-    })
-      .unwrap()
-      .then(() => {
-        navigate("/parameters/categories"); // Navigating to categories page after successful creation
-      });
-  }
-};
-
-const handleSubmitAndAddAnother = () => {
-  if (categoryId !== "") {
-    // Calling Category edit API
-    editCategory({
-      id: categoryId, // ID of the category
-      details: {
-        showFilter: checked, // Whether to show filters
-        name: categoryName, // Category name
-        description: categoryDescription, // Category description
-        status: categoryStatus ? categoryStatus : "active", // Category status,
+        status: categoryStatus, // Category status
         isVisibleFrontend: categoryVisibility,
         notes: categoryNotes,
-      },
-    })
-      .unwrap()
-      .then(() => {
-        navigate("/parameters/categories/edit"); // Navigating to edit page after successful edit
-      });
-  } else {
-    createCategory({
-      showFilter: checked, // Whether to show filters
-      name: categoryName, // Category name
-      description: categoryDescription, // Category description
-      status: categoryStatus ? categoryStatus : "active", // Category status
-      isVisibleFrontend: categoryVisibility,
-      notes: categoryNotes,
-    })
-      .unwrap()
-      .then(() => {
-        navigate("/parameters/categories/edit"); // Navigating to categories page after successful creation
-      });
-  }
+        startDate: startDate,
+        endDate: endDate,
+        mediaUrl: categoryMediaUrl,
+      })
+        .unwrap()
+        .then(() => {
+          navigate("/parameters/categories"); // Navigating to categories page after successful creation
+        });
+    }
+  };
 
-  resetValues() // Resetting the category 
-  dispatch(updateCategoryId(""));
-};
+  const handleSubmitAndAddAnother = () => {
+    if (categoryId !== "") {
+      // Calling Category edit API
+      editCategory({
+        id: categoryId, // ID of the category
+        details: {
+          showFilter: checked, // Whether to show filters
+          name: categoryName, // Category name
+          description: categoryDescription, // Category description
+          status: categoryStatus, // Category status,
+          isVisibleFrontend: categoryVisibility,
+          notes: categoryNotes,
+          startDate: startDate,
+          endDate: endDate,
+          mediaUrl: categoryMediaUrl,
+        },
+      })
+        .unwrap()
+        .then(() => {
+          navigate("/parameters/categories/edit"); // Navigating to edit page after successful edit
+        });
+    } else {
+      createCategory({
+        showFilter: checked, // Whether to show filters
+        name: categoryName, // Category name
+        description: categoryDescription, // Category description
+        status: categoryStatus, // Category status
+        isVisibleFrontend: categoryVisibility,
+        notes: categoryNotes,
+        startDate: startDate,
+        endDate: endDate,
+        mediaUrl: categoryMediaUrl,
+      })
+        .unwrap()
+        .then(() => {
+          navigate("/parameters/categories/edit"); // Navigating to categories page after successful creation
+        });
+    }
 
-const resetValues = () => {
-  setCategoryName("");
-  setCategoryDescription("");
-  setCategoryStatus("active");
-  setCategoryNotes("");
-  setCategoryVisibility(false);
-  setChecked(false);
-};
+    resetValues() // Resetting the category 
+    dispatch(updateCategoryId(""));
+  };
+
+  const resetValues = () => {
+    setCategoryName("");
+    setCategoryDescription("");
+    setCategoryStatus("active");
+    setCategoryNotes("");
+    setCategoryVisibility(false);
+    setChecked(false);
+  };
 
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
@@ -195,7 +205,7 @@ const resetValues = () => {
 
   return (
     <div className="page container-fluid position-relative user-group">
-      <AddHeader headerName={"Gold Products"} navigateLink={"/parameters/categories"}/>
+      <AddHeader headerName={categoryName || ""} navigateLink={"/parameters/categories"} />
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -222,7 +232,7 @@ const resetValues = () => {
                     <Checkbox
                       inputProps={{ "aria-label": "controlled" }}
                       checked={checked}
-                      onChange={(e)=>setChecked(e.target.checked)}
+                      onChange={(e) => setChecked(e.target.checked)}
                       size="small"
                       style={{
                         color: "#5C6D8E",
@@ -242,19 +252,19 @@ const resetValues = () => {
               </div>
             </FormGroup>
             <div className="col-12 mt-3 px-0">
-                <div className="d-flex  mb-1">
-                  <p className="text-lightBlue me-2">Description</p>
-                  <Tooltip title="Lorem ipsum" placement="top">
-                    <img
-                      src={info}
-                      alt="info"
-                      className=" c-pointer"
-                      width={13.5}
-                    />
-                  </Tooltip>
-                </div>
-                <AppTextEditor value={categoryDescription} setFieldValue={(val)=>setCategoryDescription(val)} />
+              <div className="d-flex  mb-1">
+                <p className="text-lightBlue me-2">Description</p>
+                <Tooltip title="Lorem ipsum" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
               </div>
+              <AppTextEditor value={categoryDescription} setFieldValue={(val) => setCategoryDescription(val)} />
+            </div>
           </div>
 
           <div className="border-grey-5 rounded-8 p-3 row features mt-4">
@@ -274,28 +284,39 @@ const resetValues = () => {
             </Box>
             <div className="d-flex justify-content-between mb-2 px-0">
             </div>
-              {
-                <>
-                  <TabPanel value={categoryType} index={0}>
-                    <AddCategoriesProducts />
-                  </TabPanel>
-                  <TabPanel value={categoryType} index={1}>
-                    <AddSubCategoriesProducts />
-                  </TabPanel>
-                </>
-              }
+            {
+              <>
+                <TabPanel value={categoryType} index={0}>
+                  <AddCategoriesProducts />
+                </TabPanel>
+                <TabPanel value={categoryType} index={1}>
+                  <AddSubCategoriesProducts />
+                </TabPanel>
+              </>
+            }
           </div>
           <div className="mt-4">
             <SEO />
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-          <StatusBox headingName={"Category Status"} value={categoryStatus} handleProductStatus={(_,val)=>setCategoryStatus(val)} toggleData={['active','scheduled']} />
-          <VisibilityBox value={categoryVisibility} onChange={(_,val)=>setCategoryVisibility(val)} />
+          <StatusBox
+            headingName={"Category Status"}
+            value={categoryStatus}
+            handleProductStatus={(_, val) => setCategoryStatus(val)}
+            toggleData={['active', 'scheduled']}
+          />
+          <VisibilityBox value={categoryVisibility}
+            visibilityChange={(_, val) => setCategoryVisibility(val)}
+            startDate={startDate}
+            endDate={endDate}
+            StartDateChange={setStartDate}
+            EndDateChange={setEndDate}
+          />
           <div className="mt-4">
-            <UploadMediaBox imageName={addMedia} headingName={"Media"}  />
+            <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} />
           </div>
-          <NotesBox  name={'notes'} value={categoryNotes} onChange={(e)=> setCategoryNotes(e.target.value)}/>
+          <NotesBox name={'notes'} value={categoryNotes} onChange={(e) => setCategoryNotes(e.target.value)} />
         </div>
       </div>
       <SaveFooter handleSubmit={handleSubmit} handleSubmitAndAddAnother={handleSubmitAndAddAnother} />
