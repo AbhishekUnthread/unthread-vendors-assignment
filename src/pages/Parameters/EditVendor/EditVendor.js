@@ -46,6 +46,7 @@ const EditVendor = () => {
   const [endDate1, setEndDate1] = useState(null)
   const [vendorDuplicateName, setVendorDuplicateName] = useState("");
   const [duplicateDescription, setDuplicateDescription] = useState(false);
+  const [duplicateFilter, setDuplicateFilter] = useState(false);
   const [index, setIndex] = useState(null);
   const [vendorIndex, setVendorIndex] = useState();
 
@@ -147,7 +148,7 @@ const EditVendor = () => {
         id: vendorId, // ID of the vendor
         details: {
           isFlagShip: vendorFlagShip, // Flagship status of the vendor
-          showFilter: checked, // Whether to show filters
+          showFilter: checked?checked:false, // Whether to show filters
           name: vendorName, // Vendor name
           notes: vendorNotes, // Vendor description
           status: vendorStatus?vendorStatus:"active" // Vendor status
@@ -235,6 +236,10 @@ const EditVendor = () => {
   
       if (duplicateDescription === true) {
         VendorData.notes = vendorNotes;
+      }
+      if(duplicateFilter === true)
+      {
+        VendorData.showFilter = checked;
       }
   
       createVendor(VendorData)
@@ -345,7 +350,7 @@ const EditVendor = () => {
            value={vendorStatus}
            handleProductStatus={vendorStatusChange}
           //  handleSchedule={handleSchedule}
-           toggleData={['active','archived']}
+           toggleData={['active','draft']}
            startDate1={startDate1}
            endDate1={endDate1}
             />
@@ -471,6 +476,29 @@ const EditVendor = () => {
                 />
               }
               label="Products"
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: 13,
+                  color: "#99a6c0",
+                },
+              }}
+              
+            />
+                        <FormControlLabel
+              control={
+                <Checkbox
+                  name="filter"
+                  checked={duplicateFilter}
+                  onChange={(e)=>setDuplicateFilter(e.target.checked)}
+                  inputProps={{ "aria-label": "controlled" }}
+                  size="small"
+                  style={{
+                    color: "#5C6D8E",
+                    marginRight: 0,
+                  }}
+                />
+              }
+              label="Show Filter"
               sx={{
                 "& .MuiTypography-root": {
                   fontSize: 13,

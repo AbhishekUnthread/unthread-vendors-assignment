@@ -121,8 +121,8 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
   queryParameters.createdAt = "-1"; // Set default createdAt value
 }
 
-const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
-  : vendorType === 2 ? { status: "active" }
+const vendorTypeQuery = vendorType === 1 ? { status: "active" }
+  : vendorType === 2 ? { status: "draft" } : vendorType === 3 ? { status: "archived" }
   : {};
 
   const {
@@ -285,24 +285,24 @@ const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
     dispatch,
   ]);
  // * SORT POPOVERS STARTS HERE
-  // const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
-  // const handleSortClick = (event) => {
-  //   setAnchorSortEl(event.currentTarget);
-  // };
+  const handleSortClick = (event) => {
+    setAnchorSortEl(event.currentTarget);
+  };
 
-  // const handleSortClose = () => {
-  //   setAnchorSortEl(null);
-  // };
+  const handleSortClose = () => {
+    setAnchorSortEl(null);
+  };
 
-  // const handleSortRadioChange = (event) => {
-  //   setSelectedSortOption(event.target.value);
-  //   setAnchorSortEl(null); // Close the popover after selecting a value
-  // };
+  const handleSortRadioChange = (event) => {
+    setSelectedSortOption(event.target.value);
+    setAnchorSortEl(null); // Close the popover after selecting a value
+  };
 
   
-  // const openSort = Boolean(anchorSortEl);
-  // const idSort = openSort ? "simple-popover" : undefined;
+  const openSort = Boolean(anchorSortEl);
+  const idSort = openSort ? "simple-popover" : undefined;
 
  // * SORT POPOVERS ENDS
 
@@ -349,22 +349,22 @@ const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
   };
 
    // * SORT POPOVERS STARTS HERE
-  const [anchorSortE1, setAnchorSortE1] = React.useState(null);
-  const openSort = Boolean(anchorSortE1);
-  const idSort = openSort ? "simple-popover" : undefined;
+  // const [anchorSortE1, setAnchorSortE1] = React.useState(null);
+  // const openSort = Boolean(anchorSortE1);
+  // const idSort = openSort ? "simple-popover" : undefined;
 
-  const handleSortClose = () => {
-    setAnchorSortE1(null);
-  };
+  // const handleSortClose = () => {
+  //   setAnchorSortE1(null);
+  // };
   
-  const handleSortClick = (event) => {
-    setAnchorSortE1(event.currentTarget);
-  };
-  const handleSortCheckboxChange = (event) => {
-    const { value, checked } = event.target;
-    setSelectedSortOption(checked ? value : null);
-    setAnchorSortE1(null);
-  };
+  // const handleSortClick = (event) => {
+  //   setAnchorSortE1(event.currentTarget);
+  // };
+  // const handleSortCheckboxChange = (event) => {
+  //   const { value, checked } = event.target;
+  //   setSelectedSortOption(checked ? value : null);
+  //   setAnchorSortE1(null);
+  // };
    // * SORT POPOVERS ENDS
 
   // * STATUS POPOVERS STARTS HERE
@@ -593,13 +593,14 @@ const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
-              <Tab label="Draft" className="tabs-head" />
               <Tab label="Active" className="tabs-head" />
+              <Tab label="In-Active" className="tabs-head" />
+              <Tab label="Archived" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
-              {/* <button
+              <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idSort}
                 variant="contained"
@@ -652,7 +653,7 @@ const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
                   />
                 </RadioGroup>
               </FormControl>
-              </Popover> */}
+              </Popover>
               {/* <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idStatus}
@@ -697,7 +698,7 @@ const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
                 </FormControl>
               </Popover> */}
 
-              <button
+              {/* <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idSort}
                 variant="contained"
@@ -781,7 +782,7 @@ const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
                     checked={selectedSortOption === "newestToOldest"}
                   />
                 </FormGroup>
-              </Popover>
+              </Popover> */}
               <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idStatus}
@@ -859,6 +860,15 @@ const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
             />
           </TabPanel>
           <TabPanel value={vendorType} index={2}>
+            <VendorsTable
+              isLoading={vendorsIsLoading}
+              deleteData={ArchiveTagsHandler}
+              error={error}
+              list={vendorList}
+              edit={editCategoryPageNavigationHandler}
+            />
+          </TabPanel>
+          <TabPanel value={vendorType} index={3}>
             <VendorsTable
               isLoading={vendorsIsLoading}
               deleteData={ArchiveTagsHandler}

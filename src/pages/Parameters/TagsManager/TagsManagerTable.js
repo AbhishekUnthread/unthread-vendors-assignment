@@ -266,7 +266,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit}) => {
                     </TableCell>
 
                     <TableCell style={{ width: 180 }}>
-                    <p className="text-lightBlue">{index}</p>
+                    <p className="text-lightBlue">{row.totalProduct}</p>
                          </TableCell>
 
                     <TableCell style={{ width: 140, padding: 0 }}>

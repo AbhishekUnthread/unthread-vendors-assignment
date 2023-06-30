@@ -229,8 +229,8 @@ const TagsManager = () => {
   if (!selectedSortOption && !searchValue) {
     queryParameters.createdAt = "-1"; // Set default createdAt value
   }
-  const TagTypeQuery = tagsType === 1 ? { status: "draft" }
-  : tagsType === 2 ? { status: "active" }
+  const TagTypeQuery = tagsType === 1 ? { status: "active" }
+  : tagsType === 2 ? { status: "draft" } :tagsType === 3 ? { status: "inactive" }
   : {};
   
   const[editTag,{
@@ -291,6 +291,12 @@ const {
 
     
     useEffect(() => {
+
+      if(editTagIsSuccess)
+      {
+        dispatch(showSuccess({ message: "Status updtaed successfully" }));
+      }
+
       if (tagsError) {
         setError(true);
         if (tagsError?.data?.message) {
@@ -316,12 +322,12 @@ const {
 
       if (createTagsIsSuccess) {
         setShowCreateModal(false);
-        dispatch(showSuccess({ message: "Vendor created successfully" }));
+        dispatch(showSuccess({ message: "Tag created successfully" }));
       }
       if(bulkCreateTagsIsSuccess)
       {
         setShowCreateModal(false);
-        dispatch(showSuccess({ message: "Vendors created successfully" }));
+        dispatch(showSuccess({ message: "Tags created successfully" }));
       }
       
     }, [tagsType,tagsIsSuccess,tagsError,tagsData,dispatch,bulkCreateTagsIsSuccess,bulkTagEditIsSuccess])
@@ -354,7 +360,7 @@ const {
     initialValues: {
       name : "",
       status:"active",
-      showFilter:true,
+      showFilter:false,
     },
     enableReinitialize: true,
     validationSchema: multipleTags.length > 0 ? multipleTagsSchema : tagsValidationSchema,
@@ -394,24 +400,46 @@ const {
     setSearchValue(event.target.value);
   };
 
+   // * SORT POPOVERS STARTS HERE
+   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+
+   const handleSortClick = (event) => {
+     setAnchorSortEl(event.currentTarget);
+   };
+ 
+   const handleSortClose = () => {
+     setAnchorSortEl(null);
+   };
+ 
+   const handleSortRadioChange = (event) => {
+     setSelectedSortOption(event.target.value);
+     setAnchorSortEl(null); // Close the popover after selecting a value
+   };
+ 
+   
+   const openSort = Boolean(anchorSortEl);
+   const idSort = openSort ? "simple-popover" : undefined;
+ 
+  // * SORT POPOVERS ENDS
+
 
      // * SORT POPOVERS STARTS HERE
-     const [anchorSortE1, setAnchorSortE1] = React.useState(null);
-     const openSort = Boolean(anchorSortE1);
-     const idSort = openSort ? "simple-popover" : undefined;
+    //  const [anchorSortE1, setAnchorSortE1] = React.useState(null);
+    //  const openSort = Boolean(anchorSortE1);
+    //  const idSort = openSort ? "simple-popover" : undefined;
    
-     const handleSortClose = () => {
-       setAnchorSortE1(null);
-     };
+    //  const handleSortClose = () => {
+    //    setAnchorSortE1(null);
+    //  };
      
-     const handleSortClick = (event) => {
-       setAnchorSortE1(event.currentTarget);
-     };
-     const handleSortCheckboxChange = (event) => {
-       const { value, checked } = event.target;
-       setSelectedSortOption(checked ? value : null);
-       setAnchorSortE1(null);
-     };
+    //  const handleSortClick = (event) => {
+    //    setAnchorSortE1(event.currentTarget);
+    //  };
+    //  const handleSortCheckboxChange = (event) => {
+    //    const { value, checked } = event.target;
+    //    setSelectedSortOption(checked ? value : null);
+    //    setAnchorSortE1(null);
+    //  };
       // * SORT POPOVERS ENDS
 
   return (
@@ -965,14 +993,69 @@ const {
             aria-label="scrollable force tabs example" 
             className="tabs">
               <Tab label="All" className="tabs-head" />{" "}
-              <Tab label="Draft" className="tabs-head" />
               <Tab label="Active" className="tabs-head" />
+              <Tab label="In-Active" className="tabs-head" />
+              <Tab label="Draft" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange}/>
-            
             <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortEl}
+                onClose={handleSortClose}
+                className="columns"
+              >
+              <FormControl className="px-2 py-1">
+                <RadioGroup
+                  aria-labelledby="demo-controlled-radio-buttons-group"
+                  name="controlled-radio-buttons-group"
+                  value={selectedSortOption}
+                  onChange={handleSortRadioChange}
+                >
+                  <FormControlLabel
+                    value="alphabeticalAtoZ"
+                    control={<Radio size="small" />}
+                    label="Alphabetical (A-Z)"
+                  />
+                  <FormControlLabel
+                    value="alphabeticalZtoA"
+                    control={<Radio size="small" />}
+                    label="Alphabetical (Z-A)"
+                  />
+                  <FormControlLabel
+                    value="oldestToNewest"
+                    control={<Radio size="small" />}
+                    label="Oldest to Newest"
+                  />
+                  <FormControlLabel
+                    value="newestToOldest"
+                    control={<Radio size="small" />}
+                    label="Newest to Oldest"
+                  />
+                </RadioGroup>
+              </FormControl>
+              </Popover>
+            
+            {/* <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idSort}
                 variant="contained"
@@ -1056,7 +1139,7 @@ const {
                     checked={selectedSortOption === "newestToOldest"}
                   />
                 </FormGroup>
-              </Popover>
+              </Popover> */}
           </div>
           <TabPanel value={tagsType} index={0}>
             <TagsManagerTable 
@@ -1078,6 +1161,15 @@ const {
              />
           </TabPanel>
           <TabPanel value={tagsType} index={2}>
+            <TagsManagerTable
+              isLoading={tagsIsLoading}
+              deleteData={ArchiveTagsHandler}
+              error={error}
+              list={tagsList}
+              edit={editTagsPageNavigationHandler}
+             />
+          </TabPanel>
+          <TabPanel value={tagsType} index={3}>
             <TagsManagerTable
               isLoading={tagsIsLoading}
               deleteData={ArchiveTagsHandler}
