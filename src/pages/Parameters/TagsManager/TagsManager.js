@@ -1,4 +1,4 @@
-import {
+import React, {
   forwardRef,
   useState,
   useEffect,
@@ -56,6 +56,9 @@ import {
   TablePagination,
   TableRow,
   Chip,
+  FormHelperText,
+  Popover,
+  FormGroup,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import { LoadingButton } from "@mui/lab";
@@ -72,7 +75,13 @@ import {
   useCreateTagMutation,
   useDeleteTagMutation,
   useEditTagMutation,
+  useBulkCreateTagMutation,
+  useBulkEditTagMutation,
 } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
+import { useNavigate } from "react-router-dom";
+import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
+import sort from "../../../assets/icons/sort.svg";
+
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = forwardRef(function Transition(props, ref) {
@@ -168,13 +177,270 @@ const likeHeadCells = [
 
 // ? TABLE ENDS HERE
 
-const tagsValidationSchema = Yup.object({
-  name: Yup.string().trim().min(3).required("required"),
-  description: Yup.string().trim().min(3).required(),
-  status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
-});
-
 const TagsManager = () => {
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [tagsType, setTagsType] = useState(0);
+  const [tagsList, setTagsList] = useState([]);
+  const [error, setError] = useState(false);
+  const [multipleTags,setMultipleTags] = useState([]);
+  const [selectedSortOption, setSelectedSortOption] = React.useState("newestToOldest");
+  const [searchValue, setSearchValue] = useState("");
+  const [totalCount,setTotalCount] = React.useState([]);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  
+  const tagsValidationSchema = Yup.object({
+    name: Yup.string().trim().min(3).required("Required"),
+    // name: Yup.string().min(3, 'Name must be at least 3 characters long').required('Name is required'),
+    // description: Yup.string().trim().min(3).required(),
+    // status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
+    // name: Yup.string()
+    // .when('multipleTags', {
+    //   is: (multipleTags) => !multipleTags || multipleTags.length === 0,
+    //   then: Yup.string()
+    //     .trim()
+    //     .min(3, 'Name must be at least 3 characters long')
+    //     .required('Name is required when tags are empty'),
+    //   otherwise: Yup.string()
+    //     .trim()
+    //     .min(3, 'Name must be at least 3 characters long'),
+    // }),
+  });
+
+  const multipleTagsSchema = Yup.object({
+    name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
+  });
+
+  const queryParameters = {};
+  if (selectedSortOption) {
+    // Check alphabetical sort options
+    if (selectedSortOption === "alphabeticalAtoZ" || selectedSortOption === "alphabeticalZtoA") {
+      queryParameters.alphabetical = selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
+    }
+    // Check createdAt sort options
+    else if (selectedSortOption === "oldestToNewest" || selectedSortOption === "newestToOldest") {
+      queryParameters.createdAt = selectedSortOption === "oldestToNewest" ? "1" : "-1";
+    }
+  }
+  if(searchValue)
+  {
+  queryParameters.name = searchValue;
+  }
+  if (!selectedSortOption && !searchValue) {
+    queryParameters.createdAt = "-1"; // Set default createdAt value
+  }
+  const TagTypeQuery = tagsType === 1 ? { status: "archieved" }
+  : {};
+  
+  const[editTag,{
+    data: editData,
+    isLoading: editTagIsLoading,
+    isSuccess: editTagIsSuccess,
+    error: editTagError, 
+  }]=useEditTagMutation();
+
+  const changeTagsTypeHandler
+   = (_event, tabIndex) => {
+    setTagsType(tabIndex);
+  };
+  const[deleteTags,
+  {
+    isLoading: deleteTagsIsLoading, 
+    isSuccess: deleteTagsIsSuccess, 
+    error: deleteTagsError, 
+  }]= useDeleteTagMutation();
+
+const[createTag,
+{
+  isLoading: createTagsIsLoading, 
+  isSuccess: createTagsIsSuccess, 
+  error:createTagsError, 
+}]= useCreateTagMutation();
+
+const[bulkCreateTag,{
+  isLoading: bulkCreateTagsIsLoading, 
+  isSuccess: bulkCreateTagsIsSuccess, 
+  error:bulkCreateTagsError, 
+  
+}]=useBulkCreateTagMutation();
+
+const[bulkEdit,
+  {
+    data: bulkEditTag,
+    isLoading: bulkTagEditLoading,
+    isSuccess: bulkTagEditIsSuccess,
+    error: bulkTagEditError,
+  }]=useBulkEditTagMutation();
+
+// const queryOptions =
+//   tagsType === 0
+//     ? { createdAt: -1 }
+//     : tagsType === 1
+//     ? { status: "draft" }
+//     : tagsType === 2
+//     ? { status: "active" }
+//     : {};
+
+const {
+  data: tagsData,
+  isLoading: tagsIsLoading,
+  isSuccess: tagsIsSuccess,
+  error: tagsError,
+} = useGetAllTagsQuery({...queryParameters,...TagTypeQuery}, { enabled: Object.keys(queryParameters).length > 0 });
+
+    
+    useEffect(() => {
+
+      if(editTagIsSuccess)
+      {
+        dispatch(showSuccess({ message: "Status updtaed successfully" }));
+      }
+
+      if (tagsError) {
+        setError(true);
+        if (tagsError?.data?.message) {
+          dispatch(showError({ message: tagsError.data.message }));
+        } else {
+          dispatch(
+            showError({ message: "Something went wrong!, please try again" })
+          );
+        }
+      }
+      if (tagsIsSuccess || bulkCreateTagsIsSuccess || bulkTagEditIsSuccess) {
+        setError(false);
+        if (tagsType === 0) {
+          setTagsList(tagsData.data.data);
+          setTotalCount(tagsData.data.totalCount);
+        }
+        if (tagsType === 1) {
+          setTagsList(tagsData.data.data);
+          setTotalCount(tagsData.data.totalCount);
+        }
+      }
+
+      if (createTagsIsSuccess) {
+        setShowCreateModal(false);
+        dispatch(showSuccess({ message: "Tag created successfully" }));
+      }
+      if(bulkCreateTagsIsSuccess)
+      {
+        setShowCreateModal(false);
+        dispatch(showSuccess({ message: "Tags created successfully" }));
+      }
+      
+    }, [tagsType,tagsIsSuccess,tagsError,tagsData,dispatch,bulkCreateTagsIsSuccess,bulkTagEditIsSuccess])
+    
+    const editTagsPageNavigationHandler = (data) => {
+      dispatch(updateTagId(data._id)); 
+      navigate('edit');
+    };
+
+    const ArchiveTagsHandler = (data) => {
+      const newStatus = data?.status === "archieved" ? "active" : "archieved";
+      editTag({
+        id: data?._id,
+        details: {
+          status: newStatus,
+        },
+      });
+    };
+    
+  
+  const toggleCreateModalHandler = () => {
+    setShowCreateModal((prevState) => !prevState);
+    TagFormik.resetForm();
+    setMultipleTags([]);
+    TagFormik.setFieldTouched('name', false);
+    TagFormik.setFieldError('name', '');
+  };
+  
+  const TagFormik = useFormik({
+    initialValues: {
+      name : "",
+      status:"active",
+      showFilter:false,
+    },
+    enableReinitialize: true,
+    validationSchema: multipleTags.length > 0 ? multipleTagsSchema : tagsValidationSchema,
+    
+    onSubmit: (values) => {
+      if(multipleTags.length>0)
+      {
+        bulkCreateTag(multipleTags)
+      }
+      else{
+        createTag(values);
+      }
+    },
+  });
+
+  const handleAddMultiple = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      TagFormik.validateForm().then(() => {
+        if (TagFormik.isValid && TagFormik.values.name !== '') {
+          TagFormik.setFieldTouched('name', true);
+          setMultipleTags((prevValues) => [
+            ...prevValues,
+            { name: TagFormik.values.name, status: 'active', filter: TagFormik.values.showFilter },
+          ]);
+          TagFormik.resetForm();
+        }
+      });
+    }
+  };
+  
+  const handleDelete = (value) => {
+    setMultipleTags((prevValues) => prevValues.filter((v) => v.name !== value));
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+   // * SORT POPOVERS STARTS HERE
+   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+
+   const handleSortClick = (event) => {
+     setAnchorSortEl(event.currentTarget);
+   };
+ 
+   const handleSortClose = () => {
+     setAnchorSortEl(null);
+   };
+ 
+   const handleSortRadioChange = (event) => {
+     setSelectedSortOption(event.target.value);
+     setAnchorSortEl(null); // Close the popover after selecting a value
+   };
+ 
+   
+   const openSort = Boolean(anchorSortEl);
+   const idSort = openSort ? "simple-popover" : undefined;
+ 
+  // * SORT POPOVERS ENDS
+
+
+     // * SORT POPOVERS STARTS HERE
+    //  const [anchorSortE1, setAnchorSortE1] = React.useState(null);
+    //  const openSort = Boolean(anchorSortE1);
+    //  const idSort = openSort ? "simple-popover" : undefined;
+   
+    //  const handleSortClose = () => {
+    //    setAnchorSortE1(null);
+    //  };
+     
+    //  const handleSortClick = (event) => {
+    //    setAnchorSortE1(event.currentTarget);
+    //  };
+    //  const handleSortCheckboxChange = (event) => {
+    //    const { value, checked } = event.target;
+    //    setSelectedSortOption(checked ? value : null);
+    //    setAnchorSortE1(null);
+    //  };
+      // * SORT POPOVERS ENDS
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -190,7 +456,10 @@ const TagsManager = () => {
           <button className="button-lightBlue-outline py-2 px-4 ms-3">
             <p>Bulk Add Tags</p>
           </button>
-          <button className="button-gradient py-2 px-4 ms-3">
+          <button
+           className="button-gradient py-2 px-4 ms-3" 
+           onClick={toggleCreateModalHandler}
+           >
             <p>+ Create Tag</p>
           </button>
 
@@ -200,6 +469,7 @@ const TagsManager = () => {
             aria-describedby="alert-dialog-slide-description"
             maxWidth="sm"
             fullWidth={true}
+            open={showCreateModal}
           >
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
@@ -217,22 +487,61 @@ const TagsManager = () => {
                   alt="cancel"
                   width={30}
                   className="c-pointer"
+                  onClick={toggleCreateModalHandler}
                 />
               </div>
             </DialogTitle>
             <hr className="hr-grey-6 my-0" />
-
+            <form noValidate onSubmit={TagFormik.handleSubmit}>
             <DialogContent className="py-3 px-4">
-              <p className="text-lightBlue mb-2">Tag Name</p>
+              <p className="text-lightBlue mb-2">Create Tags</p>
               <FormControl className="col-7 px-0">
-                <OutlinedInput placeholder="Enter Tag Name" size="small" />
+                <OutlinedInput
+                 placeholder="Enter Tag Name" 
+                 size="small"
+                 name="name"
+                 value={TagFormik.values.name}
+                 onChange={TagFormik.handleChange}
+                 onBlur={TagFormik.handleBlur}
+                 onKeyDown={handleAddMultiple}
+                  />
+                {!!TagFormik.touched.name && TagFormik.errors.name && (
+                    <FormHelperText error>
+                        {TagFormik.errors.name}
+                    </FormHelperText>
+                  )}
               </FormControl>
+              <br />
+              <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="showFilter"
+                      checked={TagFormik.values.showFilter}
+                      onChange={TagFormik.handleChange}
+                      inputProps={{ "aria-label": "controlled" }}
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                        marginRight: 0,
+                        width: "auto",
+                      }}
+                    />
+                  }
+                  label="Include in Filters"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: "0.875rem",
+                      color: "#c8d8ff",
+                    },
+                  }}
+                  className=" px-0"
+                />
               <div className="d-flex">
-                {[].map((data, index) => {
+                {multipleTags && multipleTags.map((data, index) => {
                   return (
                     <Chip
-                      label={data}
-                      onDelete={() => {}}
+                      label={data.name}
+                      onDelete={() => handleDelete(data.name)}
                       onClick={() => {}}
                       size="small"
                       className="mt-3 me-2"
@@ -240,16 +549,28 @@ const TagsManager = () => {
                   );
                 })}
               </div>
+
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
             <DialogActions className="d-flex justify-content-between px-4 py-3">
-              <button className="button-grey py-2 px-5">
-                <p className="text-lightBlue">Cancel</p>
-              </button>
-              <button className="button-gradient py-2 px-5">
+            
+                <button
+                  className="button-grey py-2 px-5"
+                  onClick={toggleCreateModalHandler}
+                  type="button"
+                >
+                  <p className="text-lightBlue">Cancel</p>
+                </button>
+              <LoadingButton 
+              className="button-gradient py-2 px-5"
+              // loading={createTagsIsLoading}
+              // disabled={createTagsIsLoading}
+              type="submit"
+              >
                 <p>Save</p>
-              </button>
+              </LoadingButton>
             </DialogActions>
+            </form>
           </Dialog>
 
           <SwipeableDrawer anchor="right" className="bulk-drawer">
@@ -666,19 +987,179 @@ const TagsManager = () => {
             {/* variant="scrollable"
               scrollButtons
               allowScrollButtonsMobile */}
-            <Tabs aria-label="scrollable force tabs example" className="tabs">
+            <Tabs 
+            value={tagsType}
+            onChange={changeTagsTypeHandler}
+            aria-label="scrollable force tabs example" 
+            className="tabs">
               <Tab label="All" className="tabs-head" />{" "}
-              <Tab label="Draft" className="tabs-head" />
+              <Tab label="Archive" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange}/>
+            <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortEl}
+                onClose={handleSortClose}
+                className="columns"
+              >
+              <FormControl className="px-2 py-1">
+                <RadioGroup
+                  aria-labelledby="demo-controlled-radio-buttons-group"
+                  name="controlled-radio-buttons-group"
+                  value={selectedSortOption}
+                  onChange={handleSortRadioChange}
+                >
+                  <FormControlLabel
+                    value="newestToOldest"
+                    control={<Radio size="small" />}
+                    label="Newest to Oldest"
+                  />
+                  <FormControlLabel
+                    value="oldestToNewest"
+                    control={<Radio size="small" />}
+                    label="Oldest to Newest"
+                  />
+                  <FormControlLabel
+                    value="alphabeticalAtoZ"
+                    control={<Radio size="small" />}
+                    label="Alphabetical (A-Z)"
+                  />
+                  <FormControlLabel
+                    value="alphabeticalZtoA"
+                    control={<Radio size="small" />}
+                    label="Alphabetical (Z-A)"
+                  />
+
+                </RadioGroup>
+              </FormControl>
+              </Popover>
+            
+            {/* <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortE1}
+                onClose={handleSortClose}
+                className="columns"
+              >
+                <FormGroup className="px-2 py-1"                   
+                  onChange={handleSortCheckboxChange}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Alphabetical (A-Z)"
+                    value="alphabeticalAtoZ"
+                    className="me-0"
+                    checked={selectedSortOption === "alphabeticalAtoZ"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Alphabetical (Z-A)"
+                    className="me-0"
+                    value="alphabeticalZtoA"
+                    checked={selectedSortOption === "alphabeticalZtoA"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Oldest to Newest"
+                    className="me-0"
+                    value="oldestToNewest"
+                    checked={selectedSortOption === "oldestToNewest"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Newest to Oldest"
+                    className="me-0"
+                    value="newestToOldest"
+                    checked={selectedSortOption === "newestToOldest"}
+                  />
+                </FormGroup>
+              </Popover> */}
           </div>
-          <TabPanel index={0}>
-            <TagsManagerTable />
+          <TabPanel value={tagsType} index={0}>
+            <TagsManagerTable 
+              isLoading={tagsIsLoading}
+              deleteData={ArchiveTagsHandler}
+              error={error}
+              list={tagsList}
+              edit={editTagsPageNavigationHandler}
+              bulkEdit={bulkEdit}
+              totalCount={totalCount}
+            />
           </TabPanel>
-          <TabPanel index={1}>
-            <TagsManagerTable />
+          <TabPanel value={tagsType} index={1}>
+            <TagsManagerTable
+              isLoading={tagsIsLoading}
+              deleteData={ArchiveTagsHandler}
+              error={error}
+              list={tagsList}
+              edit={editTagsPageNavigationHandler}
+              totalCount={totalCount}
+             />
           </TabPanel>
         </Paper>
       </div>

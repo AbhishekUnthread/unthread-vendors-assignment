@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
@@ -10,7 +10,15 @@ import TableEditStatusButton from "../../../components/TableEditStatusButton/Tab
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // ! MATERIAL IMPORTS
 import {
+  Box,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  OutlinedInput,
+  Slide,
   Table,
   TableBody,
   TableCell,
@@ -18,16 +26,28 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
+  Typography,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import { useBulkEditVendorMutation } from "../../../features/parameters/vendors/vendorsApiSlice";
+import { useDispatch } from "react-redux";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import { LoadingButton } from "@mui/lab";
+import question from "../../../assets/icons/question.svg"
+import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 
 // ? TABLE STARTS HERE
 function createData(vId, vendorsName, noOfProducts, status) {
   return { vId, vendorsName, noOfProducts, status };
 }
 
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 const headCells = [
   {
     id: "vendorsName",
@@ -58,12 +78,67 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
+const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [showCreateModal, setShowCreateModal] = React.useState(false);
+  const [archive, setArchive] = React.useState(false);
+  const [name, setName] = React.useState(false);
+
+
+
+  const [state, setState] = React.useState([]);
+  const dispatch = useDispatch();
+
+  const toggleArchiveModalHandler = (row) => {
+    setShowCreateModal((prevState) => !prevState);
+    setArchive(row);
+    setName(row?.name);
+  };
+
+  const[bulkEdit,
+  {
+    data: bulkEditVendor,
+    isLoading: bulkVendorEditLoading,
+    isSuccess: bulkVendorEditIsSuccess,
+    error: bulkVendorEditError,
+  }]=useBulkEditVendorMutation();
+
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
+
+  useEffect(() => {
+    // Update the state only if the selectedStatus state has a value
+    if (selectedStatus !== null) {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as Draft") {
+          return {
+            id,
+            status: "draft",
+          };
+        } else {
+          return {
+            id,
+            status: "", // Set a default value here if needed
+          };
+        }
+      });
+      setState(newState);
+      bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      setSelectedStatus(null);
+    }
+  }, [selected, selectedStatus,bulkVendorEditIsSuccess]);
+  
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -111,8 +186,14 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  const handleArchive =()=>{
+    deleteData(archive);
+    toggleArchiveModalHandler();
+  }
 
   return (
     <React.Fragment>
@@ -129,7 +210,11 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
+          <TableEditStatusButton
+            onSelect={handleStatusSelect}
+            defaultValue={["Set as Active", "Set as Draft"]}
+            headingName="Edit Status"
+          />
           <TableMassActionButton />
         </div>
       )}
@@ -198,16 +283,25 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
                           </TableCell>
 
                           <TableCell style={{ width: 180 }}>
-                            <p className="text-lightBlue">{index}</p>
+                            <p className="text-lightBlue">{row.totalProduct}</p>
                           </TableCell>
 
-                          <TableCell style={{ width: 140, padding: 0 }}>
+                          {/* <TableCell style={{ width: 140, padding: 0 }}>
                             <div className="d-flex align-items-center">
                               <div
                                 className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.status}`}
                               >
-                                <small className="text-lightBlue fw-400">
-                                  {row.status}
+                                <small className="text-black fw-400">
+                                  {row.status == "active" ? "Acitve" : row.status == "in-active" ? "In-Active" : "Archived" }
+                                </small>
+                              </div>
+                            </div>
+                          </TableCell> */}
+                          <TableCell style={{ width: 140, padding: 0 }}>
+                            <div className="d-flex align-items-center">
+                              <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"}}>
+                                <small className="text-black fw-400">
+                                  {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "archieved" ? "Archived" : "Scheduled"}
                                 </small>
                               </div>
                             </div>
@@ -234,13 +328,20 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
                               )}
 
                               {deleteData && (
-                                <Tooltip title={"Delete"} placement="top">
-                                  <div
-                                    onClick={(e) => {
-                                      deleteData(row);
-                                    }}
-                                    className="table-edit-icon rounded-4 p-2"
-                                  >
+                                <Tooltip
+                                  onClick={(e) => {
+                                    row.status === "active"
+                                      ? toggleArchiveModalHandler(row)
+                                      : deleteData(row);
+                                  }}
+                                  title={
+                                    row.status === "active"
+                                      ? "Archive"
+                                      : "Un-Archive"
+                                  }
+                                  placement="top"
+                                >
+                                  <div className="table-edit-icon rounded-4 p-2">
                                     <InventoryIcon
                                       sx={{
                                         color: "#5c6d8e",
@@ -269,9 +370,9 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[10, 20, 30]}
+              rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={list.length}
+              count={totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -289,6 +390,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
       ) : (
         <></>
       )}
+      <DeleteModal showCreateModal={showCreateModal} toggleArchiveModalHandler={toggleArchiveModalHandler} handleArchive={handleArchive} name={name} />
     </React.Fragment>
   );
 };

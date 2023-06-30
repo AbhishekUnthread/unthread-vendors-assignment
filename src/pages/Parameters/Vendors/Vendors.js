@@ -31,6 +31,11 @@ import {
   FormHelperText,
   FormControlLabel,
   Checkbox,
+  RadioGroup,
+  Radio,
+  Popover,
+  Autocomplete,
+  FormGroup,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -44,8 +49,12 @@ import {
   useGetAllVendorsQuery,
   useCreateVendorMutation,
   useDeleteVendorMutation,
+  useBulkCreateVendorMutation,
+  useEditVendorMutation,
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+import sort from "../../../assets/icons/sort.svg";
+
 
 // ! MATERIAL ICONS IMPORTS
 
@@ -55,12 +64,6 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const vendorValidationSchema = Yup.object({
-  name: Yup.string().trim().min(3).required("required"),
-  description: Yup.string().trim().min(3).required(),
-  status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
-});
-
 const Vendors = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -69,13 +72,78 @@ const Vendors = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedSortOption, setSelectedSortOption] = React.useState("newestToOldest");
+  const [selectedStatusOption, setSelectedStatusOption] = React.useState(null);
+  const [searchValue, setSearchValue] = React.useState("");
+  const [multipleVendors,setMultipleVendors] = React.useState([]);
+  const [totalCount,setTotalCount] = React.useState([]);
+
+
+    const vendorValidationSchema = Yup.object({
+    name: Yup.string().trim().min(3).required("Required"),
+  // description: Yup.string().trim().min(3).required(),
+  // status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
+});
+  const multipleVendorsSchema = Yup.object({
+  name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
+  });
+
+  const handleDelete = (value) => {
+    setMultipleVendors((prevValues) => prevValues.filter((v) => v.name !== value));
+  };
+
+
+//Initializes an empty object to store the query parameters.
+  const queryParameters = {};
+
+// Check selectedSortOption
+if (selectedSortOption) {
+  // Check alphabetical sort options
+  if (selectedSortOption === "alphabeticalAtoZ" || selectedSortOption === "alphabeticalZtoA") {
+    queryParameters.alphabetical = selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
+  }
+  // Check createdAt sort options
+  else if (selectedSortOption === "oldestToNewest" || selectedSortOption === "newestToOldest") {
+    queryParameters.createdAt = selectedSortOption === "oldestToNewest" ? "1" : "-1";
+  }
+}
+
+// Check selectedStatusOption
+if (selectedStatusOption !== null) {
+  queryParameters.status = selectedStatusOption;
+}
+
+if(searchValue)
+{
+  queryParameters.name = searchValue;
+}
+
+// Check if both selectedSortOption and selectedStatusOption are null
+if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
+  queryParameters.createdAt = "-1"; // Set default createdAt value
+}
+
+const vendorTypeQuery = vendorType === 1 ? { status: "active" }
+  : vendorType === 2 ? { status: "in-active" } : vendorType === 3 ? { status: "archieved" }
+  : {};
 
   const {
     data: vendorsData, // Data received from the useGetAllVendorsQuery hook
     isLoading: vendorsIsLoading, // Loading state of the vendors data
     isSuccess: vendorsIsSuccess, // Success state of the vendors data
     error: vendorsError, // Error state of the vendors data
-  } = useGetAllVendorsQuery({ createdAt: "-1" }); // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
+  } = useGetAllVendorsQuery({...queryParameters,...vendorTypeQuery}, { enabled: Object.keys(queryParameters).length > 0 }); 
+  // The `enabled` option determines whether the useGetAllVendorsQuery hook should be enabled or disabled based on the presence of query parameters.
+  // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
+
+  const [
+    editVendor,
+    { data: editData,
+      isLoading: editVendorIsLoading,
+      isSuccess: editVendorIsSuccess,
+      error: editVendorError },
+  ] = useEditVendorMutation();
+
 
   const [
     createVendor,
@@ -85,6 +153,16 @@ const Vendors = () => {
       error: createVendorError,
     },
   ] = useCreateVendorMutation();
+
+  const [
+    bulkCreateVendor,
+    {
+      isLoading: bulkCreateVendorIsLoading,
+      isSuccess: bulkCreateVendorIsSuccess,
+      error: bulkCreateVendorError,
+    },
+  ] =useBulkCreateVendorMutation();
+
   const [
     deleteVendor,
     {
@@ -94,31 +172,48 @@ const Vendors = () => {
     },
   ] = useDeleteVendorMutation();
 
+  
   const vendorFormik = useFormik({
     initialValues: {
-      name: "",
-      description: "",
+         name: "",
+      // description: "",
       status: "active",
-      showFilter: true,
+      showFilter: false,
     },
     enableReinitialize: true,
-    validationSchema: vendorValidationSchema,
-    onSubmit: (values) => {
-      createVendor(values)
-        .unwrap()
-        .then(() => vendorFormik.resetForm());
+    validationSchema: multipleVendors.length > 0 ? multipleVendorsSchema : vendorValidationSchema,
+    onSubmit: (values) => {  
+      if(multipleVendors.length>0)
+      {
+        bulkCreateVendor(multipleVendors)
+      }
+      else
+      {
+        createVendor(values)
+      }
     },
   });
+
 
   const toggleCreateModalHandler = () => {
     setShowCreateModal((prevState) => !prevState);
     vendorFormik.resetForm();
     setIsEditing(false);
-    // setEditId(null);
+    setMultipleVendors([]);
+    vendorFormik.setFieldTouched('name', false);
+    vendorFormik.setFieldError('name', '');
+
   };
 
-  const deleteVendorHandler = (data) => {
-    deleteVendor(data?._id);
+  const ArchiveTagsHandler = (data) => {
+    const newStatus = data?.status === "archieved" ? "active" : "archieved";
+    editVendor({
+      id: data?._id,
+      details: {
+        status: newStatus,
+        showFilter:true
+      },
+    });
   };
 
   const editCategoryPageNavigationHandler = (data) => {
@@ -135,6 +230,21 @@ const Vendors = () => {
   };
 
   useEffect(() => {
+    if (bulkCreateVendorIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Vendors created successfully" }));
+    }
+  }, [bulkCreateVendorIsSuccess,dispatch])
+  
+
+  
+  useEffect(() => {
+
+    if(editVendorIsSuccess)
+    {
+      dispatch(showSuccess({ message: "Status updtaed successfully" }));
+    }
+
     if (vendorsError) {
       setError(true);
       if (vendorsError?.data?.message) {
@@ -159,13 +269,26 @@ const Vendors = () => {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Vendor created successfully" }));
     }
+
     if (vendorsIsSuccess) {
       setError(false);
       if (vendorType === 0) {
         setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
       }
       if (vendorType === 1) {
         setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
+      }
+      if(vendorType === 2)
+      {
+        setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
+      }
+      if(vendorType === 3)
+      {
+        setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
       }
     }
   }, [
@@ -177,6 +300,108 @@ const Vendors = () => {
     vendorType,
     dispatch,
   ]);
+ // * SORT POPOVERS STARTS HERE
+  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+
+  const handleSortClick = (event) => {
+    setAnchorSortEl(event.currentTarget);
+  };
+
+  const handleSortClose = () => {
+    setAnchorSortEl(null);
+  };
+
+  const handleSortRadioChange = (event) => {
+    setSelectedSortOption(event.target.value);
+    setAnchorSortEl(null); // Close the popover after selecting a value
+  };
+
+  
+  const openSort = Boolean(anchorSortEl);
+  const idSort = openSort ? "simple-popover" : undefined;
+
+ // * SORT POPOVERS ENDS
+
+  // * STATUS POPOVERS STARTS HERE
+  // const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
+
+  // const handleStatusClick = (event) => {
+  //   setAnchorStatusEl(event.currentTarget);
+  // };
+
+  // const handleStatusClose = () => {
+  //   setAnchorStatusEl(null);
+  // };
+
+  // const handleStatusRadioChange = (event) => {
+  //   setSelectedStatusOption(event.target.value);
+  //   setAnchorStatusEl(null); // Close the popover after selecting a value
+  // };
+
+  // const openStatus = Boolean(anchorStatusEl);
+  // const idStatus = openStatus ? "simple-popover" : undefined;
+ // * STATUS POPOVERS ENDS
+
+
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+
+  const handleAddMultiple = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      vendorFormik.validateForm().then(() => {
+        if (vendorFormik.isValid && vendorFormik.values.name !== '') {
+          vendorFormik.setFieldTouched('name', true);
+          setMultipleVendors((prevValues) => [
+            ...prevValues,
+            { name: vendorFormik.values.name, status: 'active', showFilter: vendorFormik.values.showFilter },
+          ]);
+          vendorFormik.resetForm();
+        }
+      });
+    }
+  };
+
+   // * SORT POPOVERS STARTS HERE
+  // const [anchorSortE1, setAnchorSortE1] = React.useState(null);
+  // const openSort = Boolean(anchorSortE1);
+  // const idSort = openSort ? "simple-popover" : undefined;
+
+  // const handleSortClose = () => {
+  //   setAnchorSortE1(null);
+  // };
+  
+  // const handleSortClick = (event) => {
+  //   setAnchorSortE1(event.currentTarget);
+  // };
+  // const handleSortCheckboxChange = (event) => {
+  //   const { value, checked } = event.target;
+  //   setSelectedSortOption(checked ? value : null);
+  //   setAnchorSortE1(null);
+  // };
+   // * SORT POPOVERS ENDS
+
+  // * STATUS POPOVERS STARTS HERE
+  const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
+  const handleStatusClick = (event) => {
+    setAnchorStatusEl(event.currentTarget);
+  };
+
+  const handleStatusClose = () => {
+    setAnchorStatusEl(null);
+  };
+
+  const handleStatusCheckboxChange = (event) => {
+    const { value, checked } = event.target;
+    setSelectedStatusOption(checked ? value : null);
+    setAnchorStatusEl(null); // Close the popover after selecting a value
+  };
+
+  const openStatus = Boolean(anchorStatusEl);
+  const idStatus = openStatus ? "simple-popover" : undefined;
+ // * STATUS POPOVERS ENDS
 
   return (
     <div className="container-fluid page">
@@ -229,7 +454,7 @@ const Vendors = () => {
 
             <form noValidate onSubmit={vendorFormik.handleSubmit}>
               <DialogContent className="py-3 px-4">
-                <p className="text-lightBlue mb-2">Vendor Name</p>
+                <p className="text-lightBlue mb-2">Vendor Name *</p>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
                     placeholder="Enter Vendor Name"
@@ -238,30 +463,13 @@ const Vendors = () => {
                     value={vendorFormik.values.name}
                     onBlur={vendorFormik.handleBlur}
                     onChange={vendorFormik.handleChange}
+                    onKeyDown={handleAddMultiple}
                   />
                   {!!vendorFormik.touched.name && vendorFormik.errors.name && (
                     <FormHelperText error>
                       {vendorFormik.errors.name}
                     </FormHelperText>
                   )}
-                </FormControl>
-
-                <p className="text-lightBlue mb-2">Description</p>
-                <FormControl className="col-7 px-0">
-                  <OutlinedInput
-                    placeholder="Enter Description"
-                    size="small"
-                    value={vendorFormik.values.description}
-                    onBlur={vendorFormik.handleBlur}
-                    onChange={vendorFormik.handleChange}
-                    name="description"
-                  />
-                  {!!vendorFormik.touched.description &&
-                    vendorFormik.errors.description && (
-                      <FormHelperText error>
-                        {vendorFormik.errors.description}
-                      </FormHelperText>
-                    )}
                 </FormControl>
                 <br />
                 <FormControlLabel
@@ -288,6 +496,35 @@ const Vendors = () => {
                   }}
                   className=" px-0"
                 />
+                <div >
+                {multipleVendors && multipleVendors.map((value, index) => (
+                <Chip
+                  key={index}
+                  label={value.name}
+                  onDelete={() => handleDelete(value.name)}
+                  size="small"
+                  className="mt-3 me-2 px-1"
+                />
+              ))}
+                </div>
+            {/* <br/>
+                <p className="text-lightBlue mb-2">Description</p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Description"
+                    size="small"
+                    value={vendorFormik.values.description}
+                    onBlur={vendorFormik.handleBlur}
+                    onChange={vendorFormik.handleChange}
+                    name="description"
+                  />
+                  {!!vendorFormik.touched.description &&
+                    vendorFormik.errors.description && (
+                      <FormHelperText error>
+                        {vendorFormik.errors.description}
+                      </FormHelperText>
+                    )}
+                </FormControl> */}
 
                 {/* <div className="d-flex">
                     <Chip
@@ -297,7 +534,7 @@ const Vendors = () => {
                     ></Chip>
               </div> */}
 
-                {/* <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
+                 {/* <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
               <FormControl
                 //   sx={{ m: 0, minWidth: 120, width: "100%" }}
                 size="small"
@@ -326,7 +563,7 @@ const Vendors = () => {
                     JWL 3
                   </MenuItem>
                 </Select>
-              </FormControl> */}
+              </FormControl>  */}
               </DialogContent>
 
               <hr className="hr-grey-6 my-0" />
@@ -372,28 +609,298 @@ const Vendors = () => {
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
-              <Tab label="Draft" className="tabs-head" />
+              <Tab label="Active" className="tabs-head" />
+              <Tab label="In-Active" className="tabs-head" />
+              <Tab label="Archived" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
+            <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idStatus}
+                variant="contained"
+                onClick={handleStatusClick}
+              >
+                <small className="text-lightBlue me-2">Status</small>
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idStatus}
+                open={openStatus}
+                anchorEl={anchorStatusEl}
+                onClose={handleStatusClose}
+                className="columns"
+              >
+                <FormGroup className="px-2 py-1"                   
+                  onChange={handleStatusCheckboxChange}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Active"
+                    value="active"
+                    className="me-0"
+                    checked={selectedStatusOption === "active"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Archived"
+                    className="me-0"
+                    value="archived"
+                    checked={selectedStatusOption === "archived"}
+                  />
+                </FormGroup>
+              </Popover>
+
+              <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortEl}
+                onClose={handleSortClose}
+                className="columns"
+              >
+              <FormControl className="px-2 py-1">
+                <RadioGroup
+                  aria-labelledby="demo-controlled-radio-buttons-group"
+                  name="controlled-radio-buttons-group"
+                  value={selectedSortOption}
+                  onChange={handleSortRadioChange}
+                >
+                  <FormControlLabel
+                    value="newestToOldest"
+                    control={<Radio size="small" />}
+                    label="Newest to Oldest"
+                  />
+                  <FormControlLabel
+                    value="oldestToNewest"
+                    control={<Radio size="small" />}
+                    label="Oldest to Newest"
+                  />
+                  <FormControlLabel
+                    value="alphabeticalAtoZ"
+                    control={<Radio size="small" />}
+                    label="Alphabetical (A-Z)"
+                  />
+                  <FormControlLabel
+                    value="alphabeticalZtoA"
+                    control={<Radio size="small" />}
+                    label="Alphabetical (Z-A)"
+                  />
+
+                </RadioGroup>
+              </FormControl>
+              </Popover>
+              {/* <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idStatus}
+                variant="contained"
+                onClick={handleStatusClick}
+              >
+                <small className="text-lightBlue me-2">Status</small>
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idStatus}
+                open={openStatus}
+                anchorEl={anchorStatusEl}
+                onClose={handleStatusClose}
+                className="columns"
+              >
+                <FormControl className="px-2 py-1">
+                  <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    value={selectedStatusOption}
+                    onChange={handleStatusRadioChange}
+                  >
+                    <FormControlLabel
+                      value="active"
+                      control={<Radio size="small" />}
+                      label="Active"
+                    />
+                    <FormControlLabel
+                      value="archived"
+                      control={<Radio size="small" />}
+                      label="Archive"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Popover> */}
+
+              {/* <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortE1}
+                onClose={handleSortClose}
+                className="columns"
+              >
+                <FormGroup className="px-2 py-1"                   
+                  onChange={handleSortCheckboxChange}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Alphabetical (A-Z)"
+                    value="alphabeticalAtoZ"
+                    className="me-0"
+                    checked={selectedSortOption === "alphabeticalAtoZ"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Alphabetical (Z-A)"
+                    className="me-0"
+                    value="alphabeticalZtoA"
+                    checked={selectedSortOption === "alphabeticalZtoA"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Oldest to Newest"
+                    className="me-0"
+                    value="oldestToNewest"
+                    checked={selectedSortOption === "oldestToNewest"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Newest to Oldest"
+                    className="me-0"
+                    value="newestToOldest"
+                    checked={selectedSortOption === "newestToOldest"}
+                  />
+                </FormGroup>
+              </Popover> */}
+
+
           </div>
           <TabPanel value={vendorType} index={0}>
             <VendorsTable
               isLoading={vendorsIsLoading}
-              deleteData={deleteVendorHandler}
+              deleteData={ArchiveTagsHandler}
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
+              totalCount={totalCount}
             />
           </TabPanel>
           <TabPanel value={vendorType} index={1}>
             <VendorsTable
               isLoading={vendorsIsLoading}
-              deleteData={deleteVendorHandler}
+              deleteData={ArchiveTagsHandler}
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
+              totalCount={totalCount}
+
+            />
+          </TabPanel>
+          <TabPanel value={vendorType} index={2}>
+            <VendorsTable
+              isLoading={vendorsIsLoading}
+              deleteData={ArchiveTagsHandler}
+              error={error}
+              list={vendorList}
+              edit={editCategoryPageNavigationHandler}
+              totalCount={totalCount}
+
+            />
+          </TabPanel>
+          <TabPanel value={vendorType} index={3}>
+            <VendorsTable
+              isLoading={vendorsIsLoading}
+              deleteData={ArchiveTagsHandler}
+              error={error}
+              list={vendorList}
+              edit={editCategoryPageNavigationHandler}
+              totalCount={totalCount}
+
             />
           </TabPanel>
         </Paper>
