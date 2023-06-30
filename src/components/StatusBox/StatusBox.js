@@ -26,7 +26,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, handleSchedule, toggleData=['active','in-active'], startDate1, endDate1}) => {
+const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, handleSchedule, toggleData=['active','in-active'], startDate, endDate, handleStartDate, handleEndDate}) => {
 
   const showScheduleData = showSchedule ? false : true;
   // ? TOGGLE BUTTONS STARTS HERE
@@ -40,13 +40,13 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
 
   // ? SCHEDULE PRODUCT DIALOG STARTS HERE
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
-  const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState();
+  const [startDateLocal, setStartDate] = React.useState(new Date());
+  const [endDateLocal, setEndDate] = React.useState();
 
-  const startDateNew = moment(startDate1).format("DD/MM/YYYY")
-  const startTime = moment(startDate1).format("HH:MM a")
-  const endDateNew = moment(endDate1).format("DD/MM/YYYY")
-  const endTime = moment(endDate1).format("HH:MM a")
+  const startDateNew = moment(startDate).format("DD/MM/YYYY")
+  const startTime = moment(startDate).format("HH:MM a")
+  const endDateNew = moment(endDate).format("DD/MM/YYYY")
+  const endTime = moment(endDate).format("HH:MM a")
 
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);
@@ -54,9 +54,6 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
 
  const handelScheduleProductClose = () => {
   setOpenScheduleProduct(false);
-  if (startDate && endDate) {
-    handleSchedule(startDate, endDate); // Call the handleSchedule prop with the selected dates
-  }
 };
   // ? SCHEDULE PRODUCT DIALOG ENDS HERE
 
@@ -99,10 +96,15 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         <div className="d-flex align-items-center mt-2 c-pointer">
           <img src={clock} alt="clock" className="me-1" width={12} />
           <small className="text-blue-2" onClick={handelScheduleProduct}>
-            Schedule {startDate1 == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate1 == null ? '' : `till ${endDateNew} at ${endTime}` }
+            Schedule {startDate == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate == null ? '' : `till ${endDateNew} at ${endTime}` }
           </small>
         </div>
       )}
+
+      <div className="d-flex flex-column justify-content-start px-4 py-3">
+        <small className="text-blue-2" style={{cursor: 'pointer'}}>Edit</small>
+        <small style={{color: '#F67476', cursor: 'pointer'}}>Clear</small>
+      </div>
 
       <Dialog
         open={openScheduleProduct}
@@ -140,9 +142,10 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker
-              value={startDate}
+              value={startDateLocal}
               onChange={(newValue) => {
                 setStartDate(newValue);
+                handleStartDate(newValue)
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
             />
@@ -161,9 +164,10 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker
-              value={endDate}
+              value={endDateLocal}
               onChange={(newValue) => {
                 setEndDate(newValue);
+                handleEndDate(newValue);
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
             />

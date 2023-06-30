@@ -47,7 +47,7 @@ const VisibilityBox = ({ value, onChange }) => {
                 />
             </RadioGroup>
         </FormControl>
-        <FormGroup>
+        {/* <FormGroup>
             <FormControlLabel control={<Checkbox defaultChecked size="small" />} label="Schedule Visibility"
             sx={{
               "& .MuiTypography-root": {
@@ -55,7 +55,7 @@ const VisibilityBox = ({ value, onChange }) => {
               },
             }}
             />
-        </FormGroup>
+        </FormGroup> */}
     </div>
   );
 };

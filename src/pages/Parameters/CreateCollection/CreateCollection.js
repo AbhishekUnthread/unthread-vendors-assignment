@@ -237,10 +237,8 @@ const CreateCollection = () => {
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
   const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
-  const [categorySeo,setCategorySeo] = useState({})
-
-  console.log(startDate1, 'startDatfdse1')
-  console.log(endDate1, 'endDatsfde1')
+  const [categorySeo,setCategorySeo] = useState({});
+  const [appTextEditor, setAppTextEditor] = useState("<p></p>")
 
 
   const handleSchedule = (start, end) => {
@@ -292,7 +290,7 @@ const CreateCollection = () => {
   const collectionFormik = useFormik({
     initialValues: {
       title: "",
-      // description: "",
+      description: "",
       status: startDate1 === null ? collectionStatus : "scheduled",
       ...(startDate1 !== null && endDate1 !== null &&
       { startDate: new Date(startDate1), endDate: new Date(endDate1) }),
@@ -310,6 +308,10 @@ const CreateCollection = () => {
         navigate("/parameters/collections");
     },
   });
+
+  useEffect(() => {
+    collectionFormik.setFieldValue("description", appTextEditor)
+  },[appTextEditor])
 
   useEffect(() => {
     if (createCollectionError) {
@@ -509,6 +511,10 @@ const CreateCollection = () => {
     dispatch,
   ]);
 
+  const handleTextEditor = (value) => {
+    collectionFormik.setFieldValue("description", value)
+  }
+
   return (
     <form noValidate onSubmit={collectionFormik.handleSubmit}>
       <div className="page container-fluid position-relative user-group">
@@ -587,8 +593,8 @@ const CreateCollection = () => {
                   </Tooltip>
                 </div>
                 <AppTextEditor
-                setFieldValue={(val) => collectionFormik.setFieldValue("description", val)}
-                value={collectionFormik.values.description}
+                  setFieldValue={setAppTextEditor}
+                  value={appTextEditor}
                  />
               </div>
             </div>
@@ -1246,13 +1252,16 @@ const CreateCollection = () => {
             </SwipeableDrawer>
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
-            <StatusBox name={"status"}
+            <StatusBox 
+              name={"status"}
               value={collectionFormik?.values?.status} headingName={"Collection Status"} 
               titleName={"Collection"}
               handleProductStatus={handleProductStatus}
               handleSchedule={handleSchedule}
-              startDate1={startDate1}
-              endDate1={endDate1}
+              startDate={startDate1}
+              endDate={endDate1}
+              handleStartDate={setStartDate}
+              handleEndDate={setEndDate}
             />
             <VisibilityBox name={"isVisibleFrontend"} visibleFrontend={visibleFrontend} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
             <div className="mt-4">

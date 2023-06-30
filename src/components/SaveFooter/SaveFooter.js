@@ -2,7 +2,7 @@ import React from "react";
 import "../../pages/Parameters/EditVendor/EditVendor.scss";
 import { Link } from "react-router-dom";
 
-const SaveFooter = ({handleSubmit,handleSubmitAndAddAnother}) => {
+const SaveFooter = ({handleSubmit,handleSubmitAndAddAnother, saveAsDraft, saveAddAnother}) => {
 
   return (
     <div className="row create-buttons pt-5 pb-3 justify-content-between">
@@ -14,20 +14,24 @@ const SaveFooter = ({handleSubmit,handleSubmitAndAddAnother}) => {
         <p>Discard</p>
         </Link>
 
+        { saveAsDraft ?
         <Link
         to="/parameters/vendors"
         className="button-lightBlue-outline py-2 px-4 ms-3"
         >
-        <p>Save as Draft</p>
+        <p>{saveAsDraft}</p>
         </Link>
+        : " "}
     </div>
     <div className="d-flex w-auto px-0">
+        { saveAddAnother ?
         <button
         onClick={handleSubmitAndAddAnother}
         className="button-lightBlue-outline py-2 px-4"
         >
-        <p>Save & Add Another</p>
+        <p>{saveAddAnother}</p>
         </button>
+        : ""}
         <button
           onClick={handleSubmit}
           className="button-gradient ms-3 py-2 px-4 w-auto"
