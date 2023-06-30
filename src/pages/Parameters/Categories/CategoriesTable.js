@@ -366,7 +366,7 @@ function  deleteRowData(){
                                   </Tooltip>
                                 )}
                                 {deleteData && (
-                                  <Tooltip title={"Delete"} placement="top">
+                                  <Tooltip title={"Archived"} placement="top">
                                     <div
                                       onClick={(e) => {
                                         toggleArchiveModalHandler(row)
