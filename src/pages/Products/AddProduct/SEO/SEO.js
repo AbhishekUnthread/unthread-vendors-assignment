@@ -40,13 +40,11 @@ const SEO = ({name,value, handleSeoChange }) => {
 
   useEffect(()=>{
     if(value){
-      seoFormik.setFieldValue("title",value.title)
-      seoFormik.setFieldValue("urlHandle",value.urlHandle)
-      seoFormik.setFieldValue("description",value.description)
-      seoFormik.setFieldValue('slug',value.slug)
-      setMultipleTags(value.metaKeywords || [])
-    }else{
-      seoFormik.setFieldValue("title",name)
+      seoFormik.setFieldValue("title", value && value.title ? value.title : name);
+      seoFormik.setFieldValue("urlHandle", value && value.urlHandle ? value.urlHandle : "");
+      seoFormik.setFieldValue("description", value && value.description ? value.description : "");
+      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : "");
+      setMultipleTags(value && value.metaKeywords ? value.metaKeywords : []);
     }
   },[value,name])
 
