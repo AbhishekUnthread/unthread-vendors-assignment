@@ -332,7 +332,7 @@ function  deleteRowData(){
                             <TableCell style={{ width: 120, padding: 0 }}>
                               <div className="d-flex align-items-center">
                                 {edit && (
-                                  <Tooltip title="Edit" placement="top" onClick={()=>subModalOpenHandler(row)}>
+                                  <Tooltip title="Add Sub Category" placement="top" onClick={()=>subModalOpenHandler(row)}>
                                     <div className="table-edit-icon rounded-4 p-2">
                                       <AddCircleOutlineIcon
                                         sx={{
