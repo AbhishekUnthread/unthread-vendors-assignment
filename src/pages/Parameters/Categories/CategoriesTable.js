@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
-import {
-  EnhancedTableGapHead
-} from "../../../components/TableDependenciesWithGap/TableDependenciesWithGap"
+import { EnhancedTableGapHead } from "../../../components/TableDependenciesWithGap/TableDependenciesWithGap";
 import {
   EnhancedTableHeadSubTable,
   stableSort,
@@ -25,17 +23,19 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
-  Typography
+  Typography,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useDispatch } from "react-redux";
 import { updateCategoryId } from "../../../features/parameters/categories/categorySlice";
 import { useGetAllSubCategoriesQuery } from "../../../features/parameters/categories/categoriesApiSlice";
 import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -99,18 +99,29 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoading,subModalOpenHandler }) => {
-  const dispatch = useDispatch()
+const CategoriesTable = ({
+  list,
+  edit,
+  deleteData,
+  deleteSubData,
+  error,
+  isLoading,
+  subModalOpenHandler,
+  bulkEdit
+}) => {
+  const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = useState([]);
-  const [subCategoryList,setSubCategoryList] = useState([])
-  const [filterParameter,setFilterParameter] = useState({})
-  const [showCreateDeleteModal,setShowCreateDeleteModal] = useState(false)
-  const [rowData,setRowData] = useState({})
+  const [subCategoryList, setSubCategoryList] = useState([]);
+  const [filterParameter, setFilterParameter] = useState({});
+  const [showCreateDeleteModal, setShowCreateDeleteModal] = useState(false);
+  const [rowData, setRowData] = useState({});
+  const [selectedStatus, setSelectedStatus] = React.useState(null);
+
 
   const {
     data: subCategoriesData,
@@ -118,15 +129,14 @@ const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoadin
     isSuccess: subCategoriesIsSuccess,
     error: subCategoriesError,
   } = useGetAllSubCategoriesQuery({
-    ...filterParameter
+    ...filterParameter,
   });
 
-  useEffect(()=>{
-    if(subCategoriesData?.data?.data){
-
+  useEffect(() => {
+    if (subCategoriesData?.data?.data) {
       setSubCategoryList(subCategoriesData?.data?.data);
     }
-  },[subCategoriesIsSuccess,subCategoriesData])
+  }, [subCategoriesIsSuccess, subCategoriesData]);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -176,39 +186,70 @@ const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoadin
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-   const toggleCreateSubModalHandler = () => {
+  const toggleCreateSubModalHandler = () => {
     // setShowCreateSubModal((prevState) => !prevState);
     // setShowCreatePopover(null);
   };
 
-  function handleTableRowChange(row){
-    let categoryId= {}
-    categoryId.categoryId = row._id
-   setFilterParameter(categoryId)
-  if(open.length === 0){
-    let item = [...open]
-    item.push(row._id)
-    setOpen(item)
-  }
-  if(open.length > 0 && open.includes(row._id)){
-    setOpen(item=> item.filter(i=> i !== row._id))
-  }
-  if(open.length > 0 && !open.includes(row._id)){
-    let item = [...open]
-    item.push(row._id)
-    setOpen(item)
-  }
- }
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
 
- const toggleArchiveModalHandler = (row) => {
-  setShowCreateDeleteModal((prevState) => !prevState);
-  setRowData(row)
-};
+  useEffect(() => {
+    // Update the state only if the selectedStatus state has a value
+    if (selectedStatus !== null) {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as Draft") {
+          return {
+            id,
+            status: "draft",
+          };
+        } else {
+          return {
+            id,
+            status: "", // Set a default value here if needed
+          };
+        }
+      });
+      bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      setSelectedStatus(null);
+    }
+  }, [selected, selectedStatus]);
 
-function  deleteRowData(){
-  setShowCreateDeleteModal(false);
-    deleteData(rowData)
-}
+
+  function handleTableRowChange(row) {
+    let categoryId = {};
+    categoryId.categoryId = row._id;
+    setFilterParameter(categoryId);
+    if (open.length === 0) {
+      let item = [...open];
+      item.push(row._id);
+      setOpen(item);
+    }
+    if (open.length > 0 && open.includes(row._id)) {
+      setOpen((item) => item.filter((i) => i !== row._id));
+    }
+    if (open.length > 0 && !open.includes(row._id)) {
+      let item = [...open];
+      item.push(row._id);
+      setOpen(item);
+    }
+  }
+
+  const toggleArchiveModalHandler = (row) => {
+    setShowCreateDeleteModal((prevState) => !prevState);
+    setRowData(row);
+  };
+
+  function deleteRowData() {
+    setShowCreateDeleteModal(false);
+    deleteData(rowData);
+  }
 
   return (
     <React.Fragment>
@@ -226,8 +267,8 @@ function  deleteRowData(){
             </small>
           </button>
 
-          {/* <TableEditStatusButton />
-          <TableMassActionButton /> */}
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
+          {/* <TableMassActionButton />  */}
         </div>
       )}
       {!error ? (
@@ -286,11 +327,16 @@ function  deleteRowData(){
                                 size="small"
                                 onClick={() => handleTableRowChange(row)}
                               >
-                                {(open.length >0 && open.includes(row._id)) ? (
-                                  <PlayArrowIcon style={{ transform: 'rotate(90deg)', fontSize: '15px' }} />
+                                {open.length > 0 && open.includes(row._id) ? (
+                                  <PlayArrowIcon
+                                    style={{
+                                      transform: "rotate(90deg)",
+                                      fontSize: "15px",
+                                    }}
+                                  />
                                 ) : (
-                                  <PlayArrowIcon style={{ fontSize: '15px' }} />
-                                )}               
+                                  <PlayArrowIcon style={{ fontSize: "15px" }} />
+                                )}
                               </IconButton>
                             </TableCell>
                             <TableCell
@@ -309,30 +355,52 @@ function  deleteRowData(){
                               </Link>
                             </TableCell>
                             <TableCell style={{ width: 180 }}>
-                            <p className="text-lightBlue">{row.totalProduct}</p>
+                              <p className="text-lightBlue">
+                                {row.totalProduct}
+                              </p>
                             </TableCell>
 
                             <TableCell style={{ width: 180 }}>
-                            <p className="text-lightBlue">{row.totalSubCategory}</p>
-                              
+                              <p className="text-lightBlue">
+                                {row.totalSubCategory}
+                              </p>
                             </TableCell>
 
-                            <TableCell style={{ width: 120, padding: 0 }}>
+                            <TableCell style={{ width: 140, padding: 0 }}>
                               <div className="d-flex align-items-center">
                                 <div
-                                  className={`rounded-pill d-flex  px-2 py-1 c-pointer table-status`}
+                                  className="rounded-pill d-flex px-2 py-1 c-pointer"
+                                  style={{
+                                    background:
+                                      row.status == "active"
+                                        ? "#A6FAAF"
+                                        : row.status == "in-active"
+                                        ? "#F67476"
+                                        : row.status == "draft"
+                                        ? "#C8D8FF"
+                                        : "#FEE1A3",
+                                  }}
                                 >
                                   <small className="text-black fw-400">
-                                    {row.status}
+                                    {row.status == "active"
+                                      ? "Active"
+                                      : row.status == "in-active"
+                                      ? "In-Active"
+                                      : row.status == "draft"
+                                      ? "Archived"
+                                      : "Scheduled"}
                                   </small>
                                 </div>
-
                               </div>
                             </TableCell>
                             <TableCell style={{ width: 120, padding: 0 }}>
                               <div className="d-flex align-items-center">
                                 {edit && (
-                                  <Tooltip title="Add Sub Category" placement="top" onClick={()=>subModalOpenHandler(row)}>
+                                  <Tooltip
+                                    title="Add Sub Category"
+                                    placement="top"
+                                    onClick={() => subModalOpenHandler(row)}
+                                  >
                                     <div className="table-edit-icon rounded-4 p-2">
                                       <AddCircleOutlineIcon
                                         sx={{
@@ -349,8 +417,8 @@ function  deleteRowData(){
                                     <Link
                                       className="text-decoration-none"
                                       to="/parameters/categories/edit"
-                                      onClick={()=>{
-                                        dispatch(updateCategoryId(row._id))
+                                      onClick={() => {
+                                        dispatch(updateCategoryId(row._id));
                                       }}
                                     >
                                       <div className="table-edit-icon rounded-4 p-2">
@@ -369,7 +437,7 @@ function  deleteRowData(){
                                   <Tooltip title={"Archived"} placement="top">
                                     <div
                                       onClick={(e) => {
-                                        toggleArchiveModalHandler(row)
+                                        toggleArchiveModalHandler(row);
                                       }}
                                       className="table-edit-icon rounded-4 p-2"
                                     >
@@ -387,8 +455,15 @@ function  deleteRowData(){
                             </TableCell>
                           </TableRow>
                           <TableRow>
-                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
-                              <Collapse in={open.includes(row._id)} timeout="auto" unmountOnExit>
+                            <TableCell
+                              style={{ paddingBottom: 0, paddingTop: 0 }}
+                              colSpan={9}
+                            >
+                              <Collapse
+                                in={open.includes(row._id)}
+                                timeout="auto"
+                                unmountOnExit
+                              >
                                 <React.Fragment>
                                   <TableContainer>
                                     <Table
@@ -406,15 +481,23 @@ function  deleteRowData(){
                                         headCells={headCells}
                                       />
                                       <TableBody>
-                                        {stableSort(subCategoryList, getComparator(order, orderBy))
-                                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                        {stableSort(
+                                          subCategoryList,
+                                          getComparator(order, orderBy)
+                                        )
+                                          .slice(
+                                            page * rowsPerPage,
+                                            page * rowsPerPage + rowsPerPage
+                                          )
                                           .map((row, index) => {
-                                            const isItemSelected = isSelected(row._id);
+                                            const isItemSelected = isSelected(
+                                              row._id
+                                            );
                                             const labelId = `enhanced-table-checkbox-${index}`;
 
                                             return (
-                                               <React.Fragment key={row._id}>
-                                                 <TableRow
+                                              <React.Fragment key={row._id}>
+                                                <TableRow
                                                   hover
                                                   role="checkbox"
                                                   aria-checked={isItemSelected}
@@ -422,16 +505,26 @@ function  deleteRowData(){
                                                   key={index}
                                                   selected={isItemSelected}
                                                   className="table-rows"
-                                                  sx={{ "& > *": { borderBottom: "unset" } }}
+                                                  sx={{
+                                                    "& > *": {
+                                                      borderBottom: "unset",
+                                                    },
+                                                  }}
                                                 >
                                                   <TableCell />
                                                   <TableCell padding="checkbox">
                                                     <Checkbox
                                                       checked={isItemSelected}
                                                       inputProps={{
-                                                        "aria-labelledby": labelId,
+                                                        "aria-labelledby":
+                                                          labelId,
                                                       }}
-                                                      onClick={(event) => handleClick(event, row._id)}
+                                                      onClick={(event) =>
+                                                        handleClick(
+                                                          event,
+                                                          row._id
+                                                        )
+                                                      }
                                                       size="small"
                                                       style={{
                                                         color: "#5C6D8E",
@@ -457,11 +550,20 @@ function  deleteRowData(){
                                                     </Link>
                                                   </TableCell>
 
-                                                  <TableCell style={{ width: 180 }}>
-                                                    <p className="text-lightBlue">{row.totalProduct}</p>
+                                                  <TableCell
+                                                    style={{ width: 180 }}
+                                                  >
+                                                    <p className="text-lightBlue">
+                                                      {row.totalProduct}
+                                                    </p>
                                                   </TableCell>
 
-                                                  <TableCell style={{ width: 120, padding: 0 }}>
+                                                  <TableCell
+                                                    style={{
+                                                      width: 120,
+                                                      padding: 0,
+                                                    }}
+                                                  >
                                                     <div className="d-flex align-items-center">
                                                       <div
                                                         className={`rounded-pill d-flex  px-2 py-1 c-pointer table-status`}
@@ -472,13 +574,25 @@ function  deleteRowData(){
                                                       </div>
                                                     </div>
                                                   </TableCell>
-                                                  <TableCell style={{ width: 120, padding: 0 }}>
+                                                  <TableCell
+                                                    style={{
+                                                      width: 120,
+                                                      padding: 0,
+                                                    }}
+                                                  >
                                                     <div className="d-flex align-items-center">
                                                       {edit && (
-                                                        <Tooltip title="Edit" placement="top">
+                                                        <Tooltip
+                                                          title="Edit"
+                                                          placement="top"
+                                                        >
                                                           <div
                                                             onClick={(e) => {
-                                                              dispatch(updateCategoryId(row._id))
+                                                              dispatch(
+                                                                updateCategoryId(
+                                                                  row._id
+                                                                )
+                                                              );
                                                             }}
                                                             className="table-edit-icon rounded-4 p-2"
                                                           >
@@ -488,9 +602,11 @@ function  deleteRowData(){
                                                             >
                                                               <EditOutlinedIcon
                                                                 sx={{
-                                                                  color: "#5c6d8e",
+                                                                  color:
+                                                                    "#5c6d8e",
                                                                   fontSize: 18,
-                                                                  cursor: "pointer",
+                                                                  cursor:
+                                                                    "pointer",
                                                                 }}
                                                               />
                                                             </Link>
@@ -498,18 +614,25 @@ function  deleteRowData(){
                                                         </Tooltip>
                                                       )}
                                                       {deleteSubData && (
-                                                        <Tooltip title={"Archived"} placement="top">
+                                                        <Tooltip
+                                                          title={"Archived"}
+                                                          placement="top"
+                                                        >
                                                           <div
                                                             onClick={(e) => {
-                                                              deleteSubData(row)
+                                                              deleteSubData(
+                                                                row
+                                                              );
                                                             }}
                                                             className="table-edit-icon rounded-4 p-2"
                                                           >
                                                             <InventoryIcon
                                                               sx={{
-                                                                color: "#5c6d8e",
+                                                                color:
+                                                                  "#5c6d8e",
                                                                 fontSize: 18,
-                                                                cursor: "pointer",
+                                                                cursor:
+                                                                  "pointer",
                                                               }}
                                                             />
                                                           </div>
@@ -518,7 +641,7 @@ function  deleteRowData(){
                                                     </div>
                                                   </TableCell>
                                                 </TableRow>
-                                               </React.Fragment>
+                                              </React.Fragment>
                                             );
                                           })}
                                         {emptyRows > 0 && (
@@ -573,11 +696,11 @@ function  deleteRowData(){
       ) : (
         <></>
       )}
-      <DeleteModal 
-      showCreateModal={showCreateDeleteModal}  
-      toggleArchiveModalHandler={toggleArchiveModalHandler}
-      handleArchive={deleteRowData}
-       />
+      <DeleteModal
+        showCreateModal={showCreateDeleteModal}
+        toggleArchiveModalHandler={toggleArchiveModalHandler}
+        handleArchive={deleteRowData}
+      />
     </React.Fragment>
   );
 };

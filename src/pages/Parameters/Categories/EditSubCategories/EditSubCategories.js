@@ -312,7 +312,7 @@ const EditSubCategories = () => {
           <NotesBox value={subCategoryNotes} onChange={(e) => setSubCategoryNotes(e.target.value)} />
         </div>
       </div>
-      <SaveFooter handleSubmit={handleSubmit} handleSubmitAndAddAnother={handleSubmitAndAddAnother} />
+      <SaveFooter handleSubmit={handleSubmit}  />
     </div>
   );
 };

@@ -60,6 +60,8 @@ import {
   useEditSubCategoryMutation,
   useCategoryBulkCreateTagMutation,
   useSubCategoryBulkCreateTagMutation,
+  useBulkEditTagCategoryMutation,
+  useBulkEditTagSubCategoryMutation,
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
@@ -211,6 +213,22 @@ const Categories = () => {
       error: editSubCategoryError,
     },
   ] = useEditSubCategoryMutation();
+
+  const[bulkEditCategory,
+    {
+      data: bulkEditCategoryTag,
+      isLoading: bulkTagEditCategoryLoading,
+      isSuccess: bulkTagEditCategoryIsSuccess,
+      error: bulkTagEditCategoryError,
+    }]=useBulkEditTagCategoryMutation();
+
+    const[bulkEditSubCategory,
+      {
+        data: bulkEditSubCategoryTag,
+        isLoading: bulkTagEditSubCategoryLoading,
+        isSuccess: bulkTagEditSubCategoryIsSuccess,
+        error: bulkTagEditSubCategoryError,
+      }]=useBulkEditTagSubCategoryMutation();
 
   const categoryFormik = useFormik({
     initialValues: {
@@ -946,6 +964,7 @@ const Categories = () => {
                   error={error}
                   list={categoryList}
                   edit={editCategoryHandler}
+                  bulkEdit={bulkEditCategory}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={1}>
@@ -955,6 +974,7 @@ const Categories = () => {
                   error={error}
                   list={subCategoryList}
                   edit={editCategoryHandler}
+                  bulkEdit={bulkEditSubCategory}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={2}>
@@ -964,6 +984,7 @@ const Categories = () => {
                   error={error}
                   list={categoryList}
                   edit={editCategoryHandler}
+                  bulkEdit={bulkEditCategory}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={3}>
@@ -973,6 +994,7 @@ const Categories = () => {
                   error={error}
                   list={subCategoryList}
                   edit={editCategoryHandler}
+                  bulkEdit={bulkEditSubCategory}
                 />
               </TabPanel>
             </>
