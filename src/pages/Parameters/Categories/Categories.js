@@ -24,6 +24,7 @@ import {
   RadioGroup,
   TableHead,
   Typography,
+  Checkbox,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -58,6 +59,7 @@ import {
   useEditCategoryMutation,
   useEditSubCategoryMutation,
   useCategoryBulkCreateTagMutation,
+  useSubCategoryBulkCreateTagMutation,
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
@@ -72,6 +74,9 @@ const categoryValidationSchema = Yup.object({
   status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
 });
 const multipleCategorySchema = Yup.object({
+  name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
+});
+const multipleSubCategorySchema = Yup.object({
   name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
 });
 const subCategoryValidationSchema = Yup.object({
@@ -96,21 +101,37 @@ const Categories = () => {
   const [sortFilter, setSortFilter] = React.useState(null);
   const [statusFilter, setStatusFilter] = React.useState("");
   const [multipleTags, setMultipleTags] = useState([]);
+  const [multipleTagsForSub,setMultipleTagsForSub] = useState([])
+  const [searchValue, setSearchValue] = useState("");
   const filterParameter = {};
 
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  }
+  
+
   if (sortFilter) {
-    if (
-      sortFilter === "alphabeticalAtoZ" ||
-      sortFilter === "alphabeticalZtoA"
-    ) {
-      filterParameter.alphabetical =
-        sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
-    } else if (
-      sortFilter === "oldestToNewest" ||
-      sortFilter === "newestToOldest"
-    ) {
+    if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
+      filterParameter.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+    }
+    else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
       filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
     }
+  }
+
+  const categoryTypeQuery = categoryType === 0 ? { createdAt: -1 }
+  : categoryType === 1 ? { status: "" }
+  : categoryType === 2 ? { createdAt: -1, status: "draft" }
+  : categoryType === 3 ? { createdAt: -1, status: "draft" }
+  : {};
+
+  const filterParams = { ...filterParameter, ...categoryTypeQuery };
+  if (searchValue) {
+    filterParams.name = searchValue;
+  }
+
+  if (categoryType === 0) {
+    filterParams.status = statusFilter;
   }
 
 
@@ -119,19 +140,13 @@ const Categories = () => {
     isLoading: categoriesIsLoading,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({
-    ...filterParameter,
-    status: `${statusFilter}`,
-  });
+  } = useGetAllCategoriesQuery({...filterParams});
   const {
     data: subCategoriesData,
     isLoading: subCategoriesIsLoading,
     isSuccess: subCategoriesIsSuccess,
     error: subCategoriesError,
-  } = useGetAllSubCategoriesQuery({
-    ...filterParameter,
-    status: `${statusFilter}`,
-  });
+  } = useGetAllSubCategoriesQuery({...filterParams});
   const [
     createCategory,
     {
@@ -148,6 +163,14 @@ const Categories = () => {
       error: bulkCreateTagsError,
     },
   ] = useCategoryBulkCreateTagMutation();
+  const [
+    bulkCreateSubCategory,
+    {
+      isLoading: bulkCreateSubTagsIsLoading,
+      isSuccess: bulkCreateSubTagsIsSuccess,
+      error: bulkCreateSubTagsError,
+    },
+  ] = useSubCategoryBulkCreateTagMutation();
   const [
     createSubCategory,
     {
@@ -217,18 +240,20 @@ const Categories = () => {
   const subCategoryFormik = useFormik({
     initialValues: {
       name: "",
-      description: "some description",
+      description: "<p></P>",
       status: "active",
       categoryId: "",
       showFilter: true,
     },
     enableReinitialize: true,
-    validationSchema: subCategoryValidationSchema,
+    validationSchema: multipleTagsForSub.length > 0? multipleSubCategorySchema : subCategoryValidationSchema,
     onSubmit: (values) => {
-      if (isEditing) {
-        editSubCategory({ id: editId, details: values })
-          .unwrap()
-          .then(() => subCategoryFormik.resetForm());
+      if (multipleTagsForSub.length > 0) {
+        bulkCreateSubCategory(multipleTagsForSub).unwrap()
+        .then(() => {
+          subCategoryFormik.resetForm()
+          setMultipleTagsForSub([])
+        });
       } else {
         createSubCategory(values)
           .unwrap()
@@ -238,15 +263,7 @@ const Categories = () => {
   });
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
-    console.log(tabIndex)
     setCategoryType(tabIndex);
-    if (tabIndex === 2 ||tabIndex === 3) {
-      setStatusFilter('draft')
-    }
-    if (tabIndex === 0 || tabIndex === 1)  {
-      setStatusFilter("")
-    }
-    
   };
 
   const toggleCreateModalHandler = () => {
@@ -264,6 +281,7 @@ const Categories = () => {
     subCategoryFormik.resetForm();
     setIsEditing(false);
     setEditId(null);
+    setMultipleTagsForSub([])
   };
 
   const toggleCreatePopoverHandler = (e) => {
@@ -425,9 +443,10 @@ const Categories = () => {
     editSubCategoryIsSuccess,
     categoryType,
     dispatch,
+    sortFilter,
   ]);
 
-  const handleAddMultiple = (event) => {
+  const handleAddMultiple = (event,categoryFormik,setMultipleTags,data,flag) => {
     if (event.key === "Enter") {
       event.preventDefault();
       categoryFormik.validateForm().then(() => {
@@ -435,19 +454,19 @@ const Categories = () => {
           categoryFormik.setFieldTouched("name", true);
           setMultipleTags((prevValues) => [
             ...prevValues,
-            {
-              name: categoryFormik.values.name,
-              status: "active",
-              showFilter: categoryFormik.values.showFilter,
-            },
+            data,
           ]);
-          categoryFormik.resetForm();
+          if(flag){  
+            categoryFormik.resetForm();
+          }else{
+            categoryFormik.setFieldValue("name", "");
+          }
         }
       });
     }
   };
 
-  const handleDelete = (value) => {
+  const handleDelete = (value,setMultipleTags) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v.name !== value));
   };
 
@@ -549,7 +568,11 @@ const Categories = () => {
                     value={categoryFormik.values.name}
                     onBlur={categoryFormik.handleBlur}
                     onChange={categoryFormik.handleChange}
-                    onKeyDown={handleAddMultiple}
+                    onKeyDown={(e)=>handleAddMultiple(e,categoryFormik,setMultipleTags,{
+                      name: categoryFormik.values.name,
+                      status: "active",
+                      showFilter: categoryFormik.values.showFilter,
+                    },true)}
                   />
                   {!!categoryFormik.touched.name &&
                     categoryFormik.errors.name && (
@@ -564,7 +587,7 @@ const Categories = () => {
                       return (
                         <Chip
                           label={data.name}
-                          onDelete={() => handleDelete(data.name)}
+                          onDelete={() => handleDelete(data.name,setMultipleTags)}
                           onClick={() => {}}
                           size="small"
                           className="mt-3 me-2"
@@ -572,6 +595,30 @@ const Categories = () => {
                       );
                     })}
                 </div>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="showFilter"
+                      checked={categoryFormik.values.showFilter}
+                      onChange={categoryFormik.handleChange}
+                      inputProps={{ "aria-label": "controlled" }}
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                        marginRight: 0,
+                        width: "auto",
+                      }}
+                    />
+                  }
+                  label="Include in Filters"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: "0.875rem",
+                      color: "#c8d8ff",
+                    },
+                  }}
+                  className=" px-0"
+                />
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -669,6 +716,13 @@ const Categories = () => {
                     value={subCategoryFormik.values.name}
                     onBlur={subCategoryFormik.handleBlur}
                     onChange={subCategoryFormik.handleChange}
+                    onKeyDown={(e)=>handleAddMultiple(e,subCategoryFormik,setMultipleTagsForSub,{
+                      name: subCategoryFormik.values.name,
+                      description: "<p></P>",
+                      status: "active",
+                      categoryId: subCategoryFormik.values.categoryId,
+                      showFilter: subCategoryFormik.values.showFilter,
+                    },false)}
                   />
                   {!!subCategoryFormik.touched.name &&
                     subCategoryFormik.errors.name && (
@@ -679,18 +733,43 @@ const Categories = () => {
                 </FormControl>
 
                 <div className="d-flex">
-                  {[].map((data, index) => {
-                    return (
-                      <Chip
-                        label={data}
-                        onDelete={() => {}}
-                        onClick={() => {}}
-                        size="small"
-                        className="mt-3 me-2"
-                      ></Chip>
-                    );
-                  })}
+                  {multipleTagsForSub &&
+                    multipleTagsForSub.map((data, index) => {
+                      return (
+                        <Chip
+                          label={data.name}
+                          onDelete={() => handleDelete(data.name,setMultipleTags)}
+                          onClick={() => {}}
+                          size="small"
+                          className="mt-3 me-2"
+                        ></Chip>
+                      );
+                    })}
                 </div>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="showFilter"
+                      checked={subCategoryFormik.values.showFilter}
+                      onChange={subCategoryFormik.handleChange}
+                      inputProps={{ "aria-label": "controlled" }}
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                        marginRight: 0,
+                        width: "auto",
+                      }}
+                    />
+                  }
+                  label="Include in Filters"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: "0.875rem",
+                      color: "#c8d8ff",
+                    },
+                  }}
+                  className=" px-0"
+                />
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -744,7 +823,7 @@ const Categories = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+            <TableSearch  searchValue={searchValue} handleSearchChange={handleSearchChange} />
             <div className="d-flex">
               <button
                 className="button-grey py-2 px-3 ms-2"

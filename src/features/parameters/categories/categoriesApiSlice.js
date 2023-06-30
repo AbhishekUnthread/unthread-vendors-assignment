@@ -50,6 +50,14 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Categories"],
     }),
+    subCategoryBulkCreateTag: builder.mutation({
+      query: (tagsDetails) => ({
+        url: "/parameters/subCategory/bulkCreate",
+        method: "POST",
+        body: tagsDetails,
+      }),
+      invalidatesTags: ["SubCategories"],
+    }),
     createSubCategory: builder.mutation({
       query: (subCategoryDetails) => ({
         url: "/parameters/subCategory",
@@ -103,4 +111,5 @@ export const {
   useEditCategoryMutation,
   useEditSubCategoryMutation,
   useCategoryBulkCreateTagMutation,
+  useSubCategoryBulkCreateTagMutation,
 } = categoriesApiSlice;
