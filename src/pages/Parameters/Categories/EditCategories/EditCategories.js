@@ -39,6 +39,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
 import { useCreateCategoryMutation, useEditCategoryMutation, useGetAllCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
 import { UseEditCategory } from "../../../../features/parameters/categories/categoriesEditHook";
+import { showSuccess } from "../../../../features/snackbar/snackbarAction";
 
 const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
@@ -98,7 +99,7 @@ const EditCategories = () => {
       setCategorySeo(categoriesData.data.data[0]?.seos || {})
       
     }
-  }, [categoriesIsSuccess]);
+  }, [categoriesIsSuccess,dispatch]);
 
 
 
@@ -126,7 +127,7 @@ const EditCategories = () => {
       })
         .unwrap()
         .then(() => {
-          navigate("/parameters/categories"); // Navigating to categories page after successful edit
+          dispatch(showSuccess({message:"Category Updated Successfully"}))
         });
     } else {
       createCategory({

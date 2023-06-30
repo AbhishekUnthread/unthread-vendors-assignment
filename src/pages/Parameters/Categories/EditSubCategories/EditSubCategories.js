@@ -38,6 +38,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateSubCategoryMutation, useEditSubCategoryMutation, useGetAllSubCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
 import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
+import { showSuccess } from "../../../../features/snackbar/snackbarAction";
 
 const EditSubCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
@@ -117,7 +118,7 @@ const EditSubCategories = () => {
       })
         .unwrap()
         .then(() => {
-          navigate("/parameters/categories");
+          dispatch(showSuccess({message:"Sub Category Updated Successfully"}))
         });
     } else {
       createSubCategory({
