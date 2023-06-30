@@ -244,7 +244,8 @@ const EditCollection = () => {
   const [startDate1, setStartDate1] = useState(null)
   const [endDate1, setEndDate1] = useState(null)
   const collectionId = useSelector((state)=>state.collection.collectionId)
-  const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
+  const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
+  const [collectionSeo,setCollectionSeo] = useState({})
 
   const {
     data: collectionData,
@@ -284,7 +285,8 @@ const EditCollection = () => {
       setCollectionFilter(newCollectionData?.filter)
       setStartDate1(newCollectionData.startDate);
       setEndDate1(newCollectionData?.endDate)
-      setCategoryMediaUrl(newCollectionData?.mediaUrl)
+      setCollectionMediaUrl(newCollectionData?.mediaUrl)
+      setCollectionSeo(newCollectionData?.seos || {})
     }
   }, [collectionIsSuccess]);
 
@@ -299,7 +301,8 @@ const EditCollection = () => {
           status: collectionStatus ? collectionStatus : "active", 
           isVisibleFrontend: collectionVisibility,
           notes: collectionNote,
-          mediaUrl: categoryMediaUrl,
+          mediaUrl: collectionMediaUrl,
+          seo: collectionSeo,
         }
       })
         .unwrap()
@@ -312,7 +315,8 @@ const EditCollection = () => {
         status: collectionStatus ? collectionStatus : "active", 
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
-        mediaUrl: categoryMediaUrl,
+        mediaUrl: collectionMediaUrl,
+        seo: collectionSeo,
       })
         .unwrap()
         navigate("/parameters/collection");
@@ -1058,7 +1062,7 @@ const EditCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO />
+              <SEO name={collectionTitle} value={collectionSeo} handleSeoChange={setCollectionSeo} />
             </div>
 
             <SwipeableDrawer
@@ -1268,14 +1272,16 @@ const EditCollection = () => {
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
             <StatusBox headingName={"Collection Status"} 
               value={collectionStatus} 
-              handleProductStatus={(val)=>setCollectionStatus(val)}
+               handleProductStatus={(event, newStatus) => {
+                setCollectionStatus(newStatus)
+              }}
               handleSchedule={handleSchedule}
               startDate1={startDate1}
               endDate1={endDate1}
             />
             <VisibilityBox value={collectionVisibility} onChange={(_,val)=>setCollectionVisibility(val)}/>
             <div className="mt-4">
-              <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} />
+              <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCollectionMediaUrl} />
             </div>
             <div className="mt-4">
               <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />
