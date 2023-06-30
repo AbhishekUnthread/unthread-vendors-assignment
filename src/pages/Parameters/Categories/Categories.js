@@ -446,20 +446,20 @@ const Categories = () => {
     sortFilter,
   ]);
 
-  const handleAddMultiple = (event,categoryFormik,setMultipleTags,data,flag) => {
+  const handleAddMultiple = (event,Formik,Tags,data,flag) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      categoryFormik.validateForm().then(() => {
-        if (categoryFormik.isValid && categoryFormik.values.name !== "") {
-          categoryFormik.setFieldTouched("name", true);
-          setMultipleTags((prevValues) => [
+      Formik.validateForm().then(() => {
+        if (Formik.isValid && Formik.values.name !== "") {
+          Formik.setFieldTouched("name", true);
+          Tags((prevValues) => [
             ...prevValues,
             data,
           ]);
           if(flag){  
-            categoryFormik.resetForm();
+            Formik.resetForm();
           }else{
-            categoryFormik.setFieldValue("name", "");
+            Formik.setFieldValue("name", "");
           }
         }
       });
