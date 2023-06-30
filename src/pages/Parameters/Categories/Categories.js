@@ -105,6 +105,8 @@ const Categories = () => {
   const [multipleTags, setMultipleTags] = useState([]);
   const [multipleTagsForSub,setMultipleTagsForSub] = useState([])
   const [searchValue, setSearchValue] = useState("");
+  const [categoryTotalCount,setCategoryTotalCount] = React.useState([]);
+  const [subCategoryTotalCount,setSubCategoryTotalCount] = React.useState([]);
   const filterParameter = {};
 
   const handleSearchChange = (event) => {
@@ -123,8 +125,8 @@ const Categories = () => {
 
   const categoryTypeQuery = categoryType === 0 ? { createdAt: -1 }
   : categoryType === 1 ? { status: "" }
-  : categoryType === 2 ? { createdAt: -1, status: "draft" }
-  : categoryType === 3 ? { createdAt: -1, status: "draft" }
+  : categoryType === 2 ? { createdAt: -1, status: "archieved" }
+  : categoryType === 3 ? { createdAt: -1, status: "archieved" }
   : {};
 
   const filterParams = { ...filterParameter, ...categoryTypeQuery };
@@ -424,15 +426,19 @@ const Categories = () => {
 
       if (categoryType === 0) {
         setCategoryList(categoriesData.data.data);
+        setCategoryTotalCount(categoriesData.data.totalCount)
       }
       if (categoryType === 1) {
         setSubCategoryList(subCategoriesData.data.data);
+        setSubCategoryTotalCount(subCategoriesData.data.totalCount)
       }
       if (categoryType === 2) {
         setCategoryList(categoriesData.data.data);
+        setCategoryTotalCount(categoriesData.data.totalCount)
       }
       if (categoryType === 3) {
-        setSubCategoryList(subCategoriesData.data.data);
+        setSubCategoryList(subCategoriesData.data.data)
+        setSubCategoryTotalCount(subCategoriesData.data.totalCount)
       }
     }
     if (createCategoryIsSuccess || editCategoryIsSuccess) {
@@ -736,7 +742,7 @@ const Categories = () => {
                     onChange={subCategoryFormik.handleChange}
                     onKeyDown={(e)=>handleAddMultiple(e,subCategoryFormik,setMultipleTagsForSub,{
                       name: subCategoryFormik.values.name,
-                      description: "<p></P>",
+                      description: "<p></p>",
                       status: "active",
                       categoryId: subCategoryFormik.values.categoryId,
                       showFilter: subCategoryFormik.values.showFilter,
@@ -890,7 +896,7 @@ const Categories = () => {
                       label="Scheduled"
                     />
                     <FormControlLabel
-                      value="draft"
+                      value="archieved"
                       control={<Radio size="small" />}
                       label="Archived"
                     />
@@ -965,7 +971,9 @@ const Categories = () => {
                   list={categoryList}
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditCategory}
+                  editCategory={editCategory}
                   archived={true}
+                  totalCount={categoryTotalCount}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={1}>
@@ -976,7 +984,9 @@ const Categories = () => {
                   list={subCategoryList}
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditSubCategory}
+                  editSubCategory={editSubCategory}
                   archived={true}
+                  totalCount={subCategoryTotalCount}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={2}>
@@ -987,7 +997,9 @@ const Categories = () => {
                   list={categoryList}
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditCategory}
+                  editCategory={editCategory}
                   archived={false}
+                  totalCount={categoryTotalCount}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={3}>
@@ -998,7 +1010,9 @@ const Categories = () => {
                   list={subCategoryList}
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditSubCategory}
+                  editSubCategory={editSubCategory}
                   archived={false}
+                  totalCount={subCategoryTotalCount}
                 />
               </TabPanel>
             </>

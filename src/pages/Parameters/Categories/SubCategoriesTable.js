@@ -26,6 +26,7 @@ import { updateCategoryId } from "../../../features/parameters/categories/catego
 import { useDispatch } from "react-redux";
 import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 // ? TABLE STARTS HERE
 
@@ -70,7 +71,9 @@ const SubCategoriesTable = ({
   error,
   isLoading,
   bulkEdit,
+  editSubCategory,
   archived,
+  totalCount
 }) => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
@@ -173,7 +176,13 @@ const SubCategoriesTable = ({
 
   function deleteRowData() {
     setShowCreateDeleteModal(false);
-    deleteData(rowData);
+    editSubCategory({
+      id:rowData._id,
+      details:{
+        status:'archieved'
+      }
+    })
+    // deleteData(rowData);
   }
   return (
     <React.Fragment>
@@ -277,7 +286,7 @@ const SubCategoriesTable = ({
                                       ? "#A6FAAF"
                                       : row.status == "in-active"
                                       ? "#F67476"
-                                      : row.status == "draft"
+                                      : row.status == "archieved"
                                       ? "#C8D8FF"
                                       : "#FEE1A3",
                                 }}
@@ -287,7 +296,7 @@ const SubCategoriesTable = ({
                                     ? "Active"
                                     : row.status == "in-active"
                                     ? "In-Active"
-                                    : row.status == "draft"
+                                    : row.status == "archieved"
                                     ? "Archived"
                                     : "Scheduled"}
                                 </small>
@@ -317,6 +326,24 @@ const SubCategoriesTable = ({
                                   </Link>
                                 </Tooltip>
                               )}
+                              {!archived &&(
+                                   <Tooltip title={"Archived"} placement="top">
+                                   <div
+                                     onClick={(e) => {
+                                       deleteData(row);
+                                     }}
+                                     className="table-edit-icon rounded-4 p-2"
+                                   >
+                                     <DeleteIcon
+                                       sx={{
+                                         color: "#5c6d8e",
+                                         fontSize: 18,
+                                         cursor: "pointer",
+                                       }}
+                                     />
+                                   </div>
+                                 </Tooltip>
+                                )}
                               {deleteData && (
                                 <Tooltip title={"Archived"} placement="top">
                                   <div
@@ -353,9 +380,9 @@ const SubCategoriesTable = ({
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[10, 20, 30]}
+              rowsPerPageOptions={[5, 10, 15]}
               component="div"
-              count={list.length}
+              count={totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -374,6 +401,7 @@ const SubCategoriesTable = ({
         <></>
       )}
       <DeleteModal
+      name={archived ?'Archived' : "Un Archived"}
         showCreateModal={showCreateDeleteModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={deleteRowData}

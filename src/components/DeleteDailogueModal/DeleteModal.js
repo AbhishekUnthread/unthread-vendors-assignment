@@ -8,7 +8,7 @@ const Transition = forwardRef(function Transition(props, ref) {
   });
   // ? DIALOG TRANSITION ENDS HERE
 
-const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,name}) => {
+const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,name=""}) => {
   return (
     <>
     <Dialog
@@ -37,7 +37,7 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
             align="center"
             sx={{ color: "lightBlue", marginBottom: 2 }}
           >
-            Are you sure you want to archive {name?name:""}?
+            Are you sure you want to {name}?
           </Typography>
           <br />
         </DialogContent>
