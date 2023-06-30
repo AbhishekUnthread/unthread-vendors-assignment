@@ -192,7 +192,7 @@ const Categories = () => {
   const categoryFormik = useFormik({
     initialValues: {
       name: "",
-      description: "some description",
+      description: "<p></p>",
       status: "active",
       showFilter: true,
     },

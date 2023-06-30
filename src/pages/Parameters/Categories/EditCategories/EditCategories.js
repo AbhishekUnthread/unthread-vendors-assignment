@@ -94,7 +94,7 @@ const EditCategories = () => {
       setStartDate(categoriesData.data.data[0].startDate)
       setEndDate(categoriesData.data.data[0].endDate)
       setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl)
-      setCategorySeo(categoriesData.data.data[0].seo)
+      setCategorySeo(categoriesData.data.data[0]?.seos || {})
     }
   }, [categoriesIsSuccess]);
 

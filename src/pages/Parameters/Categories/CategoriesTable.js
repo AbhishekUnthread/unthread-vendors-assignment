@@ -485,7 +485,7 @@ const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoadin
                                                         </Tooltip>
                                                       )}
                                                       {deleteSubData && (
-                                                        <Tooltip title={"Delete"} placement="top">
+                                                        <Tooltip title={"Archived"} placement="top">
                                                           <div
                                                             onClick={(e) => {
                                                               deleteSubData(row);
