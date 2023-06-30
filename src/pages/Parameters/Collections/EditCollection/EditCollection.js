@@ -1287,6 +1287,8 @@ const EditCollection = () => {
               startDate={startDate1}
               endDate={endDate1}
               showSchedule={true}
+              andleStartDate={setStartDate1}
+              handleEndDate={setEndDate1}
               clearDate={clearDate}
             />
             <VisibilityBox value={collectionVisibility} onChange={(_,val)=>setCollectionVisibility(val)}/>
