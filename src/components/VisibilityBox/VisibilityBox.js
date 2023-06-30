@@ -1,5 +1,5 @@
 import React from "react";
-import { 
+import {
     Checkbox,
     FormControl,
     FormControlLabel,
@@ -9,15 +9,12 @@ import {
     RadioGroup,
 } from "@mui/material";
 import clock from "../../assets/icons/clock.svg";
-
 const VisibilityBox = ({ value, onChange }) => {
   const [selectedValue, setSelectedValue] = React.useState(value);
-
   const handleRadioChange = (event) => {
     setSelectedValue(event.target.value);
     onChange(event.target.value);
   };
-
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -30,18 +27,18 @@ const VisibilityBox = ({ value, onChange }) => {
                 value={selectedValue}
                 onChange={handleRadioChange}
             >
-                <FormControlLabel value={true} control={<Radio />} 
-                  label="Visible in frontend" 
+                <FormControlLabel value={true} control={<Radio />}
+                  label="Visible in frontend"
                   sx={{
                       "& .MuiTypography-root": {
-                        color: "#c8d8ff",
+                        color: "#C8D8FF",
                       },
-                    }} 
+                    }}
                 />
-                <FormControlLabel value={false} control={<Radio />} label="Hidden from website" 
+                <FormControlLabel value={false} control={<Radio />} label="Hidden from website"
                   sx={{
                     "& .MuiTypography-root": {
-                      color: "#c8d8ff",
+                      color: "#C8D8FF",
                     },
                   }}
                 />
@@ -51,7 +48,7 @@ const VisibilityBox = ({ value, onChange }) => {
             <FormControlLabel control={<Checkbox defaultChecked size="small" />} label="Schedule Visibility"
             sx={{
               "& .MuiTypography-root": {
-                color: "#c8d8ff",
+                color: "#C8D8FF",
               },
             }}
             />
@@ -59,5 +56,4 @@ const VisibilityBox = ({ value, onChange }) => {
     </div>
   );
 };
-
 export default VisibilityBox;

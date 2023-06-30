@@ -175,9 +175,10 @@ const likeProductRows = [
 ];
 // ? LIKE PRODUCTS TABLE ENDS HERE
 
-const AddProducts = () => {
+const AddProducts = ({isLoading,list}) => {
   // ? ADD PRODUCT DRAWER STARTS HERE
 
+  console.log("product", list);
   const [addProductDrawer, setAddProductDrawer] = React.useState({
     top: false,
     left: false,

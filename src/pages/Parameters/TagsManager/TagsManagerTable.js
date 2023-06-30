@@ -1,8 +1,13 @@
-import React from "react";
+import React, { forwardRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 // ! MATERIAL IMPORTS
 import {
+  Box,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Slide,
   Table,
   TableBody,
   TableCell,
@@ -10,6 +15,7 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
+  Typography,
 } from "@mui/material";
 // ! COMPONENT IMPORTS
 import {
@@ -22,20 +28,43 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import { useBulkEditTagMutation } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
+import { useDispatch } from "react-redux";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import { LoadingButton } from "@mui/lab";
+import question from "../../../assets/icons/question.svg"
+import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+
 
 // ? TABLE STARTS HERE
 function createData(tId, tagName, noOfProducts) {
   return { tId, tagName, noOfProducts };
 }
 
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 
-
-const TagsManagerTable = ({list,edit,deleteData}) => {
+const 
+TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [state, setState] = React.useState([]);
+  const [showCreateModal, setShowCreateModal] = React.useState(false);
+  const [archive, setArchive] = React.useState(false);
+  const [name, setName] = React.useState(false);
+
+
+  const dispatch = useDispatch();
+
+
+
 
   const headCells = [
     {
@@ -50,12 +79,12 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
       disablePadding: true,
       label: "No Of Products",
     },
-    {
-      id: "status",
-      numeric: false,
-      disablePadding: true,
-      label: "Status",
-    },
+    // {
+    //   id: "status",
+    //   numeric: false,
+    //   disablePadding: true,
+    //   label: "Status",
+    // },
    
     {
       id: "actions",
@@ -80,12 +109,44 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = list.map((n) => n.tId);
+      const newSelected = list.map((n) => n._id);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
+
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
+
+  useEffect(() => {
+    // Update the state only if the selectedStatus state has a value
+    if (selectedStatus !== null) {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as Draft") {
+          return {
+            id,
+            status: "draft",
+          };
+        } else {
+          return {
+            id,
+            status: "", // Set a default value here if needed
+          };
+        }
+      });
+      setState(newState);
+      bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      setSelectedStatus(null);
+    }
+  }, [selected, selectedStatus]);
+  
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -114,6 +175,17 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  const toggleArchiveModalHandler = (row) => {
+    setShowCreateModal((prevState) => !prevState);
+    setArchive(row);
+    setName(row?.name);
+  };
+
+  const handleArchive =()=>{
+    deleteData(archive);
+    toggleArchiveModalHandler();
+  }
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -129,10 +201,13 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
           <TableMassActionButton />
         </div>
       )}
+      {!error ? (
+        list.length ? (
+        <>
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}
@@ -152,7 +227,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
             {stableSort(list, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const isItemSelected = isSelected(row.tId);
+                const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -171,7 +246,7 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.tId)}
+                        onClick={(event) => handleClick(event, row._id)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -189,25 +264,34 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                         to="/parameters/tagsManager/edit"
                       >
                         <p className="text-lightBlue rounded-circle fw-600">
-                        {row.attributes.name}
+                        {row.name}
                         </p>
                       </Link>
                     </TableCell>
 
                     <TableCell style={{ width: 180 }}>
-                    <p className="text-lightBlue">{index}</p>
-                         </TableCell>
+                    <p className="text-lightBlue">{row.totalProduct}</p>
+                    </TableCell>
 
-                    <TableCell style={{ width: 140, padding: 0 }}>
+                    {/* <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <div                          className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.attributes.status}`}>
+                        <div className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.status}`}>
 
-                          <small className="text-black fw-400">
-                          {row.attributes.status}
+                          <small className="text-lightBlue fw-400">
+                          {row.status}
                           </small>
                         </div>
                       </div>
-                    </TableCell>
+                    </TableCell> */}
+                    {/* <TableCell style={{ width: 140, padding: 0 }}>
+                            <div className="d-flex align-items-center">
+                              <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "draft" ? "#C8D8FF" : "#FEE1A3"}}>
+                                <small className="text-black fw-400">
+                                  {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "draft" ? "Archived" : "Scheduled"}
+                                </small>
+                              </div>
+                            </div>
+                    </TableCell> */}
                    
                     <TableCell style={{ width: 120, padding: 0 }}>
                       <div className="d-flex align-items-center">
@@ -231,10 +315,12 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
                         </Tooltip>} 
                        
 
-                      {deleteData && <Tooltip 
+                       {deleteData && <Tooltip 
                          onClick={(e)=>{
-                          deleteData(row)
-                        }} title={edit?'Archive':'Un-Archive'} placement="top">
+                          row.status === "active"
+                                      ? toggleArchiveModalHandler(row)
+                                      : deleteData(row);
+                        }} title={row.status==="active"?'Archive':'Un-Archive'} placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <InventoryIcon
                               sx={{
@@ -265,14 +351,27 @@ const TagsManagerTable = ({list,edit,deleteData}) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={list.length}
+        count={totalCount}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         className="table-pagination"
       />
+      </>): isLoading ? (
+          <span className="d-flex justify-content-center m-3">Loading...</span>
+        ) : (
+          <span className="d-flex justify-content-center m-3">
+            No data found
+          </span>
+        )
+      ) : (
+        <></>
+      )}
+      <DeleteModal showCreateModal={showCreateModal} toggleArchiveModalHandler={toggleArchiveModalHandler} handleArchive={handleArchive} name={name} />
+
     </React.Fragment>
+
   );
 };
 

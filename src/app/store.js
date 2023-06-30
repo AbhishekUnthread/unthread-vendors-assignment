@@ -5,8 +5,10 @@ import authReducer from "../features/auth/authSlice";
 import snackbarReducer from "../features/snackbar/snackbarSlice";
 import userReducer from "../features/user/userSlice";
 import vendorReducer from "../features/parameters/vendors/vendorSlice";
+import tagsReducer from "../features/parameters/tagsManager/tagsManagerSlice"
 import categoryReducer from "../features/parameters/categories/categorySlice";
 import collectionReducer from "../features/parameters/collections/collectionSlice"
+
 
 const store = configureStore({
   reducer: {
@@ -15,6 +17,7 @@ const store = configureStore({
     snackbar: snackbarReducer,
     user: userReducer,
     vendor:vendorReducer,
+    tags : tagsReducer,
     category:categoryReducer,
     collection:collectionReducer,
   },
