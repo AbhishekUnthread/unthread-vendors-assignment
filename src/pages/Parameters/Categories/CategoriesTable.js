@@ -35,6 +35,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useDispatch } from "react-redux";
 import { updateCategoryId } from "../../../features/parameters/categories/categorySlice";
 import { useGetAllSubCategoriesQuery } from "../../../features/parameters/categories/categoriesApiSlice";
+import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -108,6 +109,8 @@ const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoadin
   const [open, setOpen] = useState([]);
   const [subCategoryList,setSubCategoryList] = useState([])
   const [filterParameter,setFilterParameter] = useState({})
+  const [showCreateDeleteModal,setShowCreateDeleteModal] = useState(false)
+  const [rowData,setRowData] = useState({})
 
   const {
     data: subCategoriesData,
@@ -196,6 +199,16 @@ const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoadin
     setOpen(item)
   }
  }
+
+ const toggleArchiveModalHandler = (row) => {
+  setShowCreateDeleteModal((prevState) => !prevState);
+  setRowData(row)
+};
+
+function  deleteRowData(){
+  setShowCreateDeleteModal(false);
+    deleteData(rowData)
+}
 
   return (
     <React.Fragment>
@@ -356,7 +369,7 @@ const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoadin
                                   <Tooltip title={"Delete"} placement="top">
                                     <div
                                       onClick={(e) => {
-                                        deleteData(row);
+                                        toggleArchiveModalHandler(row)
                                       }}
                                       className="table-edit-icon rounded-4 p-2"
                                     >
@@ -488,7 +501,7 @@ const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoadin
                                                         <Tooltip title={"Archived"} placement="top">
                                                           <div
                                                             onClick={(e) => {
-                                                              deleteSubData(row);
+                                                              deleteSubData(row)
                                                             }}
                                                             className="table-edit-icon rounded-4 p-2"
                                                           >
@@ -560,6 +573,11 @@ const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoadin
       ) : (
         <></>
       )}
+      <DeleteModal 
+      showCreateModal={showCreateDeleteModal}  
+      toggleArchiveModalHandler={toggleArchiveModalHandler}
+      handleArchive={deleteRowData}
+       />
     </React.Fragment>
   );
 };
