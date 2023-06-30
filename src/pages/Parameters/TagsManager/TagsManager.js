@@ -1,4 +1,4 @@
-import {
+import React, {
   forwardRef,
   useState,
   useEffect,
@@ -57,6 +57,8 @@ import {
   TableRow,
   Chip,
   FormHelperText,
+  Popover,
+  FormGroup,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import { LoadingButton } from "@mui/lab";
@@ -74,9 +76,12 @@ import {
   useDeleteTagMutation,
   useEditTagMutation,
   useBulkCreateTagMutation,
+  useBulkEditTagMutation,
 } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { useNavigate } from "react-router-dom";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
+import sort from "../../../assets/icons/sort.svg";
+
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = forwardRef(function Transition(props, ref) {
@@ -178,8 +183,11 @@ const TagsManager = () => {
   const [tagsList, setTagsList] = useState([]);
   const [error, setError] = useState(false);
   const [multipleTags,setMultipleTags] = useState([]);
+  const [selectedSortOption, setSelectedSortOption] = React.useState(null);
+  const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   
   const tagsValidationSchema = Yup.object({
     name: Yup.string().trim().min(3).required("Required"),
@@ -202,6 +210,28 @@ const TagsManager = () => {
   const multipleTagsSchema = Yup.object({
     name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
   });
+
+  const queryParameters = {};
+  if (selectedSortOption) {
+    // Check alphabetical sort options
+    if (selectedSortOption === "alphabeticalAtoZ" || selectedSortOption === "alphabeticalZtoA") {
+      queryParameters.alphabetical = selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
+    }
+    // Check createdAt sort options
+    else if (selectedSortOption === "oldestToNewest" || selectedSortOption === "newestToOldest") {
+      queryParameters.createdAt = selectedSortOption === "oldestToNewest" ? "1" : "-1";
+    }
+  }
+  if(searchValue)
+  {
+  queryParameters.name = searchValue;
+  }
+  if (!selectedSortOption && !searchValue) {
+    queryParameters.createdAt = "-1"; // Set default createdAt value
+  }
+  const TagTypeQuery = tagsType === 1 ? { status: "draft" }
+  : tagsType === 2 ? { status: "active" }
+  : {};
   
   const[editTag,{
     data: editData,
@@ -235,21 +265,29 @@ const[bulkCreateTag,{
   
 }]=useBulkCreateTagMutation();
 
-const queryOptions =
-  tagsType === 0
-    ? { createdAt: -1 }
-    : tagsType === 1
-    ? { status: "draft" }
-    : tagsType === 2
-    ? { status: "active" }
-    : {};
+const[bulkEdit,
+  {
+    data: bulkEditTag,
+    isLoading: bulkTagEditLoading,
+    isSuccess: bulkTagEditIsSuccess,
+    error: bulkTagEditError,
+  }]=useBulkEditTagMutation();
+
+// const queryOptions =
+//   tagsType === 0
+//     ? { createdAt: -1 }
+//     : tagsType === 1
+//     ? { status: "draft" }
+//     : tagsType === 2
+//     ? { status: "active" }
+//     : {};
 
 const {
   data: tagsData,
   isLoading: tagsIsLoading,
   isSuccess: tagsIsSuccess,
   error: tagsError,
-} = useGetAllTagsQuery(queryOptions);
+} = useGetAllTagsQuery({...queryParameters,...TagTypeQuery}, { enabled: Object.keys(queryParameters).length > 0 });
 
     
     useEffect(() => {
@@ -263,7 +301,7 @@ const {
           );
         }
       }
-      if (tagsIsSuccess) {
+      if (tagsIsSuccess || bulkCreateTagsIsSuccess || bulkTagEditIsSuccess) {
         setError(false);
         if (tagsType === 0) {
           setTagsList(tagsData.data.data);
@@ -275,6 +313,7 @@ const {
           setTagsList(tagsData.data.data);
         }
       }
+
       if (createTagsIsSuccess) {
         setShowCreateModal(false);
         dispatch(showSuccess({ message: "Vendor created successfully" }));
@@ -285,7 +324,7 @@ const {
         dispatch(showSuccess({ message: "Vendors created successfully" }));
       }
       
-    }, [tagsType,tagsIsSuccess,tagsError,tagsData])
+    }, [tagsType,tagsIsSuccess,tagsError,tagsData,dispatch,bulkCreateTagsIsSuccess,bulkTagEditIsSuccess])
     
     const editTagsPageNavigationHandler = (data) => {
       dispatch(updateTagId(data._id)); 
@@ -350,6 +389,31 @@ const {
   const handleDelete = (value) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v.name !== value));
   };
+
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+
+     // * SORT POPOVERS STARTS HERE
+     const [anchorSortE1, setAnchorSortE1] = React.useState(null);
+     const openSort = Boolean(anchorSortE1);
+     const idSort = openSort ? "simple-popover" : undefined;
+   
+     const handleSortClose = () => {
+       setAnchorSortE1(null);
+     };
+     
+     const handleSortClick = (event) => {
+       setAnchorSortE1(event.currentTarget);
+     };
+     const handleSortCheckboxChange = (event) => {
+       const { value, checked } = event.target;
+       setSelectedSortOption(checked ? value : null);
+       setAnchorSortE1(null);
+     };
+      // * SORT POPOVERS ENDS
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -906,7 +970,93 @@ const {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange}/>
+            
+            <button
+                className="button-grey py-2 px-3 ms-2"
+                aria-describedby={idSort}
+                variant="contained"
+                onClick={handleSortClick}
+              >
+                <small className="text-lightBlue me-2">Sort</small>
+                <img src={sort} alt="sort" className="" />
+              </button>
+              <Popover
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                id={idSort}
+                open={openSort}
+                anchorEl={anchorSortE1}
+                onClose={handleSortClose}
+                className="columns"
+              >
+                <FormGroup className="px-2 py-1"                   
+                  onChange={handleSortCheckboxChange}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Alphabetical (A-Z)"
+                    value="alphabeticalAtoZ"
+                    className="me-0"
+                    checked={selectedSortOption === "alphabeticalAtoZ"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Alphabetical (Z-A)"
+                    className="me-0"
+                    value="alphabeticalZtoA"
+                    checked={selectedSortOption === "alphabeticalZtoA"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Oldest to Newest"
+                    className="me-0"
+                    value="oldestToNewest"
+                    checked={selectedSortOption === "oldestToNewest"}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                        }}
+                      />
+                    }
+                    label="Newest to Oldest"
+                    className="me-0"
+                    value="newestToOldest"
+                    checked={selectedSortOption === "newestToOldest"}
+                  />
+                </FormGroup>
+              </Popover>
           </div>
           <TabPanel value={tagsType} index={0}>
             <TagsManagerTable 
@@ -915,6 +1065,7 @@ const {
               error={error}
               list={tagsList}
               edit={editTagsPageNavigationHandler}
+              bulkEdit={bulkEdit}
             />
           </TabPanel>
           <TabPanel value={tagsType} index={1}>

@@ -1,8 +1,13 @@
-import React from "react";
+import React, { forwardRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 // ! MATERIAL IMPORTS
 import {
+  Box,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Slide,
   Table,
   TableBody,
   TableCell,
@@ -10,6 +15,7 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
+  Typography,
 } from "@mui/material";
 // ! COMPONENT IMPORTS
 import {
@@ -22,21 +28,40 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import { useBulkEditTagMutation } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
+import { useDispatch } from "react-redux";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import { LoadingButton } from "@mui/lab";
+import question from "../../../assets/icons/question.svg"
+
 
 // ? TABLE STARTS HERE
 function createData(tId, tagName, noOfProducts) {
   return { tId, tagName, noOfProducts };
 }
 
-
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 
 const 
-TagsManagerTable = ({list,edit,deleteData,isLoading,error}) => {
+TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [state, setState] = React.useState([]);
+  const [showCreateModal, setShowCreateModal] = React.useState(false);
+  const [archive, setArchive] = React.useState(false);
+
+  const dispatch = useDispatch();
+
+
+
 
   const headCells = [
     {
@@ -87,6 +112,37 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error}) => {
     }
     setSelected([]);
   };
+
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
+
+  useEffect(() => {
+    // Update the state only if the selectedStatus state has a value
+    if (selectedStatus !== null) {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as Draft") {
+          return {
+            id,
+            status: "draft",
+          };
+        } else {
+          return {
+            id,
+            status: "", // Set a default value here if needed
+          };
+        }
+      });
+      setState(newState);
+      bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      setSelectedStatus(null);
+    }
+  }, [selected, selectedStatus]);
   
 
   const handleClick = (event, name) => {
@@ -116,6 +172,16 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error}) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  const toggleArchiveModalHandler = (row) => {
+    setShowCreateModal((prevState) => !prevState);
+    setArchive(row);
+  };
+
+  const handleArchive =()=>{
+    deleteData(archive);
+    toggleArchiveModalHandler();
+  }
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -131,7 +197,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error}) => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
           <TableMassActionButton />
         </div>
       )}
@@ -238,7 +304,9 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error}) => {
 
                        {deleteData && <Tooltip 
                          onClick={(e)=>{
-                          deleteData(row)
+                          row.status === "active"
+                                      ? toggleArchiveModalHandler(row)
+                                      : deleteData(row);
                         }} title={row.status==="active"?'Archive':'Un-Archive'} placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <InventoryIcon
@@ -287,7 +355,60 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error}) => {
       ) : (
         <></>
       )}
+      <Dialog
+        TransitionComponent={Transition}
+        keepMounted
+        aria-describedby="alert-dialog-slide-description"
+        maxWidth="sm"
+        fullWidth={true}
+        open={showCreateModal}
+        onClose={toggleArchiveModalHandler}
+      >
+        <hr className="hr-grey-6 my-0" />
+        <DialogContent className="py-3 px-4">
+          <Box
+            sx={{
+              display: "block",
+              marginLeft: "auto",
+              marginRight: "auto",
+              width: "50%",
+            }}
+          >
+            <img src={question} alt="questionMark" />
+          </Box>
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{ color: "lightBlue", marginBottom: 2 }}
+          >
+            Are you sure you want to Archive?
+          </Typography>
+
+          <br />
+        </DialogContent>
+
+        <hr className="hr-grey-6 my-0" />
+
+        <DialogActions className="d-flex justify-content-between px-4 py-3">
+          <button
+            className="button-grey py-2 px-5"
+            onClick={toggleArchiveModalHandler}
+            type="button"
+          >
+            <p className="text-lightBlue">No</p>
+          </button>
+          <LoadingButton
+            className="button-gradient py-2 px-5"
+            type="button"
+            onClick={handleArchive}
+          >
+            <p>Yes</p>
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
+
     </React.Fragment>
+
   );
 };
 

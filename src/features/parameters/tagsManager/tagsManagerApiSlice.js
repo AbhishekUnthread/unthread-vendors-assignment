@@ -51,6 +51,18 @@ export const tagsManagerApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["TagsManager"],
     }),
+    bulkEditTag:builder.mutation({
+      query: (updates) => ({
+        url: `/parameters/tagManager/bulkUpdate`,
+        method: "PUT",
+        body: updates,
+      }),
+      invalidatesTags: ["TagManager"],
+    })
+
+
+
+
   }),
 });
 
@@ -60,4 +72,5 @@ export const {
   useDeleteTagMutation,
   useEditTagMutation,
   useBulkCreateTagMutation,
+  useBulkEditTagMutation
 } = tagsManagerApiSlice;

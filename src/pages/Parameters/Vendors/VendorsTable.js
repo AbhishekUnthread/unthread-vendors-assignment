@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { forwardRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
@@ -10,7 +10,15 @@ import TableEditStatusButton from "../../../components/TableEditStatusButton/Tab
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // ! MATERIAL IMPORTS
 import {
+  Box,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  OutlinedInput,
+  Slide,
   Table,
   TableBody,
   TableCell,
@@ -18,6 +26,7 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
+  Typography,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -25,12 +34,19 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import { useBulkEditVendorMutation } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { useDispatch } from "react-redux";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import { LoadingButton } from "@mui/lab";
+import question from "../../../assets/icons/question.svg"
 
 // ? TABLE STARTS HERE
 function createData(vId, vendorsName, noOfProducts, status) {
   return { vId, vendorsName, noOfProducts, status };
 }
 
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
 const headCells = [
   {
     id: "vendorsName",
@@ -68,8 +84,17 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [showCreateModal, setShowCreateModal] = React.useState(false);
+  const [archive, setArchive] = React.useState(false);
+
+
   const [state, setState] = React.useState([]);
   const dispatch = useDispatch();
+
+  const toggleArchiveModalHandler = (row) => {
+    setShowCreateModal((prevState) => !prevState);
+    setArchive(row);
+  };
 
   const[bulkEdit,
   {
@@ -108,7 +133,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
       bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
       setSelectedStatus(null);
     }
-  }, [selected, selectedStatus]);
+  }, [selected, selectedStatus,bulkVendorEditIsSuccess]);
   
 
   const emptyRows =
@@ -160,6 +185,11 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  const handleArchive =()=>{
+    deleteData(archive);
+    toggleArchiveModalHandler();
+  }
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -175,7 +205,11 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
+          <TableEditStatusButton
+            onSelect={handleStatusSelect}
+            defaultValue={["Set as Active", "Set as Draft"]}
+            headingName="Edit Status"
+          />
           <TableMassActionButton />
         </div>
       )}
@@ -279,20 +313,31 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
                                 </Tooltip>
                               )}
 
-                              {deleteData && <Tooltip 
-                         onClick={(e)=>{
-                          deleteData(row)
-                        }} title={row.status==="active"?'Archive':'Un-Archive'} placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <InventoryIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip> } 
+                              {deleteData && (
+                                <Tooltip
+                                  onClick={(e) => {
+                                    row.status === "active"
+                                      ? toggleArchiveModalHandler(row)
+                                      : deleteData(row);
+                                  }}
+                                  title={
+                                    row.status === "active"
+                                      ? "Archive"
+                                      : "Un-Archive"
+                                  }
+                                  placement="top"
+                                >
+                                  <div className="table-edit-icon rounded-4 p-2">
+                                    <InventoryIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </div>
+                                </Tooltip>
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -331,6 +376,57 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading }) => {
       ) : (
         <></>
       )}
+      <Dialog
+        TransitionComponent={Transition}
+        keepMounted
+        aria-describedby="alert-dialog-slide-description"
+        maxWidth="sm"
+        fullWidth={true}
+        open={showCreateModal}
+        onClose={toggleArchiveModalHandler}
+      >
+        <hr className="hr-grey-6 my-0" />
+        <DialogContent className="py-3 px-4">
+          <Box
+            sx={{
+              display: "block",
+              marginLeft: "auto",
+              marginRight: "auto",
+              width: "50%",
+            }}
+          >
+            <img src={question} alt="questionMark" />
+          </Box>
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{ color: "lightBlue", marginBottom: 2 }}
+          >
+            Are you sure you want to Archive?
+          </Typography>
+
+          <br />
+        </DialogContent>
+
+        <hr className="hr-grey-6 my-0" />
+
+        <DialogActions className="d-flex justify-content-between px-4 py-3">
+          <button
+            className="button-grey py-2 px-5"
+            onClick={toggleArchiveModalHandler}
+            type="button"
+          >
+            <p className="text-lightBlue">No</p>
+          </button>
+          <LoadingButton
+            className="button-gradient py-2 px-5"
+            type="button"
+            onClick={handleArchive}
+          >
+            <p>Yes</p>
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 };

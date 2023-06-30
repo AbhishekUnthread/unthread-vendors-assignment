@@ -121,22 +121,6 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
   queryParameters.createdAt = "-1"; // Set default createdAt value
 }
 
-// if(vendorType === 0)
-// {
-//   queryParameters.createdAt = "-1"
-// }
-// else if(vendorType === 1)
-// {
-//   queryParameters.status = "draft"
-// }
-// else if(vendorType === 2)
-// {
-//   queryParameters.status = "draft"
-// }
-// else{
-//   queryParameters ={};
-// }
-
 const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
   : vendorType === 2 ? { status: "active" }
   : {};
@@ -251,7 +235,6 @@ const vendorTypeQuery = vendorType === 1 ? { status: "draft" }
   }, [bulkCreateVendorIsSuccess,dispatch])
   
 
-  console.log("fwfwfeqf",vendorList)
   
   useEffect(() => {
     if (vendorsError) {
