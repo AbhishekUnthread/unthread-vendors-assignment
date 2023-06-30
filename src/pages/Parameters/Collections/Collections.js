@@ -108,6 +108,7 @@ const Collections = () => {
 const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
   : collectionType === 1 ? { status: "active" }
   : collectionType === 2 ? { createdAt: -1, status: "in-active" }
+  : collectionType === 3 ? { createdAt: -1, status: "draft" }
   : {};
 
   const filterParams = { ...filterParameter, ...collectionTypeQuery };
@@ -206,6 +207,9 @@ const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
         setCollectionList(collectionData.data.data);
       }
       if (collectionType === 2) {
+        setCollectionList(collectionData.data.data);
+      }
+      if (collectionType === 3) {
         setCollectionList(collectionData.data.data);
       }
     }
@@ -388,6 +392,14 @@ const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
             />
           </TabPanel>
           <TabPanel value={collectionType} index={2}>
+            <CollectionsTable
+              deleteData={deleteCollectionHandler}
+              isLoading={collectionIsLoading}
+              error={error}
+              list={collectionList}
+            />
+          </TabPanel>
+          <TabPanel value={collectionType} index={3}>
             <CollectionsTable
               deleteData={deleteCollectionHandler}
               isLoading={collectionIsLoading}
