@@ -1,7 +1,7 @@
 import { LoadingButton } from '@mui/lab'
 import { Box, Dialog, DialogActions, DialogContent, Slide, Typography } from '@mui/material'
 import React, { forwardRef } from 'react'
-import question from "../../assets/icons/clock.svg"
+import question from "../../assets/icons/question.svg"
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;

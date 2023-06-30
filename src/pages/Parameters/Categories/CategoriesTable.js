@@ -99,7 +99,7 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoading }) => {
+const CategoriesTable = ({ list, edit, deleteData,deleteSubData, error, isLoading,subModalOpenHandler }) => {
   const dispatch = useDispatch()
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
@@ -332,7 +332,7 @@ function  deleteRowData(){
                             <TableCell style={{ width: 120, padding: 0 }}>
                               <div className="d-flex align-items-center">
                                 {edit && (
-                                  <Tooltip title="Edit" placement="top" onClick={toggleCreateSubModalHandler}>
+                                  <Tooltip title="Edit" placement="top" onClick={()=>subModalOpenHandler(row)}>
                                     <div className="table-edit-icon rounded-4 p-2">
                                       <AddCircleOutlineIcon
                                         sx={{
@@ -478,7 +478,7 @@ function  deleteRowData(){
                                                         <Tooltip title="Edit" placement="top">
                                                           <div
                                                             onClick={(e) => {
-                                                              edit(row);
+                                                              dispatch(updateCategoryId(row._id))
                                                             }}
                                                             className="table-edit-icon rounded-4 p-2"
                                                           >

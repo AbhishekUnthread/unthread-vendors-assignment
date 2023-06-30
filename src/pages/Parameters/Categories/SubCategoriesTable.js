@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
@@ -22,6 +22,9 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import { updateCategoryId } from "../../../features/parameters/categories/categorySlice";
+import { useDispatch } from "react-redux";
+import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 
 // ? TABLE STARTS HERE
 
@@ -60,11 +63,15 @@ const headCells = [
 // ? TABLE ENDS HERE
 
 const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
+
+  const dispatch = useDispatch()
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [showCreateDeleteModal,setShowCreateDeleteModal] = useState(false)
+  const [rowData,setRowData] = useState({})
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -115,6 +122,15 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  const toggleArchiveModalHandler = (row) => {
+    setShowCreateDeleteModal((prevState) => !prevState);
+    setRowData(row)
+  };
+  
+  function  deleteRowData(){
+    setShowCreateDeleteModal(false);
+      deleteData(rowData)
+  }
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -220,10 +236,16 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                             <div className="d-flex align-items-center">
                               {edit && (
                                 <Tooltip title="Edit" placement="top">
+                                  <Link
+                                      className="text-decoration-none"
+                                      to="/parameters/subCategories/edit"
+                                      onClick={()=>{
+                                        dispatch(updateCategoryId(row._id))
+                                      }}
+                                    >
+
                                   <div
-                                    onClick={(e) => {
-                                      edit(row);
-                                    }}
+                                   
                                     className="table-edit-icon rounded-4 p-2"
                                   >
                                     <EditOutlinedIcon
@@ -234,13 +256,14 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                                       }}
                                     />
                                   </div>
+                                    </Link>
                                 </Tooltip>
                               )}
                               {deleteData && (
                                 <Tooltip title={"Delete"} placement="top">
                                   <div
                                     onClick={(e) => {
-                                      deleteData(row);
+                                      toggleArchiveModalHandler(row);
                                     }}
                                     className="table-edit-icon rounded-4 p-2"
                                   >
@@ -292,6 +315,11 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
       ) : (
         <></>
       )}
+      <DeleteModal 
+      showCreateModal={showCreateDeleteModal}  
+      toggleArchiveModalHandler={toggleArchiveModalHandler}
+      handleArchive={deleteRowData}
+       />
     </React.Fragment>
   );
 };

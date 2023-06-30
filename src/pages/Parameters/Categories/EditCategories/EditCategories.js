@@ -38,6 +38,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
 import { useCreateCategoryMutation, useEditCategoryMutation, useGetAllCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
+import { UseEditCategory } from "../../../../features/parameters/categories/categoriesEditHook";
 
 const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
@@ -95,6 +96,7 @@ const EditCategories = () => {
       setEndDate(categoriesData.data.data[0].endDate)
       setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl)
       setCategorySeo(categoriesData.data.data[0]?.seos || {})
+      
     }
   }, [categoriesIsSuccess]);
 

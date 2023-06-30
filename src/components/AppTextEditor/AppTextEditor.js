@@ -5,7 +5,7 @@ import { convertToHTML, convertFromHTML } from "draft-convert";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "./AppTextEditor.scss";
 
-const AppTextEditor = ({ value, setFieldValue }) => {
+const AppTextEditor = ({ value="<p><p/>", setFieldValue }) => {
   const [editorState, setEditorState] = useState(null);
 
   useEffect(() => {

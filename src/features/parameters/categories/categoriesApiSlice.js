@@ -61,16 +61,16 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
     deleteCategory: builder.mutation({
       query: (categoryId) => ({
         url: `/parameters/category/${categoryId}`,
-        method: "DELETE",
-        body: categoryId,
+        method: "PUT",
+        body: {status:"draft"},
       }),
       invalidatesTags: ["Categories"],
     }),
     deleteSubCategory: builder.mutation({
       query: (subCategoryId) => ({
         url: `/parameters/subCategory/${subCategoryId}`,
-        method: "DELETE",
-        body: subCategoryId,
+        method: "PUT",
+        body: {status:"draft"},
       }),
       invalidatesTags: ["SubCategories"],
     }),

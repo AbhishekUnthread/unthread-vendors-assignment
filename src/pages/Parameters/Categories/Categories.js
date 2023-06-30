@@ -451,6 +451,11 @@ const Categories = () => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v.name !== value));
   };
 
+  const subModalOpenHandler= (row)=>{
+    setShowCreateSubModal(prev => !prev)
+    subCategoryFormik.setFieldValue("categoryId",row._id)
+  }
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -601,7 +606,7 @@ const Categories = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
                   <h5 className="text-lightBlue fw-500">
-                    {`${isEditing ? "Edit" : "Update"} Sub Category`}
+                    {`Sub Category`}
                   </h5>
 
                   <small className="text-grey-6 mt-1 d-block">
@@ -858,6 +863,7 @@ const Categories = () => {
                   isLoading={categoriesIsLoading || subCategoriesIsLoading}
                   deleteData={deleteCategoryHandler}
                   deleteSubData={deleteSubCategoryHandler}
+                  subModalOpenHandler={subModalOpenHandler}
                   error={error}
                   list={categoryList}
                   edit={editCategoryHandler}
