@@ -445,10 +445,7 @@ const Categories = () => {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Category created successfully" }));
     }
-    if (editCategoryIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Category edited successfully" }));
-    }
+    
     if (deleteCategoryIsSuccess) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Category Deleted successfully" }));
@@ -460,10 +457,6 @@ const Categories = () => {
     if (createSubCategoryIsSuccess ) {
       setShowCreateSubModal(false);
       dispatch(showSuccess({ message: "Sub Category created successfully" }));
-    }
-    if (editSubCategoryIsSuccess) {
-      setShowCreateSubModal(false);
-      dispatch(showSuccess({ message: "Sub Category edited successfully" }));
     }
     if(deleteSubCategoryIsSuccess){
       setShowCreateSubModal(false);
@@ -779,7 +772,7 @@ const Categories = () => {
                       return (
                         <Chip
                           label={data.name}
-                          onDelete={() => handleDelete(data.name,setMultipleTags)}
+                          onDelete={() => handleDelete(data.name,setMultipleTagsForSub)}
                           onClick={() => {}}
                           size="small"
                           className="mt-3 me-2"
@@ -989,6 +982,7 @@ const Categories = () => {
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditCategory}
                   editCategory={editCategory}
+                  editSubCategory={editSubCategory}
                   archived={true}
                   totalCount={categoryTotalCount}
                 />
@@ -1015,6 +1009,7 @@ const Categories = () => {
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditCategory}
                   editCategory={editCategory}
+                  editSubCategory={editSubCategory}
                   archived={false}
                   totalCount={categoryTotalCount}
                 />

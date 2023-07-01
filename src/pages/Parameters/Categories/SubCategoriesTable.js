@@ -27,6 +27,7 @@ import { useDispatch } from "react-redux";
 import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import DeleteIcon from '@mui/icons-material/Delete';
+import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 
 // ? TABLE STARTS HERE
 
@@ -83,8 +84,9 @@ const SubCategoriesTable = ({
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [showCreateDeleteModal, setShowCreateDeleteModal] = useState(false);
   const [rowData, setRowData] = useState({});
-
+  const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [handleStatusValue,setHandleStatusValue] = useState('in-active')
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -148,10 +150,10 @@ const SubCategoriesTable = ({
             id,
             status: "active",
           };
-        } else if (selectedStatus === "Set as Draft") {
+        } else if (selectedStatus === "Set as Archieved") {
           return {
             id,
-            status: "draft",
+            status: "archieved",
           };
         } else {
           return {
@@ -163,7 +165,7 @@ const SubCategoriesTable = ({
       bulkEdit({ updates: newState })
         .unwrap()
         .then(() =>
-          dispatch(showSuccess({ message: " Status updated successfully" }))
+          dispatch(showSuccess({ message: "Sub Categories Status updated successfully" }))
         );
       setSelectedStatus(null);
     }
@@ -171,6 +173,11 @@ const SubCategoriesTable = ({
 
   const toggleArchiveModalHandler = (row) => {
     setShowCreateDeleteModal((prevState) => !prevState);
+    setRowData(row);
+  };
+
+  const toggleUnArchiveModalHandler = (row) => {
+    setShowUnArchivedModal((prevState) => !prevState);
     setRowData(row);
   };
 
@@ -182,7 +189,18 @@ const SubCategoriesTable = ({
         status:'archieved'
       }
     })
-    // deleteData(rowData);
+    dispatch(showSuccess({ message: "Archived this Sub category successfully" }));
+  }
+
+  function handleUnArchived(){
+    setShowUnArchivedModal(false)
+    editSubCategory({
+      id:rowData._id,
+      details:{
+        status:handleStatusValue
+      }
+    })
+    dispatch(showSuccess({ message: "Un-Archived this Sub category successfully" }));
   }
   return (
     <React.Fragment>
@@ -200,8 +218,8 @@ const SubCategoriesTable = ({
             </small>
           </button>
 
-          {/* <TableEditStatusButton />
-          <TableMassActionButton /> */}
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Archieved']} headingName="Edit Status"/>
+          {/*<TableMassActionButton /> */}
         </div>
       )}
       {!error ? (
@@ -345,10 +363,15 @@ const SubCategoriesTable = ({
                                  </Tooltip>
                                 )}
                               {deleteData && (
-                                <Tooltip title={"Archived"} placement="top">
+                                <Tooltip title={archived ?"Archived":"Un Archived"} placement="top">
                                   <div
                                     onClick={(e) => {
-                                      toggleArchiveModalHandler(row);
+                                      if(archived){
+
+                                        toggleArchiveModalHandler(row);
+                                      }else{
+                                        toggleUnArchiveModalHandler(row)
+                                      }
                                     }}
                                     className="table-edit-icon rounded-4 p-2"
                                   >
@@ -406,6 +429,12 @@ const SubCategoriesTable = ({
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={deleteRowData}
       />
+      <UnArchivedModal
+      showUnArchivedModal={showUnArchivedModal}
+      closeUnArchivedModal={()=>setShowUnArchivedModal(false)}
+      handleUnArchived={handleUnArchived}
+      handleValue={setHandleStatusValue}
+       />
     </React.Fragment>
   );
 };
