@@ -1,18 +1,18 @@
 import React from "react";
 import "../../pages/Parameters/EditVendor/EditVendor.scss";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 const SaveFooter = ({handleSubmit,handleSubmitAndAddAnother, saveAsDraft, saveAddAnother}) => {
+  const navigate = useNavigate()
 
   return (
     <div className="row create-buttons pt-5 pb-3 justify-content-between">
     <div className="d-flex w-auto px-0">
-        <Link
-        to="/parameters/vendors"
+        <button
         className="button-red-outline py-2 px-4"
+        onClick={()=>navigate(-1)}
         >
         <p>Discard</p>
-        </Link>
+        </button>
 
         { saveAsDraft ?
         <Link
@@ -42,5 +42,4 @@ const SaveFooter = ({handleSubmit,handleSubmitAndAddAnother, saveAsDraft, saveAd
     </div>
   );
 };
-
 export default SaveFooter;

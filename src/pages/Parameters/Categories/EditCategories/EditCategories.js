@@ -38,6 +38,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
 import { useCreateCategoryMutation, useEditCategoryMutation, useGetAllCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
+import { UseEditCategory } from "../../../../features/parameters/categories/categoriesEditHook";
+import { showSuccess } from "../../../../features/snackbar/snackbarAction";
 
 const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
@@ -50,6 +52,7 @@ const EditCategories = () => {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [categoryVisibility, setCategoryVisibility] = useState(false);
+  const [categorySeo,setCategorySeo] = useState({})
   const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
   const [checked, setChecked] = useState(false);
   const categoryId = useSelector((state) => state.category.categoryId);
@@ -93,8 +96,10 @@ const EditCategories = () => {
       setStartDate(categoriesData.data.data[0].startDate)
       setEndDate(categoriesData.data.data[0].endDate)
       setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl)
+      setCategorySeo(categoriesData.data.data[0]?.seos || {})
+      
     }
-  }, [categoriesIsSuccess]);
+  }, [categoriesIsSuccess,dispatch]);
 
 
 
@@ -117,11 +122,12 @@ const EditCategories = () => {
           startDate: startDate,
           endDate: endDate,
           mediaUrl: categoryMediaUrl,
+          seo: categorySeo,
         },
       })
         .unwrap()
         .then(() => {
-          navigate("/parameters/categories"); // Navigating to categories page after successful edit
+          dispatch(showSuccess({message:"Category Updated Successfully"}))
         });
     } else {
       createCategory({
@@ -134,6 +140,7 @@ const EditCategories = () => {
         startDate: startDate,
         endDate: endDate,
         mediaUrl: categoryMediaUrl,
+        seo: categorySeo,
       })
         .unwrap()
         .then(() => {
@@ -157,6 +164,7 @@ const EditCategories = () => {
           startDate: startDate,
           endDate: endDate,
           mediaUrl: categoryMediaUrl,
+          seo: categorySeo,
         },
       })
         .unwrap()
@@ -174,6 +182,7 @@ const EditCategories = () => {
         startDate: startDate,
         endDate: endDate,
         mediaUrl: categoryMediaUrl,
+        seo: categorySeo,
       })
         .unwrap()
         .then(() => {
@@ -266,7 +275,7 @@ const EditCategories = () => {
               <AppTextEditor value={categoryDescription} setFieldValue={(val) => setCategoryDescription(val)} />
             </div>
           </div>
-
+          
           <div className="border-grey-5 rounded-8 p-3 row features mt-4">
             <Box
               sx={{ width: "100%" }}
@@ -290,13 +299,13 @@ const EditCategories = () => {
                   <AddCategoriesProducts />
                 </TabPanel>
                 <TabPanel value={categoryType} index={1}>
-                  <AddSubCategoriesProducts />
+                  <AddSubCategoriesProducts id={categoryId} />
                 </TabPanel>
               </>
             }
           </div>
           <div className="mt-4">
-            <SEO />
+            <SEO name={categoryName} value={categorySeo} handleSeoChange={setCategorySeo} />
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
@@ -307,19 +316,16 @@ const EditCategories = () => {
             toggleData={['active', 'scheduled']}
           />
           <VisibilityBox value={categoryVisibility}
-            visibilityChange={(_, val) => setCategoryVisibility(val)}
-            startDate={startDate}
-            endDate={endDate}
-            StartDateChange={setStartDate}
-            EndDateChange={setEndDate}
+            onChange={(_, val) => setCategoryVisibility(val)}
+            
           />
           <div className="mt-4">
-            <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} />
+            <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} imageValue={categoryMediaUrl} />
           </div>
           <NotesBox name={'notes'} value={categoryNotes} onChange={(e) => setCategoryNotes(e.target.value)} />
         </div>
       </div>
-      <SaveFooter handleSubmit={handleSubmit} handleSubmitAndAddAnother={handleSubmitAndAddAnother} />
+      <SaveFooter handleSubmit={handleSubmit}  />
     </div>
   );
 };
