@@ -37,6 +37,7 @@ import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import DeleteIcon from '@mui/icons-material/Delete';
+import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -123,8 +124,10 @@ const CategoriesTable = ({
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [filterParameter, setFilterParameter] = useState({});
   const [showCreateDeleteModal, setShowCreateDeleteModal] = useState(false);
+  const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
   const [rowData, setRowData] = useState({});
   const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [handleStatusValue,setHandleStatusValue] = useState('in-active')
 
 
   const {
@@ -208,10 +211,10 @@ const CategoriesTable = ({
             id,
             status: "active",
           };
-        } else if (selectedStatus === "Set as Draft") {
+        } else if (selectedStatus === "Set as Archieved") {
           return {
             id,
-            status: "draft",
+            status: "archieved",
           };
         } else {
           return {
@@ -250,6 +253,11 @@ const CategoriesTable = ({
     setRowData(row);
   };
 
+  const toggleUnArchiveModalHandler = (row) => {
+    setShowUnArchivedModal((prevState) => !prevState);
+    setRowData(row);
+  };
+
   function deleteRowData() {
     setShowCreateDeleteModal(false);
     editCategory({
@@ -259,6 +267,16 @@ const CategoriesTable = ({
       }
     })
     // deleteData(rowData);
+  }
+
+  function handleUnArchived(){
+    setShowUnArchivedModal(false)
+    editCategory({
+      id:rowData._id,
+      details:{
+        status:handleStatusValue
+      }
+    })
   }
 
   return (
@@ -277,7 +295,7 @@ const CategoriesTable = ({
             </small>
           </button>
 
-          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Archieved']} headingName="Edit Status"/>
           {/* <TableMassActionButton />  */}
         </div>
       )}
@@ -466,10 +484,15 @@ const CategoriesTable = ({
                                  </Tooltip>
                                 )}
                                 {deleteData && (
-                                  <Tooltip title={"Archived"} placement="top">
+                                  <Tooltip title={ archived ? "Archived" : "Un Archived"} placement="top">
                                     <div
                                       onClick={(e) => {
-                                        toggleArchiveModalHandler(row);
+                                        if(archived){
+
+                                          toggleArchiveModalHandler(row);
+                                        }else{
+                                          toggleUnArchiveModalHandler(row)
+                                        }
                                       }}
                                       className="table-edit-icon rounded-4 p-2"
                                     >
@@ -613,7 +636,7 @@ const CategoriesTable = ({
                                                     }}
                                                   >
                                                     <div className="d-flex align-items-center">
-                                                      {edit && (
+                                                      {edit && row?.status !== "archieved" && (
                                                         <Tooltip
                                                           title="Edit"
                                                           placement="top"
@@ -645,9 +668,31 @@ const CategoriesTable = ({
                                                           </div>
                                                         </Tooltip>
                                                       )}
+                                                      {
+                                                        row?.status === "archieved" &&(
+                                                          <Tooltip title={"Delete"} placement="top">
+                                                          <div
+                                                            onClick={(e) => {
+                                                              deleteSubData(
+                                                                row
+                                                              );
+                                                            }}
+                                                            className="table-edit-icon rounded-4 p-2"
+                                                          >
+                                                            <DeleteIcon
+                                                              sx={{
+                                                                color: "#5c6d8e",
+                                                                fontSize: 18,
+                                                                cursor: "pointer",
+                                                              }}
+                                                            />
+                                                          </div>
+                                                        </Tooltip>
+                                                       )
+                                                      }
                                                       {deleteSubData && (
                                                         <Tooltip
-                                                          title={"Archived"}
+                                                          title={ row?.status === "archieved" ?"Un Archived":"Archived"}
                                                           placement="top"
                                                         >
                                                           <div
@@ -729,11 +774,18 @@ const CategoriesTable = ({
         <></>
       )}
       <DeleteModal
-      name={archived ?'Archived' : "Un Archived"}
+      name={'Archived'}
         showCreateModal={showCreateDeleteModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={deleteRowData}
       />
+      <UnArchivedModal
+      showUnArchivedModal={showUnArchivedModal}
+      closeUnArchivedModal={()=>setShowUnArchivedModal(false)}
+      handleUnArchived={handleUnArchived}
+      handleValue={setHandleStatusValue}
+
+       />
     </React.Fragment>
   );
 };

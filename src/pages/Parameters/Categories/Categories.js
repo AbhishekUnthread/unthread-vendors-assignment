@@ -100,8 +100,8 @@ const Categories = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
   const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
-  const [sortFilter, setSortFilter] = React.useState(null);
-  const [statusFilter, setStatusFilter] = React.useState("");
+  const [sortFilter, setSortFilter] = React.useState("newestToOldest");
+  const [statusFilter, setStatusFilter] = React.useState("active");
   const [multipleTags, setMultipleTags] = useState([]);
   const [multipleTagsForSub,setMultipleTagsForSub] = useState([])
   const [searchValue, setSearchValue] = useState("");
@@ -124,7 +124,7 @@ const Categories = () => {
   }
 
   const categoryTypeQuery = categoryType === 0 ? { createdAt: -1 }
-  : categoryType === 1 ? { status: "" }
+  : categoryType === 1 ? { status: "active" }
   : categoryType === 2 ? { createdAt: -1, status: "archieved" }
   : categoryType === 3 ? { createdAt: -1, status: "archieved" }
   : {};
@@ -441,16 +441,33 @@ const Categories = () => {
         setSubCategoryTotalCount(subCategoriesData.data.totalCount)
       }
     }
-    if (createCategoryIsSuccess || editCategoryIsSuccess) {
+    if (createCategoryIsSuccess ) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Category created successfully" }));
+    }
+    if (editCategoryIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Category edited successfully" }));
+    }
+    if (deleteCategoryIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Category Deleted successfully" }));
     }
     if (bulkCreateTagsIsSuccess) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Categories created successfully" }));
     }
-    if (createSubCategoryIsSuccess || editSubCategoryIsSuccess) {
+    if (createSubCategoryIsSuccess ) {
       setShowCreateSubModal(false);
+      dispatch(showSuccess({ message: "Sub Category created successfully" }));
+    }
+    if (editSubCategoryIsSuccess) {
+      setShowCreateSubModal(false);
+      dispatch(showSuccess({ message: "Sub Category edited successfully" }));
+    }
+    if(deleteSubCategoryIsSuccess){
+      setShowCreateSubModal(false);
+      dispatch(showSuccess({ message: "Sub Category deleted successfully" }));
     }
   }, [
     categoriesData,
@@ -935,14 +952,14 @@ const Categories = () => {
                     onChange={handleSortRadio}
                   >
                     <FormControlLabel
-                      value="oldestToNewest"
-                      control={<Radio size="small" />}
-                      label="Oldest to Newest"
-                    />
-                    <FormControlLabel
                       value="newestToOldest"
                       control={<Radio size="small" />}
                       label="Newest to Oldest"
+                    />
+                    <FormControlLabel
+                      value="oldestToNewest"
+                      control={<Radio size="small" />}
+                      label="Oldest to Newest"
                     />
                     <FormControlLabel
                       value="alphabeticalAtoZ"
