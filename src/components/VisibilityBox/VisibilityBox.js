@@ -56,4 +56,5 @@ const VisibilityBox = ({ value, onChange }) => {
     </div>
   );
 };
+
 export default VisibilityBox;
