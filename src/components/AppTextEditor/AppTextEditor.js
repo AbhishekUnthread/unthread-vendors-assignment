@@ -7,7 +7,6 @@ import "./AppTextEditor.scss";
 
 const AppTextEditor = ({ value="<p><p/>", setFieldValue }) => {
   const [editorState, setEditorState] = useState(null);
-
   useEffect(() => {
     if (value && !editorState) {
       const contentState = convertFromHTML(value);
@@ -15,14 +14,12 @@ const AppTextEditor = ({ value="<p><p/>", setFieldValue }) => {
       setEditorState(initialEditorState);
     }
   }, [value, editorState]);
-
   useEffect(() => {
     if (editorState) {
       const html = convertToHTML(editorState.getCurrentContent());
       setFieldValue(html);
     }
   }, [editorState, setFieldValue]);
-
   const handleEditorStateChange = (state) => {
     setEditorState(state);
   };
@@ -30,7 +27,6 @@ const AppTextEditor = ({ value="<p><p/>", setFieldValue }) => {
   if (!editorState) {
     return <div>Loading editor...</div>;
   }
-
   return (
     <Editor
       editorState={editorState}
@@ -43,3 +39,4 @@ const AppTextEditor = ({ value="<p><p/>", setFieldValue }) => {
 };
 
 export default AppTextEditor;
+

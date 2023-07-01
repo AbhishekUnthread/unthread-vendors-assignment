@@ -3,6 +3,7 @@ import "../../pages/Parameters/EditVendor/EditVendor.scss";
 import { Link, useNavigate } from "react-router-dom";
 const SaveFooter = ({handleSubmit,handleSubmitAndAddAnother, saveAsDraft, saveAddAnother}) => {
   const navigate = useNavigate()
+
   return (
     <div className="row create-buttons pt-5 pb-3 justify-content-between">
     <div className="d-flex w-auto px-0">
@@ -12,6 +13,7 @@ const SaveFooter = ({handleSubmit,handleSubmitAndAddAnother, saveAsDraft, saveAd
         >
         <p>Discard</p>
         </button>
+
         { saveAsDraft ?
         <Link
         to="/parameters/vendors"

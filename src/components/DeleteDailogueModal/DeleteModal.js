@@ -38,6 +38,7 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
             sx={{ color: "lightBlue", marginBottom: 2 }}
           >
             Are you sure you want to {name}?
+
           </Typography>
           <br />
         </DialogContent>

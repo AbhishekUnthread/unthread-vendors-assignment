@@ -132,8 +132,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
         }
       });
       setState(newState);
-                  console.log(newState, 'newState')
-
       const requestData = {
         updates: newState
       };
@@ -233,6 +231,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
           status: "archieved"
         }
     })
+    dispatch(showSuccess({ message: "Archived this collection successfully" }));
   }
 
   const handleUnArchive = (unArchivedId) => {
@@ -242,6 +241,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
           status: "in-active"
         }
     })
+    dispatch(showSuccess({ message: "Un-Archived this collection successfully" }));
   }
 
   const handleModalClose = () => {
@@ -343,9 +343,18 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
                     </TableCell>
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"}}>
+                        <div className="rounded-pill d-flex px-2 py-1 c-pointer" 
+                          style={{background: 
+                            row.status == "active" ? "#A6FAAF" : 
+                            row.status == "in-active" ? "#F67476" : 
+                            row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
+                          }}>
                           <small className="text-black fw-400">
-                            {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "archieved" ? "Archived" : "Scheduled"}
+                            {
+                              row.status == "active" ? "Active" :  
+                              row.status == "in-active" ? "In-Active" : 
+                              row.status == "archieved" ? "Archived" : "Scheduled"
+                            }
                           </small>
                         </div>
                       </div>
@@ -354,10 +363,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
                       <TableCell style={{ width: 140, padding: 0 }}>
                          <div className="d-flex align-items-center">
                           {deleteData && (
-                          <Tooltip title="Edit" placement="top">
+                          <Tooltip title="Delete" placement="top">
                             <div className="table-edit-icon rounded-4 p-2" 
                                 onClick={(e) => {
                                   deleteData(row);
+                                  dispatch(showSuccess({ message: "Deleted this collection successfully" }));
                                 }}
                             >
                               <DeleteIcon
@@ -370,7 +380,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
                             </div>
                           </Tooltip>
                           )}
-                          <Tooltip title="Archive" placement="top">
+                          <Tooltip title="Un-Archive" placement="top">
                             <div className="table-edit-icon rounded-4 p-2"
                               onClick={() => {
                                 handleUnArchive(row._id)
@@ -490,7 +500,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
               You have unsaved changes.
             </h6> */}
             <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive this?
+              Are you sure you want to Archive this collection ?
             </h6>
             <div className="d-flex justify-content-center mt-4">
               <hr className="hr-grey-6 w-100" />
