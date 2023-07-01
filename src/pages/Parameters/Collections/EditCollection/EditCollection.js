@@ -1287,7 +1287,7 @@ const EditCollection = () => {
               startDate={startDate1}
               endDate={endDate1}
               showSchedule={true}
-              andleStartDate={setStartDate1}
+              handleStartDate={setStartDate1}
               handleEndDate={setEndDate1}
               clearDate={clearDate}
             />

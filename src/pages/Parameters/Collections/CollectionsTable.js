@@ -15,7 +15,6 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  TextField,
   Tooltip,
 } from "@mui/material";
 // ! COMPONENT IMPORTS
@@ -24,23 +23,18 @@ import {
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal"
+import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 // !IMAGES IMPORTS
-import ringSmall from "../../../assets/images/ringSmall.svg";
-import info from "../../../assets/icons/info.svg";
-import clock from "../../../assets/icons/clock.svg";
-import cancel from "../../../assets/icons/cancel.svg";
+import unthreadLogo from "../../../assets/images/unthreadLogo.png"
 
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 
 import { updateCollectionId } from "../../../features/parameters/collections/collectionSlice";
-import { DesktopDateTimePicker } from "@mui/x-date-pickers";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useBulkEditCollectionMutation, useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import question from '../../../assets/images/products/question.svg'
@@ -79,6 +73,20 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [state, setState] = React.useState([]);
   const [collectionId, setCollectionId] = React.useState('')
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+  const [archiveID, setArchiveID] = React.useState(false);
+  const [name, setName] = React.useState(false);
+  const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
+  const [unArchiveID, setUnArchiveID] = React.useState(false);
+  const [statusValue, setStatusValue] = React.useState("in-active")
+
+  const handleValue = (e) => {
+    setStatusValue(e.target.value)
+  }
+
+  const closeUnArchivedModal = () => {
+    setShowUnArhcivedModal(false)
+  }
 
   const [
     editCollection,
@@ -103,6 +111,18 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
   const handleArchive = (id) => {
     setArchivedModal(true);
     setCollectionId(id);
+  }
+
+  const toggleArchiveModalHandler = (row) => {
+    setShowDeleteModal((prevState) => !prevState);
+    setArchiveID(row);
+    setName(row?.name);
+  };
+
+   const handleArchiveModal =()=>{
+    deleteData(archiveID);
+    toggleArchiveModalHandler();
+    dispatch(showSuccess({ message: "Deleted this collection successfully" }));
   }
 
   useEffect(() => {
@@ -135,7 +155,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
       const requestData = {
         updates: newState
       };
-            console.log(requestData, 'requestData')
       bulkEditCollection(requestData).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
       setSelectedStatus(null);
     }
@@ -234,13 +253,19 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
     dispatch(showSuccess({ message: "Archived this collection successfully" }));
   }
 
-  const handleUnArchive = (unArchivedId) => {
-    editCollection({
-        id: unArchivedId,
+  const handleUnArchive = (id) => {
+    setShowUnArhcivedModal(true)
+    setUnArchiveID(id)
+  }
+
+  const handleUnArchived = () => {
+     editCollection({
+        id: unArchiveID,
         details : {
-          status: "in-active"
+          status: statusValue
         }
     })
+    setShowUnArhcivedModal(false)
     dispatch(showSuccess({ message: "Un-Archived this collection successfully" }));
   }
 
@@ -322,11 +347,15 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
                     >
                       <Link
                         className="text-decoration-none"
-                        to="/parameters/collections/create"
                       >
-                        <div className="d-flex align-items-center py-2">
+                        <div className="d-flex align-items-center py-2"
+                          onClick={()=>{
+                            dispatch(updateCollectionId(row._id));
+                            navigate("/parameters/collections/edit")
+                          }}
+                        >
                           <img
-                            src={row.mediaUrl}
+                            src={row.mediaUrl ? row.mediaUrl : unthreadLogo}
                             alt="ringSmall"
                             className="me-2"
                             height={45}
@@ -366,8 +395,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
                           <Tooltip title="Delete" placement="top">
                             <div className="table-edit-icon rounded-4 p-2" 
                                 onClick={(e) => {
-                                  deleteData(row);
-                                  dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+                                  toggleArchiveModalHandler(row)
                                 }}
                             >
                               <DeleteIcon
@@ -521,6 +549,13 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
             </button>
           </DialogActions>
         </Dialog>
+        <DeleteModal showCreateModal={showDeleteModal} toggleArchiveModalHandler={toggleArchiveModalHandler} handleArchive={handleArchiveModal} name={name} />
+        <UnArchivedModal 
+          handleValue={handleValue}
+          showUnArchivedModal={showUnArchivedModal}
+          closeUnArchivedModal={closeUnArchivedModal}
+          handleUnArchived={handleUnArchived}
+        />
     </React.Fragment>
   );
 };
