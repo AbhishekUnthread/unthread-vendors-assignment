@@ -44,9 +44,9 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
     setOpenScheduleProduct(true);
   };
 
- const handelScheduleProductClose = () => {
-  setOpenScheduleProduct(false);
-};
+  const handelScheduleProductClose = () => {
+    setOpenScheduleProduct(false);
+  };
   // ? SCHEDULE PRODUCT DIALOG ENDS HERE
 
   return (
@@ -100,7 +100,6 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         </div>
       )}
 
-      
       <Dialog
         open={openScheduleProduct}
         TransitionComponent={Transition}
