@@ -45,17 +45,15 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
           </Typography>
           <br />
         </DialogContent>
-        <DialogActions className="d-flex justify-content-between px-4 py-3">
+        <DialogActions className="d-flex justify-content-between px-4 pb-4">
           <button
-            className="button-red-outline py-2 px-4"
+            className="button-red-outline py-2 px-3 me-5"
             onClick={toggleArchiveModalHandler}
-            type="button"
           >
-            <p className="text-lightBlue">No</p>
+            <p>No</p>
           </button>
           <button
-            className="button-lightBlue-outline py-2 px-4"
-            type="button"
+            className="button-gradient py-2 px-3 ms-5"
             onClick={handleArchive}
           >
             <p>Yes</p>

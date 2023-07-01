@@ -60,27 +60,30 @@ const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnAr
           </Typography>
           <br />
         </DialogContent>
-        <RadioGroup
-          aria-labelledby="demo-controlled-radio-buttons-group"
-          name="controlled-radio-buttons-group"
-          value={statusValue}
-          onChange={handleStatusRadio}
-          className="d-flex justify-content-between px-4 py-3"
-          onClick={(newValue) => {
+        <div className="d-flex justify-content-center">
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            name="row-radio-buttons-group" 
+            value={statusValue}
+            onChange={handleStatusRadio}
+            className="d-flex justify-content-between px-4 py-3"
+            onClick={(newValue) => {
               handleValue(newValue)
             }}
-        >
-          <FormControlLabel
-            value="active"
-            control={<Radio size="small" />}
-            label="Active"
-          />
-          <FormControlLabel
-            value="in-active"
-            control={<Radio size="small" />}
-            label="In-Active"
-          />
-        </RadioGroup>
+          >
+            <FormControlLabel
+              value="active"
+              control={<Radio size="small" />}
+              label="Active"
+            />
+            <FormControlLabel
+              value="in-active"
+              control={<Radio size="small" />}
+              label="In-Active"
+            />
+          </RadioGroup>
+        </div>
         <DialogActions className="d-flex justify-content-between px-4 py-3">
           <button
             className="button-grey py-2 px-5"
