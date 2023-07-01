@@ -4,6 +4,7 @@ import { EditorState, ContentState } from "draft-js";
 import { convertToHTML, convertFromHTML } from "draft-convert";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "./AppTextEditor.scss";
+
 const AppTextEditor = ({ value="<p><p/>", setFieldValue }) => {
   const [editorState, setEditorState] = useState(null);
   useEffect(() => {
@@ -22,6 +23,7 @@ const AppTextEditor = ({ value="<p><p/>", setFieldValue }) => {
   const handleEditorStateChange = (state) => {
     setEditorState(state);
   };
+
   if (!editorState) {
     return <div>Loading editor...</div>;
   }
@@ -35,4 +37,6 @@ const AppTextEditor = ({ value="<p><p/>", setFieldValue }) => {
     />
   );
 };
+
 export default AppTextEditor;
+

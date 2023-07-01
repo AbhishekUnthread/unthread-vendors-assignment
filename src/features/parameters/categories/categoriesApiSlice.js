@@ -50,6 +50,14 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Categories"],
     }),
+    subCategoryBulkCreateTag: builder.mutation({
+      query: (tagsDetails) => ({
+        url: "/parameters/subCategory/bulkCreate",
+        method: "POST",
+        body: tagsDetails,
+      }),
+      invalidatesTags: ["SubCategories"],
+    }),
     createSubCategory: builder.mutation({
       query: (subCategoryDetails) => ({
         url: "/parameters/subCategory",
@@ -90,6 +98,23 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["SubCategories"],
     }),
+    bulkEditTagCategory:builder.mutation({
+      query: (updates) => ({
+        url: `/parameters/category/bulkUpdate`,
+        method: "PUT",
+        body: updates,
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+    bulkEditTagSubCategory:builder.mutation({
+      query: (updates) => ({
+        url: `/parameters/subCategory/bulkUpdate`,
+        method: "PUT",
+        body: updates,
+      }),
+      invalidatesTags: ["SubCategories"],
+    }),
+
   }),
 });
 
@@ -103,4 +128,7 @@ export const {
   useEditCategoryMutation,
   useEditSubCategoryMutation,
   useCategoryBulkCreateTagMutation,
+  useSubCategoryBulkCreateTagMutation,
+  useBulkEditTagCategoryMutation,
+  useBulkEditTagSubCategoryMutation,
 } = categoriesApiSlice;

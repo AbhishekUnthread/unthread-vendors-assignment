@@ -29,7 +29,7 @@ const SEO = ({name,value, handleSeoChange }) => {
 
   const seoFormik = useFormik({
     initialValues: {
-      slug: "",
+      slug: null,
       title: "",
       urlHandle: "",
       description: "",
@@ -43,7 +43,7 @@ const SEO = ({name,value, handleSeoChange }) => {
       seoFormik.setFieldValue("title", value && value.title ? value.title : name);
       seoFormik.setFieldValue("urlHandle", value && value.urlHandle ? value.urlHandle : "");
       seoFormik.setFieldValue("description", value && value.description ? value.description : "");
-      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : "");
+      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : null);
       setMultipleTags(value && value.metaKeywords ? value.metaKeywords : []);
     }
   },[value,name])
