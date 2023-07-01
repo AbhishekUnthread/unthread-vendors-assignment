@@ -25,6 +25,7 @@ import {
 } from "../../../components/TableDependencies/TableDependencies";
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // !IMAGES IMPORTS
 import unthreadLogo from "../../../assets/images/unthreadLogo.png"
 
@@ -139,10 +140,10 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
             id,
             status: "in-active",
           };
-        } else if (selectedStatus === "Set as Draft") {
+        } else if (selectedStatus === "Set as Archived") {
           return {
             id,
-            status: "archived",
+            status: "draft",
           };
         } else {
           return {
@@ -162,7 +163,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
-  };  
+  };
+
+  const handleMassAction  = (status) => {
+    setSelectedStatus(status);
+  };
 
   const headCells = [
     {
@@ -288,7 +293,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
               </span>
             </small>
           </button>
-          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as In-Active','Set as Draft']} headingName="Edit Status"/>
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as In-Active']} headingName="Edit Status"/>
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={['Edit','Set as Archived']}/>
         </div>
       )}
       {!error ? (
