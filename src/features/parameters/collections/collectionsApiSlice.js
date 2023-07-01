@@ -44,10 +44,10 @@ export const collectionApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["Collections"],
     }),
     bulkEditCollection: builder.mutation({
-      query: ({ updates }) => ({
+      query: (updates) => ({
         url: `/parameters/collection/bulkUpdate`,
         method: "PUT",
-        body: updates,
+        body: updates ,
       }),
       invalidatesTags: ["Collections"],
     })
