@@ -48,20 +48,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 // ? TABLE STARTS HERE
-function createData(cId, collectionsName, noOfProducts, status, actions) {
-  return { cId, collectionsName, noOfProducts, status, actions };
-}
-
-const rows = [
-  createData(1, "Collection 1", "25", "Active"),
-  createData(2, "Collection 2", "225", "Active"),
-  createData(3, "Collection 3", "125", "Active"),
-  createData(4, "Collection 4", "25", "Active"),
-  createData(5, "Collection 5", "221", "Active"),
-  createData(6, "Collection 6", "12", "Active"),
-  createData(7, "Collection 7", "10", "Active"),
-  createData(8, "Collection 8", "503", "Active"),
-];
 
 const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) => {
   const dispatch = useDispatch();
@@ -127,7 +113,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
   }
 
   useEffect(() => {
-    // Update the state only if the selectedStatus state has a value
     if (selectedStatus !== null) {
       const newState = selected.map((id) => {
         if (selectedStatus === "Set as Active") {
@@ -211,7 +196,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = list.map((n) => n.cId);
+      const newSelected = list.map((n) => n._id);
       setSelected(newSelected);
       return;
     }

@@ -246,6 +246,7 @@ const EditCollection = () => {
   const collectionId = useSelector((state)=>state.collection.collectionId)
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
+  const [hideFooter, setHideFooter] = useState(false)
 
    const clearDate = () => {
     setStartDate1(null);
@@ -553,6 +554,16 @@ const EditCollection = () => {
       dispatch(showSuccess({ message: "Duplicate Created of this collection successfully" }));
   };
   // ? DUPLICATE COLLECTION DIALOG ENDS HERE
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      setHideFooter(true);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []); 
 
   return (
       <div className="page container-fluid position-relative user-group">
@@ -1305,9 +1316,9 @@ const EditCollection = () => {
           </div>
         </div>
 
-        <div className="row create-buttons pt-5 pb-3 justify-content-between">
+        { hideFooter && <div className="row create-buttons pt-5 pb-3 justify-content-between">
           <SaveFooter handleSubmit={handleSubmit} />          
-        </div>
+        </div> }
       <Dialog
         open={openDuplicateCollection}
         TransitionComponent={Transition}
