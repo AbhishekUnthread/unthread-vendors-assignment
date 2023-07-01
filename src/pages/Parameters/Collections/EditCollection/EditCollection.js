@@ -247,6 +247,11 @@ const EditCollection = () => {
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
 
+   const clearDate = () => {
+    setStartDate1(null);
+    setEndDate1(null);
+  }  
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
@@ -307,6 +312,7 @@ const EditCollection = () => {
       })
         .unwrap()
         navigate("/parameters/collections");
+        dispatch(showSuccess({ message: "Edited this collection successfully" }));
     }else {
       createCollection({
         title: collectionTitle, 
@@ -320,6 +326,7 @@ const EditCollection = () => {
       })
         .unwrap()
         navigate("/parameters/collection");
+        dispatch(showSuccess({ message: "Edited this collection successfully" }));
     }
   }
 
@@ -543,6 +550,7 @@ const EditCollection = () => {
       .then(() => {
         setOpenDuplicateCollection(false);
       });
+      dispatch(showSuccess({ message: "Duplicate Created of this collection successfully" }));
   };
   // ? DUPLICATE COLLECTION DIALOG ENDS HERE
 
@@ -1276,8 +1284,12 @@ const EditCollection = () => {
                 setCollectionStatus(newStatus)
               }}
               handleSchedule={handleSchedule}
-              startDate1={startDate1}
-              endDate1={endDate1}
+              startDate={startDate1}
+              endDate={endDate1}
+              showSchedule={true}
+              andleStartDate={setStartDate1}
+              handleEndDate={setEndDate1}
+              clearDate={clearDate}
             />
             <VisibilityBox value={collectionVisibility} onChange={(_,val)=>setCollectionVisibility(val)}/>
             <div className="mt-4">

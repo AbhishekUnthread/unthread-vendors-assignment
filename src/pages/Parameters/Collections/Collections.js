@@ -22,14 +22,10 @@ import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSec
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 
-import parameters from "../../../assets/icons/sidenav/parameters.svg";
 import sort from "../../../assets/icons/sort.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 
-import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
-import * as Yup from "yup";
-import { useFormik } from "formik";
 
 import {
   showSuccess,
@@ -81,7 +77,7 @@ const Collections = () => {
     collectionsReducer,
     initialCollectionState
   );
-  const [sortFilter, setSortFilter] = React.useState(null);
+  const [sortFilter, setSortFilter] = React.useState("newestToOldest");
   const [statusFilter, setStatusFilter] = React.useState("");
   const [searchValue, setSearchValue] = useState("");
 
@@ -98,19 +94,18 @@ const Collections = () => {
 
   if (sortFilter) {
     if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
-      filterParameter.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+      filterParameter.alphabetical = sortFilter == "alphabeticalAtoZ" ? "1" : "-1";
     }
     else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
-      filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+      filterParameter.createdAt = sortFilter == "oldestToNewest" ? "1" : "-1";
     }
   }
-
   
-const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
-  : collectionType === 1 ? { status: "active" }
-  : collectionType === 2 ? { createdAt: -1, status: "in-active" }
-  : collectionType === 3 ? { createdAt: -1, status: "archieved" }
-  : {};
+  const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
+    : collectionType === 1 ? { status: "active" }
+    : collectionType === 2 ? { createdAt: -1, status: "in-active" }
+    : collectionType === 3 ? { createdAt: -1, status: "archieved" }
+    : {};
 
   const filterParams = { ...filterParameter, ...collectionTypeQuery };
   if (searchValue) {
@@ -175,7 +170,6 @@ const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
   const idStatus = openStatus ? "simple-popover" : undefined;
   // * STATUS POPOVERS ENDS
 
-  
   const deleteCollectionHandler = (data) => {
     if (collectionType === 0) {
       deleteCollection(data._id);
@@ -359,14 +353,14 @@ const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
                     onChange={handleSortRadio}
                   >
                     <FormControlLabel
-                      value="oldestToNewest"
-                      control={<Radio size="small" />}
-                      label="Oldest to Newest"
-                    />
-                    <FormControlLabel
                       value="newestToOldest"
                       control={<Radio size="small" />}
                       label="Newest to Oldest"
+                    />
+                    <FormControlLabel
+                      value="oldestToNewest"
+                      control={<Radio size="small" />}
+                      label="Oldest to Newest"
                     />
                     <FormControlLabel
                       value="alphabeticalAtoZ"
