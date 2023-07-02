@@ -5,9 +5,8 @@ import { convertToHTML, convertFromHTML } from "draft-convert";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "./AppTextEditor.scss";
 
-const AppTextEditor = ({ value, setFieldValue }) => {
+const AppTextEditor = ({ value="<p><p/>", setFieldValue }) => {
   const [editorState, setEditorState] = useState(null);
-
   useEffect(() => {
     if (value && !editorState) {
       const contentState = convertFromHTML(value);
@@ -15,23 +14,19 @@ const AppTextEditor = ({ value, setFieldValue }) => {
       setEditorState(initialEditorState);
     }
   }, [value, editorState]);
-
   useEffect(() => {
     if (editorState) {
       const html = convertToHTML(editorState.getCurrentContent());
       setFieldValue(html);
     }
   }, [editorState, setFieldValue]);
-
   const handleEditorStateChange = (state) => {
     setEditorState(state);
   };
 
-
   if (!editorState) {
     return <div>Loading editor...</div>;
   }
-
   return (
     <Editor
       editorState={editorState}
@@ -44,3 +39,4 @@ const AppTextEditor = ({ value, setFieldValue }) => {
 };
 
 export default AppTextEditor;
+

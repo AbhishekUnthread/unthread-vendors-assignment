@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import info from "../../assets/icons/info.svg";
 import UseFileUpload from "../../features/fileUpload/fileUploadHook";
-
 // ? FILE UPLOAD STARTS HERE
 const baseStyle = {
   flex: 1,
@@ -13,31 +12,26 @@ const baseStyle = {
   padding: "0",
   borderWidth: 2,
   borderRadius: 8,
-  borderColor: "#38395c",
+  borderColor: "#38395C",
   borderStyle: "dashed",
-  color: "#bdbdbd",
+  color: "#BDBDBD",
   outline: "none",
   transition: "border .24s ease-in-out",
   cursor: "pointer",
   justifyContent: "center",
-  backgroundColor: "#1a1932",
+  backgroundColor: "#1A1932",
 };
-
 const focusedStyle = {
-  borderColor: "#2196f3",
+  borderColor: "#2196F3",
 };
-
 const acceptStyle = {
-  borderColor: "#00e676",
+  borderColor: "#00E676",
 };
-
 const rejectStyle = {
-  borderColor: "#ff1744",
+  borderColor: "#FF1744",
 };
 // ? FILE UPLOAD ENDS HERE
-
-const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
-
+const UploadMediaBox = ({ imageName, headingName ,UploadChange, imageValue}) => {
   const [inputUrl,setInputUrl] =useState('')
  const  [uploadFile, uploadState] = UseFileUpload()
   // ? FILE UPLOAD STARTS HERE
@@ -50,7 +44,6 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
       uploadFile({file:acceptedFiles[0]})
     }
     });
-
     useEffect(()=>{
       if(uploadState.data?.url){
         UploadChange(uploadState.data?.url)
@@ -58,7 +51,12 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
         UploadChange(inputUrl)
       }
     },[uploadState,inputUrl])
-
+    useEffect(() => {
+      if(imageValue){
+        setInputUrl(imageValue)
+      }
+    },[imageValue])
+    
   const style = useMemo(
     () => ({
       ...baseStyle,
@@ -69,7 +67,6 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
     [isFocused, isDragAccept, isDragReject]
   );
   // ? FILE UPLOAD ENDS HERE
-
   // * SAVE FILTER POPOVERS STARTS
   const [anchorSaveFilterEl, setAnchorSaveFilterEl] = React.useState(null);
   const handleSaveFilterClick = (event) => {
@@ -81,7 +78,6 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
   const openSaveFilter = Boolean(anchorSaveFilterEl);
   const idSaveFilter = openSaveFilter ? "simple-popover" : undefined;
   // * SAVE FILTER POPOVERS ENDS
-
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3">
       <div className="d-flex align-items-center justify-content-between">
@@ -94,7 +90,6 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
         >
           Add Media from URL
         </small>
-
         <Popover
           anchorOrigin={{
             vertical: "bottom",
@@ -141,10 +136,9 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange}) => {
           //   event.target.value = null;
           // }}
         />
-        <img src={uploadState?.data ? uploadState?.data?.url : imageName} className="w-100" style={{height: "150px"}} alt="" />
+        <img src={uploadState?.data?.url ? uploadState?.data?.url : inputUrl !== "" ? inputUrl : imageName } className="w-100" style={{height: "150px"}} alt="" />
       </div>
     </div>
   );
 };
-
 export default UploadMediaBox;

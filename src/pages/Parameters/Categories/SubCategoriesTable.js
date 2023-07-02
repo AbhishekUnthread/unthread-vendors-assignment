@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
@@ -22,6 +22,11 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import { updateCategoryId } from "../../../features/parameters/categories/categorySlice";
+import { useDispatch } from "react-redux";
+import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 // ? TABLE STARTS HERE
 
@@ -59,12 +64,27 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
+const SubCategoriesTable = ({
+  list,
+  edit,
+  deleteData,
+  error,
+  isLoading,
+  bulkEdit,
+  editSubCategory,
+  archived,
+  totalCount
+}) => {
+  const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [showCreateDeleteModal, setShowCreateDeleteModal] = useState(false);
+  const [rowData, setRowData] = useState({});
+
+  const [selectedStatus, setSelectedStatus] = React.useState(null);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -115,6 +135,55 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
+
+  useEffect(() => {
+    // Update the state only if the selectedStatus state has a value
+    if (selectedStatus !== null) {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as Draft") {
+          return {
+            id,
+            status: "draft",
+          };
+        } else {
+          return {
+            id,
+            status: "", // Set a default value here if needed
+          };
+        }
+      });
+      bulkEdit({ updates: newState })
+        .unwrap()
+        .then(() =>
+          dispatch(showSuccess({ message: " Status updated successfully" }))
+        );
+      setSelectedStatus(null);
+    }
+  }, [selected, selectedStatus]);
+
+  const toggleArchiveModalHandler = (row) => {
+    setShowCreateDeleteModal((prevState) => !prevState);
+    setRowData(row);
+  };
+
+  function deleteRowData() {
+    setShowCreateDeleteModal(false);
+    editSubCategory({
+      id:rowData._id,
+      details:{
+        status:'archieved'
+      }
+    })
+    // deleteData(rowData);
+  }
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -199,50 +268,87 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
                             </Link>
                           </TableCell>
                           <TableCell style={{ width: 180 }}>
-                            <p className="text-lightBlue">{row.category?.[0]?.name}</p>
+                            <p className="text-lightBlue">
+                              {row.category?.[0]?.name}
+                            </p>
                           </TableCell>
 
                           <TableCell style={{ width: 180 }}>
                             <p className="text-lightBlue">{row.totalProduct}</p>
                           </TableCell>
-                          {console.log(row)}
-
-                          <TableCell style={{ width: 120, padding: 0 }}>
+                          <TableCell style={{ width: 140, padding: 0 }}>
                             <div className="d-flex align-items-center">
                               <div
-                                className={`rounded-pill d-flex  px-2 py-1 c-pointer table-status`}
+                                className="rounded-pill d-flex px-2 py-1 c-pointer"
+                                style={{
+                                  background:
+                                    row.status == "active"
+                                      ? "#A6FAAF"
+                                      : row.status == "in-active"
+                                      ? "#F67476"
+                                      : row.status == "archieved"
+                                      ? "#C8D8FF"
+                                      : "#FEE1A3",
+                                }}
                               >
                                 <small className="text-black fw-400">
-                                  {row.status}
+                                  {row.status == "active"
+                                    ? "Active"
+                                    : row.status == "in-active"
+                                    ? "In-Active"
+                                    : row.status == "archieved"
+                                    ? "Archived"
+                                    : "Scheduled"}
                                 </small>
                               </div>
                             </div>
                           </TableCell>
                           <TableCell style={{ width: 120, padding: 0 }}>
                             <div className="d-flex align-items-center">
-                              {edit && (
+                              {edit && archived && (
                                 <Tooltip title="Edit" placement="top">
-                                  <div
-                                    onClick={(e) => {
-                                      edit(row);
+                                  <Link
+                                    className="text-decoration-none"
+                                    to="/parameters/subCategories/edit"
+                                    onClick={() => {
+                                      dispatch(updateCategoryId(row._id));
                                     }}
-                                    className="table-edit-icon rounded-4 p-2"
                                   >
-                                    <EditOutlinedIcon
-                                      sx={{
-                                        color: "#5c6d8e",
-                                        fontSize: 18,
-                                        cursor: "pointer",
-                                      }}
-                                    />
-                                  </div>
+                                    <div className="table-edit-icon rounded-4 p-2">
+                                      <EditOutlinedIcon
+                                        sx={{
+                                          color: "#5c6d8e",
+                                          fontSize: 18,
+                                          cursor: "pointer",
+                                        }}
+                                      />
+                                    </div>
+                                  </Link>
                                 </Tooltip>
                               )}
+                              {!archived &&(
+                                   <Tooltip title={"Archived"} placement="top">
+                                   <div
+                                     onClick={(e) => {
+                                       deleteData(row);
+                                     }}
+                                     className="table-edit-icon rounded-4 p-2"
+                                   >
+                                     <DeleteIcon
+                                       sx={{
+                                         color: "#5c6d8e",
+                                         fontSize: 18,
+                                         cursor: "pointer",
+                                       }}
+                                     />
+                                   </div>
+                                 </Tooltip>
+                                )}
                               {deleteData && (
-                                <Tooltip title={"Delete"} placement="top">
+                                <Tooltip title={"Archived"} placement="top">
                                   <div
                                     onClick={(e) => {
-                                      deleteData(row);
+                                      toggleArchiveModalHandler(row);
                                     }}
                                     className="table-edit-icon rounded-4 p-2"
                                   >
@@ -274,9 +380,9 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[10, 20, 30]}
+              rowsPerPageOptions={[5, 10, 15]}
               component="div"
-              count={list.length}
+              count={totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -294,6 +400,12 @@ const SubCategoriesTable = ({ list, edit, deleteData, error, isLoading }) => {
       ) : (
         <></>
       )}
+      <DeleteModal
+      name={archived ?'Archived' : "Un Archived"}
+        showCreateModal={showCreateDeleteModal}
+        toggleArchiveModalHandler={toggleArchiveModalHandler}
+        handleArchive={deleteRowData}
+      />
     </React.Fragment>
   );
 };

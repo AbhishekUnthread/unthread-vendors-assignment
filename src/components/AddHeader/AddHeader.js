@@ -11,14 +11,14 @@ const AddHeader = ({headerName, subHeading, subHighlightstext, navigateLink, pre
   return (
     <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          {/* <Link to={navigateLink} className="d-flex"> */}
+          <Link to={navigateLink} className="d-flex">
             <img
               src={arrowLeft}
               alt="arrowLeft"
               width={9}
               className="c-pointer"
             />
-          {/* </Link> */}
+          </Link>
           <div className="d-flex justify-content-between align-items-center">
             <div className="d-flex flex-column ">
                 <h5 className="page-heading ms-2 ps-1">{headerName}</h5>
