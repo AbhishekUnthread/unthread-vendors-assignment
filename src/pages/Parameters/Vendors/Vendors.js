@@ -120,7 +120,9 @@ if(searchValue)
 
 // Check if both selectedSortOption and selectedStatusOption are null
 if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
-  queryParameters.createdAt = "-1"; // Set default createdAt value
+ // Set default createdAt value
+  queryParameters.status = "active";
+  queryParameters.status = "in-active"
 }
 
 const vendorTypeQuery = vendorType === 1 ? { status: "active" }
@@ -205,16 +207,20 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
 
   };
 
-  const ArchiveTagsHandler = (data) => {
-    const newStatus = data?.status === "archieved" ? "active" : "archieved";
-    editVendor({
-      id: data?._id,
-      details: {
-        status: newStatus,
-        showFilter:true
-      },
-    });
-  };
+  // const ArchiveTagsHandler = (data) => {
+  //   const newStatus = data?.status === "archieved" ? "active" : "archieved";
+  //   editVendor({
+  //     id: data?._id,
+  //     details: {
+  //       status: newStatus,
+  //       showFilter:true
+  //     },
+  //   });
+  // };
+  const handleDeleteVendor =(data)=>{
+
+    deleteVendor(data);
+  }
 
   const editCategoryPageNavigationHandler = (data) => {
     // Set the flag to indicate that editing is in progress
@@ -863,17 +869,16 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
           <TabPanel value={vendorType} index={0}>
             <VendorsTable
               isLoading={vendorsIsLoading}
-              deleteData={ArchiveTagsHandler}
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
+              deleteData={handleDeleteVendor}
             />
           </TabPanel>
           <TabPanel value={vendorType} index={1}>
             <VendorsTable
               isLoading={vendorsIsLoading}
-              deleteData={ArchiveTagsHandler}
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
@@ -884,7 +889,6 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
           <TabPanel value={vendorType} index={2}>
             <VendorsTable
               isLoading={vendorsIsLoading}
-              deleteData={ArchiveTagsHandler}
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
@@ -895,11 +899,11 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
           <TabPanel value={vendorType} index={3}>
             <VendorsTable
               isLoading={vendorsIsLoading}
-              deleteData={ArchiveTagsHandler}
               error={error}
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
+              deleteData={handleDeleteVendor}
 
             />
           </TabPanel>
