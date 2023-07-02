@@ -27,6 +27,7 @@ const AppTextEditor = ({ value, setFieldValue }) => {
     setEditorState(state);
   };
 
+
   if (!editorState) {
     return <div>Loading editor...</div>;
   }

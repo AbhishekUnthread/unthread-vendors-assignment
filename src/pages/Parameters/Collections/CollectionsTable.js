@@ -5,6 +5,9 @@ import { useDispatch } from "react-redux";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
   Slide,
   Table,
   TableBody,
@@ -38,8 +41,17 @@ import { updateCollectionId } from "../../../features/parameters/collections/col
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
+import { useBulkEditCollectionMutation, useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import question from '../../../assets/images/products/question.svg'
+import DeleteIcon from '@mui/icons-material/Delete';
+
+// ? DIALOG TRANSITION STARTS HERE
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+// ? DIALOG TRANSITION ENDS HERE
+
 // ? TABLE STARTS HERE
 function createData(cId, collectionsName, noOfProducts, status, actions) {
   return { cId, collectionsName, noOfProducts, status, actions };
@@ -56,7 +68,7 @@ const rows = [
   createData(8, "Collection 8", "503", "Active"),
 ];
 
-const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
+const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
@@ -66,6 +78,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [state, setState] = React.useState([]);
+  const [collectionId, setCollectionId] = React.useState('')
 
   const [
     editCollection,
@@ -77,14 +90,58 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
     }
   ] = useEditCollectionMutation();
 
-  const handleArchive = (collectionId) => {
-    editCollection({
-        id: collectionId,
-        details : {
-          status: "draft"
-        }
-      })
+  const[
+    bulkEditCollection,
+    {
+      data: bulkEditCollections,
+      isLoading: bulkCollectionEditLoading,
+      isSuccess: bulkCollectionEditIsSuccess,
+      error: bulkCollectionEditError,
+    }
+  ] = useBulkEditCollectionMutation();
+
+  const handleArchive = (id) => {
+    setArchivedModal(true);
+    setCollectionId(id);
   }
+
+  useEffect(() => {
+    // Update the state only if the selectedStatus state has a value
+    if (selectedStatus !== null) {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as In-Active") {
+          return {
+            id,
+            status: "in-active",
+          };
+        } else if (selectedStatus === "Set as Draft") {
+          return {
+            id,
+            status: "archived",
+          };
+        } else {
+          return {
+            id,
+            status: "", 
+          };
+        }
+      });
+      setState(newState);
+                  console.log(newState, 'newState')
+
+      const requestData = {
+        updates: newState
+      };
+            console.log(requestData, 'requestData')
+      bulkEditCollection(requestData).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      setSelectedStatus(null);
+    }
+  }, [selected, selectedStatus]);
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -166,6 +223,31 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  const [openArchivedModal, setArchivedModal] = React.useState(false);
+
+  const handleArchivedModalClose = () => {
+    setArchivedModal(false);
+     editCollection({
+        id: collectionId,
+        details : {
+          status: "archieved"
+        }
+    })
+  }
+
+  const handleUnArchive = (unArchivedId) => {
+    editCollection({
+        id: unArchivedId,
+        details : {
+          status: "in-active"
+        }
+    })
+  }
+
+  const handleModalClose = () => {
+    setArchivedModal(false);
+  };
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -181,10 +263,12 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
-          <TableMassActionButton />
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as In-Active','Set as Draft']} headingName="Edit Status"/>
         </div>
       )}
+      {!error ? (
+        list.length ? (
+        <>
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}
@@ -204,7 +288,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
             {stableSort(list, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const isItemSelected = isSelected(row.cId);
+                const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -213,7 +297,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.cId}
+                    key={index}
                     selected={isItemSelected}
                     className="table-rows"
                   >
@@ -223,7 +307,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.cId)}
+                        onClick={(event) => handleClick(event, row._id)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -259,60 +343,100 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
                     </TableCell>
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
+                        <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"}}>
                           <small className="text-black fw-400">
-                            {row.status == "active" ? "Acitve" : row.status == "in-active" ? "In-Active" : "Archived" }
+                            {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "archieved" ? "Archived" : "Scheduled"}
                           </small>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell style={{ width: 140, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2" 
-                              onClick={()=>{
-                                dispatch(updateCollectionId(row._id));
-                                navigate("/parameters/collections/edit")
-                              }}
-                          >
-                            <EditOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                        <Tooltip title="Copy" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <ContentCopyIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                        <Tooltip title="Archive" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2"
-                            onClick={() => {
-                              handleArchive(row._id)
+                    {row.status == "archieved" ?
+                      <TableCell style={{ width: 140, padding: 0 }}>
+                         <div className="d-flex align-items-center">
+                          {deleteData && (
+                          <Tooltip title="Edit" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2" 
+                                onClick={(e) => {
+                                  deleteData(row);
+                                }}
+                            >
+                              <DeleteIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                          )}
+                          <Tooltip title="Archive" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2"
+                              onClick={() => {
+                                handleUnArchive(row._id)
+                                }
                               }
-                            }
-                          >
-                            <InventoryIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                      </div>
-                    </TableCell>
+                            >
+                              <InventoryIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+                      :
+                      <TableCell style={{ width: 140, padding: 0 }}>
+                        <div className="d-flex align-items-center">
+                          <Tooltip title="Edit" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2" 
+                                onClick={()=>{
+                                  dispatch(updateCollectionId(row._id));
+                                  navigate("/parameters/collections/edit")
+                                }}
+                            >
+                              <EditOutlinedIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                          <Tooltip title="Copy" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2">
+                              <ContentCopyIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                          <Tooltip title="Archive" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2"
+                              onClick={() => {
+                                handleArchive(row._id)
+                                }
+                              }
+                            >
+                              <InventoryIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                        </div>
+                      </TableCell>                   
+                    }
                   </TableRow>
                 );
               })}
@@ -332,13 +456,61 @@ const CollectionsTable = ({ list, error, isLoading, deleteData }) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={list.length}
+        count={pageLength}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         className="table-pagination"
       />
+      </>
+      ) : isLoading ? (
+            <span className="d-flex justify-content-center m-3">Loading...</span>
+          ) : (
+            <span className="d-flex justify-content-center m-3">
+              No data found
+            </span>
+          )
+        ) : (
+          <></>
+        )}
+
+        <Dialog
+          open={openArchivedModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleModalClose}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={question} alt="question" width={200} />
+            <div className="row"></div>
+            {/* <h6 className="text-lightBlue mt-3 mb-2">
+              You have unsaved changes.
+            </h6> */}
+            <h6 className="text-lightBlue mt-2 mb-2">
+              Are you sure you want to Archive this?
+            </h6>
+            <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+            </div>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-between px-4 pb-4">
+            <button
+              className="button-red-outline py-2 px-3 me-5"
+              onClick={handleModalClose}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-3 ms-5"
+              onClick={handleArchivedModalClose}
+            >
+              <p>Archived</p>
+            </button>
+          </DialogActions>
+        </Dialog>
     </React.Fragment>
   );
 };

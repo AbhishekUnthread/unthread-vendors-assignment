@@ -3,7 +3,7 @@ import { Popover } from "@mui/material";
 // ! IMAGES IMPORTS
 import arrowDown from "../../assets/icons/arrowDown.svg";
 
-const TableEditStatusButton = ({onSelect, headingName, defaultValue=['active','In-active']}) => {
+const TableEditStatusButton = ({onSelect, headingName, defaultValue=['active','In-active', 'draft']}) => {
   // * EDIT STATUS POPOVERS STARTS
   const [anchorEditStatusEl, setAnchorEditStatusEl] = React.useState(null);
 
@@ -55,6 +55,9 @@ const TableEditStatusButton = ({onSelect, headingName, defaultValue=['active','I
           </small>
           <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back" onClick={() => handleStatusSelect(defaultValue[1])}>
           {defaultValue[1]}
+          </small>
+          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back" onClick={() => handleStatusSelect(defaultValue[2])}>
+          {defaultValue[2]}
           </small>
         </div>
       </Popover>
