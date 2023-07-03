@@ -20,6 +20,8 @@ const SEO = ({name,value, handleSeoChange }) => {
   const id = useId();
   // ? CHECKBOX STARTS HERE
 
+  const [viewAll,setViewAll] = useState(false);
+
   const [checked, setChecked] = React.useState(false);
 
   const handleCheckboxChange = (event) => {
