@@ -35,9 +35,6 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
   const startTime = moment(startDate).format("HH:MM a")
   const endDateNew = moment(endDate).format("DD/MM/YYYY")
   const endTime = moment(endDate).format("HH:MM a")
-
-  console.log(startDateLocal,'startDateLocal')
-
   
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);

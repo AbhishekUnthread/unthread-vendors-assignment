@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import './Collections.scss';
 
 // ! MATERIAL IMPORTS
 import {
@@ -40,6 +41,7 @@ import { useBulkEditCollectionMutation, useEditCollectionMutation } from "../../
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import question from '../../../assets/images/products/question.svg'
 import DeleteIcon from '@mui/icons-material/Delete';
+import moment from "moment";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -294,6 +296,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     setArchivedModal(false);
   };
 
+  console.log(list, 'sfkdksf lfsdj')
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -405,14 +409,14 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                       <p className="text-lightBlue">{row.totalProduct}</p>
                     </TableCell>
                     <TableCell style={{ width: 140, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex px-2 py-1 c-pointer" 
+                      <div className="d-block">
+                        <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
                           style={{background: 
                             row.status == "active" ? "#A6FAAF" : 
                             row.status == "in-active" ? "#F67476" : 
                             row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
                           }}>
-                          <small className="text-black fw-400">
+                          <small className="text-black fw-500">
                             {
                               row.status == "active" ? "Active" :  
                               row.status == "in-active" ? "In-Active" : 
@@ -420,6 +424,23 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                             }
                           </small>
                         </div>
+                        { row.status == "scheduled" && 
+                          <div>
+                            <small className="text-blue-2">
+                              {row.startDate && (
+                                <>
+                                  for {moment(row.startDate).format("DD/MM/YYYY")}
+                                </>
+                              )}
+                              {row.startDate && row.endDate && ' '}
+                              {row.endDate && (
+                                <>
+                                  till {moment(row.endDate).format("DD/MM/YYYY")}
+                                </>
+                              )}
+                            </small>
+                          </div>
+                        }
                       </div>
                     </TableCell>
                     {row.status == "archieved" ?
