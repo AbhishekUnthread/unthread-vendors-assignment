@@ -264,7 +264,7 @@ const EditTags = () => {
             </div>
           </div>
 
-          <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features">
+          <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-4">
             <div className="d-flex justify-content-between mb-2 px-0">
               <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
                 Add Products
@@ -313,119 +313,7 @@ const EditTags = () => {
           </Link>
         </div>
       </div>
-      <Dialog
-        open={openDuplicateTag}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleDuplicateTagClose}
-        aria-describedby="alert-dialog-slide-description"
-        maxWidth="sm"
-        fullWidth={true}
-      >
-        <DialogTitle>
-          <div className="d-flex justify-content-between align-items-center">
-            <h5 className="text-lightBlue fw-500">Duplicate Tag</h5>
-            <img
-              src={cancel}
-              alt="cancel"
-              width={30}
-              onClick={handleDuplicateTagClose}
-              className="c-pointer"
-            />
-          </div>
-          <Tooltip title="Lorem ipsum" placement="top">
-            <img
-                src={info}
-                alt="info"
-                className=" c-pointer"
-                width={13.5}
-            />
-          </Tooltip>
-          <small className="mt-1 text-grey-6 font1">
-            These banner will be see no PLP page as promotional banner
-          </small>
-        </DialogTitle>
-        <hr className="hr-grey-6 my-0" />
-        <DialogContent className="py-3 px-4 schedule-product">
-          <div className="d-flex mb-1">
-            <p className="text-lightBlue me-2">Tag Name</p>
-          </div>
-          <FormControl className="w-100 px-0">
-            <OutlinedInput
-              placeholder="Mirosa Collection_copy"
-              size="small"
-              name="title"
-              value={tagDuplicateName}
-              onChange={handleDuplicateNameChange}
-            />
-          </FormControl>
-          <hr className="hr-grey-6 my-0" />
-          <div className="d-flex mb-1 mt-3">
-            <p className="text-lightBlue me-2">What to Include in this Duplicate</p>
-          </div>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="filter"
-                  checked={duplicateDescription}
-                  onChange={(e)=>setDuplicateDescription(e.target.checked)}
-                  inputProps={{ "aria-label": "controlled" }}
-                  size="small"
-                  style={{
-                    color: "#5C6D8E",
-                    marginRight: 0,
-                  }}
-                />
-              }
-              label="Notes"
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 13,
-                  color: "#99a6c0",
-                },
-              }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="filter"
-                  inputProps={{ "aria-label": "controlled" }}
-                  size="small"
-                  style={{
-                    color: "#5C6D8E",
-                    marginRight: 0,
-                  }}
-                />
-              }
-              label="Products"
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 13,
-                  color: "#99a6c0",
-                },
-              }}
-            />
-          </FormGroup>
-        </DialogContent>
-        <hr className="hr-grey-6 my-0" />
-        <DialogActions className="d-flex flex-column justify-content-start px-4 py-3">
-          <div className="d-flex justify-content-between w-100">
-            <button
-              className="button-grey py-2 px-5"
-              onClick={handleDuplicateTagClose}
-            >
-              <p className="text-lightBlue">Cancel</p>
-            </button>
-            <button
-              className="button-gradient py-2 px-5"
-              onClick={scheduleDuplicateTag}
-            >
-              <p>Save</p>
-            </button>
-          </div>
-        </DialogActions>
-      </Dialog>
+
     </div>
   );
 };

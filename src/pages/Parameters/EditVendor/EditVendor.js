@@ -24,6 +24,7 @@ import {
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import SaveFooter from "../../../components/SaveFooter/SaveFooter";
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -38,7 +39,9 @@ const EditVendor = () => {
   const dispatch = useDispatch();
   const [vendorName, setVendorName] = useState("")
   const [vendorNotes, setVendorNotes] = useState("")
+  const [vendorNotesCompare, setVendorNotesCompare] = useState("")
   const [vendorStatus, setVendorStatus] = useState("active")
+  const [vendorStatusCompare, setVendorStatusCompare] = useState("active")
   const [vendorFlagShip, setVendorFlagShip] = useState("")
   const [checked, setChecked] = React.useState(false);
   const vendorId = useSelector((state)=>state.vendor.vendorId)
@@ -50,8 +53,18 @@ const EditVendor = () => {
   const [duplicateFilter, setDuplicateFilter] = useState(false);
   const [index, setIndex] = useState(null);
   const [vendorIndex, setVendorIndex] = useState();
+  const [hideFooter, setHideFooter] = useState(false)
 
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      setHideFooter(true);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []); 
 
 
 
@@ -100,23 +113,25 @@ const EditVendor = () => {
     if (vendorsIsSuccess && vendorId !== "") {
       // If vendorsIsSuccess is true, set the vendor name based on the data from the API response
 
-      setIndex(vendorsData.data.data.findIndex(vendor => vendor._id === vendorId));
-      console.log({url:index});
-      const vendor = vendorsData.data.data[index];
-      setVendorName(vendor?.name);
-      setVendorFlagShip(vendor?.isFlagShip);
-      setVendorNotes(vendor?.notes);
-      setVendorStatus(vendor?.status);
-      setChecked(vendor?.showFilter);
-      setStartDate1(vendor?.startDate);
-      setEndDate1(vendor?.endDate);
-      // setVendorName(vendorsData.data.data[0].name);
-      // setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
-      // setVendorNotes(vendorsData.data.data[0].notes)
-      // setVendorStatus(vendorsData.data.data[0].status)
-      // setChecked(vendorsData.data.data[0].showFilter)
-      // setStartDate1(vendorsData.data.data[0].startDate)
-      // setEndDate1(vendorsData.data.data[0].endDate)
+      // setIndex(vendorsData.data.data.findIndex(vendor => vendor._id === vendorId));
+      // console.log({url:index});
+      // const vendor = vendorsData.data.data[index];
+      // setVendorName(vendor?.name);
+      // setVendorFlagShip(vendor?.isFlagShip);
+      // setVendorNotes(vendor?.notes);
+      // setVendorStatus(vendor?.status);
+      // setChecked(vendor?.showFilter);
+      // setStartDate1(vendor?.startDate);
+      // setEndDate1(vendor?.endDate);
+
+      setVendorName(vendorsData.data.data[0].name);
+      setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
+      setVendorNotes(vendorsData.data.data[0].notes)
+      setVendorNotesCompare(vendorsData.data.data[0].notes)
+      setVendorStatus(vendorsData.data.data[0].status)
+      setChecked(vendorsData.data.data[0].showFilter)
+      setStartDate1(vendorsData.data.data[0].startDate)
+      setEndDate1(vendorsData.data.data[0].endDate)
     }
   }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess]);
 
@@ -355,15 +370,20 @@ const EditVendor = () => {
            value={vendorStatus}
            handleProductStatus={vendorStatusChange}
           //  handleSchedule={handleSchedule}
-           toggleData={['active','draft']}
-           startDate1={startDate1}
-           endDate1={endDate1}
+           toggleData={['active','in-active']}
             />
           <NotesBox name="note" value={vendorNotes} onChange={vendorNotesChange} />
         </div>
       </div>
+      
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
-        <div className="d-flex w-auto px-0">
+
+        { (hideFooter || vendorNotesCompare!==vendorNotes || vendorStatusCompare!==vendorStatus)&& <div className="row create-buttons pt-5 pb-3 justify-content-between">
+          <SaveFooter handleSubmit={handleSubmit} />          
+        </div>
+           }
+
+        {/* <div className="d-flex w-auto px-0">
           <Link
             to="/parameters/vendors"
             className="button-red-outline py-2 px-4"
@@ -371,14 +391,15 @@ const EditVendor = () => {
             <p>Discard</p>
           </Link>
 
-          {/* <Link
+          <Link
             to="/parameters/vendors"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
-          </Link> */}
-        </div>
-        <div className="d-flex w-auto px-0">
+          </Link>
+        </div> */}
+        
+        {/* <div className="d-flex w-auto px-0">
           <Link
             to="/parameters/vendors"
             className="button-lightBlue-outline py-2 px-4"
@@ -393,7 +414,7 @@ const EditVendor = () => {
           >
             <p>Save</p>
           </Link>
-        </div>
+        </div> */}
       </div>
       <Dialog
         open={openDuplicateVendor}

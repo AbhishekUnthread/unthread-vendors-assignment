@@ -336,15 +336,20 @@ const {
       navigate('edit');
     };
 
-    const ArchiveTagsHandler = (data) => {
-      const newStatus = data?.status === "archieved" ? "active" : "archieved";
-      editTag({
-        id: data?._id,
-        details: {
-          status: newStatus,
-        },
-      });
-    };
+    // const ArchiveTagsHandler = (data) => {
+    //   const newStatus = data?.status === "archieved" ? "active" : "archieved";
+    //   editTag({
+    //     id: data?._id,
+    //     details: {
+    //       status: newStatus,
+    //     },
+    //   });
+    // };
+
+  const handleTagDelete = (data)=>
+  {
+    deleteTags(data);
+  }
     
   
   const toggleCreateModalHandler = () => {
@@ -1143,7 +1148,7 @@ const {
           <TabPanel value={tagsType} index={0}>
             <TagsManagerTable 
               isLoading={tagsIsLoading}
-              deleteData={ArchiveTagsHandler}
+              deleteData={handleTagDelete}
               error={error}
               list={tagsList}
               edit={editTagsPageNavigationHandler}
@@ -1154,7 +1159,7 @@ const {
           <TabPanel value={tagsType} index={1}>
             <TagsManagerTable
               isLoading={tagsIsLoading}
-              deleteData={ArchiveTagsHandler}
+              deleteData={handleTagDelete}
               error={error}
               list={tagsList}
               edit={editTagsPageNavigationHandler}
