@@ -128,7 +128,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
         } else if (selectedStatus === "Set as Archived") {
           return {
             id,
-            status: "draft",
+            status: "archieved",
           };
         } else {
           return {
