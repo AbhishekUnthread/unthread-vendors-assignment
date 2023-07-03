@@ -2,29 +2,31 @@ import React from "react";
 import { Popover } from "@mui/material";
 // ! IMAGES IMPORTS
 import arrowDown from "../../assets/icons/arrowDown.svg";
-
-const TableMassActionButton = () => {
-  // * MASS ACTION POPOVERS STARTS
-  const [anchorMassActionEl, setAnchorMassActionEl] = React.useState(null);
-  const handleMassActionClick = (event) => {
-    setAnchorMassActionEl(event.currentTarget);
+const TableMassActionButton = ({onSelect, headingName, defaultValue=['active','In-active']}) => {
+   // * EDIT STATUS POPOVERS STARTS
+  const [anchorEditStatusEl, setAnchorEditStatusEl] = React.useState(null);
+  const handleEditStatusClick = (event) => {
+    setAnchorEditStatusEl(event.currentTarget);
   };
-  const handleMassActionClose = () => {
-    setAnchorMassActionEl(null);
+  const handleStatusSelect = (status) => {
+    onSelect(status); // Call the callback function passed from the parent component
+    handleEditStatusClose();
   };
-  const openMassAction = Boolean(anchorMassActionEl);
-  const idMassAction = openMassAction ? "simple-popover" : undefined;
+  const handleEditStatusClose = () => {
+    setAnchorEditStatusEl(null);
+  };
+  const openEditStatus = Boolean(anchorEditStatusEl);
+  const idEditStatus = openEditStatus ? "simple-popover" : undefined;
   // * MASS ACTION POPOVERS ENDS
-
   return (
-    <React.Fragment>
+     <React.Fragment>
       <button
         className="button-grey py-2 px-3 ms-2"
-        aria-describedby={idMassAction}
+        aria-describedby={idEditStatus}
         variant="contained"
-        onClick={handleMassActionClick}
+        onClick={handleEditStatusClick}
       >
-        <small className="text-lightBlue">Mass Action</small>
+        <small className="text-lightBlue">{headingName}</small>
         <img src={arrowDown} alt="arrowDown" className="ms-2" />
       </button>
       <Popover
@@ -36,24 +38,21 @@ const TableMassActionButton = () => {
           vertical: "top",
           horizontal: "left",
         }}
-        id={idMassAction}
-        open={openMassAction}
-        anchorEl={anchorMassActionEl}
-        onClose={handleMassActionClose}
+        id={idEditStatus}
+        open={openEditStatus}
+        anchorEl={anchorEditStatusEl}
+        onClose={handleEditStatusClose}
       >
-        <div className="py-2 px-2">
-          <small className="text-grey-7 px-2">ACTIONS</small>
-          <hr className="hr-grey-6 my-2" />
-          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-            Edit
+        <div className="py-2 px-1">
+          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back" onClick={() => handleStatusSelect(defaultValue[0])}>
+          {defaultValue[0]}
           </small>
-          <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-            <small className="text-lightBlue font2 d-block me-3">Archive</small>
-          </div>
+          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back" onClick={() => handleStatusSelect(defaultValue[1])}>
+          {defaultValue[1]}
+          </small>
         </div>
       </Popover>
     </React.Fragment>
   );
 };
-
 export default TableMassActionButton;

@@ -33,11 +33,13 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useDispatch } from "react-redux";
 import { updateCategoryId } from "../../../features/parameters/categories/categorySlice";
 import { useGetAllSubCategoriesQuery } from "../../../features/parameters/categories/categoriesApiSlice";
-import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+import ArchivedModal from "../../../components/DeleteDailogueModal/DeleteModal";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -130,6 +132,7 @@ const CategoriesTable = ({
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [handleStatusValue, setHandleStatusValue] = useState("in-active");
   const [toggleCategoris, setToggleCategoris] = useState(true);
+  const [showDeleteModal,setShowDeleteModal] = useState(false)
 
   const {
     data: subCategoriesData,
@@ -238,7 +241,7 @@ const CategoriesTable = ({
     categoryId.categoryId = row._id;
     setFilterParameter(categoryId);
     if (open.length === 0) {
-      let item = [...open];
+      let item = [];
       item.push(row._id);
       setOpen(item);
     }
@@ -246,7 +249,7 @@ const CategoriesTable = ({
       setOpen((item) => item.filter((i) => i !== row._id));
     }
     if (open.length > 0 && !open.includes(row._id)) {
-      let item = [...open];
+      let item = [];
       item.push(row._id);
       setOpen(item);
     }
@@ -256,6 +259,11 @@ const CategoriesTable = ({
     setShowCreateDeleteModal((prevState) => !prevState);
     setRowData(row);
   };
+
+  const toggleDeleteModalHandler =(row)=>{
+    setShowDeleteModal((prevState) => !prevState)
+    setRowData(row);
+  }
 
   const toggleUnArchiveModalHandler = (row) => {
     setShowUnArchivedModal((prevState) => !prevState);
@@ -312,6 +320,27 @@ const CategoriesTable = ({
     }
   }
 
+  function deleteDatas(){
+    setShowDeleteModal(false)
+    if (toggleCategoris) {
+     deleteData(rowData)
+      dispatch(
+        showSuccess({ message: "Deleted this category successfully" })
+      );
+    } else {
+      deleteSubData(rowData)
+      dispatch(
+        showSuccess({ message: "Deleted this sub Category successfully" })
+      );
+      setToggleCategoris(true);
+    }
+
+  }
+
+  const handleMassAction  = (status) => {
+    setSelectedStatus(status);
+  };
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -333,7 +362,7 @@ const CategoriesTable = ({
             defaultValue={["Set as Active", "Set as Archieved"]}
             headingName="Edit Status"
           />
-          {/* <TableMassActionButton />  */}
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={['Edit','Set as Archieved']}/>
         </div>
       )}
       {!error ? (
@@ -508,7 +537,7 @@ const CategoriesTable = ({
                                   <Tooltip title={"Delete"} placement="top">
                                     <div
                                       onClick={(e) => {
-                                        deleteData(row);
+                                        toggleDeleteModalHandler(row)
                                       }}
                                       className="table-edit-icon rounded-4 p-2"
                                     >
@@ -743,9 +772,8 @@ const CategoriesTable = ({
                                                         >
                                                           <div
                                                             onClick={(e) => {
-                                                              deleteSubData(
-                                                                row
-                                                              );
+                                                              setToggleCategoris(false)
+                                                              toggleDeleteModalHandler(row)
                                                             }}
                                                             className="table-edit-icon rounded-4 p-2"
                                                           >
@@ -861,7 +889,7 @@ const CategoriesTable = ({
       ) : (
         <></>
       )}
-      <DeleteModal
+      <ArchivedModal
         name={"Archived"}
         showCreateModal={showCreateDeleteModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
@@ -873,6 +901,12 @@ const CategoriesTable = ({
         handleUnArchived={handleUnArchived}
         handleValue={setHandleStatusValue}
       />
+       <DeleteModal
+       name={""}
+       showCreateModal={showDeleteModal}
+       toggleArchiveModalHandler={toggleDeleteModalHandler}
+       handleArchive={deleteDatas}
+        />
     </React.Fragment>
   );
 };

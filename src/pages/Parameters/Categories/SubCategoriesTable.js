@@ -24,10 +24,11 @@ import TableEditStatusButton from "../../../components/TableEditStatusButton/Tab
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import { updateCategoryId } from "../../../features/parameters/categories/categorySlice";
 import { useDispatch } from "react-redux";
-import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+import ArchivedModal from "../../../components/DeleteDailogueModal/DeleteModal";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 
 // ? TABLE STARTS HERE
 
@@ -87,6 +88,7 @@ const SubCategoriesTable = ({
   const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [handleStatusValue,setHandleStatusValue] = useState('in-active')
+  const [showDeleteModal,setShowDeleteModal] = useState(false)
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -176,10 +178,20 @@ const SubCategoriesTable = ({
     setRowData(row);
   };
 
+  const toggleDeleteModalHandler =(row)=>{
+    setShowDeleteModal((prevState) => !prevState)
+    setRowData(row);
+  }
+
   const toggleUnArchiveModalHandler = (row) => {
     setShowUnArchivedModal((prevState) => !prevState);
     setRowData(row);
   };
+
+  function deleteData(){
+    setShowDeleteModal(false)
+    deleteData(rowData)
+  }
 
   function deleteRowData() {
     setShowCreateDeleteModal(false);
@@ -348,7 +360,7 @@ const SubCategoriesTable = ({
                                    <Tooltip title={"Archived"} placement="top">
                                    <div
                                      onClick={(e) => {
-                                       deleteData(row);
+                                      toggleDeleteModalHandler(row)
                                      }}
                                      className="table-edit-icon rounded-4 p-2"
                                    >
@@ -423,8 +435,8 @@ const SubCategoriesTable = ({
       ) : (
         <></>
       )}
-      <DeleteModal
-      name={archived ?'Archived' : "Un Archived"}
+      <ArchivedModal
+      name={'Archived'}
         showCreateModal={showCreateDeleteModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={deleteRowData}
@@ -435,6 +447,12 @@ const SubCategoriesTable = ({
       handleUnArchived={handleUnArchived}
       handleValue={setHandleStatusValue}
        />
+       <DeleteModal
+       name={"This Sub Category"}
+       showCreateModal={showDeleteModal}
+       toggleArchiveModalHandler={toggleDeleteModalHandler}
+       handleArchive={deleteData}
+        />
     </React.Fragment>
   );
 };
