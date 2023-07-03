@@ -60,6 +60,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { LoadingButton } from "@mui/lab";
+import moment from "moment";
 
 import {
   showSuccess,
@@ -246,6 +247,17 @@ const EditCollection = () => {
   const collectionId = useSelector((state)=>state.collection.collectionId)
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
+  const [hideFooter, setHideFooter] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const handleSchedule = (start, end) => {
+    console.log(start,'start')
+    setStartDate(start);
+    setEndDate(end);
+  };
+  console.log(moment(startDate).toDate(), 'startDate startDate');
+  console.log(moment(startDate1).toDate(), 'startDate1 dsfn');
 
    const clearDate = () => {
     setStartDate1(null);
@@ -303,11 +315,15 @@ const EditCollection = () => {
           title: collectionTitle, 
           filter: collectionFilter, 
           description: collectionDescription, 
-          status: collectionStatus ? collectionStatus : "active", 
+          status: startDate1 === null ? collectionStatus : "scheduled",
           isVisibleFrontend: collectionVisibility,
           notes: collectionNote,
           mediaUrl: collectionMediaUrl,
           seo: collectionSeo,
+          ...(startDate1 !== null &&
+          { startDate: new Date(startDate1) }),
+          ...(endDate1 !== null &&
+          { endDate: new Date(endDate1) }),
         }
       })
         .unwrap()
@@ -398,13 +414,7 @@ const EditCollection = () => {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
-  const handleSchedule = (start, end) => {
-    setStartDate(start);
-    setEndDate(end);
-  };
+  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -554,13 +564,23 @@ const EditCollection = () => {
   };
   // ? DUPLICATE COLLECTION DIALOG ENDS HERE
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      setHideFooter(true);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []); 
+
   return (
       <div className="page container-fluid position-relative user-group">
         <AddHeader headerName={collectionTitle} previewButton={"Preveiw"} navigateLink={"/parameters/collections"} duplicateButton={"Duplicate"} handleDuplicate={handleDuplicate}/>
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-              <div className="col-md-12 px-0 mt-3">
+              <div className="col-md-12 px-0 mt-1">
                 <div className="d-flex mb-1">
                   <p className="text-lightBlue me-2">Collection Title</p>
                   <Tooltip title="Lorem ipsum" placement="top">
@@ -1305,9 +1325,9 @@ const EditCollection = () => {
           </div>
         </div>
 
-        <div className="row create-buttons pt-5 pb-3 justify-content-between">
+        { hideFooter && 
           <SaveFooter handleSubmit={handleSubmit} />          
-        </div>
+         }
       <Dialog
         open={openDuplicateCollection}
         TransitionComponent={Transition}

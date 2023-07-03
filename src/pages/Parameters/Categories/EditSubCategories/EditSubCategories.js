@@ -139,6 +139,10 @@ const EditSubCategories = () => {
         });
     }
   };
+  const clearDate = () => {
+    setStartDate(null);
+    setEndDate(null);
+  }
 
   const handleSubmitAndAddAnother = () => {
     if (subCategoryId !== "") {
@@ -304,7 +308,13 @@ const EditSubCategories = () => {
           <StatusBox headingName={"Sub-Category Status"}
              value={subCategoryStatus}
              handleProductStatus={(_, val) => setSubCategoryStatus(val)}
-             toggleData={['active', 'scheduled']} />
+             toggleData={['active', 'in-active']}
+             startDate={startDate}
+            endDate={endDate}
+            handleStartDate={setStartDate}
+            handleEndDate={setEndDate}
+            clearDate={clearDate}
+              />
           <VisibilityBox value={subCategoryVisibility}
             onChange={(_, val) => setSubCategoryVisibility(val)} />
           <div className="mt-4">

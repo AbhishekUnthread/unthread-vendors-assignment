@@ -33,10 +33,13 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useDispatch } from "react-redux";
 import { updateCategoryId } from "../../../features/parameters/categories/categorySlice";
 import { useGetAllSubCategoriesQuery } from "../../../features/parameters/categories/categoriesApiSlice";
-import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+import ArchivedModal from "../../../components/DeleteDailogueModal/DeleteModal";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
+import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -110,6 +113,7 @@ const CategoriesTable = ({
   subModalOpenHandler,
   bulkEdit,
   editCategory,
+  editSubCategory,
   archived,
   totalCount,
 }) => {
@@ -123,9 +127,12 @@ const CategoriesTable = ({
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [filterParameter, setFilterParameter] = useState({});
   const [showCreateDeleteModal, setShowCreateDeleteModal] = useState(false);
+  const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
   const [rowData, setRowData] = useState({});
   const [selectedStatus, setSelectedStatus] = React.useState(null);
-
+  const [handleStatusValue, setHandleStatusValue] = useState("in-active");
+  const [toggleCategoris, setToggleCategoris] = useState(true);
+  const [showDeleteModal,setShowDeleteModal] = useState(false)
 
   const {
     data: subCategoriesData,
@@ -208,10 +215,10 @@ const CategoriesTable = ({
             id,
             status: "active",
           };
-        } else if (selectedStatus === "Set as Draft") {
+        } else if (selectedStatus === "Set as Archieved") {
           return {
             id,
-            status: "draft",
+            status: "archieved",
           };
         } else {
           return {
@@ -220,18 +227,21 @@ const CategoriesTable = ({
           };
         }
       });
-      bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      bulkEdit({ updates: newState })
+        .unwrap()
+        .then(() =>
+          dispatch(showSuccess({ message: " Status updated successfully" }))
+        );
       setSelectedStatus(null);
     }
   }, [selected, selectedStatus]);
-
 
   function handleTableRowChange(row) {
     let categoryId = {};
     categoryId.categoryId = row._id;
     setFilterParameter(categoryId);
     if (open.length === 0) {
-      let item = [...open];
+      let item = [];
       item.push(row._id);
       setOpen(item);
     }
@@ -239,7 +249,7 @@ const CategoriesTable = ({
       setOpen((item) => item.filter((i) => i !== row._id));
     }
     if (open.length > 0 && !open.includes(row._id)) {
-      let item = [...open];
+      let item = [];
       item.push(row._id);
       setOpen(item);
     }
@@ -250,16 +260,86 @@ const CategoriesTable = ({
     setRowData(row);
   };
 
+  const toggleDeleteModalHandler =(row)=>{
+    setShowDeleteModal((prevState) => !prevState)
+    setRowData(row);
+  }
+
+  const toggleUnArchiveModalHandler = (row) => {
+    setShowUnArchivedModal((prevState) => !prevState);
+    setRowData(row);
+  };
+
   function deleteRowData() {
     setShowCreateDeleteModal(false);
-    editCategory({
-      id:rowData._id,
-      details:{
-        status:'archieved'
-      }
-    })
-    // deleteData(rowData);
+    if (toggleCategoris) {
+      editCategory({
+        id: rowData._id,
+        details: {
+          status: "archieved",
+        },
+      });
+      dispatch(showSuccess({ message: "Archived this category successfully" }));
+    } else {
+      editSubCategory({
+        id: rowData._id,
+        details: {
+          status: "archieved",
+        },
+      });
+      dispatch(
+        showSuccess({ message: "Archived this Sub category successfully" })
+      );
+      setToggleCategoris(true);
+    }
   }
+
+  function handleUnArchived() {
+    setShowUnArchivedModal(false);
+    if (toggleCategoris) {
+      editCategory({
+        id: rowData._id,
+        details: {
+          status: handleStatusValue,
+        },
+      });
+      dispatch(
+        showSuccess({ message: "Un-Archived this category successfully" })
+      );
+    } else {
+      editSubCategory({
+        id: rowData._id,
+        details: {
+          status: handleStatusValue,
+        },
+      });
+      dispatch(
+        showSuccess({ message: "Un-Archived this sub Category successfully" })
+      );
+      setToggleCategoris(true);
+    }
+  }
+
+  function deleteDatas(){
+    setShowDeleteModal(false)
+    if (toggleCategoris) {
+     deleteData(rowData)
+      dispatch(
+        showSuccess({ message: "Deleted this category successfully" })
+      );
+    } else {
+      deleteSubData(rowData)
+      dispatch(
+        showSuccess({ message: "Deleted this sub Category successfully" })
+      );
+      setToggleCategoris(true);
+    }
+
+  }
+
+  const handleMassAction  = (status) => {
+    setSelectedStatus(status);
+  };
 
   return (
     <React.Fragment>
@@ -277,8 +357,12 @@ const CategoriesTable = ({
             </small>
           </button>
 
-          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
-          {/* <TableMassActionButton />  */}
+          <TableEditStatusButton
+            onSelect={handleStatusSelect}
+            defaultValue={["Set as Active", "Set as Archieved"]}
+            headingName="Edit Status"
+          />
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={['Edit','Set as Archieved']}/>
         </div>
       )}
       {!error ? (
@@ -331,28 +415,30 @@ const CategoriesTable = ({
                                 }}
                               />
                             </TableCell>
-                            {
-                              archived ? (
-                                <TableCell>
-                              <IconButton
-                                aria-label="expand row"
-                                size="small"
-                                onClick={() => handleTableRowChange(row)}
-                              >
-                                {open.length > 0 && open.includes(row._id) ? (
-                                  <PlayArrowIcon
-                                    style={{
-                                      transform: "rotate(90deg)",
-                                      fontSize: "15px",
-                                    }}
-                                  />
-                                ) : (
-                                  <PlayArrowIcon style={{ fontSize: "15px" }} />
-                                )}
-                              </IconButton>
-                            </TableCell>
-                              ) : <p></p>
-                            }
+                            {archived ? (
+                              <TableCell>
+                                <IconButton
+                                  aria-label="expand row"
+                                  size="small"
+                                  onClick={() => handleTableRowChange(row)}
+                                >
+                                  {open.length > 0 && open.includes(row._id) ? (
+                                    <PlayArrowIcon
+                                      style={{
+                                        transform: "rotate(90deg)",
+                                        fontSize: "15px",
+                                      }}
+                                    />
+                                  ) : (
+                                    <PlayArrowIcon
+                                      style={{ fontSize: "15px" }}
+                                    />
+                                  )}
+                                </IconButton>
+                              </TableCell>
+                            ) : (
+                              <p></p>
+                            )}
                             <TableCell
                               component="th"
                               id={labelId}
@@ -447,29 +533,38 @@ const CategoriesTable = ({
                                     </Link>
                                   </Tooltip>
                                 )}
-                                {!archived &&(
-                                   <Tooltip title={"Delete"} placement="top">
-                                   <div
-                                     onClick={(e) => {
-                                       deleteData(row);
-                                     }}
-                                     className="table-edit-icon rounded-4 p-2"
-                                   >
-                                     <DeleteIcon
-                                       sx={{
-                                         color: "#5c6d8e",
-                                         fontSize: 18,
-                                         cursor: "pointer",
-                                       }}
-                                     />
-                                   </div>
-                                 </Tooltip>
-                                )}
-                                {deleteData && (
-                                  <Tooltip title={"Archived"} placement="top">
+                                {!archived && (
+                                  <Tooltip title={"Delete"} placement="top">
                                     <div
                                       onClick={(e) => {
-                                        toggleArchiveModalHandler(row);
+                                        toggleDeleteModalHandler(row)
+                                      }}
+                                      className="table-edit-icon rounded-4 p-2"
+                                    >
+                                      <DeleteIcon
+                                        sx={{
+                                          color: "#5c6d8e",
+                                          fontSize: 18,
+                                          cursor: "pointer",
+                                        }}
+                                      />
+                                    </div>
+                                  </Tooltip>
+                                )}
+                                {deleteData && (
+                                  <Tooltip
+                                    title={
+                                      archived ? "Archived" : "Un Archived"
+                                    }
+                                    placement="top"
+                                  >
+                                    <div
+                                      onClick={(e) => {
+                                        if (archived) {
+                                          toggleArchiveModalHandler(row);
+                                        } else {
+                                          toggleUnArchiveModalHandler(row);
+                                        }
                                       }}
                                       className="table-edit-icon rounded-4 p-2"
                                     >
@@ -598,10 +693,32 @@ const CategoriesTable = ({
                                                   >
                                                     <div className="d-flex align-items-center">
                                                       <div
-                                                        className={`rounded-pill d-flex  px-2 py-1 c-pointer table-status`}
+                                                        className="rounded-pill d-flex px-2 py-1 c-pointer"
+                                                        style={{
+                                                          background:
+                                                            row.status ==
+                                                            "active"
+                                                              ? "#A6FAAF"
+                                                              : row.status ==
+                                                                "in-active"
+                                                              ? "#F67476"
+                                                              : row.status ==
+                                                                "archieved"
+                                                              ? "#C8D8FF"
+                                                              : "#FEE1A3",
+                                                        }}
                                                       >
                                                         <small className="text-black fw-400">
-                                                          {row.status}
+                                                          {row.status ==
+                                                          "active"
+                                                            ? "Active"
+                                                            : row.status ==
+                                                              "in-active"
+                                                            ? "In-Active"
+                                                            : row.status ==
+                                                              "archieved"
+                                                            ? "Archived"
+                                                            : "Scheduled"}
                                                         </small>
                                                       </div>
                                                     </div>
@@ -613,48 +730,92 @@ const CategoriesTable = ({
                                                     }}
                                                   >
                                                     <div className="d-flex align-items-center">
-                                                      {edit && (
+                                                      {edit &&
+                                                        row?.status !==
+                                                          "archieved" && (
+                                                          <Tooltip
+                                                            title="Edit"
+                                                            placement="top"
+                                                          >
+                                                            <div
+                                                              onClick={(e) => {
+                                                                dispatch(
+                                                                  updateCategoryId(
+                                                                    row._id
+                                                                  )
+                                                                );
+                                                              }}
+                                                              className="table-edit-icon rounded-4 p-2"
+                                                            >
+                                                              <Link
+                                                                className="text-decoration-none"
+                                                                to="/parameters/subCategories/edit"
+                                                              >
+                                                                <EditOutlinedIcon
+                                                                  sx={{
+                                                                    color:
+                                                                      "#5c6d8e",
+                                                                    fontSize: 18,
+                                                                    cursor:
+                                                                      "pointer",
+                                                                  }}
+                                                                />
+                                                              </Link>
+                                                            </div>
+                                                          </Tooltip>
+                                                        )}
+                                                      {row?.status ===
+                                                        "archieved" && (
                                                         <Tooltip
-                                                          title="Edit"
+                                                          title={"Delete"}
                                                           placement="top"
                                                         >
                                                           <div
                                                             onClick={(e) => {
-                                                              dispatch(
-                                                                updateCategoryId(
-                                                                  row._id
-                                                                )
-                                                              );
+                                                              setToggleCategoris(false)
+                                                              toggleDeleteModalHandler(row)
                                                             }}
                                                             className="table-edit-icon rounded-4 p-2"
                                                           >
-                                                            <Link
-                                                              className="text-decoration-none"
-                                                              to="/parameters/subCategories/edit"
-                                                            >
-                                                              <EditOutlinedIcon
-                                                                sx={{
-                                                                  color:
-                                                                    "#5c6d8e",
-                                                                  fontSize: 18,
-                                                                  cursor:
-                                                                    "pointer",
-                                                                }}
-                                                              />
-                                                            </Link>
+                                                            <DeleteIcon
+                                                              sx={{
+                                                                color:
+                                                                  "#5c6d8e",
+                                                                fontSize: 18,
+                                                                cursor:
+                                                                  "pointer",
+                                                              }}
+                                                            />
                                                           </div>
                                                         </Tooltip>
                                                       )}
                                                       {deleteSubData && (
                                                         <Tooltip
-                                                          title={"Archived"}
+                                                          title={
+                                                            row?.status ===
+                                                            "archieved"
+                                                              ? "Un Archived"
+                                                              : "Archived"
+                                                          }
                                                           placement="top"
                                                         >
                                                           <div
                                                             onClick={(e) => {
-                                                              deleteSubData(
-                                                                row
+                                                              setToggleCategoris(
+                                                                false
                                                               );
+                                                              if (
+                                                                row?.status !==
+                                                                "archieved"
+                                                              ) {
+                                                                toggleArchiveModalHandler(
+                                                                  row
+                                                                );
+                                                              } else {
+                                                                toggleUnArchiveModalHandler(
+                                                                  row
+                                                                );
+                                                              }
                                                             }}
                                                             className="table-edit-icon rounded-4 p-2"
                                                           >
@@ -728,12 +889,24 @@ const CategoriesTable = ({
       ) : (
         <></>
       )}
-      <DeleteModal
-      name={archived ?'Archived' : "Un Archived"}
+      <ArchivedModal
+        name={"Archived"}
         showCreateModal={showCreateDeleteModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={deleteRowData}
       />
+      <UnArchivedModal
+        showUnArchivedModal={showUnArchivedModal}
+        closeUnArchivedModal={() => setShowUnArchivedModal(false)}
+        handleUnArchived={handleUnArchived}
+        handleValue={setHandleStatusValue}
+      />
+       <DeleteModal
+       name={""}
+       showCreateModal={showDeleteModal}
+       toggleArchiveModalHandler={toggleDeleteModalHandler}
+       handleArchive={deleteDatas}
+        />
     </React.Fragment>
   );
 };

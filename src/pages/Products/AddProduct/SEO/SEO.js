@@ -15,59 +15,49 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useFormik } from "formik";
-
 const SEO = ({name,value, handleSeoChange }) => {
   const [multipleTags, setMultipleTags] = useState([]);
   const id = useId();
   // ? CHECKBOX STARTS HERE
-  const [checked, setChecked] = React.useState(true);
-
-  const handleCheckboxChange = (event) => {
-    setChecked(event.target.checked);
-  };
+  const [viewAll, setViewAll] = React.useState(false);
+  // const handleCheckboxChange = () => {
+  //   setViewAll(prevState => !prevState);
+  // };
   // ? CHECKBOX ENDS HERE
-
   const seoFormik = useFormik({
     initialValues: {
-      slug: null,
+      slug: "https://example.com/",
       title: "",
-      urlHandle: "",
       description: "",
       metaKeywords: "",
     },
     enableReinitialize: true,
   });
-
   useEffect(()=>{
-    if(value){
+    if(value || name){
       seoFormik.setFieldValue("title", value && value.title ? value.title : name);
-      seoFormik.setFieldValue("urlHandle", value && value.urlHandle ? value.urlHandle : "");
       seoFormik.setFieldValue("description", value && value.description ? value.description : "");
-      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : null);
+      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : generateUrlName(name));
       setMultipleTags(value && value.metaKeywords ? value.metaKeywords : []);
     }
   },[value,name])
-
+  
   useEffect(()=>{
     handleSeoChange({
       ...seoFormik.values,
       metaKeywords:multipleTags,
-      slug: value?.slug ? value.slug : generateUniqueId(seoFormik.values.title)
     })
     console.log({
       ...seoFormik.values,
       metaKeywords:multipleTags,
-      slug: value?.slug ? value.slug : generateUniqueId(seoFormik.values.title)
     })
   },[seoFormik.values])
-
   // ? SWITCH STARTS HERE
   const [checkedSwitch, setCheckedSwitch] = React.useState(true);
   const handleSwitchChange = (event) => {
     setCheckedSwitch(event.target.checked);
   };
   // ? SWITCH ENDS HERE
-
   const handleAddMultiple = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -83,20 +73,13 @@ const SEO = ({name,value, handleSeoChange }) => {
       });
     }
   };
-
   const handleDelete = (value) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
-
-  function generateUniqueId(name="") {
-    
-  
-    const formattedName = name?.toLowerCase()?.replace(/\s+/g, '-');
-    const finalId = `${formattedName}${id}`;
-  
-    return finalId;
+  function generateUrlName(name="") {
+    const formattedName = "https://example.com/"+name?.toLowerCase()?.replace(/\s+/g, '-');
+    return formattedName;
   }
-
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
       <div className="d-flex col-12 px-0 justifu-content-between">
@@ -125,8 +108,8 @@ const SEO = ({name,value, handleSeoChange }) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={checked}
-                  onChange={handleCheckboxChange}
+                  // checked={checked}
+                  // onChange={handleCheckboxChange}
                   inputProps={{ "aria-label": "controlled" }}
                   size="small"
                   style={{
@@ -139,7 +122,7 @@ const SEO = ({name,value, handleSeoChange }) => {
               sx={{
                 "& .MuiTypography-root": {
                   fontSize: 13,
-                  color: "#c8d8ff",
+                  color: "#C8D8FF",
                 },
               }}
             />
@@ -147,7 +130,7 @@ const SEO = ({name,value, handleSeoChange }) => {
               <i className="text-grey-6">Powered by Kepler</i>
             </p>
           </div>
-          {!checked && (
+          {viewAll && (
             <React.Fragment>
               <small className="text-lightBlue mb-2 mt-3 col-12 px-0">
                 Page Title
@@ -174,7 +157,7 @@ const SEO = ({name,value, handleSeoChange }) => {
                 placeholder="Please enter meta description"
                 style={{
                   background: "#15142A",
-                  color: "#c8d8ff",
+                  color: "#C8D8FF",
                   borderRadius: 5,
                 }}
                 minRows={5}
@@ -191,15 +174,14 @@ const SEO = ({name,value, handleSeoChange }) => {
               </small>
               <FormControl className="col-12 px-0">
                 <OutlinedInput
-                  name="urlHandle"
+                  name="slug"
                   placeholder="Please enter Url"
                   size="small"
-                  value={seoFormik.values.urlHandle}
+                  value={seoFormik.values.slug}
                   onChange={seoFormik.handleChange}
                   onBlur={seoFormik.handleBlur}
                 />
               </FormControl>
-
               <small className="text-lightBlue mb-2 mt-3 col-12 px-0">
                 Meta Keywords
               </small>
@@ -230,15 +212,19 @@ const SEO = ({name,value, handleSeoChange }) => {
               </FormControl>
             </React.Fragment>
           )}
-
           <div className="col-12 px-0 bg-black-13 border-grey-5 mt-3 rounded-8">
             <div className="d-flex flex-column p-3">
-              <p className="text-lightBlue">Metadata Preview</p>
+              <div className="d-flex justify-content-between">
+                <p className="text-lightBlue">Metadata Preview</p>
+                <small className="text-lightBlue text-blue-2 c-pointer" onClick={() => setViewAll(prevState => !prevState)}>
+                  { viewAll == false ? "View" : "Cancel" }
+                </small>
+              </div>
               <small className="text-lightBlue mt-3 mb-2 fw-500">
                 {seoFormik.values.title}
               </small>
               <small className="text-blue-2">
-                {seoFormik.values.urlHandle}
+                {seoFormik.values.slug}
               </small>
               <small className="mt-2 text-grey-6">
                 {seoFormik.values.description}
@@ -250,5 +236,4 @@ const SEO = ({name,value, handleSeoChange }) => {
     </div>
   );
 };
-
 export default SEO;

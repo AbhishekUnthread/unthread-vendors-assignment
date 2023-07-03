@@ -48,22 +48,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 // ? TABLE STARTS HERE
-function createData(cId, collectionsName, noOfProducts, status, actions) {
-  return { cId, collectionsName, noOfProducts, status, actions };
-}
 
-const rows = [
-  createData(1, "Collection 1", "25", "Active"),
-  createData(2, "Collection 2", "225", "Active"),
-  createData(3, "Collection 3", "125", "Active"),
-  createData(4, "Collection 4", "25", "Active"),
-  createData(5, "Collection 5", "221", "Active"),
-  createData(6, "Collection 6", "12", "Active"),
-  createData(7, "Collection 7", "10", "Active"),
-  createData(8, "Collection 8", "503", "Active"),
-];
-
-const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) => {
+const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, collectionType }) => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
@@ -80,6 +66,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
   const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
   const [unArchiveID, setUnArchiveID] = React.useState(false);
   const [statusValue, setStatusValue] = React.useState("in-active")
+  const [massActions, setMassActions] = React.useState("")
 
   const handleValue = (e) => {
     setStatusValue(e.target.value)
@@ -127,7 +114,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
   }
 
   useEffect(() => {
-    // Update the state only if the selectedStatus state has a value
     if (selectedStatus !== null) {
       const newState = selected.map((id) => {
         if (selectedStatus === "Set as Active") {
@@ -143,7 +129,18 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
         } else if (selectedStatus === "Set as Archived") {
           return {
             id,
-            status: "draft",
+            status: "archieved",
+          };
+        } else if (selectedStatus === "Delete") {
+          return {
+            id,
+            status: "in-active",
+            active: false
+          };
+        } else if (selectedStatus === "Set as Un-Archived") {
+          return {
+            id,
+            status: "in-active",
           };
         } else {
           return {
@@ -156,11 +153,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
       const requestData = {
         updates: newState
       };
-      bulkEditCollection(requestData).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      bulkEditCollection(requestData).unwrap().then(()=>dispatch(showSuccess({ message: "Status updated successfully" })));
       setSelectedStatus(null);
     }
   }, [selected, selectedStatus]);
-
+  
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
   };
@@ -211,7 +208,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = list.map((n) => n.cId);
+      const newSelected = list.map((n) => n._id);
       setSelected(newSelected);
       return;
     }
@@ -293,8 +290,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
               </span>
             </small>
           </button>
-          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as In-Active']} headingName="Edit Status"/>
-          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={['Edit','Set as Archived']}/>
+          { collectionType !== 3 && <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as In-Active']} headingName="Edit Status"/>}
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={ collectionType !== 3 ? ['Edit','Set as Archived'] : ['Delete','Set as Un-Archived']}/>
         </div>
       )}
       {!error ? (
