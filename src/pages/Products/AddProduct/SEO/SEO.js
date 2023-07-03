@@ -20,7 +20,7 @@ const SEO = ({name,value, handleSeoChange }) => {
   const [multipleTags, setMultipleTags] = useState([]);
   const id = useId();
   // ? CHECKBOX STARTS HERE
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = React.useState(false);
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
@@ -29,9 +29,8 @@ const SEO = ({name,value, handleSeoChange }) => {
 
   const seoFormik = useFormik({
     initialValues: {
-      slug: null,
+      slug: "https://example.com/",
       title: "",
-      urlHandle: "",
       description: "",
       metaKeywords: "",
     },
@@ -39,25 +38,23 @@ const SEO = ({name,value, handleSeoChange }) => {
   });
 
   useEffect(()=>{
-    if(value){
+    if(value || name){
       seoFormik.setFieldValue("title", value && value.title ? value.title : name);
-      seoFormik.setFieldValue("urlHandle", value && value.urlHandle ? value.urlHandle : "");
       seoFormik.setFieldValue("description", value && value.description ? value.description : "");
-      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : null);
+      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : generateUrlName(name));
       setMultipleTags(value && value.metaKeywords ? value.metaKeywords : []);
     }
   },[value,name])
+  
 
   useEffect(()=>{
     handleSeoChange({
       ...seoFormik.values,
       metaKeywords:multipleTags,
-      slug: value?.slug ? value.slug : generateUniqueId(seoFormik.values.title)
     })
     console.log({
       ...seoFormik.values,
       metaKeywords:multipleTags,
-      slug: value?.slug ? value.slug : generateUniqueId(seoFormik.values.title)
     })
   },[seoFormik.values])
 
@@ -88,13 +85,10 @@ const SEO = ({name,value, handleSeoChange }) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
 
-  function generateUniqueId(name="") {
-    
+  function generateUrlName(name="") {
+    const formattedName = "https://example.com/"+name?.toLowerCase()?.replace(/\s+/g, '-');
   
-    const formattedName = name?.toLowerCase()?.replace(/\s+/g, '-');
-    const finalId = `${formattedName}${id}`;
-  
-    return finalId;
+    return formattedName;
   }
 
   return (
@@ -191,10 +185,10 @@ const SEO = ({name,value, handleSeoChange }) => {
               </small>
               <FormControl className="col-12 px-0">
                 <OutlinedInput
-                  name="urlHandle"
+                  name="slug"
                   placeholder="Please enter Url"
                   size="small"
-                  value={seoFormik.values.urlHandle}
+                  value={seoFormik.values.slug}
                   onChange={seoFormik.handleChange}
                   onBlur={seoFormik.handleBlur}
                 />
@@ -238,7 +232,7 @@ const SEO = ({name,value, handleSeoChange }) => {
                 {seoFormik.values.title}
               </small>
               <small className="text-blue-2">
-                {seoFormik.values.urlHandle}
+                {seoFormik.values.slug}
               </small>
               <small className="mt-2 text-grey-6">
                 {seoFormik.values.description}

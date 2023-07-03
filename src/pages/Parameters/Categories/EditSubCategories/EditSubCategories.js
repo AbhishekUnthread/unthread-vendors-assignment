@@ -91,8 +91,8 @@ const EditSubCategories = () => {
       setSubCategoryVisibility(subCategoriesData.data.data[0].isVisibleFrontend);
       setSubCategoryNotes(subCategoriesData.data.data[0].notes);
       setChecked(subCategoriesData.data.data[0].showFilter);
-      setStartDate(subCategoriesData.data.data[0].startDate);
-      setEndDate(subCategoriesData.data.data[0].endDate);
+      setStartDate(subCategoriesData.data.data[0].startDate || null);
+      setEndDate(subCategoriesData.data.data[0].endDate || null);
       setSubCategoryMediaUrl(subCategoriesData.data.data[0].mediaUrl);
       setCategoryName(subCategoriesData.data.data[0].category?.[0]?.name || "")
       setSubCategorySeo(subCategoriesData.data.data[0]?.seos || {});
@@ -101,20 +101,25 @@ const EditSubCategories = () => {
 
   const handleSubmit = () => {
     if (subCategoryId !== "") {
+      let editItem ={
+        name: subCategoryName,
+        description: subCategoryDescription,
+        status: subCategoryStatus,
+        isVisibleFrontend: subCategoryVisibility,
+        notes: subCategoryNotes,
+        showFilter: checked,
+        mediaUrl: subCategoryMediaUrl,
+        seo: subCategorySeo,
+      }
+      if(startDate){
+        editItem.startDate = startDate
+      }
+      if(endDate){
+        editItem.endDate = endDate
+      }
       editSubCategory({
         id: subCategoryId,
-        details: {
-          name: subCategoryName,
-          description: subCategoryDescription,
-          status: subCategoryStatus,
-          isVisibleFrontend: subCategoryVisibility,
-          notes: subCategoryNotes,
-          showFilter: checked,
-          startDate: startDate,
-          endDate: endDate,
-          mediaUrl: subCategoryMediaUrl,
-          seo: subCategorySeo,
-        },
+        details: editItem,
       })
         .unwrap()
         .then(() => {
@@ -144,62 +149,9 @@ const EditSubCategories = () => {
     setEndDate(null);
   }
 
-  const handleSubmitAndAddAnother = () => {
-    if (subCategoryId !== "") {
-      editSubCategory({
-        id: subCategoryId,
-        details: {
-          name: subCategoryName,
-          description: subCategoryDescription,
-          status: subCategoryStatus,
-          isVisibleFrontend: subCategoryVisibility,
-          notes: subCategoryNotes,
-          showFilter: checked,
-          startDate: startDate,
-          endDate: endDate,
-          mediaUrl: subCategoryMediaUrl,
-          seo: subCategorySeo,
-        },
-      })
-        .unwrap()
-        .then(() => {
-          navigate("/parameters/sub-categories/edit");
-        });
-    } else {
-      createSubCategory({
-          name: subCategoryName,
-          description: subCategoryDescription,
-          status: subCategoryStatus,
-          isVisibleFrontend: subCategoryVisibility,
-          notes: subCategoryNotes,
-          showFilter: checked,
-          startDate,
-          endDate,
-          mediaUrl: subCategoryMediaUrl,
-          seo: subCategorySeo,
-      })
-        .unwrap()
-        .then(() => {
-          navigate("/parameters/sub-categories/edit");
-        });
-    }
+  
 
-    resetValues() // Resetting the category 
-    dispatch(updateCategoryId(""));
-  };
 
-  const resetValues = () => {
-    setSubCategoryName("");
-    setSubCategoryDescription("");
-    setSubCategoryStatus("active");
-    setSubCategoryNotes("");
-    setStartDate("");
-    setEndDate("");
-    setSubCategoryVisibility(false);
-    setSubCategorySeo({});
-    setSubCategoryMediaUrl("");
-    setChecked(false);
-  };
 
 
   const handleNameChange = (event) => {

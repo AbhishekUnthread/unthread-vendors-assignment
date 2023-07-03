@@ -606,6 +606,8 @@ const Categories = () => {
                       name: categoryFormik.values.name,
                       status: "active",
                       showFilter: categoryFormik.values.showFilter,
+                      description:"<p></p>",
+                      type:"active"
                     },true)}
                   />
                   {!!categoryFormik.touched.name &&

@@ -93,8 +93,8 @@ const EditCategories = () => {
       setCategoryVisibility(categoriesData.data.data[0].isVisibleFrontend)
       setCategoryNotes(categoriesData.data.data[0].notes)
       setChecked(categoriesData.data.data[0].showFilter)
-      setStartDate(categoriesData.data.data[0].startDate)
-      setEndDate(categoriesData.data.data[0].endDate)
+      setStartDate(categoriesData.data.data[0].startDate || null)
+      setEndDate(categoriesData.data.data[0].endDate || null)
       setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl)
       setCategorySeo(categoriesData.data.data[0]?.seos || {})
       
@@ -115,22 +115,25 @@ const EditCategories = () => {
   const handleSubmit = () => {
     if (categoryId !== "") {
       // Calling Category edit API
+      let editItems ={
+        showFilter: checked, // Whether to show filters
+        name: categoryName, // Category name
+        description: categoryDescription, // Category description
+        status: startDate === null ?  categoryStatus :"scheduled", // Category status
+        isVisibleFrontend: categoryVisibility,
+        notes: categoryNotes,
+        mediaUrl: categoryMediaUrl,
+        seo: categorySeo,
+      }
+      if(startDate){
+        editItems.startDate = new Date(startDate)
+      }
+      if(endDate){
+        editItems.endDate = new Date(endDate)
+      }
       editCategory({
         id: categoryId, // ID of the category
-        details: {
-          showFilter: checked, // Whether to show filters
-          name: categoryName, // Category name
-          description: categoryDescription, // Category description
-          status: startDate === null ?  categoryStatus :"scheduled", // Category status
-          ...(startDate !== null &&
-            { startDate: new Date(startDate) }),
-            ...(endDate !== null &&
-            { endDate: new Date(endDate) }),
-          isVisibleFrontend: categoryVisibility,
-          notes: categoryNotes,
-          mediaUrl: categoryMediaUrl,
-          seo: categorySeo,
-        },
+        details: editItems,
       })
         .unwrap()
         .then(() => {
