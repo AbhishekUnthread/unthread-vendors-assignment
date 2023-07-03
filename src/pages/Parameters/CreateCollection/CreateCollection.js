@@ -34,6 +34,7 @@ import addMedia from "../../../assets/icons/addMedia.svg";
 // ! MATERIAL IMPORTS
 import {
   FormControl,
+  FormHelperText,
   MenuItem,
   Select,
   InputAdornment,
@@ -543,6 +544,11 @@ const CreateCollection = () => {
                     name="title"
                   />
                 </FormControl>
+                {!!collectionFormik.touched.title && collectionFormik.errors.title && (
+                    <FormHelperText error>
+                      {collectionFormik.errors.title}
+                    </FormHelperText>
+                  )}
                 <FormGroup>
                   <div className="d-flex align-items-center col-12 px-0">
                     <FormControlLabel
