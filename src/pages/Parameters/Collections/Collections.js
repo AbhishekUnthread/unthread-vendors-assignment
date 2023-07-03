@@ -2,6 +2,7 @@ import React, { forwardRef, useState, useEffect, useReducer } from "react";
 import { Link } from "react-router-dom";
 import { 
   Box,
+  Checkbox,
   FormControl,
   FormControlLabel,
   Paper,
@@ -80,17 +81,35 @@ const Collections = () => {
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
   const [statusFilter, setStatusFilter] = React.useState("active,in-active,scheduled");
   const [searchValue, setSearchValue] = useState("");
+  
+  console.log(statusFilter,'statusFilter')
 
   const filterParameter = {};
 
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
   }
-  
+
   const handleStatusChange = (event) => {
-    setStatusFilter(event.target.value)
-    setAnchorStatusEl(null)
-  }
+    const selectedStatus = event.target.value;
+    if (event.target.checked) {
+      setStatusFilter((prevStatusFilter) => {
+        if (Array.isArray(prevStatusFilter)) {
+          return [...prevStatusFilter, selectedStatus];
+        } else {
+          return [selectedStatus];
+        }
+      });
+    } else {
+      setStatusFilter((prevStatusFilter) => {
+        if (Array.isArray(prevStatusFilter)) {
+          return prevStatusFilter.filter((status) => status !== selectedStatus);
+        } else {
+          return [];
+        }
+      });
+    }
+  };
 
   if (sortFilter) {
     if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
@@ -291,29 +310,34 @@ const Collections = () => {
                 onClose={handleStatusClose}
                 className="columns"
               >
-                <FormControl className="px-2 py-1">
-                  <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    value={statusFilter}
-                    onChange={handleStatusChange}
-                  >
-                    <FormControlLabel
-                      value="active"
-                      control={<Radio size="small" />}
-                      label="Active"
-                    />
-                    <FormControlLabel
-                      value="in-active"
-                      control={<Radio size="small" />}
-                      label="In-Active"
-                    />
-                    <FormControlLabel
-                      value="scheduled"
-                      control={<Radio size="small" />}
-                      label="Scheduled"
-                    />
-                  </RadioGroup>
+                <FormControl className="px-2 py-1"
+                  // value={statusFilter}
+                  // onChange={handleStatusChange}
+                >
+                  <FormControlLabel
+                    value="active"
+                    control={<Checkbox size="small" />}
+                    label="Active"
+                            onChange={handleStatusChange}
+        checked={statusFilter.includes('active')}
+
+                  />
+                  <FormControlLabel
+                    value="in-active"
+                    control={<Checkbox size="small" />}
+                    label="In-Active"
+                            onChange={handleStatusChange}
+        checked={statusFilter.includes('in-active')}
+
+                  />
+                  <FormControlLabel
+                    value="scheduled"
+                    control={<Checkbox size="small" />}
+                    label="Scheduled"
+                            onChange={handleStatusChange}
+        checked={statusFilter.includes('scheduled')}
+
+                  />
                 </FormControl>
               </Popover>
               <button

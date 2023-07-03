@@ -295,8 +295,8 @@ const CreateCollection = () => {
       title: "",
       description: "",
       status: "",
-      startDate: "",
-      endDate: "",
+      ...(startDate1 !== null && { startDate: "" }),
+      ...(endDate1 !== null && { endDate: "" }),
       isVisibleFrontend: true,
       filter: true,
       notes: "",
@@ -315,8 +315,12 @@ const CreateCollection = () => {
 
   useEffect(() => {
     collectionFormik.setFieldValue("description", appTextEditor)
-    collectionFormik.setFieldValue("startDate", startDate1);
-    collectionFormik.setFieldValue("endDate", endDate1);
+    if(startDate1 !== null){
+      collectionFormik.setFieldValue("startDate", startDate1);
+    }
+    if(endDate1 !== null){
+      collectionFormik.setFieldValue("endDate", endDate1);
+    }
     if(startDate1 !== null){
       collectionFormik.setFieldValue("status", "scheduled");
     }
