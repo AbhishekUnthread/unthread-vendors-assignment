@@ -101,7 +101,7 @@ const Categories = () => {
   const [editId, setEditId] = useState(null);
   const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState("active");
+  const [statusFilter, setStatusFilter] = React.useState(['active','scheduled','in-active']);
   const [multipleTags, setMultipleTags] = useState([]);
   const [multipleTagsForSub,setMultipleTagsForSub] = useState([])
   const [searchValue, setSearchValue] = useState("");
@@ -124,7 +124,7 @@ const Categories = () => {
   }
 
   const categoryTypeQuery = categoryType === 0 ? { createdAt: -1 }
-  : categoryType === 1 ? { status: "active" }
+  : categoryType === 1 ? { status: ['active','scheduled','in-active'] }
   : categoryType === 2 ? { createdAt: -1, status: "archieved" }
   : categoryType === 3 ? { createdAt: -1, status: "archieved" }
   : {};
