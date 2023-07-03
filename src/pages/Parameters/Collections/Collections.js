@@ -78,7 +78,7 @@ const Collections = () => {
     initialCollectionState
   );
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState("active,in-active,scheduled");
   const [searchValue, setSearchValue] = useState("");
 
   const filterParameter = {};
@@ -312,11 +312,6 @@ const Collections = () => {
                       value="scheduled"
                       control={<Radio size="small" />}
                       label="Scheduled"
-                    />
-                    <FormControlLabel
-                      value="archived"
-                      control={<Radio size="small" />}
-                      label="Archived"
                     />
                   </RadioGroup>
                 </FormControl>
