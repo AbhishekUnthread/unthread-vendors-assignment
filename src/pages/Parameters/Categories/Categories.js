@@ -987,7 +987,7 @@ const Categories = () => {
                 <CategoriesTable
                   isLoading={categoriesIsLoading || subCategoriesIsLoading}
                   deleteData={deleteCategoryHandler}
-                  deleteSubData={deleteSubCategoryHandler}
+                  deleteSubData={true}
                   subModalOpenHandler={subModalOpenHandler}
                   error={error}
                   list={categoryList}
