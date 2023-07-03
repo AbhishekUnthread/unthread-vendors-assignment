@@ -256,6 +256,14 @@ const CreateCollection = () => {
     collectionFormik?.setFieldValue("status", status);
   }
 
+  // const handleStartDate = (startDate) => {
+  //   collectionFormik?.setFieldValue("startDate", startDate);
+  // }
+
+  // const handleEndDate = (endDate) => {
+  //   collectionFormik?.setFieldValue("endDate", endDate);
+  // }
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
@@ -286,11 +294,9 @@ const CreateCollection = () => {
     initialValues: {
       title: "",
       description: "",
-      status: startDate1 === null ? collectionStatus : "scheduled",
-      ...(startDate1 !== null &&
-      { startDate: new Date(startDate1) }),
-      ...(endDate1 !== null &&
-      { endDate: new Date(endDate1) }),
+      status: "",
+      startDate: "",
+      endDate: "",
       isVisibleFrontend: true,
       filter: true,
       notes: "",
@@ -309,7 +315,12 @@ const CreateCollection = () => {
 
   useEffect(() => {
     collectionFormik.setFieldValue("description", appTextEditor)
-  },[appTextEditor])
+    collectionFormik.setFieldValue("startDate", startDate1);
+    collectionFormik.setFieldValue("endDate", endDate1);
+    if(startDate1 !== null){
+      collectionFormik.setFieldValue("status", "scheduled");
+    }
+  },[appTextEditor, startDate1, endDate1])
 
   useEffect(() => {
     if (createCollectionError) {

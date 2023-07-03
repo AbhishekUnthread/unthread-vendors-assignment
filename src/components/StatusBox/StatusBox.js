@@ -27,7 +27,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, toggleData=['active','in-active'], startDate, endDate, handleStartDate, handleEndDate, clearDate}) => {
-  console.log(startDate, 'startDate');
 
   const showScheduleData = showSchedule === undefined ? false : true;
 
@@ -40,7 +39,8 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
   const startTime = moment(startDate).format("HH:MM a")
   const endDateNew = moment(endDate).format("DD/MM/YYYY")
   const endTime = moment(endDate).format("HH:MM a")
-  console.log(startDateLocal, 'startDateLocal');
+
+  console.log(startDateLocal,'startDateLocal')
 
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);
@@ -88,18 +88,18 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         </ToggleButton>
       </ToggleButtonGroup>
       {showScheduleData && (
-        <div>
           <div className="d-flex align-items-center mt-2 c-pointer">
             <img src={clock} alt="clock" className="me-1" width={12} />
             <small className="text-blue-2" onClick={handelScheduleProduct}>
               Schedule {startDate == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate == null ? '' : `till ${endDateNew} at ${endTime}` }
             </small>
           </div>
+      )}
+      {startDate !== null && (
           <div className="d-flex justify-content-between px-4 py-3">
             <small className="text-blue-2" style={{cursor: 'pointer'}} onClick={handelScheduleProduct}>Edit</small>
             <small style={{color: '#F67476', cursor: 'pointer'}} onClick={clearDate}>Clear</small>
           </div>
-        </div>
       )}
 
       <Dialog
@@ -140,7 +140,6 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
             <DesktopDateTimePicker
               value={startDateLocal}
               onChange={(newValue) => {
-                console.log(newValue, 'newValue')
                 setStartDate(newValue);
                 handleStartDate(newValue)
               }}
