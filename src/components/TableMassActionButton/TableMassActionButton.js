@@ -15,6 +15,7 @@ const TableMassActionButton = ({onSelect, headingName, defaultValue=['active','I
   const handleEditStatusClose = () => {
     setAnchorEditStatusEl(null);
   };
+
   const openEditStatus = Boolean(anchorEditStatusEl);
   const idEditStatus = openEditStatus ? "simple-popover" : undefined;
   // * MASS ACTION POPOVERS ENDS
@@ -29,6 +30,7 @@ const TableMassActionButton = ({onSelect, headingName, defaultValue=['active','I
         <small className="text-lightBlue">{headingName}</small>
         <img src={arrowDown} alt="arrowDown" className="ms-2" />
       </button>
+
       <Popover
         anchorOrigin={{
           vertical: "bottom",

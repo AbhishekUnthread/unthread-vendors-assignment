@@ -121,7 +121,7 @@ const Collections = () => {
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({...filterParams}, { enabled: Object.keys(filterParameter).length > 0 });
+  } = useGetAllCollectionsQuery({...filterParams});
 
   const [
     deleteCollection,
@@ -261,7 +261,7 @@ const Collections = () => {
               <Tab label="All" className="tabs-head" />
               <Tab label="Active" className="tabs-head" />
               <Tab label="In-Active" className="tabs-head" />
-              <Tab label="Archieved" className="tabs-head" />
+              <Tab label="Archived" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">

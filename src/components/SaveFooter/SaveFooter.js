@@ -5,7 +5,7 @@ const SaveFooter = ({handleSubmit,handleSubmitAndAddAnother, saveAsDraft, saveAd
   const navigate = useNavigate()
 
   return (
-    <div className="row create-buttons pt-5 pb-3 justify-content-between">
+    <div className="row create-buttons pt-5 pb-3 justify-content-between mb-2">
     <div className="d-flex w-auto px-0">
         <button
         className="button-red-outline py-2 px-4"

@@ -1,5 +1,6 @@
-import React, { forwardRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { forwardRef, useEffect, useState } from "react";
+import { Link,useNavigate } from "react-router-dom";
+
 // ! COMPONENT IMPORTS
 import {
   EnhancedTableHead,
@@ -31,12 +32,15 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import { useBulkEditVendorMutation } from "../../../features/parameters/vendors/vendorsApiSlice";
+import { useBulkEditVendorMutation, useEditVendorMutation } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { useDispatch } from "react-redux";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { LoadingButton } from "@mui/lab";
 import question from "../../../assets/icons/question.svg"
 import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+import DeleteIcon from '@mui/icons-material/Delete';
+import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
+import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 
 // ? TABLE STARTS HERE
 function createData(vId, vendorsName, noOfProducts, status) {
@@ -88,6 +92,10 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const [archive, setArchive] = React.useState(false);
   const [name, setName] = React.useState(false);
+  const [vendor, setVendor] = React.useState(false);
+  const [vendorName, setVendorName] = React.useState("")
+  const [vendorStatus, setVendorStatus] = React.useState("in-active")
+  const navigate = useNavigate();
 
 
 
@@ -100,6 +108,14 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
     setName(row?.name);
   };
 
+  const [
+    editVendor,
+    { data: editData,
+      isLoading: editVendorIsLoading,
+      isSuccess: editVendorIsSuccess,
+      error: editVendorError },
+  ] = useEditVendorMutation();
+
   const[bulkEdit,
   {
     data: bulkEditVendor,
@@ -109,6 +125,9 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
   }]=useBulkEditVendorMutation();
 
   const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
+  const handleMassAction  = (status) => {
     setSelectedStatus(status);
   };
 
@@ -121,12 +140,20 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
             id,
             status: "active",
           };
-        } else if (selectedStatus === "Set as Draft") {
+        }
+        else if (selectedStatus === "Set as In-Active") {
           return {
             id,
-            status: "draft",
+            status: "in-active",
           };
-        } else {
+        } 
+        else if(selectedStatus==="Archive"){
+          return{
+            id,
+            status:"archieved"
+          }
+        }
+        else {
           return {
             id,
             status: "", // Set a default value here if needed
@@ -142,6 +169,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
+    console.log({url:rowsPerPage});
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -153,14 +181,23 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
     setOrderBy(property);
   };
 
+  // const handleSelectAllClick = (event) => {
+  //   if (event.target.checked) {
+  //     const newSelected = list.map((n) => n._id);
+  //     setSelected(newSelected);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = list.map((n) => n._id);
+      const newSelected = list.slice(0, rowsPerPage).map((n) => n._id);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
+  
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -189,11 +226,68 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
   
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
+// Archive Starts Here
+  const [archivedModal,setArchivedModal] = useState(false)
 
-  const handleArchive =()=>{
-    deleteData(archive);
-    toggleArchiveModalHandler();
+  const handleArchive = (row) => {
+    setArchivedModal(true);
+    setVendorName(row?.name)
+    setVendor(row);
   }
+  const handleModalClose = () => {
+    setArchivedModal(false);
+  };
+  const handleArchivedModalOnSave = () => {
+    setArchivedModal(false);
+    editVendor({
+      id: vendor?._id,
+      details : {
+        status: "archieved",
+        showFilter:false
+      }
+  })
+  }
+// Archive ends here
+
+//unArchive Starts here
+const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
+
+const handleUnArchive = (row) => {
+  setShowUnArhcivedModal(true)
+  setVendorName(row?.name)
+  setVendor(row)
+}
+const closeUnArchivedModal = () => {
+  setShowUnArhcivedModal(false)
+}
+const handleValue = (e) => {
+  setVendorStatus(e.target.value)
+}
+const handleUnArchived = () => {
+  editVendor({
+     id: vendor?._id,
+     details : {
+       status: vendorStatus,
+       showFilter:true
+     }
+ })
+ setShowUnArhcivedModal(false)
+ dispatch(showSuccess({ message: "Un-Archived this vendor successfully" }));
+}
+//unarchive ends here
+const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+
+const handleDeleteOnClick = (row) => {
+  setShowDeleteModal((prevState) => !prevState);
+  setVendor(row)
+  setVendorName(row?.name);
+};
+const handleDelete =()=>{
+  console.log({rrl:vendor._id})
+  deleteData(vendor?._id);
+  handleDeleteOnClick();
+  dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+}
 
   return (
     <React.Fragment>
@@ -210,12 +304,23 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
               </span>
             </small>
           </button>
+          {/* <button className="button-grey py-2 px-3 ms-2">
+            <small className="text-lightBlue">
+              Select all {totalCount} tags &nbsp;
+              <span
+                className="text-blue-2 c-pointer"
+                onClick={() => setSelected([])}
+              >
+                (Clear Selection)
+              </span>
+            </small>
+          </button> */}
           <TableEditStatusButton
             onSelect={handleStatusSelect}
-            defaultValue={["Set as Active", "Set as Draft"]}
+            defaultValue={["Set as Active", "Set as In-Active"]}
             headingName="Edit Status"
           />
-          <TableMassActionButton />
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={['Edit','Archive']}/>
         </div>
       )}
       {!error ? (
@@ -274,11 +379,17 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
                           >
                             <Link
                               className="text-decoration-none"
-                              to="/parameters/vendors/edit"
+                            >
+                            <div className="d-flex align-items-center py-2"
+                              onClick={()=>{
+                                dispatch(updateVendorId(row._id));
+                                navigate("/parameters/vendors/edit")
+                                }}
                             >
                               <p className="text-lightBlue rounded-circle fw-600">
                                 {row.name}{" "}
                               </p>
+                            </div>
                             </Link>
                           </TableCell>
 
@@ -306,9 +417,50 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
                               </div>
                             </div>
                           </TableCell>
+                          {row.status ==="archieved"?
+                        <TableCell style={{ width: 140, padding: 0 }}>
+                         <div className="d-flex align-items-center">
+                          <Tooltip title="Delete" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2" 
+                                onClick={(e) => {
+                                  handleDeleteOnClick(row)
+                                }}
+                            >
+                              <DeleteIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+
+                          <Tooltip
+                              onClick={() => {
+                                handleUnArchive(row)
+                                }
+                              }
+                                  title="Un-Archive"
+                                  placement="top"
+                                >
+                                  <div className="table-edit-icon rounded-4 p-2">
+                                    <InventoryIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </div>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+
+                          :
                           <TableCell style={{ width: 120, padding: 0 }}>
                             <div className="d-flex align-items-center">
-                              {edit && (
+
                                 <Tooltip title="Edit" placement="top">
                                   <Link
                                     onClick={(e) => {
@@ -325,20 +477,12 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
                                     />
                                   </Link>
                                 </Tooltip>
-                              )}
 
-                              {deleteData && (
                                 <Tooltip
-                                  onClick={(e) => {
-                                    row.status === "active"
-                                      ? toggleArchiveModalHandler(row)
-                                      : deleteData(row);
-                                  }}
-                                  title={
-                                    row.status === "active"
-                                      ? "Archive"
-                                      : "Un-Archive"
-                                  }
+                                onClick={() => {
+                                handleArchive(row)
+                                }}
+                                  title="Archive"
                                   placement="top"
                                 >
                                   <div className="table-edit-icon rounded-4 p-2">
@@ -351,9 +495,8 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
                                     />
                                   </div>
                                 </Tooltip>
-                              )}
                             </div>
-                          </TableCell>
+                          </TableCell>}
                         </TableRow>
                       );
                     })}
@@ -390,7 +533,46 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
       ) : (
         <></>
       )}
-      <DeleteModal showCreateModal={showCreateModal} toggleArchiveModalHandler={toggleArchiveModalHandler} handleArchive={handleArchive} name={name} />
+      <Dialog
+          open={archivedModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleModalClose}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={question} alt="question" width={200} />
+            <div className="row"></div>
+            <h6 className="text-lightBlue mt-2 mb-2">
+              Are you sure you want to Archive {vendorName} ?
+            </h6>
+            <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+            </div>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-between px-4 pb-4">
+            <button
+              className="button-red-outline py-2 px-3 me-5"
+              onClick={handleModalClose}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-3 ms-5"
+              onClick={handleArchivedModalOnSave}
+            >
+              <p>Archived</p>
+            </button>
+          </DialogActions>
+        </Dialog>
+      <DeleteModal showCreateModal={showDeleteModal} toggleArchiveModalHandler={handleDeleteOnClick} handleArchive={handleDelete} name={vendorName} />
+      <UnArchivedModal 
+          handleValue={handleValue}
+          showUnArchivedModal={showUnArchivedModal}
+          closeUnArchivedModal={closeUnArchivedModal}
+          handleUnArchived={handleUnArchived}
+        />
     </React.Fragment>
   );
 };
