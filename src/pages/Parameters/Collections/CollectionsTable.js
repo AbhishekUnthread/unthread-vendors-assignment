@@ -65,12 +65,13 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const [name, setName] = React.useState(false);
   const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
   const [unArchiveID, setUnArchiveID] = React.useState(false);
-  const [statusValue, setStatusValue] = React.useState("in-active")
-  const [massActions, setMassActions] = React.useState("")
+  const [statusValue, setStatusValue] = React.useState("in-active");
+  const [massActionStatus, setMassActionStatus] = React.useState("");
+  const [forMassAction, setForMassAction] = React.useState(false)
 
-  const handleValue = (e) => {
-    setStatusValue(e.target.value)
-  }
+  const handleStatusValue = (value) => {
+    setStatusValue(value);
+  };
 
   const closeUnArchivedModal = () => {
     setShowUnArhcivedModal(false)
@@ -107,12 +108,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     setName(row?.name);
   };
 
-   const handleArchiveModal =()=>{
-    deleteData(archiveID);
-    toggleArchiveModalHandler();
-    dispatch(showSuccess({ message: "Deleted this collection successfully" }));
-  }
-
   useEffect(() => {
     if (selectedStatus !== null) {
       const newState = selected.map((id) => {
@@ -140,7 +135,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
         } else if (selectedStatus === "Set as Un-Archived") {
           return {
             id,
-            status: "in-active",
+            status: statusValue,
           };
         } else {
           return {
@@ -153,8 +148,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
       const requestData = {
         updates: newState
       };
-      bulkEditCollection(requestData).unwrap().then(()=>dispatch(showSuccess({ message: "Status updated successfully" })));
+      bulkEditCollection(requestData).unwrap().then(()=>
+      dispatch(showSuccess({ message: "Status updated successfully" })));
       setSelectedStatus(null);
+      setShowUnArhcivedModal(false)
+      setShowDeleteModal(false);
     }
   }, [selected, selectedStatus]);
   
@@ -163,7 +161,15 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   };
 
   const handleMassAction  = (status) => {
-    setSelectedStatus(status);
+    setForMassAction(true)
+    setMassActionStatus(status);
+    if(collectionType !== 3) {
+      setSelectedStatus(status);
+    } else if(collectionType === 3 && status === "Set as Un-Archived") {
+      setShowUnArhcivedModal(true);
+    } else if(collectionType === 3 && status === "Delete") {
+      setShowDeleteModal(true);
+    }
   };
 
   const headCells = [
@@ -231,7 +237,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
   };
 
@@ -261,14 +266,28 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   }
 
   const handleUnArchived = () => {
-     editCollection({
-        id: unArchiveID,
-        details : {
-          status: statusValue
-        }
-    })
-    setShowUnArhcivedModal(false)
-    dispatch(showSuccess({ message: "Un-Archived this collection successfully" }));
+    if(forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+    } else {
+      editCollection({
+          id: unArchiveID,
+          details : {
+            status: statusValue
+          }
+      })
+      setShowUnArhcivedModal(false)
+      dispatch(showSuccess({ message: "Un-Archived this collection successfully" }));
+    }
+  }
+
+  const handleArchiveModal =()=>{
+    if(forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+    } else {
+      deleteData(archiveID);
+      toggleArchiveModalHandler();
+      dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+    }
   }
 
   const handleModalClose = () => {
@@ -290,8 +309,20 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
               </span>
             </small>
           </button>
-          { collectionType !== 3 && <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as In-Active']} headingName="Edit Status"/>}
-          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={ collectionType !== 3 ? ['Edit','Set as Archived'] : ['Delete','Set as Un-Archived']}/>
+          { collectionType !== 3 && 
+            <TableEditStatusButton 
+              onSelect={handleStatusSelect} 
+              defaultValue={['Set as Active','Set as In-Active']} 
+              headingName="Edit Status"
+            />
+          }
+          <TableMassActionButton 
+            headingName="Mass Action" 
+            onSelect={handleMassAction} 
+            defaultValue={ collectionType !== 3 ? 
+            ['Edit','Set as Archived'] : 
+            ['Delete','Set as Un-Archived']}
+          />
         </div>
       )}
       {!error ? (
@@ -549,9 +580,14 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
             </button>
           </DialogActions>
         </Dialog>
-        <DeleteModal showCreateModal={showDeleteModal} toggleArchiveModalHandler={toggleArchiveModalHandler} handleArchive={handleArchiveModal} name={name} />
+        <DeleteModal 
+          showCreateModal={showDeleteModal}
+          toggleArchiveModalHandler={toggleArchiveModalHandler}
+          handleArchive={handleArchiveModal} 
+          name={name} 
+        />
         <UnArchivedModal 
-          handleValue={handleValue}
+          handleStatusValue={handleStatusValue}
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}

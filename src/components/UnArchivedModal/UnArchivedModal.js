@@ -18,12 +18,16 @@ const Transition = forwardRef(function Transition(props, ref) {
   });
   // ? DIALOG TRANSITION ENDS HERE
 
-const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnArchived, handleValue }) => {
+const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnArchived, handleStatusValue }) => {
   const [statusValue, setStatusValue] = React.useState("in-active");
 
   const handleStatusRadio = (event) => {
-    setStatusValue(event.target.value);
+    const value = event.target.value;
+    setStatusValue(value);
+    handleStatusValue(value);
   }
+
+  console.log(statusValue,'statusValue')
 
   return (
     <>
@@ -59,10 +63,9 @@ const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnAr
             value={statusValue}
             onChange={handleStatusRadio}
             className="d-flex justify-content-between px-4 py-3"
-            onClick={(newValue) => {
-              handleValue(newValue.target.value)
-
-            }}
+            // onClick={(newValue) => {
+            //   handleValue(newValue.target.value)
+            // }}
           >
             <FormControlLabel
               value="active"
