@@ -104,7 +104,7 @@ const EditSubCategories = () => {
       let editItem ={
         name: subCategoryName,
         description: subCategoryDescription,
-        status: subCategoryStatus,
+        status: startDate === null ? subCategoryStatus :"scheduled",
         isVisibleFrontend: subCategoryVisibility,
         notes: subCategoryNotes,
         showFilter: checked,
