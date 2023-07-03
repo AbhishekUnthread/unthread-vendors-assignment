@@ -46,25 +46,25 @@ const EditVendor = () => {
   const [checked, setChecked] = React.useState(false);
   const vendorId = useSelector((state)=>state.vendor.vendorId)
   const [products,setProducts] = React.useState([])
-  const [startDate1, setStartDate1] = useState(null)
-  const [endDate1, setEndDate1] = useState(null)
   const [vendorDuplicateName, setVendorDuplicateName] = useState("");
   const [duplicateDescription, setDuplicateDescription] = useState(false);
   const [duplicateFilter, setDuplicateFilter] = useState(false);
   const [index, setIndex] = useState(null);
   const [vendorIndex, setVendorIndex] = useState();
-  const [hideFooter, setHideFooter] = useState(false)
+  const [hideFooter, setHideFooter] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
+  const [initialData, setInitialData] = useState({});
 
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      setHideFooter(true);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []); 
+  // useEffect(() => {
+  //   const handleKeyDown = (event) => {
+  //     setHideFooter(true);
+  //   };
+  //   window.addEventListener('keydown', handleKeyDown);
+  //   return () => {
+  //     window.removeEventListener('keydown', handleKeyDown);
+  //   };
+  // }, []); 
 
 
 
@@ -123,15 +123,13 @@ const EditVendor = () => {
       // setChecked(vendor?.showFilter);
       // setStartDate1(vendor?.startDate);
       // setEndDate1(vendor?.endDate);
-
+      setInitialData(vendorsData.data.data[0]);
       setVendorName(vendorsData.data.data[0].name);
       setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
       setVendorNotes(vendorsData.data.data[0].notes)
       setVendorNotesCompare(vendorsData.data.data[0].notes)
       setVendorStatus(vendorsData.data.data[0].status)
       setChecked(vendorsData.data.data[0].showFilter)
-      setStartDate1(vendorsData.data.data[0].startDate)
-      setEndDate1(vendorsData.data.data[0].endDate)
     }
   }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess]);
 
@@ -140,27 +138,38 @@ const EditVendor = () => {
     console.log({urln:vendorIndex})
     setIndex(vendorIndex)
   };
-
+console.log("dgrrg",vendorStatus)
   const getPreviousVendorId = () => {
     setVendorIndex(prevIndex => (prevIndex === 0 ? vendorsData.data.data.length - 1 : prevIndex - 1));
     setIndex(vendorsData.data.data[vendorIndex])
   };
-  
-    const vendorNotesChange=(event)=>{
-      setVendorNotes(event.target.value);
-    }
-    const vendorStatusChange=(event,vendorStatus)=>{
-      setVendorStatus(vendorStatus);
-    }   
 
     const handleNameChange = (event) => {
-      setVendorName(event.target.value); // Updating the vendor name based on the input value
+      const newValue = event.target.value;
+      setVendorName(newValue);
+      setIsChanged(newValue !== initialData.name || vendorNotes !== initialData.notes );
     };
+  
+    const vendorNotesChange=(event)=>{
+      const newValue = event.target.value;
+      setVendorNotes(newValue);
+      setIsChanged(vendorName !== initialData.name || newValue !== initialData.notes);
+    }
+    const vendorStatusChange=(event,vendorStatus)=>{
+      setVendorStatus(event.target.value);
+      setIsChanged(true);
+      // setIsChanged(vendorName !== initialData.notes || vendorNotes !== initialData.names || newValue !== initialData.status || checked !== initialData.showFilter);
+    }   
 
     const handleFilterChange=(event)=>{
-      setChecked(event.target.checked);
+      const newValue = event.target.checked;
+      setChecked(newValue);
+      // setIsChanged(true);
+      // setIsChanged(vendorName !== initialData.names || vendorNotes !== initialData.notes || vendorStatus !== initialData.status || newValue !== initialData.showFilter);
     }
     const handleSubmit = () => {
+      setIsChanged(false);
+      setInitialData({ vendorName, vendorNotes, vendorStatus, checked });
      if(vendorId !== "")
      {
        // Calling Vendor edit API
@@ -378,7 +387,7 @@ const EditVendor = () => {
       
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
 
-        { (hideFooter || vendorNotesCompare!==vendorNotes || vendorStatusCompare!==vendorStatus)&& <div className="row create-buttons pt-5 pb-3 justify-content-between">
+        { isChanged && <div className="row create-buttons pt-5 pb-3 justify-content-between">
           <SaveFooter handleSubmit={handleSubmit} />          
         </div>
            }

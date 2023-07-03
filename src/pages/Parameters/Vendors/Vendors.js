@@ -112,16 +112,25 @@ if (selectedSortOption) {
 // if (selectedStatusOption !== null) {
 //   queryParameters.status = selectedStatusOption;
 // }
-if (selectedStatusOption.length > 0) {
-  if (selectedStatusOption.includes("active")) {
-    queryParameters.status = "active";
-  }
+// if (selectedStatusOption.length > 0) {
+//   if (selectedStatusOption.includes("active")) {
+//     queryParameters.status = "active";
+//   }
 
-  if (selectedStatusOption.includes("archived")) {
-    queryParameters.status = "archieved";
+//   if (selectedStatusOption.includes("archived")) {
+//     queryParameters.status = "archieved";
+//   }
+// }
+
+if (selectedStatusOption !== null) {
+  if (Array.isArray(selectedStatusOption)) {
+    queryParameters.status = selectedStatusOption.join(',');
+  } else {
+    queryParameters.status = selectedStatusOption;
   }
 }
 
+// console.log("fjhvehjd",queryParameters.status = selectedStatusOption)
 if(searchValue)
 {
   queryParameters.name = searchValue;
@@ -696,9 +705,9 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
                     }
                     label="Archived"
                     className="me-0"
-                    value="archived"
+                    value="archieved"
                     // checked={selectedStatusOption === "archived"}
-                    checked={selectedStatusOption.includes("archived")}
+                    checked={selectedStatusOption.includes("archieved")}
                   />
                 </FormGroup>
               </Popover>
