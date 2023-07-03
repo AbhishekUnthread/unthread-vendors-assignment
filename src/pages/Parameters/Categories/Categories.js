@@ -124,9 +124,9 @@ const Categories = () => {
   }
 
   const categoryTypeQuery = categoryType === 0 ? { createdAt: -1 }
-  : categoryType === 1 ? { status: ['active','scheduled','in-active'] }
-  : categoryType === 2 ? { createdAt: -1, status: "archieved" }
-  : categoryType === 3 ? { createdAt: -1, status: "archieved" }
+  : categoryType === 1 ? { status: statusFilter }
+  : categoryType === 2 ? { createdAt: -1, status: ["archieved"] }
+  : categoryType === 3 ? { createdAt: -1, status: ["archieved"] }
   : {};
 
   const filterParams = { ...filterParameter, ...categoryTypeQuery };
@@ -338,9 +338,24 @@ const Categories = () => {
   };
 
   const handleStatusChange = (event) => {
-    setStatusFilter(event.target.value);
-    setAnchorStatusEl(null);
+    const selectedStatus = event.target.value;
+    if (event.target.value) {
+      if (statusFilter.length === 0) {
+        let item = [];
+        statusFilter.push(selectedStatus);
+        setStatusFilter(item);
+      }
+      if (statusFilter.length > 0 && statusFilter.includes(selectedStatus)) {
+        setStatusFilter((item) => item.filter((i) => i !== selectedStatus));
+      }
+      if (statusFilter.length > 0 && !statusFilter.includes(selectedStatus)) {
+        let item = [...statusFilter];
+        item.push(selectedStatus);
+        setStatusFilter(item);
+      }
+    }
   };
+
 
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
@@ -886,33 +901,27 @@ const Categories = () => {
                 className="columns"
               >
                 <FormControl className="px-2 py-1">
-                  <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    value={statusFilter}
+                  <FormControlLabel
+                    value="active"
+                    control={<Checkbox size="small" sx={{ color: "#C8D8FF" }}/>}
+                    label="Active"
                     onChange={handleStatusChange}
-                  >
-                    <FormControlLabel
-                      value="active"
-                      control={<Radio size="small" />}
-                      label="Active"
-                    />
-                    <FormControlLabel
-                      value="in-active"
-                      control={<Radio size="small" />}
-                      label="In-Active"
-                    />
-                    <FormControlLabel
-                      value="scheduled"
-                      control={<Radio size="small" />}
-                      label="Scheduled"
-                    />
-                    <FormControlLabel
-                      value="archieved"
-                      control={<Radio size="small" />}
-                      label="Archived"
-                    />
-                  </RadioGroup>
+                    checked={statusFilter.includes('active')}
+                  />
+                  <FormControlLabel
+                    value="in-active"
+                    control={<Checkbox size="small" sx={{ color: "#C8D8FF" }}/>}
+                    label="In-Active"
+                    onChange={handleStatusChange}
+                    checked={statusFilter.includes('in-active')}
+                  />
+                  <FormControlLabel
+                    value="scheduled"
+                    control={<Checkbox size="small" sx={{ color: "#C8D8FF" }}/>}
+                    label="Scheduled"
+                    onChange={handleStatusChange}
+                    checked={statusFilter.includes('scheduled')}
+                  />
                 </FormControl>
               </Popover>
               <button
