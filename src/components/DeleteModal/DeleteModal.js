@@ -1,14 +1,14 @@
 import { LoadingButton } from '@mui/lab'
 import { Box, Dialog, DialogActions, DialogContent, Slide, Typography } from '@mui/material'
 import React, { forwardRef } from 'react'
-import question from '../../assets/images/products/question.svg'
+import Delete from "../../assets/images/Components/Cancel.png";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
   // ? DIALOG TRANSITION ENDS HERE
 
-const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,name=""}) => {
+const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,name}) => {
   return (
     <>
     <Dialog
@@ -30,35 +30,34 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
               width: "50%",
             }}
           >
-            <img src={question} alt="questionMark" />
+            <img 
+              src={Delete}
+              alt="questionMark"
+              width="250px"
+            />
           </Box>
           <Typography
             variant="h5"
             align="center"
             sx={{ color: "lightBlue", marginBottom: 2 }}
           >
-
-            Are you sure you want to permanently delete  {name}?
-
+            Are you sure you want to delete permanently {name} ?
           </Typography>
           <br />
         </DialogContent>
-        <hr className="hr-grey-6 my-0" />
-        <DialogActions className="d-flex justify-content-between px-4 py-3">
+        <DialogActions className="d-flex justify-content-between px-4 pb-4">
           <button
-            className="button-grey py-2 px-5"
+            className="button-red-outline py-2 px-3 me-5"
             onClick={toggleArchiveModalHandler}
-            type="button"
           >
-            <p className="text-lightBlue">No</p>
+            <p>No</p>
           </button>
-          <LoadingButton
-            className="button-gradient py-2 px-5"
-            type="button"
+          <button
+            className="button-gradient py-2 px-3 ms-5"
             onClick={handleArchive}
           >
             <p>Yes</p>
-          </LoadingButton>
+          </button>
         </DialogActions>
       </Dialog>
     </>

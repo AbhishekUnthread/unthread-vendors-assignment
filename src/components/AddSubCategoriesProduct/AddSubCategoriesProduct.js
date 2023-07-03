@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../AddProducts/AddProducts.scss";
 // ! COMPONENT IMPORTS
 import {
@@ -28,6 +28,7 @@ import {
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
+import { useDeleteSubCategoryMutation, useGetAllSubCategoriesQuery } from "../../features/parameters/categories/categoriesApiSlice";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -131,20 +132,6 @@ function createLikeProductData(pId, productName, category, price) {
   return { pId, productName, category, price };
 }
 
-const likeHeadCells = [
-  {
-    id: "productName",
-    numeric: false,
-    disablePadding: true,
-    label: "Sub Categories Name",
-  },
-  {
-    id: "price",
-    numeric: false,
-    disablePadding: false,
-    label: "Price",
-  },
-];
 
 const likeProductRows = [
   createLikeProductData(
@@ -163,42 +150,35 @@ const likeProductRows = [
 ];
 // ? LIKE PRODUCTS TABLE ENDS HERE
 
-const AddSubCategoriesProducts = () => {
-  // ? ADD PRODUCT DRAWER STARTS HERE
+const AddSubCategoriesProducts = ({id}) => {
+  const [subCategoryList,setSubCategoryList] = useState([])
+  
 
-  const [addProductDrawer, setAddProductDrawer] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
+  const {
+    data: subCategoriesData,
+    isLoading: subCategoriesIsLoading,
+    isSuccess: subCategoriesIsSuccess,
+    error: subCategoriesError,
+  } = useGetAllSubCategoriesQuery({
+    categoryId:id
   });
 
-  const toggleAddProductDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
+  const [
+    deleteSubCategory,
+    {
+      isLoading: deleteSubCategoryIsLoading,
+      isSuccess: deleteSubCategoryIsSuccess,
+      error: deleteSubCategoryError,
+    },
+  ] = useDeleteSubCategoryMutation();
+
+  useEffect(()=>{
+    if(subCategoriesData?.data?.data){
+
+      setSubCategoryList(subCategoriesData?.data?.data);
     }
+  },[subCategoriesIsSuccess,subCategoriesData,deleteSubCategoryIsSuccess])
 
-    setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
-  };
-  // ? ADD PRODUCT DRAWER ENDS HERE
-
-  // * PRICE POPOVERS STARTS
-  const [anchorPriceEl, setAnchorPriceEl] = React.useState(null);
-  const handlePriceClick = (event) => {
-    setAnchorPriceEl(event.currentTarget);
-  };
-
-  const handlePriceClose = () => {
-    setAnchorPriceEl(null);
-  };
-
-  const openPrice = Boolean(anchorPriceEl);
-  const idPrice = openPrice ? "simple-popover" : undefined;
-  // * PRICE POPOVERS ENDS
 
   // * TABLE STARTS HERE
   const [order, setOrder] = React.useState("asc");
@@ -213,14 +193,7 @@ const AddSubCategoriesProducts = () => {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.pId);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
+  
 
   const handleLikeSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -276,7 +249,7 @@ const AddSubCategoriesProducts = () => {
           <div className="col-md-3 pe-md-1 py-2">
             <button
               className="button-gradient w-100 py-2 px-3"
-              onClick={toggleAddProductDrawer("right", true)}
+              // onClick={toggleAddProductDrawer("right", true)}
             >
               <p>+ Add Sub Categories</p>
             </button>
@@ -312,11 +285,11 @@ const AddSubCategoriesProducts = () => {
                 orderBy={orderBy}
                 onSelectAllClick={handleLikeSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={likeProductRows.length}
+                rowCount={subCategoryList?.length}
                 headCells={drawerHeadCells}
               />
               <TableBody>
-                {stableSort(likeProductRows, getComparator(order, orderBy))
+                {stableSort(subCategoryList, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
                     const isItemSelected = isSelected(row.pId);
@@ -339,7 +312,7 @@ const AddSubCategoriesProducts = () => {
                               "aria-labelledby": labelId,
                             }}
                             size="small"
-                            onClick={(event) => handleClick(event, row.pId)}
+                            onClick={(event) => handleClick(event, row._id)}
                             style={{
                               color: "#5C6D8E",
                               marginRight: 0,
@@ -347,16 +320,19 @@ const AddSubCategoriesProducts = () => {
                           />
                         </TableCell>
                         <TableCell>
-                          <p className="text-lightBlue">{row.category}</p>
+                          <p className="text-lightBlue">{row.name}</p>
                         </TableCell>
                         <TableCell>
                           <div className="d-flex align-items-center c-pointer ">
-                            <p className="text-lightBlue">{row.price}</p>
+                            <p className="text-lightBlue">{row.totalProduct}</p>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="d-flex align-items-center c-pointer ">
                             <img
+                            onClick={()=>{
+                              deleteSubCategory(row._id)
+                            }}
                               src={deleteButton}
                               alt="deleteButton"
                               width={75}
@@ -391,216 +367,6 @@ const AddSubCategoriesProducts = () => {
           />
         </div>
       </div>
-
-      <SwipeableDrawer
-        anchor="right"
-        open={addProductDrawer["right"]}
-        onClose={toggleAddProductDrawer("right", false)}
-        onOpen={toggleAddProductDrawer("right", true)}
-      >
-        <div className="d-flex justify-content-between pt-3 ps-3 pe-2 me-1 align-items-center">
-          <h6 className="text-lightBlue">Select Products</h6>
-          <img
-            src={cancel}
-            alt="cancel"
-            className="c-pointer add-product-padding"
-            onClick={toggleAddProductDrawer("right", false)}
-          />
-        </div>
-        <hr className="hr-grey-6 mt-3 mb-3" />
-        <div className="px-3">
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon sx={{ color: "#c8d8ff" }} />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
-        </div>
-        {selected.length > 0 && (
-          <div className="d-flex justify-content-between align-items-center px-2 mt-3">
-            <button className="button-grey py-2 px-3 border-lightBlue">
-              <small className="text-lightBlue">
-                {selected.length} products are selected&nbsp;
-                <span
-                  className="text-blue-2 c-pointer"
-                  onClick={() => setSelected([])}
-                >
-                  (Clear Selection)
-                </span>
-              </small>
-            </button>
-          </div>
-        )}
-        <TableContainer className="mt-3">
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size="medium"
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-              headCells={likeHeadCells}
-            />
-            <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.pId);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.pId}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            "aria-labelledby": labelId,
-                          }}
-                          size="small"
-                          onClick={(event) => handleClick(event, row.pId)}
-                          style={{
-                            color: "#5C6D8E",
-                            marginRight: 0,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
-                      >
-                        <div className="d-flex align-items-center my-2">
-                          <img
-                            src={ringSmall}
-                            alt="ringSmall"
-                            className="me-2"
-                            height={45}
-                            width={45}
-                          />
-                          <div>
-                            <p className="text-lightBlue fw-600">
-                              {row.productName}
-                            </p>
-                            <small className="mt-2 text-grey-6">
-                              SKU: TFDR012345
-                            </small>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <p className="text-lightBlue">{row.category}</p>
-                      </TableCell>
-                      <TableCell>
-                        <div
-                          className="d-flex align-items-center c-pointer "
-                          aria-describedby={idPrice}
-                          variant="contained"
-                          onClick={handlePriceClick}
-                        >
-                          <p className="text-lightBlue">{row.price}</p>
-                          <img
-                            className="ms-3"
-                            src={arrowDown}
-                            alt="arrowDown"
-                          />
-                        </div>
-                        <Popover
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "center",
-                          }}
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "center",
-                          }}
-                          id={idPrice}
-                          open={openPrice}
-                          anchorEl={anchorPriceEl}
-                          onClose={handlePriceClose}
-                        >
-                          <div className="px-3">
-                            <small className="text-lightBlue">
-                              Default : 12KT • Yellow • Gold • IJ-SI
-                            </small>
-                            <div className="d-flex align-items-center justify-content-between mb-2 mt-3 text-grey-6">
-                              <small>Metal Price</small>
-                              <small className="ms-2">₹&nbsp;15,000</small>
-                            </div>
-                            <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
-                              <small>Diamond Price</small>
-                              <small className="ms-2">₹&nbsp;4,000</small>
-                            </div>
-                            <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
-                              <small>Making Charges</small>
-                              <small className="ms-2">₹&nbsp;1,000</small>
-                            </div>
-                            <div className="d-flex align-items-center justify-content-between mb-3 mt-2 text-grey-6">
-                              <small>GST</small>
-                              <small className="ms-2">₹&nbsp;&nbsp;600</small>
-                            </div>
-                            <div className="d-flex align-items-center justify-content-between mb-2 mt-2">
-                              <p className="text-lightBlue">Total</p>
-                              <p className="ms-2 text-lightBlue fw-600">
-                                ₹&nbsp;20,600
-                              </p>
-                            </div>
-                          </div>
-                        </Popover>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          className="table-pagination"
-        />
-        <div className="d-flex flex-column py-3 px-4 feature-buttons">
-          <hr className="hr-grey-6 my-3 w-100" />
-          <div className="d-flex justify-content-between">
-            <button className="button-gradient py-2 px-5 w-auto ">
-              <p>Add 4 Products</p>
-            </button>
-            <button className="button-lightBlue-outline py-2 px-4">
-              <p>Cancel</p>
-            </button>
-          </div>
-        </div>
-      </SwipeableDrawer>
     </React.Fragment>
   );
 };
