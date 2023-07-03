@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -28,12 +28,16 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
-import { useBulkEditTagMutation } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
+import { useBulkEditTagMutation, useEditTagMutation } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { useDispatch } from "react-redux";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { LoadingButton } from "@mui/lab";
 import question from "../../../assets/icons/question.svg"
 import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
+import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 
 // ? TABLE STARTS HERE
@@ -59,10 +63,21 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const [archive, setArchive] = React.useState(false);
   const [name, setName] = React.useState(false);
+  const [tag, setTag] = React.useState(false);
+  const [tagName, setTagName] = React.useState("")
+  const [tagStatus, setTagStatus] = React.useState("in-active")
+  const navigate = useNavigate();
+
 
 
   const dispatch = useDispatch();
 
+  const[editTag,{
+    data: editData,
+    isLoading: editTagIsLoading,
+    isSuccess: editTagIsSuccess,
+    error: editTagError, 
+  }]=useEditTagMutation();
 
 
 
@@ -107,9 +122,17 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
     setOrderBy(property);
   };
 
+  // const handleSelectAllClick = (event) => {
+  //   if (event.target.checked) {
+  //     const newSelected = list.map((n) => n._id);
+  //     setSelected(newSelected);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = list.map((n) => n._id);
+      const newSelected = list.slice(0, rowsPerPage).map((n) => n._id);
       setSelected(newSelected);
       return;
     }
@@ -119,7 +142,9 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
   };
-
+  const handleMassAction  = (status) => {
+    setSelectedStatus(status);
+  };
   useEffect(() => {
     // Update the state only if the selectedStatus state has a value
     if (selectedStatus !== null) {
@@ -134,7 +159,14 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
             id,
             status: "draft",
           };
-        } else {
+        }
+        else if(selectedStatus==="Archive"){
+          return{
+            id,
+            status:"archieved"
+          }
+        }
+         else {
           return {
             id,
             status: "", // Set a default value here if needed
@@ -181,10 +213,73 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
     setName(row?.name);
   };
 
-  const handleArchive =()=>{
-    deleteData(archive);
-    toggleArchiveModalHandler();
+  // const handleArchive =()=>{
+  //   deleteData(archive);
+  //   toggleArchiveModalHandler();
+  // }
+
+  // Archive Starts Here
+  const [archivedModal,setArchivedModal] = React.useState(false)
+
+  const handleArchive = (row) => {
+    setArchivedModal(true);
+    setTagName(row?.name)
+    setTag(row);
   }
+  const handleModalClose = () => {
+    setArchivedModal(false);
+  };
+  const handleArchivedModalOnSave = () => {
+    setArchivedModal(false);
+    editTag({
+      id: tag?._id,
+      details : {
+        status: "archieved",
+        showFilter:false
+      }
+  })
+  }
+// Archive ends here
+
+//unArchive Starts here
+const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
+
+const handleUnArchive = (row) => {
+  setShowUnArhcivedModal(true)
+  setTagName(row?.name)
+  setTag(row)
+}
+const closeUnArchivedModal = () => {
+  setShowUnArhcivedModal(false)
+}
+const handleValue = (e) => {
+  setTagStatus(e.target.value)
+}
+const handleUnArchived = () => {
+  editTag({
+     id: tag?._id,
+     details : {
+       status: tagStatus,
+       showFilter:true
+     }
+ })
+ setShowUnArhcivedModal(false)
+ dispatch(showSuccess({ message: "Un-Archived this tag successfully" }));
+}
+//unarchive ends here
+const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+
+const handleDeleteOnClick = (row) => {
+  setShowDeleteModal((prevState) => !prevState);
+  setTag(row)
+  setTagName(row?.name);
+};
+const handleDelete =()=>{
+  console.log({rrl:tag._id})
+  deleteData(tag?._id);
+  handleDeleteOnClick();
+  dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+}
 
   return (
     <React.Fragment>
@@ -201,8 +296,19 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
               </span>
             </small>
           </button>
+          {/* <button className="button-grey py-2 px-3 ms-2">
+            <small className="text-lightBlue">
+              Select all {totalCount} tags &nbsp;
+              <span
+                className="text-blue-2 c-pointer"
+                onClick={() => setSelected([])}
+              >
+                (Clear Selection)
+              </span>
+            </small>
+          </button> */}
           <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
-          <TableMassActionButton />
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={['Edit','Archive']}/>
         </div>
       )}
       {!error ? (
@@ -261,11 +367,17 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
                     >
                       <Link
                         className="text-decoration-none"
-                        to="/parameters/tagsManager/edit"
+                      >
+                      <div className="d-flex align-items-center py-2"
+                              onClick={()=>{
+                                dispatch(updateTagId(row._id));
+                                navigate("/parameters/tagsManager/edit")
+                                }}
                       >
                         <p className="text-lightBlue rounded-circle fw-600">
                         {row.name}
                         </p>
+                      </div>
                       </Link>
                     </TableCell>
 
@@ -293,46 +405,86 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
                             </div>
                     </TableCell> */}
                    
-                    <TableCell style={{ width: 120, padding: 0 }}>
-                      <div className="d-flex align-items-center">
+                    {row.status ==="archieved"?
+                        <TableCell style={{ width: 140, padding: 0 }}>
+                         <div className="d-flex align-items-center">
+                          <Tooltip title="Delete" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2" 
+                                onClick={(e) => {
+                                  handleDeleteOnClick(row)
+                                }}
+                            >
+                              <DeleteIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
 
-                      {edit && <Tooltip  title="Edit" placement="top">
-                          <Link
-                           onClick={(e)=>{
-                            edit(row)
-                          }}
-                            className="table-edit-icon rounded-4 p-2"
-                          >
-                            <EditOutlinedIcon
+                          <Tooltip
+                              onClick={() => {
+                                handleUnArchive(row)
+                                }
+                              }
+                                  title="Un-Archive"
+                                  placement="top"
+                                >
+                                  <div className="table-edit-icon rounded-4 p-2">
+                                    <InventoryIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </div>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
 
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </Link>
-                        </Tooltip>} 
-                       
+                          :
+                          <TableCell style={{ width: 120, padding: 0 }}>
+                            <div className="d-flex align-items-center">
 
-                       {deleteData && <Tooltip 
-                         onClick={(e)=>{
-                          row.status === "active"
-                                      ? toggleArchiveModalHandler(row)
-                                      : deleteData(row);
-                        }} title={row.status==="active"?'Archive':'Un-Archive'} placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <InventoryIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip> }  
-                      </div>
-                    </TableCell>
+                                <Tooltip title="Edit" placement="top">
+                                  <Link
+                                    onClick={(e) => {
+                                      edit(row);
+                                    }}
+                                    className="table-edit-icon rounded-4 p-2"
+                                  >
+                                    <EditOutlinedIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </Link>
+                                </Tooltip>
+
+                                <Tooltip
+                                onClick={() => {
+                                handleArchive(row)
+                                }}
+                                  title="Archive"
+                                  placement="top"
+                                >
+                                  <div className="table-edit-icon rounded-4 p-2">
+                                    <InventoryIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </div>
+                                </Tooltip>
+                            </div>
+                          </TableCell>}
                   </TableRow>
                 );
               })}
@@ -368,7 +520,79 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
       ) : (
         <></>
       )}
-      <DeleteModal showCreateModal={showCreateModal} toggleArchiveModalHandler={toggleArchiveModalHandler} handleArchive={handleArchive} name={name} />
+      <Dialog
+          open={archivedModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleModalClose}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={question} alt="question" width={200} />
+            <div className="row"></div>
+            <h6 className="text-lightBlue mt-2 mb-2">
+              Are you sure you want to Archive {tagName} ?
+            </h6>
+            <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+            </div>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-between px-4 pb-4">
+            <button
+              className="button-red-outline py-2 px-3 me-5"
+              onClick={handleModalClose}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-3 ms-5"
+              onClick={handleArchivedModalOnSave}
+            >
+              <p>Archived</p>
+            </button>
+          </DialogActions>
+      </Dialog>
+      <DeleteModal showCreateModal={showDeleteModal} toggleArchiveModalHandler={handleDeleteOnClick} handleArchive={handleDelete} name={tagName} />
+      {/* <UnArchivedModal 
+          handleValue={handleValue}
+          showUnArchivedModal={showUnArchivedModal}
+          closeUnArchivedModal={closeUnArchivedModal}
+          handleUnArchived={handleUnArchived}
+        /> */}
+      <Dialog
+          open={showUnArchivedModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={closeUnArchivedModal}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={question} alt="question" width={200} />
+            <div className="row"></div>
+            <h6 className="text-lightBlue mt-2 mb-2">
+              Are you sure you want to Un-Archive {tagName} ?
+            </h6>
+            <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+            </div>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-between px-4 pb-4">
+            <button
+              className="button-red-outline py-2 px-3 me-5"
+              onClick={closeUnArchivedModal}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-3 ms-5"
+              onClick={handleUnArchived}
+            >
+              <p>Activate</p>
+            </button>
+          </DialogActions>
+      </Dialog>
 
     </React.Fragment>
 
