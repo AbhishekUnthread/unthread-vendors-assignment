@@ -580,7 +580,7 @@ const EditCollection = () => {
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-              <div className="col-md-12 px-0 mt-3">
+              <div className="col-md-12 px-0 mt-1">
                 <div className="d-flex mb-1">
                   <p className="text-lightBlue me-2">Collection Title</p>
                   <Tooltip title="Lorem ipsum" placement="top">
@@ -1325,9 +1325,9 @@ const EditCollection = () => {
           </div>
         </div>
 
-        { hideFooter && <div className="row create-buttons pt-5 pb-3 justify-content-between">
+        { hideFooter && 
           <SaveFooter handleSubmit={handleSubmit} />          
-        </div> }
+         }
       <Dialog
         open={openDuplicateCollection}
         TransitionComponent={Transition}

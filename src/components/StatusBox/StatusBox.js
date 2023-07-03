@@ -79,18 +79,18 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         </ToggleButton>
       </ToggleButtonGroup>
       {showScheduleData && (
-        <div>
           <div className="d-flex align-items-center mt-2 c-pointer">
             <img src={clock} alt="clock" className="me-1" width={12} />
             <small className="text-blue-2" onClick={handelScheduleProduct}>
               Schedule {startDate == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate == null ? '' : `till ${endDateNew} at ${endTime}` }
             </small>
           </div>
+      )}
+      {startDate !== null && (
           <div className="d-flex justify-content-between px-4 py-3">
             <small className="text-blue-2" style={{cursor: 'pointer'}} onClick={handelScheduleProduct}>Edit</small>
             <small style={{color: '#F67476', cursor: 'pointer'}} onClick={clearDate}>Clear</small>
           </div>
-        </div>
       )}
 
       <Dialog

@@ -2,6 +2,7 @@ import React, { forwardRef, useState, useEffect, useReducer } from "react";
 import { Link } from "react-router-dom";
 import { 
   Box,
+  Checkbox,
   FormControl,
   FormControlLabel,
   Paper,
@@ -78,20 +79,34 @@ const Collections = () => {
     initialCollectionState
   );
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState(["active","in-active","scheduled"]);
   const [searchValue, setSearchValue] = useState("");
-
+  
   const filterParameter = {};
 
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
   }
-  
-  const handleStatusChange = (event) => {
-    setStatusFilter(event.target.value)
-    setAnchorStatusEl(null)
-  }
 
+  const handleStatusChange = (event) => {
+    const selectedStatus = event.target.value;
+    if (event.target.value) {
+      if (statusFilter.length === 0) {
+        let item = [];
+        statusFilter.push(selectedStatus);
+        setStatusFilter(item);
+      }
+      if (statusFilter.length > 0 && statusFilter.includes(selectedStatus)) {
+        setStatusFilter((item) => item.filter((i) => i !== selectedStatus));
+      }
+      if (statusFilter.length > 0 && !statusFilter.includes(selectedStatus)) {
+        let item = [...statusFilter];
+        item.push(selectedStatus);
+        setStatusFilter(item);
+      }
+    }
+  };
+  
   if (sortFilter) {
     if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
       filterParameter.alphabetical = sortFilter == "alphabeticalAtoZ" ? "1" : "-1";
@@ -292,33 +307,27 @@ const Collections = () => {
                 className="columns"
               >
                 <FormControl className="px-2 py-1">
-                  <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    value={statusFilter}
+                  <FormControlLabel
+                    value="active"
+                    control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
+                    label="Active"
                     onChange={handleStatusChange}
-                  >
-                    <FormControlLabel
-                      value="active"
-                      control={<Radio size="small" />}
-                      label="Active"
-                    />
-                    <FormControlLabel
-                      value="in-active"
-                      control={<Radio size="small" />}
-                      label="In-Active"
-                    />
-                    <FormControlLabel
-                      value="scheduled"
-                      control={<Radio size="small" />}
-                      label="Scheduled"
-                    />
-                    <FormControlLabel
-                      value="archived"
-                      control={<Radio size="small" />}
-                      label="Archived"
-                    />
-                  </RadioGroup>
+                    checked={statusFilter.includes('active')}
+                  />
+                  <FormControlLabel
+                    value="in-active"
+                    control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
+                    label="In-Active"
+                    onChange={handleStatusChange}
+                    checked={statusFilter.includes('in-active')}
+                  />
+                  <FormControlLabel
+                    value="scheduled"
+                    control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
+                    label="Scheduled"
+                    onChange={handleStatusChange}
+                    checked={statusFilter.includes('scheduled')}
+                  />
                 </FormControl>
               </Popover>
               <button
@@ -411,6 +420,7 @@ const Collections = () => {
               error={error}
               list={collectionList}
               pageLength={pageLength}
+              collectionType={collectionType}
             />
           </TabPanel>
         </Paper>

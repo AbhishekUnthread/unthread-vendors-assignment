@@ -262,16 +262,6 @@ const CreateCollection = () => {
     isSuccess: collectionIsSuccess,
     error: collectionError,
   } = useGetAllCollectionsQuery({ createdAt: "-1", id: collectionId });
-
-  const [
-    uploadFile, 
-    {
-      data,
-      isLoading,
-      isSuccess,
-      isError
-    }
-  ] = UseFileUpload();
   
   const [
     createCollection,
@@ -286,11 +276,9 @@ const CreateCollection = () => {
     initialValues: {
       title: "",
       description: "",
-      status: startDate1 === null ? collectionStatus : "scheduled",
-      ...(startDate1 !== null &&
-      { startDate: new Date(startDate1) }),
-      ...(endDate1 !== null &&
-      { endDate: new Date(endDate1) }),
+      status: "",
+      ...(startDate1 !== null && { startDate: "" }),
+      ...(endDate1 !== null && { endDate: "" }),
       isVisibleFrontend: true,
       filter: true,
       notes: "",
@@ -303,13 +291,22 @@ const CreateCollection = () => {
         .unwrap()
         .then(() => collectionFormik.resetForm());
         navigate("/parameters/collections");
-        dispatch(showSuccess({ message: "Created this collection successfully" }));
+        dispatch(showSuccess({ message: "Collection created successfully" }));
     },
   });
 
   useEffect(() => {
     collectionFormik.setFieldValue("description", appTextEditor)
-  },[appTextEditor])
+    if(startDate1 !== null){
+      collectionFormik.setFieldValue("startDate", startDate1);
+    }
+    if(endDate1 !== null){
+      collectionFormik.setFieldValue("endDate", endDate1);
+    }
+    if(startDate1 !== null){
+      collectionFormik.setFieldValue("status", "scheduled");
+    }
+  },[appTextEditor, startDate1, endDate1])
 
   useEffect(() => {
     if (createCollectionError) {
@@ -524,7 +521,7 @@ const CreateCollection = () => {
                 </div>
               </div> */}
 
-              <div className="col-md-12 px-0 mt-3">
+              <div className="col-md-12 px-0 mt-1">
                 <div className="d-flex mb-1">
                   <p className="text-lightBlue me-2">Collection Title *</p>
                   <Tooltip title="Lorem ipsum" placement="top">
