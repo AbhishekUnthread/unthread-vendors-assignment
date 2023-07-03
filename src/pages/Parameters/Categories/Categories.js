@@ -448,7 +448,7 @@ const Categories = () => {
     
     if (deleteCategoryIsSuccess) {
       setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Category Deleted successfully" }));
+      dispatch(showSuccess({ message: "Category deleted successfully" }));
     }
     if (bulkCreateTagsIsSuccess) {
       setShowCreateModal(false);
