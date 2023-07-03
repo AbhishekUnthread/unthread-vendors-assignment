@@ -2,27 +2,23 @@ import React from "react";
 import { Popover } from "@mui/material";
 // ! IMAGES IMPORTS
 import arrowDown from "../../assets/icons/arrowDown.svg";
-
 const TableMassActionButton = ({onSelect, headingName, defaultValue=['active','In-active']}) => {
    // * EDIT STATUS POPOVERS STARTS
   const [anchorEditStatusEl, setAnchorEditStatusEl] = React.useState(null);
-
   const handleEditStatusClick = (event) => {
     setAnchorEditStatusEl(event.currentTarget);
   };
-
   const handleStatusSelect = (status) => {
     onSelect(status); // Call the callback function passed from the parent component
     handleEditStatusClose();
   };
-  
   const handleEditStatusClose = () => {
     setAnchorEditStatusEl(null);
   };
+
   const openEditStatus = Boolean(anchorEditStatusEl);
   const idEditStatus = openEditStatus ? "simple-popover" : undefined;
   // * MASS ACTION POPOVERS ENDS
-
   return (
      <React.Fragment>
       <button
@@ -61,5 +57,4 @@ const TableMassActionButton = ({onSelect, headingName, defaultValue=['active','I
     </React.Fragment>
   );
 };
-
 export default TableMassActionButton;

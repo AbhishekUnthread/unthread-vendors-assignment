@@ -47,10 +47,10 @@ const EditCategories = () => {
   const dispatch = useDispatch();
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
-  const [categoryStatus, setCategoryStatus] = useState("active");
+  const [categoryStatus, setCategoryStatus] = useState("");
   const [categoryNotes, setCategoryNotes] = useState('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
   const [categoryVisibility, setCategoryVisibility] = useState(false);
   const [categorySeo,setCategorySeo] = useState({})
   const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
@@ -107,6 +107,11 @@ const EditCategories = () => {
     setCategoryName(event.target.value); // Updating the category name based on the input value
   };
 
+  const clearDate = () => {
+    setStartDate(null);
+    setEndDate(null);
+  }
+
   const handleSubmit = () => {
     if (categoryId !== "") {
       // Calling Category edit API
@@ -116,11 +121,13 @@ const EditCategories = () => {
           showFilter: checked, // Whether to show filters
           name: categoryName, // Category name
           description: categoryDescription, // Category description
-          status: categoryStatus, // Category status
+          status: startDate === null ?  categoryStatus :"scheduled", // Category status
+          ...(startDate !== null &&
+            { startDate: new Date(startDate) }),
+            ...(endDate !== null &&
+            { endDate: new Date(endDate) }),
           isVisibleFrontend: categoryVisibility,
           notes: categoryNotes,
-          startDate: startDate,
-          endDate: endDate,
           mediaUrl: categoryMediaUrl,
           seo: categorySeo,
         },
@@ -313,7 +320,13 @@ const EditCategories = () => {
             headingName={"Category Status"}
             value={categoryStatus}
             handleProductStatus={(_, val) => setCategoryStatus(val)}
-            toggleData={['active', 'scheduled']}
+            toggleData={['active', 'in-active']}
+            showSchedule={true}
+            startDate={startDate}
+            endDate={endDate}
+            handleStartDate={setStartDate}
+            handleEndDate={setEndDate}
+            clearDate={clearDate}
           />
           <VisibilityBox value={categoryVisibility}
             onChange={(_, val) => setCategoryVisibility(val)}

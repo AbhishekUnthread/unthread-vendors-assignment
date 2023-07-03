@@ -25,8 +25,6 @@ const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnAr
     setStatusValue(event.target.value);
   }
 
-  console.log(statusValue,'statusValue')
-
   return (
     <>
     <Dialog
@@ -69,7 +67,8 @@ const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnAr
             onChange={handleStatusRadio}
             className="d-flex justify-content-between px-4 py-3"
             onClick={(newValue) => {
-              handleValue(newValue)
+              handleValue(newValue.target.value)
+
             }}
           >
             <FormControlLabel

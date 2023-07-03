@@ -1,4 +1,4 @@
-import React from "react"; 
+import React from "react";
 // ! MATERIAL IMPORTS
 // ! IMAGES IMPORTS
 import info from "../../assets/icons/info.svg";
@@ -19,22 +19,18 @@ import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import moment from "moment";
-
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 // ? DIALOG TRANSITION ENDS HERE
-
 const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, toggleData=['active','in-active'], startDate, endDate, handleStartDate, handleEndDate, clearDate}) => {
 
   const showScheduleData = showSchedule === undefined ? false : true;
-
   // ? SCHEDULE PRODUCT DIALOG STARTS HERE
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
   const [startDateLocal, setStartDate] = React.useState(startDate ? moment(startDate).toDate() : null);
   const [endDateLocal, setEndDate] = React.useState("");
-
   const startDateNew = moment(startDate).format("DD/MM/YYYY")
   const startTime = moment(startDate).format("HH:MM a")
   const endDateNew = moment(endDate).format("DD/MM/YYYY")
@@ -42,6 +38,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
 
   console.log(startDateLocal,'startDateLocal')
 
+  
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);
   };
@@ -50,13 +47,11 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
     setOpenScheduleProduct(false);
   };
   // ? SCHEDULE PRODUCT DIALOG ENDS HERE
-
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3">
       <div className="d-flex align-items-center justify-content-between">
         <h6 className="text-lightBlue mb-3 fw-500">{headingName}</h6>
       </div>
-
       <ToggleButtonGroup
         value={value}
         onChange={handleProductStatus}
@@ -78,7 +73,6 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         <ToggleButton
           value={toggleData[1]}
           aria-label="inactive"
-
           style={{ width: "50%" }}
           className="productInfo-toggle__draft"
         >
@@ -148,7 +142,6 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
           </LocalizationProvider>
           <div className="d-flex mb-1 mt-3">
             <p className="text-lightBlue">End Date</p>
-
             <Tooltip title="Lorem ipsum" placement="top">
               <img
                 src={info}
@@ -190,5 +183,4 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
     </div>
   );
 };
-
 export default StatusBox;
