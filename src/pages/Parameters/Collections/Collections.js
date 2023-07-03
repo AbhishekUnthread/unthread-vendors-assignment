@@ -121,7 +121,7 @@ const Collections = () => {
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({...filterParams}, { enabled: Object.keys(filterParameter).length > 0 });
+  } = useGetAllCollectionsQuery({...filterParams});
 
   const [
     deleteCollection,
