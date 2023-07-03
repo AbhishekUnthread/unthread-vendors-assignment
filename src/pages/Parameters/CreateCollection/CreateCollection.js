@@ -256,30 +256,12 @@ const CreateCollection = () => {
     collectionFormik?.setFieldValue("status", status);
   }
 
-  // const handleStartDate = (startDate) => {
-  //   collectionFormik?.setFieldValue("startDate", startDate);
-  // }
-
-  // const handleEndDate = (endDate) => {
-  //   collectionFormik?.setFieldValue("endDate", endDate);
-  // }
-
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
   } = useGetAllCollectionsQuery({ createdAt: "-1", id: collectionId });
-
-  const [
-    uploadFile, 
-    {
-      data,
-      isLoading,
-      isSuccess,
-      isError
-    }
-  ] = UseFileUpload();
   
   const [
     createCollection,
@@ -309,7 +291,7 @@ const CreateCollection = () => {
         .unwrap()
         .then(() => collectionFormik.resetForm());
         navigate("/parameters/collections");
-        dispatch(showSuccess({ message: "Created this collection successfully" }));
+        dispatch(showSuccess({ message: "Collection created successfully" }));
     },
   });
 
@@ -539,7 +521,7 @@ const CreateCollection = () => {
                 </div>
               </div> */}
 
-              <div className="col-md-12 px-0 mt-3">
+              <div className="col-md-12 px-0 mt-1">
                 <div className="d-flex mb-1">
                   <p className="text-lightBlue me-2">Collection Title *</p>
                   <Tooltip title="Lorem ipsum" placement="top">

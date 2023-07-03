@@ -31,21 +31,14 @@ const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnAr
         TransitionComponent={Transition}
         keepMounted
         aria-describedby="alert-dialog-slide-description"
-        maxWidth="sm"
+        maxWidth="xs"
         fullWidth={true}
         open={showUnArchivedModal}
         onClose={closeUnArchivedModal}
       >
         <hr className="hr-grey-6 my-0" />
         <DialogContent className="py-3 px-4">
-          <Box
-            sx={{
-              display: "block",
-              marginLeft: "auto",
-              marginRight: "auto",
-              width: "50%",
-            }}
-          >
+          <Box sx={{  display: 'flex', justifyContent: 'center' }}>
             <img src={unArchived} alt="questionMark" style={{width: '300px', height: '300px'}}/>
           </Box>
           <Typography

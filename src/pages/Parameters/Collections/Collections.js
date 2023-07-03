@@ -79,11 +79,9 @@ const Collections = () => {
     initialCollectionState
   );
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState("active,in-active,scheduled");
+  const [statusFilter, setStatusFilter] = React.useState(["active","in-active","scheduled"]);
   const [searchValue, setSearchValue] = useState("");
   
-  console.log(statusFilter,'statusFilter')
-
   const filterParameter = {};
 
   const handleSearchChange = (event) => {
@@ -92,25 +90,23 @@ const Collections = () => {
 
   const handleStatusChange = (event) => {
     const selectedStatus = event.target.value;
-    if (event.target.checked) {
-      setStatusFilter((prevStatusFilter) => {
-        if (Array.isArray(prevStatusFilter)) {
-          return [...prevStatusFilter, selectedStatus];
-        } else {
-          return [selectedStatus];
-        }
-      });
-    } else {
-      setStatusFilter((prevStatusFilter) => {
-        if (Array.isArray(prevStatusFilter)) {
-          return prevStatusFilter.filter((status) => status !== selectedStatus);
-        } else {
-          return [];
-        }
-      });
+    if (event.target.value) {
+      if (statusFilter.length === 0) {
+        let item = [];
+        statusFilter.push(selectedStatus);
+        setStatusFilter(item);
+      }
+      if (statusFilter.length > 0 && statusFilter.includes(selectedStatus)) {
+        setStatusFilter((item) => item.filter((i) => i !== selectedStatus));
+      }
+      if (statusFilter.length > 0 && !statusFilter.includes(selectedStatus)) {
+        let item = [...statusFilter];
+        item.push(selectedStatus);
+        setStatusFilter(item);
+      }
     }
   };
-
+  
   if (sortFilter) {
     if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
       filterParameter.alphabetical = sortFilter == "alphabeticalAtoZ" ? "1" : "-1";
@@ -310,33 +306,27 @@ const Collections = () => {
                 onClose={handleStatusClose}
                 className="columns"
               >
-                <FormControl className="px-2 py-1"
-                  // value={statusFilter}
-                  // onChange={handleStatusChange}
-                >
+                <FormControl className="px-2 py-1">
                   <FormControlLabel
                     value="active"
-                    control={<Checkbox size="small" />}
+                    control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="Active"
-                            onChange={handleStatusChange}
-        checked={statusFilter.includes('active')}
-
+                    onChange={handleStatusChange}
+                    checked={statusFilter.includes('active')}
                   />
                   <FormControlLabel
                     value="in-active"
-                    control={<Checkbox size="small" />}
+                    control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="In-Active"
-                            onChange={handleStatusChange}
-        checked={statusFilter.includes('in-active')}
-
+                    onChange={handleStatusChange}
+                    checked={statusFilter.includes('in-active')}
                   />
                   <FormControlLabel
                     value="scheduled"
-                    control={<Checkbox size="small" />}
+                    control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="Scheduled"
-                            onChange={handleStatusChange}
-        checked={statusFilter.includes('scheduled')}
-
+                    onChange={handleStatusChange}
+                    checked={statusFilter.includes('scheduled')}
                   />
                 </FormControl>
               </Popover>
@@ -430,6 +420,7 @@ const Collections = () => {
               error={error}
               list={collectionList}
               pageLength={pageLength}
+              collectionType={collectionType}
             />
           </TabPanel>
         </Paper>

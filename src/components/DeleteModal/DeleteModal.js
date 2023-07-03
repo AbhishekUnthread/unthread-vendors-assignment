@@ -14,21 +14,14 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
         TransitionComponent={Transition}
         keepMounted
         aria-describedby="alert-dialog-slide-description"
-        maxWidth="sm"
+        maxWidth="xs"
         fullWidth={true}
         open={showCreateModal}
         onClose={toggleArchiveModalHandler}
       >
         <hr className="hr-grey-6 my-0" />
         <DialogContent className="py-3 px-4">
-          <Box
-            sx={{
-              display: "block",
-              marginLeft: "auto",
-              marginRight: "auto",
-              width: "50%",
-            }}
-          >
+          <Box sx={{  display: 'flex', justifyContent: 'center' }}>
             <img 
               src={Delete}
               alt="questionMark"
