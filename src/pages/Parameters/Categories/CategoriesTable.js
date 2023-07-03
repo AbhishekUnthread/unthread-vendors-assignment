@@ -112,6 +112,7 @@ const CategoriesTable = ({
   isLoading,
   subModalOpenHandler,
   bulkEdit,
+  bulkSubEdit,
   editCategory,
   editSubCategory,
   archived,
@@ -164,6 +165,15 @@ const CategoriesTable = ({
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelected = list.map((n) => n._id);
+      setSelected(newSelected);
+      return;
+    }
+    setSelected([]);
+  };
+
+  const handleSelectAllClickForSub = (event) => {
+    if (event.target.checked) {
+      const newSelected = subCategoryList.map((n) => n._id);
       setSelected(newSelected);
       return;
     }
@@ -227,13 +237,23 @@ const CategoriesTable = ({
           };
         }
       });
-      bulkEdit({ updates: newState })
+      if(toggleCategoris){
+
+        bulkEdit({ updates: newState })
+          .unwrap()
+          .then(() =>
+            dispatch(showSuccess({ message: " Status updated successfully" }))
+          );
+        setSelectedStatus(null);
+      }else{
+        bulkSubEdit({ updates: newState })
         .unwrap()
         .then(() =>
           dispatch(showSuccess({ message: " Status updated successfully" }))
         );
       setSelectedStatus(null);
-    }
+      }
+      }
   }, [selected, selectedStatus]);
 
   function handleTableRowChange(row) {
@@ -602,7 +622,10 @@ const CategoriesTable = ({
                                         numSelected={selected.length}
                                         order={order}
                                         orderBy={orderBy}
-                                        onSelectAllClick={handleSelectAllClick}
+                                        onSelectAllClick={(e)=>{
+                                          setToggleCategoris(false)
+                                          handleSelectAllClickForSub(e)
+                                        }}
                                         onRequestSort={handleRequestSort}
                                         rowCount={subCategoryList?.length}
                                         headCells={headCells}
@@ -647,10 +670,12 @@ const CategoriesTable = ({
                                                           labelId,
                                                       }}
                                                       onClick={(event) =>
+                                                        { 
+                                                         setToggleCategoris(false)
                                                         handleClick(
                                                           event,
                                                           row._id
-                                                        )
+                                                        )}
                                                       }
                                                       size="small"
                                                       style={{

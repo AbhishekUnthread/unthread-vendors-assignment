@@ -284,6 +284,7 @@ const Categories = () => {
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryType(tabIndex);
+    setSearchValue("")
   };
 
   const toggleCreateModalHandler = () => {
@@ -992,6 +993,7 @@ const Categories = () => {
                   list={categoryList}
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditCategory}
+                  bulkSubEdit={bulkEditSubCategory}
                   editCategory={editCategory}
                   editSubCategory={editSubCategory}
                   archived={true}
@@ -1019,6 +1021,7 @@ const Categories = () => {
                   list={categoryList}
                   edit={editCategoryHandler}
                   bulkEdit={bulkEditCategory}
+                  bulkSubEdit={bulkEditSubCategory}
                   editCategory={editCategory}
                   editSubCategory={editSubCategory}
                   archived={false}
