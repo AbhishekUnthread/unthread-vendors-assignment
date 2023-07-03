@@ -60,6 +60,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { LoadingButton } from "@mui/lab";
+import moment from "moment";
 
 import {
   showSuccess,
@@ -246,7 +247,17 @@ const EditCollection = () => {
   const collectionId = useSelector((state)=>state.collection.collectionId)
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
-  const [hideFooter, setHideFooter] = useState(false)
+  const [hideFooter, setHideFooter] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const handleSchedule = (start, end) => {
+    console.log(start,'start')
+    setStartDate(start);
+    setEndDate(end);
+  };
+  console.log(moment(startDate).toDate(), 'startDate startDate');
+  console.log(moment(startDate1).toDate(), 'startDate1 dsfn');
 
    const clearDate = () => {
     setStartDate1(null);
@@ -304,11 +315,15 @@ const EditCollection = () => {
           title: collectionTitle, 
           filter: collectionFilter, 
           description: collectionDescription, 
-          status: collectionStatus ? collectionStatus : "active", 
+          status: startDate1 === null ? collectionStatus : "scheduled",
           isVisibleFrontend: collectionVisibility,
           notes: collectionNote,
           mediaUrl: collectionMediaUrl,
           seo: collectionSeo,
+          ...(startDate1 !== null &&
+          { startDate: new Date(startDate1) }),
+          ...(endDate1 !== null &&
+          { endDate: new Date(endDate1) }),
         }
       })
         .unwrap()
@@ -399,13 +414,7 @@ const EditCollection = () => {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
-  const handleSchedule = (start, end) => {
-    setStartDate(start);
-    setEndDate(end);
-  };
+  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";

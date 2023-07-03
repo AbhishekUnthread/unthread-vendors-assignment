@@ -27,18 +27,20 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, toggleData=['active','in-active'], startDate, endDate, handleStartDate, handleEndDate, clearDate}) => {
+  console.log(startDate, 'startDate');
 
   const showScheduleData = showSchedule === undefined ? false : true;
 
   // ? SCHEDULE PRODUCT DIALOG STARTS HERE
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
-  const [startDateLocal, setStartDate] = React.useState(new Date());
+  const [startDateLocal, setStartDate] = React.useState(startDate ? moment(startDate).toDate() : null);
   const [endDateLocal, setEndDate] = React.useState("");
 
   const startDateNew = moment(startDate).format("DD/MM/YYYY")
   const startTime = moment(startDate).format("HH:MM a")
   const endDateNew = moment(endDate).format("DD/MM/YYYY")
   const endTime = moment(endDate).format("HH:MM a")
+  console.log(startDateLocal, 'startDateLocal');
 
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);
@@ -138,6 +140,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
             <DesktopDateTimePicker
               value={startDateLocal}
               onChange={(newValue) => {
+                console.log(newValue, 'newValue')
                 setStartDate(newValue);
                 handleStartDate(newValue)
               }}

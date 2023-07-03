@@ -287,8 +287,10 @@ const CreateCollection = () => {
       title: "",
       description: "",
       status: startDate1 === null ? collectionStatus : "scheduled",
-      ...(startDate1 !== null && endDate1 !== null &&
-      { startDate: new Date(startDate1), endDate: new Date(endDate1) }),
+      ...(startDate1 !== null &&
+      { startDate: new Date(startDate1) }),
+      ...(endDate1 !== null &&
+      { endDate: new Date(endDate1) }),
       isVisibleFrontend: true,
       filter: true,
       notes: "",
