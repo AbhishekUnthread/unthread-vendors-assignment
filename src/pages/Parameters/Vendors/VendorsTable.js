@@ -304,6 +304,17 @@ const handleDelete =()=>{
               </span>
             </small>
           </button>
+          {/* <button className="button-grey py-2 px-3 ms-2">
+            <small className="text-lightBlue">
+              Select all {totalCount} tags &nbsp;
+              <span
+                className="text-blue-2 c-pointer"
+                onClick={() => setSelected([])}
+              >
+                (Clear Selection)
+              </span>
+            </small>
+          </button> */}
           <TableEditStatusButton
             onSelect={handleStatusSelect}
             defaultValue={["Set as Active", "Set as In-Active"]}

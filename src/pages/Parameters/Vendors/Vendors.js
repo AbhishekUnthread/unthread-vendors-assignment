@@ -73,7 +73,7 @@ const Vendors = () => {
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = React.useState("newestToOldest");
-  const [selectedStatusOption, setSelectedStatusOption] = React.useState(null);
+  const [selectedStatusOption, setSelectedStatusOption] = React.useState([]);
   const [searchValue, setSearchValue] = React.useState("");
   const [multipleVendors,setMultipleVendors] = React.useState([]);
   const [totalCount,setTotalCount] = React.useState([]);
@@ -109,8 +109,17 @@ if (selectedSortOption) {
 }
 
 // Check selectedStatusOption
-if (selectedStatusOption !== null) {
-  queryParameters.status = selectedStatusOption;
+// if (selectedStatusOption !== null) {
+//   queryParameters.status = selectedStatusOption;
+// }
+if (selectedStatusOption.length > 0) {
+  if (selectedStatusOption.includes("active")) {
+    queryParameters.status = "active";
+  }
+
+  if (selectedStatusOption.includes("archived")) {
+    queryParameters.status = "archieved";
+  }
 }
 
 if(searchValue)
@@ -399,12 +408,25 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
     setAnchorStatusEl(null);
   };
 
+  // const handleStatusCheckboxChange = (event) => {
+  //   const { value, checked } = event.target;
+  //   setSelectedStatusOption(checked ? value : null);
+  //   setAnchorStatusEl(null); 
+  // };
   const handleStatusCheckboxChange = (event) => {
-    const { value, checked } = event.target;
-    setSelectedStatusOption(checked ? value : null);
-    setAnchorStatusEl(null); // Close the popover after selecting a value
+    const { value } = event.target;
+  
+    setSelectedStatusOption((prevSelected) => {
+      if (prevSelected.includes(value)) {
+        return prevSelected.filter((option) => option !== value);
+      } else {
+        return [...prevSelected, value];
+      }
+    });
+    setAnchorStatusEl(null); 
   };
-
+  
+  console.log({url:selectedStatusOption})
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
  // * STATUS POPOVERS ENDS
@@ -660,7 +682,8 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
                     label="Active"
                     value="active"
                     className="me-0"
-                    checked={selectedStatusOption === "active"}
+                    // checked={selectedStatusOption === "active"}
+                    checked={selectedStatusOption.includes("active")}
                   />
                   <FormControlLabel
                     control={
@@ -674,7 +697,8 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
                     label="Archived"
                     className="me-0"
                     value="archived"
-                    checked={selectedStatusOption === "archived"}
+                    // checked={selectedStatusOption === "archived"}
+                    checked={selectedStatusOption.includes("archived")}
                   />
                 </FormGroup>
               </Popover>
