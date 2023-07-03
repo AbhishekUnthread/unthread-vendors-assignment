@@ -49,7 +49,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 // ? TABLE STARTS HERE
 
-const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) => {
+const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, collectionType }) => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
@@ -66,6 +66,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
   const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
   const [unArchiveID, setUnArchiveID] = React.useState(false);
   const [statusValue, setStatusValue] = React.useState("in-active")
+  const [massActions, setMassActions] = React.useState("")
 
   const handleValue = (e) => {
     setStatusValue(e.target.value)
@@ -130,6 +131,17 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
             id,
             status: "archieved",
           };
+        } else if (selectedStatus === "Delete") {
+          return {
+            id,
+            status: "in-active",
+            active: false
+          };
+        } else if (selectedStatus === "Set as Un-Archived") {
+          return {
+            id,
+            status: "in-active",
+          };
         } else {
           return {
             id,
@@ -141,11 +153,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
       const requestData = {
         updates: newState
       };
-      bulkEditCollection(requestData).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      bulkEditCollection(requestData).unwrap().then(()=>dispatch(showSuccess({ message: "Status updated successfully" })));
       setSelectedStatus(null);
     }
   }, [selected, selectedStatus]);
-
+  
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
   };
@@ -278,8 +290,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength }) =>
               </span>
             </small>
           </button>
-          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as In-Active']} headingName="Edit Status"/>
-          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={['Edit','Set as Archived']}/>
+          { collectionType !== 3 && <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as In-Active']} headingName="Edit Status"/>}
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={ collectionType !== 3 ? ['Edit','Set as Archived'] : ['Delete','Set as Un-Archived']}/>
         </div>
       )}
       {!error ? (

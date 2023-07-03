@@ -53,7 +53,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         <h6 className="text-lightBlue mb-3 fw-500">{headingName}</h6>
       </div>
       <ToggleButtonGroup
-        value={value}
+        value={value === "scheduled" ? 'in-active': value}
         onChange={handleProductStatus}
         aria-label="text formatting"
         className="row d-flex px-2 productInfo-toggle"
