@@ -82,19 +82,22 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) => {
+const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [selectedMassStatus, setSelectedMassStatus] = React.useState(null);
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const [archive, setArchive] = React.useState(false);
   const [name, setName] = React.useState(false);
   const [vendor, setVendor] = React.useState(false);
   const [vendorName, setVendorName] = React.useState("")
   const [vendorStatus, setVendorStatus] = React.useState("in-active")
+  const [vendorMassStatus, setVendorMassStatus] = React.useState("in-active")
+  const [openUnArchivePopUp,setOpenUnArchivePopUp] = React.useState(false)
   const navigate = useNavigate();
 
 
@@ -127,12 +130,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
   };
-  const handleMassAction  = (status) => {
-    setSelectedStatus(status);
-  };
-
   useEffect(() => {
-    // Update the state only if the selectedStatus state has a value
     if (selectedStatus !== null) {
       const newState = selected.map((id) => {
         if (selectedStatus === "Set as Active") {
@@ -147,12 +145,6 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
             status: "in-active",
           };
         } 
-        else if(selectedStatus==="Archive"){
-          return{
-            id,
-            status:"archieved"
-          }
-        }
         else {
           return {
             id,
@@ -163,13 +155,51 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
       setState(newState);
       bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
       setSelectedStatus(null);
+      setSelected([]);
     }
-  }, [selected, selectedStatus,bulkVendorEditIsSuccess]);
+  }, [selectedStatus])
   
 
+  const handleMassAction  = (status) => {
+    if(status ==="Set as Un-Archived")
+    {
+      setOpenUnArchivePopUp(true);
+    }
+    if(status ==="Archive")
+    {
+      setArchivedModal(true);
+    }
+    if(status ==="Delete")
+    {
+      setShowDeleteModal(true);
+    }
+    setSelectedMassStatus(status);
+  };
+
+
+  const handleMassValue = (value) => {
+    setVendorMassStatus(value)
+  }
+  const handleMassUnArchived = () => {
+    const newState = selected.map((id) => {
+      if (selectedMassStatus === "Set as Un-Archived") {
+        return {
+          id,
+          status: vendorMassStatus,
+        };
+      }
+    });
+    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    setOpenUnArchivePopUp(false);
+    setSelected([]);
+  };
+
+  const closeMassUnArchivedModal = () => {
+    setOpenUnArchivePopUp(false)
+  }
+  
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
-    console.log({url:rowsPerPage});
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -190,14 +220,20 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
   //   setSelected([]);
   // };
   const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
+    if(selected.length>0)
+    {
+    setSelected([]);
+    }
+    else if(event.target.checked) {
       const newSelected = list.slice(0, rowsPerPage).map((n) => n._id);
       setSelected(newSelected);
-      return;
     }
-    setSelected([]);
+    else
+    {
+      setSelected([]);
+    }
   };
-  
+
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -238,14 +274,28 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount }) =
     setArchivedModal(false);
   };
   const handleArchivedModalOnSave = () => {
+    if(selected.length>0)
+    {
+      const newState = selected.map((id) => {
+        return {
+          id,
+          status: "archieved",
+        };
+    });
+    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    setSelected([]);
+    }
+    else{
+      editVendor({
+        id: vendor?._id,
+        details : {
+          status: "archieved",
+          showFilter:false
+        }
+    })
+    }
     setArchivedModal(false);
-    editVendor({
-      id: vendor?._id,
-      details : {
-        status: "archieved",
-        showFilter:false
-      }
-  })
+    setVendorName("");
   }
 // Archive ends here
 
@@ -260,8 +310,8 @@ const handleUnArchive = (row) => {
 const closeUnArchivedModal = () => {
   setShowUnArhcivedModal(false)
 }
-const handleValue = (e) => {
-  setVendorStatus(e.target.value)
+const handleValue = (value) => {
+  setVendorStatus(value)
 }
 const handleUnArchived = () => {
   editVendor({
@@ -283,11 +333,24 @@ const handleDeleteOnClick = (row) => {
   setVendorName(row?.name);
 };
 const handleDelete =()=>{
-  console.log({rrl:vendor._id})
-  deleteData(vendor?._id);
+  if(selected.length>0)
+  {
+    const newState = selected.map((id) => {
+      return {
+        id
+      };
+  });
   handleDeleteOnClick();
-  dispatch(showSuccess({ message: "Deleted this collection successfully" }));
-}
+  console.log("ffwe",newState)
+
+  }
+  else{
+    deleteData(vendor?._id);
+    handleDeleteOnClick();
+    dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+  }
+  }
+
 
   return (
     <React.Fragment>
@@ -315,12 +378,12 @@ const handleDelete =()=>{
               </span>
             </small>
           </button> */}
-          <TableEditStatusButton
+          {vendorType!==3 &&<TableEditStatusButton
             onSelect={handleStatusSelect}
             defaultValue={["Set as Active", "Set as In-Active"]}
             headingName="Edit Status"
-          />
-          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={['Edit','Archive']}/>
+          />}
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={vendorType !==3?['Edit','Archive']:['Delete','Set as Un-Archived']}/>
         </div>
       )}
       {!error ? (
@@ -545,7 +608,7 @@ const handleDelete =()=>{
             <img src={question} alt="question" width={200} />
             <div className="row"></div>
             <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive {vendorName} ?
+  Are you sure you want to Archive {`${selected.length > 1 ? `${selected.length} vendors` : ""}${vendorName}`}?
             </h6>
             <div className="d-flex justify-content-center mt-4">
               <hr className="hr-grey-6 w-100" />
@@ -565,14 +628,29 @@ const handleDelete =()=>{
               <p>Archived</p>
             </button>
           </DialogActions>
-        </Dialog>
-      <DeleteModal showCreateModal={showDeleteModal} toggleArchiveModalHandler={handleDeleteOnClick} handleArchive={handleDelete} name={vendorName} />
+      </Dialog>
+      <DeleteModal
+  showCreateModal={showDeleteModal}
+  toggleArchiveModalHandler={handleDeleteOnClick}
+  handleArchive={handleDelete}
+  name={`${selected.length > 1 ? `${selected.length} vendors` : ''}${vendorName}`}
+/>
+
       <UnArchivedModal 
           handleValue={handleValue}
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
         />
+        
+          <UnArchivedModal 
+          handleValue={handleMassValue}
+          showUnArchivedModal={openUnArchivePopUp}
+          closeUnArchivedModal={closeMassUnArchivedModal}
+          handleUnArchived={handleMassUnArchived}
+        />
+        
+
     </React.Fragment>
   );
 };

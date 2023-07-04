@@ -52,7 +52,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 const 
-TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) => {
+TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,tagsType}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -131,53 +131,71 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
   //   setSelected([]);
   // };
   const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
+    if(selected.length>0)
+    {
+    setSelected([]);
+    }
+    else if (event.target.checked) {
       const newSelected = list.slice(0, rowsPerPage).map((n) => n._id);
       setSelected(newSelected);
-      return;
     }
-    setSelected([]);
+    else
+    {
+      setSelected([]);
+    }
   };
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
   };
   const handleMassAction  = (status) => {
+    if(status ==="Set as Un-Archived")
+    {
+      setShowUnArhcivedModal(true);
+    }
+    if(status ==="Archive")
+    {
+      setArchivedModal(true);
+    }
+    if(status ==="Delete")
+    {
+      setShowDeleteModal(true);
+    }
     setSelectedStatus(status);
   };
-  useEffect(() => {
-    // Update the state only if the selectedStatus state has a value
-    if (selectedStatus !== null) {
-      const newState = selected.map((id) => {
-        if (selectedStatus === "Set as Active") {
-          return {
-            id,
-            status: "active",
-          };
-        } else if (selectedStatus === "Set as Draft") {
-          return {
-            id,
-            status: "draft",
-          };
-        }
-        else if(selectedStatus==="Archive"){
-          return{
-            id,
-            status:"archieved"
-          }
-        }
-         else {
-          return {
-            id,
-            status: "", // Set a default value here if needed
-          };
-        }
-      });
-      setState(newState);
-      bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
-      setSelectedStatus(null);
-    }
-  }, [selected, selectedStatus]);
+  // useEffect(() => {
+  //   // Update the state only if the selectedStatus state has a value
+  //   if (selectedStatus !== null) {
+  //     const newState = selected.map((id) => {
+  //       if (selectedStatus === "Set as Active") {
+  //         return {
+  //           id,
+  //           status: "active",
+  //         };
+  //       } else if (selectedStatus === "Set as Draft") {
+  //         return {
+  //           id,
+  //           status: "draft",
+  //         };
+  //       }
+  //       else if(selectedStatus==="Archive"){
+  //         return{
+  //           id,
+  //           status:"archieved"
+  //         }
+  //       }
+  //        else {
+  //         return {
+  //           id,
+  //           status: "", // Set a default value here if needed
+  //         };
+  //       }
+  //     });
+  //     setState(newState);
+  //     bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+  //     setSelectedStatus(null);
+  //   }
+  // }, [selected, selectedStatus]);
   
 
   const handleClick = (event, name) => {
@@ -231,13 +249,27 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount}) 
   };
   const handleArchivedModalOnSave = () => {
     setArchivedModal(false);
-    editTag({
-      id: tag?._id,
-      details : {
-        status: "archieved",
-        showFilter:false
-      }
-  })
+    if(selected.length>0)
+    {
+      const newState = selected.map((id) => {
+        return {
+          id,
+          status: "archieved",
+        };
+    });
+    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    setSelected([]);
+    }
+    else
+    {
+      editTag({
+        id: tag?._id,
+        details : {
+          status: "archieved",
+          showFilter:false
+        }
+    })
+    }
   }
 // Archive ends here
 
@@ -256,13 +288,26 @@ const handleValue = (e) => {
   setTagStatus(e.target.value)
 }
 const handleUnArchived = () => {
-  editTag({
-     id: tag?._id,
-     details : {
-       status: tagStatus,
-       showFilter:true
-     }
- })
+  if(selected.length>0)
+    {
+      const newState = selected.map((id) => {
+        return {
+          id,
+          status: "active",
+        };
+    });
+    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    setSelected([]);
+    }
+  else{
+    editTag({
+      id: tag?._id,
+      details : {
+        status: "active",
+        showFilter:true
+      }
+  })
+  }
  setShowUnArhcivedModal(false)
  dispatch(showSuccess({ message: "Un-Archived this tag successfully" }));
 }
@@ -307,8 +352,8 @@ const handleDelete =()=>{
               </span>
             </small>
           </button> */}
-          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/>
-          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={['Edit','Archive']}/>
+          {/* <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/> */}
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={tagsType!==1?['Edit','Archive']:['Delete','Set as Un-Archived']}/>
         </div>
       )}
       {!error ? (
