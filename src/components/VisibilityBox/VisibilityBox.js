@@ -8,7 +8,7 @@ import {
     Radio,
     RadioGroup,
 } from "@mui/material";
-import clock from "../../assets/icons/clock.svg";
+
 const VisibilityBox = ({ value, onChange }) => {
   const [selectedValue, setSelectedValue] = React.useState(value);
   const handleRadioChange = (event) => {
