@@ -19,10 +19,15 @@ const SEO = ({name,value, handleSeoChange }) => {
   const [multipleTags, setMultipleTags] = useState([]);
   const id = useId();
   // ? CHECKBOX STARTS HERE
-  const [viewAll, setViewAll] = React.useState(false);
-  // const handleCheckboxChange = () => {
-  //   setViewAll(prevState => !prevState);
-  // };
+
+  const [viewAll,setViewAll] = useState(false);
+
+  const [checked, setChecked] = React.useState(false);
+
+  const handleCheckboxChange = (event) => {
+    setChecked(event.target.checked);
+  };
+
   // ? CHECKBOX ENDS HERE
   const seoFormik = useFormik({
     initialValues: {
@@ -76,6 +81,7 @@ const SEO = ({name,value, handleSeoChange }) => {
   const handleDelete = (value) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
+
   function generateUrlName(name="") {
     const formattedName = "https://example.com/"+name?.toLowerCase()?.replace(/\s+/g, '-');
     return formattedName;

@@ -37,13 +37,22 @@ import {
   DialogTitle,
   Dialog,
   Slide,
+  Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
-import { useCreateSubCategoryMutation, useDeleteSubCategoryMutation, useGetAllCategoriesQuery, useGetAllSubCategoriesQuery, useSubCategoryBulkCreateTagMutation } from "../../features/parameters/categories/categoriesApiSlice";
+import { useBulkEditTagSubCategoryMutation, useCreateSubCategoryMutation, useDeleteSubCategoryMutation, useEditSubCategoryMutation, useGetAllCategoriesQuery, useGetAllSubCategoriesQuery, useSubCategoryBulkCreateTagMutation } from "../../features/parameters/categories/categoriesApiSlice";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { showSuccess } from "../../features/snackbar/snackbarAction";
+import { useDispatch } from "react-redux";
+import TableEditStatusButton from "../TableEditStatusButton/TableEditStatusButton";
+import { updateCategoryId } from "../../features/parameters/categories/categorySlice";
+import { Link } from "react-router-dom";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import ArchivedModal from "../../components/DeleteDailogueModal/DeleteModal";
 
 
 
@@ -87,22 +96,22 @@ const rows = [
 
 const drawerHeadCells = [
   {
-    id: "productName",
+    id: "subCategoriesName",
     numeric: false,
     disablePadding: true,
     label: "Sub Categories Name",
   },
   {
-    id: "price",
+    id: "status",
     numeric: false,
-    disablePadding: false,
-    label: "No. of Products",
+    disablePadding: true,
+    label: "Status",
   },
   {
-    id: "action",
+    id: "actions",
     numeric: false,
-    disablePadding: false,
-    label: "Action",
+    disablePadding: true,
+    label: "Actions",
   },
 ];
 
@@ -146,10 +155,16 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 const AddSubCategoriesProducts = ({id}) => {
+  const dispatch = useDispatch()
   const [subCategoryList,setSubCategoryList] = useState([])
   const [searchValue, setSearchValue] = useState("");
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
   const [multipleTagsForSub,setMultipleTagsForSub] = useState([])
+  const [selectedStatus,setSelectedStatus] = useState([])
+  const [selected, setSelected] = React.useState([]);
+  const [totalCount,setTotalCount] = React.useState(0);
+  const [showCreateDeleteModal, setShowCreateDeleteModal] = useState(false);
+  const [rowData, setRowData] = useState({});
   const filterParameter = {};
 
   if (searchValue) {
@@ -164,8 +179,18 @@ const AddSubCategoriesProducts = ({id}) => {
     error: subCategoriesError,
   } = useGetAllSubCategoriesQuery({
     categoryId:id,
+    status:['active','in-active'],
     ...filterParameter
   });
+
+  const [
+    editSubCategory,
+    {
+      isLoading: editSubCategoryIsLoading,
+      isSuccess: editSubCategoryIsSuccess,
+      error: editSubCategoryError,
+    },
+  ] = useEditSubCategoryMutation();
 
   const {
     data: categoriesData,
@@ -200,6 +225,14 @@ const AddSubCategoriesProducts = ({id}) => {
     },
   ] = useDeleteSubCategoryMutation();
 
+  const[bulkEditSubCategory,
+    {
+      data: bulkEditSubCategoryTag,
+      isLoading: bulkTagEditSubCategoryLoading,
+      isSuccess: bulkTagEditSubCategoryIsSuccess,
+      error: bulkTagEditSubCategoryError,
+    }]=useBulkEditTagSubCategoryMutation();
+
   const subCategoryFormik = useFormik({
     initialValues: {
       name: "",
@@ -228,13 +261,17 @@ const AddSubCategoriesProducts = ({id}) => {
       }
     },
   });
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
 
   useEffect(()=>{
     if(subCategoriesData?.data?.data){
 
       setSubCategoryList(subCategoriesData?.data?.data);
+      setTotalCount(subCategoriesData?.data?.totalCount)
     }
-  },[subCategoriesIsSuccess,subCategoriesData,deleteSubCategoryIsSuccess])
+  },[subCategoriesIsSuccess,subCategoriesData,deleteSubCategoryIsSuccess,bulkTagEditSubCategoryIsSuccess,editSubCategoryIsSuccess])
 
   const handleAddMultiple = (event,Formik,Tags,data,flag) => {
     if (event.key === "Enter") {
@@ -256,6 +293,36 @@ const AddSubCategoriesProducts = ({id}) => {
     }
   };
 
+  useEffect(() => {
+    // Update the state only if the selectedStatus state has a value
+    if (selectedStatus !== null) {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as Archieved") {
+          return {
+            id,
+            status: "archieved",
+          };
+        } else {
+          return {
+            id,
+            status: "", // Set a default value here if needed
+          };
+        }
+      });
+      bulkEditSubCategory({ updates: newState })
+        .unwrap()
+        .then(() =>
+          dispatch(showSuccess({ message: "Sub Categories Status updated successfully" }))
+        );
+      setSelectedStatus(null);
+    }
+  }, [selected, selectedStatus]);
+
   const handleDelete = (value,setMultipleTags) => {
     setMultipleTagsForSub((prevValues) => prevValues.filter((v) => v.name !== value));
   };
@@ -276,7 +343,7 @@ const AddSubCategoriesProducts = ({id}) => {
   // * TABLE STARTS HERE
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("productName");
-  const [selected, setSelected] = React.useState([]);
+  
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -289,12 +356,15 @@ const AddSubCategoriesProducts = ({id}) => {
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
   }
+  
+
+
 
   
 
   const handleLikeSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = likeProductRows.map((n) => n.pId);
+      const newSelected = subCategoryList.map((n) => n._id);
       setSelected(newSelected);
       return;
     }
@@ -335,6 +405,22 @@ const AddSubCategoriesProducts = ({id}) => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   // * TABLE ENDS HERE
+
+  const toggleArchiveModalHandler = (row) => {
+    setShowCreateDeleteModal((prevState) => !prevState);
+    setRowData(row);
+  };
+
+  function deleteRowData() {
+    setShowCreateDeleteModal(false);
+    editSubCategory({
+      id:rowData._id,
+      details:{
+        status:'archieved'
+      }
+    })
+    dispatch(showSuccess({ message: "Archived this Sub category successfully" }));
+  }
 
   return (
     <React.Fragment>
@@ -523,6 +609,11 @@ const AddSubCategoriesProducts = ({id}) => {
                   </span>
                 </small>
               </button>
+              <TableEditStatusButton
+            onSelect={handleStatusSelect}
+            defaultValue={["Set as Active", "Set as Archieved"]}
+            headingName="Edit Status"
+          />
             </div>
           )}
           <TableContainer className="mt-3">
@@ -544,7 +635,7 @@ const AddSubCategoriesProducts = ({id}) => {
                 {stableSort(subCategoryList, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const isItemSelected = isSelected(row.pId);
+                    const isItemSelected = isSelected(row._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
@@ -553,7 +644,7 @@ const AddSubCategoriesProducts = ({id}) => {
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.pId}
+                        key={row._id}
                         selected={isItemSelected}
                       >
                         <TableCell padding="checkbox">
@@ -575,22 +666,77 @@ const AddSubCategoriesProducts = ({id}) => {
                           <p className="text-lightBlue">{row.name}</p>
                         </TableCell>
                         <TableCell>
-                          <div className="d-flex align-items-center c-pointer ">
-                            <p className="text-lightBlue">{row.totalProduct}</p>
-                          </div>
+                        <div className="d-flex align-items-center">
+                                                      <div
+                                                        className="rounded-pill d-flex px-2 py-1 c-pointer"
+                                                        style={{
+                                                          background:
+                                                            row.status ==
+                                                            "active"
+                                                              ? "#A6FAAF"
+                                                              : row.status ==
+                                                                "in-active"
+                                                              ? "#F67476"
+                                                              : row.status ==
+                                                                "archieved"
+                                                              ? "#C8D8FF"
+                                                              : "#FEE1A3",
+                                                        }}
+                                                      >
+                                                        <small className="text-black fw-400">
+                                                          {row.status ==
+                                                          "active"
+                                                            ? "Active"
+                                                            : row.status ==
+                                                              "in-active"
+                                                            ? "In-Active"
+                                                            : row.status ==
+                                                              "archieved"
+                                                            ? "Archived"
+                                                            : "Scheduled"}
+                                                        </small>
+                                                      </div>
+                                                    </div>
                         </TableCell>
                         <TableCell>
-                          <div className="d-flex align-items-center c-pointer ">
-                            <img
-                            onClick={()=>{
-                              deleteSubCategory(row._id)
-                            }}
-                              src={deleteButton}
-                              alt="deleteButton"
-                              width={75}
-                              className="c-pointer"
-                            />
-                          </div>
+                        <div className="d-flex align-items-center">
+                        <Tooltip title="Edit" placement="top">
+                                  <Link
+                                    className="text-decoration-none"
+                                    to="/parameters/subCategories/edit"
+                                    onClick={() => {
+                                      dispatch(updateCategoryId(row._id));
+                                    }}
+                                  >
+                                    <div className="table-edit-icon rounded-4 p-2">
+                                      <EditOutlinedIcon
+                                        sx={{
+                                          color: "#5c6d8e",
+                                          fontSize: 18,
+                                          cursor: "pointer",
+                                        }}
+                                      />
+                                    </div>
+                                  </Link>
+                                </Tooltip>
+                                <Tooltip title={"Archived"} placement="top">
+                                  <div
+                                    onClick={(e) => {
+                                        toggleArchiveModalHandler(row);
+                                      
+                                    }}
+                                    className="table-edit-icon rounded-4 p-2"
+                                  >
+                                    <InventoryIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </div>
+                                </Tooltip>
+                                </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -610,7 +756,7 @@ const AddSubCategoriesProducts = ({id}) => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={rows.length}
+            count={totalCount}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -619,6 +765,12 @@ const AddSubCategoriesProducts = ({id}) => {
           />
         </div>
       </div>
+      <ArchivedModal
+      name={'Archived'}
+        showCreateModal={showCreateDeleteModal}
+        toggleArchiveModalHandler={toggleArchiveModalHandler}
+        handleArchive={deleteRowData}
+      />
     </React.Fragment>
   );
 };
