@@ -14,7 +14,7 @@ import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import cancel from "../../../assets/icons/cancel.svg";
 
 // ! MATERIAL IMPORTS
-import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, OutlinedInput, Slide, Tooltip } from "@mui/material";
+import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, OutlinedInput, Slide, Tooltip, Typography } from "@mui/material";
 
 import {
   useGetAllVendorsQuery,
@@ -25,12 +25,17 @@ import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice
 import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter from "../../../components/SaveFooter/SaveFooter";
+import * as Yup from 'yup';
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
       return <Slide direction="up" ref={ref} {...props} />;
     });
     // ? DIALOG TRANSITION ENDS HERE
+
+    const validationSchema = Yup.object().shape({
+      vendorName: Yup.string().max(50, 'Name cannot exceed 50 characters').required('Name is required'),
+    });
 
 
 const EditVendor = () => {
@@ -39,21 +44,20 @@ const EditVendor = () => {
   const dispatch = useDispatch();
   const [vendorName, setVendorName] = useState("")
   const [vendorNotes, setVendorNotes] = useState("")
-  const [vendorNotesCompare, setVendorNotesCompare] = useState("")
   const [vendorStatus, setVendorStatus] = useState("active")
-  const [vendorStatusCompare, setVendorStatusCompare] = useState("active")
   const [vendorFlagShip, setVendorFlagShip] = useState("")
   const [checked, setChecked] = React.useState(false);
   const vendorId = useSelector((state)=>state.vendor.vendorId)
   const [products,setProducts] = React.useState([])
+  const [startDate1, setStartDate1] = useState(null)
+  const [endDate1, setEndDate1] = useState(null)
   const [vendorDuplicateName, setVendorDuplicateName] = useState("");
   const [duplicateDescription, setDuplicateDescription] = useState(false);
   const [duplicateFilter, setDuplicateFilter] = useState(false);
   const [index, setIndex] = useState(null);
   const [vendorIndex, setVendorIndex] = useState();
   const [hideFooter, setHideFooter] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
-  const [initialData, setInitialData] = useState({});
+  const [vendorNameError, setVendorNameError] = useState('');
 
 
   // useEffect(() => {
@@ -123,13 +127,14 @@ const EditVendor = () => {
       // setChecked(vendor?.showFilter);
       // setStartDate1(vendor?.startDate);
       // setEndDate1(vendor?.endDate);
-      setInitialData(vendorsData.data.data[0]);
+
       setVendorName(vendorsData.data.data[0].name);
       setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
       setVendorNotes(vendorsData.data.data[0].notes)
-      setVendorNotesCompare(vendorsData.data.data[0].notes)
       setVendorStatus(vendorsData.data.data[0].status)
       setChecked(vendorsData.data.data[0].showFilter)
+      setStartDate1(vendorsData.data.data[0].startDate)
+      setEndDate1(vendorsData.data.data[0].endDate)
     }
   }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess]);
 
@@ -138,38 +143,46 @@ const EditVendor = () => {
     console.log({urln:vendorIndex})
     setIndex(vendorIndex)
   };
-console.log("dgrrg",vendorStatus)
+
   const getPreviousVendorId = () => {
     setVendorIndex(prevIndex => (prevIndex === 0 ? vendorsData.data.data.length - 1 : prevIndex - 1));
     setIndex(vendorsData.data.data[vendorIndex])
   };
-
-    const handleNameChange = (event) => {
-      const newValue = event.target.value;
-      setVendorName(newValue);
-      setIsChanged(newValue !== initialData.name || vendorNotes !== initialData.notes );
-    };
   
     const vendorNotesChange=(event)=>{
-      const newValue = event.target.value;
-      setVendorNotes(newValue);
-      setIsChanged(vendorName !== initialData.name || newValue !== initialData.notes);
+      setVendorNotes(event.target.value);
+      setHideFooter(true);
     }
     const vendorStatusChange=(event,vendorStatus)=>{
-      setVendorStatus(event.target.value);
-      setIsChanged(true);
-      // setIsChanged(vendorName !== initialData.notes || vendorNotes !== initialData.names || newValue !== initialData.status || checked !== initialData.showFilter);
+      setVendorStatus(vendorStatus);
+      setHideFooter(true);
     }   
 
+    // const handleNameChange = (event) => {
+    //   setVendorName(event.target.value); // Updating the vendor name based on the input value
+    //   setHideFooter(true);
+    // };
+    const handleNameChange = (event) => {
+      const newName = event.target.value;
+      setHideFooter(true);
+      validationSchema
+        .validate({ vendorName: newName })
+        .then(() => {
+          setVendorName(newName);
+          setVendorNameError('');
+        })
+        .catch((error) => {
+          setVendorName(newName);
+          setVendorNameError(error.message);
+        });
+    };
+
     const handleFilterChange=(event)=>{
-      const newValue = event.target.checked;
-      setChecked(newValue);
-      // setIsChanged(true);
-      // setIsChanged(vendorName !== initialData.names || vendorNotes !== initialData.notes || vendorStatus !== initialData.status || newValue !== initialData.showFilter);
+      setChecked(event.target.checked);
+      setHideFooter(true);
     }
     const handleSubmit = () => {
-      setIsChanged(false);
-      setInitialData({ vendorName, vendorNotes, vendorStatus, checked });
+      if (!vendorNameError) {
      if(vendorId !== "")
      {
        // Calling Vendor edit API
@@ -197,7 +210,7 @@ console.log("dgrrg",vendorStatus)
         navigate("/parameters/vendors"); // Navigating to vendors page after successful creation
       });
      }
-    };
+    }};
     
     const handleSubmitAndAddAnother = () => {
       if(vendorId !== "")
@@ -334,6 +347,14 @@ console.log("dgrrg",vendorStatus)
               <FormControl className="w-100 px-0">
                 <OutlinedInput placeholder={vendorName} value={vendorName} onChange={handleNameChange}size="small" />
               </FormControl>
+              {vendorNameError &&
+              <>
+              <Typography variant="caption" color="error">
+              {vendorNameError}
+              </Typography>
+              <br />
+              </>
+              }
               <FormControlLabel
                         control={
                           <Checkbox
@@ -387,7 +408,7 @@ console.log("dgrrg",vendorStatus)
       
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
 
-        { isChanged && <div className="row create-buttons pt-5 pb-3 justify-content-between">
+        { hideFooter && <div className="row create-buttons pt-5 pb-3 justify-content-between">
           <SaveFooter handleSubmit={handleSubmit} />          
         </div>
            }

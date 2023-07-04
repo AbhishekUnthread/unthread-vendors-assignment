@@ -94,7 +94,8 @@ const Vendors = () => {
 
 
 //Initializes an empty object to store the query parameters.
-  const queryParameters = {};
+const queryParameters = {
+};
 
 // Check selectedSortOption
 if (selectedSortOption) {
@@ -143,9 +144,19 @@ if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
   queryParameters.status = "in-active"
 }
 
-const vendorTypeQuery = vendorType === 1 ? { status: "active" }
-  : vendorType === 2 ? { status: "in-active" } : vendorType === 3 ? { status: "archieved" }
-  : {};
+const vendorTypeQuery =
+  vendorType === 0
+    ? selectedStatusOption.length>0
+      ? { status: selectedStatusOption }
+      : { status: "[active,in-active]" }
+    : vendorType === 1
+    ? { status: "active" }
+    : vendorType === 2
+    ? { status: "in-active" }
+    : vendorType === 3
+    ? { status: "archieved" }
+    : {};
+
 
   const {
     data: vendorsData, // Data received from the useGetAllVendorsQuery hook
@@ -435,7 +446,6 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
     setAnchorStatusEl(null); 
   };
   
-  console.log({url:selectedStatusOption})
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
  // * STATUS POPOVERS ENDS
@@ -703,11 +713,11 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
                         }}
                       />
                     }
-                    label="Archived"
+                    label="In-Active"
                     className="me-0"
-                    value="archieved"
+                    value="in-active"
                     // checked={selectedStatusOption === "archived"}
-                    checked={selectedStatusOption.includes("archieved")}
+                    checked={selectedStatusOption.includes("in-active")}
                   />
                 </FormGroup>
               </Popover>
@@ -937,6 +947,7 @@ const vendorTypeQuery = vendorType === 1 ? { status: "active" }
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
               deleteData={handleDeleteVendor}
+              vendorType={vendorType}
 
             />
           </TabPanel>

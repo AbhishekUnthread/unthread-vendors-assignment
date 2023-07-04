@@ -230,7 +230,7 @@ const TagsManager = () => {
   if (!selectedSortOption && !searchValue) {
     queryParameters.createdAt = "-1"; // Set default createdAt value
   }
-  const TagTypeQuery = tagsType === 1 ? { status: "archieved" }
+  const TagTypeQuery =tagsType === 0 ? { status: "active" }: tagsType === 1 ? { status: "archieved" }
   : {};
   
   const[editTag,{
@@ -1164,6 +1164,8 @@ const {
               list={tagsList}
               edit={editTagsPageNavigationHandler}
               totalCount={totalCount}
+              tagsType={tagsType}
+              bulkEdit={bulkEdit}
              />
           </TabPanel>
         </Paper>
