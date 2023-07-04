@@ -224,17 +224,15 @@ const likeProductRows = [
 // ? LIKE PRODUCTS TABLE ENDS HERE
 
 const collectionValidationSchema = Yup.object({
-  title: Yup.string().trim().min(3).required("required"),
+  title: Yup.string().trim().min(3).required("Required"),
 });
 
 const CreateCollection = () => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
   const [error, setError] = useState(false);
-  const [collectionStatus, setCollectionStatus] = React.useState("active");
   const [startDate1, setStartDate] = useState(null);
   const [endDate1, setEndDate] = useState(null);
-  const [visibleFrontend, setVisibleFrontend] = useState("visible")
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
   const [categorySeo,setCategorySeo] = useState({});
@@ -246,7 +244,7 @@ const CreateCollection = () => {
   }  
   
   const handleVisiblility = (value) => {
-    collectionFormik?.setFieldValue("visibleFrontend", value);
+    collectionFormik?.setFieldValue("isVisibleFrontend", Boolean(value));
   }
 
   const handleMediaUrl = (value) => {
@@ -277,11 +275,11 @@ const CreateCollection = () => {
     initialValues: {
       title: "",
       description: "",
-      status: "",
+      status: "in-active",
       ...(startDate1 !== null && { startDate: "" }),
       ...(endDate1 !== null && { endDate: "" }),
-      isVisibleFrontend: true,
-      filter: true,
+      isVisibleFrontend: false,
+      filter: false,
       notes: "",
       mediaUrl: "",
     },
@@ -1261,7 +1259,7 @@ const CreateCollection = () => {
               handleEndDate={setEndDate}
               clearDate={clearDate}
             />
-            <VisibilityBox name={"isVisibleFrontend"} visibleFrontend={visibleFrontend} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
+            <VisibilityBox name={"isVisibleFrontend"} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
             <div className="mt-4">
               <UploadMediaBox name={"mediaUrl"}  value={collectionFormik?.values?.mediaUrl}  imageName={addMedia} headingName={"Media"} UploadChange={handleMediaUrl} />
             </div>
