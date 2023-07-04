@@ -63,7 +63,6 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { LoadingButton } from "@mui/lab";
-import moment from "moment";
 
 import {
   showSuccess,
@@ -273,15 +272,9 @@ const CreateCollection = () => {
 
   const collectionFormik = useFormik({
     initialValues: {
-      title: "",
-      description: "",
       status: "in-active",
-      ...(startDate1 !== null && { startDate: "" }),
-      ...(endDate1 !== null && { endDate: "" }),
       isVisibleFrontend: false,
       filter: false,
-      notes: "",
-      mediaUrl: "",
     },
     enableReinitialize: true,
     validationSchema: collectionValidationSchema,

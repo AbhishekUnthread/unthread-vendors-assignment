@@ -27,9 +27,6 @@ const SEO = ({name,value, handleSeoChange }) => {
   const seoFormik = useFormik({
     initialValues: {
       slug: "https://example.com/",
-      title: "",
-      description: "",
-      metaKeywords: "",
     },
     enableReinitialize: true,
   });

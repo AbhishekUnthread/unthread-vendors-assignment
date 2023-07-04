@@ -32,6 +32,7 @@ const apiSlice = createApi({
     "Collections",
     "TagsManager",
     "ProductTabs",
+    "Customers",
   ],
   endpoints: (builder) => ({}),
 });
