@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import "../../EditVendor/EditVendor.scss";
 import { Link, useNavigate } from "react-router-dom";
 // ! COMPONENT IMPORTS
@@ -24,21 +24,35 @@ import {
   Autocomplete,
   Box,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   FormGroup,
+  FormHelperText,
+  MenuItem,
   OutlinedInput,
   Paper,
   Popover,
+  Select,
+  Slide,
   Tab,
   Tabs,
   TextField,
   Tooltip
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { useCreateSubCategoryMutation, useEditSubCategoryMutation, useGetAllSubCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
+import { useCreateSubCategoryMutation, useEditSubCategoryMutation, useGetAllCategoriesQuery, useGetAllSubCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
 import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
 import { showSuccess } from "../../../../features/snackbar/snackbarAction";
+import cancel from "../../../../assets/icons/cancel.svg";
+import { LoadingButton } from "@mui/lab";
+
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const EditSubCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
@@ -55,7 +69,17 @@ const EditSubCategories = () => {
   const [subCategoryMediaUrl, setSubCategoryMediaUrl] = useState("");
   const [categoryName,setCategoryName] = useState("")
   const [checked, setChecked] = useState(false);
+  const [showCreateSubModal, setShowCreateSubModal] = useState(false);
   const subCategoryId = useSelector((state) => state.category.categoryId);
+  const [subCategoryPatentId, setSubCategoryParentId] = useState("")
+
+
+  const {
+    data: categoriesData,
+    isLoading: categoriesIsLoading,
+    isSuccess: categoriesIsSuccess,
+    error: categoriesError,
+  } = useGetAllCategoriesQuery();
 
   const [
     createSubCategory,
@@ -91,30 +115,39 @@ const EditSubCategories = () => {
       setSubCategoryVisibility(subCategoriesData.data.data[0].isVisibleFrontend);
       setSubCategoryNotes(subCategoriesData.data.data[0].notes);
       setChecked(subCategoriesData.data.data[0].showFilter);
-      setStartDate(subCategoriesData.data.data[0].startDate);
-      setEndDate(subCategoriesData.data.data[0].endDate);
+      setStartDate(subCategoriesData.data.data[0].startDate || null);
+      setEndDate(subCategoriesData.data.data[0].endDate || null);
       setSubCategoryMediaUrl(subCategoriesData.data.data[0].mediaUrl);
       setCategoryName(subCategoriesData.data.data[0].category?.[0]?.name || "")
+      setSubCategoryParentId(subCategoriesData.data.data[0].category?.[0]?._id || "")
       setSubCategorySeo(subCategoriesData.data.data[0]?.seos || {});
     }
   }, [subCategoriesIsSuccess]);
 
   const handleSubmit = () => {
     if (subCategoryId !== "") {
+      let editItem ={
+        name: subCategoryName,
+        description: subCategoryDescription,
+        status: startDate === null ? subCategoryStatus :"scheduled",
+        isVisibleFrontend: subCategoryVisibility,
+        notes: subCategoryNotes,
+        showFilter: checked,
+        mediaUrl: subCategoryMediaUrl,
+        seo: subCategorySeo,
+      }
+      if(subCategoryPatentId){
+        editItem.categoryId = subCategoryPatentId
+      }
+      if(startDate){
+        editItem.startDate = startDate
+      }
+      if(endDate){
+        editItem.endDate = endDate
+      }
       editSubCategory({
         id: subCategoryId,
-        details: {
-          name: subCategoryName,
-          description: subCategoryDescription,
-          status: subCategoryStatus,
-          isVisibleFrontend: subCategoryVisibility,
-          notes: subCategoryNotes,
-          showFilter: checked,
-          startDate: startDate,
-          endDate: endDate,
-          mediaUrl: subCategoryMediaUrl,
-          seo: subCategorySeo,
-        },
+        details: editItem,
       })
         .unwrap()
         .then(() => {
@@ -144,62 +177,12 @@ const EditSubCategories = () => {
     setEndDate(null);
   }
 
-  const handleSubmitAndAddAnother = () => {
-    if (subCategoryId !== "") {
-      editSubCategory({
-        id: subCategoryId,
-        details: {
-          name: subCategoryName,
-          description: subCategoryDescription,
-          status: subCategoryStatus,
-          isVisibleFrontend: subCategoryVisibility,
-          notes: subCategoryNotes,
-          showFilter: checked,
-          startDate: startDate,
-          endDate: endDate,
-          mediaUrl: subCategoryMediaUrl,
-          seo: subCategorySeo,
-        },
-      })
-        .unwrap()
-        .then(() => {
-          navigate("/parameters/sub-categories/edit");
-        });
-    } else {
-      createSubCategory({
-          name: subCategoryName,
-          description: subCategoryDescription,
-          status: subCategoryStatus,
-          isVisibleFrontend: subCategoryVisibility,
-          notes: subCategoryNotes,
-          showFilter: checked,
-          startDate,
-          endDate,
-          mediaUrl: subCategoryMediaUrl,
-          seo: subCategorySeo,
-      })
-        .unwrap()
-        .then(() => {
-          navigate("/parameters/sub-categories/edit");
-        });
-    }
-
-    resetValues() // Resetting the category 
-    dispatch(updateCategoryId(""));
+  
+  const toggleCreateSubModalHandler = () => {
+    setShowCreateSubModal((prevState) => !prevState);
   };
 
-  const resetValues = () => {
-    setSubCategoryName("");
-    setSubCategoryDescription("");
-    setSubCategoryStatus("active");
-    setSubCategoryNotes("");
-    setStartDate("");
-    setEndDate("");
-    setSubCategoryVisibility(false);
-    setSubCategorySeo({});
-    setSubCategoryMediaUrl("");
-    setChecked(false);
-  };
+
 
 
   const handleNameChange = (event) => {
@@ -216,7 +199,10 @@ const EditSubCategories = () => {
 
   return (
     <div className="page container-fluid position-relative user-group">
+      <div onClick={toggleCreateSubModalHandler}>
+
       <AddHeader headerName={subCategoryName} subHeading={`Parent Category: ${categoryName}`} subHighlightstext={"(Change)"} navigateLink={"/parameters/categories"} />
+      </div>
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -232,6 +218,95 @@ const EditSubCategories = () => {
                   />
                 </Tooltip>
               </div>
+              <Dialog
+            TransitionComponent={Transition}
+            keepMounted
+            aria-describedby="alert-dialog-slide-description"
+            maxWidth="sm"
+            fullWidth={true}
+            open={showCreateSubModal}
+            onClose={toggleCreateSubModalHandler}
+          >
+            <DialogTitle>
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex flex-column ">
+                  <h5 className="text-lightBlue fw-500">
+                    {`Sub Category`}
+                  </h5>
+
+                  <small className="text-grey-6 mt-1 d-block">
+                    ⓘ Some Dummy Content to explain
+                  </small>
+                </div>
+                <img
+                  src={cancel}
+                  alt="cancel"
+                  width={30}
+                  className="c-pointer"
+                  onClick={toggleCreateSubModalHandler}
+                />
+              </div>
+            </DialogTitle>
+            <hr className="hr-grey-6 my-0" />
+
+            <div>
+              <DialogContent className="py-3 px-4">
+                <p className="text-lightBlue mb-2">Select Category</p>
+                <FormControl
+                  //   sx={{ m: 0, minWidth: 120, width: "100%" }}
+                  size="small"
+                  className="col-md-7"
+                >
+                  {categoriesData?.data?.data && (
+                    <Select
+                      labelId="demo-select-small"
+                      id="demo-select-small"
+                      size="small"
+                      MenuProps={{ PaperProps: { sx: { maxHeight: 150 } } }}
+                      name="categoryId"
+                      value={subCategoryPatentId}
+                      onChange={(e)=>setSubCategoryParentId(e.target.value)}
+                    >
+                      <MenuItem key={""} value={"Select Category"}>
+                        Select Category
+                      </MenuItem>
+                      {categoriesData.data.data.map((option) => (
+                        <MenuItem key={option._id} value={option._id}>
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                  
+                </FormControl>
+               
+
+                
+              </DialogContent>
+              <hr className="hr-grey-6 my-0" />
+              <DialogActions className="d-flex justify-content-between px-4 py-3">
+                <button
+                  onClick={toggleCreateSubModalHandler}
+                  type="button"
+                  className="button-grey py-2 px-5"
+                >
+                  <p className="text-lightBlue">Cancel</p>
+                </button>
+                <LoadingButton
+                  loading={
+                    createSubCategoryIsLoading
+                  }
+                  disabled={
+                    createSubCategoryIsLoading 
+                  }
+                  onClick={toggleCreateSubModalHandler}
+                  className="button-gradient py-2 px-5"
+                >
+                  <p>Save</p>
+                </LoadingButton>
+              </DialogActions>
+            </div>
+          </Dialog>
               <FormControl className="w-100 px-0">
                 <OutlinedInput value={subCategoryName} onChange={handleNameChange} placeholder="Rings" size="small" />
               </FormControl>

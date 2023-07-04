@@ -112,6 +112,7 @@ const CategoriesTable = ({
   isLoading,
   subModalOpenHandler,
   bulkEdit,
+  bulkSubEdit,
   editCategory,
   editSubCategory,
   archived,
@@ -125,7 +126,7 @@ const CategoriesTable = ({
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
-  const [filterParameter, setFilterParameter] = useState({});
+  const [filterParameter, setFilterParameter] = useState();
   const [showCreateDeleteModal, setShowCreateDeleteModal] = useState(false);
   const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
   const [rowData, setRowData] = useState({});
@@ -164,6 +165,15 @@ const CategoriesTable = ({
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelected = list.map((n) => n._id);
+      setSelected(newSelected);
+      return;
+    }
+    setSelected([]);
+  };
+
+  const handleSelectAllClickForSub = (event) => {
+    if (event.target.checked) {
+      const newSelected = subCategoryList.map((n) => n._id);
       setSelected(newSelected);
       return;
     }
@@ -227,18 +237,29 @@ const CategoriesTable = ({
           };
         }
       });
-      bulkEdit({ updates: newState })
+      if(toggleCategoris){
+
+        bulkEdit({ updates: newState })
+          .unwrap()
+          .then(() =>
+            dispatch(showSuccess({ message: " Status updated successfully" }))
+          );
+        setSelectedStatus(null);
+      }else{
+        bulkSubEdit({ updates: newState })
         .unwrap()
         .then(() =>
           dispatch(showSuccess({ message: " Status updated successfully" }))
         );
       setSelectedStatus(null);
-    }
+      }
+      }
   }, [selected, selectedStatus]);
 
   function handleTableRowChange(row) {
     let categoryId = {};
     categoryId.categoryId = row._id;
+    categoryId.status = ['active','scheduled','in-active']
     setFilterParameter(categoryId);
     if (open.length === 0) {
       let item = [];
@@ -270,7 +291,7 @@ const CategoriesTable = ({
     setRowData(row);
   };
 
-  function deleteRowData() {
+  function handleArchived() {
     setShowCreateDeleteModal(false);
     if (toggleCategoris) {
       editCategory({
@@ -322,18 +343,11 @@ const CategoriesTable = ({
 
   function deleteDatas(){
     setShowDeleteModal(false)
-    if (toggleCategoris) {
      deleteData(rowData)
       dispatch(
         showSuccess({ message: "Deleted this category successfully" })
       );
-    } else {
-      deleteSubData(rowData)
-      dispatch(
-        showSuccess({ message: "Deleted this sub Category successfully" })
-      );
-      setToggleCategoris(true);
-    }
+   
 
   }
 
@@ -602,7 +616,10 @@ const CategoriesTable = ({
                                         numSelected={selected.length}
                                         order={order}
                                         orderBy={orderBy}
-                                        onSelectAllClick={handleSelectAllClick}
+                                        onSelectAllClick={(e)=>{
+                                          setToggleCategoris(false)
+                                          handleSelectAllClickForSub(e)
+                                        }}
                                         onRequestSort={handleRequestSort}
                                         rowCount={subCategoryList?.length}
                                         headCells={headCells}
@@ -647,10 +664,12 @@ const CategoriesTable = ({
                                                           labelId,
                                                       }}
                                                       onClick={(event) =>
+                                                        { 
+                                                         setToggleCategoris(false)
                                                         handleClick(
                                                           event,
                                                           row._id
-                                                        )
+                                                        )}
                                                       }
                                                       size="small"
                                                       style={{
@@ -764,31 +783,7 @@ const CategoriesTable = ({
                                                             </div>
                                                           </Tooltip>
                                                         )}
-                                                      {row?.status ===
-                                                        "archieved" && (
-                                                        <Tooltip
-                                                          title={"Delete"}
-                                                          placement="top"
-                                                        >
-                                                          <div
-                                                            onClick={(e) => {
-                                                              setToggleCategoris(false)
-                                                              toggleDeleteModalHandler(row)
-                                                            }}
-                                                            className="table-edit-icon rounded-4 p-2"
-                                                          >
-                                                            <DeleteIcon
-                                                              sx={{
-                                                                color:
-                                                                  "#5c6d8e",
-                                                                fontSize: 18,
-                                                                cursor:
-                                                                  "pointer",
-                                                              }}
-                                                            />
-                                                          </div>
-                                                        </Tooltip>
-                                                      )}
+                                                      
                                                       {deleteSubData && (
                                                         <Tooltip
                                                           title={
@@ -893,7 +888,7 @@ const CategoriesTable = ({
         name={"Archived"}
         showCreateModal={showCreateDeleteModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
-        handleArchive={deleteRowData}
+        handleArchive={handleArchived}
       />
       <UnArchivedModal
         showUnArchivedModal={showUnArchivedModal}

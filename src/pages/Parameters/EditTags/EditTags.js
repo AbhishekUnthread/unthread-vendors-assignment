@@ -13,17 +13,23 @@ import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import cancel from "../../../assets/icons/cancel.svg";
 
 // ! MATERIAL IMPORTS
-import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, OutlinedInput, Slide, Tooltip } from "@mui/material";
+import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, OutlinedInput, Slide, Tooltip, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateTagMutation, useEditTagMutation, useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import SaveFooter from "../../../components/SaveFooter/SaveFooter";
+import * as Yup from 'yup';
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
       return <Slide direction="up" ref={ref} {...props} />;
     });
     // ? DIALOG TRANSITION ENDS HERE
+
+    const validationSchema = Yup.object().shape({
+      tagName: Yup.string().max(50, 'Name cannot exceed 50 characters').required('Name is required'),
+    });
 
 
 const EditTags = () => {
@@ -33,6 +39,9 @@ const EditTags = () => {
   const [tagNotes,setTagNotes] = React.useState("")
   const [tagDuplicateName, setTagDuplicateName] = React.useState("");
   const [duplicateDescription, setDuplicateDescription] = React.useState(false);
+  const [hideFooter, setHideFooter] = React.useState(false);
+  const [tagNameError, setTagNameError] = React.useState('');
+
   const navigate = useNavigate();
   const [checked, setChecked] = React.useState(false);
   const dispatch = useDispatch();
@@ -77,19 +86,33 @@ const EditTags = () => {
 
 
     const handleNameChange = (event) => {
-      setTagName(event.target.value); // Updating the vendor name based on the input value
+      const newName = event.target.value;
+      setHideFooter(true);
+      validationSchema
+      .validate({ tagName: newName })
+      .then(() => {
+        setTagName(newName);
+        setTagNameError('');
+      })
+      .catch((error) => {
+        setTagName(newName);
+        setTagNameError(error.message);
+      });
     };
     const tagStatusChange=(event,tagStatus)=>{
       setTagStatus(tagStatus);
     }   
     const tagNotesChange=(event)=>{
       setTagNotes(event.target.value);
+      setHideFooter(true);
     }
     const handleFilterChange=(event)=>{
       setChecked(event.target.checked);
+      setHideFooter(true);
     }
 
     const handleSubmit = () => {
+      if(!tagNameError){
       if(tagId !== "")
       {
         editTag({
@@ -115,7 +138,7 @@ const EditTags = () => {
          navigate("/parameters/tagsManager"); 
        });
       }
-     };
+     }};
 
      const handleSubmitAndAddAnother = () => {
       if(tagId !== "")
@@ -237,6 +260,14 @@ const EditTags = () => {
               <FormControl className="w-100 px-0">
                 <OutlinedInput placeholder="Enter Tag Name" size="small" value={tagName} onChange={handleNameChange}/>
               </FormControl>
+              {tagNameError &&
+              <>
+                <Typography variant="caption" color="error">
+                  {tagNameError}
+                </Typography>
+              <br />
+              </>
+              }
               <FormControlLabel
                         control={
                           <Checkbox
@@ -283,18 +314,18 @@ const EditTags = () => {
 
         </div>
       </div>
-      <div className="row create-buttons pt-5 pb-3 justify-content-between">
+      {/* <div className="row create-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
           <Link to="/parameters/tagsManager" className="button-red-outline py-2 px-4">
             <p>Discard</p>
           </Link>
 
-          {/* <Link
+          <Link
             to="/parameters/tagsManager"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
-          </Link> */}
+          </Link>
         </div>
         <div className="d-flex w-auto px-0">
           <Link
@@ -312,7 +343,11 @@ const EditTags = () => {
             <p>Save</p>
           </Link>
         </div>
-      </div>
+      </div> */}
+      { hideFooter && <div className="row create-buttons pt-5 pb-3 justify-content-between">
+          <SaveFooter handleSubmit={handleSubmit} />          
+        </div>
+           }
 
     </div>
   );

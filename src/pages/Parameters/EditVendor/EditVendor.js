@@ -14,7 +14,7 @@ import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import cancel from "../../../assets/icons/cancel.svg";
 
 // ! MATERIAL IMPORTS
-import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, OutlinedInput, Slide, Tooltip } from "@mui/material";
+import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, OutlinedInput, Slide, Tooltip, Typography } from "@mui/material";
 
 import {
   useGetAllVendorsQuery,
@@ -25,12 +25,17 @@ import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice
 import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter from "../../../components/SaveFooter/SaveFooter";
+import * as Yup from 'yup';
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
       return <Slide direction="up" ref={ref} {...props} />;
     });
     // ? DIALOG TRANSITION ENDS HERE
+
+    const validationSchema = Yup.object().shape({
+      vendorName: Yup.string().max(50, 'Name cannot exceed 50 characters').required('Name is required'),
+    });
 
 
 const EditVendor = () => {
@@ -39,9 +44,7 @@ const EditVendor = () => {
   const dispatch = useDispatch();
   const [vendorName, setVendorName] = useState("")
   const [vendorNotes, setVendorNotes] = useState("")
-  const [vendorNotesCompare, setVendorNotesCompare] = useState("")
   const [vendorStatus, setVendorStatus] = useState("active")
-  const [vendorStatusCompare, setVendorStatusCompare] = useState("active")
   const [vendorFlagShip, setVendorFlagShip] = useState("")
   const [checked, setChecked] = React.useState(false);
   const vendorId = useSelector((state)=>state.vendor.vendorId)
@@ -53,18 +56,19 @@ const EditVendor = () => {
   const [duplicateFilter, setDuplicateFilter] = useState(false);
   const [index, setIndex] = useState(null);
   const [vendorIndex, setVendorIndex] = useState();
-  const [hideFooter, setHideFooter] = useState(false)
+  const [hideFooter, setHideFooter] = useState(false);
+  const [vendorNameError, setVendorNameError] = useState('');
 
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      setHideFooter(true);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []); 
+  // useEffect(() => {
+  //   const handleKeyDown = (event) => {
+  //     setHideFooter(true);
+  //   };
+  //   window.addEventListener('keydown', handleKeyDown);
+  //   return () => {
+  //     window.removeEventListener('keydown', handleKeyDown);
+  //   };
+  // }, []); 
 
 
 
@@ -127,7 +131,6 @@ const EditVendor = () => {
       setVendorName(vendorsData.data.data[0].name);
       setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
       setVendorNotes(vendorsData.data.data[0].notes)
-      setVendorNotesCompare(vendorsData.data.data[0].notes)
       setVendorStatus(vendorsData.data.data[0].status)
       setChecked(vendorsData.data.data[0].showFilter)
       setStartDate1(vendorsData.data.data[0].startDate)
@@ -148,19 +151,38 @@ const EditVendor = () => {
   
     const vendorNotesChange=(event)=>{
       setVendorNotes(event.target.value);
+      setHideFooter(true);
     }
     const vendorStatusChange=(event,vendorStatus)=>{
       setVendorStatus(vendorStatus);
+      setHideFooter(true);
     }   
 
+    // const handleNameChange = (event) => {
+    //   setVendorName(event.target.value); // Updating the vendor name based on the input value
+    //   setHideFooter(true);
+    // };
     const handleNameChange = (event) => {
-      setVendorName(event.target.value); // Updating the vendor name based on the input value
+      const newName = event.target.value;
+      setHideFooter(true);
+      validationSchema
+        .validate({ vendorName: newName })
+        .then(() => {
+          setVendorName(newName);
+          setVendorNameError('');
+        })
+        .catch((error) => {
+          setVendorName(newName);
+          setVendorNameError(error.message);
+        });
     };
 
     const handleFilterChange=(event)=>{
       setChecked(event.target.checked);
+      setHideFooter(true);
     }
     const handleSubmit = () => {
+      if (!vendorNameError) {
      if(vendorId !== "")
      {
        // Calling Vendor edit API
@@ -188,7 +210,7 @@ const EditVendor = () => {
         navigate("/parameters/vendors"); // Navigating to vendors page after successful creation
       });
      }
-    };
+    }};
     
     const handleSubmitAndAddAnother = () => {
       if(vendorId !== "")
@@ -325,6 +347,14 @@ const EditVendor = () => {
               <FormControl className="w-100 px-0">
                 <OutlinedInput placeholder={vendorName} value={vendorName} onChange={handleNameChange}size="small" />
               </FormControl>
+              {vendorNameError &&
+              <>
+              <Typography variant="caption" color="error">
+              {vendorNameError}
+              </Typography>
+              <br />
+              </>
+              }
               <FormControlLabel
                         control={
                           <Checkbox
@@ -378,7 +408,7 @@ const EditVendor = () => {
       
       <div className="row create-buttons pt-5 pb-3 justify-content-between">
 
-        { (hideFooter || vendorNotesCompare!==vendorNotes || vendorStatusCompare!==vendorStatus)&& <div className="row create-buttons pt-5 pb-3 justify-content-between">
+        { hideFooter && <div className="row create-buttons pt-5 pb-3 justify-content-between">
           <SaveFooter handleSubmit={handleSubmit} />          
         </div>
            }
