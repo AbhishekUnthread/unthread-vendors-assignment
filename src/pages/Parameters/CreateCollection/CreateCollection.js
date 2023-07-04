@@ -224,6 +224,8 @@ const likeProductRows = [
 
 const collectionValidationSchema = Yup.object({
   title: Yup.string().trim().min(3).required("Required"),
+  description : Yup.string().trim().min(10).required("Required"),
+  mediaUrl : Yup.string().trim().required("Required"),
 });
 
 const CreateCollection = () => {
@@ -235,7 +237,7 @@ const CreateCollection = () => {
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
   const [categorySeo,setCategorySeo] = useState({});
-  const [appTextEditor, setAppTextEditor] = useState("<p></p>")
+  const [appTextEditor, setAppTextEditor] = useState("<p></p77>")
 
   const clearDate = () => {
     setStartDate(null);
@@ -247,7 +249,9 @@ const CreateCollection = () => {
   }
 
   const handleMediaUrl = (value) => {
-    collectionFormik?.setFieldValue("mediaUrl", value);
+    if(value !== null) {
+      collectionFormik?.setFieldValue("mediaUrl", value);
+    }
   }
 
   const handleProductStatus = (value, status) => {
@@ -288,7 +292,9 @@ const CreateCollection = () => {
   });
 
   useEffect(() => {
-    collectionFormik.setFieldValue("description", appTextEditor)
+    if(appTextEditor !== null) {
+      collectionFormik.setFieldValue("description", appTextEditor)
+    }
     if(startDate1 !== null){
       collectionFormik.setFieldValue("startDate", startDate1);
     }
@@ -585,6 +591,11 @@ const CreateCollection = () => {
                   value={appTextEditor}
                  />
               </div>
+              {!!collectionFormik.touched.description && collectionFormik.errors.description && (
+                <FormHelperText error>
+                  {collectionFormik.errors.description}
+                </FormHelperText>
+              )}
             </div>
 
             <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-4">
@@ -1032,7 +1043,11 @@ const CreateCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO name={collectionFormik.values.title} value={categorySeo} handleSeoChange={setCategorySeo} />
+              <SEO 
+                name={collectionFormik.values.title} 
+                value={categorySeo} 
+                handleSeoChange={setCategorySeo} 
+              />
             </div>
 
             <SwipeableDrawer
@@ -1254,8 +1269,19 @@ const CreateCollection = () => {
             />
             <VisibilityBox name={"isVisibleFrontend"} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
             <div className="mt-4">
-              <UploadMediaBox name={"mediaUrl"}  value={collectionFormik?.values?.mediaUrl}  imageName={addMedia} headingName={"Media"} UploadChange={handleMediaUrl} />
+              <UploadMediaBox 
+                name={"mediaUrl"}  
+                value={collectionFormik?.values?.mediaUrl}  
+                imageName={addMedia} 
+                headingName={"Media"} 
+                UploadChange={handleMediaUrl} 
+              />
             </div>
+             {!!collectionFormik.touched.mediaUrl && collectionFormik.errors.mediaUrl && (
+                <FormHelperText error>
+                  {collectionFormik.errors.mediaUrl}
+                </FormHelperText>
+              )}
             <div className="mt-4">
               <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />
             </div>
