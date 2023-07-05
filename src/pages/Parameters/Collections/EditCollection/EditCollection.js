@@ -309,22 +309,34 @@ const EditCollection = () => {
 
   const handleSubmit = () => {
     if (collectionId !== "") {
+      const collectionDetails = {
+        title: collectionTitle, 
+        filter: collectionFilter, 
+        description: collectionDescription, 
+        status: startDate1 === null ? collectionStatus : "scheduled",
+        isVisibleFrontend: collectionVisibility,
+        notes: collectionNote,
+        mediaUrl: collectionMediaUrl,
+        seo: {}
+      }
+      if (startDate1 != null) {
+        collectionDetails.startDate = new Date(startDate1);
+      }
+      if (endDate1 != null) {
+        collectionDetails.endDate = new Date(endDate1);
+      }
+
+      if (collectionSeo && typeof collectionSeo === "object") {
+        for (const key in collectionSeo) {
+          if (collectionSeo[key] !== "" && collectionSeo[key] !== null) {
+            collectionDetails.seo[key] = collectionSeo[key];
+          }
+        }
+      }
+
       editCollection({
         id: collectionId,
-        details : {
-          title: collectionTitle, 
-          filter: collectionFilter, 
-          description: collectionDescription, 
-          status: startDate1 === null ? collectionStatus : "scheduled",
-          isVisibleFrontend: collectionVisibility,
-          notes: collectionNote,
-          mediaUrl: collectionMediaUrl,
-          seo: collectionSeo,
-          ...(startDate1 !== null &&
-          { startDate: new Date(startDate1) }),
-          ...(endDate1 !== null &&
-          { endDate: new Date(endDate1) }),
-        }
+        details: collectionDetails
       })
         .unwrap()
         navigate("/parameters/collections");
