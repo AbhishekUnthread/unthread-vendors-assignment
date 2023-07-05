@@ -3,7 +3,13 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 
-export default function AppMobileCodeSelect() {
+export default function AppMobileCodeSelect({ GetCountryCode }) {
+  const handleChange = (event) => {
+    if (event) {
+      GetCountryCode(event.target.value);
+    }
+  };
+
   return (
     <Autocomplete
       id="country-select-demo"
@@ -51,6 +57,7 @@ export default function AppMobileCodeSelect() {
             ...params.inputProps,
             autoComplete: "new-password", // disable autocomplete and autofill
           }}
+          onChange={(event) => handleChange(event)}
         />
       )}
     />

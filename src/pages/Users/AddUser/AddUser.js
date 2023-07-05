@@ -17,7 +17,7 @@ import SaveFooter from "../../../components/SaveFooter/SaveFooter"
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import archivedGrey from "../../../assets/icons/archivedGrey.svg";
 import editGrey from "../../../assets/icons/editGrey.svg";
-import addUserUpload from "../../../assets/images/users/addUserUpload.svg";
+import addMedia from "../../../assets/icons/addMedia.svg";
 // ! MATERIAL IMPORTS
 import {
   FormControl,
@@ -66,12 +66,22 @@ const taggedWithData = [
 const customerValidationSchema = Yup.object({
   firstName: Yup.string().trim().min(3).required("Required"),
   lastName: Yup.string().trim().min(3).required("Required"),
-  email: Yup.string().email().required("Required")
+  email: Yup.string().email().required("Required"),
+  phone: Yup.number().min(10).required("Required"),
+  password:  Yup
+    .string()
+    .min(8, 'Password must be 8 characters long')
+    .matches(/[0-9]/, 'Password requires a number')
+    .matches(/[a-z]/, 'Password requires a lowercase letter')
+    .matches(/[A-Z]/, 'Password requires an uppercase letter')
+    .matches(/[^\w]/, 'Password requires a symbol')
+    .required("Required"),
 });
 
 const AddUser = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
+  const [startDate, setStartDate] = React.useState(null);
 
   const [
     createCustomer,
@@ -82,6 +92,17 @@ const AddUser = () => {
     },
   ] = useCreateCustomerMutation();
 
+  const handleMediaUrl = (value) => {
+    if(value !== null) {
+      customerFormik?.setFieldValue("imageUrl", value);
+    }
+  }
+
+  const GetCountryCode = (value) => {
+    console.log(value, 'value of country code')
+    customerFormik.setFieldValue("countryCode", value)
+  }
+
   const customerFormik = useFormik({
     initialValues: {
       isSendEmail: false,
@@ -90,6 +111,7 @@ const AddUser = () => {
     enableReinitialize: true,
     validationSchema: customerValidationSchema,
     onSubmit: (values) => {
+      console.log(values, 'values for creating customers')
       createCustomer(values)
         .unwrap()
         .then(() => customerFormik.resetForm());
@@ -201,7 +223,11 @@ const AddUser = () => {
                     <FormControl className="w-100 px-0">
                       <LocalizationProvider dateAdapter={AdapterMoment}>
                         <DesktopDateTimePicker
-                          renderInput={(params) => <TextField {...params} size="small" />}
+                          onChange={(newValue) => {
+                            setStartDate(newValue);
+                            // handleStartDate(newValue)
+                          }}
+                          renderInput={(params) => <TextField {...params} size="small" placeholder="hello"/>}
                         />
                       </LocalizationProvider>
                     </FormControl>
@@ -295,7 +321,7 @@ const AddUser = () => {
                             <AppMobileCodeSelect 
                               value={customerFormik.values.countryCode}
                               onBlur={customerFormik.handleBlur}
-                              onChange={customerFormik.handleChange}
+                              GetCountryCode={GetCountryCode}
                               name="countryCode" 
                             />
                             {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
@@ -307,6 +333,11 @@ const AddUser = () => {
                         name="phone" 
                       />
                     </FormControl>
+                    {!!customerFormik.touched.phone && customerFormik.errors.phone && (
+                      <FormHelperText error>
+                        {customerFormik.errors.phone}
+                      </FormHelperText>
+                    )}
                   </div>
                   <div className="col-md-12">
                     <FormControlLabel
@@ -657,12 +688,19 @@ const AddUser = () => {
             </div>
           </div>
           <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-            {/* <UploadMediaBox
-              imageName={addUserUpload}
-              headingName={"Add Profile"}
-            /> */}
+            <UploadMediaBox 
+              name={"imageUrl"}  
+              value={customerFormik?.values?.imageUrl}  
+              imageName={addMedia} 
+              headingName={"Media"} 
+              UploadChange={handleMediaUrl} 
+            />
             <TagsBox />
-            <NotesBox />
+            <NotesBox 
+              name={"notes"}
+              onChange={customerFormik.handleChange} 
+              value={customerFormik.values.notes}
+            />
           </div>
         </div>
         <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
