@@ -32,6 +32,11 @@ import {
   TextField,
   Autocomplete,
 } from "@mui/material";
+
+import { DesktopDateTimePicker } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -61,6 +66,7 @@ const taggedWithData = [
 const customerValidationSchema = Yup.object({
   firstName: Yup.string().trim().min(3).required("Required"),
   lastName: Yup.string().trim().min(3).required("Required"),
+  email: Yup.string().email().required("Required")
 });
 
 const AddUser = () => {
@@ -78,8 +84,8 @@ const AddUser = () => {
 
   const customerFormik = useFormik({
     initialValues: {
-      isSendEmail: true,
-      isTemporaryPassword: true
+      isSendEmail: false,
+      isTemporaryPassword: false
     },
     enableReinitialize: true,
     validationSchema: customerValidationSchema,
@@ -193,14 +199,11 @@ const AddUser = () => {
                   <div className="col-md-6 mt-3">
                     <p className="text-lightBlue mb-1">Date of Birth</p>
                     <FormControl className="w-100 px-0">
-                      <OutlinedInput
-                        placeholder="Select Date of Birth"
-                        size="small"
-                        value={customerFormik.values.dob}
-                        onBlur={customerFormik.handleBlur}
-                        onChange={customerFormik.handleChange}
-                        name="dob" 
-                      />
+                      <LocalizationProvider dateAdapter={AdapterMoment}>
+                        <DesktopDateTimePicker
+                          renderInput={(params) => <TextField {...params} size="small" />}
+                        />
+                      </LocalizationProvider>
                     </FormControl>
                     {!!customerFormik.touched.dob && customerFormik.errors.dob && (
                       <FormHelperText error>
@@ -254,6 +257,11 @@ const AddUser = () => {
                         name="email" 
                       />
                     </FormControl>
+                    {!!customerFormik.touched.email && customerFormik.errors.email && (
+                      <FormHelperText error>
+                        {customerFormik.errors.email}
+                      </FormHelperText>
+                    )}
                   </div>
                   <div className="col-md-12">
                     <FormControlLabel

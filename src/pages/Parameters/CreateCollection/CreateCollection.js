@@ -224,8 +224,8 @@ const likeProductRows = [
 
 const collectionValidationSchema = Yup.object({
   title: Yup.string().trim().min(3).required("Required"),
-  description : Yup.string().trim().min(10).required("Required"),
-  mediaUrl : Yup.string().trim().required("Required"),
+  // description : Yup.string().trim().min(10).required("Required"),
+  // mediaUrl : Yup.string().trim().required("Required"),
 });
 
 const CreateCollection = () => {
@@ -237,7 +237,7 @@ const CreateCollection = () => {
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
   const [categorySeo,setCategorySeo] = useState({});
-  const [appTextEditor, setAppTextEditor] = useState("<p></p77>")
+  const [appTextEditor, setAppTextEditor] = useState()
 
   const clearDate = () => {
     setStartDate(null);
@@ -283,6 +283,14 @@ const CreateCollection = () => {
     enableReinitialize: true,
     validationSchema: collectionValidationSchema,
     onSubmit: (values) => {
+      console.log(values, 'values');
+      for (const key in values) {
+        if(values[key] === "" || values[key] === null){
+          delete values[key] 
+        }
+      }
+            console.log(values, 'values new');
+
       createCollection(values)
         .unwrap()
         .then(() => collectionFormik.resetForm());
@@ -591,11 +599,11 @@ const CreateCollection = () => {
                   value={appTextEditor}
                  />
               </div>
-              {!!collectionFormik.touched.description && collectionFormik.errors.description && (
+              {/* {!!collectionFormik.touched.description && collectionFormik.errors.description && (
                 <FormHelperText error>
                   {collectionFormik.errors.description}
                 </FormHelperText>
-              )}
+              )} */}
             </div>
 
             <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-4">
@@ -1277,11 +1285,11 @@ const CreateCollection = () => {
                 UploadChange={handleMediaUrl} 
               />
             </div>
-             {!!collectionFormik.touched.mediaUrl && collectionFormik.errors.mediaUrl && (
+             {/* {!!collectionFormik.touched.mediaUrl && collectionFormik.errors.mediaUrl && (
                 <FormHelperText error>
                   {collectionFormik.errors.mediaUrl}
                 </FormHelperText>
-              )}
+              )} */}
             <div className="mt-4">
               <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />
             </div>
