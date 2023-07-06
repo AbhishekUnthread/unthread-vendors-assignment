@@ -27,8 +27,11 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
+  Tooltip,
 } from "@mui/material";
-
+import moment from "moment";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import ChatIcon from '@mui/icons-material/Chat';
 // ? TABLE STARTS HERE
 function createData(eId, date, userName, subject) {
   return { eId, date, userName, subject };
@@ -63,16 +66,16 @@ const headCells = [
     label: "Enquiry ID",
   },
   {
-    id: "date",
+    id: "status",
     numeric: false,
     disablePadding: false,
-    label: "Date",
+    label: "Status",
   },
   {
-    id: "userName",
+    id: "customer",
     numeric: false,
     disablePadding: false,
-    label: "User",
+    label: "Customer",
   },
   {
     id: "subject",
@@ -81,16 +84,16 @@ const headCells = [
     label: "Subject",
   },
   {
-    id: "comments",
+    id: "message",
     numeric: false,
     disablePadding: false,
-    label: "Comments",
+    label: "Message",
   },
   {
-    id: "replyAction",
+    id: "action",
     numeric: false,
     disablePadding: false,
-    label: "Reply Action",
+    label: "Action",
   },
 ];
 
@@ -102,19 +105,26 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const UserEnquiriesTable = () => {
+const UserEnquiriesTable = ({isLoading,error,list,rowsPerPage,changeRowsPerPage,changePage,page}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("eId");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [page, setPage] = React.useState(0);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  // const emptyRows =
+  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
+
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
+
+  const formattedDate = moment(list.created_at).format("MMM Do [at] hh:mma");
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -124,7 +134,7 @@ const UserEnquiriesTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.eId);
+      const newSelected = list.map((n) => n.external_id);
       setSelected(newSelected);
       return;
     }
@@ -151,11 +161,6 @@ const UserEnquiriesTable = () => {
     setSelected(newSelected);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   // ? COMMENT DIALOG STARTS HERE
@@ -169,6 +174,20 @@ const UserEnquiriesTable = () => {
     setOpenComment(false);
   };
   // ? COMMENT DIALOG ENDS HERE
+
+  // REPLY DIALOGUE BOX STARTS HERE
+
+   const handleReply = (row)=>
+   {
+
+   }
+
+  // REPLY DIALOGUE BOX ENDS HERE
+
+  const handleArchive =(row)=>{
+
+  }
+
 
   return (
     <React.Fragment>
@@ -191,6 +210,7 @@ const UserEnquiriesTable = () => {
           </div>
         </div>
       )}
+      {!error ? (list.length ?( <>
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}
@@ -207,10 +227,9 @@ const UserEnquiriesTable = () => {
             headCells={headCells}
           />
           <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {stableSort(list, getComparator(order, orderBy))
               .map((row, index) => {
-                const isItemSelected = isSelected(row.eId);
+                const isItemSelected = isSelected(row.external_id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -219,7 +238,7 @@ const UserEnquiriesTable = () => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.eId}
+                    key={row.external_id}
                     selected={isItemSelected}
                     className="table-rows"
                   >
@@ -229,7 +248,7 @@ const UserEnquiriesTable = () => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.eId)}
+                        onClick={(event) => handleClick(event, row.external_id)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -247,13 +266,29 @@ const UserEnquiriesTable = () => {
                           className="text-blue-2 rounded-circle fw-600 c-pointer"
                           onClick={handleOpenComment}
                         >
-                          {row.eId}
+                          <u>#{row.external_id}</u>
+                          <div className="d-flex align-items-center c-pointer">
+                            <p className="text-lightBlue pt-5px">{formattedDate}</p>
+                          </div>
                         </p>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="d-flex align-items-center c-pointer">
-                        <p className="text-lightBlue">{row.date}</p>
+                      <div className="d-flex align-items-center">
+                          <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
+                            style={{background: 
+                            row.status === "open" ? "#C8D8FF" :
+                            row.status === "pending" ?"#FEE1A3"  : 
+                            row.status === "resolved" ? "#A6FAAF" : ""
+                            }}>
+                            <small className="text-black fw-400">
+                              {
+                                row.status === "open" ? "Open" :  
+                                row.status === "pending" ? "Pending" : 
+                                row.status === "resolved" ? "Resolved" : ""
+                              }
+                            </small>
+                          </div>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -274,7 +309,7 @@ const UserEnquiriesTable = () => {
                         className="d-flex c-pointer"
                         onClick={handleOpenComment}
                       >
-                        <p className="text-blue-2">View</p>
+                        <p className="text-lightBlue">{row.description}</p>
                       </div>
 
                       <Dialog
@@ -371,7 +406,7 @@ const UserEnquiriesTable = () => {
                       </Dialog>
                     </TableCell>
                     <TableCell style={{ width: 160 }}>
-                      <div className="d-flex align-items-center">
+                      {/* <div className="d-flex align-items-center">
                         <img
                           src={replyActionButton}
                           alt="replyActionButton"
@@ -379,12 +414,48 @@ const UserEnquiriesTable = () => {
                           onClick={handleOpenComment}
                           className="c-pointer"
                         />
-                      </div>
+                      </div> */}
+                      <div className="d-flex align-items-center">
+                          <Tooltip title="Reply" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2" 
+                                onClick={(e) => {
+                                  handleReply(row)
+                                }}
+                            >
+                              <ChatIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+
+                          <Tooltip
+                              onClick={() => {
+                                handleArchive(row)
+                                }
+                              }
+                                  title="Archive"
+                                  placement="top"
+                                >
+                                  <div className="table-edit-icon rounded-4 p-2">
+                                    <InventoryIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </div>
+                          </Tooltip>
+                        </div>
                     </TableCell>
                   </TableRow>
                 );
               })}
-            {emptyRows > 0 && (
+            {/* {emptyRows > 0 && (
               <TableRow
                 style={{
                   height: 53 * emptyRows,
@@ -392,20 +463,29 @@ const UserEnquiriesTable = () => {
               >
                 <TableCell colSpan={6} />
               </TableRow>
-            )}
+            )} */}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={list.length}
         rowsPerPage={rowsPerPage}
         page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        onPageChange={changePage}
+        onRowsPerPageChange={changeRowsPerPage}
         className="table-pagination"
       />
+            </>):isLoading ? (
+          <span className="d-flex justify-content-center m-3">Loading...</span>
+        ): (
+          <span className="d-flex justify-content-center m-3">
+            No data found
+          </span>
+        )): (
+        <></>
+      )}
     </React.Fragment>
   );
 };

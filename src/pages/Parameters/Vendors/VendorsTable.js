@@ -474,9 +474,18 @@ const handleDelete =()=>{
                           </TableCell> */}
                           <TableCell style={{ width: 140, padding: 0 }}>
                             <div className="d-flex align-items-center">
-                              <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"}}>
+                              <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
+                               style={{background: 
+                               row.status == "active" ? "#A6FAAF" :
+                               row.status == "in-active" ? "#F67476" : 
+                               row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
+                               }}>
                                 <small className="text-black fw-400">
-                                  {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "archieved" ? "Archived" : "Scheduled"}
+                                  {
+                                    row.status == "active" ? "Active" :  
+                                    row.status == "in-active" ? "In-Active" : 
+                                    row.status == "archieved" ? "Archived" : "Scheduled"
+                                  }
                                 </small>
                               </div>
                             </div>
