@@ -18,8 +18,9 @@ const NotesBox = ({name,value,onChange}) => {
           background: "#15142A",
           color: "#c8d8ff",
           borderRadius: 5,
-          paddingLeft: 20,
-          paddingTop: 10
+          paddingInline: 20,
+          paddingTop: 10,
+          paddingBottom: 10
         }}
         minRows={3}
         className="col-12"

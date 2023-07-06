@@ -226,10 +226,6 @@ const likeProductRows = [
 ];
 // ? LIKE PRODUCTS TABLE ENDS HERE
 
-const collectionValidationSchema = Yup.object({
-  title: Yup.string().trim().min(3).required("required"),
-});
-
 const EditCollection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -252,12 +248,9 @@ const EditCollection = () => {
   const [endDate, setEndDate] = useState(null);
 
   const handleSchedule = (start, end) => {
-    console.log(start,'start')
     setStartDate(start);
     setEndDate(end);
   };
-  console.log(moment(startDate).toDate(), 'startDate startDate');
-  console.log(moment(startDate1).toDate(), 'startDate1 dsfn');
 
    const clearDate = () => {
     setStartDate1(null);

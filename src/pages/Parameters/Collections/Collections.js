@@ -97,11 +97,7 @@ const Collections = () => {
   if (collectionType === 0) {
     filterParams.status = statusFilter;
   }
-        console.log(filterParameter,'filterParameter')
-
-        console.log(filterParams,'filterParams')
-
-
+  
   const {
     data: collectionData,
     isLoading: collectionIsLoading,

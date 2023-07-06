@@ -107,9 +107,10 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   }
 
   const toggleArchiveModalHandler = (row) => {
+    setForMassAction(false)
     setShowDeleteModal((prevState) => !prevState);
     setArchiveID(row);
-    setName(row?.name);
+    setName(row?.title);
   };
 
   useEffect(() => {
@@ -162,8 +163,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
-        setArchivedModal(true);
-
   };
 
   const handleMassAction  = (status) => {
@@ -271,9 +270,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     }
   }
 
-  const handleUnArchive = (id) => {
+  const handleUnArchive = (id, title) => {
+    setForMassAction(false)
     setShowUnArhcivedModal(true)
     setUnArchiveID(id)
+    setName(title)
   }
 
   const handleUnArchived = () => {
@@ -473,7 +474,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                           <Tooltip title="Un-Archive" placement="top">
                             <div className="table-edit-icon rounded-4 p-2"
                               onClick={() => {
-                                handleUnArchive(row._id)
+                                handleUnArchive(row._id, row.title)
                                 }
                               }
                             >
@@ -507,7 +508,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                               />
                             </div>
                           </Tooltip>
-                          <Tooltip title="Copy" placement="top">
+                          <Tooltip title="Duplicate" placement="top">
                             <div className="table-edit-icon rounded-4 p-2">
                               <ContentCopyIcon
                                 sx={{
@@ -613,13 +614,14 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           showCreateModal={showDeleteModal}
           toggleArchiveModalHandler={toggleArchiveModalHandler}
           handleArchive={handleArchiveModal} 
-          name={name} 
+          name={forMassAction == false ? name : ""} 
         />
         <UnArchivedModal 
           handleStatusValue={handleStatusValue}
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
+          name={forMassAction == false ? name : "this"}
         />
     </React.Fragment>
   );

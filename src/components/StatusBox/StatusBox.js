@@ -79,7 +79,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         </ToggleButton>
       </ToggleButtonGroup>
       {showScheduleData && (
-          <div className="d-flex align-items-center mt-2 c-pointer">
+          <div className="d-flex align-items-center mt-4 c-pointer">
             <img src={clock} alt="clock" className="me-1" width={12} />
             <small className="text-blue-2" onClick={handelScheduleProduct}>
               Schedule {startDate == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate == null ? '' : `till ${endDateNew} at ${endTime}` }
