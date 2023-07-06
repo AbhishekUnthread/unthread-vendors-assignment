@@ -4,7 +4,7 @@ export const customerAddressApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createCustomerAddress: builder.mutation({
       query: (customerAddressDetails) => ({
-        url: "/customer",
+        url: "/customerAddress",
         method: "POST",
         body: customerAddressDetails,
       }),

@@ -3,7 +3,15 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 
-export default function AppStateSelect() {
+export default function AppStateSelect({ getStateName, SelectStateName }) {
+  const handleStateName = (event) => {
+    getStateName(event.target.value)
+  }
+
+  const selectStateName = (event, value) => {
+    SelectStateName(value.label)
+  }
+
   return (
     <Autocomplete
       id="country-select-demo"
@@ -12,6 +20,7 @@ export default function AppStateSelect() {
       autoHighlight
       size="small"
       getOptionLabel={(option) => option.label}
+      onChange={selectStateName}
       renderOption={(props, option) => (
         <Box
           component="li"
@@ -32,6 +41,7 @@ export default function AppStateSelect() {
             ...params.inputProps,
             autoComplete: "new-password", // disable autocomplete and autofill
           }}
+          onChange={handleStateName}
         />
       )}
     />
