@@ -264,7 +264,7 @@ const CreateCollection = () => {
     isSuccess: collectionIsSuccess,
     error: collectionError,
   } = useGetAllCollectionsQuery({ createdAt: "-1", id: collectionId });
-  
+
   const [
     createCollection,
     {

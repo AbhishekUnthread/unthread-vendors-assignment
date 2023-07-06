@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
   Box,
@@ -16,7 +16,6 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import CollectionsTable from "./CollectionsTable";
-import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
@@ -35,51 +34,18 @@ import {
 
 import {
   useGetAllCollectionsQuery,
-  useCreateCollectionMutation,
   useDeleteCollectionMutation,
-  useEditCollectionMutation,
 } from "../../../features/parameters/collections/collectionsApiSlice";
 
-const eventHandler = (e) => {
-  e.stopPropagation();
-  console.log(e.target);
-};
-
-const initialCollectionState = {
-  status: "",
-  start: 0,
-  limit: 10,
-  total: null,
-};
-
-const collectionsReducer = (state, action) => {
-  switch (action.type) {
-    case "STATUS": {
-      return {
-        ...state,
-        status: action.payload,
-      };
-    }
-    default: {
-      return initialCollectionState;
-    }
-  }
-};
 
 const Collections = () => {
   const dispatch = useDispatch();
-  const [value, setValue] = useState(0);
   const [error, setError] = useState(false);
   const [collectionList, setCollectionList] = useState([]);
   const [collectionType, setCollectionType] = useState(0);
-  const [collectionsStatus, setCollectionsStatus] = useState("");
   const [pageLength, setPageLegnth] = useState();
-  const [collectionState, collectionDispatch] = useReducer(
-    collectionsReducer,
-    initialCollectionState
-  );
-  const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState(["active","in-active","scheduled"]);
+  const [sortFilter, setSortFilter] = useState("newestToOldest");
+  const [statusFilter, setStatusFilter] = useState(["active","in-active","scheduled"]);
   const [searchValue, setSearchValue] = useState("");
   
   const filterParameter = {};
@@ -112,11 +78,12 @@ const Collections = () => {
       filterParameter.alphabetical = sortFilter == "alphabeticalAtoZ" ? "1" : "-1";
     }
     else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
+      console.log(sortFilter,'sortFilter')
       filterParameter.createdAt = sortFilter == "oldestToNewest" ? "1" : "-1";
     }
   }
   
-  const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
+  const collectionTypeQuery = collectionType === 0 ? { }
     : collectionType === 1 ? { status: "active" }
     : collectionType === 2 ? { createdAt: -1, status: "in-active" }
     : collectionType === 3 ? { createdAt: -1, status: "archieved" }
@@ -130,6 +97,10 @@ const Collections = () => {
   if (collectionType === 0) {
     filterParams.status = statusFilter;
   }
+        console.log(filterParameter,'filterParameter')
+
+        console.log(filterParams,'filterParams')
+
 
   const {
     data: collectionData,

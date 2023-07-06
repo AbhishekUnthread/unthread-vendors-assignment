@@ -270,6 +270,37 @@ const AddUser = () => {
                     </FormControl>
                   </div>
                   <div className="col-md-12 mt-3">
+                    <p className="text-lightBlue mb-1">Mobile Number</p>
+                    <FormControl className="w-100 px-0">
+                      <OutlinedInput
+                        placeholder="Enter Mobile Number"
+                        size="small"
+                        sx={{ paddingLeft: 0 }}
+                        startAdornment={
+                          <InputAdornment position="start">
+                            <AppMobileCodeSelect 
+                              value={customerFormik.values.countryCode}
+                              onBlur={customerFormik.handleBlur}
+                              GetCountryCode={GetCountryCode}
+                              SelectCountryCode = {SelectCountryCode}
+                              name="countryCode" 
+                            />
+                            {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
+                          </InputAdornment>
+                        }
+                        value={customerFormik.values.phone}
+                        onBlur={customerFormik.handleBlur}
+                        onChange={customerFormik.handleChange}
+                        name="phone" 
+                      />
+                    </FormControl>
+                    {!!customerFormik.touched.phone && customerFormik.errors.phone && (
+                      <FormHelperText error>
+                        {customerFormik.errors.phone}
+                      </FormHelperText>
+                    )}
+                  </div>
+                  <div className="col-md-12 mt-3">
                     <p className="text-lightBlue mb-1">Email ID</p>
                     <FormControl className="w-100 px-0">
                       <OutlinedInput 
@@ -311,35 +342,38 @@ const AddUser = () => {
                     />
                   </div>
                   <div className="col-md-12 mt-3">
-                    <p className="text-lightBlue mb-1">Mobile Number</p>
-                    <FormControl className="w-100 px-0">
-                      <OutlinedInput
-                        placeholder="Enter Mobile Number"
-                        size="small"
-                        sx={{ paddingLeft: 0 }}
-                        startAdornment={
-                          <InputAdornment position="start">
-                            <AppMobileCodeSelect 
-                              value={customerFormik.values.countryCode}
-                              onBlur={customerFormik.handleBlur}
-                              GetCountryCode={GetCountryCode}
-                              SelectCountryCode = {SelectCountryCode}
-                              name="countryCode" 
-                            />
-                            {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
-                          </InputAdornment>
-                        }
-                        value={customerFormik.values.phone}
-                        onBlur={customerFormik.handleBlur}
-                        onChange={customerFormik.handleChange}
-                        name="phone" 
-                      />
-                    </FormControl>
-                    {!!customerFormik.touched.phone && customerFormik.errors.phone && (
-                      <FormHelperText error>
-                        {customerFormik.errors.phone}
-                      </FormHelperText>
-                    )}
+                    <p className="text-lightBlue mb-1">User Group</p>
+                    {/* <Autocomplete
+                      multiple
+                      id="checkboxes-tags-demo"
+                      sx={{ width: "100%" }}
+                      options={customerGroupData?.data?.data}
+                      disableCloseOnSelect
+                      getOptionLabel={(option) => option?.name}
+                      size="small"
+                      renderOption={(props, option, { selected }) => (
+                        <li {...props}>
+                          <Checkbox
+                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                            checkedIcon={<CheckBoxIcon fontSize="small" />}
+                            checked={selected}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                              marginRight: 0,
+                            }}
+                          />
+                          <small className="text-lightBlue">{option?.name}</small>
+                        </li>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          size="small"
+                          {...params}
+                          placeholder="Search"
+                        />
+                      )}
+                    /> */}
                   </div>
                   <div className="col-md-12">
                     <FormControlLabel
@@ -396,54 +430,6 @@ const AddUser = () => {
                         },
                       }}
                     />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
-              <div className="d-flex col-12 px-0 justify-content-between">
-                <div className="d-flex align-items-center">
-                  <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                    User Type
-                  </h6>
-                </div>
-              </div>
-              <hr className="hr-grey-6 mt-3 mb-0" />
-              <div className="col-12 px-0">
-                <div className="row">
-                  <div className="col-md-12 mt-3">
-                    <p className="text-lightBlue mb-1">User Group</p>
-                    {/* <Autocomplete
-                      multiple
-                      id="checkboxes-tags-demo"
-                      sx={{ width: "100%" }}
-                      options={customerGroupData?.data?.data}
-                      disableCloseOnSelect
-                      getOptionLabel={(option) => option?.name}
-                      size="small"
-                      renderOption={(props, option, { selected }) => (
-                        <li {...props}>
-                          <Checkbox
-                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                            checkedIcon={<CheckBoxIcon fontSize="small" />}
-                            checked={selected}
-                            size="small"
-                            style={{
-                              color: "#5C6D8E",
-                              marginRight: 0,
-                            }}
-                          />
-                          <small className="text-lightBlue">{option?.name}</small>
-                        </li>
-                      )}
-                      renderInput={(params) => (
-                        <TextField
-                          size="small"
-                          {...params}
-                          placeholder="Search"
-                        />
-                      )}
-                    /> */}
                   </div>
                 </div>
               </div>

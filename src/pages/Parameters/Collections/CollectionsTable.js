@@ -587,7 +587,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
             <img src={question} alt="question" width={200} />
             <div className="row"></div>
             <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive this collection 
+              Are you sure you want to Archive this collection  
               {forMassAction == false &&<span className="text-blue-2">{collectionTitle} </span>} ?
             </h6>
             <div className="d-flex justify-content-center mt-4">
