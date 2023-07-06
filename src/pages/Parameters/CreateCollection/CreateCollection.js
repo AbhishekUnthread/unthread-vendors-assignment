@@ -283,14 +283,11 @@ const CreateCollection = () => {
     enableReinitialize: true,
     validationSchema: collectionValidationSchema,
     onSubmit: (values) => {
-      console.log(values, 'values');
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
           delete values[key] 
         }
       }
-            console.log(values, 'values new');
-
       createCollection(values)
         .unwrap()
         .then(() => collectionFormik.resetForm());

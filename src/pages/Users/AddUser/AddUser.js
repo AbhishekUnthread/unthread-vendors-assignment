@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./AddUser.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
@@ -41,7 +41,10 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
-import { useCreateCustomerMutation } from "../../../features/user/customer/customerApiSlice"
+import {useCreateCustomerMutation} from "../../../features/customers/customer/customerApiSlice"
+import { useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
+import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
+import { useCreateCustomerAddressMutation } from "../../../features/customers/customerAddress/customerAddressApiSlice";
 
 import {
   showSuccess,
@@ -81,7 +84,24 @@ const customerValidationSchema = Yup.object({
 const AddUser = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
-  const [startDate, setStartDate] = React.useState(null);
+  const [startDate, setStartDate] = useState(null);
+
+  const {
+    data: tagsData,
+    isLoading: tagsIsLoading,
+    isSuccess: tagsIsSuccess,
+    error: tagsError,
+  } = useGetAllTagsQuery({createdAt: -1});
+
+  const {
+    data: customerGroupData,
+    isLoading: customerGroupIsLoading,
+    isSuccess: customerGroupIsSuccess,
+    error: customerGroupError,
+  } = useGetAllCustomerGroupQuery();
+
+  console.log(customerGroupData?.data?.data, 'customerGroupData')
+  console.log(taggedWithData, 'taggedWithData')
 
   const [
     createCustomer,
@@ -92,6 +112,15 @@ const AddUser = () => {
     },
   ] = useCreateCustomerMutation();
 
+  const [
+    createCustomerAddress,
+    {
+      isLoading: createCustomerAddressIsLoading,
+      isSuccess: createCustomerAddressIsSuccess,
+      error: createCustomerAddressError,
+    },
+  ] = useCreateCustomerAddressMutation();
+
   const handleMediaUrl = (value) => {
     if(value !== null) {
       customerFormik?.setFieldValue("imageUrl", value);
@@ -99,7 +128,6 @@ const AddUser = () => {
   }
 
   const GetCountryCode = (value) => {
-    console.log(value, 'value of country code')
     customerFormik.setFieldValue("countryCode", value)
   }
 
@@ -111,10 +139,34 @@ const AddUser = () => {
     enableReinitialize: true,
     validationSchema: customerValidationSchema,
     onSubmit: (values) => {
+      for (const key in values) {
+        if(values[key] === "" || values[key] === null){
+          delete values[key] 
+        }
+      }
       console.log(values, 'values for creating customers')
-      createCustomer(values)
+      // createCustomer(values)
+      //   .unwrap()
+      //   .then(() => customerFormik.resetForm());
+      //   navigate("/users/allUsers");
+      //   dispatch(showSuccess({ message: "Custormer created successfully" }));
+    },
+  });
+
+  const customerAddressFormik = useFormik({
+    initialValues: {
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      for (const key in values) {
+        if(values[key] === "" || values[key] === null){
+          delete values[key] 
+        }
+      }
+      console.log(values, 'values for creating customers')
+      createCustomerAddress(values)
         .unwrap()
-        .then(() => customerFormik.resetForm());
+        .then(() => customerAddressFormik.resetForm());
         navigate("/users/allUsers");
         dispatch(showSuccess({ message: "Custormer created successfully" }));
     },
@@ -122,6 +174,7 @@ const AddUser = () => {
 
   // ? GENDER SELECT STARTS HERE
   const [gender, setGender] = React.useState("");
+
 
   const handleGenderChange = (event) => {
     setGender(event.target.value);
@@ -246,24 +299,20 @@ const AddUser = () => {
                       <Select
                         labelId="demo-select-small"
                         id="demo-select-small"
-                        value={gender}
-                        onChange={handleGenderChange}
+                        name="gender"
+                        value={customerFormik.values.gender}
+                        onChange={customerFormik.handleChange}
                         size="small"
+                        placeholder="Gender"
                       >
                         <MenuItem
-                          value=""
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          None
-                        </MenuItem>
-                        <MenuItem
-                          value={10}
+                          value="male"
                           sx={{ fontSize: 13, color: "#5c6d8e" }}
                         >
                           Male
                         </MenuItem>
                         <MenuItem
-                          value={20}
+                          value="female"
                           sx={{ fontSize: 13, color: "#5c6d8e" }}
                         >
                           Female
@@ -292,7 +341,10 @@ const AddUser = () => {
                   <div className="col-md-12">
                     <FormControlLabel
                       control={
-                        <Checkbox
+                        <Checkbox  
+                          name="isSendEmail"                       
+                          value={customerFormik.values.isSendEmail}
+                          onChange={customerFormik.handleChange}
                           inputProps={{ "aria-label": "controlled" }}
                           size="small"
                           style={{
@@ -376,6 +428,9 @@ const AddUser = () => {
                     <FormControlLabel
                       control={
                         <Checkbox
+                          name="isTemporaryPassword"
+                          value={customerFormik.values.isTemporaryPassword}
+                          onChange={customerFormik.handleChange}
                           inputProps={{ "aria-label": "controlled" }}
                           size="small"
                           style={{
@@ -406,46 +461,6 @@ const AddUser = () => {
               <hr className="hr-grey-6 mt-3 mb-0" />
               <div className="col-12 px-0">
                 <div className="row">
-                  <div className="col-md-12 mt-3">
-                    <p className="text-lightBlue mb-1">User Role</p>
-                    <FormControl
-                      sx={{ m: 0, minWidth: 120, width: "100%" }}
-                      size="small"
-                    >
-                      <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        value={userRole}
-                        onChange={handleUserRoleChange}
-                        size="small"
-                      >
-                        <MenuItem
-                          value=""
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          None
-                        </MenuItem>
-                        <MenuItem
-                          value={10}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Admin
-                        </MenuItem>
-                        <MenuItem
-                          value={20}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Super Admin
-                        </MenuItem>
-                        <MenuItem
-                          value={20}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          User
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  </div>
                   <div className="col-md-12 mt-3">
                     <p className="text-lightBlue mb-1">User Group</p>
                     <Autocomplete
@@ -548,6 +563,9 @@ const AddUser = () => {
                         <OutlinedInput
                           placeholder="Office Address, Home Address"
                           size="small"
+                          name="name"
+                          value={customerAddressFormik.values.name}
+                          onChange={customerAddressFormik.handleChange}
                         />
                       </FormControl>
                       <small className="text-grey-6">
@@ -581,6 +599,9 @@ const AddUser = () => {
                         <OutlinedInput
                           placeholder="Enter First Name"
                           size="small"
+                          name="firstName"
+                          value={customerAddressFormik.values.firstName}
+                          onChange={customerAddressFormik.handleChange}
                         />
                       </FormControl>
                     </div>
@@ -590,6 +611,9 @@ const AddUser = () => {
                         <OutlinedInput
                           placeholder="Enter Last Name"
                           size="small"
+                          name="lastName"
+                          value={customerAddressFormik.values.lastName}
+                          onChange={customerAddressFormik.handleChange}
                         />
                       </FormControl>
                     </div>
@@ -599,6 +623,9 @@ const AddUser = () => {
                         <OutlinedInput
                           placeholder="Enter Email ID"
                           size="small"
+                          name="companyName"
+                          value={customerAddressFormik.values.companyName}
+                          onChange={customerAddressFormik.handleChange}
                         />
                       </FormControl>
                     </div>
@@ -609,6 +636,9 @@ const AddUser = () => {
                           placeholder="Enter Mobile Number"
                           size="small"
                           sx={{ paddingLeft: 0 }}
+                          name="phone"
+                          value={customerAddressFormik.values.phone}
+                          onChange={customerAddressFormik.handleChange}
                           startAdornment={
                             <InputAdornment position="start">
                               <AppMobileCodeSelect />
@@ -629,6 +659,9 @@ const AddUser = () => {
                         <OutlinedInput
                           placeholder="Enter Address Line 1"
                           size="small"
+                          name="line1"
+                          value={customerAddressFormik.values.line1}
+                          onChange={customerAddressFormik.handleChange}
                         />
                       </FormControl>
                     </div>
@@ -695,7 +728,9 @@ const AddUser = () => {
               headingName={"Media"} 
               UploadChange={handleMediaUrl} 
             />
-            <TagsBox />
+            {/* <TagsBox 
+              tagsList={tagsData?.data?.data}
+            /> */}
             <NotesBox 
               name={"notes"}
               onChange={customerFormik.handleChange} 
