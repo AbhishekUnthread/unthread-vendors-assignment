@@ -408,6 +408,7 @@ const handleDelete =()=>{
                   {stableSort(list, getComparator(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
+                      console.log("Fefew",row)
                       const isItemSelected = isSelected(row._id);
                       const labelId = `enhanced-table-checkbox-${index}`;
 

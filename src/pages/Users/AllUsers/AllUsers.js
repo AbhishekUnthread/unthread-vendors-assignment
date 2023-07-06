@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./AllUsers.scss";
 // ! COMPONENT IMPORTS
@@ -39,6 +39,9 @@ import {
 } from "@mui/material";
 // ! MATERIAL ICON IMPORTS
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useGetAllCustomersQuery } from "../../../features/user/customer/customerApiSlice";
+import { useDispatch } from "react-redux";
+import { showError } from "../../../features/snackbar/snackbarAction";
 
 const locationData = [
   { title: "Content 1", value: "content1" },
@@ -56,10 +59,86 @@ const locationData = [
 ];
 
 const AllUsers = () => {
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const dispatch = useDispatch();
+  const [customersList, setCustomersList] = React.useState([]);
+  const [totalCount,setTotalCount] = React.useState(0);
+  const [error, setError] = React.useState(false);
+  const [customerType, setCustomerType] = React.useState(0);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [searchValue, setSearchValue] = React.useState("");
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+
+  const changeCustomerTypeHandler = (event, newValue) => {
+    setCustomerType(newValue);
+  };
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+  const queryParameters = {};
+  if(searchValue)
+{
+  queryParameters.name = searchValue;
+}
+
+
+  const {
+    data: customersData, // 
+    isLoading: customersIsLoading, 
+    isSuccess: customersIsSuccess, 
+    error: customersError
+  } = useGetAllCustomersQuery({createdAt:1,pageSize:rowsPerPage,pageNo:page+1,...queryParameters}); 
+
+  useEffect(() => {
+    if (customersIsSuccess) {
+      setError(false);
+      if (customerType === 0) {
+        setCustomersList(customersData.data.data);
+        setTotalCount(customersData.data.totalCount)
+      }
+      if (customerType === 1) {
+        setCustomersList(customersData.data.data);
+        setTotalCount(customersData.data.totalCount)
+      }
+      if(customerType === 2)
+      {
+        setCustomersList(customersData.data.data);
+        setTotalCount(customersData.data.totalCount)
+      }
+      if(customerType === 3)
+      {
+        setCustomersList(customersData.data.data);
+        setTotalCount(customersData.data.totalCount)
+      }
+      if(customerType === 4)
+      {
+        setCustomersList(customersData.data.data);
+        setTotalCount(customersData.data.totalCount)
+      }
+    }
+    if (customersError) {
+      setError(true);
+      if (customersError?.data?.message) {
+        dispatch(showError({ message: customersError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+
+  }, [customersData,customersIsSuccess,customersIsLoading,customersError,page,rowsPerPage])
+
 
   // ? POPOVERS STARTS HERE
 
@@ -151,6 +230,7 @@ const AllUsers = () => {
   // * DAYS POPOVERS ENDS
 
   // ? POPOVERS ENDS HERE
+  console.log({crl:customersList})
 
   return (
     <div className="container-fluid page">
@@ -288,8 +368,8 @@ const AllUsers = () => {
               scrollButtons
               allowScrollButtonsMobile */}
             <Tabs
-              value={value}
-              onChange={handleChange}
+              value={customerType}
+              onChange={changeCustomerTypeHandler}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
@@ -340,7 +420,7 @@ const AllUsers = () => {
             </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
             <div className="d-flex ms-2">
               <div className="d-flex product-button__box">
                 <button
@@ -593,20 +673,37 @@ const AllUsers = () => {
               </Popover>
             </div>
           </div>
-          <TabPanel value={value} index={0}>
-            <AllUsersTable />
+          <TabPanel value={customerType} index={0}>
+            <AllUsersTable
+              isLoading={customersIsLoading}
+              error={error}
+              list={customersList}
+              totalCount={totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={rowsPerPage}
+              changePage={handleChangePage}
+              page={page}
+            />
           </TabPanel>
-          <TabPanel value={value} index={1}>
-            <AllUsersTable />
+          <TabPanel value={customerType} index={1}>
+            <AllUsersTable 
+              list={customersList}
+            />
           </TabPanel>
-          <TabPanel value={value} index={2}>
-            <AllUsersTable />
+          <TabPanel value={customerType} index={2}>
+            <AllUsersTable 
+              list={customersList}
+            />
           </TabPanel>
-          <TabPanel value={value} index={3}>
-            <AllUsersTable />
+          <TabPanel value={customerType} index={3}>
+            <AllUsersTable 
+              list={customersList}
+            />
           </TabPanel>
-          <TabPanel value={value} index={4}>
-            <AllUsersTable />
+          <TabPanel value={customerType} index={4}>
+            <AllUsersTable 
+              list={customersList}
+            />
           </TabPanel>
         </Paper>
       </div>
