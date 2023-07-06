@@ -3,12 +3,16 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { countries } from "../../assets/DefaultValues/Countries"
 
-export default function AppMobileCodeSelect({ GetCountryCode }) {
-  const handleChange = (event) => {
+export default function AppMobileCodeSelect({ GetCountryCode, SelectCountryCode }) {
+  const handleCountryCode = (event) => {
     if (event) {
       GetCountryCode(event.target.value);
     }
   };
+
+  const selectCountryCode = (event, value) => {
+    SelectCountryCode(value?.phone);
+  }
 
   return (
     <Autocomplete
@@ -20,6 +24,7 @@ export default function AppMobileCodeSelect({ GetCountryCode }) {
       disableClearable
       freeSolo
       getOptionLabel={(option) => `+${option.phone}`}
+      onChange={selectCountryCode}
       componentsProps={{
         paper: {
           sx: {
@@ -57,7 +62,7 @@ export default function AppMobileCodeSelect({ GetCountryCode }) {
             ...params.inputProps,
             autoComplete: "new-password", // disable autocomplete and autofill
           }}
-          onChange={handleChange}
+          onChange={handleCountryCode}
         />
       )}
     />
