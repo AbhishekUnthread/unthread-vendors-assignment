@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./AddUser.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
@@ -102,6 +102,12 @@ const AddUser = () => {
     isSuccess: customerGroupIsSuccess,
     error: customerGroupError,
   } = useGetAllCustomerGroupQuery();
+
+  useEffect(() => {
+    if (customerGroupData) {
+      console.log(customerGroupData);
+    }
+  }, [customerGroupData]);
 
   const [
     createCustomer,
@@ -407,13 +413,13 @@ const AddUser = () => {
                 <div className="row">
                   <div className="col-md-12 mt-3">
                     <p className="text-lightBlue mb-1">User Group</p>
-                    <Autocomplete
+                    {/* <Autocomplete
                       multiple
                       id="checkboxes-tags-demo"
                       sx={{ width: "100%" }}
-                      options={taggedWithData}
+                      options={customerGroupData?.data?.data}
                       disableCloseOnSelect
-                      getOptionLabel={(option) => option.title}
+                      getOptionLabel={(option) => option?.name}
                       size="small"
                       renderOption={(props, option, { selected }) => (
                         <li {...props}>
@@ -427,7 +433,7 @@ const AddUser = () => {
                               marginRight: 0,
                             }}
                           />
-                          <small className="text-lightBlue">{option.title}</small>
+                          <small className="text-lightBlue">{option?.name}</small>
                         </li>
                       )}
                       renderInput={(params) => (
@@ -437,7 +443,7 @@ const AddUser = () => {
                           placeholder="Search"
                         />
                       )}
-                    />
+                    /> */}
                   </div>
                 </div>
               </div>

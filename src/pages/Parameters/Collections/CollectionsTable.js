@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import './Collections.scss';
@@ -69,7 +69,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const [unArchiveID, setUnArchiveID] = React.useState(false);
   const [statusValue, setStatusValue] = React.useState("in-active");
   const [massActionStatus, setMassActionStatus] = React.useState("");
-  const [forMassAction, setForMassAction] = React.useState(false)
+  const [forMassAction, setForMassAction] = React.useState(false);
+  const [collectionTitle, setCollectionTitle] = useState("");
 
   const handleStatusValue = (value) => {
     setStatusValue(value);
@@ -99,7 +100,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     }
   ] = useBulkEditCollectionMutation();
 
-  const handleArchive = (id) => {
+  const handleArchive = (id, title) => {
+    setCollectionTitle(title);
     setArchivedModal(true);
     setCollectionId(id);
   }
@@ -160,13 +162,15 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
+        setArchivedModal(true);
+
   };
 
   const handleMassAction  = (status) => {
     setForMassAction(true)
     setMassActionStatus(status);
-    if(collectionType !== 3) {
-      setSelectedStatus(status);
+    if(collectionType !== 3 && status === "Set as Archived") {
+      setArchivedModal(true);
     } else if(collectionType === 3 && status === "Set as Un-Archived") {
       setShowUnArhcivedModal(true);
     } else if(collectionType === 3 && status === "Delete") {
@@ -252,14 +256,19 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const [openArchivedModal, setArchivedModal] = React.useState(false);
 
   const handleArchivedModalClose = () => {
-    setArchivedModal(false);
-     editCollection({
-        id: collectionId,
-        details : {
-          status: "archieved"
-        }
-    })
-    dispatch(showSuccess({ message: "Archived this collection successfully" }));
+    if(forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      setArchivedModal(false);
+    } else {
+      setArchivedModal(false);
+      editCollection({
+          id: collectionId,
+          details : {
+            status: "archieved"
+          }
+      })
+      dispatch(showSuccess({ message: "Archived this collection successfully" }));
+    }
   }
 
   const handleUnArchive = (id) => {
@@ -295,8 +304,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const handleModalClose = () => {
     setArchivedModal(false);
   };
-
-  console.log(list, 'sfkdksf lfsdj')
 
   return (
     <React.Fragment>
@@ -408,7 +415,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                     <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.totalProduct}</p>
                     </TableCell>
-                    <TableCell style={{ width: 140, padding: 0 }}>
+                    <TableCell style={{ width: 180, padding: 0 }}>
                       <div className="d-block">
                         <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
                           style={{background: 
@@ -514,7 +521,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                           <Tooltip title="Archive" placement="top">
                             <div className="table-edit-icon rounded-4 p-2"
                               onClick={() => {
-                                handleArchive(row._id)
+                                handleArchive(row._id, row?.title)
                                 }
                               }
                             >
@@ -580,7 +587,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
             <img src={question} alt="question" width={200} />
             <div className="row"></div>
             <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive this collection ?
+              Are you sure you want to Archive this collection 
+              {forMassAction == false &&<span className="text-blue-2">{collectionTitle} </span>} ?
             </h6>
             <div className="d-flex justify-content-center mt-4">
               <hr className="hr-grey-6 w-100" />

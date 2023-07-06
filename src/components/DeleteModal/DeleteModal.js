@@ -15,27 +15,19 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
         keepMounted
         aria-describedby="alert-dialog-slide-description"
         maxWidth="xs"
-        fullWidth={true}
         open={showCreateModal}
         onClose={toggleArchiveModalHandler}
       >
-        <hr className="hr-grey-6 my-0" />
-        <DialogContent className="py-3 px-4">
-          <Box sx={{  display: 'flex', justifyContent: 'center' }}>
-            <img 
-              src={Delete}
-              alt="questionMark"
-              width="250px"
-            />
-          </Box>
-          <Typography
-            variant="h5"
-            align="center"
-            sx={{ color: "lightBlue", marginBottom: 2 }}
-          >
-            Are you sure you want to delete permanently {name} ?
-          </Typography>
-          <br />
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={Delete} alt="question" width={200} />
+            <div className="row"></div>
+            <h6 className="text-lightBlue mt-2 mb-2">
+              Are you sure you want to delete permanently 
+              <span className="text-blue-2">{name} </span> ?
+            </h6>
+            <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+            </div>
         </DialogContent>
         <DialogActions className="d-flex justify-content-between px-4 pb-4">
           <button
