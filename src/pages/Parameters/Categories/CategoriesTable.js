@@ -40,6 +40,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
+import moment from "moment";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -508,6 +509,23 @@ const CategoriesTable = ({
                                       : "Scheduled"}
                                   </small>
                                 </div>
+                                { row.status == "scheduled" && 
+                          <div>
+                            <small className="text-blue-2">
+                              {row.startDate && (
+                                <>
+                                  for {moment(row.startDate).format("DD/MM/YYYY")}
+                                </>
+                              )}
+                              {row.startDate && row.endDate && ' '}
+                              {row.endDate && (
+                                <>
+                                  till {moment(row.endDate).format("DD/MM/YYYY")}
+                                </>
+                              )}
+                            </small>
+                          </div>
+                        }
                               </div>
                             </TableCell>
                             <TableCell style={{ width: 120, padding: 0 }}>

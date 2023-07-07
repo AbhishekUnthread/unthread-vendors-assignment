@@ -119,7 +119,7 @@ const EditCategories = () => {
         showFilter: checked, // Whether to show filters
         name: categoryName, // Category name
         description: categoryDescription, // Category description
-        status: startDate === null ?  categoryStatus :"scheduled", // Category status
+        status: startDate === null || startDate === "" ?  categoryStatus :"scheduled", // Category status
         isVisibleFrontend: categoryVisibility,
         notes: categoryNotes,
         mediaUrl: categoryMediaUrl,

@@ -29,6 +29,7 @@ import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
+import moment from "moment";
 
 // ? TABLE STARTS HERE
 
@@ -290,7 +291,10 @@ const SubCategoriesTable = ({
                           >
                             <Link
                               className="text-decoration-none"
-                              to="/parameters/categories/edit"
+                              to="/parameters/subCategories/edit"
+                              onClick={() => {
+                                dispatch(updateCategoryId(row._id));
+                              }}
                             >
                               <p className="text-lightBlue rounded-circle fw-600">
                                 {row.name}
@@ -331,6 +335,23 @@ const SubCategoriesTable = ({
                                     : "Scheduled"}
                                 </small>
                               </div>
+                              { row.status == "scheduled" && 
+                          <div>
+                            <small className="text-blue-2">
+                              {row.startDate && (
+                                <>
+                                  for {moment(row.startDate).format("DD/MM/YYYY")}
+                                </>
+                              )}
+                              {row.startDate && row.endDate && ' '}
+                              {row.endDate && (
+                                <>
+                                  till {moment(row.endDate).format("DD/MM/YYYY")}
+                                </>
+                              )}
+                            </small>
+                          </div>
+                        }
                             </div>
                           </TableCell>
                           <TableCell style={{ width: 120, padding: 0 }}>
