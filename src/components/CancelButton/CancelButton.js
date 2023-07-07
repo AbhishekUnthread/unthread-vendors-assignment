@@ -1,13 +1,13 @@
 import { Tooltip } from "@mui/material";
 
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import ClearIcon from "@mui/icons-material/Clear";
 
-const EditButton = (props) => {
+const CancelButton = (props) => {
   const { onClick } = props;
   return (
-    <Tooltip title="Edit" placement="top">
+    <Tooltip title="Cancel" placement="top">
       <button onClick={onClick} className="reset table-edit-icon rounded-4 p-2">
-        <EditOutlinedIcon
+        <ClearIcon
           sx={{
             color: "#5c6d8e",
             fontSize: 18,
@@ -19,4 +19,4 @@ const EditButton = (props) => {
   );
 };
 
-export default EditButton;
+export default CancelButton;

@@ -69,7 +69,7 @@ import EditCategories from "./pages/Parameters/Categories/EditCategories/EditCat
 import EditSubCategories from "./pages/Parameters/Categories/EditSubCategories/EditSubCategories";
 import EditCollection from "./pages/Parameters/Collections/EditCollection/EditCollection";
 import ProductTabs from "./pages/Parameters/ProductTabs/ProductTabs";
-import CreateProductTab from "./pages/Parameters/ProductTabs/CreateProductTab";
+import ProductTabInfo from "./pages/Parameters/ProductTabs/ProductTabInfo";
 
 const router = () => {
   const loginStatus = store.getState().auth.isLoggedIn;
@@ -211,7 +211,11 @@ const router = () => {
                 },
                 {
                   path: "productTabs/create",
-                  element: <CreateProductTab />,
+                  element: <ProductTabInfo />,
+                },
+                {
+                  path: "productTabs/edit/:id",
+                  element: <ProductTabInfo />,
                 },
                 {
                   path: "additionalFields",

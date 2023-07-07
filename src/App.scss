@@ -132,24 +132,24 @@
     }
   }
   &-red-outline {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    background: transparent;
-    border-radius: 5px;
-    border: 1px solid $red2;
-    color: $red2;
-    text-decoration: none;
-    min-width: max-content;
-    cursor: pointer;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background: transparent !important;
+    border-radius: 5px !important;
+    border: 1px solid $red2 !important;
+    color: $red2 !important;
+    text-decoration: none !important;
+    min-width: max-content !important;
+    cursor: pointer !important;
     &:hover {
-      background: $red2;
-      color: $black1;
+      background: $red2 !important;
+      color: $black1 !important;
     }
     &:disabled {
-      background: $grey1;
-      cursor: not-allowed;
+      background: $grey1 !important;
+      cursor: not-allowed !important;
     }
   }
   &-green-outline {
@@ -965,6 +965,10 @@ textarea {
   .MuiButtonBase-root {
     color: $lightBlue;
   }
+}
+
+.link {
+  color: $blue1;
 }
 
 // MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiClock-amButton css-dv4hng-MuiButtonBase-root-MuiIconButton-root-MuiClock-amButton

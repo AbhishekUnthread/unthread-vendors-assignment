@@ -23,7 +23,7 @@ import TableHeader from "../../../components/TableHeader/TableHeader";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import EditButton from "../../../components/EditButton/EditButton";
-import ArchiveButton from "../../../components/ArchiveButton/ArchiveButton";
+import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
 
 const DragHandle = SortableHandle(() => (
   <TableCell>
@@ -72,7 +72,7 @@ const HEAD_CELLS = [
   },
 ];
 
-const PAGINATION_ROWS = [1, 2, 3];
+const PAGINATION_ROWS = [10, 20, 30];
 
 const ProductTabsTable = (props) => {
   const {
@@ -86,6 +86,7 @@ const ProductTabsTable = (props) => {
     page,
     onSort,
     onEdit,
+    onDelete,
   } = props;
 
   const onRowsPerPageChange = (e) => {
@@ -106,7 +107,11 @@ const ProductTabsTable = (props) => {
     );
   }
 
-  if (!data || (data && !data.length)) {
+  if (!data) {
+    return <></>;
+  }
+
+  if (data && !data.length) {
     return (
       <span className="d-flex justify-content-center m-3">No data found</span>
     );
@@ -128,7 +133,7 @@ const ProductTabsTable = (props) => {
                     </TableCell>
                     <TableCell>
                       <div className="d-flex flex-wrap align-items-center gap-2">
-                        {item.customFields.length &&
+                        {item.customFields.length ? (
                           item.customFields.map((field) => {
                             return (
                               <Chip
@@ -137,13 +142,22 @@ const ProductTabsTable = (props) => {
                                 size="small"
                               />
                             );
-                          })}
+                          })
+                        ) : (
+                          <></>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="d-flex align-items-center justify-content-end">
-                        <EditButton onClick={onEdit} />
-                        <ArchiveButton />
+                        <EditButton onClick={onEdit.bind(null, index + 1)} />
+                        <RemoveIconButton
+                          onClick={onDelete.bind(null, {
+                            id: item._id,
+                            message: `delete ${item.title} product tab`,
+                          })}
+                          title="Delete"
+                        />
                       </div>
                     </TableCell>
                   </TableRow>

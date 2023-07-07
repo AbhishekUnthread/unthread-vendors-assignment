@@ -1,58 +1,37 @@
-import { forwardRef, useState, useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  OutlinedInput,
-  Paper,
-  Slide,
-  Tab,
-  Tabs,
-  Select,
-  MenuItem,
-  Chip,
-  FormHelperText,
-  FormControlLabel,
-  Checkbox,
-} from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-import * as Yup from "yup";
-import { useFormik } from "formik";
+import { Box, Paper, Tab, Tabs } from "@mui/material";
 import { useDispatch } from "react-redux";
 
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import ProductTabsTable from "./ProductTabsTable";
-import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import PageTitleBar from "../../../components/PageTitleBar/PageTitleBar";
-
-import cancel from "../../../assets/icons/cancel.svg";
-import parameters from "../../../assets/icons/sidenav/parameters.svg";
+import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
 
 import {
   useGetAllProductTabsQuery,
-  useCreateProductTabMutation,
   useDeleteProductTabMutation,
-  useEditProductTabMutation,
 } from "../../../features/parameters/productTabs/productTabsApiSlice";
 import {
   showSuccess,
   showError,
 } from "../../../features/snackbar/snackbarAction";
 
-const TAB_LIST = [
-  { id: 1, label: "all" },
-  { id: 2, label: "archived" },
-];
+const TAB_LIST = [{ id: 1, label: "all" }];
 
 const initialQueryFilterState = {
-  pageSize: 1,
+  pageSize: 10,
   pageNo: 1,
   title: "",
+};
+
+const initialProductsTabState = {
+  data: null,
+  totalCount: 0,
+  deleteId: null,
+  confirmationMessage: "",
+  showDeleteModal: false,
 };
 
 const queryFilterReducer = (state, action) => {
@@ -69,7 +48,7 @@ const queryFilterReducer = (state, action) => {
       pageNo: action.pageNo + 1,
     };
   }
-  if (action.type === "SEARCH") {
+  if (action.type === "SEARCH_TITLE") {
     return {
       ...state,
       pageNo: initialQueryFilterState.pageNo,
@@ -79,13 +58,49 @@ const queryFilterReducer = (state, action) => {
   return initialQueryFilterState;
 };
 
+const productsTabReducer = (state, action) => {
+  if (action.type === "SET_DATA") {
+    return {
+      ...initialProductsTabState,
+      data: action.data,
+      totalCount: action.totalCount,
+    };
+  }
+  if (action.type === "SORT_DATA") {
+    return {
+      ...initialProductsTabState,
+      totalCount: state.totalCount,
+      data: action.data,
+    };
+  }
+  if (action.type === "SET_DELETE") {
+    return {
+      ...state,
+      deleteId: action.id,
+      confirmationMessage: action.message || "",
+      showDeleteModal: true,
+    };
+  }
+  if (action.type === "REMOVE_DELETE") {
+    return {
+      ...initialProductsTabState,
+      totalCount: state.totalCount,
+      data: state.data,
+    };
+  }
+  return initialProductsTabState;
+};
+
 const ProductTabs = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [productsTabList, setProductsTabList] = useState(null);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
+  );
+  const [productsTabState, dispatchProductsTab] = useReducer(
+    productsTabReducer,
+    initialProductsTabState
   );
 
   const {
@@ -94,7 +109,17 @@ const ProductTabs = () => {
     error: productsTabError,
     isError: productsTabIsError,
     isSuccess: productsTabIsSuccess,
+    isFetching: productsTabDataIsFetching,
   } = useGetAllProductTabsQuery(queryFilterState);
+
+  const [
+    deleteProductTab,
+    {
+      isLoading: deleteProductTabIsLoading,
+      error: deleteProductTabError,
+      isSuccess: deleteProductTabIsSuccess,
+    },
+  ] = useDeleteProductTabMutation();
 
   const pageChangeHandler = (_, pageNo) => {
     dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
@@ -104,18 +129,37 @@ const ProductTabs = () => {
     dispatchQueryFilter({ type: "SET_PAGE_SIZE", size });
   };
 
-  const searchHandler = (e) => {
-    dispatchQueryFilter({ type: "SEARCH", title: e.target.value });
+  const searchHandler = (value) => {
+    dispatchQueryFilter({ type: "SEARCH_TITLE", title: value });
   };
 
   const sortHandler = (sortedData) => {
-    setProductsTabList((prevState) => {
-      return { ...prevState, data: sortedData };
+    dispatchProductsTab({
+      type: "SORT_DATA",
+      data: sortedData,
     });
   };
 
-  const editHandler = () => {
+  const editHandler = (index) => {
+    const currentTabNo =
+      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
+    navigate(`./edit/${currentTabNo}`);
+  };
+
+  const createHandler = () => {
     navigate("./create");
+  };
+
+  const deleteHandler = ({ id, message }) => {
+    dispatchProductsTab({ type: "SET_DELETE", id, message });
+  };
+
+  const CancelDeleteHandler = () => {
+    dispatchProductsTab({ type: "REMOVE_DELETE" });
+  };
+
+  const deleteConfirmationHandler = () => {
+    deleteProductTab(productsTabState.deleteId);
   };
 
   useEffect(() => {
@@ -129,9 +173,31 @@ const ProductTabs = () => {
       }
     }
     if (productsTabIsSuccess) {
-      setProductsTabList(productsTabData);
+      dispatchProductsTab({
+        type: "SET_DATA",
+        data: productsTabData.data,
+        totalCount: productsTabData.totalCount,
+      });
     }
   }, [productsTabError, productsTabIsSuccess, productsTabData, dispatch]);
+
+  useEffect(() => {
+    if (deleteProductTabError) {
+      if (deleteProductTabError?.data?.message) {
+        dispatch(showError({ message: deleteProductTabError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+    if (deleteProductTabIsSuccess) {
+      dispatchProductsTab({
+        type: "REMOVE_DELETE",
+      });
+      dispatch(showSuccess({ message: "Product Tab Deleted" }));
+    }
+  }, [deleteProductTabError, deleteProductTabIsSuccess, dispatch]);
 
   return (
     <div className="container-fluid page">
@@ -139,7 +205,7 @@ const ProductTabs = () => {
         title="Product Tabs"
         onTutorial={() => {}}
         onSettings={() => {}}
-        onCreate={() => {}}
+        onCreate={createHandler}
         createBtnText="+ Create New Tab"
       />
 
@@ -165,40 +231,32 @@ const ProductTabs = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch
-              onChange={searchHandler}
-              value={queryFilterState.title}
-            />
+            <TableSearch onChange={searchHandler} />
           </div>
           <TabPanel value={0} index={0}>
             <ProductTabsTable
               error={productsTabIsError}
-              isLoading={productsTabIsLoading}
-              data={productsTabList?.data}
-              totalCount={productsTabList?.totalCount}
+              isLoading={productsTabIsLoading || productsTabDataIsFetching}
+              data={productsTabState?.data}
+              totalCount={productsTabState?.totalCount}
               onPageChange={pageChangeHandler}
               onPageSize={pageSizeHandler}
               pageSize={queryFilterState.pageSize}
               page={queryFilterState.pageNo}
               onSort={sortHandler}
               onEdit={editHandler}
-            />
-          </TabPanel>
-          <TabPanel value={0} index={1}>
-            <ProductTabsTable
-              error={productsTabIsError}
-              isLoading={productsTabIsLoading}
-              data={productsTabList?.data}
-              totalCount={productsTabList?.totalCount}
-              onPageChange={pageChangeHandler}
-              onPageSize={pageSizeHandler}
-              pageSize={queryFilterState.pageSize}
-              page={queryFilterState.pageNo}
-              onSort={sortHandler}
+              onDelete={deleteHandler}
             />
           </TabPanel>
         </Paper>
       </div>
+      <ConfirmationModal
+        onConfirm={deleteConfirmationHandler}
+        onCancel={CancelDeleteHandler}
+        show={productsTabState.showDeleteModal}
+        isLoading={deleteProductTabIsLoading}
+        message={productsTabState.confirmationMessage}
+      />
     </div>
   );
 };
