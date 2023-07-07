@@ -1,10 +1,8 @@
-import { useEffect, useState, useCallback, useReducer } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useCallback, useReducer } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
-  Checkbox,
   FormControl,
-  FormControlLabel,
   OutlinedInput,
   Tooltip,
   Grid,
@@ -19,6 +17,7 @@ import InfoHeader from "../../../components/Header/InfoHeader";
 import { UploadMediaSmall } from "../../../components/UploadMediaBox/UploadMedia";
 import { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
+import DuplicateModal from "../../../components/DuplicateModal/DuplicateModal";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -35,55 +34,31 @@ import {
 } from "../../../features/parameters/productTabs/productTabsApiSlice";
 
 const commonCustomFieldSchema = Yup.object().shape({
-  title: Yup.string().required("Required"),
+  title: Yup.string().min(3).required("Required"),
   fieldType: Yup.string()
     .oneOf(["text", "dimension", "image", "weight", "productField"])
-    .when("title", ([title], schema) => {
-      if (title) {
-        return schema.required("Required");
-      }
-      return schema;
-    }),
+    .required("Required"),
   isDefaultHighlight: Yup.boolean().optional(),
-  productValue: Yup.string().when("fieldType", ([fieldType], schema) => {
-    if (["text", "dimension", "image", "weight"].includes(fieldType)) {
-      return schema.required("Required");
-    }
-    return schema;
-  }),
-  visibility: Yup.string()
-    .oneOf(["show", "hide"])
-    .when("title", ([title], schema) => {
-      if (title) {
+  productValue: Yup.string().when(
+    ["isDefaultHighlight", "fieldType"],
+    ([isDefaultHighlight, fieldType], schema) => {
+      if (
+        isDefaultHighlight &&
+        ["text", "dimension", "image", "weight"].includes(fieldType)
+      ) {
         return schema.required("Required");
       }
       return schema;
-    }),
+    }
+  ),
+  visibility: Yup.string().oneOf(["show", "hide"]).required("Required"),
 });
 const customFieldSchema = Yup.object().shape({
-  title: Yup.string().required("Required"),
+  title: Yup.string().min(3).required("Required"),
   fieldType: Yup.string()
     .oneOf(["text", "dimension", "image", "weight", "productField"])
-    .when("title", ([title], schema) => {
-      if (title) {
-        return schema.required("Required");
-      }
-      return schema;
-    }),
-  productValue: Yup.string().when("fieldType", ([fieldType], schema) => {
-    if (["text", "dimension", "image", "weight"].includes(fieldType)) {
-      return schema.required("Required");
-    }
-    return schema;
-  }),
-  visibility: Yup.string()
-    .oneOf(["show", "hide"])
-    .when("title", ([title], schema) => {
-      if (title) {
-        return schema.required("Required");
-      }
-      return schema;
-    }),
+    .required("Required"),
+  visibility: Yup.string().oneOf(["show", "hide"]).required("Required"),
 });
 const createProductTabValidationSchema = Yup.object({
   title: Yup.string().trim().required("Required"),
@@ -129,6 +104,12 @@ const productsTabReducer = (state, action) => {
     return {
       ...initialProductsInfoState,
       isEditing: true,
+    };
+  }
+  if (action.type === "DISABLE_EDIT") {
+    return {
+      ...initialProductsInfoState,
+      isEditing: false,
     };
   }
 
@@ -231,7 +212,6 @@ const ProductTabInfo = () => {
         {
           title: "",
           fieldType: "",
-          productValue: "",
           visibility: "",
         },
       ],
@@ -242,7 +222,22 @@ const ProductTabInfo = () => {
       const productTabValues = structuredClone(values);
       productTabValues.commonCustomFields = productTabValues?.commonCustomFields
         ?.length
-        ? productTabValues?.commonCustomFields.filter((field) => field.title)
+        ? productTabValues?.commonCustomFields
+            .filter((field) => field.title)
+            .map((field) => {
+              const clonedField = structuredClone(field);
+              if (
+                !["text", "dimension", "image", "weight"].includes(
+                  clonedField.fieldType
+                )
+              ) {
+                clonedField.isDefaultHighlight = false;
+                delete clonedField.productValue;
+              } else if (!clonedField.isDefaultHighlight) {
+                delete clonedField.productValue;
+              }
+              return clonedField;
+            })
         : null;
       productTabValues.customFields = productTabValues?.customFields?.length
         ? productTabValues?.customFields.filter((field) => field.title)
@@ -298,7 +293,6 @@ const ProductTabInfo = () => {
     const newCustomFields = formik?.values?.customFields.concat({
       title: "",
       fieldType: "",
-      productValue: "",
       visibility: "",
     });
     formik.setFieldValue("customFields", newCustomFields);
@@ -340,6 +334,7 @@ const ProductTabInfo = () => {
       }
     }
     if (editProductTabIsSuccess) {
+      dispatchProductsInfo({ type: "DISABLE_EDIT" });
       dispatch(showSuccess({ message: "Product tab edited successfully" }));
     }
   }, [
@@ -393,7 +388,6 @@ const ProductTabInfo = () => {
       <InfoHeader
         title={formik.values.title || "Create Tab"}
         onBack={backHandler}
-        onDuplicate={() => {}}
         onPreview={() => {}}
         onPrev={prevPageHandler}
         onNext={nextPageHandler}
