@@ -33,11 +33,15 @@ import {
   Tab,
   Tabs,
   TextField,
-  Tooltip
+  Tooltip,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
-import { useCreateCategoryMutation, useEditCategoryMutation, useGetAllCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
+import {
+  useCreateCategoryMutation,
+  useEditCategoryMutation,
+  useGetAllCategoriesQuery,
+} from "../../../../features/parameters/categories/categoriesApiSlice";
 import { UseEditCategory } from "../../../../features/parameters/categories/categoriesEditHook";
 import { showSuccess } from "../../../../features/snackbar/snackbarAction";
 
@@ -48,15 +52,14 @@ const EditCategories = () => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
   const [categoryStatus, setCategoryStatus] = useState("");
-  const [categoryNotes, setCategoryNotes] = useState('')
-  const [startDate, setStartDate] = useState(null)
-  const [endDate, setEndDate] = useState(null)
+  const [categoryNotes, setCategoryNotes] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [categoryVisibility, setCategoryVisibility] = useState(false);
-  const [categorySeo,setCategorySeo] = useState({})
-  const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
+  const [categorySeo, setCategorySeo] = useState({});
+  const [categoryMediaUrl, setCategoryMediaUrl] = useState("");
   const [checked, setChecked] = useState(false);
   const categoryId = useSelector((state) => state.category.categoryId);
-
 
   const [
     createCategory,
@@ -90,18 +93,15 @@ const EditCategories = () => {
       setCategoryName(categoriesData.data.data[0].name);
       setCategoryDescription(categoriesData.data.data[0].description);
       setCategoryStatus(categoriesData.data.data[0].status);
-      setCategoryVisibility(categoriesData.data.data[0].isVisibleFrontend)
-      setCategoryNotes(categoriesData.data.data[0].notes)
-      setChecked(categoriesData.data.data[0].showFilter)
-      setStartDate(categoriesData.data.data[0].startDate || null)
-      setEndDate(categoriesData.data.data[0].endDate || null)
-      setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl)
-      setCategorySeo(categoriesData.data.data[0]?.seos || {})
-      
+      setCategoryVisibility(categoriesData.data.data[0].isVisibleFrontend);
+      setCategoryNotes(categoriesData.data.data[0].notes);
+      setChecked(categoriesData.data.data[0].showFilter);
+      setStartDate(categoriesData.data.data[0].startDate || null);
+      setEndDate(categoriesData.data.data[0].endDate || null);
+      setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl);
+      setCategorySeo(categoriesData.data.data[0]?.seos || {});
     }
-  }, [categoriesIsSuccess,dispatch]);
-
-
+  }, [categoriesIsSuccess, dispatch]);
 
   const handleNameChange = (event) => {
     setCategoryName(event.target.value); // Updating the category name based on the input value
@@ -110,26 +110,26 @@ const EditCategories = () => {
   const clearDate = () => {
     setStartDate(null);
     setEndDate(null);
-  }
+  };
 
   const handleSubmit = () => {
     if (categoryId !== "") {
       // Calling Category edit API
-      let editItems ={
+      let editItems = {
         showFilter: checked, // Whether to show filters
         name: categoryName, // Category name
         description: categoryDescription, // Category description
-        status: startDate === null ?  categoryStatus :"scheduled", // Category status
+        status: startDate === null ? categoryStatus : "scheduled", // Category status
         isVisibleFrontend: categoryVisibility,
         notes: categoryNotes,
         mediaUrl: categoryMediaUrl,
         seo: categorySeo,
+      };
+      if (startDate) {
+        editItems.startDate = new Date(startDate);
       }
-      if(startDate){
-        editItems.startDate = new Date(startDate)
-      }
-      if(endDate){
-        editItems.endDate = new Date(endDate)
+      if (endDate) {
+        editItems.endDate = new Date(endDate);
       }
       editCategory({
         id: categoryId, // ID of the category
@@ -137,7 +137,7 @@ const EditCategories = () => {
       })
         .unwrap()
         .then(() => {
-          dispatch(showSuccess({message:"Category Updated Successfully"}))
+          dispatch(showSuccess({ message: "Category Updated Successfully" }));
         });
     } else {
       createCategory({
@@ -200,7 +200,7 @@ const EditCategories = () => {
         });
     }
 
-    resetValues() // Resetting the category 
+    resetValues(); // Resetting the category
     dispatch(updateCategoryId(""));
   };
 
@@ -213,7 +213,6 @@ const EditCategories = () => {
     setChecked(false);
   };
 
-
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryType(tabIndex);
     if (tabIndex === 0) {
@@ -224,7 +223,10 @@ const EditCategories = () => {
 
   return (
     <div className="page container-fluid position-relative user-group">
-      <AddHeader headerName={categoryName || ""} navigateLink={"/parameters/categories"} />
+      <AddHeader
+        headerName={categoryName || ""}
+        navigateLink={"/parameters/categories"}
+      />
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -241,7 +243,12 @@ const EditCategories = () => {
                 </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
-                <OutlinedInput value={categoryName} onChange={handleNameChange} placeholder="Gold Products" size="small" />
+                <OutlinedInput
+                  value={categoryName}
+                  onChange={handleNameChange}
+                  placeholder="Gold Products"
+                  size="small"
+                />
               </FormControl>
             </div>
             <FormGroup>
@@ -282,10 +289,13 @@ const EditCategories = () => {
                   />
                 </Tooltip>
               </div>
-              <AppTextEditor value={categoryDescription} setFieldValue={(val) => setCategoryDescription(val)} />
+              <AppTextEditor
+                value={categoryDescription}
+                setFieldValue={(val) => setCategoryDescription(val)}
+              />
             </div>
           </div>
-          
+
           <div className="border-grey-5 rounded-8 p-3 row features mt-4">
             <Box
               sx={{ width: "100%" }}
@@ -301,8 +311,7 @@ const EditCategories = () => {
                 <Tab label="Sub Categories" className="tabs-head" />
               </Tabs>
             </Box>
-            <div className="d-flex justify-content-between mb-2 px-0">
-            </div>
+            <div className="d-flex justify-content-between mb-2 px-0"></div>
             {
               <>
                 <TabPanel value={categoryType} index={0}>
@@ -315,7 +324,11 @@ const EditCategories = () => {
             }
           </div>
           <div className="mt-4">
-            <SEO name={categoryName} value={categorySeo} handleSeoChange={setCategorySeo} />
+            <SEO
+              name={categoryName}
+              value={categorySeo}
+              handleSeoChange={setCategorySeo}
+            />
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
@@ -323,7 +336,7 @@ const EditCategories = () => {
             headingName={"Category Status"}
             value={categoryStatus}
             handleProductStatus={(_, val) => setCategoryStatus(val)}
-            toggleData={['active', 'in-active']}
+            toggleData={["active", "in-active"]}
             showSchedule={true}
             startDate={startDate}
             endDate={endDate}
@@ -331,17 +344,26 @@ const EditCategories = () => {
             handleEndDate={setEndDate}
             clearDate={clearDate}
           />
-          <VisibilityBox value={categoryVisibility}
+          <VisibilityBox
+            value={categoryVisibility}
             onChange={(_, val) => setCategoryVisibility(val)}
-            
           />
           <div className="mt-4">
-            <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} imageValue={categoryMediaUrl} />
+            <UploadMediaBox
+              imageName={addMedia}
+              headingName={"Media"}
+              UploadChange={setCategoryMediaUrl}
+              imageValue={categoryMediaUrl}
+            />
           </div>
-          <NotesBox name={'notes'} value={categoryNotes} onChange={(e) => setCategoryNotes(e.target.value)} />
+          <NotesBox
+            name={"notes"}
+            value={categoryNotes}
+            onChange={(e) => setCategoryNotes(e.target.value)}
+          />
         </div>
       </div>
-      <SaveFooter handleSubmit={handleSubmit}  />
+      <SaveFooter handleSubmit={handleSubmit} />
     </div>
   );
 };
