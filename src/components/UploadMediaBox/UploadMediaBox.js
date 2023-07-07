@@ -44,11 +44,15 @@ const UploadMediaBox = ({
 }) => {
   const [inputUrl, setInputUrl] = useState("");
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [uploadFile, uploadState] = UseFileUpload();
 >>>>>>> a913455 (product tab draggable)
 =======
   const [uploadFile, data] = UseFileUpload();
 >>>>>>> 6306a33 (product tab module pushed)
+=======
+  const [uploadFile, uploadState] = UseFileUpload();
+>>>>>>> dcc3a94 (conflicts solved)
   // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
@@ -76,12 +80,12 @@ const UploadMediaBox = ({
 =======
 
   useEffect(() => {
-    if (data?.url) {
-      UploadChange(data?.url);
+    if (uploadState.data?.url) {
+      UploadChange(uploadState.data?.url);
     } else {
       UploadChange(inputUrl);
     }
-  }, [data, inputUrl]);
+  }, [uploadState, inputUrl]);
 
 >>>>>>> a913455 (product tab draggable)
   const style = useMemo(

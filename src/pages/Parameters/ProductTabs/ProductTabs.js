@@ -21,7 +21,7 @@ import {
 const TAB_LIST = [{ id: 1, label: "all" }];
 
 const initialQueryFilterState = {
-  pageSize: 10,
+  pageSize: 1,
   pageNo: 1,
   title: "",
 };
