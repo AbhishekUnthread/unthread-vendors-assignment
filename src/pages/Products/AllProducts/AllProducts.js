@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./AllProducts.scss";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
@@ -56,6 +56,9 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
+import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
+import { useGetAllVendorsQuery } from "../../../features/parameters/vendors/vendorsApiSlice";
+import { useGetAllCategoriesQuery } from "../../../features/parameters/categories/categoriesApiSlice";
 
 // ? FILTER ACCORDIAN STARTS HERE
 const Accordion = styled((props) => (
@@ -127,20 +130,7 @@ const rejectStyle = {
 };
 // ? FILE UPLOAD ENDS HERE
 
-const vendorData = [
-  { title: "Content 1", value: "content1" },
-  { title: "Content 2", value: "content2" },
-  { title: "Content 3", value: "content3" },
-  { title: "Content 4", value: "content4" },
-  { title: "Content 5", value: "content5" },
-  { title: "Content 6", value: "content6" },
-  { title: "Content 7", value: "content7" },
-  { title: "Content 8", value: "content8" },
-  { title: "Content 9", value: "content9" },
-  { title: "Content 10", value: "content10" },
-  { title: "Content 11", value: "content11" },
-  { title: "Content 12", value: "content12" },
-];
+
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
   { title: "Tag 2", value: "tag2" },
@@ -163,8 +153,108 @@ const AllProducts = () => {
   const [value, setValue] = React.useState(0);
   const [valueExport, setExportValue] = React.useState(0);
   const [importValue, setImportValue] = React.useState("importProducts");
+  const [sortFilter, setSortFilter] = React.useState("newestToOldest");
+  const [statusFilter, setStatusFilter] = React.useState(['active']);
   const [importSecondValue, setImportSecondValue] =
     React.useState("uploadLineSheet");
+    const [searchValue, setSearchValue] = useState("");
+  const [productList,SetProductList] = useState([])
+  const [ totalProduct,setTotalProduct] = useState("")
+  const [vendorData,setVendorData] = useState([])
+  const [categoryData,setCategoryData] = useState([])
+  const [vendorValue,setVendorValue] = useState("")
+  const [categoryValue,setCategoryValue] = useState("")
+    const filterParameter = {};
+
+
+    const handleSearchChange = (event) => { 
+      setSearchValue(event.target.value);
+    }
+
+    if (sortFilter) {
+      if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
+        filterParameter.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+      }
+      else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
+        filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+      }
+    }
+
+    const ProductTypeQuery = value === 0 ? { createdAt: -1 }
+    : value === 1 ? { status: "active" }
+    : value === 2 ? { createdAt: -1, status: "in-active" }
+    : value === 3 ? { createdAt: -1, status: "archieved" }
+    : {};
+
+    const filterParams = { ...filterParameter, ...ProductTypeQuery };
+
+
+    if (searchValue) {
+      filterParams.title = searchValue;
+    }
+
+    if(vendorValue){
+      filterParams.vendor = vendorValue;
+    }
+
+    if(categoryValue){
+      filterParams.category = categoryValue;
+    }
+
+    if (value === 0) {
+      filterParams.status = statusFilter;
+    }
+
+    const {
+      data: productsData,
+      isLoading: productsIsLoading,
+      isSuccess: productsIsSuccess,
+      error: productsError,
+    } = useGetAllProductsQuery({...filterParams});
+
+    const {
+      data: vendorsData, // Data received from the useGetAllVendorsQuery hook
+      isLoading: vendorsIsLoading, // Loading state of the vendors data
+      isSuccess: vendorsIsSuccess, // Success state of the vendors data
+      error: vendorsError, // Error state of the vendors data
+    } = useGetAllVendorsQuery(); 
+
+    const {
+      data: categoriesData,
+      isLoading: categoriesIsLoading,
+      isSuccess: categoriesIsSuccess,
+      error: categoriesError,
+    } = useGetAllCategoriesQuery();
+
+    useEffect(()=>{
+      if(productsIsSuccess && productsData?.data?.data){
+        SetProductList(productsData?.data?.data)
+        setTotalProduct(productsData?.data?.totalCount)
+      }
+    },[productsIsSuccess,productsData])
+
+    useEffect(()=>{
+      if(vendorsIsSuccess && vendorsData?.data?.data){
+        setVendorData(vendorsData?.data?.data)
+      }
+    },[vendorsIsSuccess,vendorsData])
+
+    useEffect(()=>{
+      if(categoriesIsSuccess && categoriesData?.data?.data){
+        setCategoryData(categoriesData?.data?.data)
+      }
+    },[categoriesIsSuccess,categoriesData])
+
+
+    function handleVendorChange(e,newValue){
+     setVendorValue(newValue.name || "")
+      setAnchorVendorEl(false)
+    }
+
+    function handleCategoryChange(e,newValue){
+      setCategoryValue(newValue.name || "")
+       setAnchorCategoryEl(false)
+     }
 
   const handleImportChange = (event, newValue) => {
     setImportValue(newValue);
@@ -342,6 +432,11 @@ const AllProducts = () => {
   const handleImportSecondOpen = () => {
     setOpenImport(false);
     setOpenImportSecond(true);
+  };
+
+  const handleSortRadioChange = (event) => {
+    setSortFilter(event.target.value);
+    setAnchorSortEl(null); // Close the popover after selecting a value
   };
 
   const handleImportSecondClose = () => {
@@ -834,7 +929,7 @@ const AllProducts = () => {
             </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 px-2 justify-content-between">
-            <TableSearch />
+          <TableSearch  searchValue={searchValue} handleSearchChange={handleSearchChange} />
             <div className="d-flex">
               <div className="d-flex product-button__box ms-2">
                 <button
@@ -866,11 +961,12 @@ const AllProducts = () => {
                       freeSolo
                       size="small"
                       options={vendorData}
-                      getOptionLabel={(option) => option.title}
+                      onChange={handleVendorChange}
+                      getOptionLabel={(option) => option.name}
                       renderOption={(props, option) => (
                         <li {...props}>
                           <small className="text-lightBlue my-1">
-                            {option.title}
+                            {option.name}
                           </small>
                         </li>
                       )}
@@ -916,12 +1012,13 @@ const AllProducts = () => {
                       freeSolo
                       size="small"
                       sx={{ width: 200 }}
-                      options={vendorData}
-                      getOptionLabel={(option) => option.title}
+                      options={categoryData}
+                      onChange={handleCategoryChange}
+                      getOptionLabel={(option) => option.name}
                       renderOption={(props, option) => (
                         <li {...props}>
                           <small className="text-lightBlue my-1">
-                            {option.title}
+                            {option.name}
                           </small>
                         </li>
                       )}
@@ -1495,6 +1592,8 @@ const AllProducts = () => {
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
+                    value={sortFilter}
+                    onChange={handleSortRadioChange}
                     // value={value}
                     // onChange={handleRadioChange}
                   >
@@ -1740,16 +1839,28 @@ const AllProducts = () => {
             </div>
           </div>
           <TabPanel value={value} index={0}>
-            <AllProductsTable />
+            <AllProductsTable
+            list={productList}
+            totalCount={totalProduct}
+             />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <AllProductsTable />
+            <AllProductsTable
+            list={productList}
+            totalCount={totalProduct}
+             />
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <AllProductsTable />
+            <AllProductsTable
+            list={productList}
+            totalCount={totalProduct}
+             />
           </TabPanel>
           <TabPanel value={value} index={3}>
-            <AllProductsTable />
+            <AllProductsTable 
+            list={productList}
+            totalCount={totalProduct}
+            />
           </TabPanel>
         </Paper>
       </div>

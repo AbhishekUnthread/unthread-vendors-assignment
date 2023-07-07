@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./ProductInfo.scss";
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import { useDropzone } from "react-dropzone";
+import * as Yup from "yup";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
 import clock from "../../../../assets/icons/clock.svg";
@@ -42,6 +43,13 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import SearchIcon from "@mui/icons-material/Search";
+import { useCreateProductMutation } from "../../../../features/products/product/productApiSlice";
+import { useDispatch } from "react-redux";
+import { showSuccess } from "../../../../features/snackbar/snackbarAction";
+import { useFormik } from "formik";
+import { Link } from "react-router-dom";
+import StatusBox from "../../../../components/StatusBox/StatusBox";
+import { updateproduct } from "../../../../features/products/product/productReducer";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -151,15 +159,15 @@ const vendorData = [
 ];
 
 const discountData = [
-  { title: "5%", value: "5" },
-  { title: "10%", value: "10" },
-  { title: "20%", value: "20" },
-  { title: "30%", value: "30" },
-  { title: "40%", value: "40" },
-  { title: "50%", value: "50" },
-  { title: "60%", value: "60" },
-  { title: "70%", value: "70" },
-  { title: "80%", value: "80" },
+  { title: "5%", value: 5 },
+  { title: "10%", value: 10 },
+  { title: "20%", value: 20 },
+  { title: "30%", value: 30 },
+  { title: "40%", value: 40 },
+  { title: "50%", value: 50 },
+  { title: "60%", value: 60 },
+  { title: "70%", value: 70 },
+  { title: "80%", value: 80 },
 ];
 
 const taggedWithData = [
@@ -178,13 +186,83 @@ const taggedWithData = [
 ];
 // ? COLLECTIONS AUTOCOMPLETE ENDS HERE
 
+const productValidationSchema = Yup.object({
+  title: Yup.string().trim().min(3).required("Required"),
+  // description : Yup.string().trim().min(10).required("Required"),
+  // mediaUrl : Yup.string().trim().required("Required"),
+});
+
 const ProductInfo = () => {
   // ? TOGGLE BUTTONS STARTS HERE
-  const [productStatus, setPoductStatus] = React.useState("active");
-  const handleProductStatus = (event, newProductStatus) => {
-    setPoductStatus(newProductStatus);
-  };
+  const dispatch = useDispatch()
+  const [appTextEditor, setAppTextEditor] = useState("<p></p>")
+ 
   // ? TOGGLE BUTTONS ENDS HERE
+
+
+
+  const [
+    createProduct,
+    {
+      isLoading: createProductIsLoading,
+      isSuccess: createProductIsSuccess,
+      error: createProductError,
+    },
+  ] = useCreateProductMutation();
+
+  useEffect(()=>{
+    if(createProductIsSuccess){
+      dispatch(showSuccess({message:"Product Created succesfully"}))
+    }
+  },[
+    createProductIsSuccess
+  ])
+
+  const productFormik = useFormik({
+    initialValues:{
+      title:"",
+      status:"active",
+      price: {
+          priceOnRequest: false,
+          dynamicPricing: false,
+          price: 0,
+          discount: 0
+      },
+      availableFor: {
+        isReturnable: false,
+        isCod: false,
+      isLifeTimeExchange: false,
+        isLifeTimeBuyBack: false,
+        isNextDayShipping: false,
+        isTryOn: false,
+        isViewSimilarItem: false,
+    }
+    },
+    enableReinitialize:true,
+    validationSchema: productValidationSchema,
+    onSubmit: (values)=>{
+      console.log(values)
+      createProduct(values).unwrap().then(()=>{
+        productFormik.resetForm()
+      })
+    }
+  })
+
+
+  useEffect(()=>{
+    dispatch(updateproduct(productFormik.values))
+  },[productFormik.values])
+
+  const handleProductStatus = (event, newProductStatus) => {
+    productFormik.setFieldValue("status", newProductStatus);
+  };
+
+  useEffect(() => {
+    if(appTextEditor !== "<p></p>") {
+      productFormik.setFieldValue("description", appTextEditor)
+    }
+    
+  },[appTextEditor])
 
   // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
@@ -205,7 +283,37 @@ const ProductInfo = () => {
   );
   // ? FILE UPLOAD ENDS HERE
 
+function handleAvailableFor(event){
+  const value = event.target.value
+  if (value === "COD Available") {
+    productFormik.setFieldValue("availableFor.isCod", true);
+}
+if (value === "Lifetime Exchange") {
+    productFormik.setFieldValue("availableFor.isLifeTimeExchange", true);
+}
+if (value === "Lifetime Buyback") {
+    productFormik.setFieldValue("availableFor.isLifeTimeBuyBack", true);
+}
+if (value === "Next Day Shipping") {
+    productFormik.setFieldValue("availableFor.isNextDayShipping", true);
+}
+if (value === "Enable Try On") {
+    productFormik.setFieldValue("availableFor.isTryOn", true);
+}
+if (value === "Enable to View Similar Items") {
+    productFormik.setFieldValue("availableFor.isViewSimilarItem", true);
+}
+
+}
+  
+
+  
+
   // ? CHECKBOX STARTS HERE
+
+  function handleDiscountChange(e,newValue){
+    productFormik.setFieldValue("price.discount",newValue.value)
+  }
   const [checkedPrice, setCheckedPrice] = React.useState(false);
 
   const handlePriceRequest = (event) => {
@@ -360,7 +468,7 @@ const ProductInfo = () => {
   // * METAL FILTER POPOVERS ENDS
 
   return (
-    <React.Fragment>
+    <form noValidate onSubmit={productFormik.handleSubmit}>
       <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo">
         <div className="col-12 px-0">
           <div className="row">
@@ -377,144 +485,18 @@ const ProductInfo = () => {
                 </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
-                <OutlinedInput placeholder="Enter Title" size="small" />
+                <OutlinedInput name="title" value={productFormik.values.title} onChange={productFormik.handleChange} placeholder="Enter Title" size="small" />
               </FormControl>
             </div>
             <div className="col-4">
-              <div className="d-flex mb-1">
-                <p className="text-lightBlue me-2">Product Status</p>
-                <Tooltip title="Lorem ipsum" placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className="c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip>
-              </div>
-              <ToggleButtonGroup
-                value={productStatus}
-                onChange={handleProductStatus}
-                aria-label="text formatting"
-                className="row d-flex px-2 productInfo-toggle"
-                size="small"
-                exclusive
-              >
-                <ToggleButton
-                  value="active"
-                  aria-label="active"
-                  style={{ width: "50%" }}
-                  className="productInfo-toggle__active"
-                >
-                  <div className="d-flex">
-                    <p className="text-grey-6">Active</p>
-                  </div>
-                </ToggleButton>
-                <ToggleButton
-                  value="draft"
-                  aria-label="draft"
-                  style={{ width: "50%" }}
-                  className="productInfo-toggle__draft"
-                >
-                  <div className="d-flex">
-                    <p className="text-grey-6">Draft</p>
-                  </div>
-                </ToggleButton>
-              </ToggleButtonGroup>
-              <div className="d-flex align-items-center mt-1 c-pointer">
-                <img src={clock} alt="clock" className="me-1" width={12} />
-                <small className="text-blue-2" onClick={handelScheduleProduct}>
-                  Schedule Product
-                </small>
-              </div>
+            <StatusBox
+              showSchedule={true}
+              name={"status"}
+              value={productFormik.values.status} headingName={"Product Status"} 
+              titleName={"Product"}
+              handleProductStatus={handleProductStatus}
+            />
             </div>
-
-            <Dialog
-              open={openScheduleProduct}
-              TransitionComponent={Transition}
-              keepMounted
-              onClose={handelScheduleProductClose}
-              aria-describedby="alert-dialog-slide-description"
-              maxWidth="sm"
-              fullWidth={true}
-            >
-              <DialogTitle>
-                <div className="d-flex justify-content-between align-items-center">
-                  <h5 className="text-lightBlue fw-500">Schedule Product</h5>
-                  <img
-                    src={cancel}
-                    alt="cancel"
-                    width={30}
-                    onClick={handelScheduleProductClose}
-                    className="c-pointer"
-                  />
-                </div>
-              </DialogTitle>
-              <hr className="hr-grey-6 my-0" />
-              <DialogContent className="py-3 px-4 schedule-product">
-                <div className="d-flex mb-1">
-                  <p className="text-lightBlue me-2">Start Date</p>
-                  <Tooltip title="Lorem ipsum" placement="top">
-                    <img
-                      src={info}
-                      alt="info"
-                      className="c-pointer"
-                      width={13.5}
-                    />
-                  </Tooltip>
-                </div>
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-                  <DesktopDateTimePicker
-                    value={dateStartValue}
-                    onChange={(newValue) => {
-                      setDateStartValue(newValue);
-                    }}
-                    renderInput={(params) => (
-                      <TextField {...params} size="small" />
-                    )}
-                  />
-                </LocalizationProvider>
-                <div className="d-flex mb-1 mt-3">
-                  <p className="text-lightBlue me-2">End Date</p>
-                  <Tooltip title="Lorem ipsum" placement="top">
-                    <img
-                      src={info}
-                      alt="info"
-                      className="c-pointer"
-                      width={13.5}
-                    />
-                  </Tooltip>
-                </div>
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-                  <DesktopDateTimePicker
-                    value={dateStartValue}
-                    onChange={(newValue) => {
-                      setDateStartValue(newValue);
-                    }}
-                    renderInput={(params) => (
-                      <TextField {...params} size="small" />
-                    )}
-                  />
-                </LocalizationProvider>
-              </DialogContent>
-              <hr className="hr-grey-6 my-0" />
-              <DialogActions className="d-flex flex-column justify-content-start px-4 py-3">
-                <div className="d-flex justify-content-between w-100">
-                  <button
-                    className="button-grey py-2 px-5"
-                    onClick={handelScheduleProductClose}
-                  >
-                    <p className="text-lightBlue">Cancel</p>
-                  </button>
-                  <button
-                    className="button-gradient py-2 px-5"
-                    onClick={handelScheduleProductClose}
-                  >
-                    <p>Schedule</p>
-                  </button>
-                </div>
-              </DialogActions>
-            </Dialog>
           </div>
         </div>
         <div className="col-12 px-0 mt-3">
@@ -580,7 +562,8 @@ const ProductInfo = () => {
               </button>
             </div>
           </div>
-          <AppTextEditor />
+          <AppTextEditor setFieldValue={setAppTextEditor}
+                  value={appTextEditor} />
           {openDynamicTextEditor && (
             <div className="mt-3">
               <div className="d-flex justify-content-between align-items-center">
@@ -1075,6 +1058,10 @@ const ProductInfo = () => {
 
               <FormControl sx={{ width: "100%" }} className="col-7 px-0">
                 <OutlinedInput
+                type="number"
+                name="price.price"
+                value={productFormik.values.price.price}
+                onChange={productFormik.handleChange}
                   placeholder="Enter Price"
                   size="small"
                   disabled={checkedDynamic}
@@ -1102,6 +1089,7 @@ const ProductInfo = () => {
                 id="free-solo-demo"
                 freeSolo
                 size="small"
+                onChange={handleDiscountChange}
                 // sx={{ width: 200 }}
                 options={discountData}
                 getOptionLabel={(option) => option.title}
@@ -1120,7 +1108,7 @@ const ProductInfo = () => {
                 )}
               />
             </div>
-            <div className="col-4 mt-2">
+            {/* <div className="col-4 mt-2">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Sale Price</p>
                 <Tooltip title="Lorem ipsum" placement="top">
@@ -1134,15 +1122,18 @@ const ProductInfo = () => {
               </div>
 
               <FormControl sx={{ width: "100%" }} className="col-7 px-0">
-                <OutlinedInput placeholder="4000" size="small" />
+                <OutlinedInput name="price.discount"
+                value={productFormik.values.price.discount}
+                onChange={productFormik.handleChange} placeholder="4000" size="small" />
               </FormControl>
-            </div>
+            </div> */}
             <div className="col-12 mt-2">
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={checkedPrice}
-                    onChange={handlePriceRequest}
+                  name="price.priceOnRequest"
+                    checked={productFormik.values.price.priceOnRequest}
+                    onChange={productFormik.handleChange}
                     inputProps={{ "aria-label": "controlled" }}
                     size="small"
                     style={{
@@ -1179,8 +1170,9 @@ const ProductInfo = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={checkedDynamic}
-                    onChange={handleDynamicPrice}
+                  name="price.dynamicPricing"
+                    checked={productFormik.values.price.dynamicPricing}
+                    onChange={productFormik.handleChange}
                     inputProps={{ "aria-label": "controlled" }}
                     size="small"
                     style={{
@@ -1844,23 +1836,15 @@ const ProductInfo = () => {
           </div>
           <p className="text-blue-2 c-pointer col-auto ms-auto px-0">Manage</p>
         </div>
-        <FormGroup className="tags-checkbox px-0">
+        <FormGroup
+        onChange={handleAvailableFor}
+         className="tags-checkbox px-0">
+        
           <FormControlLabel
             control={
               <Checkbox
                 size="small"
-                style={{
-                  color: "#5C6D8E",
-                }}
-              />
-            }
-            label="Price Breakup"
-            className="me-0"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                size="small"
+                value={"Returnable"}
                 style={{
                   color: "#5C6D8E",
                 }}
@@ -1872,6 +1856,7 @@ const ProductInfo = () => {
           <FormControlLabel
             control={
               <Checkbox
+              value="COD Available"
                 size="small"
                 style={{
                   color: "#5C6D8E",
@@ -1885,6 +1870,7 @@ const ProductInfo = () => {
             control={
               <Checkbox
                 size="small"
+                value="Lifetime Exchange"
                 style={{
                   color: "#5C6D8E",
                 }}
@@ -1897,6 +1883,7 @@ const ProductInfo = () => {
             control={
               <Checkbox
                 size="small"
+                value="Lifetime Buyback"
                 style={{
                   color: "#5C6D8E",
                 }}
@@ -1909,6 +1896,7 @@ const ProductInfo = () => {
             control={
               <Checkbox
                 size="small"
+                value="Next Day Shipping"
                 style={{
                   color: "#5C6D8E",
                 }}
@@ -1921,6 +1909,7 @@ const ProductInfo = () => {
             control={
               <Checkbox
                 size="small"
+                value="Enable Try On"
                 style={{
                   color: "#5C6D8E",
                 }}
@@ -1933,6 +1922,7 @@ const ProductInfo = () => {
             control={
               <Checkbox
                 size="small"
+                value="Enable to View Similar Items"
                 style={{
                   color: "#5C6D8E",
                 }}
@@ -1943,7 +1933,33 @@ const ProductInfo = () => {
           />
         </FormGroup>
       </div>
-    </React.Fragment>
+      <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
+        <div className="d-flex w-auto px-0">
+          <Link
+            to="/products/allProducts"
+            className="button-red-outline py-2 px-4"
+          >
+            <p>Discard</p>
+          </Link>
+
+          <Link
+            to="/products/allProducts"
+            className="button-lightBlue-outline py-2 px-4 ms-3"
+          >
+            <p>Save as Draft</p>
+          </Link>
+        </div>
+
+      
+          <button
+            className="button-gradient py-2 px-4 w-auto"
+            type="submit"
+          >
+            <p>Continue</p>
+          </button>
+        
+      </div>
+    </form>
   );
 };
 

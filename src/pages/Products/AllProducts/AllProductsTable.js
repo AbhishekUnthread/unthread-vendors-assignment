@@ -260,7 +260,7 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const AllProductsTable = () => {
+const AllProductsTable = ({list,totalCount}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("productName");
   const [selected, setSelected] = React.useState([]);
@@ -579,10 +579,9 @@ const AllProductsTable = () => {
             headCells={headCells}
           />
           <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.pId);
+            {stableSort(list, getComparator(order, orderBy))
+              ?.map((row, index) => {
+                const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -601,7 +600,7 @@ const AllProductsTable = () => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.pId)}
+                        onClick={(event) => handleClick(event, row._id)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -616,7 +615,7 @@ const AllProductsTable = () => {
                     >
                       <div className="d-flex align-items-center py-3">
                         <img
-                          src={ringSmall}
+                          src={row?.image || ringSmall}
                           alt="ringSmall"
                           className="me-2"
                           height={45}
@@ -624,7 +623,7 @@ const AllProductsTable = () => {
                         />
                         <div>
                           <p className="text-lightBlue fw-600">
-                            {row.productName}
+                            {row?.title}
                           </p>
                           <small className="mt-2 text-grey-6">
                             SKU: TFDR012345
@@ -633,7 +632,7 @@ const AllProductsTable = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <p className="text-lightBlue">{row.category}</p>
+                      <p className="text-lightBlue">{row?.productType?.category?.name}</p>
                     </TableCell>
                     <TableCell>
                       <div className="d-flex align-items-center">
@@ -641,7 +640,7 @@ const AllProductsTable = () => {
                           1452
                         </p>
                         &nbsp;
-                        <p className="text-lightBlue"> {row.qty}</p>
+                        <p className="text-lightBlue"> {row?.qty}</p>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -651,7 +650,7 @@ const AllProductsTable = () => {
                         variant="contained"
                         onClick={handlePriceClick}
                       >
-                        <p className="text-lightBlue">{row.price}</p>
+                        <p className="text-lightBlue">{row?.price?.price}</p>
                         <img className="ms-3" src={arrowDown} alt="arrowDown" />
                       </div>
                       <Popover
@@ -711,9 +710,18 @@ const AllProductsTable = () => {
                     </TableCell>
                     <TableCell>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.status}
+                      <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
+                          style={{background: 
+                            row.status == "active" ? "#A6FAAF" : 
+                            row.status == "in-active" ? "#F67476" : 
+                            row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
+                          }}>
+                          <small className="text-black fw-500">
+                            {
+                              row.status == "active" ? "Active" :  
+                              row.status == "in-active" ? "In-Active" : 
+                              row.status == "archieved" ? "Archived" : "Scheduled"
+                            }
                           </small>
                         </div>
                       </div>
@@ -817,7 +825,7 @@ const AllProductsTable = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={totalCount}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

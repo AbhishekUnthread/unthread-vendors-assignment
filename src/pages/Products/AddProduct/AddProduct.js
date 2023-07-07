@@ -31,6 +31,7 @@ import {
 } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
+import { useSelector } from "react-redux";
 
 // ? TABS STARTS HERE
 function TabPanel(props) {
@@ -62,6 +63,7 @@ TabPanel.propTypes = {
 
 const AddProduct = () => {
   const [value, setValue] = React.useState(0);
+  const productInfo = useSelector(state=> state.product.product)
 
   // ? TABS STARTS HERE
   const handleChange = (event, newValue) => {
@@ -70,6 +72,15 @@ const AddProduct = () => {
   const handleTabChange = () => {
     value < 6 && setValue(value + 1);
   };
+
+  function getIcon(isDone) {
+    if (isDone) {
+        return <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />;
+    } else {
+        return <CloseIcon sx={{ color: "#EA3A3D", fontSize: 20 }} />;
+    }
+}
+
   // ? TABS ENDS HERE
 
   // ? SIZE SELECT STARTS HERE
@@ -199,7 +210,7 @@ const AddProduct = () => {
           <div className="bg-black-15 border-grey-5 rounded-8 p-3">
             <h6 className="text-grey-6 mb-3">Preview:</h6>
             <AppReactImageGallery />
-            <p className="mt-3 text-lightBlue">The Fringe Diamond Ring</p>
+            <p className="mt-3 text-lightBlue">{productInfo?.title}</p>
             <small className="text-grey-6 my-2">
               SKU123456&nbsp;|&nbsp;JWLellers
             </small>
@@ -207,11 +218,11 @@ const AddProduct = () => {
               <small className="text-grey-6">Diamond Ring</small>
             </div>
             <div className="d-flex my-4 flex-wrap">
-              <h6 className="text-lightBlue">₹ 85,000</h6>
+              <h6 className="text-lightBlue">₹ {productInfo?.price?.price}</h6>
               <small className="ms-2 me-3 text-grey-6 ">
                 <s>₹ 100,000</s>
               </small>
-              <small className="text-lightBlue">15%&nbsp;OFF</small>
+              <small className="text-lightBlue">{productInfo?.price?.discount}%&nbsp;OFF</small>
             </div>
             <p className="text-lightBlue mb-2">Size:</p>
             <FormControl
@@ -334,35 +345,31 @@ const AddProduct = () => {
                 <small className="c-pointer text-blue-2">Edit</small>
               </div>
               <div className="d-flex align-items-center mb-2">
-                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
-                <p className="text-lightBlue ms-2">Price Breakdown</p>
-              </div>
-              <div className="d-flex align-items-center mb-2">
-                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+              {getIcon(productInfo?.availableFor?.isReturnable)}
                 <p className="text-lightBlue ms-2">Returnable</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+              {getIcon(productInfo?.availableFor?.isCod)}
                 <p className="text-lightBlue ms-2">COD</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-                <CloseIcon sx={{ color: "#EA3A3D", fontSize: 20 }} />
+              {getIcon(productInfo?.availableFor?.isLifeTimeExchange)}
                 <p className="text-lightBlue ms-2">Lifetime Exchange</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+              {getIcon(productInfo?.availableFor?.isLifeTimeBuyBack)}
                 <p className="text-lightBlue ms-2">Lifetime Buyback</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+              {getIcon(productInfo?.availableFor?.isNextDayShipping)}
                 <p className="text-lightBlue ms-2">Next Day Shipping</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+              {getIcon(productInfo?.availableFor?.isTryOn)}
                 <p className="text-lightBlue ms-2">Enable Try On</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-                <DoneIcon sx={{ color: "#1AD598", fontSize: 20 }} />
+              {getIcon(productInfo?.availableFor?.isViewSimilarItem)}
                 <p className="text-lightBlue ms-2">
                   Enable to View Similar Items
                 </p>
@@ -371,39 +378,7 @@ const AddProduct = () => {
           </div>
         </div>
       </div>
-      <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
-        <div className="d-flex w-auto px-0">
-          <Link
-            to="/products/allProducts"
-            className="button-red-outline py-2 px-4"
-          >
-            <p>Discard</p>
-          </Link>
-
-          <Link
-            to="/products/allProducts"
-            className="button-lightBlue-outline py-2 px-4 ms-3"
-          >
-            <p>Save as Draft</p>
-          </Link>
-        </div>
-
-        {value === 6 ? (
-          <Link
-            to="/products/allProducts"
-            className="button-gradient py-2 px-4 w-auto"
-          >
-            <p>Save</p>
-          </Link>
-        ) : (
-          <button
-            className="button-gradient py-2 px-4 w-auto"
-            onClick={handleTabChange}
-          >
-            <p>Continue</p>
-          </button>
-        )}
-      </div>
+     
     </div>
   );
 };
