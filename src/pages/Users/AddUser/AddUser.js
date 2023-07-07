@@ -37,6 +37,7 @@ import {
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -85,9 +86,6 @@ const customerValidationSchema = Yup.object({
 const AddUser = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
-  const currentDate = new Date();
-  currentDate.setFullYear(currentDate.getFullYear() - 18);
-  const [startDate, setStartDate] = useState(currentDate);
 
   const {
     data: tagsData,
@@ -128,15 +126,21 @@ const AddUser = () => {
     customerFormik.setFieldValue("countryCode", value)
   }
 
-  const SelectCountryCode = (event, value) => {
+  const SelectCountryCode = (event) => {
     customerFormik.setFieldValue("countryCode", event)
+  }
+
+  const handleDOB = (event, value) => {
+    console.log(event, " vene fkds lksd k")
+        console.log(value, " value value lksd k")
+
+    customerFormik.setFieldValue("dob", event)
   }
 
   const customerFormik = useFormik({
     initialValues: {
       isSendEmail: false,
       isTemporaryPassword: false,
-      dob: new Date(startDate)
     },
     enableReinitialize: true,
     validationSchema: customerValidationSchema,
@@ -224,11 +228,10 @@ const AddUser = () => {
                     <p className="text-lightBlue mb-1">Date of Birth</p>
                     <FormControl className="w-100 px-0">
                       <LocalizationProvider dateAdapter={AdapterMoment}>
-                        <DesktopDateTimePicker
-                          value={startDate}
-                          onChange={(newValue) => {
-                            setStartDate(newValue);
-                          }}
+                        <DatePicker
+                          name="dob" 
+                          value={customerFormik.values.dob}
+                          onChange={handleDOB}
                           renderInput={(params) => <TextField {...params} size="small" />}
                         />
                       </LocalizationProvider>

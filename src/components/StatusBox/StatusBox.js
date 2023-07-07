@@ -35,7 +35,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
   const startTime = moment(startDate).format("HH:MM a")
   const endDateNew = moment(endDate).format("DD/MM/YYYY")
   const endTime = moment(endDate).format("HH:MM a")
-  
+
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);
   };
@@ -62,12 +62,14 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
           aria-label="active"
           style={{ width: "50%" }}
           className="productInfo-toggle__active"
+          disabled={startDate != null || endDate != null}
         >
           <div className="d-flex">
             <p className="text-grey-6">{toggleData[0]}</p>
           </div>
         </ToggleButton>
         <ToggleButton
+          disabled={startDate != null|| endDate != null}
           value={toggleData[1]}
           aria-label="inactive"
           style={{ width: "50%" }}
@@ -86,7 +88,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
             </small>
           </div>
       )}
-      {startDate !== null && (
+      {startDate != null && (
           <div className="d-flex justify-content-between px-4 py-3">
             <small className="text-blue-2" style={{cursor: 'pointer'}} onClick={handelScheduleProduct}>Edit</small>
             <small style={{color: '#F67476', cursor: 'pointer'}} onClick={clearDate}>Clear</small>

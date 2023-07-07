@@ -244,18 +244,26 @@ const EditCollection = () => {
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
-  const handleSchedule = (start, end) => {
-    setStartDate(start);
-    setEndDate(end);
-  };
 
    const clearDate = () => {
     setStartDate1(null);
     setEndDate1(null);
   }  
+
+  const handleStartDate = (event) => {
+    setStartDate1(event)
+    setHideFooter(true)
+  }
+
+  const handleEndDate = (event) => {
+    setEndDate1(event)
+    setHideFooter(true)
+  }
+
+  const handleIncludeFilter = (event) => {
+    setCollectionFilter(event.target.checked)
+    setHideFooter(true)
+  }
 
   const {
     data: collectionData,
@@ -551,7 +559,7 @@ const EditCollection = () => {
     const collectionData = {
       title: collectionDuplicateTitle,
       filter: collectionFilter,
-      status: collectionStatus ? collectionStatus : "active",
+      status: collectionStatus,
       isVisibleFrontend: collectionVisibility,
       notes: collectionNote,
     };
@@ -614,7 +622,7 @@ const EditCollection = () => {
                           name="filter"
                           inputProps={{ "aria-label": "controlled" }}
                           checked={collectionFilter}
-                          onChange={(e)=>setCollectionFilter(e.target.checked)}
+                          onChange={handleIncludeFilter}
                           size="small"
                           style={{
                             color: "#5C6D8E",
@@ -1307,21 +1315,31 @@ const EditCollection = () => {
               value={collectionStatus} 
                handleProductStatus={(event, newStatus) => {
                 setCollectionStatus(newStatus)
+                setHideFooter(true)
               }}
-              handleSchedule={handleSchedule}
               startDate={startDate1}
               endDate={endDate1}
               showSchedule={true}
-              handleStartDate={setStartDate1}
-              handleEndDate={setEndDate1}
+              handleStartDate={handleStartDate}
+              handleEndDate={handleEndDate}
               clearDate={clearDate}
             />
-            <VisibilityBox value={collectionVisibility} onChange={(_,val)=>setCollectionVisibility(val)}/>
+            {/* <VisibilityBox 
+              value={collectionVisibility} 
+              onChange={(_,val)=>setCollectionVisibility(val)}
+            /> */}
             <div className="mt-4">
-              <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCollectionMediaUrl} />
+              <UploadMediaBox 
+                imageName={addMedia} 
+                headingName={"Media"} 
+                UploadChange={setCollectionMediaUrl} 
+              />
             </div>
             <div className="mt-4">
-              <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />
+              <UploadBanner 
+                imageName={addMedia} 
+                headingName={"Up Selling Banners"} 
+              />
             </div>
             <NotesBox 
               name={"notes"}

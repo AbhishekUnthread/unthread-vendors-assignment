@@ -218,13 +218,17 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   };
 
   const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = list.map((n) => n._id);
-      setSelected(newSelected);
-      return;
+    if(selected.length>0) {
+      setSelected([]);
     }
-    setSelected([]);
-  };
+    else if(event.target.checked) {
+      const newSelected = list.slice(0, rowsPerPage).map((n) => n._id);
+      setSelected(newSelected);
+    }
+    else {
+      setSelected([]);
+    }
+  };  
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
