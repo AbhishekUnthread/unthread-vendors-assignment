@@ -53,8 +53,8 @@
 
     button {
       border-radius: 50%;
-      width: 10px;
-      height: 10px;
+      width: 6px;
+      height: 6px;
       display: grid;
       place-content: center;
       background: $lightBlue;
@@ -64,5 +64,6 @@
   .media {
     width: 100%;
     object-fit: cover;
+    height: 150px;
   }
 }

@@ -25,21 +25,6 @@ import "./customField.scss";
 const CUSTOM_FIELD_LIST = [
   {
     id: uuidv4(),
-    title: "None",
-    value: "",
-    children: null,
-    icon: (
-      <FilterNoneIcon
-        sx={{
-          color: "#5c6d8e",
-          fontSize: 18,
-          cursor: "pointer",
-        }}
-      />
-    ),
-  },
-  {
-    id: uuidv4(),
     title: "Text",
     value: "text",
     children: null,
@@ -305,45 +290,52 @@ const AddCustomField = (props) => {
           />
         </Grid>
       </Grid>
-      {!hideDefaultHighlight && (
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={values?.isDefaultHighlight}
-              name={`${field}.isDefaultHighlight`}
+      {!hideDefaultHighlight &&
+        ["text", "dimension", "image", "weight"].includes(
+          values?.fieldType
+        ) && (
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={values?.isDefaultHighlight}
+                name={`${field}.isDefaultHighlight`}
+                onBlur={formik?.handleBlur}
+                onChange={formik?.handleChange}
+                inputProps={{ "aria-label": "controlled" }}
+                size="small"
+                style={{
+                  color: "#5C6D8E",
+                  marginRight: 0,
+                  width: "auto",
+                }}
+              />
+            }
+            label="Enable Default Highlight"
+            sx={{
+              "& .MuiTypography-root": {
+                fontSize: "0.7rem",
+                color: "#c8d8ff",
+              },
+            }}
+            className=" px-0"
+          ></FormControlLabel>
+        )}
+      {!hideDefaultHighlight &&
+        values?.isDefaultHighlight &&
+        ["text", "dimension", "image", "weight"].includes(
+          values?.fieldType
+        ) && (
+          <div className="mt-2">
+            <FieldType
+              error={!!touched?.productValue && error?.productValue}
+              value={values?.productValue}
+              onChange={changeProductValueHandler}
+              name={`${field}.productValue`}
               onBlur={formik?.handleBlur}
-              onChange={formik?.handleChange}
-              inputProps={{ "aria-label": "controlled" }}
-              size="small"
-              style={{
-                color: "#5C6D8E",
-                marginRight: 0,
-                width: "auto",
-              }}
+              fieldType={values?.fieldType}
             />
-          }
-          label="Enable Default Highlight"
-          sx={{
-            "& .MuiTypography-root": {
-              fontSize: "0.7rem",
-              color: "#c8d8ff",
-            },
-          }}
-          className=" px-0"
-        ></FormControlLabel>
-      )}
-      {values?.fieldType && (
-        <div className="mt-2">
-          <FieldType
-            error={!!touched?.productValue && error?.productValue}
-            value={values?.productValue}
-            onChange={changeProductValueHandler}
-            name={`${field}.productValue`}
-            onBlur={formik?.handleBlur}
-            fieldType={values?.fieldType}
-          />
-        </div>
-      )}
+          </div>
+        )}
     </>
   );
 };
