@@ -86,6 +86,9 @@ const customerValidationSchema = Yup.object({
 const AddUser = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
+  const [selectedGroupName, setSelectedGroupName] = useState([]);
+  const [selectedTagName, setSelectedTagName] = useState([]);
+  const [ addressDetails, setAddressDetails] = useState();
 
   const {
     data: tagsData,
@@ -100,12 +103,6 @@ const AddUser = () => {
     isSuccess: customerGroupIsSuccess,
     error: customerGroupError,
   } = useGetAllCustomerGroupQuery();
-
-  useEffect(() => {
-    if (customerGroupData) {
-      console.log(customerGroupData);
-    }
-  }, [customerGroupData]);
 
   const [
     createCustomer,
@@ -131,16 +128,26 @@ const AddUser = () => {
   }
 
   const handleDOB = (event, value) => {
-    console.log(event, " vene fkds lksd k")
-        console.log(value, " value value lksd k")
-
     customerFormik.setFieldValue("dob", event)
+  }
+
+  const selectedTagList = (event) => {
+    customerFormik.setFieldValue("tags", event)
+  }
+
+  const handleGroupName = (event, value) => {
+    customerFormik.setFieldValue("userGroup", value.map(option => option._id))
+  }
+
+  const customerAddressDetails = (event) => {
+    setAddressDetails(event)
   }
 
   const customerFormik = useFormik({
     initialValues: {
       isSendEmail: false,
       isTemporaryPassword: false,
+      // address: [addressDetails],
     },
     enableReinitialize: true,
     validationSchema: customerValidationSchema,
@@ -151,11 +158,11 @@ const AddUser = () => {
         }
       }
       console.log(values, 'values for creating customers')
-      // createCustomer(values)
-      //   .unwrap()
-      //   .then(() => customerFormik.resetForm());
-      //   navigate("/users/allUsers");
-      //   dispatch(showSuccess({ message: "Custormer created successfully" }));
+      createCustomer(values)
+        // .unwrap()
+        // .then(() => customerFormik.resetForm());
+        // navigate("/users/allUsers");
+        // dispatch(showSuccess({ message: "Custormer created successfully" }));
     },
   });
 
@@ -303,6 +310,26 @@ const AddUser = () => {
                       </FormHelperText>
                     )}
                   </div>
+                   <div className="col-md-12">
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          inputProps={{ "aria-label": "controlled" }}
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                          }}
+                        />
+                      }
+                      label="User agreed to receive SMS marketing text messages."
+                      sx={{
+                        "& .MuiTypography-root": {
+                          fontSize: 13,
+                          color: "#5c6d8e",
+                        },
+                      }}
+                    />
+                  </div>
                   <div className="col-md-12 mt-3">
                     <p className="text-lightBlue mb-1">Email ID</p>
                     <FormControl className="w-100 px-0">
@@ -310,7 +337,6 @@ const AddUser = () => {
                         placeholder="Enter Email ID" 
                         size="small" 
                         value={customerFormik.values.email}
-                        onBlur={customerFormik.handleBlur}
                         onChange={customerFormik.handleChange}
                         name="email" 
                       />
@@ -346,14 +372,17 @@ const AddUser = () => {
                   </div>
                   <div className="col-md-12 mt-3">
                     <p className="text-lightBlue mb-1">User Group</p>
-                    {/* <Autocomplete
+                    <Autocomplete
                       multiple
                       id="checkboxes-tags-demo"
                       sx={{ width: "100%" }}
-                      options={customerGroupData?.data?.data}
+                      options={customerGroupData?.data?.data || []}
                       disableCloseOnSelect
                       getOptionLabel={(option) => option?.name}
                       size="small"
+                      value={customerFormik.values.email}
+                      name="email" 
+                      onChange={handleGroupName}
                       renderOption={(props, option, { selected }) => (
                         <li {...props}>
                           <Checkbox
@@ -376,26 +405,6 @@ const AddUser = () => {
                           placeholder="Search"
                         />
                       )}
-                    /> */}
-                  </div>
-                  <div className="col-md-12">
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          inputProps={{ "aria-label": "controlled" }}
-                          size="small"
-                          style={{
-                            color: "#5C6D8E",
-                          }}
-                        />
-                      }
-                      label="User agreed to receive SMS marketing text messages."
-                      sx={{
-                        "& .MuiTypography-root": {
-                          fontSize: 13,
-                          color: "#5c6d8e",
-                        },
-                      }}
                     />
                   </div>
                   <div className="col-md-12 mt-3">
@@ -438,7 +447,7 @@ const AddUser = () => {
               </div>
             </div>
 
-            <AddAddress />
+            <AddAddress customerAddressDetails={customerAddressDetails}/>
           </div>
           <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
             <UploadMediaBox 
@@ -448,9 +457,12 @@ const AddUser = () => {
               headingName={"Media"} 
               UploadChange={handleMediaUrl} 
             />
-            {/* <TagsBox 
-              tagsList={tagsData?.data?.data}
-            /> */}
+            <TagsBox 
+              name="tags"
+              value={customerFormik.values.tags}
+              tagsList={tagsData?.data?.data || []}
+              selectedTagList={selectedTagList}
+            />
             <NotesBox 
               name={"notes"}
               onChange={customerFormik.handleChange} 

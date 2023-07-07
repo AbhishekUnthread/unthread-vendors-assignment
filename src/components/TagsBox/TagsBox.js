@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // ! IMAGES IMPORTS
 import info from "../../assets/icons/info.svg";
 import cancel from "../../assets/icons/cancel.svg";
@@ -84,7 +84,11 @@ const taggedWithData = [
   { title: "Tag 12", value: "tag12" },
 ];
 
-const TagsBox = ({tagsList}) => {
+const TagsBox = ({tagsList, selectedTagList}) => {
+
+  const handleTagList = (event, value) => {
+    selectedTagList(value.map(option => option.name))
+  }
   // ? TAGS DIALOG STARTS HERE
   const [openTags, setOpenTags] = React.useState(false);
 
@@ -317,6 +321,7 @@ const TagsBox = ({tagsList}) => {
         options={tagsList}
         disableCloseOnSelect
         getOptionLabel={(option) => option.name}
+        onChange={handleTagList}
         size="small"
         renderOption={(props, option, { selected }) => (
           <li {...props}>

@@ -310,6 +310,10 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     setArchivedModal(false);
   };
 
+  const handleDuplicateCollection = (row) => {
+    console.log(row, 'row')
+  }
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -513,7 +517,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                             </div>
                           </Tooltip>
                           <Tooltip title="Duplicate" placement="top">
-                            <div className="table-edit-icon rounded-4 p-2">
+                            <div className="table-edit-icon rounded-4 p-2"
+                              onClick={() => {
+                                handleDuplicateCollection(row);
+                              }}
+                            >
                               <ContentCopyIcon
                                 sx={{
                                   color: "#5c6d8e",

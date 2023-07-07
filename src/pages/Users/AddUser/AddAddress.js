@@ -51,33 +51,9 @@ import {
   showError,
 } from "../../../features/snackbar/snackbarAction";
 
-const taggedWithData = [
-  { title: "Tag 1", value: "tag1" },
-  { title: "Tag 2", value: "tag2" },
-  { title: "Tag 3", value: "tag3" },
-  { title: "Tag 4", value: "tag4" },
-  { title: "Tag 5", value: "tag5" },
-  { title: "Tag 6", value: "tag6" },
-  { title: "Tag 7", value: "tag7" },
-  { title: "Tag 8", value: "tag8" },
-  { title: "Tag 9", value: "tag9" },
-  { title: "Tag 10", value: "tag10" },
-  { title: "Tag 11", value: "tag11" },
-  { title: "Tag 12", value: "tag12" },
-];
-
-const AddAddress = () => {
+const AddAddress = ({ customerAddressDetails }) => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const [
-    createCustomerAddress,
-    {
-      isLoading: createCustomerAddressIsLoading,
-      isSuccess: createCustomerAddressIsSuccess,
-      error: createCustomerAddressError,
-    },
-  ] = useCreateCustomerAddressMutation();
 
   const customerAddressFormik = useFormik({
     initialValues: {
@@ -96,12 +72,8 @@ const AddAddress = () => {
           delete values[key] 
         }
       }
+      customerAddressDetails(values)
       console.log(values, 'values for creating customers')
-      // createCustomerAddress(values)
-      //   .unwrap()
-      //   .then(() => customerAddressFormik.resetForm());
-      //   navigate("/users/allUsers");
-      //   dispatch(showSuccess({ message: "Custormer created successfully" }));
     },
   });
 
@@ -154,12 +126,12 @@ const AddAddress = () => {
             </h6>
             </div>
 
-            <button
+            <p
             className="button-gradient py-2 px-3"
             onClick={handleAddressChange}
             >
             <p className="">+ Add Address</p>
-            </button>
+            </p>
         </div>
         {savedAddress && (
             <div className="col-12 mt-3">
