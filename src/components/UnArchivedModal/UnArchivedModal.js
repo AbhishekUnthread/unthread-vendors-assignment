@@ -18,7 +18,13 @@ const Transition = forwardRef(function Transition(props, ref) {
   });
   // ? DIALOG TRANSITION ENDS HERE
 
-const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnArchived, handleStatusValue }) => {
+const UnArchivedModal = ({ 
+    showUnArchivedModal, 
+    closeUnArchivedModal, 
+    handleUnArchived, 
+    handleStatusValue,
+    name 
+  }) => {
   const [statusValue, setStatusValue] = React.useState("in-active");
 
   const handleStatusRadio = (event) => {
@@ -27,8 +33,6 @@ const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnAr
     handleStatusValue(value);
   }
 
-  console.log(statusValue,'statusValue')
-
   return (
     <>
     <Dialog
@@ -36,24 +40,20 @@ const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnAr
         keepMounted
         aria-describedby="alert-dialog-slide-description"
         maxWidth="xs"
-        fullWidth={true}
         open={showUnArchivedModal}
         onClose={closeUnArchivedModal}
       >
-        <hr className="hr-grey-6 my-0" />
-        <DialogContent className="py-3 px-4">
-          <Box sx={{  display: 'flex', justifyContent: 'center' }}>
-            <img src={unArchived} alt="questionMark" style={{width: '300px', height: '300px'}}/>
-          </Box>
-          <Typography
-            variant="h5"
-            align="center"
-            sx={{ color: "lightBlue", marginBottom: 2 }}
-          >
-            Before un-archiving this item, 
-            please set it's status.
-          </Typography>
-          <br />
+        <DialogContent className="py-2 px-4 text-center">
+          <img src={unArchived} alt="question" width={200} />
+          <div className="row"></div>
+            <h6 className="text-lightBlue mt-2 mb-2">
+              Before un-archiving 
+              <span className="text-blue-2"> {name} </span>
+               item, please set it's status.
+            </h6>
+            <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+            </div>
         </DialogContent>
         <div className="d-flex justify-content-center">
           <RadioGroup

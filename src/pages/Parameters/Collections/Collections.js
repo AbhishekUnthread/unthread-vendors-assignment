@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
   Box,
@@ -16,7 +16,6 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import CollectionsTable from "./CollectionsTable";
-import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
@@ -35,51 +34,18 @@ import {
 
 import {
   useGetAllCollectionsQuery,
-  useCreateCollectionMutation,
   useDeleteCollectionMutation,
-  useEditCollectionMutation,
 } from "../../../features/parameters/collections/collectionsApiSlice";
 
-const eventHandler = (e) => {
-  e.stopPropagation();
-  console.log(e.target);
-};
-
-const initialCollectionState = {
-  status: "",
-  start: 0,
-  limit: 10,
-  total: null,
-};
-
-const collectionsReducer = (state, action) => {
-  switch (action.type) {
-    case "STATUS": {
-      return {
-        ...state,
-        status: action.payload,
-      };
-    }
-    default: {
-      return initialCollectionState;
-    }
-  }
-};
 
 const Collections = () => {
   const dispatch = useDispatch();
-  const [value, setValue] = useState(0);
   const [error, setError] = useState(false);
   const [collectionList, setCollectionList] = useState([]);
   const [collectionType, setCollectionType] = useState(0);
-  const [collectionsStatus, setCollectionsStatus] = useState("");
   const [pageLength, setPageLegnth] = useState();
-  const [collectionState, collectionDispatch] = useReducer(
-    collectionsReducer,
-    initialCollectionState
-  );
-  const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState(["active","in-active","scheduled"]);
+  const [sortFilter, setSortFilter] = useState("newestToOldest");
+  const [statusFilter, setStatusFilter] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   
   const filterParameter = {};
@@ -89,22 +55,15 @@ const Collections = () => {
   }
 
   const handleStatusChange = (event) => {
-    const selectedStatus = event.target.value;
-    if (event.target.value) {
-      if (statusFilter.length === 0) {
-        let item = [];
-        statusFilter.push(selectedStatus);
-        setStatusFilter(item);
+    const { value } = event.target;
+  
+    setStatusFilter((prevSelected) => {
+      if (prevSelected.includes(value)) {
+        return prevSelected.filter((option) => option !== value);
+      } else {
+        return [...prevSelected, value];
       }
-      if (statusFilter.length > 0 && statusFilter.includes(selectedStatus)) {
-        setStatusFilter((item) => item.filter((i) => i !== selectedStatus));
-      }
-      if (statusFilter.length > 0 && !statusFilter.includes(selectedStatus)) {
-        let item = [...statusFilter];
-        item.push(selectedStatus);
-        setStatusFilter(item);
-      }
-    }
+    });
   };
   
   if (sortFilter) {
@@ -115,21 +74,37 @@ const Collections = () => {
       filterParameter.createdAt = sortFilter == "oldestToNewest" ? "1" : "-1";
     }
   }
+
+  if (statusFilter !== null) {
+    if (Array.isArray(statusFilter)) {
+      filterParameter.status = statusFilter.join(',');
+    } else {
+      filterParameter.status = statusFilter;
+    }
+  }
+
+  if (statusFilter == null) {
+    filterParameter.status = "active";
+    filterParameter.status = "in-active";
+    filterParameter.status = "active"
+  }
   
-  const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
+  const collectionTypeQuery = 
+      collectionType === 0 ? statusFilter.length > 0 ? { status: statusFilter } : { status: ["active","in-active","scheduled"] }
     : collectionType === 1 ? { status: "active" }
     : collectionType === 2 ? { createdAt: -1, status: "in-active" }
     : collectionType === 3 ? { createdAt: -1, status: "archieved" }
     : {};
 
   const filterParams = { ...filterParameter, ...collectionTypeQuery };
+  
   if (searchValue) {
     filterParams.title = searchValue;
   }
 
-  if (collectionType === 0) {
-    filterParams.status = statusFilter;
-  }
+  // if (collectionType === 0) {
+  //   filterParams.status = statusFilter;
+  // }
 
   const {
     data: collectionData,
@@ -306,26 +281,23 @@ const Collections = () => {
                 onClose={handleStatusClose}
                 className="columns"
               >
-                <FormControl className="px-2 py-1">
+                <FormControl className="px-2 py-1" onChange={handleStatusChange}>
                   <FormControlLabel
                     value="active"
                     control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="Active"
-                    onChange={handleStatusChange}
                     checked={statusFilter.includes('active')}
                   />
                   <FormControlLabel
                     value="in-active"
                     control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="In-Active"
-                    onChange={handleStatusChange}
                     checked={statusFilter.includes('in-active')}
                   />
                   <FormControlLabel
                     value="scheduled"
                     control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="Scheduled"
-                    onChange={handleStatusChange}
                     checked={statusFilter.includes('scheduled')}
                   />
                 </FormControl>
