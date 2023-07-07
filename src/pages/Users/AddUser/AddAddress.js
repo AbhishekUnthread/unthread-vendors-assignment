@@ -3,57 +3,57 @@ import "./AddUser.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import * as Yup from "yup";
 
 // ! COMPONENT IMPORTS
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
-import NotesBox from "../../../components/NotesBox/NotesBox";
-import TagsBox from "../../../components/TagsBox/TagsBox";
-import SaveFooter from "../../../components/SaveFooter/SaveFooter"
 // ! IMAGES IMPORTS
-import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import archivedGrey from "../../../assets/icons/archivedGrey.svg";
 import editGrey from "../../../assets/icons/editGrey.svg";
-import addMedia from "../../../assets/icons/addMedia.svg";
 // ! MATERIAL IMPORTS
 import {
   FormControl,
-  FormHelperText,
-  MenuItem,
-  Select,
   InputAdornment,
   OutlinedInput,
   Checkbox,
   FormControlLabel,
   Chip,
-  TextField,
-  Autocomplete,
 } from "@mui/material";
-
-import { DesktopDateTimePicker } from "@mui/x-date-pickers";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-
-// ! MATERIAL ICONS IMPORTS
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-
-import {useCreateCustomerMutation} from "../../../features/customers/customer/customerApiSlice"
-import { useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
-import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
-import { useCreateCustomerAddressMutation } from "../../../features/customers/customerAddress/customerAddressApiSlice";
 
 import {
   showSuccess,
   showError,
 } from "../../../features/snackbar/snackbarAction";
 
+import { useGetAllCityQuery } from "../../../features/master/city/cityApiSlice";
+import { useGetAllCountryQuery } from "../../../features/master/country/countryApiSlice";
+import { useGetAllStateQuery } from "../../../features/master/state/stateApiSlice";
+
 const AddAddress = ({ customerAddressDetails }) => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const {
+    data: cityData,
+    isLoading: cityIsLoading,
+    isSuccess: cityIsSuccess,
+    error: cityError,
+  } = useGetAllCityQuery({createdAt: -1});
+
+  const {
+    data: countryData,
+    isLoading: countryIsLoading,
+    isSuccess: countryIsSuccess,
+    error: countryError,
+  } = useGetAllCountryQuery({createdAt: -1});
+
+  const {
+    data: stateData,
+    isLoading: stateIsLoading,
+    isSuccess: stateIsSuccess,
+    error: stateError,
+  } = useGetAllStateQuery({createdAt: -1});
 
   const customerAddressFormik = useFormik({
     initialValues: {
@@ -127,51 +127,51 @@ const AddAddress = ({ customerAddressDetails }) => {
             </div>
 
             <p
-            className="button-gradient py-2 px-3"
-            onClick={handleAddressChange}
+                className="button-gradient py-2 px-3"
+                onClick={handleAddressChange}
             >
             <p className="">+ Add Address</p>
             </p>
         </div>
         {savedAddress && (
             <div className="col-12 mt-3">
-            <div
-                className="row py-3 mb-3 rounded-8"
-                style={{ background: "rgba(39, 40, 63, 0.5)" }}
-            >
-                <div className="col-12 d-flex justify-content-between align-items-center mb-2 px-3">
-                <p className="text-lightBlue">Home</p>
-                <div className="d-flex align-items-center">
-                    <Chip label="Default" size="small" className="px-2" />
-                    <img
-                    src={editGrey}
-                    alt="editGrey"
-                    className="c-pointer ms-3"
-                    width={16}
-                    />
-                    <img
-                    src={archivedGrey}
-                    alt="archiverdGrey"
-                    className="c-pointer ms-3"
-                    width={16}
-                    />
+                <div
+                    className="row py-3 mb-3 rounded-8"
+                    style={{ background: "rgba(39, 40, 63, 0.5)" }}
+                >
+                    <div className="col-12 d-flex justify-content-between align-items-center mb-2 px-3">
+                        <p className="text-lightBlue">Home</p>
+                        <div className="d-flex align-items-center">
+                            <Chip label="Default" size="small" className="px-2" />
+                            <img
+                                src={editGrey}
+                                alt="editGrey"
+                                className="c-pointer ms-3"
+                                width={16}
+                            />
+                            <img
+                                src={archivedGrey}
+                                alt="archiverdGrey"
+                                className="c-pointer ms-3"
+                                width={16}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-12 px-3">
+                        <small className="text-lightBlue d-block">
+                            Sanjay Chauhan
+                        </small>
+                        <small className="text-lightBlue d-block">
+                            66-68, Jambi Moballa, Bapu Khote Street, Mandvi
+                        </small>
+                        <small className="text-lightBlue d-block">
+                            Mumbai-400003, Maharashtra, Mumbai
+                        </small>
+                        <small className="text-lightBlue d-block">
+                            +91 9876543210
+                        </small>
+                    </div>
                 </div>
-                </div>
-                <div className="col-12 px-3">
-                <small className="text-lightBlue d-block">
-                    Sanjay Chauhan
-                </small>
-                <small className="text-lightBlue d-block">
-                    66-68, Jambi Moballa, Bapu Khote Street, Mandvi
-                </small>
-                <small className="text-lightBlue d-block">
-                    Mumbai-400003, Maharashtra, Mumbai
-                </small>
-                <small className="text-lightBlue d-block">
-                    +91 9876543210
-                </small>
-                </div>
-            </div>
             </div>
         )}
         {address && (
