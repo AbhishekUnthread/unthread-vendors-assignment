@@ -84,12 +84,14 @@ const SubCategoriesTable = ({
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [showCreateDeleteModal, setShowCreateDeleteModal] = useState(false);
+  const [showArchivedModal, setShowArchivedModal] = useState(false);
   const [rowData, setRowData] = useState({});
   const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [handleStatusValue,setHandleStatusValue] = useState('in-active')
   const [showDeleteModal,setShowDeleteModal] = useState(false)
+  const [forMassAction, setForMassAction] = React.useState(false);
+  const [massActionStatus, setMassActionStatus] = React.useState("");
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
@@ -158,6 +160,11 @@ const SubCategoriesTable = ({
             id,
             status: "archieved",
           };
+        }else if (selectedStatus === "Set as Un-Archived") {
+          return {
+            id,
+            status: handleStatusValue,
+          };
         } else {
           return {
             id,
@@ -175,7 +182,7 @@ const SubCategoriesTable = ({
   }, [selected, selectedStatus]);
 
   const toggleArchiveModalHandler = (row) => {
-    setShowCreateDeleteModal((prevState) => !prevState);
+    showArchivedModal((prevState) => !prevState);
     setRowData(row);
   };
 
@@ -191,11 +198,19 @@ const SubCategoriesTable = ({
 
   function deleteData(){
     setShowDeleteModal(false)
+    if(forMassAction === true){
+      setSelectedStatus(massActionStatus)
+      return
+    }
     deleteData(rowData)
   }
 
   function deleteRowData() {
-    setShowCreateDeleteModal(false);
+    showArchivedModal(false);
+    if(forMassAction === true){
+      setSelectedStatus(massActionStatus)
+      return
+    }
     editSubCategory({
       id:rowData._id,
       details:{
@@ -207,6 +222,10 @@ const SubCategoriesTable = ({
 
   function handleUnArchived(){
     setShowUnArchivedModal(false)
+    if(forMassAction === true){
+      setSelectedStatus(massActionStatus)
+      return
+    }
     editSubCategory({
       id:rowData._id,
       details:{
@@ -215,6 +234,18 @@ const SubCategoriesTable = ({
     })
     dispatch(showSuccess({ message: "Un-Archived this Sub category successfully" }));
   }
+
+  const handleMassAction  = (status) => {
+    setMassActionStatus(status);
+    setForMassAction(true)
+    if(status === "Set as Archived") {
+      setShowArchivedModal(true);
+    } else if(status === "Set as Un-Archived") {
+      setShowUnArchivedModal(true);
+    } else if(status === "Delete") {
+      setShowDeleteModal(true);
+    }
+  };
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -232,7 +263,7 @@ const SubCategoriesTable = ({
           </button>
 
           <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Archieved']} headingName="Edit Status"/>
-          {/*<TableMassActionButton /> */}
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={archived?['Edit','Set as Archived']:["Set as Un-Archived"]}/>
         </div>
       )}
       {!error ? (
@@ -458,7 +489,7 @@ const SubCategoriesTable = ({
       )}
       <ArchivedModal
       name={'Archived'}
-        showCreateModal={showCreateDeleteModal}
+        showCreateModal={showArchivedModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={deleteRowData}
       />
@@ -466,7 +497,7 @@ const SubCategoriesTable = ({
       showUnArchivedModal={showUnArchivedModal}
       closeUnArchivedModal={()=>setShowUnArchivedModal(false)}
       handleUnArchived={handleUnArchived}
-      handleValue={setHandleStatusValue}
+      handleStatusValue={setHandleStatusValue}
        />
        <DeleteModal
        name={"This Sub Category"}

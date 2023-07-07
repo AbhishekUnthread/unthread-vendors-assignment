@@ -370,29 +370,7 @@ const Categories = () => {
     deleteSubCategory(data._id)
   }
 
-  const editCategoryHandler = (data) => {
-    setIsEditing(true);
-    setEditId(data._id);
-    if (categoryType === 0) {
-      if (data.categoryId) {
-        setShowCreateSubModal((prevState) => !prevState);
-        subCategoryFormik.setFieldValue("name", data.name);
-        subCategoryFormik.setFieldValue("categoryId", data.categoryId);
-      } else {
-        setShowCreateModal((prevState) => !prevState);
-        categoryFormik.setFieldValue("name", data.name);
-      }
-    }
-    if (categoryType === 1) {
-      setShowCreateModal((prevState) => !prevState);
-      categoryFormik.setFieldValue("name", data.name);
-    }
-    if (categoryType === 2) {
-      setShowCreateSubModal((prevState) => !prevState);
-      subCategoryFormik.setFieldValue("name", data.name);
-      subCategoryFormik.setFieldValue("categoryId", data.categoryId);
-    }
-  };
+ 
 
   useEffect(() => {
     if (categoriesError) {
@@ -635,20 +613,7 @@ const Categories = () => {
                       </FormHelperText>
                     )}
                 </FormControl>
-                <div className="d-flex">
-                  {multipleTags &&
-                    multipleTags.map((data, index) => {
-                      return (
-                        <Chip
-                          label={data.name}
-                          onDelete={() => handleDelete(data.name,setMultipleTags)}
-                          onClick={() => {}}
-                          size="small"
-                          className="mt-3 me-2"
-                        ></Chip>
-                      );
-                    })}
-                </div>
+                <br />
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -673,6 +638,21 @@ const Categories = () => {
                   }}
                   className=" px-0"
                 />
+                <div className="d-flex">
+                  {multipleTags &&
+                    multipleTags.map((data, index) => {
+                      return (
+                        <Chip
+                          label={data.name}
+                          onDelete={() => handleDelete(data.name,setMultipleTags)}
+                          onClick={() => {}}
+                          size="small"
+                          className="mt-3 me-2"
+                        ></Chip>
+                      );
+                    })}
+                </div>
+                
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -785,21 +765,7 @@ const Categories = () => {
                       </FormHelperText>
                     )}
                 </FormControl>
-
-                <div className="d-flex">
-                  {multipleTagsForSub &&
-                    multipleTagsForSub.map((data, index) => {
-                      return (
-                        <Chip
-                          label={data.name}
-                          onDelete={() => handleDelete(data.name,setMultipleTagsForSub)}
-                          onClick={() => {}}
-                          size="small"
-                          className="mt-3 me-2"
-                        ></Chip>
-                      );
-                    })}
-                </div>
+                <br/>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -824,6 +790,22 @@ const Categories = () => {
                   }}
                   className=" px-0"
                 />
+
+                <div className="d-flex">
+                  {multipleTagsForSub &&
+                    multipleTagsForSub.map((data, index) => {
+                      return (
+                        <Chip
+                          label={data.name}
+                          onDelete={() => handleDelete(data.name,setMultipleTagsForSub)}
+                          onClick={() => {}}
+                          size="small"
+                          className="mt-3 me-2"
+                        ></Chip>
+                      );
+                    })}
+                </div>
+               
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -835,6 +817,7 @@ const Categories = () => {
                   <p className="text-lightBlue">Cancel</p>
                 </button>
                 <LoadingButton
+                onClick={()=>setCategoryType(0)}
                   loading={
                     createSubCategoryIsLoading || editSubCategoryIsLoading
                   }
@@ -993,7 +976,7 @@ const Categories = () => {
                   subModalOpenHandler={subModalOpenHandler}
                   error={error}
                   list={categoryList}
-                  edit={editCategoryHandler}
+                  edit={true}
                   bulkEdit={bulkEditCategory}
                   bulkSubEdit={bulkEditSubCategory}
                   editCategory={editCategory}
@@ -1008,7 +991,7 @@ const Categories = () => {
                   deleteData={deleteSubCategoryHandler}
                   error={error}
                   list={subCategoryList}
-                  edit={editCategoryHandler}
+                  edit={true}
                   bulkEdit={bulkEditSubCategory}
                   editSubCategory={editSubCategory}
                   archived={true}
@@ -1021,7 +1004,7 @@ const Categories = () => {
                   deleteData={deleteCategoryHandler}
                   error={error}
                   list={categoryList}
-                  edit={editCategoryHandler}
+                  edit={true}
                   bulkEdit={bulkEditCategory}
                   bulkSubEdit={bulkEditSubCategory}
                   editCategory={editCategory}
@@ -1036,7 +1019,7 @@ const Categories = () => {
                   deleteData={deleteSubCategoryHandler}
                   error={error}
                   list={subCategoryList}
-                  edit={editCategoryHandler}
+                  edit={true}
                   bulkEdit={bulkEditSubCategory}
                   editSubCategory={editSubCategory}
                   archived={false}
