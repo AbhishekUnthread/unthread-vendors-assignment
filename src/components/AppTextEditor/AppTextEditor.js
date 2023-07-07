@@ -39,4 +39,3 @@ const AppTextEditor = ({ value, setFieldValue }) => {
 };
 
 export default AppTextEditor;
-

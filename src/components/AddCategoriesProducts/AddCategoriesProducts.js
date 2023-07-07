@@ -434,7 +434,7 @@ const AddCategoriesProducts = () => {
         onClose={toggleAddProductDrawer("right", false)}
         onOpen={toggleAddProductDrawer("right", true)}
       >
-        <div className="d-flex justify-content-between pt-3 ps-3 pe-2 me-1 align-items-center">
+        <div className=" justify-content-between pt-3 ps-3 pe-2 me-1 align-items-center">
           <h6 className="text-lightBlue">Select Products</h6>
           <img
             src={cancel}

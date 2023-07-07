@@ -1,0 +1,69 @@
+@import "../../styles/global";
+
+.small-upload-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #38395c;
+  padding: 5px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  .icon-placeholder {
+    border: 1px dashed #38395c;
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    padding: 2px;
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      object-fit: cover;
+    }
+  }
+}
+
+.large-upload-container {
+  display: grid;
+  place-content: center;
+  gap: 5px;
+  background-color: $black9;
+  min-height: 150px;
+  border: 1px dashed #38395c;
+  position: relative;
+  cursor: pointer;
+
+  .upload-icon {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+  }
+
+  .cancel-button-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(50%, -50%);
+
+    button {
+      border-radius: 50%;
+      width: 6px;
+      height: 6px;
+      display: grid;
+      place-content: center;
+      background: $lightBlue;
+    }
+  }
+
+  .media {
+    width: 100%;
+    object-fit: cover;
+    height: 150px;
+  }
+}
