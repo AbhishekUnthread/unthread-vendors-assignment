@@ -31,19 +31,31 @@ const rejectStyle = {
   borderColor: "#FF1744",
 };
 // ? FILE UPLOAD ENDS HERE
+<<<<<<< HEAD
 const UploadMediaBox = ({ imageName, headingName ,UploadChange, imageValue}) => {
   const [inputUrl,setInputUrl] =useState('')
  const  [uploadFile, uploadState] = UseFileUpload()
+=======
+
+const UploadMediaBox = ({
+  imageName,
+  headingName,
+  UploadChange = () => {},
+}) => {
+  const [inputUrl, setInputUrl] = useState("");
+  const [uploadFile, uploadState] = UseFileUpload();
+>>>>>>> a913455 (product tab draggable)
   // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
       accept: {
         "image/*": [".jpeg", ".jpg", ".png"],
       },
-    onDrop: acceptedFiles => {
-      uploadFile({file:acceptedFiles[0]})
-    }
+      onDrop: (acceptedFiles) => {
+        uploadFile({ file: acceptedFiles[0] });
+      },
     });
+<<<<<<< HEAD
     useEffect(()=>{
       if(uploadState.data?.url){
         UploadChange(uploadState.data?.url)
@@ -57,6 +69,17 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange, imageValue}) => 
       }
     },[imageValue])
     
+=======
+
+  useEffect(() => {
+    if (uploadState.data?.url) {
+      UploadChange(uploadState.data?.url);
+    } else {
+      UploadChange(inputUrl);
+    }
+  }, [uploadState, inputUrl]);
+
+>>>>>>> a913455 (product tab draggable)
   const style = useMemo(
     () => ({
       ...baseStyle,
@@ -117,10 +140,18 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange, imageValue}) => 
               </Tooltip>
             </div>
             <FormControl className="px-0">
-              <OutlinedInput value={inputUrl} onChange={e=> setInputUrl(e.target.value)} placeholder="Enter URL Link" size="small" />
+              <OutlinedInput
+                value={inputUrl}
+                onChange={(e) => setInputUrl(e.target.value)}
+                placeholder="Enter URL Link"
+                size="small"
+              />
             </FormControl>
             {/* <div className="d-flex"> */}
-            <button onClick={handleSaveFilterClose} className="ms-auto button-gradient py-1 px-4 mt-3">
+            <button
+              onClick={handleSaveFilterClose}
+              className="ms-auto button-gradient py-1 px-4 mt-3"
+            >
               <p>Add Media</p>
             </button>
             {/* </div> */}
@@ -141,4 +172,9 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange, imageValue}) => 
     </div>
   );
 };
+<<<<<<< HEAD
 export default UploadMediaBox;
+=======
+
+export default UploadMediaBox;
+>>>>>>> a913455 (product tab draggable)

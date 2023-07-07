@@ -39,7 +39,6 @@ import {
   useDeleteProductTabMutation,
   useEditProductTabMutation,
 } from "../../../features/parameters/productTabs/productTabsApiSlice";
-
 import {
   showSuccess,
   showError,
@@ -50,24 +49,40 @@ const TAB_LIST = [
   { id: 2, label: "archived" },
 ];
 
-const Transition = forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
-// ? DIALOG TRANSITION ENDS HERE
 const initialQueryFilterState = {
-  pageSize: 10,
+  pageSize: 1,
   pageNo: 1,
+  title: "",
 };
 
 const queryFilterReducer = (state, action) => {
-  if (action.type === "NEXT_PAGE") {
-    return {};
+  if (action.type === "SET_PAGE_SIZE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      pageSize: action.size,
+    };
+  }
+  if (action.type === "CHANGE_PAGE") {
+    return {
+      ...state,
+      pageNo: action.pageNo + 1,
+    };
+  }
+  if (action.type === "SEARCH") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      title: action.title,
+    };
   }
   return initialQueryFilterState;
 };
 
 const ProductTabs = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [productsTabList, setProductsTabList] = useState(null);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -80,6 +95,43 @@ const ProductTabs = () => {
     isError: productsTabIsError,
     isSuccess: productsTabIsSuccess,
   } = useGetAllProductTabsQuery(queryFilterState);
+
+  const pageChangeHandler = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+  };
+
+  const pageSizeHandler = (size) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", size });
+  };
+
+  const searchHandler = (e) => {
+    dispatchQueryFilter({ type: "SEARCH", title: e.target.value });
+  };
+
+  const sortHandler = (sortedData) => {
+    setProductsTabList((prevState) => {
+      return { ...prevState, data: sortedData };
+    });
+  };
+
+  const editHandler = () => {
+    navigate("./create");
+  };
+
+  useEffect(() => {
+    if (productsTabError) {
+      if (productsTabError?.data?.message) {
+        dispatch(showError({ message: productsTabError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+    if (productsTabIsSuccess) {
+      setProductsTabList(productsTabData);
+    }
+  }, [productsTabError, productsTabIsSuccess, productsTabData, dispatch]);
 
   return (
     <div className="container-fluid page">
@@ -113,13 +165,37 @@ const ProductTabs = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+            <TableSearch
+              onChange={searchHandler}
+              value={queryFilterState.title}
+            />
           </div>
           <TabPanel value={0} index={0}>
-            <ProductTabsTable />
+            <ProductTabsTable
+              error={productsTabIsError}
+              isLoading={productsTabIsLoading}
+              data={productsTabList?.data}
+              totalCount={productsTabList?.totalCount}
+              onPageChange={pageChangeHandler}
+              onPageSize={pageSizeHandler}
+              pageSize={queryFilterState.pageSize}
+              page={queryFilterState.pageNo}
+              onSort={sortHandler}
+              onEdit={editHandler}
+            />
           </TabPanel>
           <TabPanel value={0} index={1}>
-            <ProductTabsTable />
+            <ProductTabsTable
+              error={productsTabIsError}
+              isLoading={productsTabIsLoading}
+              data={productsTabList?.data}
+              totalCount={productsTabList?.totalCount}
+              onPageChange={pageChangeHandler}
+              onPageSize={pageSizeHandler}
+              pageSize={queryFilterState.pageSize}
+              page={queryFilterState.pageNo}
+              onSort={sortHandler}
+            />
           </TabPanel>
         </Paper>
       </div>

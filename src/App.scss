@@ -1,5 +1,9 @@
 @import "./styles/global";
 
+.reset {
+  all: unset;
+}
+
 .main-box {
   min-height: calc(100vh - 56px);
   margin-top: 3.4rem;
