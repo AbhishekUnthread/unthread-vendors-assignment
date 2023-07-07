@@ -1,82 +1,56 @@
-<<<<<<< HEAD
 import React from "react";
-import "../../pages/Parameters/EditVendor/EditVendor.scss";
+import { Slide } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { Link, useNavigate } from "react-router-dom";
-const SaveFooter = ({handleSubmit,handleSubmitAndAddAnother, saveAsDraft, saveAddAnother}) => {
-  const navigate = useNavigate()
+
+import "../../pages/Parameters/EditVendor/EditVendor.scss";
+
+const SaveFooter = ({
+  handleSubmit,
+  handleSubmitAndAddAnother,
+  saveAsDraft,
+  saveAddAnother,
+}) => {
+  const navigate = useNavigate();
 
   return (
     <div className="row create-buttons pt-5 pb-3 justify-content-between mb-2">
-    <div className="d-flex w-auto px-0">
-        <button
-        className="button-red-outline py-2 px-4"
-        onClick={()=>navigate(-1)}
-        >
-        <p>Discard</p>
-        </button>
-=======
-import { Link } from "react-router-dom";
-import { Slide } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-
-import "../../pages/Parameters/EditVendor/EditVendor.scss";
-
-const SaveFooter = () => {
-  return (
-    <div className="row create-buttons pt-5 pb-3 justify-content-between">
       <div className="d-flex w-auto px-0">
-        <Link to="/parameters/vendors" className="button-red-outline py-2 px-4">
-          <p>Discard</p>
-        </Link>
->>>>>>> 6306a33 (product tab module pushed)
-
-        { saveAsDraft ?
-        <Link
-          to="/parameters/vendors"
-          className="button-lightBlue-outline py-2 px-4 ms-3"
-        >
-<<<<<<< HEAD
-        <p>{saveAsDraft}</p>
-        </Link>
-        : " "}
-    </div>
-    <div className="d-flex w-auto px-0">
-        { saveAddAnother ?
         <button
-        onClick={handleSubmitAndAddAnother}
-        className="button-lightBlue-outline py-2 px-4"
+          className="button-red-outline py-2 px-4"
+          onClick={() => navigate(-1)}
         >
-        <p>{saveAddAnother}</p>
+          <p>Discard</p>
         </button>
-        : ""}
+
+        {saveAsDraft ? (
+          <Link
+            to="/parameters/vendors"
+            className="button-lightBlue-outline py-2 px-4 ms-3"
+          >
+            <p>{saveAsDraft}</p>
+          </Link>
+        ) : (
+          " "
+        )}
+      </div>
+      <div className="d-flex w-auto px-0">
+        {saveAddAnother ? (
+          <button
+            onClick={handleSubmitAndAddAnother}
+            className="button-lightBlue-outline py-2 px-4"
+          >
+            <p>{saveAddAnother}</p>
+          </button>
+        ) : (
+          ""
+        )}
         <button
           onClick={handleSubmit}
           className="button-gradient ms-3 py-2 px-4 w-auto"
         >
-        <p>Save</p>
-        </button>
-    </div>
-    </div>
-  );
-};
-export default SaveFooter;
-=======
-          <p>Save as Draft</p>
-        </Link>
-      </div>
-      <div className="d-flex w-auto px-0">
-        <Link
-          to="/parameters/vendors"
-          className="button-lightBlue-outline py-2 px-4"
-        >
-          <p>Save & Add Another</p>
-        </Link>
-        <Link
-          to="/parameters/vendors"
-          className="button-gradient ms-3 py-2 px-4 w-auto"
-        >
           <p>Save</p>
-        </Link>
+        </button>
       </div>
     </div>
   );
@@ -115,4 +89,3 @@ const SaveFooterSecondary = (props) => {
 
 export default SaveFooter;
 export { SaveFooterSecondary };
->>>>>>> 6306a33 (product tab module pushed)

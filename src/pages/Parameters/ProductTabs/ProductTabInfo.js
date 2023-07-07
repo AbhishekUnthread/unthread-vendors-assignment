@@ -524,6 +524,7 @@ const ProductTabInfo = () => {
                     data={formik.values?.customFields}
                     onSort={() => {}}
                     onDeleteField={deleteFieldHandler}
+                    onAdd={addFieldHandler}
                   />
                 </Grid>
               </Grid>
@@ -538,7 +539,6 @@ const ProductTabInfo = () => {
       </form>
       <ConfirmationModal
         onConfirm={deleteFieldConfirmationHandler}
-        onAdd={addFieldHandler}
         onCancel={CancelDeleteFieldHandler}
         show={productsInfoState.showDeleteModal}
         message={productsInfoState.confirmationMessage}

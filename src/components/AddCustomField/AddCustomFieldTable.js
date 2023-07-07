@@ -81,11 +81,7 @@ const HEAD_CELLS = [
 ];
 
 const AddCustomFieldTable = (props) => {
-  const { formik, data, onAdd, onSort, onDeleteField } = props;
-
-  const sortEndHandler = ({ oldIndex, newIndex }) => {
-    // onSort(arrayMove(structuredClone(data), oldIndex, newIndex));
-  };
+  const { formik, data, onAdd, onSort = () => {}, onDeleteField } = props;
 
   return (
     <TableContainer>
@@ -95,7 +91,7 @@ const AddCustomFieldTable = (props) => {
         ) : (
           <>
             <TableHeader headCells={HEAD_CELLS} />
-            <TableBodySortable onSortEnd={sortEndHandler} useDragHandle>
+            <TableBodySortable onSortEnd={onSort} useDragHandle>
               {data.map((data, index) => {
                 return (
                   <SortableRow key={index} index={1}>

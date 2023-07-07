@@ -289,14 +289,10 @@ const EditCategories = () => {
                   />
                 </Tooltip>
               </div>
-<<<<<<< HEAD
               <AppTextEditor
                 value={categoryDescription}
                 setFieldValue={(val) => setCategoryDescription(val)}
               />
-=======
-              <AppTextEditor />
->>>>>>> a913455 (product tab draggable)
             </div>
           </div>
 

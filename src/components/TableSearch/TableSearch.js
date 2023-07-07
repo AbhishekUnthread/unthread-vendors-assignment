@@ -40,14 +40,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-const TableSearch = ({searchValue,handleSearchChange}) => {
-=======
-=======
-const DEBOUNCE_TIME = 1000;
+const DEBOUNCE_TIME = 500;
 
->>>>>>> 6306a33 (product tab module pushed)
 const TableSearch = (props) => {
   const { onChange } = props;
 
@@ -59,7 +53,6 @@ const TableSearch = (props) => {
     search(e.target.value);
   };
 
->>>>>>> a913455 (product tab draggable)
   return (
     <Search>
       <SearchIconWrapper>
@@ -68,17 +61,7 @@ const TableSearch = (props) => {
       <StyledInputBase
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
-<<<<<<< HEAD
-<<<<<<< HEAD
-        value={searchValue}
-        onChange={handleSearchChange}
-=======
-        onChange={onChange}
-        value={value}
->>>>>>> a913455 (product tab draggable)
-=======
         onChange={onSearch}
->>>>>>> 6306a33 (product tab module pushed)
       />
     </Search>
   );
