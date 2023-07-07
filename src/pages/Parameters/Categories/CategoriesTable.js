@@ -462,6 +462,9 @@ const CategoriesTable = ({
                               <Link
                                 className="text-decoration-none"
                                 to="/parameters/categories/edit"
+                                onClick={() => {
+                                  dispatch(updateCategoryId(row._id));
+                                }}
                               >
                                 <p className="text-lightBlue rounded-circle fw-600">
                                   {row.name}

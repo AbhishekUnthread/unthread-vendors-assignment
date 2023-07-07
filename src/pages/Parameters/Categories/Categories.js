@@ -437,7 +437,7 @@ const Categories = () => {
       }
     }
 
-    if (categoriesIsSuccess && subCategoriesIsSuccess) {
+    if (categoriesIsSuccess || subCategoriesIsSuccess || bulkTagEditSubCategoryIsSuccess || bulkCreateSubTagsIsSuccess || bulkCreateTagsIsSuccess ) {
       setError(false);
 
       if (categoryType === 0) {
@@ -492,6 +492,8 @@ const Categories = () => {
     editCategoryIsSuccess,
     editSubCategoryIsSuccess,
     categoryType,
+    bulkTagEditSubCategoryIsSuccess,
+    bulkCreateSubTagsIsSuccess,
     dispatch,
     sortFilter,
   ]);
