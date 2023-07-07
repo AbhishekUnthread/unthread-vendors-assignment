@@ -31,28 +31,14 @@ const rejectStyle = {
   borderColor: "#FF1744",
 };
 // ? FILE UPLOAD ENDS HERE
-<<<<<<< HEAD
-const UploadMediaBox = ({ imageName, headingName ,UploadChange, imageValue}) => {
-  const [inputUrl,setInputUrl] =useState('')
- const  [uploadFile, uploadState] = UseFileUpload()
-=======
-
 const UploadMediaBox = ({
   imageName,
   headingName,
-  UploadChange = () => {},
+  UploadChange,
+  imageValue,
 }) => {
   const [inputUrl, setInputUrl] = useState("");
-<<<<<<< HEAD
-<<<<<<< HEAD
   const [uploadFile, uploadState] = UseFileUpload();
->>>>>>> a913455 (product tab draggable)
-=======
-  const [uploadFile, data] = UseFileUpload();
->>>>>>> 6306a33 (product tab module pushed)
-=======
-  const [uploadFile, uploadState] = UseFileUpload();
->>>>>>> dcc3a94 (conflicts solved)
   // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
@@ -63,22 +49,6 @@ const UploadMediaBox = ({
         uploadFile({ file: acceptedFiles[0] });
       },
     });
-<<<<<<< HEAD
-    useEffect(()=>{
-      if(uploadState.data?.url){
-        UploadChange(uploadState.data?.url)
-      }else{
-        UploadChange(inputUrl)
-      }
-    },[uploadState,inputUrl])
-    useEffect(() => {
-      if(imageValue){
-        setInputUrl(imageValue)
-      }
-    },[imageValue])
-    
-=======
-
   useEffect(() => {
     if (uploadState.data?.url) {
       UploadChange(uploadState.data?.url);
@@ -86,8 +56,12 @@ const UploadMediaBox = ({
       UploadChange(inputUrl);
     }
   }, [uploadState, inputUrl]);
+  useEffect(() => {
+    if (imageValue) {
+      setInputUrl(imageValue);
+    }
+  }, [imageValue]);
 
->>>>>>> a913455 (product tab draggable)
   const style = useMemo(
     () => ({
       ...baseStyle,
@@ -175,14 +149,20 @@ const UploadMediaBox = ({
           //   event.target.value = null;
           // }}
         />
-        <img src={uploadState?.data?.url ? uploadState?.data?.url : inputUrl !== "" ? inputUrl : imageName } className="w-100" style={{height: "150px"}} alt="" />
+        <img
+          src={
+            uploadState?.data?.url
+              ? uploadState?.data?.url
+              : inputUrl !== ""
+              ? inputUrl
+              : imageName
+          }
+          className="w-100"
+          style={{ height: "150px" }}
+          alt=""
+        />
       </div>
     </div>
   );
 };
-<<<<<<< HEAD
 export default UploadMediaBox;
-=======
-
-export default UploadMediaBox;
->>>>>>> a913455 (product tab draggable)
