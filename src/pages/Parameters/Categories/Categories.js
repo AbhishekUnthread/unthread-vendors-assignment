@@ -437,7 +437,7 @@ const Categories = () => {
       }
     }
 
-    if (categoriesIsSuccess || subCategoriesIsSuccess || bulkTagEditSubCategoryIsSuccess || bulkCreateSubTagsIsSuccess || bulkCreateTagsIsSuccess ) {
+    if (categoriesIsSuccess && subCategoriesIsSuccess) {
       setError(false);
 
       if (categoryType === 0) {

@@ -45,14 +45,17 @@ const SEO = ({name,value, handleSeoChange }) => {
   },[value,name])
   
   useEffect(()=>{
-    handleSeoChange({
-      ...seoFormik.values,
-      metaKeywords:multipleTags,
-    })
-    console.log({
-      ...seoFormik.values,
-      metaKeywords:multipleTags,
-    })
+    let seoItems={}
+    seoItems.title = seoFormik.values?.title
+    seoItems.slug = seoFormik.values.slug
+    if(seoFormik.values?.description){
+      seoItems.description =seoFormik.values?.description
+    }
+    if(multipleTags.length > 0){
+      seoItems.metaKeywords = multipleTags
+    }
+    handleSeoChange(seoItems)
+    
   },[seoFormik.values])
   // ? SWITCH STARTS HERE
   const [checkedSwitch, setCheckedSwitch] = React.useState(true);
