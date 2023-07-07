@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
 import { logoutHandler } from "../../features/auth/authAction";
 
 const baseQuery = fetchBaseQuery({
@@ -33,6 +32,8 @@ const apiSlice = createApi({
     "TagsManager",
     "ProductTabs",
     "Customers",
+    "CustomerGroup",
+    "CustomersAddress",
   ],
   endpoints: (builder) => ({}),
 });

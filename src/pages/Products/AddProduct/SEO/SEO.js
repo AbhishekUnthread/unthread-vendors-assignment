@@ -133,6 +133,25 @@ const SEO = ({name,value, handleSeoChange }) => {
               <i className="text-grey-6">Powered by Kepler</i>
             </p>
           </div>
+          <div className="col-12 px-0 bg-black-13 border-grey-5 mt-3 rounded-8">
+            <div className="d-flex flex-column p-3">
+              <div className="d-flex justify-content-between">
+                <p className="text-lightBlue">Metadata Preview</p>
+                <small className="text-lightBlue text-blue-2 c-pointer" onClick={() => setViewAll(prevState => !prevState)}>
+                  { viewAll == false ? "SEO Edit" : "Save" }
+                </small>
+              </div>
+              <small className="text-lightBlue mt-3 mb-2 fw-500">
+                {seoFormik.values.title}
+              </small>
+              <small className="text-blue-2">
+                {seoFormik.values.slug}
+              </small>
+              <small className="mt-2 text-grey-6">
+                {seoFormik.values.description}
+              </small>
+            </div>
+          </div>
           {viewAll && (
             <React.Fragment>
               <small className="text-lightBlue mb-2 mt-3 col-12 px-0">
@@ -215,25 +234,7 @@ const SEO = ({name,value, handleSeoChange }) => {
               </FormControl>
             </React.Fragment>
           )}
-          <div className="col-12 px-0 bg-black-13 border-grey-5 mt-3 rounded-8">
-            <div className="d-flex flex-column p-3">
-              <div className="d-flex justify-content-between">
-                <p className="text-lightBlue">Metadata Preview</p>
-                <small className="text-lightBlue text-blue-2 c-pointer" onClick={() => setViewAll(prevState => !prevState)}>
-                  { viewAll == false ? "View" : "Cancel" }
-                </small>
-              </div>
-              <small className="text-lightBlue mt-3 mb-2 fw-500">
-                {seoFormik.values.title}
-              </small>
-              <small className="text-blue-2">
-                {seoFormik.values.slug}
-              </small>
-              <small className="mt-2 text-grey-6">
-                {seoFormik.values.description}
-              </small>
-            </div>
-          </div>
+          
         </React.Fragment>
       )}
     </div>

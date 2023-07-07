@@ -84,7 +84,7 @@ const taggedWithData = [
   { title: "Tag 12", value: "tag12" },
 ];
 
-const TagsBox = () => {
+const TagsBox = ({tagsList}) => {
   // ? TAGS DIALOG STARTS HERE
   const [openTags, setOpenTags] = React.useState(false);
 
@@ -314,9 +314,9 @@ const TagsBox = () => {
         multiple
         id="checkboxes-tags-demo"
         sx={{ width: "100%" }}
-        options={taggedWithData}
+        options={tagsList}
         disableCloseOnSelect
-        getOptionLabel={(option) => option.title}
+        getOptionLabel={(option) => option.name}
         size="small"
         renderOption={(props, option, { selected }) => (
           <li {...props}>
@@ -330,7 +330,7 @@ const TagsBox = () => {
                 marginRight: 0,
               }}
             />
-            <small className="text-lightBlue">{option.title}</small>
+            <small className="text-lightBlue">{option.name}</small>
           </li>
         )}
         renderInput={(params) => (

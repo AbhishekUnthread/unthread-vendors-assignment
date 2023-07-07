@@ -264,7 +264,7 @@ const CreateCollection = () => {
     isSuccess: collectionIsSuccess,
     error: collectionError,
   } = useGetAllCollectionsQuery({ createdAt: "-1", id: collectionId });
-  
+
   const [
     createCollection,
     {
@@ -273,6 +273,8 @@ const CreateCollection = () => {
       error: createCollectionError,
     },
   ] = useCreateCollectionMutation();
+
+  console.log(createCollectionError,'createCollectionError')
 
   const collectionFormik = useFormik({
     initialValues: {
@@ -283,14 +285,11 @@ const CreateCollection = () => {
     enableReinitialize: true,
     validationSchema: collectionValidationSchema,
     onSubmit: (values) => {
-      console.log(values, 'values');
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
           delete values[key] 
         }
       }
-            console.log(values, 'values new');
-
       createCollection(values)
         .unwrap()
         .then(() => collectionFormik.resetForm());
