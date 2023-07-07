@@ -279,6 +279,9 @@ const AddCustomField = (props) => {
               onBlur={formik?.handleBlur}
               onChange={formik?.handleChange}
             />
+            {!!touched?.title && error?.title && (
+              <FormHelperText error>{error?.title}</FormHelperText>
+            )}
           </FormControl>
         </Grid>
         <Grid item md={4}>

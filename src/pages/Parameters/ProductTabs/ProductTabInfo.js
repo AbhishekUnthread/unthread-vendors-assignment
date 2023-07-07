@@ -35,19 +35,19 @@ import {
 } from "../../../features/parameters/productTabs/productTabsApiSlice";
 
 const commonCustomFieldSchema = Yup.object().shape({
-  title: Yup.string(),
+  title: Yup.string().required("Required"),
   fieldType: Yup.string()
     .oneOf(["text", "dimension", "image", "weight", "productField"])
     .when("title", ([title], schema) => {
       if (title) {
-        return schema.required("required");
+        return schema.required("Required");
       }
       return schema;
     }),
   isDefaultHighlight: Yup.boolean().optional(),
   productValue: Yup.string().when("fieldType", ([fieldType], schema) => {
     if (["text", "dimension", "image", "weight"].includes(fieldType)) {
-      return schema.required("required");
+      return schema.required("Required");
     }
     return schema;
   }),
@@ -55,24 +55,24 @@ const commonCustomFieldSchema = Yup.object().shape({
     .oneOf(["show", "hide"])
     .when("title", ([title], schema) => {
       if (title) {
-        return schema.required("required");
+        return schema.required("Required");
       }
       return schema;
     }),
 });
 const customFieldSchema = Yup.object().shape({
-  title: Yup.string(),
+  title: Yup.string().required("Required"),
   fieldType: Yup.string()
     .oneOf(["text", "dimension", "image", "weight", "productField"])
     .when("title", ([title], schema) => {
       if (title) {
-        return schema.required("required");
+        return schema.required("Required");
       }
       return schema;
     }),
   productValue: Yup.string().when("fieldType", ([fieldType], schema) => {
     if (["text", "dimension", "image", "weight"].includes(fieldType)) {
-      return schema.required("required");
+      return schema.required("Required");
     }
     return schema;
   }),
@@ -80,21 +80,21 @@ const customFieldSchema = Yup.object().shape({
     .oneOf(["show", "hide"])
     .when("title", ([title], schema) => {
       if (title) {
-        return schema.required("required");
+        return schema.required("Required");
       }
       return schema;
     }),
 });
 const createProductTabValidationSchema = Yup.object({
-  title: Yup.string().trim().required("required"),
+  title: Yup.string().trim().required("Required"),
   mediaUrl: Yup.string().trim(),
-  tabLayout: Yup.string().trim().required("required"),
+  tabLayout: Yup.string().trim().required("Required"),
   commonCustomFields: Yup.array()
     .of(commonCustomFieldSchema)
     .min(2)
     .max(2)
-    .required("required"),
-  customFields: Yup.array().of(customFieldSchema).min(1).required("required"),
+    .required("Required"),
+  customFields: Yup.array().of(customFieldSchema).min(1).required("Required"),
 });
 
 const initialProductsInfoState = {
@@ -239,7 +239,7 @@ const ProductTabInfo = () => {
     enableReinitialize: true,
     validationSchema: createProductTabValidationSchema,
     onSubmit: (values) => {
-      const productTabValues = values;
+      const productTabValues = structuredClone(values);
       productTabValues.commonCustomFields = productTabValues?.commonCustomFields
         ?.length
         ? productTabValues?.commonCustomFields.filter((field) => field.title)
@@ -251,7 +251,7 @@ const ProductTabInfo = () => {
         if (!productTabValues[key] || !productTabValues[key]?.length)
           delete productTabValues[key];
       }
-      if (productsInfoState.isEditing) {
+      if (id) {
         editProductTab({
           id: productsTabData?.data[0]._id,
           details: productTabValues,
@@ -275,7 +275,7 @@ const ProductTabInfo = () => {
   }, []);
 
   const deleteFieldHandler = ({ deleteIndex, message }) => {
-    if (formik.values.customFields.length === 1) {
+    if (formik.values?.customFields?.length === 1) {
       dispatch(showError({ message: "At least one custom field required" }));
       return;
     }
@@ -292,6 +292,16 @@ const ProductTabInfo = () => {
     );
     formik.setFieldValue("customFields", updatedFields);
     dispatchProductsInfo({ type: "REMOVE_DELETE" });
+  };
+
+  const addFieldHandler = () => {
+    const newCustomFields = formik?.values?.customFields.concat({
+      title: "",
+      fieldType: "",
+      productValue: "",
+      visibility: "",
+    });
+    formik.setFieldValue("customFields", newCustomFields);
   };
 
   const nextPageHandler = () => {
@@ -397,10 +407,7 @@ const ProductTabInfo = () => {
                 <Grid container spacing={2}>
                   <Grid item md={9}>
                     <div className="d-flex mb-1">
-                      <label
-                        htmlFor="tabTitle"
-                        className="small text-lightBlue me-2"
-                      >
+                      <label className="small text-lightBlue me-2">
                         Enter Tab Title
                       </label>
                       <Tooltip title="Lorem ipsum" placement="top">
@@ -414,11 +421,10 @@ const ProductTabInfo = () => {
                     </div>
                     <FormControl className="w-100 px-0">
                       <OutlinedInput
-                        id="tabTitle"
                         size="small"
                         sx={{ paddingLeft: 0 }}
                         name="title"
-                        value={formik.values.title}
+                        value={formik.values?.title}
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                       />
@@ -431,7 +437,7 @@ const ProductTabInfo = () => {
                   </Grid>
                   <Grid item md={3}>
                     <UploadMediaSmall
-                      fileSrc={formik.values.mediaUrl}
+                      fileSrc={formik.values?.mediaUrl}
                       error={
                         !!formik.touched.mediaUrl && formik.errors.mediaUrl
                       }
@@ -483,7 +489,7 @@ const ProductTabInfo = () => {
                 <Grid item md={12}>
                   <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4">
                     <AddCustomField
-                      values={formik.values.commonCustomFields[0]}
+                      values={formik.values?.commonCustomFields[0]}
                       field="commonCustomFields[0]"
                       formik={formik}
                       touched={
@@ -498,7 +504,7 @@ const ProductTabInfo = () => {
                   </div>
                   <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4">
                     <AddCustomField
-                      values={formik.values.commonCustomFields[1]}
+                      values={formik.values?.commonCustomFields[1]}
                       field="commonCustomFields[1]"
                       formik={formik}
                       touched={
@@ -515,7 +521,7 @@ const ProductTabInfo = () => {
                 <Grid item md={12}>
                   <AddCustomFieldTable
                     formik={formik}
-                    data={formik.values.customFields}
+                    data={formik.values?.customFields}
                     onSort={() => {}}
                     onDeleteField={deleteFieldHandler}
                   />
@@ -532,6 +538,7 @@ const ProductTabInfo = () => {
       </form>
       <ConfirmationModal
         onConfirm={deleteFieldConfirmationHandler}
+        onAdd={addFieldHandler}
         onCancel={CancelDeleteFieldHandler}
         show={productsInfoState.showDeleteModal}
         message={productsInfoState.confirmationMessage}

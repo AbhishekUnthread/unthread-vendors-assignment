@@ -95,13 +95,13 @@ export const SidebarData = [
     image: parameters,
     subNav: [
       {
-        title: "Collections",
-        path: "/parameters/collections",
+        title: "Categories",
+        path: "/parameters/categories",
         image: parameters,
       },
       {
-        title: "Categories",
-        path: "/parameters/categories",
+        title: "Options",
+        path: "/parameters/variantSets",
         image: parameters,
       },
       {
@@ -110,8 +110,8 @@ export const SidebarData = [
         image: parameters,
       },
       {
-        title: "Vendors",
-        path: "/parameters/vendors",
+        title: "Collections",
+        path: "/parameters/collections",
         image: parameters,
       },
       {
@@ -120,20 +120,21 @@ export const SidebarData = [
         image: parameters,
       },
       {
-        title: "Option Sets",
-        path: "/parameters/variantSets",
+        title: "Vendors",
+        path: "/parameters/vendors",
         image: parameters,
       },
-      {
-        title: "Additional Fields",
-        path: "/parameters/additionalFields",
-        image: parameters,
-      },
-      {
-        title: "Price Master",
-        path: "/parameters/priceMaster",
-        image: parameters,
-      },
+
+      // {
+      //   title: "Additional Fields",
+      //   path: "/parameters/additionalFields",
+      //   image: parameters,
+      // },
+      // {
+      //   title: "Price Master",
+      //   path: "/parameters/priceMaster",
+      //   image: parameters,
+      // },
     ],
   },
   {

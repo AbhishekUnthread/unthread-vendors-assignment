@@ -10,6 +10,7 @@ import {
   TableRow,
   Tooltip,
   Chip,
+  OutlinedInput,
 } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
@@ -80,20 +81,10 @@ const HEAD_CELLS = [
 ];
 
 const AddCustomFieldTable = (props) => {
-  const { formik, data, onSort, onDeleteField } = props;
+  const { formik, data, onAdd, onSort, onDeleteField } = props;
 
   const sortEndHandler = ({ oldIndex, newIndex }) => {
     // onSort(arrayMove(structuredClone(data), oldIndex, newIndex));
-  };
-
-  const addFieldHandler = () => {
-    const newCustomFields = formik?.values?.customFields.concat({
-      title: "",
-      fieldType: "",
-      productValue: "",
-      visibility: "",
-    });
-    formik.setFieldValue("customFields", newCustomFields);
   };
 
   return (
@@ -107,7 +98,7 @@ const AddCustomFieldTable = (props) => {
             <TableBodySortable onSortEnd={sortEndHandler} useDragHandle>
               {data.map((data, index) => {
                 return (
-                  <SortableRow key={`${index}-${data.title}`} index={1}>
+                  <SortableRow key={index} index={1}>
                     <TableRow hover tabIndex={-1} className="table-rows">
                       <DragHandle />
 
@@ -147,7 +138,7 @@ const AddCustomFieldTable = (props) => {
         )}
       </Table>
       <button
-        onClick={addFieldHandler}
+        onClick={onAdd}
         type="button"
         className="button-gradient py-2 px-4 mt-2 c-pointer"
         style={{ marginLeft: "24px" }}
