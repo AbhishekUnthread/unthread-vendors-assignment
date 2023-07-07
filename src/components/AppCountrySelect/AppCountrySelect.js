@@ -4,6 +4,8 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { countries } from "../../assets/DefaultValues/Countries";
 
+import { useGetAllCountryQuery } from "../../features/master/country/countryApiSlice";
+
 export default function AppCountrySelect({ GetCountryName, SelectCountryName }) {
   const handleCountryName = (event) => {
     if (event) {
@@ -12,13 +14,21 @@ export default function AppCountrySelect({ GetCountryName, SelectCountryName }) 
   };
 
   const selectCountryName = (event, value) => {
-    SelectCountryName(value?.label);
+    SelectCountryName(value?._id);
   }
+
+   const {
+    data: countryData,
+    isLoading: countryIsLoading,
+    isSuccess: countryIsSuccess,
+    error: countryError,
+  } = useGetAllCountryQuery({createdAt: -1});
+
   return (
     <Autocomplete
       id="country-select-demo"
       sx={{ width: 320 }}
-      options={countries}
+      options={countryData?.data?.data}
       autoHighlight
       size="small"
       componentsProps={{
@@ -31,7 +41,7 @@ export default function AppCountrySelect({ GetCountryName, SelectCountryName }) 
           },
         },
       }}
-      getOptionLabel={(option) => option.label}
+      getOptionLabel={(option) => option?.name}
       onChange={selectCountryName}
       renderOption={(props, option) => (
         <Box
@@ -39,15 +49,15 @@ export default function AppCountrySelect({ GetCountryName, SelectCountryName }) 
           sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
           {...props}
         >
-          <img
+          {/* <img
             loading="lazy"
             width="20"
             src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
             srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
             alt=""
-          />
+          /> */}
           <small className="text-lightBlue my-1">
-            {option.label} ({option.code}) +{option.phone}
+            {option?.name}
           </small>
         </Box>
       )}

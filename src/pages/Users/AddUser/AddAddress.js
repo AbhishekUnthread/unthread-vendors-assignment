@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
+import AppCitySelect from "../../../components/AddCitySelect/AddCitySelect";
 // ! IMAGES IMPORTS
 import archivedGrey from "../../../assets/icons/archivedGrey.svg";
 import editGrey from "../../../assets/icons/editGrey.svg";
@@ -26,34 +27,9 @@ import {
   showError,
 } from "../../../features/snackbar/snackbarAction";
 
-import { useGetAllCityQuery } from "../../../features/master/city/cityApiSlice";
-import { useGetAllCountryQuery } from "../../../features/master/country/countryApiSlice";
-import { useGetAllStateQuery } from "../../../features/master/state/stateApiSlice";
-
 const AddAddress = ({ customerAddressDetails }) => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const {
-    data: cityData,
-    isLoading: cityIsLoading,
-    isSuccess: cityIsSuccess,
-    error: cityError,
-  } = useGetAllCityQuery({createdAt: -1});
-
-  const {
-    data: countryData,
-    isLoading: countryIsLoading,
-    isSuccess: countryIsSuccess,
-    error: countryError,
-  } = useGetAllCountryQuery({createdAt: -1});
-
-  const {
-    data: stateData,
-    isLoading: stateIsLoading,
-    isSuccess: stateIsSuccess,
-    error: stateError,
-  } = useGetAllStateQuery({createdAt: -1});
 
   const customerAddressFormik = useFormik({
     initialValues: {
@@ -101,6 +77,14 @@ const AddAddress = ({ customerAddressDetails }) => {
     customerAddressFormik.setFieldValue("state", event)
   }
 
+   const getCityName = (value) => {
+    customerAddressFormik.setFieldValue("city", value)
+  }
+
+  const SelectCityName = (event, value) => {
+    customerAddressFormik.setFieldValue("city", event)
+  }
+
   // ? ADDRESS STARTS HERE
   const [address, setAddress] = React.useState(false);
 
@@ -111,10 +95,6 @@ const AddAddress = ({ customerAddressDetails }) => {
   // ? ADDRESS STARTS HERE
   const [savedAddress, setSavedAddress] = React.useState(false);
 
-  const handleSavedAddressChange = () => {
-    setSavedAddress(true);
-    setAddress(false);
-  };
   // ? ADDRESS ENDS HERE
 
   return (
@@ -126,11 +106,8 @@ const AddAddress = ({ customerAddressDetails }) => {
             </h6>
             </div>
 
-            <p
-                className="button-gradient py-2 px-3"
-                onClick={handleAddressChange}
-            >
-            <p className="">+ Add Address</p>
+            <p className="button-gradient py-2 px-3" onClick={handleAddressChange}>
+                <p className="">+ Add Address</p>
             </p>
         </div>
         {savedAddress && (
@@ -310,7 +287,7 @@ const AddAddress = ({ customerAddressDetails }) => {
                         </div>
                         <div className="col-md-6 mt-3">
                             <p className="text-lightBlue mb-1">Town/City</p>
-                            <FormControl className="w-100 px-0">
+                            {/* <FormControl className="w-100 px-0">
                                 <OutlinedInput
                                     placeholder="Enter Town/City"
                                     size="small"
@@ -318,7 +295,14 @@ const AddAddress = ({ customerAddressDetails }) => {
                                     value={customerAddressFormik.values.city}
                                     onChange={customerAddressFormik.handleChange}
                                 />
-                            </FormControl>
+                            </FormControl> */}
+                            <AppCitySelect 
+                                value={customerAddressFormik.values.city}
+                                getCityName={getCityName}
+                                SelectCityName={SelectCityName}
+                                name="city" 
+                            />
+
                         </div>
                         <div className="col-md-6 mt-3">
                             <p className="text-lightBlue mb-1">Zipcode/Postalcode</p>
