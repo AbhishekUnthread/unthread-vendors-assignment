@@ -493,23 +493,7 @@ const handleDelete =()=>{
                           {row.status ==="archieved"?
                         <TableCell style={{ width: 140, padding: 0 }}>
                          <div className="d-flex align-items-center">
-                          <Tooltip title="Delete" placement="top">
-                            <div className="table-edit-icon rounded-4 p-2" 
-                                onClick={(e) => {
-                                  handleDeleteOnClick(row)
-                                }}
-                            >
-                              <DeleteIcon
-                                sx={{
-                                  color: "#5c6d8e",
-                                  fontSize: 18,
-                                  cursor: "pointer",
-                                }}
-                              />
-                            </div>
-                          </Tooltip>
-
-                          <Tooltip
+                         <Tooltip
                               onClick={() => {
                                 handleUnArchive(row)
                                 }
@@ -526,6 +510,21 @@ const handleDelete =()=>{
                                       }}
                                     />
                                   </div>
+                          </Tooltip>
+                          <Tooltip title="Delete" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2" 
+                                onClick={(e) => {
+                                  handleDeleteOnClick(row)
+                                }}
+                            >
+                              <DeleteIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
                           </Tooltip>
                         </div>
                       </TableCell>

@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { showError } from "../../../features/snackbar/snackbarAction";
 import "./AllUsers.scss";
 // ! COMPONENT IMPORTS
 import AllUsersTable from "./AllUsersTable";
@@ -10,6 +12,7 @@ import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSec
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import FilterUsers from "../../../components/FilterUsers/FilterUsers";
+import { useGetAllCustomersQuery } from "../../../features/user/customer/customerApiSlice";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import allFlag from "../../../assets/images/products/allFlag.svg";
@@ -37,11 +40,9 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
-// ! MATERIAL ICON IMPORTS
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { useGetAllCustomersQuery } from "../../../features/user/customer/customerApiSlice";
-import { useDispatch } from "react-redux";
-import { showError } from "../../../features/snackbar/snackbarAction";
+// ! MATERIAL ICON IMPORTS
+
 
 const locationData = [
   { title: "Content 1", value: "content1" },
@@ -58,87 +59,103 @@ const locationData = [
   { title: "Content 12", value: "content12" },
 ];
 
+const initialQueryFilterState = {
+  pageSize: 5,
+  pageNo: 0,
+  name:"",
+};
+const initialUsersState = {
+  data: [],
+  totalCount: 0,
+  error: false,
+  customerType:0,
+};
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_SIZE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      pageSize: +action.value,
+    };
+  }
+  if (action.type === "CHANGE_PAGE") {
+    return {
+      ...state,
+      pageNo: action.pageNo ,
+    };
+  }
+  if (action.type === "SEARCH") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      name: action.name,
+    };
+  }
+  return initialQueryFilterState;
+};
+const usersReducer = (state, action) => {
+  if (action.type === "SET_DATA") {
+    return {
+      ...state,
+      data: action.data,
+      totalCount: action.totalCount,
+    };
+  }
+  if (action.type === "ERROR") {
+    return {
+      ...state,
+      error: action.error,
+    };
+  }
+  if (action.type === "SET_CUSTOMER_TYPE") {
+    return {
+      ...state,
+      customerType: action.customerType,
+    };
+  }
+  return initialUsersState;
+};
 const AllUsers = () => {
   const dispatch = useDispatch();
-  const [customersList, setCustomersList] = React.useState([]);
-  const [totalCount,setTotalCount] = React.useState(0);
-  const [error, setError] = React.useState(false);
-  const [customerType, setCustomerType] = React.useState(0);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [searchValue, setSearchValue] = React.useState("");
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+  const [usersState, dispatchUsers] = useReducer(
+    usersReducer,
+    initialUsersState
+  );
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-
-  const changeCustomerTypeHandler = (event, newValue) => {
-    setCustomerType(newValue);
-  };
-  const handleSearchChange = (event) => {
-    setSearchValue(event.target.value);
-  };
 
   const queryParameters = {};
-  if(searchValue)
+  if(queryFilterState.name)
 {
-  queryParameters.name = searchValue;
+  queryParameters.name = queryFilterState.name;
 }
-
 
   const {
     data: customersData, // 
     isLoading: customersIsLoading, 
     isSuccess: customersIsSuccess, 
     error: customersError
-  } = useGetAllCustomersQuery({createdAt:1,pageSize:rowsPerPage,pageNo:page+1,...queryParameters}); 
+  } = useGetAllCustomersQuery({createdAt:1,pageSize:queryFilterState.pageSize,pageNo:queryFilterState.pageNo+1,...queryParameters}); 
 
-  useEffect(() => {
-    if (customersIsSuccess) {
-      setError(false);
-      if (customerType === 0) {
-        setCustomersList(customersData.data.data);
-        setTotalCount(customersData.data.totalCount)
-      }
-      if (customerType === 1) {
-        setCustomersList(customersData.data.data);
-        setTotalCount(customersData.data.totalCount)
-      }
-      if(customerType === 2)
-      {
-        setCustomersList(customersData.data.data);
-        setTotalCount(customersData.data.totalCount)
-      }
-      if(customerType === 3)
-      {
-        setCustomersList(customersData.data.data);
-        setTotalCount(customersData.data.totalCount)
-      }
-      if(customerType === 4)
-      {
-        setCustomersList(customersData.data.data);
-        setTotalCount(customersData.data.totalCount)
-      }
-    }
-    if (customersError) {
-      setError(true);
-      if (customersError?.data?.message) {
-        dispatch(showError({ message: customersError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
+  const handleChangeRowsPerPage = (event) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
+  };
 
-  }, [customersData,customersIsSuccess,customersIsLoading,customersError,page,rowsPerPage])
+  const handleChangePage = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+  };
 
+  const changeCustomerTypeHandler = (event, newValue) => {
+    dispatchUsers({
+      type:"SET_CUSTOMER_TYPE", customerType:newValue
+    })
+  };
+  const handleSearchChange = (event) => {
+    dispatchQueryFilter({ type: "SEARCH", name: event.target.value });
+  };
 
   // ? POPOVERS STARTS HERE
 
@@ -230,7 +247,65 @@ const AllUsers = () => {
   // * DAYS POPOVERS ENDS
 
   // ? POPOVERS ENDS HERE
-  console.log({crl:customersList})
+
+  useEffect(() => {
+    if (customersIsSuccess) {
+      dispatchUsers({
+        type:"ERROR", error: false
+      })
+      if (usersState.customerType === 0) {
+        dispatchUsers({
+          type: "SET_DATA",
+          data: customersData.data.data,
+          totalCount: customersData.data.totalCount,
+        })
+      }
+      if (usersState.customerType === 1) {
+        dispatchUsers({
+          type: "SET_DATA",
+          data: customersData.data.data,
+          totalCount: customersData.data.totalCount,
+        })
+      }
+      if(usersState.customerType === 2)
+      {
+        dispatchUsers({
+          type: "SET_DATA",
+          data: customersData.data.data,
+          totalCount: customersData.data.totalCount,
+        })
+      }
+      if(usersState.customerType === 3)
+      {
+        dispatchUsers({
+          type: "SET_DATA",
+          data: customersData.data.data,
+          totalCount: customersData.data.totalCount,
+        })
+      }
+      if(usersState.customerType === 4)
+      {
+        dispatchUsers({
+          type: "SET_DATA",
+          data: customersData.data.data,
+          totalCount: customersData.data.totalCount,
+        })
+      }
+    }
+    if (customersError) {
+      dispatchUsers({
+        type:"ERROR", error: true
+      })
+      if (customersError?.data?.message) {
+        dispatch(showError({ message: customersError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+
+  }, [customersData,customersIsSuccess,customersIsLoading,customersError,queryFilterState.pageNo,queryFilterState.pageSize])
 
   return (
     <div className="container-fluid page">
@@ -368,7 +443,7 @@ const AllUsers = () => {
               scrollButtons
               allowScrollButtonsMobile */}
             <Tabs
-              value={customerType}
+              value={usersState.customerType}
               onChange={changeCustomerTypeHandler}
               aria-label="scrollable force tabs example"
               className="tabs"
@@ -420,7 +495,7 @@ const AllUsers = () => {
             </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
+            <TableSearch searchValue={queryFilterState.name} handleSearchChange={handleSearchChange} />
             <div className="d-flex ms-2">
               <div className="d-flex product-button__box">
                 <button
@@ -673,36 +748,36 @@ const AllUsers = () => {
               </Popover>
             </div>
           </div>
-          <TabPanel value={customerType} index={0}>
+          <TabPanel value={usersState.customerType} index={0}>
             <AllUsersTable
               isLoading={customersIsLoading}
-              error={error}
-              list={customersList}
-              totalCount={totalCount}
+              error={usersState.error}
+              list={usersState.data}
+              totalCount={usersState.totalCount}
               changeRowsPerPage={handleChangeRowsPerPage}
-              rowsPerPage={rowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
-              page={page}
+              page={queryFilterState.pageNo}
             />
           </TabPanel>
-          <TabPanel value={customerType} index={1}>
+          <TabPanel value={usersState.customerType} index={1}>
             <AllUsersTable 
-              list={customersList}
+              list={usersState.data}
             />
           </TabPanel>
-          <TabPanel value={customerType} index={2}>
+          <TabPanel value={usersState.customerType} index={2}>
             <AllUsersTable 
-              list={customersList}
+              list={usersState.data}
             />
           </TabPanel>
-          <TabPanel value={customerType} index={3}>
+          <TabPanel value={usersState.customerType} index={3}>
             <AllUsersTable 
-              list={customersList}
+              list={usersState.data}
             />
           </TabPanel>
-          <TabPanel value={customerType} index={4}>
+          <TabPanel value={usersState.customerType} index={4}>
             <AllUsersTable 
-              list={customersList}
+              list={usersState.data}
             />
           </TabPanel>
         </Paper>

@@ -297,7 +297,7 @@ const UserEnquiriesTable = ({isLoading,error,list,rowsPerPage,changeRowsPerPage,
                         className="d-flex align-items-center text-decoration-none"
                       >
                         <p className="text-blue-2 text-decoration-underline c-pointer">
-                          {row.userName}
+                          {row?.user?.userName}
                         </p>
                       </Link>
                     </TableCell>
