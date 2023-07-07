@@ -1,233 +1,185 @@
-// import { Link } from "react-router-dom";
-// import {
-//   EnhancedTableHead,
-//   stableSort,
-//   getComparator,
-// } from "../../../components/TableDependencies/TableDependencies";
-// import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-// import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Tooltip,
+  Chip,
+} from "@mui/material";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import {
+  SortableContainer,
+  SortableHandle,
+  SortableElement,
+  arrayMove,
+} from "react-sortable-hoc";
 
-// import {
-//   Checkbox,
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableContainer,
-//   TablePagination,
-//   TableRow,
-//   Tooltip,
-// } from "@mui/material";
+import TableHeader from "../../../components/TableHeader/TableHeader";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import EditButton from "../../../components/EditButton/EditButton";
+import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
 
-// import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-// import InventoryIcon from "@mui/icons-material/Inventory";
+const DragHandle = SortableHandle(() => (
+  <TableCell>
+    <DragIndicatorIcon
+      sx={{
+        color: "#5c6d8e",
+        fontSize: 26,
+        cursor: "pointer",
+      }}
+    />
+  </TableCell>
+));
 
-// const headCells = [
-//   {
-//     id: "vendorsName",
-//     numeric: false,
-//     disablePadding: true,
-//     label: "Vendors Name",
-//   },
-//   {
-//     id: "noOfProducts",
-//     numeric: false,
-//     disablePadding: true,
-//     label: "No Of Products",
-//   },
-//   {
-//     id: "status",
-//     numeric: false,
-//     disablePadding: true,
-//     label: "Status",
-//   },
-//   {
-//     id: "actions",
-//     numeric: false,
-//     disablePadding: true,
-//     label: "Actions",
-//   },
-// ];
+const TableBodySortable = SortableContainer(({ children }) => (
+  <TableBody>{children}</TableBody>
+));
 
-// const ProductTabsTable = (props) => {
-//   const { error, isLoading, data } = props;
+TableBodySortable.muiName = "TableBody";
 
-//   return (
-//     <>
-//       {/* {selected.length > 0 && (
-//         <div className="d-flex align-items-center px-2 mb-3">
-//           <button className="button-grey py-2 px-3">
-//             <small className="text-lightBlue">
-//               {selected.length} vendors are selected&nbsp;
-//               <span
-//                 className="text-blue-2 c-pointer"
-//                 onClick={() => setSelected([])}
-//               >
-//                 (Clear Selection)
-//               </span>
-//             </small>
-//           </button>
-//           <TableEditStatusButton />
-//           <TableMassActionButton />
-//         </div>
-//       )} */}
-//       {!error ? (
-//         list.length ? (
-//           <>
-//             <TableContainer>
-//               <Table
-//                 sx={{ minWidth: 750 }}
-//                 aria-labelledby="tableTitle"
-//                 size="medium"
-//               >
-//                 <EnhancedTableHead
-//                   numSelected={selected.length}
-//                   order={order}
-//                   orderBy={orderBy}
-//                   onSelectAllClick={handleSelectAllClick}
-//                   onRequestSort={handleRequestSort}
-//                   rowCount={list.length}
-//                   headCells={headCells}
-//                 />
-//                 <TableBody>
-//                   {stableSort(list, getComparator(order, orderBy))
-//                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-//                     .map((row, index) => {
-//                       const isItemSelected = isSelected(row._id);
-//                       const labelId = `enhanced-table-checkbox-${index}`;
+const SortableRow = SortableElement(({ children }) => children);
 
-//                       return (
-//                         <TableRow
-//                           hover
-//                           role="checkbox"
-//                           aria-checked={isItemSelected}
-//                           tabIndex={-1}
-//                           key={index}
-//                           selected={isItemSelected}
-//                           className="table-rows"
-//                         >
-//                           <TableCell padding="checkbox">
-//                             <Checkbox
-//                               checked={isItemSelected}
-//                               inputProps={{
-//                                 "aria-labelledby": labelId,
-//                               }}
-//                               onClick={(event) => handleClick(event, row._id)}
-//                               size="small"
-//                               style={{
-//                                 color: "#5C6D8E",
-//                               }}
-//                             />
-//                           </TableCell>
-//                           <TableCell
-//                             component="th"
-//                             id={labelId}
-//                             scope="row"
-//                             padding="none"
-//                           >
-//                             <Link
-//                               className="text-decoration-none"
-//                               to="/parameters/vendors/edit"
-//                             >
-//                               <p className="text-lightBlue rounded-circle fw-600">
-//                                 {row.name}{" "}
-//                               </p>
-//                             </Link>
-//                           </TableCell>
+const HEAD_CELLS = [
+  {
+    align: "left",
+    disablePadding: false,
+    label: "",
+    width: "5%",
+  },
+  {
+    align: "left",
+    disablePadding: false,
+    label: "Field Set Name",
+    width: "30%",
+  },
+  {
+    align: "left",
+    disablePadding: false,
+    label: "No. Of Fields",
+    width: "50%",
+  },
+  {
+    align: "right",
+    disablePadding: false,
+    label: "Action",
+    width: "15%",
+  },
+];
 
-//                           <TableCell style={{ width: 180 }}>
-//                             <p className="text-lightBlue">{index}</p>
-//                           </TableCell>
+const PAGINATION_ROWS = [10, 20, 30];
 
-//                           <TableCell style={{ width: 140, padding: 0 }}>
-//                             <div className="d-flex align-items-center">
-//                               <div
-//                                 className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.status}`}
-//                               >
-//                                 <small className="text-lightBlue fw-400">
-//                                   {row.status}
-//                                 </small>
-//                               </div>
-//                             </div>
-//                           </TableCell>
-//                           <TableCell style={{ width: 120, padding: 0 }}>
-//                             <div className="d-flex align-items-center">
-//                               {edit && (
-//                                 <Tooltip title="Edit" placement="top">
-//                                   <Link
-//                                     onClick={(e) => {
-//                                       edit(row);
-//                                     }}
-//                                     className="table-edit-icon rounded-4 p-2"
-//                                   >
-//                                     <EditOutlinedIcon
-//                                       sx={{
-//                                         color: "#5c6d8e",
-//                                         fontSize: 18,
-//                                         cursor: "pointer",
-//                                       }}
-//                                     />
-//                                   </Link>
-//                                 </Tooltip>
-//                               )}
+const ProductTabsTable = (props) => {
+  const {
+    error,
+    isLoading,
+    data,
+    totalCount,
+    onPageChange,
+    onPageSize,
+    pageSize,
+    page,
+    onSort,
+    onEdit,
+    onDelete,
+  } = props;
 
-//                               {deleteData && (
-//                                 <Tooltip title={"Delete"} placement="top">
-//                                   <div
-//                                     onClick={(e) => {
-//                                       deleteData(row);
-//                                     }}
-//                                     className="table-edit-icon rounded-4 p-2"
-//                                   >
-//                                     <InventoryIcon
-//                                       sx={{
-//                                         color: "#5c6d8e",
-//                                         fontSize: 18,
-//                                         cursor: "pointer",
-//                                       }}
-//                                     />
-//                                   </div>
-//                                 </Tooltip>
-//                               )}
-//                             </div>
-//                           </TableCell>
-//                         </TableRow>
-//                       );
-//                     })}
-//                   {emptyRows > 0 && (
-//                     <TableRow
-//                       style={{
-//                         height: 53 * emptyRows,
-//                       }}
-//                     >
-//                       <TableCell colSpan={6} />
-//                     </TableRow>
-//                   )}
-//                 </TableBody>
-//               </Table>
-//             </TableContainer>
-//             <TablePagination
-//               rowsPerPageOptions={[10, 20, 30]}
-//               component="div"
-//               count={list.length}
-//               rowsPerPage={rowsPerPage}
-//               page={page}
-//               onPageChange={handleChangePage}
-//               onRowsPerPageChange={handleChangeRowsPerPage}
-//               className="table-pagination"
-//             />
-//           </>
-//         ) : isLoading ? (
-//           <span className="d-flex justify-content-center m-3">Loading...</span>
-//         ) : (
-//           <span className="d-flex justify-content-center m-3">
-//             No data found
-//           </span>
-//         )
-//       ) : (
-//         <></>
-//       )}
-//     </>
-//   );
-// };
+  const onRowsPerPageChange = (e) => {
+    onPageSize(e.target.value);
+  };
 
-// export default ProductTabsTable;
+  const sortEndHandler = ({ oldIndex, newIndex }) => {
+    onSort(arrayMove(structuredClone(data), oldIndex, newIndex));
+  };
+
+  if (error) {
+    return <></>;
+  }
+
+  if (isLoading) {
+    return (
+      <span className="d-flex justify-content-center m-3">Loading...</span>
+    );
+  }
+
+  if (!data) {
+    return <></>;
+  }
+
+  if (data && !data.length) {
+    return (
+      <span className="d-flex justify-content-center m-3">No data found</span>
+    );
+  }
+
+  return (
+    <>
+      <TableContainer>
+        <Table sx={{ minWidth: 750 }} size="medium">
+          <TableHeader headCells={HEAD_CELLS} />
+          <TableBodySortable onSortEnd={sortEndHandler} useDragHandle>
+            {data.map((item, index) => {
+              return (
+                <SortableRow index={index} key={item._id}>
+                  <TableRow hover tabIndex={-1} className="table-rows">
+                    <DragHandle />
+                    <TableCell sx={{ textTransform: "capitalize" }}>
+                      <p className="text-lightBlue fw-600">{item.title}</p>
+                    </TableCell>
+                    <TableCell>
+                      <div className="d-flex flex-wrap align-items-center gap-2">
+                        {item.customFields.length ? (
+                          item.customFields.map((field) => {
+                            return (
+                              <Chip
+                                key={field._id}
+                                label={field.title}
+                                size="small"
+                              />
+                            );
+                          })
+                        ) : (
+                          <></>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="d-flex align-items-center justify-content-end">
+                        <EditButton onClick={onEdit.bind(null, index + 1)} />
+                        <RemoveIconButton
+                          onClick={onDelete.bind(null, {
+                            id: item._id,
+                            message: `delete ${item.title} product tab`,
+                          })}
+                          title="Delete"
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </SortableRow>
+              );
+            })}
+          </TableBodySortable>
+        </Table>
+      </TableContainer>
+
+      <TablePagination
+        rowsPerPageOptions={PAGINATION_ROWS}
+        component="div"
+        count={totalCount || 0}
+        rowsPerPage={pageSize}
+        page={page - 1}
+        onPageChange={onPageChange}
+        onRowsPerPageChange={onRowsPerPageChange}
+        className="table-pagination"
+      />
+    </>
+  );
+};
+
+export default ProductTabsTable;
