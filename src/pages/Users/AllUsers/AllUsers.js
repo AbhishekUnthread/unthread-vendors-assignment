@@ -153,8 +153,8 @@ const AllUsers = () => {
       type:"SET_CUSTOMER_TYPE", customerType:newValue
     })
   };
-  const handleSearchChange = (event) => {
-    dispatchQueryFilter({ type: "SEARCH", name: event.target.value });
+  const handleSearchChange = (value) => {
+    dispatchQueryFilter({ type: "SEARCH", name: value });
   };
 
   // ? POPOVERS STARTS HERE
@@ -495,7 +495,7 @@ const AllUsers = () => {
             </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch searchValue={queryFilterState.name} handleSearchChange={handleSearchChange} />
+            <TableSearch onChange={handleSearchChange} />
             <div className="d-flex ms-2">
               <div className="d-flex product-button__box">
                 <button

@@ -62,6 +62,7 @@ const TableSearch = (props) => {
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
         onChange={onSearch}
+        
       />
     </Search>
   );
