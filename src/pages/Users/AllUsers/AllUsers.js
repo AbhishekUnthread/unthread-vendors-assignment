@@ -12,7 +12,7 @@ import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSec
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import FilterUsers from "../../../components/FilterUsers/FilterUsers";
-import { useGetAllCustomersQuery } from "../../../features/user/customer/customerApiSlice";
+import { useGetAllCustomersQuery } from "../../../features/customers/customer/customerApiSlice";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import allFlag from "../../../assets/images/products/allFlag.svg";
