@@ -617,7 +617,7 @@ const handleDelete =()=>{
             <img src={question} alt="question" width={200} />
             <div className="row"></div>
             <h6 className="text-lightBlue mt-2 mb-2">
-  Are you sure you want to Archive {`${selected.length > 1 ? `${selected.length} vendors` : ""}${vendorName}`}?
+              Are you sure you want to Archive <span className="text-blue-2">{`${selected.length > 1 ? `${selected.length} vendors` : ""}${vendorName}`}?</span>
             </h6>
             <div className="d-flex justify-content-center mt-4">
               <hr className="hr-grey-6 w-100" />
@@ -639,21 +639,21 @@ const handleDelete =()=>{
           </DialogActions>
       </Dialog>
       <DeleteModal
-  showCreateModal={showDeleteModal}
-  toggleArchiveModalHandler={handleDeleteOnClick}
-  handleArchive={handleDelete}
-  name={`${selected.length > 1 ? `${selected.length} vendors` : ''}${vendorName}`}
-/>
+        showCreateModal={showDeleteModal}
+        toggleArchiveModalHandler={handleDeleteOnClick}
+        handleArchive={handleDelete}
+        name={`${selected.length > 1 ? `${selected.length} vendors` : ''}${vendorName}`}
+      />
 
       <UnArchivedModal 
-          handleValue={handleValue}
+          handleStatusValue={handleValue}
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
         />
         
           <UnArchivedModal 
-          handleValue={handleMassValue}
+          handleStatusValue={handleMassValue}
           showUnArchivedModal={openUnArchivePopUp}
           closeUnArchivedModal={closeMassUnArchivedModal}
           handleUnArchived={handleMassUnArchived}

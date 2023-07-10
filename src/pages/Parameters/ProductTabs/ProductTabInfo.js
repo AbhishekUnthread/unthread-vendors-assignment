@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import _ from "lodash";
 
 import AddCustomField from "../../../components/AddCustomField/AddCustomField";
 import AddCustomFieldTable from "../../../components/AddCustomField/AddCustomFieldTable";
@@ -17,7 +18,6 @@ import InfoHeader from "../../../components/Header/InfoHeader";
 import { UploadMediaSmall } from "../../../components/UploadMediaBox/UploadMedia";
 import { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
-import DuplicateModal from "../../../components/DuplicateModal/DuplicateModal";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -34,7 +34,7 @@ import {
 } from "../../../features/parameters/productTabs/productTabsApiSlice";
 
 const commonCustomFieldSchema = Yup.object().shape({
-  title: Yup.string().min(3).required("Required"),
+  title: Yup.string().min(3, "Too short").required("Required"),
   fieldType: Yup.string()
     .oneOf(["text", "dimension", "image", "weight", "productField"])
     .required("Required"),
@@ -54,7 +54,7 @@ const commonCustomFieldSchema = Yup.object().shape({
   visibility: Yup.string().oneOf(["show", "hide"]).required("Required"),
 });
 const customFieldSchema = Yup.object().shape({
-  title: Yup.string().min(3).required("Required"),
+  title: Yup.string().min(3, "Too short").required("Required"),
   fieldType: Yup.string()
     .oneOf(["text", "dimension", "image", "weight", "productField"])
     .required("Required"),
@@ -252,11 +252,25 @@ const ProductTabInfo = () => {
           details: productTabValues,
         })
           .unwrap()
-          .then(() => formik.resetForm());
+          .then(() => {
+            dispatchProductsInfo({ type: "DISABLE_EDIT" });
+            dispatch(
+              showSuccess({ message: "Product tab edited successfully" })
+            );
+            formik.resetForm();
+          });
       } else {
         createProductTab(productTabValues)
           .unwrap()
-          .then(() => formik.resetForm());
+          .then(() => {
+            dispatch(
+              showSuccess({
+                message: "Product tab created successfully",
+              })
+            );
+            formik.resetForm();
+            navigate("/parameters/productTabs");
+          });
       }
     },
   });
@@ -333,15 +347,9 @@ const ProductTabInfo = () => {
         );
       }
     }
-    if (editProductTabIsSuccess) {
-      dispatchProductsInfo({ type: "DISABLE_EDIT" });
-      dispatch(showSuccess({ message: "Product tab edited successfully" }));
-    }
   }, [
     createProductTabError,
     createProductTabIsError,
-    createProductTabIsSuccess,
-    editProductTabIsSuccess,
     editProductTabError,
     editProductTabIsError,
     dispatch,
@@ -378,10 +386,12 @@ const ProductTabInfo = () => {
   ]);
 
   useEffect(() => {
-    if (formik.dirty) {
+    if (id && !_.isEqual(formik.values, formik.initialValues)) {
       dispatchProductsInfo({ type: "ENABLE_EDIT" });
+    } else if (id && _.isEqual(formik.values, formik.initialValues)) {
+      dispatchProductsInfo({ type: "DISABLE_EDIT" });
     }
-  }, [formik.dirty]);
+  }, [formik.initialValues, formik.values, id]);
 
   return (
     <div className="page container-fluid position-relative user-group product-tab-page">

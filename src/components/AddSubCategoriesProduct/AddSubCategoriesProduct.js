@@ -239,7 +239,7 @@ const AddSubCategoriesProducts = ({id}) => {
       description: "<p></P>",
       status: "active",
       categoryId: "",
-      showFilter: true,
+      showFilter: false,
     },
     enableReinitialize: true,
     validationSchema: multipleTagsForSub.length > 0? multipleSubCategorySchema : subCategoryValidationSchema,
@@ -518,21 +518,7 @@ const AddSubCategoriesProducts = ({id}) => {
                       </FormHelperText>
                     )}
                 </FormControl>
-
-                <div className="d-flex">
-                  {multipleTagsForSub &&
-                    multipleTagsForSub.map((data, index) => {
-                      return (
-                        <Chip
-                          label={data.name}
-                          onDelete={() => handleDelete(data.name,setMultipleTagsForSub)}
-                          onClick={() => {}}
-                          size="small"
-                          className="mt-3 me-2"
-                        ></Chip>
-                      );
-                    })}
-                </div>
+                <br />
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -557,6 +543,22 @@ const AddSubCategoriesProducts = ({id}) => {
                   }}
                   className=" px-0"
                 />
+
+                <div className="d-flex">
+                  {multipleTagsForSub &&
+                    multipleTagsForSub.map((data, index) => {
+                      return (
+                        <Chip
+                          label={data.name}
+                          onDelete={() => handleDelete(data.name,setMultipleTagsForSub)}
+                          onClick={() => {}}
+                          size="small"
+                          className="mt-3 me-2"
+                        ></Chip>
+                      );
+                    })}
+                </div>
+                
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
