@@ -383,6 +383,7 @@ const EditSubCategories = () => {
           <StatusBox headingName={"Sub-Category Status"}
              value={subCategoryStatus}
              handleProductStatus={(_, val) => setSubCategoryStatus(val)}
+             showSchedule={true}
              toggleData={['active', 'in-active']}
              startDate={startDate}
             endDate={endDate}
