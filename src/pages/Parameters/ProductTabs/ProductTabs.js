@@ -231,7 +231,7 @@ const ProductTabs = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearchSecondary handleSearchChange={searchHandler} />
+            <TableSearchSecondary onChange={searchHandler} />
           </div>
           <TabPanel value={0} index={0}>
             <ProductTabsTable
