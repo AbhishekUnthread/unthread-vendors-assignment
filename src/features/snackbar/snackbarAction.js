@@ -1,43 +1,26 @@
-import { snackbarActions } from "./snackbarSlice";
-import store from "../../app/store";
+import SnackbarUtils from "./useSnackbar";
 
 const showSuccess = ({ message, duration }) => {
   return (dispatch) => {
-    const currentDuration = duration || store.getState().snackbar.duration;
-    dispatch(snackbarActions.show({ message, duration, type: "success" }));
-    setTimeout(() => {
-      dispatch(snackbarActions.reset());
-    }, currentDuration);
+    SnackbarUtils.success(message);
   };
 };
 
 const showError = ({ message, duration }) => {
   return (dispatch) => {
-    const currentDuration = duration || store.getState().snackbar.duration;
-    dispatch(snackbarActions.show({ message, duration, type: "error" }));
-    setTimeout(() => {
-      dispatch(snackbarActions.reset());
-    }, currentDuration);
+    SnackbarUtils.error(message);
   };
 };
 
 const showWarning = ({ message, duration }) => {
   return (dispatch) => {
-    const currentDuration = duration || store.getState().snackbar.duration;
-    dispatch(snackbarActions.show({ message, duration, type: "warning" }));
-    setTimeout(() => {
-      dispatch(snackbarActions.reset());
-    }, currentDuration);
+    SnackbarUtils.warning(message);
   };
 };
 
 const showInfo = ({ message, duration }) => {
   return (dispatch) => {
-    const currentDuration = duration || store.getState().snackbar.duration;
-    dispatch(snackbarActions.show({ message, duration, type: "info" }));
-    setTimeout(() => {
-      dispatch(snackbarActions.reset());
-    }, currentDuration);
+    SnackbarUtils.info(message);
   };
 };
 

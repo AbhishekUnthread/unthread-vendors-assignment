@@ -971,6 +971,91 @@ textarea {
   color: $blue1;
 }
 
+.snackbar {
+  background-color: #070616 !important;
+
+  &.success {
+    border-radius: 4px !important;
+    margin: auto;
+    border: 1px solid $green4 !important;
+
+    .container {
+      background-color: rgba($green4, 0.1) !important;
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 6px 18px !important;
+    }
+
+    p {
+      color: lighten($green4, 10%) !important;
+    }
+    button {
+      color: lighten($green4, 10%) !important;
+    }
+  }
+  &.error {
+    border: 1px solid $red6 !important;
+    border-radius: 4px !important;
+    margin: auto;
+
+    .container {
+      background-color: rgba($red6, 0.1) !important;
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 6px 18px !important;
+    }
+
+    p {
+      color: lighten($red6, 10%) !important;
+    }
+    button {
+      color: lighten($red6, 10%) !important;
+    }
+  }
+  &.info {
+    border: 1px solid $lightBlue !important;
+    border-radius: 4px !important;
+    margin: auto;
+
+    .container {
+      background-color: rgba($lightBlue, 0.1) !important;
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 6px 18px !important;
+    }
+
+    p {
+      color: lighten($lightBlue, 10%) !important;
+    }
+    button {
+      color: lighten($lightBlue, 10%) !important;
+    }
+  }
+  &.warning {
+    border: 1px solid $yellow2 !important;
+    border-radius: 4px !important;
+    margin: auto;
+
+    .container {
+      background-color: rgba($yellow2, 0.1) !important;
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 6px 18px !important;
+    }
+
+    p {
+      color: lighten($yellow2, 10%) !important;
+    }
+    button {
+      color: lighten($yellow2, 10%) !important;
+    }
+  }
+}
+
 // MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiClock-amButton css-dv4hng-MuiButtonBase-root-MuiIconButton-root-MuiClock-amButton
 // MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiClock-pmButton css-1uog4ez-MuiButtonBase-root-MuiIconButton-root-MuiClock-pmButton
 // ? DATE PICKER STYLES ENDS HERE
