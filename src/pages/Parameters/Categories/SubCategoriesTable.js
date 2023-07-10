@@ -190,7 +190,7 @@ const SubCategoriesTable = ({
   }, [selected, selectedStatus]);
 
   const toggleArchiveModalHandler = (row) => {
-    showArchivedModal((prevState) => !prevState);
+    setShowArchivedModal((prevState) => !prevState);
     setRowData(row);
   };
 
@@ -486,12 +486,12 @@ const SubCategoriesTable = ({
       ) : (
         <></>
       )}
-      <ArchivedModal
+      {/* <ArchivedModal
       name={'Archived'}
         showCreateModal={showArchivedModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={deleteRowData}
-      />
+      /> */}
       <Dialog
           open={showArchivedModal}
           TransitionComponent={Transition}

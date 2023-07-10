@@ -239,7 +239,7 @@ const Categories = () => {
       name: "",
       description: "<p></p>",
       status: "active",
-      showFilter: true,
+      showFilter: false,
     },
     enableReinitialize: true,
     validationSchema:multipleTags.length>0 ? multipleCategorySchema: categoryValidationSchema,
@@ -265,7 +265,7 @@ const Categories = () => {
       description: "<p></P>",
       status: "active",
       categoryId: "",
-      showFilter: true,
+      showFilter: false,
     },
     enableReinitialize: true,
     validationSchema: multipleTagsForSub.length > 0? multipleSubCategorySchema : subCategoryValidationSchema,
@@ -823,7 +823,9 @@ const Categories = () => {
                   <p className="text-lightBlue">Cancel</p>
                 </button>
                 <LoadingButton
-                onClick={()=>setCategoryType(0)}
+                onClick={()=>{
+                  toggleCreateSubModalHandler()
+                  setCategoryType(0)}}
                   loading={
                     createSubCategoryIsLoading || editSubCategoryIsLoading
                   }
