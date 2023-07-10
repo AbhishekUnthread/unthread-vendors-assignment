@@ -35,7 +35,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
   const startTime = moment(startDate).format("HH:MM a")
   const endDateNew = moment(endDate).format("DD/MM/YYYY")
   const endTime = moment(endDate).format("HH:MM a")
-
+  
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);
   };
@@ -62,18 +62,18 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
           aria-label="active"
           style={{ width: "50%" }}
           className="productInfo-toggle__active"
-          disabled={startDate != null || endDate != null}
+          disabled={startDate != null}
         >
           <div className="d-flex">
             <p className="text-grey-6">{toggleData[0]}</p>
           </div>
         </ToggleButton>
         <ToggleButton
-          disabled={startDate != null|| endDate != null}
           value={toggleData[1]}
           aria-label="inactive"
           style={{ width: "50%" }}
           className="productInfo-toggle__draft"
+          disabled={startDate != null}
         >
           <div className="d-flex">
             <p className="text-grey-6">{toggleData[1]}</p>
@@ -81,7 +81,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         </ToggleButton>
       </ToggleButtonGroup>
       {showScheduleData && (
-          <div className="d-flex align-items-center mt-4 c-pointer">
+          <div className="d-flex align-items-center mt-2 c-pointer">
             <img src={clock} alt="clock" className="me-1" width={12} />
             <small className="text-blue-2" onClick={handelScheduleProduct}>
               Schedule {startDate == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate == null ? '' : `till ${endDateNew} at ${endTime}` }
@@ -140,7 +140,8 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
             />
           </LocalizationProvider>
           <div className="d-flex mb-1 mt-3">
-            <p className="text-lightBlue">End Date</p>
+            <p className="text-lightBlue">End Date</p>             <p className="text-lightBlue">(Optional)</p>
+
             <Tooltip title="Lorem ipsum" placement="top">
               <img
                 src={info}

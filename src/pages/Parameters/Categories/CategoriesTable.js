@@ -40,6 +40,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
+import moment from "moment";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -127,13 +128,16 @@ const CategoriesTable = ({
   const [open, setOpen] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [filterParameter, setFilterParameter] = useState();
-  const [showCreateDeleteModal, setShowCreateDeleteModal] = useState(false);
+
+  const [showArchivedModal, setShowArchivedModal] = useState(false);
   const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
   const [rowData, setRowData] = useState({});
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [handleStatusValue, setHandleStatusValue] = useState("in-active");
   const [toggleCategoris, setToggleCategoris] = useState(true);
   const [showDeleteModal,setShowDeleteModal] = useState(false)
+  const [forMassAction, setForMassAction] = React.useState(false);
+  const [massActionStatus, setMassActionStatus] = React.useState("");
 
   const {
     data: subCategoriesData,
@@ -225,10 +229,15 @@ const CategoriesTable = ({
             id,
             status: "active",
           };
-        } else if (selectedStatus === "Set as Archieved") {
+        } else if (selectedStatus === "Set as Archived") {
           return {
             id,
             status: "archieved",
+          };
+        }else if (selectedStatus === "Set as Un-Archived") {
+          return {
+            id,
+            status: handleStatusValue,
           };
         } else {
           return {
@@ -251,6 +260,7 @@ const CategoriesTable = ({
         .then(() =>
           dispatch(showSuccess({ message: " Status updated successfully" }))
         );
+        setToggleCategoris(true)
       setSelectedStatus(null);
       }
       }
@@ -277,7 +287,7 @@ const CategoriesTable = ({
   }
 
   const toggleArchiveModalHandler = (row) => {
-    setShowCreateDeleteModal((prevState) => !prevState);
+    setShowArchivedModal((prevState) => !prevState);
     setRowData(row);
   };
 
@@ -292,8 +302,12 @@ const CategoriesTable = ({
   };
 
   function handleArchived() {
-    setShowCreateDeleteModal(false);
-    if (toggleCategoris) {
+    setShowArchivedModal(false);
+    if(forMassAction === true){
+      setSelectedStatus(massActionStatus)
+      return
+    }
+    if (toggleCategoris && forMassAction === false) {
       editCategory({
         id: rowData._id,
         details: {
@@ -317,7 +331,11 @@ const CategoriesTable = ({
 
   function handleUnArchived() {
     setShowUnArchivedModal(false);
-    if (toggleCategoris) {
+    if(forMassAction === true){
+      setSelectedStatus(massActionStatus)
+      return
+    }
+    if (toggleCategoris && forMassAction === false) {
       editCategory({
         id: rowData._id,
         details: {
@@ -342,6 +360,10 @@ const CategoriesTable = ({
   }
 
   function deleteDatas(){
+    if(forMassAction === true){
+      setSelectedStatus(massActionStatus)
+      return
+    }
     setShowDeleteModal(false)
      deleteData(rowData)
       dispatch(
@@ -352,7 +374,15 @@ const CategoriesTable = ({
   }
 
   const handleMassAction  = (status) => {
-    setSelectedStatus(status);
+    setMassActionStatus(status);
+    setForMassAction(true)
+    if(status === "Set as Archived") {
+      setShowArchivedModal(true);
+    } else if(status === "Set as Un-Archived") {
+      setShowUnArchivedModal(true);
+    } else if(status === "Delete") {
+      setShowDeleteModal(true);
+    }
   };
 
   return (
@@ -373,10 +403,10 @@ const CategoriesTable = ({
 
           <TableEditStatusButton
             onSelect={handleStatusSelect}
-            defaultValue={["Set as Active", "Set as Archieved"]}
+            defaultValue={["Set as Active", "Set as Archived"]}
             headingName="Edit Status"
           />
-          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={['Edit','Set as Archieved']}/>
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={archived?['Edit','Set as Archived']:["Set as Un-Archived"]}/>
         </div>
       )}
       {!error ? (
@@ -462,6 +492,9 @@ const CategoriesTable = ({
                               <Link
                                 className="text-decoration-none"
                                 to="/parameters/categories/edit"
+                                onClick={() => {
+                                  dispatch(updateCategoryId(row._id));
+                                }}
                               >
                                 <p className="text-lightBlue rounded-circle fw-600">
                                   {row.name}
@@ -505,6 +538,23 @@ const CategoriesTable = ({
                                       : "Scheduled"}
                                   </small>
                                 </div>
+                                { row.status == "scheduled" && 
+                          <div>
+                            <small className="text-blue-2">
+                              {row.startDate && (
+                                <>
+                                  for {moment(row.startDate).format("DD/MM/YYYY")}
+                                </>
+                              )}
+                              {row.startDate && row.endDate && ' '}
+                              {row.endDate && (
+                                <>
+                                  till {moment(row.endDate).format("DD/MM/YYYY")}
+                                </>
+                              )}
+                            </small>
+                          </div>
+                        }
                               </div>
                             </TableCell>
                             <TableCell style={{ width: 120, padding: 0 }}>
@@ -885,8 +935,8 @@ const CategoriesTable = ({
         <></>
       )}
       <ArchivedModal
-        name={"Archived"}
-        showCreateModal={showCreateDeleteModal}
+        name={forMassAction == false ?"Archived":""}
+        showCreateModal={showArchivedModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={handleArchived}
       />
@@ -894,7 +944,7 @@ const CategoriesTable = ({
         showUnArchivedModal={showUnArchivedModal}
         closeUnArchivedModal={() => setShowUnArchivedModal(false)}
         handleUnArchived={handleUnArchived}
-        handleValue={setHandleStatusValue}
+        handleStatusValue={setHandleStatusValue}
       />
        <DeleteModal
        name={""}

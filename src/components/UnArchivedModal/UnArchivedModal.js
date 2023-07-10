@@ -51,9 +51,6 @@ const UnArchivedModal = ({
               <span className="text-blue-2"> {name} </span>
                item, please set it's status.
             </h6>
-            <div className="d-flex justify-content-center mt-4">
-              <hr className="hr-grey-6 w-100" />
-            </div>
         </DialogContent>
         <div className="d-flex justify-content-center">
           <RadioGroup
@@ -71,14 +68,23 @@ const UnArchivedModal = ({
               value="active"
               control={<Radio size="small" />}
               label="Active"
+              sx={{
+                color: "#6e8dd7",
+              }}
             />
             <FormControlLabel
               value="in-active"
               control={<Radio size="small" />}
               label="In-Active"
+              sx={{
+                color: "#6e8dd7",
+              }}
             />
           </RadioGroup>
         </div>
+         <div className="d-flex justify-content-center mt-4">
+            <hr className="hr-grey-6 w-100" />
+          </div>
         <DialogActions className="d-flex justify-content-between px-4 py-3">
           <button
             className="button-grey py-2 px-5"

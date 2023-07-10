@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useFormik } from "formik";
-const SEO = ({name,value, handleSeoChange }) => {
+const SEO = ({seoName,value, handleSeoChange }) => {
   const [multipleTags, setMultipleTags] = useState([]);
   const id = useId();
   // ? CHECKBOX STARTS HERE
@@ -36,23 +36,26 @@ const SEO = ({name,value, handleSeoChange }) => {
     enableReinitialize: true,
   });
   useEffect(()=>{
-    if(value || name){
-      seoFormik.setFieldValue("title", value && value.title ? value.title : name);
+    if(value || seoName){
+      seoFormik.setFieldValue("title", value && value.title ? value.title : seoName);
       seoFormik.setFieldValue("description", value && value.description ? value.description : "");
-      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : generateUrlName(name));
+      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : generateUrlName(seoName));
       setMultipleTags(value && value.metaKeywords ? value.metaKeywords : []);
     }
-  },[value,name])
+  },[value,seoName])
   
   useEffect(()=>{
-    handleSeoChange({
-      ...seoFormik.values,
-      metaKeywords:multipleTags,
-    })
-    console.log({
-      ...seoFormik.values,
-      metaKeywords:multipleTags,
-    })
+    let seoItems={}
+    seoItems.title = seoFormik.values?.title
+    seoItems.slug = seoFormik.values.slug
+    if(seoFormik.values?.description){
+      seoItems.description =seoFormik.values?.description
+    }
+    if(multipleTags.length > 0){
+      seoItems.metaKeywords = multipleTags
+    }
+    handleSeoChange(seoItems)
+    
   },[seoFormik.values])
   // ? SWITCH STARTS HERE
   const [checkedSwitch, setCheckedSwitch] = React.useState(true);
@@ -79,8 +82,8 @@ const SEO = ({name,value, handleSeoChange }) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
 
-  function generateUrlName(name="") {
-    const formattedName = "https://example.com/"+name?.toLowerCase()?.replace(/\s+/g, '-');
+  function generateUrlName(seoName="") {
+    const formattedName = "https://example.com/"+seoName?.toLowerCase()?.replace(/\s+/g, '-');
     return formattedName;
   }
   return (
