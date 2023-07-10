@@ -24,17 +24,30 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 // ? DIALOG TRANSITION ENDS HERE
-const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, toggleData=['active','in-active'], startDate, endDate, handleStartDate, handleEndDate, clearDate}) => {
-
+const StatusBox = ({
+  headingName,
+  titleName,
+  showSchedule,
+  value,
+  handleProductStatus,
+  toggleData = ["active", "in-active"],
+  startDate,
+  endDate,
+  handleStartDate,
+  handleEndDate,
+  clearDate,
+}) => {
   const showScheduleData = showSchedule === undefined ? false : true;
   // ? SCHEDULE PRODUCT DIALOG STARTS HERE
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
-  const [startDateLocal, setStartDate] = React.useState(startDate ? moment(startDate).toDate() : null);
+  const [startDateLocal, setStartDate] = React.useState(
+    startDate ? moment(startDate).toDate() : null
+  );
   const [endDateLocal, setEndDate] = React.useState("");
-  const startDateNew = moment(startDate).format("DD/MM/YYYY")
-  const startTime = moment(startDate).format("HH:MM a")
-  const endDateNew = moment(endDate).format("DD/MM/YYYY")
-  const endTime = moment(endDate).format("HH:MM a")
+  const startDateNew = moment(startDate).format("DD/MM/YYYY");
+  const startTime = moment(startDate).format("HH:MM a");
+  const endDateNew = moment(endDate).format("DD/MM/YYYY");
+  const endTime = moment(endDate).format("HH:MM a");
 
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);
@@ -50,7 +63,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         <h6 className="text-lightBlue mb-3 fw-500">{headingName}</h6>
       </div>
       <ToggleButtonGroup
-        value={value === "scheduled" ? 'in-active': value}
+        value={(value === "scheduled" && startDate !== null) ||  startDateLocal !== null ? "in-active" : value}
         onChange={handleProductStatus}
         aria-label="text formatting"
         className="row d-flex px-2 productInfo-toggle"
@@ -69,7 +82,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
           </div>
         </ToggleButton>
         <ToggleButton
-          disabled={startDate != null|| endDate != null}
+          disabled={startDate != null || endDate != null}
           value={toggleData[1]}
           aria-label="inactive"
           style={{ width: "50%" }}
@@ -81,18 +94,35 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         </ToggleButton>
       </ToggleButtonGroup>
       {showScheduleData && (
-          <div className="d-flex align-items-center mt-4 c-pointer">
-            <img src={clock} alt="clock" className="me-1" width={12} />
-            <small className="text-blue-2" onClick={handelScheduleProduct}>
-              Schedule {startDate == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate == null ? '' : `till ${endDateNew} at ${endTime}` }
-            </small>
-          </div>
+        <div className="d-flex align-items-center mt-4 c-pointer">
+          <img src={clock} alt="clock" className="me-1" width={12} />
+          <small className="text-blue-2" onClick={handelScheduleProduct}>
+            Schedule{" "}
+            {startDate == null ? "" : `for ${startDateNew} at ${startTime}`}{" "}
+            {endDate == null ? "" : `till ${endDateNew} at ${endTime}`}
+          </small>
+        </div>
       )}
       {startDate != null && (
-          <div className="d-flex justify-content-between px-4 py-3">
-            <small className="text-blue-2" style={{cursor: 'pointer'}} onClick={handelScheduleProduct}>Edit</small>
-            <small style={{color: '#F67476', cursor: 'pointer'}} onClick={clearDate}>Clear</small>
-          </div>
+        <div className="d-flex justify-content-between px-4 py-3">
+          <small
+            className="text-blue-2"
+            style={{ cursor: "pointer" }}
+            onClick={handelScheduleProduct}
+          >
+            Edit
+          </small>
+          <small
+            style={{ color: "#F67476", cursor: "pointer" }}
+            onClick={() => {
+              clearDate();
+              setStartDate(null)
+              setEndDate(null)
+            }}
+          >
+            Clear
+          </small>
+        </div>
       )}
 
       <Dialog
@@ -134,7 +164,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
               value={startDateLocal}
               onChange={(newValue) => {
                 setStartDate(newValue);
-                handleStartDate(newValue)
+                handleStartDate(newValue);
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
             />
