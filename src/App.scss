@@ -977,7 +977,7 @@ textarea {
   &.success {
     border-radius: 6px !important;
     margin: auto;
-    border: 1px solid $green4 !important;
+    border: 1px solid rgba($green4, 40%) !important;
 
     .container {
       background-color: rgba($green4, 0.1) !important;
@@ -995,7 +995,7 @@ textarea {
     }
   }
   &.error {
-    border: 1px solid $red6 !important;
+    border: 1px solid rgba($red6, 40%) !important;
     border-radius: 6px !important;
     margin: auto;
 
@@ -1015,7 +1015,7 @@ textarea {
     }
   }
   &.info {
-    border: 1px solid $lightBlue !important;
+    border: 1px solid rgba($lightBlue, 40%) !important;
     border-radius: 6px !important;
     margin: auto;
 
@@ -1035,7 +1035,7 @@ textarea {
     }
   }
   &.warning {
-    border: 1px solid $yellow2 !important;
+    border: 1px solid rgba($yellow2, 40%) !important;
     border-radius: 6px !important;
     margin: auto;
 

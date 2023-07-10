@@ -34,7 +34,7 @@ import {
 } from "../../../features/parameters/productTabs/productTabsApiSlice";
 
 const commonCustomFieldSchema = Yup.object().shape({
-  title: Yup.string().min(3).required("Required"),
+  title: Yup.string().min(3, "Too short").required("Required"),
   fieldType: Yup.string()
     .oneOf(["text", "dimension", "image", "weight", "productField"])
     .required("Required"),
@@ -54,7 +54,7 @@ const commonCustomFieldSchema = Yup.object().shape({
   visibility: Yup.string().oneOf(["show", "hide"]).required("Required"),
 });
 const customFieldSchema = Yup.object().shape({
-  title: Yup.string().min(3).required("Required"),
+  title: Yup.string().min(3, "Too short").required("Required"),
   fieldType: Yup.string()
     .oneOf(["text", "dimension", "image", "weight", "productField"])
     .required("Required"),
