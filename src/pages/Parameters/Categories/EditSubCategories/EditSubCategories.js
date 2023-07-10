@@ -377,7 +377,7 @@ const EditSubCategories = () => {
                 </>
               }
           </div>
-          <SEO seoName={subCategoryName} value={subCategorySeo} handleSeoChange={setSubCategorySeo} />
+          <SEO seoName={subCategoryName} seoValue={subCategorySeo} handleSeoChange={setSubCategorySeo} />
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
           <StatusBox headingName={"Sub-Category Status"}

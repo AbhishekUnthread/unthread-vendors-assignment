@@ -99,10 +99,23 @@ const EditCategories = () => {
       setStartDate(categoriesData.data.data[0].startDate || null)
       setEndDate(categoriesData.data.data[0].endDate || null)
       setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl)
-      setCategorySeo(categoriesData.data.data[0]?.seos || {})
+      setCategorySeo(categoriesData.data.data[0]?.seos ? categoriesData.data.data[0]?.seos :{})
       
     }
   }, [categoriesIsSuccess, dispatch]);
+
+
+  useEffect(()=>{
+    if(categoriesError){
+      if (categoriesError.data?.message) {
+        dispatch(showError({ message: categoriesError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );}
+    }
+  },[categoriesError])
+
 
   const handleNameChange = (event) => {
     setCategoryName(event.target.value); // Updating the category name based on the input value
@@ -139,7 +152,7 @@ const EditCategories = () => {
         .unwrap()
         .then(() => {
           dispatch(showSuccess({message:"Category Updated Successfully"}))
-        }).catch((err)=> showError({message:err?.message}))
+        })
     } else {
       createCategory({
         showFilter: checked, // Whether to show filters
@@ -325,7 +338,7 @@ const EditCategories = () => {
             }
           </div>
           <div className="mt-4">
-            <SEO seoName={categoryName} value={categorySeo} handleSeoChange={setCategorySeo} />
+            <SEO seoName={categoryName} seoValue={categorySeo} handleSeoChange={setCategorySeo} />
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
