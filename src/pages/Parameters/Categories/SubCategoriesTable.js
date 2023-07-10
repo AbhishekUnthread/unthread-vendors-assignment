@@ -190,7 +190,7 @@ const SubCategoriesTable = ({
   }, [selected, selectedStatus]);
 
   const toggleArchiveModalHandler = (row) => {
-    showArchivedModal((prevState) => !prevState);
+    setShowArchivedModal((prevState) => !prevState);
     setRowData(row);
   };
 
@@ -349,32 +349,23 @@ const SubCategoriesTable = ({
                           <TableCell style={{ width: 180 }}>
                             <p className="text-lightBlue">{row.totalProduct}</p>
                           </TableCell>
-                          <TableCell style={{ width: 140, padding: 0 }}>
-                            <div className="d-flex align-items-center">
-                              <div
-                                className="rounded-pill d-flex px-2 py-1 c-pointer"
-                                style={{
-                                  background:
-                                    row.status == "active"
-                                      ? "#A6FAAF"
-                                      : row.status == "in-active"
-                                      ? "#F67476"
-                                      : row.status == "archieved"
-                                      ? "#C8D8FF"
-                                      : "#FEE1A3",
-                                }}
-                              >
-                                <small className="text-black fw-400">
-                                  {row.status == "active"
-                                    ? "Active"
-                                    : row.status == "in-active"
-                                    ? "In-Active"
-                                    : row.status == "archieved"
-                                    ? "Archived"
-                                    : "Scheduled"}
-                                </small>
-                              </div>
-                              { row.status == "scheduled" && 
+                          <TableCell style={{ width: 180, padding: 0 }}>
+                      <div className="d-block">
+                        <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
+                          style={{background: 
+                            row.status == "active" ? "#A6FAAF" : 
+                            row.status == "in-active" ? "#F67476" : 
+                            row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
+                          }}>
+                          <small className="text-black fw-500">
+                            {
+                              row.status == "active" ? "Active" :  
+                              row.status == "in-active" ? "In-Active" : 
+                              row.status == "archieved" ? "Archived" : "Scheduled"
+                            }
+                          </small>
+                        </div>
+                        { row.status == "scheduled" && 
                           <div>
                             <small className="text-blue-2">
                               {row.startDate && (
@@ -391,8 +382,8 @@ const SubCategoriesTable = ({
                             </small>
                           </div>
                         }
-                            </div>
-                          </TableCell>
+                      </div>
+                    </TableCell>
                           <TableCell style={{ width: 120, padding: 0 }}>
                             <div className="d-flex align-items-center">
                               {edit && archived && (
@@ -495,12 +486,12 @@ const SubCategoriesTable = ({
       ) : (
         <></>
       )}
-      <ArchivedModal
+      {/* <ArchivedModal
       name={'Archived'}
         showCreateModal={showArchivedModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={deleteRowData}
-      />
+      /> */}
       <Dialog
           open={showArchivedModal}
           TransitionComponent={Transition}
