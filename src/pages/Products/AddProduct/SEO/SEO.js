@@ -112,7 +112,6 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
 
-
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
       <div className="d-flex col-12 px-0 justifu-content-between">
