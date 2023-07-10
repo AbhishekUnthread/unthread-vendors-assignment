@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import { EnhancedTableGapHead } from "../../../components/TableDependenciesWithGap/TableDependenciesWithGap";
@@ -13,8 +13,12 @@ import {
   Box,
   Checkbox,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
   IconButton,
   Paper,
+  Slide,
   Table,
   TableBody,
   TableCell,
@@ -40,6 +44,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
+import question from '../../../assets/images/products/question.svg'
 import moment from "moment";
 // ? TABLE STARTS HERE
 
@@ -103,6 +108,10 @@ const headCells = [
   },
 ];
 // ? TABLE ENDS HERE
+
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const CategoriesTable = ({
   list,
@@ -513,32 +522,23 @@ const CategoriesTable = ({
                               </p>
                             </TableCell>
 
-                            <TableCell style={{ width: 140, padding: 0 }}>
-                              <div className="d-flex align-items-center">
-                                <div
-                                  className="rounded-pill d-flex px-2 py-1 c-pointer"
-                                  style={{
-                                    background:
-                                      row.status == "active"
-                                        ? "#A6FAAF"
-                                        : row.status == "in-active"
-                                        ? "#F67476"
-                                        : row.status == "archieved"
-                                        ? "#C8D8FF"
-                                        : "#FEE1A3",
-                                  }}
-                                >
-                                  <small className="text-black fw-400">
-                                    {row.status == "active"
-                                      ? "Active"
-                                      : row.status == "in-active"
-                                      ? "In-Active"
-                                      : row.status == "archieved"
-                                      ? "Archived"
-                                      : "Scheduled"}
-                                  </small>
-                                </div>
-                                { row.status == "scheduled" && 
+                            <TableCell style={{ width: 180, padding: 0 }}>
+                      <div className="d-block">
+                        <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
+                          style={{background: 
+                            row.status == "active" ? "#A6FAAF" : 
+                            row.status == "in-active" ? "#F67476" : 
+                            row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
+                          }}>
+                          <small className="text-black fw-500">
+                            {
+                              row.status == "active" ? "Active" :  
+                              row.status == "in-active" ? "In-Active" : 
+                              row.status == "archieved" ? "Archived" : "Scheduled"
+                            }
+                          </small>
+                        </div>
+                        { row.status == "scheduled" && 
                           <div>
                             <small className="text-blue-2">
                               {row.startDate && (
@@ -555,8 +555,8 @@ const CategoriesTable = ({
                             </small>
                           </div>
                         }
-                              </div>
-                            </TableCell>
+                      </div>
+                    </TableCell>
                             <TableCell style={{ width: 120, padding: 0 }}>
                               <div className="d-flex align-items-center">
                                 {edit && archived && (
@@ -934,12 +934,46 @@ const CategoriesTable = ({
       ) : (
         <></>
       )}
-      <ArchivedModal
+      {/* <ArchivedModal
         name={forMassAction == false ?"Archived":""}
         showCreateModal={showArchivedModal}
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={handleArchived}
-      />
+      /> */}
+      <Dialog
+          open={showArchivedModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={toggleArchiveModalHandler}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={question} alt="question" width={200} />
+            <div className="row"></div>
+            <h6 className="text-lightBlue mt-2 mb-2">
+              Are you sure you want to Archive this category 
+              {forMassAction == false &&<span className="text-blue-2">{rowData?.title} </span>} ?
+            </h6>
+            <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+            </div>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-between px-4 pb-4">
+            <button
+              className="button-red-outline py-2 px-3 me-5"
+              onClick={toggleArchiveModalHandler}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-3 ms-5"
+              onClick={handleArchived}
+            >
+              <p>Archived</p>
+            </button>
+          </DialogActions>
+        </Dialog>
       <UnArchivedModal
         showUnArchivedModal={showUnArchivedModal}
         closeUnArchivedModal={() => setShowUnArchivedModal(false)}

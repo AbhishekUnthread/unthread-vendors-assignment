@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import {
@@ -9,6 +9,10 @@ import {
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Slide,
   Table,
   TableBody,
   TableCell,
@@ -29,6 +33,7 @@ import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
+import question from '../../../assets/images/products/question.svg'
 import moment from "moment";
 
 // ? TABLE STARTS HERE
@@ -66,6 +71,9 @@ const headCells = [
   },
 ];
 // ? TABLE ENDS HERE
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const SubCategoriesTable = ({
   list,
@@ -493,6 +501,40 @@ const SubCategoriesTable = ({
         toggleArchiveModalHandler={toggleArchiveModalHandler}
         handleArchive={deleteRowData}
       />
+      <Dialog
+          open={showArchivedModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={toggleArchiveModalHandler}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={question} alt="question" width={200} />
+            <div className="row"></div>
+            <h6 className="text-lightBlue mt-2 mb-2">
+              Are you sure you want to Archive this category 
+              {forMassAction == false &&<span className="text-blue-2">{rowData?.title} </span>} ?
+            </h6>
+            <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+            </div>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-between px-4 pb-4">
+            <button
+              className="button-red-outline py-2 px-3 me-5"
+              onClick={toggleArchiveModalHandler}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-3 ms-5"
+              onClick={deleteRowData}
+            >
+              <p>Archived</p>
+            </button>
+          </DialogActions>
+        </Dialog>
       <UnArchivedModal
       showUnArchivedModal={showUnArchivedModal}
       closeUnArchivedModal={()=>setShowUnArchivedModal(false)}
