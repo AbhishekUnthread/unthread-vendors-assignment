@@ -252,11 +252,25 @@ const ProductTabInfo = () => {
           details: productTabValues,
         })
           .unwrap()
-          .then(() => formik.resetForm());
+          .then(() => {
+            dispatchProductsInfo({ type: "DISABLE_EDIT" });
+            dispatch(
+              showSuccess({ message: "Product tab edited successfully" })
+            );
+            formik.resetForm();
+          });
       } else {
         createProductTab(productTabValues)
           .unwrap()
-          .then(() => formik.resetForm());
+          .then(() => {
+            dispatch(
+              showSuccess({
+                message: "Product tab created successfully",
+              })
+            );
+            formik.resetForm();
+            navigate("/parameters/productTabs");
+          });
       }
     },
   });
@@ -333,15 +347,9 @@ const ProductTabInfo = () => {
         );
       }
     }
-    if (editProductTabIsSuccess) {
-      dispatchProductsInfo({ type: "DISABLE_EDIT" });
-      dispatch(showSuccess({ message: "Product tab edited successfully" }));
-    }
   }, [
     createProductTabError,
     createProductTabIsError,
-    createProductTabIsSuccess,
-    editProductTabIsSuccess,
     editProductTabError,
     editProductTabIsError,
     dispatch,

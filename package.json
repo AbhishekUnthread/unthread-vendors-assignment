@@ -26,6 +26,7 @@
     "immutable": "^4.3.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
+    "notistack": "^3.0.1",
     "react": "^18.2.0",
     "react-color-palette": "^6.2.0",
     "react-complex-tree": "^2.1.1",
