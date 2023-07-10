@@ -203,7 +203,7 @@ const vendorTypeQuery =
     },
   ] = useDeleteVendorMutation();
 
-  
+ 
   const vendorFormik = useFormik({
     initialValues: {
          name: "",
@@ -513,9 +513,10 @@ const vendorTypeQuery =
                     onKeyDown={handleAddMultiple}
                   />
                   {!!vendorFormik.touched.name && vendorFormik.errors.name && (
-                    <FormHelperText error>
-                      {vendorFormik.errors.name}
-                    </FormHelperText>
+                    <FormHelperText error color="#F67476">
+                    {vendorFormik.errors.name}
+                  </FormHelperText>
+
                   )}
                 </FormControl>
                 <br />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../Products/AllProducts/AllProducts.scss";
 // ! COMPONENT IMPORTS
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -28,9 +28,66 @@ import {
   Tab,
   Tabs,
 } from "@mui/material";
+import { useGetAllEnquiriesQuery } from "../../../features/user/customer/enquiries/enquiriesApiSlice";
+import { useDispatch } from "react-redux";
+import { showError } from "../../../features/snackbar/snackbarAction";
 
 const UserEnquiries = () => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const dispatch = useDispatch();
+  const [enquiriesList, setEnquiriesList] = useState([]);
+  const [totalCount,setTotalCount] = useState(0);
+  const [error, setError] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [searchValue, setSearchValue] = useState("");
+
+  const queryParameters = {};
+  if(searchValue)
+  {
+    queryParameters.name = searchValue;
+  }
+
+  const{
+    data: enquiriesData, // 
+    isLoading: enquiriesIsLoading, 
+    isSuccess: enquiriesIsSuccess, 
+    error: enquiriesError
+  }= useGetAllEnquiriesQuery({createdAt:1,pageSize:rowsPerPage,pageNo:page+1,...queryParameters});
+
+  useEffect(() => {
+    if (enquiriesIsSuccess) {
+      setError(false);
+      if (value === 0) {
+        setEnquiriesList(enquiriesData.data);
+        setTotalCount(enquiriesData.totalCount)
+      }
+    }
+    if (enquiriesError) {
+      setError(true);
+      if (enquiriesError?.data?.message) {
+        dispatch(showError({ message: enquiriesError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+
+  }, [enquiriesData,enquiriesIsSuccess,enquiriesIsLoading,enquiriesError,rowsPerPage,page])
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -146,7 +203,7 @@ const UserEnquiries = () => {
             </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
             <div className="d-flex ms-2">
               <FilterUsers buttonName={"More Filters"} />
               <button
@@ -232,7 +289,16 @@ const UserEnquiries = () => {
             </div>
           </div>
           <TabPanel value={value} index={0}>
-            <UserEnquiriesTable />
+            <UserEnquiriesTable
+              isLoading={enquiriesIsLoading}
+              error={error}
+              list={enquiriesList}
+              // totalCount={totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={rowsPerPage}
+              changePage={handleChangePage}
+              page={page}
+             />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <UserEnquiriesTable />

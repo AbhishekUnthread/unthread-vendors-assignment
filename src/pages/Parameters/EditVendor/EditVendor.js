@@ -349,7 +349,7 @@ const EditVendor = () => {
               </FormControl>
               {vendorNameError &&
               <>
-              <Typography variant="caption" color="error">
+              <Typography variant="caption" color="#F67476">
               {vendorNameError}
               </Typography>
               <br />
