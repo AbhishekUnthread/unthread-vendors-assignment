@@ -69,7 +69,7 @@ const UnArchivedModal = ({
               control={<Radio size="small" />}
               label="Active"
               sx={{
-                color: "#6e8dd7",
+                color: "#c8d8ff",
               }}
             />
             <FormControlLabel
@@ -77,7 +77,7 @@ const UnArchivedModal = ({
               control={<Radio size="small" />}
               label="In-Active"
               sx={{
-                color: "#6e8dd7",
+                color: "#c8d8ff",
               }}
             />
           </RadioGroup>
