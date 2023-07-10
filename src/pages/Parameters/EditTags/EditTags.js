@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCreateTagMutation, useEditTagMutation, useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
-import SaveFooter from "../../../components/SaveFooter/SaveFooter";
+import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
 
     // ? DIALOG TRANSITION STARTS HERE
@@ -139,6 +139,10 @@ const EditTags = () => {
        });
       }
      }};
+
+     const backHandler = () => {
+      navigate("/parameters/tagsManager");
+    };
 
      const handleSubmitAndAddAnother = () => {
       if(tagId !== "")
@@ -304,50 +308,26 @@ const EditTags = () => {
             <AddProducts />
           </div>
         </div>
-        <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
+        <div className="col-lg-3 pe-0 ps-0 ps-lg-3">
           {/* <StatusBox  value={tagStatus} 
            headingName={"Tag Status"}
-           handleProductStatus={tagStatusChange}
+           handleProductStatus={tagStatusChange}  
            toggleData={['active','archived']}
             /> */}
           <NotesBox name="note" value={tagNotes} onChange={tagNotesChange} />
 
         </div>
       </div>
-      {/* <div className="row create-buttons pt-5 pb-3 justify-content-between">
-        <div className="d-flex w-auto px-0">
-          <Link to="/parameters/tagsManager" className="button-red-outline py-2 px-4">
-            <p>Discard</p>
-          </Link>
-
-          <Link
-            to="/parameters/tagsManager"
-            className="button-lightBlue-outline py-2 px-4 ms-3"
-          >
-            <p>Save as Draft</p>
-          </Link>
-        </div>
-        <div className="d-flex w-auto px-0">
-          <Link
-            to="#"
-            className="button-lightBlue-outline py-2 px-4"
-            onClick={handleSubmitAndAddAnother}
-          >
-            <p>Save & Add Another</p>
-          </Link>
-          <Link
-            to="#"
-            className="button-gradient ms-3 py-2 px-4 w-auto"
-            onClick={handleSubmit}
-          >
-            <p>Save</p>
-          </Link>
-        </div>
-      </div> */}
-      { hideFooter && <div className="row create-buttons pt-5 pb-3 justify-content-between">
+      { hideFooter && <div className="row create-buttons pt-5 justify-content-between" style={{ width: '104%' }} >
           <SaveFooter handleSubmit={handleSubmit} />          
-        </div>
+      </div>
            }
+          {/* <SaveFooterSecondary
+          show={hideFooter}
+          onDiscard={backHandler}
+          isLoading={editTagIsLoading}
+          handleSubmit={handleSubmit}
+        /> */}
 
     </div>
   );

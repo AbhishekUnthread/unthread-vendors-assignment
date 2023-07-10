@@ -577,7 +577,7 @@ const handleDelete =()=>{
             <img src={question} alt="question" width={200} />
             <div className="row"></div>
             <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive {tagName} ?
+              Are you sure you want to Archive <span className="text-blue-2">{tagName}</span> ?
             </h6>
             <div className="d-flex justify-content-center mt-4">
               <hr className="hr-grey-6 w-100" />
