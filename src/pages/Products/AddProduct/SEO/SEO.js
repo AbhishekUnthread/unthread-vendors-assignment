@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,useId} from "react";
+import React, { useEffect, useState } from "react";
 import "./SEO.scss";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
@@ -15,39 +15,69 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useFormik } from "formik";
-const SEO = ({seoName,value, handleSeoChange }) => {
+const SEO = ({seoName,seoValue, handleSeoChange }) => {
   const [multipleTags, setMultipleTags] = useState([]);
-  const id = useId();
+  const [isFirstTimeRender,setIsFirstTimeRender] = useState(true)
   // ? CHECKBOX STARTS HERE
 
   const [viewAll,setViewAll] = useState(false);
 
   const [checked, setChecked] = React.useState(false);
 
+  function generateUrlName(name="") {
+    const formattedName = "https://example.com/"+name?.toLowerCase()?.replace(/\s+/g, '-');
+    return formattedName;
+  }
+
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
   };
 
+  function isEmpty(obj) {
+    for (var prop in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+        return false;
+      }
+    }
+  
+    return true
+  }
+
   // ? CHECKBOX ENDS HERE
   const seoFormik = useFormik({
     initialValues: {
+      title:"",
       slug: "https://example.com/",
     },
     enableReinitialize: true,
   });
   useEffect(()=>{
-    if(value || seoName){
-      seoFormik.setFieldValue("title", value && value.title ? value.title : seoName);
-      seoFormik.setFieldValue("description", value && value.description ? value.description : "");
-      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : generateUrlName(seoName));
-      setMultipleTags(value && value.metaKeywords ? value.metaKeywords : []);
+    if(!isEmpty(seoValue) && isFirstTimeRender === true){
+      console.log(seoValue,!isEmpty(seoValue),isFirstTimeRender)
+      seoFormik.setFieldValue("title", seoValue && seoValue.title ? seoValue.title : seoName);
+      seoFormik.setFieldValue("description", seoValue && seoValue.description ? seoValue.description : "");
+      seoFormik.setFieldValue("slug", seoValue && seoValue.slug ? seoValue.slug : generateUrlName(seoName));
+      setMultipleTags(seoValue && seoValue.metaKeywords ? seoValue.metaKeywords : []);
+      setIsFirstTimeRender(false)
     }
-  },[value,seoName])
+
+    if(isEmpty(seoValue) && seoName){
+      console.log(seoValue,isEmpty(seoValue))
+      seoFormik.setFieldValue("title", seoValue && seoValue.title ? seoValue.title : seoName);
+      seoFormik.setFieldValue("description", seoValue && seoValue.description ? seoValue.description : "");
+      seoFormik.setFieldValue("slug", seoValue && seoValue.slug ? seoValue.slug : generateUrlName(seoName));
+      setMultipleTags(seoValue && seoValue.metaKeywords ? seoValue.metaKeywords : []);
+    }
+    
+  },[seoValue,isFirstTimeRender])
   
   useEffect(()=>{
     let seoItems={}
     seoItems.title = seoFormik.values?.title
-    seoItems.slug = seoFormik.values.slug
+    if(seoFormik.initialValues.slug !== seoFormik.values.slug || seoValue?.slug !== seoFormik.values.slug){
+
+      seoItems.slug = seoFormik.values.slug
+    }
     if(seoFormik.values?.description){
       seoItems.description =seoFormik.values?.description
     }
@@ -82,10 +112,6 @@ const SEO = ({seoName,value, handleSeoChange }) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
 
-  function generateUrlName(seoName="") {
-    const formattedName = "https://example.com/"+seoName?.toLowerCase()?.replace(/\s+/g, '-');
-    return formattedName;
-  }
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
       <div className="d-flex col-12 px-0 justifu-content-between">

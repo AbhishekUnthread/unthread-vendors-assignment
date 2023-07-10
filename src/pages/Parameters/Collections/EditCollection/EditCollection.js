@@ -267,6 +267,12 @@ const EditCollection = () => {
     setHideFooter(true)
   }
 
+  const isUploaded = (event) => {
+    if(event == true) {
+      setHideFooter(true)
+    }
+  }
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
@@ -275,6 +281,8 @@ const EditCollection = () => {
   } = useGetAllCollectionsQuery({ createdAt:"-1", id: collectionId });
 
   const newCollectionData = collectionData?.data?.data[0];
+
+  console.log(newCollectionData,'newCollectionData');
 
   const [
     createCollection,
@@ -307,6 +315,9 @@ const EditCollection = () => {
       setEndDate1(newCollectionData?.endDate)
       setCollectionMediaUrl(newCollectionData?.mediaUrl)
       setCollectionSeo(newCollectionData?.seos || {})
+
+      const duplicateTitle = `${newCollectionData?.title} Copy`;
+      setCollectionDuplicateTitle(duplicateTitle);
     }
   }, [collectionIsSuccess, dispatch]);
 
@@ -320,6 +331,7 @@ const EditCollection = () => {
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
+        seo: collectionSeo
       }
       if (startDate1 != null) {
         collectionDetails.startDate = new Date(startDate1);
@@ -328,19 +340,13 @@ const EditCollection = () => {
         collectionDetails.endDate = new Date(endDate1);
       }
 
-      for (const key in collectionSeo) {
-        if (collectionSeo[key] === "" && collectionSeo[key] === null) {
-          collectionDetails.seo[key] = collectionSeo[key];
-        }
-      }
-
       editCollection({
         id: collectionId,
         details: collectionDetails
       })
         .unwrap()
         navigate("/parameters/collections");
-        dispatch(showSuccess({ message: "Edited this collection successfully" }));
+        dispatch(showSuccess({ message: "Collection updated successfully!" }));
     }else {
       createCollection({
         title: collectionTitle, 
@@ -354,18 +360,17 @@ const EditCollection = () => {
       })
         .unwrap()
         navigate("/parameters/collection");
-        dispatch(showSuccess({ message: "Edited this collection successfully" }));
+        dispatch(showSuccess({ message: "Collection updated successfully!" }));
     }
   }
 
   useEffect(() => {
     if (createCollectionError) {
-      setError(true);
       if (createCollectionError?.data?.message) {
         dispatch(showError({ message: createCollectionError.data.message }));
       } else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Failed to update Collection. Please try again." })
         );
       }
     }
@@ -1104,7 +1109,7 @@ const EditCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO name={collectionTitle} value={collectionSeo} handleSeoChange={setCollectionSeo} />
+              <SEO seoName={collectionTitle} seoValue={collectionSeo} handleSeoChange={setCollectionSeo} />
             </div>
 
             <SwipeableDrawer
@@ -1334,6 +1339,8 @@ const EditCollection = () => {
                 imageName={addMedia} 
                 headingName={"Media"} 
                 UploadChange={setCollectionMediaUrl} 
+                previousImage={collectionMediaUrl}
+                isUploaded={isUploaded}
               />
             </div>
             <div className="mt-4">
@@ -1395,7 +1402,6 @@ const EditCollection = () => {
               size="small"
               name="title"
               value={collectionDuplicateTitle}
-              onChange={handleDuplicateTitleChange}
             />
           </FormControl>
           <hr className="hr-grey-6 my-0" />

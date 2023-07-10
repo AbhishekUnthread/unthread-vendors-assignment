@@ -258,6 +258,10 @@ const CreateCollection = () => {
     collectionFormik?.setFieldValue("status", status);
   }
 
+  useEffect(() => {
+    console.log(categorySeo,'categorySeo')
+  },[categorySeo])
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
@@ -288,11 +292,34 @@ const CreateCollection = () => {
           delete values[key] 
         }
       }
-      createCollection(values)
+      let obj={
+        ...values,
+        seo: {}
+      };
+      
+      if(categorySeo?.title) {
+        obj.seo.title = categorySeo?.title
+      }
+
+      if(categorySeo?.slug) {
+        obj.seo.slug = categorySeo?.slug
+      }
+
+      if(categorySeo?.urlHandle) {
+        obj.seo.urlHandle = categorySeo?.urlHandle
+      }
+
+      if(categorySeo?.metaKeywords) {
+        obj.seo.metaKeywords = categorySeo?.metaKeywords
+      }
+
+      createCollection(obj)
         .unwrap()
-        .then(() => collectionFormik.resetForm());
-        navigate("/parameters/collections");
-        dispatch(showSuccess({ message: "Collection created successfully" }));
+        .then(() => { 
+          navigate("/parameters/collections");
+          dispatch(showSuccess({ message: "Collection created successfully" }));
+        });
+       
     },
   });
 
@@ -313,12 +340,11 @@ const CreateCollection = () => {
 
   useEffect(() => {
     if (createCollectionError) {
-      setError(true);
       if (createCollectionError?.data?.message) {
         dispatch(showError({ message: createCollectionError.data.message }));
       } else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Oops! Failed to create Collection. Please try again." })
         );
       }
     }
@@ -489,7 +515,6 @@ const CreateCollection = () => {
 
    useEffect(() => {
     if (collectionError) {
-      setError(true);
       if (collectionError?.data?.message) {
         dispatch(showError({ message: collectionError.data.message }));
       } else {
@@ -499,7 +524,6 @@ const CreateCollection = () => {
       }
     }
     if (collectionIsSuccess) {
-      setError(false);
         setCollectionList(collectionData.data.data);
     }
   }, [
@@ -1048,9 +1072,9 @@ const CreateCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO 
-                name={collectionFormik.values.title} 
-                value={categorySeo} 
+              <SEO  
+                seoName={collectionFormik.values.title} 
+                seoValue={categorySeo} 
                 handleSeoChange={setCategorySeo} 
               />
             </div>

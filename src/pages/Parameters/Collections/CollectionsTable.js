@@ -27,6 +27,7 @@ import {
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import DuplicateCollection from "./DuplicateCollection/DuplicateCollection";
 // !IMAGES IMPORTS
 import unthreadLogo from "../../../assets/images/unthreadLogo.png"
 
@@ -71,6 +72,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const [massActionStatus, setMassActionStatus] = React.useState("");
   const [forMassAction, setForMassAction] = React.useState(false);
   const [collectionTitle, setCollectionTitle] = useState("");
+  const [duplicateModal, setDuplicateModal] = useState(false)
 
   const handleStatusValue = (value) => {
     setStatusValue(value);
@@ -270,7 +272,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
             status: "archieved"
           }
       })
-      dispatch(showSuccess({ message: "Archived this collection successfully" }));
+      dispatch(showSuccess({ message: "Collection archived successfully!" }));
     }
   }
 
@@ -292,7 +294,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           }
       })
       setShowUnArhcivedModal(false)
-      dispatch(showSuccess({ message: "Un-Archived this collection successfully" }));
+      dispatch(showSuccess({ message: "Collection un-archived successfully" }));
     }
   }
 
@@ -302,7 +304,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     } else {
       deleteData(archiveID);
       toggleArchiveModalHandler();
-      dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+      dispatch(showSuccess({ message: "Collection deleted successfully!" }));
     }
   }
 
@@ -310,8 +312,12 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     setArchivedModal(false);
   };
 
+  const handleDuplicateCollectionClose = () => {
+    setDuplicateModal(false)
+  }
+
   const handleDuplicateCollection = (row) => {
-    console.log(row, 'row')
+    setDuplicateModal(true)
   }
 
   return (
@@ -424,7 +430,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                     <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.totalProduct}</p>
                     </TableCell>
-                    <TableCell style={{ width: 180, padding: 0 }}>
+                    <TableCell style={{ width: 180, padding: 10 }}>
                       <div className="d-block">
                         <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
                           style={{background: 
@@ -519,7 +525,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                           <Tooltip title="Duplicate" placement="top">
                             <div className="table-edit-icon rounded-4 p-2"
                               onClick={() => {
-                                handleDuplicateCollection(row);
+                                dispatch(updateCollectionId(row._id));
+                                handleDuplicateCollection(row)
                               }}
                             >
                               <ContentCopyIcon
@@ -634,6 +641,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
           name={forMassAction == false ? name : "this"}
+        />
+
+        <DuplicateCollection 
+          openDuplicateCollection={duplicateModal}
+          handleDuplicateCollectionClose={handleDuplicateCollectionClose}
         />
     </React.Fragment>
   );
