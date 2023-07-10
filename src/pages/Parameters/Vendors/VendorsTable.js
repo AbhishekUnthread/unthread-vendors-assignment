@@ -646,14 +646,14 @@ const handleDelete =()=>{
 />
 
       <UnArchivedModal 
-          handleValue={handleValue}
+          handleStatusValue={handleValue}
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
         />
         
           <UnArchivedModal 
-          handleValue={handleMassValue}
+          handleStatusValue={handleMassValue}
           showUnArchivedModal={openUnArchivePopUp}
           closeUnArchivedModal={closeMassUnArchivedModal}
           handleUnArchived={handleMassUnArchived}

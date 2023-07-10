@@ -24,7 +24,7 @@ import {
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
-import SaveFooter from "../../../components/SaveFooter/SaveFooter";
+import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
 
     // ? DIALOG TRANSITION STARTS HERE
@@ -211,6 +211,10 @@ const EditVendor = () => {
       });
      }
     }};
+
+    const backHandler = () => {
+      navigate("/parameters/vendors");
+    };
     
     const handleSubmitAndAddAnother = () => {
       if(vendorId !== "")
@@ -406,12 +410,19 @@ const EditVendor = () => {
         </div>
       </div>
       
-      <div className="row create-buttons pt-5 pb-3 justify-content-between">
 
-        { hideFooter && <div className="row create-buttons pt-5 pb-3 justify-content-between">
+      <SaveFooterSecondary
+          show={hideFooter}
+          onDiscard={backHandler}
+          isLoading={editVendorIsLoading}
+          handleSubmit={handleSubmit}
+        />
+
+
+        {/* { hideFooter && <div className="row create-buttons pt-5 pb-3 justify-content-between">
           <SaveFooter handleSubmit={handleSubmit} />          
         </div>
-           }
+           } */}
 
         {/* <div className="d-flex w-auto px-0">
           <Link
@@ -445,7 +456,6 @@ const EditVendor = () => {
             <p>Save</p>
           </Link>
         </div> */}
-      </div>
       <Dialog
         open={openDuplicateVendor}
         TransitionComponent={Transition}
