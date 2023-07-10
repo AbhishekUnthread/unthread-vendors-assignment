@@ -42,7 +42,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const DEBOUNCE_TIME = 500;
 
-const TableSearch = (props) => {
+const TableSearch = ({ searchValue, handleSearchChange }) => {
+  return (
+    <Search>
+      <SearchIconWrapper>
+        <SearchIcon sx={{ color: "#c8d8ff" }} />
+      </SearchIconWrapper>
+      <StyledInputBase
+        placeholder="Search…"
+        inputProps={{ "aria-label": "search" }}
+        value={searchValue}
+        onChange={handleSearchChange}
+      />
+    </Search>
+  );
+};
+
+const TableSearchSecondary = (props) => {
   const { onChange } = props;
 
   const search = _debounce((value) => {
@@ -62,10 +78,10 @@ const TableSearch = (props) => {
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
         onChange={onSearch}
-        
       />
     </Search>
   );
 };
 
 export default TableSearch;
+export { TableSearchSecondary };
