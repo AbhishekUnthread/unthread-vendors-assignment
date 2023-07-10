@@ -49,8 +49,6 @@ const EditVendor = () => {
   const [checked, setChecked] = React.useState(false);
   const vendorId = useSelector((state)=>state.vendor.vendorId)
   const [products,setProducts] = React.useState([])
-  const [startDate1, setStartDate1] = useState(null)
-  const [endDate1, setEndDate1] = useState(null)
   const [vendorDuplicateName, setVendorDuplicateName] = useState("");
   const [duplicateDescription, setDuplicateDescription] = useState(false);
   const [duplicateFilter, setDuplicateFilter] = useState(false);
@@ -59,19 +57,12 @@ const EditVendor = () => {
   const [hideFooter, setHideFooter] = useState(false);
   const [vendorNameError, setVendorNameError] = useState('');
 
+  const [initialName, setInitailName] = useState("");
+  const [initialNotes, setInitailNotes] = useState("");
+  const [initialStatus, setInitailStatus] = useState("active");
+  const [initialFilter, setInitailFilter] = useState(false);
 
-  // useEffect(() => {
-  //   const handleKeyDown = (event) => {
-  //     setHideFooter(true);
-  //   };
-  //   window.addEventListener('keydown', handleKeyDown);
-  //   return () => {
-  //     window.removeEventListener('keydown', handleKeyDown);
-  //   };
-  // }, []); 
-
-
-
+  
   const {
     data : vendorProductsData,
     isLoading:vendorProductsDataIsLoading,
@@ -129,29 +120,26 @@ const EditVendor = () => {
       // If vendorsIsSuccess is true, set the vendor name based on the data from the API response
 
       // setIndex(vendorsData.data.data.findIndex(vendor => vendor._id === vendorId));
-      // console.log({url:index});
       // const vendor = vendorsData.data.data[index];
       // setVendorName(vendor?.name);
       // setVendorFlagShip(vendor?.isFlagShip);
       // setVendorNotes(vendor?.notes);
       // setVendorStatus(vendor?.status);
       // setChecked(vendor?.showFilter);
-      // setStartDate1(vendor?.startDate);
-      // setEndDate1(vendor?.endDate);
-
       setVendorName(vendorsData.data.data[0].name);
+      setInitailName(vendorsData.data.data[0].name)
       setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
       setVendorNotes(vendorsData.data.data[0].notes)
+      setInitailNotes(vendorsData.data.data[0].notes)
       setVendorStatus(vendorsData.data.data[0].status)
+      setInitailStatus(vendorsData.data.data[0].status)
       setChecked(vendorsData.data.data[0].showFilter)
-      setStartDate1(vendorsData.data.data[0].startDate)
-      setEndDate1(vendorsData.data.data[0].endDate)
+      setInitailFilter(vendorsData.data.data[0].showFilter)
     }
   }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess,editVendorError]);
 
   const getNextVendorId = () => {
     setVendorIndex(prevIndex => (prevIndex + 1) % vendorsData.data.data.length);
-    console.log({urln:vendorIndex})
     setIndex(vendorIndex)
   };
 
@@ -162,11 +150,11 @@ const EditVendor = () => {
   
     const vendorNotesChange=(event)=>{
       setVendorNotes(event.target.value);
-      setHideFooter(true);
+      // setHideFooter(true);
     }
     const vendorStatusChange=(event,vendorStatus)=>{
       setVendorStatus(vendorStatus);
-      setHideFooter(true);
+      // setHideFooter(true);
     }   
 
     // const handleNameChange = (event) => {
@@ -175,7 +163,7 @@ const EditVendor = () => {
     // };
     const handleNameChange = (event) => {
       const newName = event.target.value;
-      setHideFooter(true);
+      // setHideFooter(true);
       validationSchema
         .validate({ vendorName: newName })
         .then(() => {
@@ -190,7 +178,7 @@ const EditVendor = () => {
 
     const handleFilterChange=(event)=>{
       setChecked(event.target.checked);
-      setHideFooter(true);
+      // setHideFooter(true);
     }
     const handleSubmit = () => {
       if (!vendorNameError) {
@@ -263,7 +251,6 @@ const EditVendor = () => {
 
 
     const handleNextItem = ()=>{
-      console.log("hey");
       getNextVendorId();
       
     }
@@ -307,6 +294,15 @@ const EditVendor = () => {
         });
     };
     // ? DUPLICATE VENDOR DIALOG ENDS HERE
+
+    useEffect(() => {
+      setHideFooter(
+        vendorName.trim() !== initialName ||
+        (vendorNotes !== initialNotes && vendorNotes !== "") ||
+        vendorStatus !== initialStatus ||
+        checked !== initialFilter
+      );
+    }, [vendorName, vendorNotes, vendorStatus, checked]);
     
   return (
     <div className="page container-fluid position-relative user-group">
