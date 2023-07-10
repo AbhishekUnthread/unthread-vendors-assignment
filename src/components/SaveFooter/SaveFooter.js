@@ -57,10 +57,13 @@ const SaveFooter = ({
 };
 
 const SaveFooterSecondary = (props) => {
-  const { onDiscard, show, isLoading,handleSubmit } = props;
+  const { onDiscard, show, isLoading, handleSubmit } = props;
   return (
     <Slide direction="up" in={show} mountOnEnter unmountOnExit>
-      <div className="row create-buttons pt-5 pb-3 justify-content-between" style={{ width: '102%' }}>
+      <div
+        className="row create-buttons pt-5 pb-3 justify-content-between"
+        style={{ width: "102%" }}
+      >
         <div className="d-flex w-auto px-0">
           {onDiscard && (
             <button
@@ -78,7 +81,7 @@ const SaveFooterSecondary = (props) => {
             type="submit"
             loading={isLoading}
             disabled={isLoading}
-            onClick={handleSubmit}
+            onClick={handleSubmit ? handleSubmit : () => {}}
           >
             <p>Save</p>
           </LoadingButton>
