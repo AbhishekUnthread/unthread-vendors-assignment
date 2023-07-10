@@ -277,7 +277,7 @@ const vendorTypeQuery =
 
     if(editVendorIsSuccess)
     {
-      dispatch(showSuccess({ message: "Status updtaed successfully" }));
+      dispatch(showSuccess({ message: "Status updated successfully" }));
     }
 
     if (vendorsError) {
