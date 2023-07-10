@@ -274,8 +274,6 @@ const CreateCollection = () => {
     },
   ] = useCreateCollectionMutation();
 
-  console.log(createCollectionError,'createCollectionError')
-
   const collectionFormik = useFormik({
     initialValues: {
       status: "in-active",

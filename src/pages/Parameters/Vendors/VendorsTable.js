@@ -408,6 +408,7 @@ const handleDelete =()=>{
                   {stableSort(list, getComparator(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
+                      console.log("Fefew",row)
                       const isItemSelected = isSelected(row._id);
                       const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -473,9 +474,18 @@ const handleDelete =()=>{
                           </TableCell> */}
                           <TableCell style={{ width: 140, padding: 0 }}>
                             <div className="d-flex align-items-center">
-                              <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"}}>
+                              <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
+                               style={{background: 
+                               row.status == "active" ? "#A6FAAF" :
+                               row.status == "in-active" ? "#F67476" : 
+                               row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
+                               }}>
                                 <small className="text-black fw-400">
-                                  {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "archieved" ? "Archived" : "Scheduled"}
+                                  {
+                                    row.status == "active" ? "Active" :  
+                                    row.status == "in-active" ? "In-Active" : 
+                                    row.status == "archieved" ? "Archived" : "Scheduled"
+                                  }
                                 </small>
                               </div>
                             </div>
@@ -483,23 +493,7 @@ const handleDelete =()=>{
                           {row.status ==="archieved"?
                         <TableCell style={{ width: 140, padding: 0 }}>
                          <div className="d-flex align-items-center">
-                          <Tooltip title="Delete" placement="top">
-                            <div className="table-edit-icon rounded-4 p-2" 
-                                onClick={(e) => {
-                                  handleDeleteOnClick(row)
-                                }}
-                            >
-                              <DeleteIcon
-                                sx={{
-                                  color: "#5c6d8e",
-                                  fontSize: 18,
-                                  cursor: "pointer",
-                                }}
-                              />
-                            </div>
-                          </Tooltip>
-
-                          <Tooltip
+                         <Tooltip
                               onClick={() => {
                                 handleUnArchive(row)
                                 }
@@ -516,6 +510,21 @@ const handleDelete =()=>{
                                       }}
                                     />
                                   </div>
+                          </Tooltip>
+                          <Tooltip title="Delete" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2" 
+                                onClick={(e) => {
+                                  handleDeleteOnClick(row)
+                                }}
+                            >
+                              <DeleteIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
                           </Tooltip>
                         </div>
                       </TableCell>

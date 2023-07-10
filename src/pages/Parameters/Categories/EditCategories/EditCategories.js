@@ -33,11 +33,15 @@ import {
   Tab,
   Tabs,
   TextField,
-  Tooltip
+  Tooltip,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
-import { useCreateCategoryMutation, useEditCategoryMutation, useGetAllCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
+import {
+  useCreateCategoryMutation,
+  useEditCategoryMutation,
+  useGetAllCategoriesQuery,
+} from "../../../../features/parameters/categories/categoriesApiSlice";
 import { UseEditCategory } from "../../../../features/parameters/categories/categoriesEditHook";
 import { showError, showSuccess } from "../../../../features/snackbar/snackbarAction";
 
@@ -56,7 +60,6 @@ const EditCategories = () => {
   const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
   const [checked, setChecked] = useState(false);
   const categoryId = useSelector((state) => state.category.categoryId);
-
 
   const [
     createCategory,
@@ -99,9 +102,7 @@ const EditCategories = () => {
       setCategorySeo(categoriesData.data.data[0]?.seos || {})
       
     }
-  }, [categoriesIsSuccess,dispatch]);
-
-
+  }, [categoriesIsSuccess, dispatch]);
 
   const handleNameChange = (event) => {
     setCategoryName(event.target.value); // Updating the category name based on the input value
@@ -110,12 +111,12 @@ const EditCategories = () => {
   const clearDate = () => {
     setStartDate(null);
     setEndDate(null);
-  }
+  };
 
   const handleSubmit = () => {
     if (categoryId !== "") {
       // Calling Category edit API
-      let editItems ={
+      let editItems = {
         showFilter: checked, // Whether to show filters
         name: categoryName, // Category name
         description: categoryDescription, // Category description
@@ -124,12 +125,12 @@ const EditCategories = () => {
         notes: categoryNotes,
         mediaUrl: categoryMediaUrl,
         seo: categorySeo,
+      };
+      if (startDate) {
+        editItems.startDate = new Date(startDate);
       }
-      if(startDate){
-        editItems.startDate = new Date(startDate)
-      }
-      if(endDate){
-        editItems.endDate = new Date(endDate)
+      if (endDate) {
+        editItems.endDate = new Date(endDate);
       }
       editCategory({
         id: categoryId, // ID of the category
@@ -200,7 +201,7 @@ const EditCategories = () => {
         });
     }
 
-    resetValues() // Resetting the category 
+    resetValues(); // Resetting the category
     dispatch(updateCategoryId(""));
   };
 
@@ -213,7 +214,6 @@ const EditCategories = () => {
     setChecked(false);
   };
 
-
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryType(tabIndex);
     if (tabIndex === 0) {
@@ -224,7 +224,10 @@ const EditCategories = () => {
 
   return (
     <div className="page container-fluid position-relative user-group">
-      <AddHeader headerName={categoryName || ""} navigateLink={"/parameters/categories"} />
+      <AddHeader
+        headerName={categoryName || ""}
+        navigateLink={"/parameters/categories"}
+      />
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -241,7 +244,12 @@ const EditCategories = () => {
                 </Tooltip>
               </div>
               <FormControl className="w-100 px-0">
-                <OutlinedInput value={categoryName} onChange={handleNameChange} placeholder="Gold Products" size="small" />
+                <OutlinedInput
+                  value={categoryName}
+                  onChange={handleNameChange}
+                  placeholder="Gold Products"
+                  size="small"
+                />
               </FormControl>
             </div>
             <FormGroup>
@@ -282,10 +290,13 @@ const EditCategories = () => {
                   />
                 </Tooltip>
               </div>
-              <AppTextEditor value={categoryDescription} setFieldValue={(val) => setCategoryDescription(val)} />
+              <AppTextEditor
+                value={categoryDescription}
+                setFieldValue={(val) => setCategoryDescription(val)}
+              />
             </div>
           </div>
-          
+
           <div className="border-grey-5 rounded-8 p-3 row features mt-4">
             <Box
               sx={{ width: "100%" }}
@@ -301,8 +312,7 @@ const EditCategories = () => {
                 <Tab label="Sub Categories" className="tabs-head" />
               </Tabs>
             </Box>
-            <div className="d-flex justify-content-between mb-2 px-0">
-            </div>
+            <div className="d-flex justify-content-between mb-2 px-0"></div>
             {
               <>
                 <TabPanel value={categoryType} index={0}>
@@ -323,7 +333,7 @@ const EditCategories = () => {
             headingName={"Category Status"}
             value={categoryStatus}
             handleProductStatus={(_, val) => setCategoryStatus(val)}
-            toggleData={['active', 'in-active']}
+            toggleData={["active", "in-active"]}
             showSchedule={true}
             startDate={startDate}
             endDate={endDate}
@@ -336,12 +346,21 @@ const EditCategories = () => {
             
           /> */}
           <div className="mt-4">
-            <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} imageValue={categoryMediaUrl} />
+            <UploadMediaBox
+              imageName={addMedia}
+              headingName={"Media"}
+              UploadChange={setCategoryMediaUrl}
+              imageValue={categoryMediaUrl}
+            />
           </div>
-          <NotesBox name={'notes'} value={categoryNotes} onChange={(e) => setCategoryNotes(e.target.value)} />
+          <NotesBox
+            name={"notes"}
+            value={categoryNotes}
+            onChange={(e) => setCategoryNotes(e.target.value)}
+          />
         </div>
       </div>
-      <SaveFooter handleSubmit={handleSubmit}  />
+      <SaveFooter handleSubmit={handleSubmit} />
     </div>
   );
 };
