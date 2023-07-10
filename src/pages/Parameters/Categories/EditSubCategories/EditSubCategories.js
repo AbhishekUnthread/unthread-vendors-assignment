@@ -64,7 +64,7 @@ const EditSubCategories = () => {
   const [subCategoryNotes, setSubCategoryNotes] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [subCategoryVisibility, setSubCategoryVisibility] = useState(false);
+  // const [subCategoryVisibility, setSubCategoryVisibility] = useState(false);
   const [subCategorySeo, setSubCategorySeo] = useState({});
   const [subCategoryMediaUrl, setSubCategoryMediaUrl] = useState("");
   const [categoryName,setCategoryName] = useState("")
@@ -112,7 +112,7 @@ const EditSubCategories = () => {
       setSubCategoryName(subCategoriesData.data.data[0].name);
       setSubCategoryDescription(subCategoriesData.data.data[0].description);
       setSubCategoryStatus(subCategoriesData.data.data[0].status);
-      setSubCategoryVisibility(subCategoriesData.data.data[0].isVisibleFrontend);
+      // setSubCategoryVisibility(subCategoriesData.data.data[0].isVisibleFrontend);
       setSubCategoryNotes(subCategoriesData.data.data[0].notes);
       setChecked(subCategoriesData.data.data[0].showFilter);
       setStartDate(subCategoriesData.data.data[0].startDate || null);
@@ -130,7 +130,7 @@ const EditSubCategories = () => {
         name: subCategoryName,
         description: subCategoryDescription,
         status: startDate === null ? subCategoryStatus :"scheduled",
-        isVisibleFrontend: subCategoryVisibility,
+        // isVisibleFrontend: subCategoryVisibility,
         notes: subCategoryNotes,
         showFilter: checked,
         mediaUrl: subCategoryMediaUrl,
@@ -158,7 +158,7 @@ const EditSubCategories = () => {
           name: subCategoryName,
           description: subCategoryDescription,
           status: subCategoryStatus,
-          isVisibleFrontend: subCategoryVisibility,
+          // isVisibleFrontend: subCategoryVisibility,
           notes: subCategoryNotes,
           showFilter: checked,
           startDate,
@@ -377,7 +377,7 @@ const EditSubCategories = () => {
                 </>
               }
           </div>
-          <SEO name={subCategoryName} value={subCategorySeo} handleSeoChange={setSubCategorySeo} />
+          <SEO seoName={subCategoryName} seoValue={subCategorySeo} handleSeoChange={setSubCategorySeo} />
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
           <StatusBox headingName={"Sub-Category Status"}
@@ -390,8 +390,6 @@ const EditSubCategories = () => {
             handleEndDate={setEndDate}
             clearDate={clearDate}
               />
-          <VisibilityBox value={subCategoryVisibility}
-            onChange={(_, val) => setSubCategoryVisibility(val)} />
           <div className="mt-4">
             <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setSubCategoryMediaUrl} imageValue={subCategoryMediaUrl} />
           </div>
