@@ -310,6 +310,10 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     setArchivedModal(false);
   };
 
+  const handleDuplicateCollection = (row) => {
+    console.log(row, 'row')
+  }
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -458,6 +462,22 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                     {row.status == "archieved" ?
                       <TableCell style={{ width: 140, padding: 0 }}>
                          <div className="d-flex align-items-center">
+                          <Tooltip title="Un-Archive" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2"
+                              onClick={() => {
+                                handleUnArchive(row._id, row.title)
+                                }
+                              }
+                            >
+                              <InventoryIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
                           {deleteData && (
                           <Tooltip title="Delete" placement="top">
                             <div className="table-edit-icon rounded-4 p-2" 
@@ -475,22 +495,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                             </div>
                           </Tooltip>
                           )}
-                          <Tooltip title="Un-Archive" placement="top">
-                            <div className="table-edit-icon rounded-4 p-2"
-                              onClick={() => {
-                                handleUnArchive(row._id, row.title)
-                                }
-                              }
-                            >
-                              <InventoryIcon
-                                sx={{
-                                  color: "#5c6d8e",
-                                  fontSize: 18,
-                                  cursor: "pointer",
-                                }}
-                              />
-                            </div>
-                          </Tooltip>
                         </div>
                       </TableCell>
                       :
@@ -513,7 +517,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                             </div>
                           </Tooltip>
                           <Tooltip title="Duplicate" placement="top">
-                            <div className="table-edit-icon rounded-4 p-2">
+                            <div className="table-edit-icon rounded-4 p-2"
+                              onClick={() => {
+                                handleDuplicateCollection(row);
+                              }}
+                            >
                               <ContentCopyIcon
                                 sx={{
                                   color: "#5c6d8e",

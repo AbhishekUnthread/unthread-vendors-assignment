@@ -73,6 +73,8 @@ import {
   useDeleteCollectionMutation,
   useEditCollectionMutation,
 } from "../../../../features/parameters/collections/collectionsApiSlice";
+import { updateCollectionId } from "../../../../features/parameters/collections/collectionSlice";
+
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -306,7 +308,7 @@ const EditCollection = () => {
       setCollectionMediaUrl(newCollectionData?.mediaUrl)
       setCollectionSeo(newCollectionData?.seos || {})
     }
-  }, [collectionIsSuccess]);
+  }, [collectionIsSuccess, dispatch]);
 
   const handleSubmit = () => {
     if (collectionId !== "") {
@@ -570,10 +572,12 @@ const EditCollection = () => {
 
     createCollection(collectionData)
       .unwrap()
-      .then(() => {
+      .then((res) => {
         setOpenDuplicateCollection(false);
+        dispatch(showSuccess({ message: "Duplicate Created of this collection successfully" }));
+        dispatch(updateCollectionId(res?.data?._id));
+        navigate("/parameters/collections/edit")
       });
-      dispatch(showSuccess({ message: "Duplicate Created of this collection successfully" }));
   };
   // ? DUPLICATE COLLECTION DIALOG ENDS HERE
 

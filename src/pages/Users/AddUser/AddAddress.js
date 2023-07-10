@@ -3,81 +3,33 @@ import "./AddUser.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import * as Yup from "yup";
 
 // ! COMPONENT IMPORTS
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
-import NotesBox from "../../../components/NotesBox/NotesBox";
-import TagsBox from "../../../components/TagsBox/TagsBox";
-import SaveFooter from "../../../components/SaveFooter/SaveFooter"
+import AppCitySelect from "../../../components/AddCitySelect/AddCitySelect";
 // ! IMAGES IMPORTS
-import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import archivedGrey from "../../../assets/icons/archivedGrey.svg";
 import editGrey from "../../../assets/icons/editGrey.svg";
-import addMedia from "../../../assets/icons/addMedia.svg";
 // ! MATERIAL IMPORTS
 import {
   FormControl,
-  FormHelperText,
-  MenuItem,
-  Select,
   InputAdornment,
   OutlinedInput,
   Checkbox,
   FormControlLabel,
   Chip,
-  TextField,
-  Autocomplete,
 } from "@mui/material";
-
-import { DesktopDateTimePicker } from "@mui/x-date-pickers";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-
-// ! MATERIAL ICONS IMPORTS
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-
-import {useCreateCustomerMutation} from "../../../features/customers/customer/customerApiSlice"
-import { useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
-import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
-import { useCreateCustomerAddressMutation } from "../../../features/customers/customerAddress/customerAddressApiSlice";
 
 import {
   showSuccess,
   showError,
 } from "../../../features/snackbar/snackbarAction";
 
-const taggedWithData = [
-  { title: "Tag 1", value: "tag1" },
-  { title: "Tag 2", value: "tag2" },
-  { title: "Tag 3", value: "tag3" },
-  { title: "Tag 4", value: "tag4" },
-  { title: "Tag 5", value: "tag5" },
-  { title: "Tag 6", value: "tag6" },
-  { title: "Tag 7", value: "tag7" },
-  { title: "Tag 8", value: "tag8" },
-  { title: "Tag 9", value: "tag9" },
-  { title: "Tag 10", value: "tag10" },
-  { title: "Tag 11", value: "tag11" },
-  { title: "Tag 12", value: "tag12" },
-];
-
-const AddAddress = () => {
+const AddAddress = ({ customerAddressDetails }) => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const [
-    createCustomerAddress,
-    {
-      isLoading: createCustomerAddressIsLoading,
-      isSuccess: createCustomerAddressIsSuccess,
-      error: createCustomerAddressError,
-    },
-  ] = useCreateCustomerAddressMutation();
 
   const customerAddressFormik = useFormik({
     initialValues: {
@@ -96,12 +48,8 @@ const AddAddress = () => {
           delete values[key] 
         }
       }
+      customerAddressDetails(values)
       console.log(values, 'values for creating customers')
-      // createCustomerAddress(values)
-      //   .unwrap()
-      //   .then(() => customerAddressFormik.resetForm());
-      //   navigate("/users/allUsers");
-      //   dispatch(showSuccess({ message: "Custormer created successfully" }));
     },
   });
 
@@ -129,6 +77,14 @@ const AddAddress = () => {
     customerAddressFormik.setFieldValue("state", event)
   }
 
+   const getCityName = (value) => {
+    customerAddressFormik.setFieldValue("city", value)
+  }
+
+  const SelectCityName = (event, value) => {
+    customerAddressFormik.setFieldValue("city", event)
+  }
+
   // ? ADDRESS STARTS HERE
   const [address, setAddress] = React.useState(false);
 
@@ -139,10 +95,6 @@ const AddAddress = () => {
   // ? ADDRESS STARTS HERE
   const [savedAddress, setSavedAddress] = React.useState(false);
 
-  const handleSavedAddressChange = () => {
-    setSavedAddress(true);
-    setAddress(false);
-  };
   // ? ADDRESS ENDS HERE
 
   return (
@@ -154,52 +106,49 @@ const AddAddress = () => {
             </h6>
             </div>
 
-            <button
-            className="button-gradient py-2 px-3"
-            onClick={handleAddressChange}
-            >
-            <p className="">+ Add Address</p>
-            </button>
+            <p className="button-gradient py-2 px-3" onClick={handleAddressChange}>
+                <p className="">+ Add Address</p>
+            </p>
         </div>
         {savedAddress && (
             <div className="col-12 mt-3">
-            <div
-                className="row py-3 mb-3 rounded-8"
-                style={{ background: "rgba(39, 40, 63, 0.5)" }}
-            >
-                <div className="col-12 d-flex justify-content-between align-items-center mb-2 px-3">
-                <p className="text-lightBlue">Home</p>
-                <div className="d-flex align-items-center">
-                    <Chip label="Default" size="small" className="px-2" />
-                    <img
-                    src={editGrey}
-                    alt="editGrey"
-                    className="c-pointer ms-3"
-                    width={16}
-                    />
-                    <img
-                    src={archivedGrey}
-                    alt="archiverdGrey"
-                    className="c-pointer ms-3"
-                    width={16}
-                    />
+                <div
+                    className="row py-3 mb-3 rounded-8"
+                    style={{ background: "rgba(39, 40, 63, 0.5)" }}
+                >
+                    <div className="col-12 d-flex justify-content-between align-items-center mb-2 px-3">
+                        <p className="text-lightBlue">Home</p>
+                        <div className="d-flex align-items-center">
+                            <Chip label="Default" size="small" className="px-2" />
+                            <img
+                                src={editGrey}
+                                alt="editGrey"
+                                className="c-pointer ms-3"
+                                width={16}
+                            />
+                            <img
+                                src={archivedGrey}
+                                alt="archiverdGrey"
+                                className="c-pointer ms-3"
+                                width={16}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-12 px-3">
+                        <small className="text-lightBlue d-block">
+                            Sanjay Chauhan
+                        </small>
+                        <small className="text-lightBlue d-block">
+                            66-68, Jambi Moballa, Bapu Khote Street, Mandvi
+                        </small>
+                        <small className="text-lightBlue d-block">
+                            Mumbai-400003, Maharashtra, Mumbai
+                        </small>
+                        <small className="text-lightBlue d-block">
+                            +91 9876543210
+                        </small>
+                    </div>
                 </div>
-                </div>
-                <div className="col-12 px-3">
-                <small className="text-lightBlue d-block">
-                    Sanjay Chauhan
-                </small>
-                <small className="text-lightBlue d-block">
-                    66-68, Jambi Moballa, Bapu Khote Street, Mandvi
-                </small>
-                <small className="text-lightBlue d-block">
-                    Mumbai-400003, Maharashtra, Mumbai
-                </small>
-                <small className="text-lightBlue d-block">
-                    +91 9876543210
-                </small>
-                </div>
-            </div>
             </div>
         )}
         {address && (
@@ -338,7 +287,7 @@ const AddAddress = () => {
                         </div>
                         <div className="col-md-6 mt-3">
                             <p className="text-lightBlue mb-1">Town/City</p>
-                            <FormControl className="w-100 px-0">
+                            {/* <FormControl className="w-100 px-0">
                                 <OutlinedInput
                                     placeholder="Enter Town/City"
                                     size="small"
@@ -346,7 +295,14 @@ const AddAddress = () => {
                                     value={customerAddressFormik.values.city}
                                     onChange={customerAddressFormik.handleChange}
                                 />
-                            </FormControl>
+                            </FormControl> */}
+                            <AppCitySelect 
+                                value={customerAddressFormik.values.city}
+                                getCityName={getCityName}
+                                SelectCityName={SelectCityName}
+                                name="city" 
+                            />
+
                         </div>
                         <div className="col-md-6 mt-3">
                             <p className="text-lightBlue mb-1">Zipcode/Postalcode</p>
