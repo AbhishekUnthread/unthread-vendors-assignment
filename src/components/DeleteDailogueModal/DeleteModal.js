@@ -16,13 +16,12 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
         keepMounted
         aria-describedby="alert-dialog-slide-description"
         maxWidth="sm"
-        fullWidth={true}
         open={showCreateModal}
         onClose={toggleArchiveModalHandler}
       >
-        <hr className="hr-grey-6 my-0" />
-        <DialogContent className="py-3 px-4">
-          <Box
+        <DialogContent className="py-2 px-4 text-center">
+        <img src={question} alt="questionMark" width={200}/>
+          {/* <Box
             sx={{
               display: "block",
               marginLeft: "auto",
@@ -30,30 +29,33 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
               width: "50%",
             }}
           >
-            <img src={question} alt="questionMark" />
-          </Box>
-          <Typography
+            <img src={question} alt="questionMark" width={200}/>
+          </Box> */}
+          <h6 className="text-lightBlue mt-2 mb-2"> 
+          Are you sure you want to permanently delete  <span className="text-blue-2">{name}</span>?
+          </h6>
+          {/* <Typography
             variant="h5"
             align="center"
             sx={{ color: "lightBlue", marginBottom: 2 }}
           >
+            Are you sure you want to permanently delete  <span className="text-blue-2">{name}</span>?
 
-            Are you sure you want to permanently delete  {name}?
-
-          </Typography>
-          <br />
+          </Typography> */}
+          <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+          </div>
         </DialogContent>
-        <hr className="hr-grey-6 my-0" />
-        <DialogActions className="d-flex justify-content-between px-4 py-3">
+        <DialogActions className="d-flex justify-content-between px-4 pb-4">
           <button
-            className="button-grey py-2 px-5"
+            className="button-red-outline py-2 px-4 me-5"
             onClick={toggleArchiveModalHandler}
             type="button"
           >
             <p className="text-lightBlue">No</p>
           </button>
           <LoadingButton
-            className="button-gradient py-2 px-5"
+            className="button-gradient py-2 px-5 ms-5"
             type="button"
             onClick={handleArchive}
           >
