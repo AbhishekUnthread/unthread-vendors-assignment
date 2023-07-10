@@ -411,51 +411,19 @@ const EditVendor = () => {
       </div>
       
 
-      <SaveFooterSecondary
+      {/* <SaveFooterSecondary
           show={hideFooter}
           onDiscard={backHandler}
           isLoading={editVendorIsLoading}
           handleSubmit={handleSubmit}
-        />
+        /> */}
 
 
-        {/* { hideFooter && <div className="row create-buttons pt-5 pb-3 justify-content-between">
+        { hideFooter && <div className="row create-buttons pt-5 justify-content-between " style={{ width: '104%' }}>
           <SaveFooter handleSubmit={handleSubmit} />          
         </div>
-           } */}
+           }
 
-        {/* <div className="d-flex w-auto px-0">
-          <Link
-            to="/parameters/vendors"
-            className="button-red-outline py-2 px-4"
-          >
-            <p>Discard</p>
-          </Link>
-
-          <Link
-            to="/parameters/vendors"
-            className="button-lightBlue-outline py-2 px-4 ms-3"
-          >
-            <p>Save as Draft</p>
-          </Link>
-        </div> */}
-        
-        {/* <div className="d-flex w-auto px-0">
-          <Link
-            to="/parameters/vendors"
-            className="button-lightBlue-outline py-2 px-4"
-            onClick={handleSubmitAndAddAnother}
-          >
-            <p>Save & Add Another</p>
-          </Link>
-          <Link
-            to="#"
-            className="button-gradient ms-3 py-2 px-4 w-auto"
-            onClick={handleSubmit}
-          >
-            <p>Save</p>
-          </Link>
-        </div> */}
       <Dialog
         open={openDuplicateVendor}
         TransitionComponent={Transition}
