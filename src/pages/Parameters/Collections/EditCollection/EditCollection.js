@@ -316,7 +316,7 @@ const EditCollection = () => {
         title: collectionTitle, 
         filter: collectionFilter, 
         description: collectionDescription, 
-        status: startDate1 === null ? collectionStatus : "scheduled",
+        status: startDate1 == null ? collectionStatus : "scheduled",
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
