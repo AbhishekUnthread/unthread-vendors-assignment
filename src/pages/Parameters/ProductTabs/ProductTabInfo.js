@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import _ from "lodash";
 
 import AddCustomField from "../../../components/AddCustomField/AddCustomField";
 import AddCustomFieldTable from "../../../components/AddCustomField/AddCustomFieldTable";
@@ -17,7 +18,6 @@ import InfoHeader from "../../../components/Header/InfoHeader";
 import { UploadMediaSmall } from "../../../components/UploadMediaBox/UploadMedia";
 import { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
-import DuplicateModal from "../../../components/DuplicateModal/DuplicateModal";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -386,10 +386,12 @@ const ProductTabInfo = () => {
   ]);
 
   useEffect(() => {
-    if (formik.dirty) {
+    if (id && !_.isEqual(formik.values, formik.initialValues)) {
       dispatchProductsInfo({ type: "ENABLE_EDIT" });
+    } else if (id && _.isEqual(formik.values, formik.initialValues)) {
+      dispatchProductsInfo({ type: "DISABLE_EDIT" });
     }
-  }, [formik.dirty]);
+  }, [formik.initialValues, formik.values, id]);
 
   return (
     <div className="page container-fluid position-relative user-group product-tab-page">
