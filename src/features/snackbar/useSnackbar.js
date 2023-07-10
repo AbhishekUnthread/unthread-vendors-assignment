@@ -1,5 +1,7 @@
 import { useSnackbar } from "notistack";
 
+const SNACKBAR_DURATION = 5000;
+
 let useSnackbarRef;
 export const SnackbarUtilsConfigurator = () => {
   useSnackbarRef = useSnackbar();
@@ -20,6 +22,9 @@ export default {
     this.toast(msg, "error");
   },
   toast(msg, variant = "default") {
-    useSnackbarRef.enqueueSnackbar(msg, { variant });
+    useSnackbarRef.enqueueSnackbar(msg, {
+      variant,
+      autoHideDuration: SNACKBAR_DURATION,
+    });
   },
 };
