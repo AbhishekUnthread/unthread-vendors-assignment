@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,useId} from "react";
+import React, { useEffect, useState } from "react";
 import "./SEO.scss";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
@@ -15,14 +15,18 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useFormik } from "formik";
-const SEO = ({name,value, handleSeoChange }) => {
+const SEO = ({seoName,value, handleSeoChange }) => {
   const [multipleTags, setMultipleTags] = useState([]);
-  const id = useId();
   // ? CHECKBOX STARTS HERE
 
   const [viewAll,setViewAll] = useState(false);
 
   const [checked, setChecked] = React.useState(false);
+
+  function generateUrlName(name="") {
+    const formattedName = "https://example.com/"+name?.toLowerCase()?.replace(/\s+/g, '-');
+    return formattedName;
+  }
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
@@ -31,18 +35,20 @@ const SEO = ({name,value, handleSeoChange }) => {
   // ? CHECKBOX ENDS HERE
   const seoFormik = useFormik({
     initialValues: {
+      title:"",
       slug: "https://example.com/",
     },
     enableReinitialize: true,
   });
   useEffect(()=>{
-    if(value || name){
-      seoFormik.setFieldValue("title", value && value.title ? value.title : name);
+    if(seoFormik.values.title === ""){
+      seoFormik.setFieldValue("title", value && value.title ? value.title : seoName);
       seoFormik.setFieldValue("description", value && value.description ? value.description : "");
-      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : generateUrlName(name));
+      seoFormik.setFieldValue("slug", value && value.slug ? value.slug : generateUrlName(seoName));
       setMultipleTags(value && value.metaKeywords ? value.metaKeywords : []);
     }
-  },[value,name])
+    
+  },[value,seoName])
   
   useEffect(()=>{
     let seoItems={}
@@ -82,10 +88,7 @@ const SEO = ({name,value, handleSeoChange }) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
 
-  function generateUrlName(name="") {
-    const formattedName = "https://example.com/"+name?.toLowerCase()?.replace(/\s+/g, '-');
-    return formattedName;
-  }
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row">
       <div className="d-flex col-12 px-0 justifu-content-between">

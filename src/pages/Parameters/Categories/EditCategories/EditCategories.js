@@ -39,7 +39,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
 import { useCreateCategoryMutation, useEditCategoryMutation, useGetAllCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
 import { UseEditCategory } from "../../../../features/parameters/categories/categoriesEditHook";
-import { showSuccess } from "../../../../features/snackbar/snackbarAction";
+import { showError, showSuccess } from "../../../../features/snackbar/snackbarAction";
 
 const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
@@ -51,7 +51,7 @@ const EditCategories = () => {
   const [categoryNotes, setCategoryNotes] = useState('')
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
-  const [categoryVisibility, setCategoryVisibility] = useState(false);
+  // const [categoryVisibility, setCategoryVisibility] = useState(false);
   const [categorySeo,setCategorySeo] = useState({})
   const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
   const [checked, setChecked] = useState(false);
@@ -90,7 +90,7 @@ const EditCategories = () => {
       setCategoryName(categoriesData.data.data[0].name);
       setCategoryDescription(categoriesData.data.data[0].description);
       setCategoryStatus(categoriesData.data.data[0].status);
-      setCategoryVisibility(categoriesData.data.data[0].isVisibleFrontend)
+      // setCategoryVisibility(categoriesData.data.data[0].isVisibleFrontend)
       setCategoryNotes(categoriesData.data.data[0].notes)
       setChecked(categoriesData.data.data[0].showFilter)
       setStartDate(categoriesData.data.data[0].startDate || null)
@@ -120,7 +120,7 @@ const EditCategories = () => {
         name: categoryName, // Category name
         description: categoryDescription, // Category description
         status: startDate === null  ?  categoryStatus :"scheduled", // Category status
-        isVisibleFrontend: categoryVisibility,
+        // isVisibleFrontend: categoryVisibility,
         notes: categoryNotes,
         mediaUrl: categoryMediaUrl,
         seo: categorySeo,
@@ -138,14 +138,14 @@ const EditCategories = () => {
         .unwrap()
         .then(() => {
           dispatch(showSuccess({message:"Category Updated Successfully"}))
-        });
+        }).catch((err)=> showError({message:err?.message}))
     } else {
       createCategory({
         showFilter: checked, // Whether to show filters
         name: categoryName, // Category name
         description: categoryDescription, // Category description
         status: categoryStatus, // Category status
-        isVisibleFrontend: categoryVisibility,
+        // isVisibleFrontend: categoryVisibility,
         notes: categoryNotes,
         startDate: startDate,
         endDate: endDate,
@@ -169,7 +169,7 @@ const EditCategories = () => {
           name: categoryName, // Category name
           description: categoryDescription, // Category description
           status: categoryStatus, // Category status,
-          isVisibleFrontend: categoryVisibility,
+          // isVisibleFrontend: categoryVisibility,
           notes: categoryNotes,
           startDate: startDate,
           endDate: endDate,
@@ -187,7 +187,7 @@ const EditCategories = () => {
         name: categoryName, // Category name
         description: categoryDescription, // Category description
         status: categoryStatus, // Category status
-        isVisibleFrontend: categoryVisibility,
+        // isVisibleFrontend: categoryVisibility,
         notes: categoryNotes,
         startDate: startDate,
         endDate: endDate,
@@ -209,7 +209,7 @@ const EditCategories = () => {
     setCategoryDescription("");
     setCategoryStatus("active");
     setCategoryNotes("");
-    setCategoryVisibility(false);
+    // setCategoryVisibility(false);
     setChecked(false);
   };
 
@@ -315,7 +315,7 @@ const EditCategories = () => {
             }
           </div>
           <div className="mt-4">
-            <SEO name={categoryName} value={categorySeo} handleSeoChange={setCategorySeo} />
+            <SEO seoName={categoryName} value={categorySeo} handleSeoChange={setCategorySeo} />
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
@@ -331,10 +331,10 @@ const EditCategories = () => {
             handleEndDate={setEndDate}
             clearDate={clearDate}
           />
-          <VisibilityBox value={categoryVisibility}
+          {/* <VisibilityBox value={categoryVisibility}
             onChange={(_, val) => setCategoryVisibility(val)}
             
-          />
+          /> */}
           <div className="mt-4">
             <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCategoryMediaUrl} imageValue={categoryMediaUrl} />
           </div>
