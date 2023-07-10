@@ -975,7 +975,7 @@ textarea {
   background-color: #070616 !important;
 
   &.success {
-    border-radius: 4px !important;
+    border-radius: 6px !important;
     margin: auto;
     border: 1px solid $green4 !important;
 
@@ -996,7 +996,7 @@ textarea {
   }
   &.error {
     border: 1px solid $red6 !important;
-    border-radius: 4px !important;
+    border-radius: 6px !important;
     margin: auto;
 
     .container {
@@ -1016,7 +1016,7 @@ textarea {
   }
   &.info {
     border: 1px solid $lightBlue !important;
-    border-radius: 4px !important;
+    border-radius: 6px !important;
     margin: auto;
 
     .container {
@@ -1036,7 +1036,7 @@ textarea {
   }
   &.warning {
     border: 1px solid $yellow2 !important;
-    border-radius: 4px !important;
+    border-radius: 6px !important;
     margin: auto;
 
     .container {
