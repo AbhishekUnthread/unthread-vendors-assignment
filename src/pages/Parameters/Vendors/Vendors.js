@@ -36,6 +36,7 @@ import {
   Popover,
   Autocomplete,
   FormGroup,
+  InputAdornment,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -54,10 +55,12 @@ import {
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import sort from "../../../assets/icons/sort.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg"
+
 
 
 // ! MATERIAL ICONS IMPORTS
-
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -265,11 +268,27 @@ const vendorTypeQuery =
   };
 
   useEffect(() => {
+    if (createVendorIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Vendor created successfully" }));
+    }
+
+    if (createVendorError) {
+      setError(true);
+      if (createVendorError?.data?.message) {
+        dispatch(showError({ message: createVendorError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+
     if (bulkCreateVendorIsSuccess) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Vendors created successfully" }));
     }
-  }, [bulkCreateVendorIsSuccess,dispatch])
+  }, [bulkCreateVendorIsSuccess,createVendorIsSuccess,createVendorError,])
   
 
   
@@ -289,20 +308,6 @@ const vendorTypeQuery =
           showError({ message: "Something went wrong!, please try again" })
         );
       }
-    }
-    if (createVendorError) {
-      setError(true);
-      if (createVendorError?.data?.message) {
-        dispatch(showError({ message: createVendorError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-    if (createVendorIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Vendor created successfully" }));
     }
 
     if (vendorsIsSuccess) {
@@ -330,10 +335,7 @@ const vendorTypeQuery =
     vendorsData,
     vendorsIsSuccess,
     vendorsError,
-    createVendorIsSuccess,
-    createVendorError,
     vendorType,
-    dispatch,
   ]);
  // * SORT POPOVERS STARTS HERE
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
@@ -504,6 +506,7 @@ const vendorTypeQuery =
                 <p className="text-lightBlue mb-2">Vendor Name *</p>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
+                    sx={{pr:1}}
                     placeholder="Enter Vendor Name"
                     size="small"
                     name="name"
@@ -511,6 +514,11 @@ const vendorTypeQuery =
                     onBlur={vendorFormik.handleBlur}
                     onChange={vendorFormik.handleChange}
                     onKeyDown={handleAddMultiple}
+                    endAdornment={
+                    <InputAdornment position="end">
+                        <ChevronRightIcon/>
+                    </InputAdornment>
+                    }
                   />
                   {!!vendorFormik.touched.name && vendorFormik.errors.name && (
                     <FormHelperText error color="#F67476">
@@ -663,7 +671,7 @@ const vendorTypeQuery =
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
+            <TableSearch onChange={handleSearchChange} />
             <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idStatus}
@@ -671,6 +679,7 @@ const vendorTypeQuery =
                 onClick={handleStatusClick}
               >
                 <small className="text-lightBlue me-2">Status</small>
+                <img src={arrowDown} alt="status" className="" />
               </button>
               <Popover
                 anchorOrigin={{

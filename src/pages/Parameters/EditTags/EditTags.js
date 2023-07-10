@@ -17,7 +17,7 @@ import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormContro
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateTagMutation, useEditTagMutation, useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
-import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
 
@@ -72,7 +72,7 @@ const EditTags = () => {
 
       if(editTagIsSuccess)
       {
-        dispatch(showSuccess({ message: "Tag updtaed successfully" }));
+        dispatch(showSuccess({ message: "Tag updated successfully" }));
       }
 
       if(tagsIsSuccess && tagId !== "")
@@ -119,20 +119,21 @@ const EditTags = () => {
          id: tagId, 
          details: {
            showFilter: checked, 
-           name: tagName, 
-           notes: tagNotes, 
+           name: tagName.trim(), 
+           notes: tagNotes?tagNotes.trim():tagNotes, 
           //  status: tagStatus?tagStatus:"active" 
          }
        }).unwrap().then(() => {
          navigate("/parameters/tagsManager"); 
-       });
+       })
+       .catch((editTagError)=>dispatch(showError( { message: editTagError?.data?.message } )));
       }
       else
       {
         createTag({
           showFilter: checked, 
-          name: tagName, 
-          notes: tagNotes, 
+          name: tagName.trim(), 
+          notes: tagNotes?tagNotes.trim():tagNotes, 
           // status: tagStatus?tagStatus:"active" 
        }).unwrap().then(() => {
          navigate("/parameters/tagsManager"); 

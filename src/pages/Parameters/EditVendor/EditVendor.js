@@ -23,7 +23,7 @@ import {
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
-import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
 
@@ -106,7 +106,18 @@ const EditVendor = () => {
   useEffect(() => {
     if(editVendorIsSuccess)
     {
-      dispatch(showSuccess({ message: "Vendor updtaed successfully" }));
+      dispatch(showSuccess({ message: "Vendor updated successfully" }));
+    }
+
+    if(editVendorError)
+    {
+      if (editVendorError?.data?.message) {
+        dispatch(showError({ message: editVendorError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
 
     if(vendorProductsDataIsSuccess)
@@ -136,7 +147,7 @@ const EditVendor = () => {
       setStartDate1(vendorsData.data.data[0].startDate)
       setEndDate1(vendorsData.data.data[0].endDate)
     }
-  }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess]);
+  }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess,editVendorError]);
 
   const getNextVendorId = () => {
     setVendorIndex(prevIndex => (prevIndex + 1) % vendorsData.data.data.length);
@@ -191,20 +202,21 @@ const EditVendor = () => {
         details: {
           isFlagShip: vendorFlagShip, // Flagship status of the vendor
           showFilter: checked?checked:false, // Whether to show filters
-          name: vendorName, // Vendor name
-          notes: vendorNotes, // Vendor description
+          name: vendorName.trim(), // Vendor name
+          notes: vendorNotes?vendorNotes.trim():vendorNotes, // Vendor description
           status: vendorStatus?vendorStatus:"active" // Vendor status
         }
       }).unwrap().then(() => {
         navigate("/parameters/vendors"); // Navigating to vendors page after successful edit
-      });
+      })
+      .catch((editVendorError)=>dispatch(showError( { message: editVendorError?.data?.message } )));
      }
      else
      {
       createVendor({
         showFilter: checked, // Whether to show filters
-        name: vendorName, // Vendor name
-        notes: vendorNotes, // Vendor description
+        name: vendorName.trim(), // Vendor name
+        notes: vendorNotes?vendorNotes.trim():vendorNotes, // Vendor description
         status: vendorStatus?vendorStatus:"active" // Vendor status
       }).unwrap().then(() => {
         navigate("/parameters/vendors"); // Navigating to vendors page after successful creation
