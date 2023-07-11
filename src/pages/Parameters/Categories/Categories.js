@@ -631,7 +631,22 @@ if (sortFilter) {
                     }
                     endAdornment={
                       <InputAdornment position="end">
-                          <ChevronRightIcon/>
+                          <ChevronRightIcon className="c-pointer"  onClick={(e) =>
+                      handleAddMultiple(
+                        e,
+                        categoryFormik,
+                        setMultipleTags,
+                        multipleTags,
+                        {
+                          name: categoryFormik.values.name,
+                          status: "active",
+                          showFilter: categoryFormik.values.showFilter,
+                          description: "<p></p>",
+                          type: "active",
+                        },
+                        true
+                      )
+                    }/>
                       </InputAdornment>
                       }
                   />
@@ -796,7 +811,22 @@ if (sortFilter) {
                     }
                     endAdornment={
                       <InputAdornment position="end">
-                          <ChevronRightIcon/>
+                          <ChevronRightIcon className="c-pointer"  onClick={(e) =>
+                      handleAddMultiple(
+                        e,
+                        subCategoryFormik,
+                        setMultipleTagsForSub,
+                        multipleTagsForSub,
+                        {
+                          name: subCategoryFormik.values.name,
+                          description: "<p></p>",
+                          status: "active",
+                          categoryId: subCategoryFormik.values.categoryId,
+                          showFilter: subCategoryFormik.values.showFilter,
+                        },
+                        false
+                      )
+                    }/>
                       </InputAdornment>
                       }
                   />
