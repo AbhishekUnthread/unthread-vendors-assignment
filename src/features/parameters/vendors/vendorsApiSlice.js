@@ -36,9 +36,17 @@ export const vendorsApiSlice = apiSlice.injectEndpoints({
     }),
     deleteVendor: builder.mutation({
       query: (vendorId) => ({
-        url: `/parameters/vendor/${vendorId}`,
+        url: `/parameters/vendor/hardDelete/${vendorId}`,
         method: "DELETE",
         body: vendorId,
+      }),
+      invalidatesTags: ["Vendors"],
+    }),
+    bulkDeleteVendor:builder.mutation({
+      query: (deletes) => ({
+        url: `/parameters/vendor/bulkDelete`,
+        method: "DELETE",
+        body: deletes,
       }),
       invalidatesTags: ["Vendors"],
     }),
@@ -68,4 +76,5 @@ export const {
   useEditVendorMutation,
   useBulkCreateVendorMutation,
   useBulkEditVendorMutation,
+  useBulkDeleteVendorMutation
 } = vendorsApiSlice;

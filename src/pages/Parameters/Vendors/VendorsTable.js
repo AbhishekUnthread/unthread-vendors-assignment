@@ -82,7 +82,7 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType }) => {
+const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType, bulkDelete }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -234,7 +234,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     }
   };
 
-
+console.log("efdew",selected)
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
@@ -335,14 +335,8 @@ const handleDeleteOnClick = (row) => {
 const handleDelete =()=>{
   if(selected.length>0)
   {
-    const newState = selected.map((id) => {
-      return {
-        id
-      };
-  });
+  bulkDelete({deletes :selected})
   handleDeleteOnClick();
-  console.log("ffwe",newState)
-
   }
   else{
     deleteData(vendor?._id);

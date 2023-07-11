@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../Products/AllProducts/AllProducts.scss";
+import { useDispatch } from "react-redux";
 // ! COMPONENT IMPORTS
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import VendorsTable from "./VendorsTable";
@@ -9,9 +9,25 @@ import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import TableSearch from "../../../components/TableSearch/TableSearch";
-// ! IMAGES IMPORTS
+import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import {
+  useGetAllVendorsQuery,
+  useCreateVendorMutation,
+  useDeleteVendorMutation,
+  useBulkCreateVendorMutation,
+  useEditVendorMutation,
+  useBulkDeleteVendorMutation,
+} from "../../../features/parameters/vendors/vendorsApiSlice";
+import "../../Products/AllProducts/AllProducts.scss";
+// ! ASSETS IMPORTS
 import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
+import sort from "../../../assets/icons/sort.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg"
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -38,29 +54,12 @@ import {
   FormGroup,
   InputAdornment,
 } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import {
-  showSuccess,
-  showError,
-} from "../../../features/snackbar/snackbarAction";
-import {
-  useGetAllVendorsQuery,
-  useCreateVendorMutation,
-  useDeleteVendorMutation,
-  useBulkCreateVendorMutation,
-  useEditVendorMutation,
-} from "../../../features/parameters/vendors/vendorsApiSlice";
-import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
-import sort from "../../../assets/icons/sort.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg"
-
-
-
 // ! MATERIAL ICONS IMPORTS
+import { LoadingButton } from "@mui/lab";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -81,262 +80,186 @@ const Vendors = () => {
   const [multipleVendors,setMultipleVendors] = React.useState([]);
   const [totalCount,setTotalCount] = React.useState([]);
 
-
-    const vendorValidationSchema = Yup.object({
+  const vendorValidationSchema = Yup.object({
     name: Yup.string().trim().min(3).required("Required"),
-  // description: Yup.string().trim().min(3).required(),
-  // status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
 });
   const multipleVendorsSchema = Yup.object({
   name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
   });
 
-  const handleDelete = (value) => {
+  const queryParameters = {
+  };
+  if (selectedSortOption) {
+    // Check alphabetical sort options
+    if (selectedSortOption === "alphabeticalAtoZ" || selectedSortOption === "alphabeticalZtoA") {
+      queryParameters.alphabetical = selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
+    }
+    // Check createdAt sort options
+    else if (selectedSortOption === "oldestToNewest" || selectedSortOption === "newestToOldest") {
+      queryParameters.createdAt = selectedSortOption === "oldestToNewest" ? "1" : "-1";
+    }
+  }
+  
+  if (selectedStatusOption !== null) {
+    if (Array.isArray(selectedStatusOption)) {
+      queryParameters.status = selectedStatusOption.join(',');
+    } else {
+      queryParameters.status = selectedStatusOption;
+    }
+  }
+  if(searchValue)
+  {
+    queryParameters.name = searchValue;
+  }
+  if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
+    queryParameters.status = "active";
+    queryParameters.status = "in-active"
+  }
+  
+  const vendorTypeQuery =
+    vendorType === 0
+      ? selectedStatusOption.length>0
+        ? { status: selectedStatusOption }
+        : { status: "[active,in-active]" }
+      : vendorType === 1
+      ? { status: "active" }
+      : vendorType === 2
+      ? { status: "in-active" }
+      : vendorType === 3
+      ? { status: "archieved" }
+      : {};
+  
+    const {
+      data: vendorsData, 
+      isLoading: vendorsIsLoading, 
+      isSuccess: vendorsIsSuccess, 
+      error: vendorsError, 
+    } = useGetAllVendorsQuery({...queryParameters,...vendorTypeQuery}, { enabled: Object.keys(queryParameters).length > 0 }); 
+    // The `enabled` option determines whether the useGetAllVendorsQuery hook should be enabled or disabled based on the presence of query parameters.
+    // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
+  
+    const [
+      createVendor,
+      {
+        isLoading: createVendorIsLoading,
+        isSuccess: createVendorIsSuccess,
+        error: createVendorError,
+      },
+    ] = useCreateVendorMutation();
+  
+    const [
+      bulkCreateVendor,
+      {
+        isLoading: bulkCreateVendorIsLoading,
+        isSuccess: bulkCreateVendorIsSuccess,
+        error: bulkCreateVendorError,
+      },
+    ] =useBulkCreateVendorMutation();
+  
+    const [
+      deleteVendor,
+      {
+        isLoading: deleteVendorIsLoading,
+        isSuccess: deleteVendorIsSuccess,
+        error: deleteVendorError,
+      },
+    ] = useDeleteVendorMutation();
+  
+    const [
+      bulkDeleteVendor,
+      {
+        isLoading: bulkDeleteVendorIsLoading,
+        isSuccess: bulkDeleteVendorIsSuccess,
+        error: bulkDeleteVendorError,
+      },
+    ] = useBulkDeleteVendorMutation();
+
+
+    const vendorFormik = useFormik({
+      initialValues: {
+        name: "",
+        status: "active",
+        showFilter: false,
+      },
+      enableReinitialize: true,
+      validationSchema: multipleVendors.length > 0 ? multipleVendorsSchema : vendorValidationSchema,
+      onSubmit: (values) => {  
+        if(multipleVendors.length>0)
+        {
+          bulkCreateVendor(multipleVendors)
+        }
+        else
+        {
+          createVendor(values)
+        }
+      },
+    });
+
+    const toggleCreateModalHandler = () => {
+      setShowCreateModal((prevState) => !prevState);
+      vendorFormik.resetForm();
+      setIsEditing(false);
+      setMultipleVendors([]);
+      vendorFormik.setFieldTouched('name', false);
+      vendorFormik.setFieldError('name', '');
+  
+    };
+
+    const editCategoryPageNavigationHandler = (data) => {
+      setIsEditing(true);
+      dispatch(updateVendorId(data._id)); 
+      navigate("edit");
+    };
+
+    const changeVendorTypeHandler = (_event, tabIndex) => {
+      setVendorType(tabIndex);
+    };
+
+    const handleAddMultiple = (event) => {
+      if (event.key === 'Enter'||event.type === 'click') {
+        event.preventDefault();
+        vendorFormik.validateForm().then(() => {
+          if (vendorFormik.isValid && vendorFormik.values.name.trim() !== '') {
+            vendorFormik.setFieldTouched('name', true);
+  
+            const vendorExists = multipleVendors.some(
+              (vendor) => vendor.name.toLowerCase().trim() === vendorFormik.values.name.toLowerCase().trim()
+            );
+  
+            if (!vendorExists) {
+              setMultipleVendors((prevValues) => [
+                ...prevValues,
+                { name: vendorFormik.values.name.trim(), status: 'active', showFilter: vendorFormik.values.showFilter },
+              ]);
+              vendorFormik.resetForm();
+            }
+            else{
+              dispatch(
+                showError({ message: "Duplicate Name Value" })
+              );
+            }
+          }
+          
+        });
+      }
+    };
+
+    const handleDelete = (value) => {
     setMultipleVendors((prevValues) => prevValues.filter((v) => v.name !== value));
-  };
+    };
 
-
-//Initializes an empty object to store the query parameters.
-const queryParameters = {
-};
-
-// Check selectedSortOption
-if (selectedSortOption) {
-  // Check alphabetical sort options
-  if (selectedSortOption === "alphabeticalAtoZ" || selectedSortOption === "alphabeticalZtoA") {
-    queryParameters.alphabetical = selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
-  }
-  // Check createdAt sort options
-  else if (selectedSortOption === "oldestToNewest" || selectedSortOption === "newestToOldest") {
-    queryParameters.createdAt = selectedSortOption === "oldestToNewest" ? "1" : "-1";
-  }
-}
-
-// Check selectedStatusOption
-// if (selectedStatusOption !== null) {
-//   queryParameters.status = selectedStatusOption;
-// }
-// if (selectedStatusOption.length > 0) {
-//   if (selectedStatusOption.includes("active")) {
-//     queryParameters.status = "active";
-//   }
-
-//   if (selectedStatusOption.includes("archived")) {
-//     queryParameters.status = "archieved";
-//   }
-// }
-
-if (selectedStatusOption !== null) {
-  if (Array.isArray(selectedStatusOption)) {
-    queryParameters.status = selectedStatusOption.join(',');
-  } else {
-    queryParameters.status = selectedStatusOption;
-  }
-}
-
-// console.log("fjhvehjd",queryParameters.status = selectedStatusOption)
-if(searchValue)
-{
-  queryParameters.name = searchValue;
-}
-
-// Check if both selectedSortOption and selectedStatusOption are null
-if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
- // Set default createdAt value
-  queryParameters.status = "active";
-  queryParameters.status = "in-active"
-}
-
-const vendorTypeQuery =
-  vendorType === 0
-    ? selectedStatusOption.length>0
-      ? { status: selectedStatusOption }
-      : { status: "[active,in-active]" }
-    : vendorType === 1
-    ? { status: "active" }
-    : vendorType === 2
-    ? { status: "in-active" }
-    : vendorType === 3
-    ? { status: "archieved" }
-    : {};
-
-
-  const {
-    data: vendorsData, // Data received from the useGetAllVendorsQuery hook
-    isLoading: vendorsIsLoading, // Loading state of the vendors data
-    isSuccess: vendorsIsSuccess, // Success state of the vendors data
-    error: vendorsError, // Error state of the vendors data
-  } = useGetAllVendorsQuery({...queryParameters,...vendorTypeQuery}, { enabled: Object.keys(queryParameters).length > 0 }); 
-  // The `enabled` option determines whether the useGetAllVendorsQuery hook should be enabled or disabled based on the presence of query parameters.
-  // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
-
-  const [
-    editVendor,
-    { data: editData,
-      isLoading: editVendorIsLoading,
-      isSuccess: editVendorIsSuccess,
-      error: editVendorError },
-  ] = useEditVendorMutation();
-
-
-  const [
-    createVendor,
-    {
-      isLoading: createVendorIsLoading,
-      isSuccess: createVendorIsSuccess,
-      error: createVendorError,
-    },
-  ] = useCreateVendorMutation();
-
-  const [
-    bulkCreateVendor,
-    {
-      isLoading: bulkCreateVendorIsLoading,
-      isSuccess: bulkCreateVendorIsSuccess,
-      error: bulkCreateVendorError,
-    },
-  ] =useBulkCreateVendorMutation();
-
-  const [
-    deleteVendor,
-    {
-      isLoading: deleteVendorIsLoading,
-      isSuccess: deleteVendorIsSuccess,
-      error: deleteVendorError,
-    },
-  ] = useDeleteVendorMutation();
-
- 
-  const vendorFormik = useFormik({
-    initialValues: {
-         name: "",
-      // description: "",
-      status: "active",
-      showFilter: false,
-    },
-    enableReinitialize: true,
-    validationSchema: multipleVendors.length > 0 ? multipleVendorsSchema : vendorValidationSchema,
-    onSubmit: (values) => {  
-      if(multipleVendors.length>0)
-      {
-        bulkCreateVendor(multipleVendors)
-      }
-      else
-      {
-        createVendor(values)
-      }
-    },
-  });
-
-
-  const toggleCreateModalHandler = () => {
-    setShowCreateModal((prevState) => !prevState);
-    vendorFormik.resetForm();
-    setIsEditing(false);
-    setMultipleVendors([]);
-    vendorFormik.setFieldTouched('name', false);
-    vendorFormik.setFieldError('name', '');
-
-  };
-
-  // const ArchiveTagsHandler = (data) => {
-  //   const newStatus = data?.status === "archieved" ? "active" : "archieved";
-  //   editVendor({
-  //     id: data?._id,
-  //     details: {
-  //       status: newStatus,
-  //       showFilter:true
-  //     },
-  //   });
-  // };
   const handleDeleteVendor =(data)=>{
-
     deleteVendor(data);
-  }
-
-  const editCategoryPageNavigationHandler = (data) => {
-    // Set the flag to indicate that editing is in progress
-    setIsEditing(true);
-    // Dispatch an action to update the vendor ID
-    dispatch(updateVendorId(data._id)); //have to update corresponding vendor id
-    // Navigate to the "edit" page
-    navigate("edit");
-  };
-
-  const changeVendorTypeHandler = (_event, tabIndex) => {
-    setVendorType(tabIndex);
-  };
-
-  useEffect(() => {
-    if (createVendorIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Vendor created successfully" }));
     }
 
-    if (createVendorError) {
-      setError(true);
-      if (createVendorError?.data?.message) {
-        dispatch(showError({ message: createVendorError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
+  const handleBulkDeleteVendor =(data)=>{
+    bulkDeleteVendor(data);
     }
 
-    if (bulkCreateVendorIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Vendors created successfully" }));
-    }
-  }, [bulkCreateVendorIsSuccess,createVendorIsSuccess,createVendorError,])
-  
+  const handleSearchChange = (event) => {
+      setSearchValue(event.target.value);
+    };
 
-  
-  useEffect(() => {
-
-    if(editVendorIsSuccess)
-    {
-      dispatch(showSuccess({ message: "Status updated successfully" }));
-    }
-
-    if (vendorsError) {
-      setError(true);
-      if (vendorsError?.data?.message) {
-        dispatch(showError({ message: vendorsError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-
-    if (vendorsIsSuccess) {
-      setError(false);
-      if (vendorType === 0) {
-        setVendorList(vendorsData.data.data);
-        setTotalCount(vendorsData.data.totalCount)
-      }
-      if (vendorType === 1) {
-        setVendorList(vendorsData.data.data);
-        setTotalCount(vendorsData.data.totalCount)
-      }
-      if(vendorType === 2)
-      {
-        setVendorList(vendorsData.data.data);
-        setTotalCount(vendorsData.data.totalCount)
-      }
-      if(vendorType === 3)
-      {
-        setVendorList(vendorsData.data.data);
-        setTotalCount(vendorsData.data.totalCount)
-      }
-    }
-  }, [
-    vendorsData,
-    vendorsIsSuccess,
-    vendorsError,
-    vendorType,
-  ]);
  // * SORT POPOVERS STARTS HERE
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
@@ -353,74 +276,12 @@ const vendorTypeQuery =
     setAnchorSortEl(null); // Close the popover after selecting a value
   };
 
-  
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
 
  // * SORT POPOVERS ENDS
 
-  // * STATUS POPOVERS STARTS HERE
-  // const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
-
-  // const handleStatusClick = (event) => {
-  //   setAnchorStatusEl(event.currentTarget);
-  // };
-
-  // const handleStatusClose = () => {
-  //   setAnchorStatusEl(null);
-  // };
-
-  // const handleStatusRadioChange = (event) => {
-  //   setSelectedStatusOption(event.target.value);
-  //   setAnchorStatusEl(null); // Close the popover after selecting a value
-  // };
-
-  // const openStatus = Boolean(anchorStatusEl);
-  // const idStatus = openStatus ? "simple-popover" : undefined;
- // * STATUS POPOVERS ENDS
-
-
-  const handleSearchChange = (event) => {
-    setSearchValue(event.target.value);
-  };
-
-
-  const handleAddMultiple = (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      vendorFormik.validateForm().then(() => {
-        if (vendorFormik.isValid && vendorFormik.values.name !== '') {
-          vendorFormik.setFieldTouched('name', true);
-          setMultipleVendors((prevValues) => [
-            ...prevValues,
-            { name: vendorFormik.values.name, status: 'active', showFilter: vendorFormik.values.showFilter },
-          ]);
-          vendorFormik.resetForm();
-        }
-      });
-    }
-  };
-
-   // * SORT POPOVERS STARTS HERE
-  // const [anchorSortE1, setAnchorSortE1] = React.useState(null);
-  // const openSort = Boolean(anchorSortE1);
-  // const idSort = openSort ? "simple-popover" : undefined;
-
-  // const handleSortClose = () => {
-  //   setAnchorSortE1(null);
-  // };
-  
-  // const handleSortClick = (event) => {
-  //   setAnchorSortE1(event.currentTarget);
-  // };
-  // const handleSortCheckboxChange = (event) => {
-  //   const { value, checked } = event.target;
-  //   setSelectedSortOption(checked ? value : null);
-  //   setAnchorSortE1(null);
-  // };
-   // * SORT POPOVERS ENDS
-
-  // * STATUS POPOVERS STARTS HERE
+ // * STATUS POPOVERS STARTS HERE
   const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
   const handleStatusClick = (event) => {
     setAnchorStatusEl(event.currentTarget);
@@ -430,11 +291,6 @@ const vendorTypeQuery =
     setAnchorStatusEl(null);
   };
 
-  // const handleStatusCheckboxChange = (event) => {
-  //   const { value, checked } = event.target;
-  //   setSelectedStatusOption(checked ? value : null);
-  //   setAnchorStatusEl(null); 
-  // };
   const handleStatusCheckboxChange = (event) => {
     const { value } = event.target;
   
@@ -451,6 +307,89 @@ const vendorTypeQuery =
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
  // * STATUS POPOVERS ENDS
+
+
+  useEffect(() => {
+  if(createVendorIsSuccess)
+  {
+    setShowCreateModal(false);
+    dispatch(showSuccess({ message: "Vendor created successfully" }));
+  }
+  if(createVendorError)
+  {
+    setError(true);
+    if (createVendorError?.data?.message) {
+      dispatch(showError({ message: createVendorError?.data?.message }));
+    }
+    else {
+      dispatch(
+        showError({ message: "Something went wrong!, please try again" })
+      );
+    }
+  }
+
+ }, [createVendorIsSuccess,createVendorError])
+ 
+  useEffect(() => {
+
+  if(bulkCreateVendorIsSuccess)
+  {
+      setShowCreateModal(false);
+     dispatch(showSuccess({ message: "Vendors created successfully" }));
+  }
+
+  if (bulkCreateVendorError ) {
+    setError(true);
+    if(bulkCreateVendorError?.data?.message)
+    {
+      dispatch(showError({ message: bulkCreateVendorError.data.message }));
+    }
+    else {
+      dispatch(
+        showError({ message: "Something went wrong!, please try again" })
+      );
+    }
+  }
+}, [bulkCreateVendorError,bulkCreateVendorIsSuccess])
+
+  useEffect(() => {
+  if (vendorsError) {
+    setError(true);
+    if (vendorsError?.data?.message) {
+      dispatch(showError({ message: vendorsError.data.message }));
+    } else {
+      dispatch(
+        showError({ message: "Something went wrong!, please try again" })
+      );
+    }
+  }
+  if (vendorsIsSuccess) {
+    setError(false);
+    if (vendorType === 0) {
+      setVendorList(vendorsData.data.data);
+      setTotalCount(vendorsData.data.totalCount)
+    }
+    if (vendorType === 1) {
+      setVendorList(vendorsData.data.data);
+      setTotalCount(vendorsData.data.totalCount)
+    }
+    if(vendorType === 2)
+    {
+      setVendorList(vendorsData.data.data);
+      setTotalCount(vendorsData.data.totalCount)
+    }
+    if(vendorType === 3)
+    {
+      setVendorList(vendorsData.data.data);
+      setTotalCount(vendorsData.data.totalCount)
+    }
+  }
+    }, [
+      vendorsData,
+      vendorsIsSuccess,
+      vendorType,
+      createVendorIsSuccess,bulkCreateVendorIsSuccess,createVendorError,bulkCreateVendorError,
+    ]);
 
   return (
     <div className="container-fluid page">
@@ -516,7 +455,7 @@ const vendorTypeQuery =
                     onKeyDown={handleAddMultiple}
                     endAdornment={
                     <InputAdornment position="end">
-                        <ChevronRightIcon/>
+                        <ChevronRightIcon className="c-pointer" onClick={handleAddMultiple}/>
                     </InputAdornment>
                     }
                   />
@@ -638,7 +577,7 @@ const vendorTypeQuery =
                   className="button-gradient py-2 px-5"
                   type="submit"
                 >
-                  <p>Save</p>
+                  <p>Create</p>
                 </LoadingButton>
               </DialogActions>
             </form>
@@ -671,7 +610,7 @@ const vendorTypeQuery =
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch onChange={handleSearchChange} />
+            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
             <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idStatus}
@@ -957,6 +896,7 @@ const vendorTypeQuery =
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
               deleteData={handleDeleteVendor}
+              bulkDelete={handleBulkDeleteVendor}
               vendorType={vendorType}
 
             />

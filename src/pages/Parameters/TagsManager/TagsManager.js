@@ -385,17 +385,29 @@ const {
   });
 
   const handleAddMultiple = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter'||event.type === 'click') {
       event.preventDefault();
       TagFormik.validateForm().then(() => {
-        if (TagFormik.isValid && TagFormik.values.name !== '') {
+        if (TagFormik.isValid && TagFormik.values.name.trim() !== '') {
           TagFormik.setFieldTouched('name', true);
+
+        // Check if the entered tag already exists in the array
+        const tagExists = multipleTags.some(
+          (tag) => tag.name.toLowerCase().trim() === TagFormik.values.name.toLowerCase().trim()
+        );
+        if (!tagExists) {
           setMultipleTags((prevValues) => [
             ...prevValues,
-            { name: TagFormik.values.name, status: 'active', filter: TagFormik.values.showFilter },
+            { name: TagFormik.values.name.trim(), status: 'active', filter: TagFormik.values.showFilter },
           ]);
-          TagFormik.resetForm();
         }
+        else{
+          dispatch(
+            showError({ message: "Duplicate Tag Value" })
+          );
+        }
+        }
+        TagFormik.resetForm();
       });
     }
   };
@@ -516,7 +528,7 @@ const {
                  onKeyDown={handleAddMultiple}
                  endAdornment={
                     <InputAdornment position="end">
-                        <ChevronRightIcon/>
+                        <ChevronRightIcon className="c-pointer" onClick={handleAddMultiple}/>
                     </InputAdornment>
                     }
                   />
@@ -582,7 +594,7 @@ const {
               // disabled={createTagsIsLoading}
               type="submit"
               >
-                <p>Save</p>
+                <p>Create</p>
               </LoadingButton>
             </DialogActions>
             </form>
