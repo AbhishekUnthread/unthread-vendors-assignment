@@ -23,7 +23,7 @@ import {
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
-import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
 
@@ -49,8 +49,6 @@ const EditVendor = () => {
   const [checked, setChecked] = React.useState(false);
   const vendorId = useSelector((state)=>state.vendor.vendorId)
   const [products,setProducts] = React.useState([])
-  const [startDate1, setStartDate1] = useState(null)
-  const [endDate1, setEndDate1] = useState(null)
   const [vendorDuplicateName, setVendorDuplicateName] = useState("");
   const [duplicateDescription, setDuplicateDescription] = useState(false);
   const [duplicateFilter, setDuplicateFilter] = useState(false);
@@ -59,19 +57,12 @@ const EditVendor = () => {
   const [hideFooter, setHideFooter] = useState(false);
   const [vendorNameError, setVendorNameError] = useState('');
 
+  const [initialName, setInitailName] = useState("");
+  const [initialNotes, setInitailNotes] = useState("");
+  const [initialStatus, setInitailStatus] = useState("active");
+  const [initialFilter, setInitailFilter] = useState(false);
 
-  // useEffect(() => {
-  //   const handleKeyDown = (event) => {
-  //     setHideFooter(true);
-  //   };
-  //   window.addEventListener('keydown', handleKeyDown);
-  //   return () => {
-  //     window.removeEventListener('keydown', handleKeyDown);
-  //   };
-  // }, []); 
-
-
-
+  
   const {
     data : vendorProductsData,
     isLoading:vendorProductsDataIsLoading,
@@ -106,7 +97,18 @@ const EditVendor = () => {
   useEffect(() => {
     if(editVendorIsSuccess)
     {
-      dispatch(showSuccess({ message: "Vendor updtaed successfully" }));
+      dispatch(showSuccess({ message: "Vendor updated successfully" }));
+    }
+
+    if(editVendorError)
+    {
+      if (editVendorError?.data?.message) {
+        dispatch(showError({ message: editVendorError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
 
     if(vendorProductsDataIsSuccess)
@@ -118,29 +120,26 @@ const EditVendor = () => {
       // If vendorsIsSuccess is true, set the vendor name based on the data from the API response
 
       // setIndex(vendorsData.data.data.findIndex(vendor => vendor._id === vendorId));
-      // console.log({url:index});
       // const vendor = vendorsData.data.data[index];
       // setVendorName(vendor?.name);
       // setVendorFlagShip(vendor?.isFlagShip);
       // setVendorNotes(vendor?.notes);
       // setVendorStatus(vendor?.status);
       // setChecked(vendor?.showFilter);
-      // setStartDate1(vendor?.startDate);
-      // setEndDate1(vendor?.endDate);
-
       setVendorName(vendorsData.data.data[0].name);
+      setInitailName(vendorsData.data.data[0].name)
       setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
       setVendorNotes(vendorsData.data.data[0].notes)
+      setInitailNotes(vendorsData.data.data[0].notes)
       setVendorStatus(vendorsData.data.data[0].status)
+      setInitailStatus(vendorsData.data.data[0].status)
       setChecked(vendorsData.data.data[0].showFilter)
-      setStartDate1(vendorsData.data.data[0].startDate)
-      setEndDate1(vendorsData.data.data[0].endDate)
+      setInitailFilter(vendorsData.data.data[0].showFilter)
     }
-  }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess]);
+  }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess,editVendorError]);
 
   const getNextVendorId = () => {
     setVendorIndex(prevIndex => (prevIndex + 1) % vendorsData.data.data.length);
-    console.log({urln:vendorIndex})
     setIndex(vendorIndex)
   };
 
@@ -151,11 +150,11 @@ const EditVendor = () => {
   
     const vendorNotesChange=(event)=>{
       setVendorNotes(event.target.value);
-      setHideFooter(true);
+      // setHideFooter(true);
     }
     const vendorStatusChange=(event,vendorStatus)=>{
       setVendorStatus(vendorStatus);
-      setHideFooter(true);
+      // setHideFooter(true);
     }   
 
     // const handleNameChange = (event) => {
@@ -164,7 +163,7 @@ const EditVendor = () => {
     // };
     const handleNameChange = (event) => {
       const newName = event.target.value;
-      setHideFooter(true);
+      // setHideFooter(true);
       validationSchema
         .validate({ vendorName: newName })
         .then(() => {
@@ -179,7 +178,7 @@ const EditVendor = () => {
 
     const handleFilterChange=(event)=>{
       setChecked(event.target.checked);
-      setHideFooter(true);
+      // setHideFooter(true);
     }
     const handleSubmit = () => {
       if (!vendorNameError) {
@@ -191,20 +190,21 @@ const EditVendor = () => {
         details: {
           isFlagShip: vendorFlagShip, // Flagship status of the vendor
           showFilter: checked?checked:false, // Whether to show filters
-          name: vendorName, // Vendor name
-          notes: vendorNotes, // Vendor description
+          name: vendorName.trim(), // Vendor name
+          notes: vendorNotes?vendorNotes.trim():vendorNotes, // Vendor description
           status: vendorStatus?vendorStatus:"active" // Vendor status
         }
       }).unwrap().then(() => {
         navigate("/parameters/vendors"); // Navigating to vendors page after successful edit
-      });
+      })
+      .catch((editVendorError)=>dispatch(showError( { message: editVendorError?.data?.message } )));
      }
      else
      {
       createVendor({
         showFilter: checked, // Whether to show filters
-        name: vendorName, // Vendor name
-        notes: vendorNotes, // Vendor description
+        name: vendorName.trim(), // Vendor name
+        notes: vendorNotes?vendorNotes.trim():vendorNotes, // Vendor description
         status: vendorStatus?vendorStatus:"active" // Vendor status
       }).unwrap().then(() => {
         navigate("/parameters/vendors"); // Navigating to vendors page after successful creation
@@ -251,7 +251,6 @@ const EditVendor = () => {
 
 
     const handleNextItem = ()=>{
-      console.log("hey");
       getNextVendorId();
       
     }
@@ -295,6 +294,15 @@ const EditVendor = () => {
         });
     };
     // ? DUPLICATE VENDOR DIALOG ENDS HERE
+
+    useEffect(() => {
+      setHideFooter(
+        vendorName.trim() !== initialName ||
+        (vendorNotes !== initialNotes && vendorNotes !== "") ||
+        vendorStatus !== initialStatus ||
+        checked !== initialFilter
+      );
+    }, [vendorName, vendorNotes, vendorStatus, checked]);
     
   return (
     <div className="page container-fluid position-relative user-group">
@@ -411,18 +419,18 @@ const EditVendor = () => {
       </div>
       
 
-      {/* <SaveFooterSecondary
+      <SaveFooterSecondary
           show={hideFooter}
           onDiscard={backHandler}
           isLoading={editVendorIsLoading}
           handleSubmit={handleSubmit}
-        /> */}
+        />
 
 
-        { hideFooter && <div className="row create-buttons pt-5 justify-content-between " style={{ width: '104%' }}>
+        {/* { hideFooter && <div className="row create-buttons pt-5 justify-content-between " style={{ width: '104%' }}>
           <SaveFooter handleSubmit={handleSubmit} />          
         </div>
-           }
+           } */}
 
       <Dialog
         open={openDuplicateVendor}

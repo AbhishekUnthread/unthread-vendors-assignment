@@ -408,7 +408,6 @@ const handleDelete =()=>{
                   {stableSort(list, getComparator(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
-                      console.log("Fefew",row)
                       const isItemSelected = isSelected(row._id);
                       const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -474,11 +473,11 @@ const handleDelete =()=>{
                           </TableCell> */}
                           <TableCell style={{ width: 140, padding: 0 }}>
                             <div className="d-flex align-items-center">
-                              <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
+                              <div className="rounded-pill d-flex px-2 py-1 statusBoxWidth"
                                style={{background: 
                                row.status == "active" ? "#A6FAAF" :
                                row.status == "in-active" ? "#F67476" : 
-                               row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
+                               row.status == "archieved" ? "#C8D8FF" : "#FEE1A3",cursor: "context-menu"
                                }}>
                                 <small className="text-black fw-400">
                                   {
