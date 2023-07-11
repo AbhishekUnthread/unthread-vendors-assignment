@@ -81,7 +81,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import sort from "../../../assets/icons/sort.svg";
-
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = forwardRef(function Transition(props, ref) {
@@ -289,12 +289,26 @@ const {
   error: tagsError,
 } = useGetAllTagsQuery({...queryParameters,...TagTypeQuery}, { enabled: Object.keys(queryParameters).length > 0 });
 
+    useEffect(() => {
+      if (createTagsIsSuccess) {
+        setShowCreateModal(false);
+        dispatch(showSuccess({ message: "Tag created successfully" }));
+      }
+      if(bulkCreateTagsIsSuccess)
+      {
+        setShowCreateModal(false);
+        dispatch(showSuccess({ message: "Tags created successfully" }));
+      }
+
+    }, [bulkCreateTagsIsSuccess,createTagsIsSuccess])
+    
+
     
     useEffect(() => {
 
       if(editTagIsSuccess)
       {
-        dispatch(showSuccess({ message: "Status updtaed successfully" }));
+        dispatch(showSuccess({ message: "Status updated successfully" }));
       }
 
       if (tagsError) {
@@ -318,18 +332,8 @@ const {
           setTotalCount(tagsData.data.totalCount);
         }
       }
-
-      if (createTagsIsSuccess) {
-        setShowCreateModal(false);
-        dispatch(showSuccess({ message: "Tag created successfully" }));
-      }
-      if(bulkCreateTagsIsSuccess)
-      {
-        setShowCreateModal(false);
-        dispatch(showSuccess({ message: "Tags created successfully" }));
-      }
       
-    }, [tagsType,tagsIsSuccess,tagsError,tagsData,dispatch,bulkCreateTagsIsSuccess,bulkTagEditIsSuccess])
+    }, [tagsType,tagsIsSuccess,tagsError,tagsData,dispatch,bulkTagEditIsSuccess])
     
     const editTagsPageNavigationHandler = (data) => {
       dispatch(updateTagId(data._id)); 
@@ -502,6 +506,7 @@ const {
               <p className="text-lightBlue mb-2">Create Tags</p>
               <FormControl className="col-7 px-0">
                 <OutlinedInput
+                 sx={{pr:1}}
                  placeholder="Enter Tag Name" 
                  size="small"
                  name="name"
@@ -509,6 +514,11 @@ const {
                  onChange={TagFormik.handleChange}
                  onBlur={TagFormik.handleBlur}
                  onKeyDown={handleAddMultiple}
+                 endAdornment={
+                    <InputAdornment position="end">
+                        <ChevronRightIcon/>
+                    </InputAdornment>
+                    }
                   />
                 {!!TagFormik.touched.name && TagFormik.errors.name && (
                     <FormHelperText error>

@@ -92,4 +92,4 @@ const SaveFooterSecondary = (props) => {
 };
 
 export default SaveFooter;
-export { SaveFooterSecondary };
+export { SaveFooterSecondary};

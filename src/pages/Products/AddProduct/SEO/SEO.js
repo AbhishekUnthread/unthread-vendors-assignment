@@ -52,8 +52,8 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
     enableReinitialize: true,
   });
   useEffect(()=>{
-    if(!isEmpty(seoValue) && isFirstTimeRender === true){
-      console.log(seoValue,!isEmpty(seoValue),isFirstTimeRender)
+    
+    if(!isEmpty(seoValue) && isFirstTimeRender === true && seoName !==''){
       seoFormik.setFieldValue("title", seoValue && seoValue.title ? seoValue.title : seoName);
       seoFormik.setFieldValue("description", seoValue && seoValue.description ? seoValue.description : "");
       seoFormik.setFieldValue("slug", seoValue && seoValue.slug ? seoValue.slug : generateUrlName(seoName));
@@ -61,15 +61,15 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
       setIsFirstTimeRender(false)
     }
 
-    if(isEmpty(seoValue) && seoName){
-      console.log(seoValue,isEmpty(seoValue))
-      seoFormik.setFieldValue("title", seoValue && seoValue.title ? seoValue.title : seoName);
-      seoFormik.setFieldValue("description", seoValue && seoValue.description ? seoValue.description : "");
-      seoFormik.setFieldValue("slug", seoValue && seoValue.slug ? seoValue.slug : generateUrlName(seoName));
-      setMultipleTags(seoValue && seoValue.metaKeywords ? seoValue.metaKeywords : []);
+    if(isEmpty(seoValue) && isFirstTimeRender === true && seoName !==''){
+      seoFormik.setFieldValue("title",  seoName);
+      seoFormik.setFieldValue("description",  "");
+      seoFormik.setFieldValue("slug",  generateUrlName(seoName));
+      setMultipleTags( []);
+      setIsFirstTimeRender(false)
     }
     
-  },[seoValue,isFirstTimeRender])
+  },[seoValue,seoName,isFirstTimeRender])
   
   useEffect(()=>{
     let seoItems={}

@@ -25,6 +25,7 @@ import {
   TableHead,
   Typography,
   Checkbox,
+  InputAdornment,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -44,6 +45,7 @@ import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 import sort from "../../../assets/icons/sort.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import {
   showSuccess,
@@ -62,6 +64,8 @@ import {
   useSubCategoryBulkCreateTagMutation,
   useBulkEditTagCategoryMutation,
   useBulkEditTagSubCategoryMutation,
+  useBulkDeleteSubCategoryMutation,
+  useBulkDeleteCategoryMutation,
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
@@ -76,10 +80,10 @@ const categoryValidationSchema = Yup.object({
   status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
 });
 const multipleCategorySchema = Yup.object({
-  name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
+  name: Yup.string().trim().min(3, "Name must be at least 3 characters long"),
 });
 const multipleSubCategorySchema = Yup.object({
-  name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
+  name: Yup.string().trim().min(3, "Name must be at least 3 characters long"),
 });
 const subCategoryValidationSchema = Yup.object({
   name: Yup.string().trim().min(3).required("required"),
@@ -92,7 +96,7 @@ const Categories = () => {
   const dispatch = useDispatch();
   const [categoryType, setCategoryType] = useState(0);
   const [categoryList, setCategoryList] = useState([]);
-  const [subCategoryList,setSubCategoryList] = useState([])
+  const [subCategoryList, setSubCategoryList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
   const [showCreatePopover, setShowCreatePopover] = useState(null);
@@ -103,56 +107,70 @@ const Categories = () => {
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
   const [statusFilter, setStatusFilter] = React.useState([]);
   const [multipleTags, setMultipleTags] = useState([]);
-  const [multipleTagsForSub,setMultipleTagsForSub] = useState([])
+  const [multipleTagsForSub, setMultipleTagsForSub] = useState([]);
   const [searchValue, setSearchValue] = useState("");
-  const [categoryTotalCount,setCategoryTotalCount] = React.useState([]);
-  const [subCategoryTotalCount,setSubCategoryTotalCount] = React.useState([]);
+  const [categoryTotalCount, setCategoryTotalCount] = React.useState([]);
+  const [subCategoryTotalCount, setSubCategoryTotalCount] = React.useState([]);
   const filterParameter = {};
 
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
-  }
-  
+  };
 
-  if (sortFilter) {
-    if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
-      filterParameter.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
-    }
-    else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
-      filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
-    }
-  }
+ 
 
-  const categoryTypeQuery = categoryType === 0 ? { createdAt: -1 }
-  : categoryType === 1 ? { status: statusFilter }
-  : categoryType === 2 ? { createdAt: -1, status: ["archieved"] }
-  : categoryType === 3 ? { createdAt: -1, status: ["archieved"] }
-  : {};
+  const categoryTypeQuery =
+    categoryType === 0
+      ? {
+          createdAt: -1,
+          status:
+            statusFilter.length > 0
+              ? statusFilter
+              : "active,in-active,scheduled",
+        }
+      : categoryType === 1
+      ? {
+          createdAt: -1,
+          status:
+            statusFilter.length > 0
+              ? statusFilter
+              : "active,in-active,scheduled",
+        }
+      : categoryType === 2
+      ? { createdAt: -1, status: ["archieved"] }
+      : categoryType === 3
+      ? { createdAt: -1, status: ["archieved"] }
+      : {};
 
   const filterParams = { ...filterParameter, ...categoryTypeQuery };
   if (searchValue) {
     filterParams.name = searchValue;
   }
 
-  if (statusFilter.length === 0) {
-    filterParams.status =  "active,scheduled,in-active";
-  }else{
-    filterParams.status = statusFilter
+  // Check SortOption
+if (sortFilter) {
+  // Check alphabetical sort options
+  if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
+    filterParams.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
   }
-
+  // Check createdAt sort options
+  else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
+    filterParams.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+  }
+}
 
   const {
     data: categoriesData,
     isLoading: categoriesIsLoading,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({...filterParams});
+  } = useGetAllCategoriesQuery({ ...filterParams });
   const {
     data: subCategoriesData,
     isLoading: subCategoriesIsLoading,
     isSuccess: subCategoriesIsSuccess,
     error: subCategoriesError,
-  } = useGetAllSubCategoriesQuery({...filterParams});
+  } = useGetAllSubCategoriesQuery({ ...filterParams });
   const [
     createCategory,
     {
@@ -202,6 +220,22 @@ const Categories = () => {
     },
   ] = useDeleteSubCategoryMutation();
   const [
+    bulkDeleteSubCategory,
+    {
+      isLoading: bulkDeleteSubCategoryIsLoading,
+      isSuccess: bulkDeleteSubCategoryIsSuccess,
+      error: bulkDeleteSubCategoryError,
+    },
+  ] = useBulkDeleteSubCategoryMutation();
+  const [
+    bulkDeleteCategory,
+    {
+      isLoading: bulkDeleteCategoryIsLoading,
+      isSuccess: bulkDeleteCategoryIsSuccess,
+      error: bulkDeleteCategoryError,
+    },
+  ] = useBulkDeleteCategoryMutation();
+  const [
     editCategory,
     {
       isLoading: editCategoryIsLoading,
@@ -218,21 +252,25 @@ const Categories = () => {
     },
   ] = useEditSubCategoryMutation();
 
-  const[bulkEditCategory,
+  const [
+    bulkEditCategory,
     {
       data: bulkEditCategoryTag,
       isLoading: bulkTagEditCategoryLoading,
       isSuccess: bulkTagEditCategoryIsSuccess,
       error: bulkTagEditCategoryError,
-    }]=useBulkEditTagCategoryMutation();
+    },
+  ] = useBulkEditTagCategoryMutation();
 
-    const[bulkEditSubCategory,
-      {
-        data: bulkEditSubCategoryTag,
-        isLoading: bulkTagEditSubCategoryLoading,
-        isSuccess: bulkTagEditSubCategoryIsSuccess,
-        error: bulkTagEditSubCategoryError,
-      }]=useBulkEditTagSubCategoryMutation();
+  const [
+    bulkEditSubCategory,
+    {
+      data: bulkEditSubCategoryTag,
+      isLoading: bulkTagEditSubCategoryLoading,
+      isSuccess: bulkTagEditSubCategoryIsSuccess,
+      error: bulkTagEditSubCategoryError,
+    },
+  ] = useBulkEditTagSubCategoryMutation();
 
   const categoryFormik = useFormik({
     initialValues: {
@@ -242,20 +280,26 @@ const Categories = () => {
       showFilter: false,
     },
     enableReinitialize: true,
-    validationSchema:multipleTags.length>0 ? multipleCategorySchema: categoryValidationSchema,
+    validationSchema:
+      multipleTags.length > 0
+        ? multipleCategorySchema
+        : categoryValidationSchema,
     onSubmit: (values) => {
-      if (isEditing) {
-        editCategory({ id: editId, details: values })
-          .unwrap()
-          .then(() => categoryFormik.resetForm());
-      } else if (multipleTags.length > 0) {
+      if (multipleTags.length > 0) {
         bulkCreateCategory(multipleTags)
           .unwrap()
-          .then(() => categoryFormik.resetForm());
+          .then(() => {
+            setMultipleTags([])
+            categoryFormik.resetForm()
+          }).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       } else {
         createCategory(values)
           .unwrap()
-          .then(() => categoryFormik.resetForm());
+          .then(() => categoryFormik.resetForm()).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       }
     },
   });
@@ -268,25 +312,35 @@ const Categories = () => {
       showFilter: false,
     },
     enableReinitialize: true,
-    validationSchema: multipleTagsForSub.length > 0? multipleSubCategorySchema : subCategoryValidationSchema,
+    validationSchema:
+      multipleTagsForSub.length > 0
+        ? multipleSubCategorySchema
+        : subCategoryValidationSchema,
     onSubmit: (values) => {
+      toggleCreateSubModalHandler();
+      setCategoryType(1);
       if (multipleTagsForSub.length > 0) {
-        bulkCreateSubCategory(multipleTagsForSub).unwrap()
-        .then(() => {
-          subCategoryFormik.resetForm()
-          setMultipleTagsForSub([])
-        });
+        bulkCreateSubCategory(multipleTagsForSub)
+          .unwrap()
+          .then(() => {
+            subCategoryFormik.resetForm();
+            setMultipleTagsForSub([]);
+          }).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       } else {
         createSubCategory(values)
           .unwrap()
-          .then(() => subCategoryFormik.resetForm());
+          .then(() => subCategoryFormik.resetForm()).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       }
     },
   });
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryType(tabIndex);
-    setSearchValue("")
+    setSearchValue("");
   };
 
   const toggleCreateModalHandler = () => {
@@ -295,7 +349,7 @@ const Categories = () => {
     categoryFormik.resetForm();
     setIsEditing(false);
     setEditId(null);
-    setMultipleTags([])
+    setMultipleTags([]);
   };
 
   const toggleCreateSubModalHandler = () => {
@@ -304,7 +358,7 @@ const Categories = () => {
     subCategoryFormik.resetForm();
     setIsEditing(false);
     setEditId(null);
-    setMultipleTagsForSub([])
+    setMultipleTagsForSub([]);
   };
 
   const toggleCreatePopoverHandler = (e) => {
@@ -342,7 +396,7 @@ const Categories = () => {
 
   const handleStatusChange = (event) => {
     const selectedStatus = event.target.value;
-    console.log(selectedStatus)
+    console.log(selectedStatus);
     if (event.target.value) {
       if (statusFilter.length === 0) {
         let item = [];
@@ -360,89 +414,45 @@ const Categories = () => {
     }
   };
 
-
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
   // * STATUS POPOVERS ENDS
 
   const deleteCategoryHandler = (data) => {
-        deleteCategory(data._id);  
+    deleteCategory(data._id);
   };
 
-  const deleteSubCategoryHandler = (data)=>{
-    deleteSubCategory(data._id)
-  }
-
- 
+  const deleteSubCategoryHandler = (data) => {
+    deleteSubCategory(data._id);
+  };
 
   useEffect(() => {
-    if (categoriesError) {
-      setError(true);
-      if (categoriesError.data?.message) {
-        dispatch(showError({ message: categoriesError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-    if (subCategoriesError) {
-      setError(true);
-      if (subCategoriesError.data?.message) {
-        dispatch(showError({ message: subCategoriesError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-
-    if (createCategoryError) {
-      setError(true);
-      if (createCategoryError.data?.message) {
-        dispatch(showError({ message: createCategoryError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-    if (createSubCategoryError) {
-      setError(true);
-      if (createSubCategoryError.data?.message) {
-        dispatch(showError({ message: createSubCategoryError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-
+    
     if (categoriesIsSuccess && subCategoriesIsSuccess) {
       setError(false);
 
       if (categoryType === 0) {
         setCategoryList(categoriesData.data.data);
-        setCategoryTotalCount(categoriesData.data.totalCount)
+        setCategoryTotalCount(categoriesData.data.totalCount);
       }
       if (categoryType === 1) {
         setSubCategoryList(subCategoriesData.data.data);
-        setSubCategoryTotalCount(subCategoriesData.data.totalCount)
+        setSubCategoryTotalCount(subCategoriesData.data.totalCount);
       }
       if (categoryType === 2) {
         setCategoryList(categoriesData.data.data);
-        setCategoryTotalCount(categoriesData.data.totalCount)
+        setCategoryTotalCount(categoriesData.data.totalCount);
       }
       if (categoryType === 3) {
-        setSubCategoryList(subCategoriesData.data.data)
-        setSubCategoryTotalCount(subCategoriesData.data.totalCount)
+        setSubCategoryList(subCategoriesData.data.data);
+        setSubCategoryTotalCount(subCategoriesData.data.totalCount);
       }
     }
-    if (createCategoryIsSuccess ) {
+    if (createCategoryIsSuccess) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Category created successfully" }));
     }
-    
+
     if (deleteCategoryIsSuccess) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Category deleted successfully" }));
@@ -451,11 +461,11 @@ const Categories = () => {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Categories created successfully" }));
     }
-    if (createSubCategoryIsSuccess ) {
+    if (createSubCategoryIsSuccess) {
       setShowCreateSubModal(false);
       dispatch(showSuccess({ message: "Sub Category created successfully" }));
     }
-    if(deleteSubCategoryIsSuccess){
+    if (deleteSubCategoryIsSuccess) {
       setShowCreateSubModal(false);
       dispatch(showSuccess({ message: "Sub Category deleted successfully" }));
     }
@@ -475,26 +485,25 @@ const Categories = () => {
     categoryType,
     bulkTagEditSubCategoryIsSuccess,
     bulkCreateSubTagsIsSuccess,
+    bulkDeleteSubCategoryIsSuccess,
+    bulkDeleteSubCategoryIsSuccess,
     dispatch,
     sortFilter,
   ]);
 
-  const handleAddMultiple = (event,Formik,setTags,tags,data,flag) => {
-    if (event.key === "Enter") {
+  const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
+    if (event.key === "Enter"|| event.type === 'click') {
       event.preventDefault();
       Formik.validateForm().then(() => {
         if (Formik.isValid && Formik.values.name !== "") {
           Formik.setFieldTouched("name", true);
-          let tagName = tags.map(item=> item.name)
-          if(!tagName.includes(data.name)){
-            setTags((prevValues) => [
-              ...prevValues,
-              data,
-            ]);
+          let tagName = tags.map((item) => item.name?.trim()?.toLowerCase());
+          if (!tagName.includes(data.name?.trim()?.toLowerCase())) {
+            setTags((prevValues) => [...prevValues, data]);
           }
-          if(flag){  
+          if (flag) {
             Formik.resetForm();
-          }else{
+          } else {
             Formik.setFieldValue("name", "");
           }
         }
@@ -502,14 +511,14 @@ const Categories = () => {
     }
   };
 
-  const handleDelete = (value,setMultipleTags) => {
+  const handleDelete = (value, setMultipleTags) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v.name !== value));
   };
 
-  const subModalOpenHandler= (row)=>{
-    setShowCreateSubModal(prev => !prev)
-    subCategoryFormik.setFieldValue("categoryId",row._id)
-  }
+  const subModalOpenHandler = (row) => {
+    setShowCreateSubModal((prev) => !prev);
+    subCategoryFormik.setFieldValue("categoryId", row._id);
+  };
 
   return (
     <div className="container-fluid page">
@@ -604,13 +613,42 @@ const Categories = () => {
                     value={categoryFormik.values.name}
                     onBlur={categoryFormik.handleBlur}
                     onChange={categoryFormik.handleChange}
-                    onKeyDown={(e)=>handleAddMultiple(e,categoryFormik,setMultipleTags,multipleTags,{
-                      name: categoryFormik.values.name,
-                      status: "active",
-                      showFilter: categoryFormik.values.showFilter,
-                      description:"<p></p>",
-                      type:"active"
-                    },true)}
+                    onKeyDown={(e) =>
+                      handleAddMultiple(
+                        e,
+                        categoryFormik,
+                        setMultipleTags,
+                        multipleTags,
+                        {
+                          name: categoryFormik.values.name,
+                          status: "active",
+                          showFilter: categoryFormik.values.showFilter,
+                          description: "<p></p>",
+                          type: "active",
+                        },
+                        true
+                      )
+                    }
+                    endAdornment={
+                      <InputAdornment position="end">
+                          <ChevronRightIcon className="c-pointer"  onClick={(e) =>
+                      handleAddMultiple(
+                        e,
+                        categoryFormik,
+                        setMultipleTags,
+                        multipleTags,
+                        {
+                          name: categoryFormik.values.name,
+                          status: "active",
+                          showFilter: categoryFormik.values.showFilter,
+                          description: "<p></p>",
+                          type: "active",
+                        },
+                        true
+                      )
+                    }/>
+                      </InputAdornment>
+                      }
                   />
                   {!!categoryFormik.touched.name &&
                     categoryFormik.errors.name && (
@@ -650,7 +688,9 @@ const Categories = () => {
                       return (
                         <Chip
                           label={data.name}
-                          onDelete={() => handleDelete(data.name,setMultipleTags)}
+                          onDelete={() =>
+                            handleDelete(data.name, setMultipleTags)
+                          }
                           onClick={() => {}}
                           size="small"
                           className="mt-3 me-2"
@@ -658,7 +698,6 @@ const Categories = () => {
                       );
                     })}
                 </div>
-                
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -692,9 +731,7 @@ const Categories = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">
-                    {`Sub Category`}
-                  </h5>
+                  <h5 className="text-lightBlue fw-500">{`Sub Category`}</h5>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -756,13 +793,42 @@ const Categories = () => {
                     value={subCategoryFormik.values.name}
                     onBlur={subCategoryFormik.handleBlur}
                     onChange={subCategoryFormik.handleChange}
-                    onKeyDown={(e)=>handleAddMultiple(e,subCategoryFormik,setMultipleTagsForSub,multipleTagsForSub,{
-                      name: subCategoryFormik.values.name,
-                      description: "<p></p>",
-                      status: "active",
-                      categoryId: subCategoryFormik.values.categoryId,
-                      showFilter: subCategoryFormik.values.showFilter,
-                    },false)}
+                    onKeyDown={(e) =>
+                      handleAddMultiple(
+                        e,
+                        subCategoryFormik,
+                        setMultipleTagsForSub,
+                        multipleTagsForSub,
+                        {
+                          name: subCategoryFormik.values.name,
+                          description: "<p></p>",
+                          status: "active",
+                          categoryId: subCategoryFormik.values.categoryId,
+                          showFilter: subCategoryFormik.values.showFilter,
+                        },
+                        false
+                      )
+                    }
+                    endAdornment={
+                      <InputAdornment position="end">
+                          <ChevronRightIcon className="c-pointer"  onClick={(e) =>
+                      handleAddMultiple(
+                        e,
+                        subCategoryFormik,
+                        setMultipleTagsForSub,
+                        multipleTagsForSub,
+                        {
+                          name: subCategoryFormik.values.name,
+                          description: "<p></p>",
+                          status: "active",
+                          categoryId: subCategoryFormik.values.categoryId,
+                          showFilter: subCategoryFormik.values.showFilter,
+                        },
+                        false
+                      )
+                    }/>
+                      </InputAdornment>
+                      }
                   />
                   {!!subCategoryFormik.touched.name &&
                     subCategoryFormik.errors.name && (
@@ -771,7 +837,7 @@ const Categories = () => {
                       </FormHelperText>
                     )}
                 </FormControl>
-                <br/>
+                <br />
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -803,7 +869,9 @@ const Categories = () => {
                       return (
                         <Chip
                           label={data.name}
-                          onDelete={() => handleDelete(data.name,setMultipleTagsForSub)}
+                          onDelete={() =>
+                            handleDelete(data.name, setMultipleTagsForSub)
+                          }
                           onClick={() => {}}
                           size="small"
                           className="mt-3 me-2"
@@ -811,7 +879,6 @@ const Categories = () => {
                       );
                     })}
                 </div>
-               
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
               <DialogActions className="d-flex justify-content-between px-4 py-3">
@@ -823,9 +890,6 @@ const Categories = () => {
                   <p className="text-lightBlue">Cancel</p>
                 </button>
                 <LoadingButton
-                onClick={()=>{
-                  toggleCreateSubModalHandler()
-                  setCategoryType(0)}}
                   loading={
                     createSubCategoryIsLoading || editSubCategoryIsLoading
                   }
@@ -868,7 +932,10 @@ const Categories = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch  searchValue={searchValue} handleSearchChange={handleSearchChange} />
+            <TableSearch
+              searchValue={searchValue}
+              handleSearchChange={handleSearchChange}
+            />
             <div className="d-flex">
               <button
                 className="button-grey py-2 px-3 ms-2"
@@ -897,24 +964,30 @@ const Categories = () => {
                 <FormControl className="px-2 py-1">
                   <FormControlLabel
                     value="active"
-                    control={<Checkbox size="small" sx={{ color: "#C8D8FF" }}/>}
+                    control={
+                      <Checkbox size="small" sx={{ color: "#C8D8FF" }} />
+                    }
                     label="Active"
                     onChange={handleStatusChange}
-                    checked={statusFilter.includes('active')}
+                    checked={statusFilter.includes("active")}
                   />
                   <FormControlLabel
                     value="in-active"
-                    control={<Checkbox size="small" sx={{ color: "#C8D8FF" }}/>}
+                    control={
+                      <Checkbox size="small" sx={{ color: "#C8D8FF" }} />
+                    }
                     label="In-Active"
                     onChange={handleStatusChange}
-                    checked={statusFilter.includes('in-active')}
+                    checked={statusFilter.includes("in-active")}
                   />
                   <FormControlLabel
                     value="scheduled"
-                    control={<Checkbox size="small" sx={{ color: "#C8D8FF" }}/>}
+                    control={
+                      <Checkbox size="small" sx={{ color: "#C8D8FF" }} />
+                    }
                     label="Scheduled"
                     onChange={handleStatusChange}
-                    checked={statusFilter.includes('scheduled')}
+                    checked={statusFilter.includes("scheduled")}
                   />
                 </FormControl>
               </Popover>
@@ -989,6 +1062,7 @@ const Categories = () => {
                   bulkSubEdit={bulkEditSubCategory}
                   editCategory={editCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteCategory={bulkDeleteCategory}
                   archived={true}
                   totalCount={categoryTotalCount}
                 />
@@ -1002,12 +1076,13 @@ const Categories = () => {
                   edit={true}
                   bulkEdit={bulkEditSubCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteSubCategory={bulkDeleteSubCategory}
                   archived={true}
                   totalCount={subCategoryTotalCount}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={2}>
-              <CategoriesTable
+                <CategoriesTable
                   isLoading={categoriesIsLoading}
                   deleteData={deleteCategoryHandler}
                   error={error}
@@ -1017,12 +1092,13 @@ const Categories = () => {
                   bulkSubEdit={bulkEditSubCategory}
                   editCategory={editCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteCategory={bulkDeleteCategory}
                   archived={false}
                   totalCount={categoryTotalCount}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={3}>
-              <SubCategoriesTable
+                <SubCategoriesTable
                   isLoading={subCategoriesIsLoading}
                   deleteData={deleteSubCategoryHandler}
                   error={error}
@@ -1030,6 +1106,7 @@ const Categories = () => {
                   edit={true}
                   bulkEdit={bulkEditSubCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteSubCategory={bulkDeleteSubCategory}
                   archived={false}
                   totalCount={subCategoryTotalCount}
                 />

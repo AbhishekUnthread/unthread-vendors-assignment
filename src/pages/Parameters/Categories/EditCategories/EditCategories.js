@@ -105,16 +105,7 @@ const EditCategories = () => {
   }, [categoriesIsSuccess, dispatch]);
 
 
-  useEffect(()=>{
-    if(categoriesError){
-      if (categoriesError.data?.message) {
-        dispatch(showError({ message: categoriesError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );}
-    }
-  },[categoriesError])
+ 
 
 
   const handleNameChange = (event) => {
@@ -152,7 +143,7 @@ const EditCategories = () => {
         .unwrap()
         .then(() => {
           dispatch(showSuccess({message:"Category Updated Successfully"}))
-        })
+        }).catch((categoriesError)=>dispatch(showError({ message: categoriesError?.data?.message })))
     } else {
       createCategory({
         showFilter: checked, // Whether to show filters
@@ -243,7 +234,7 @@ const EditCategories = () => {
       />
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
+          <div className="features border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Category Name</p>
@@ -360,10 +351,11 @@ const EditCategories = () => {
           /> */}
           <div className="mt-4">
             <UploadMediaBox
-              imageName={addMedia}
-              headingName={"Media"}
-              UploadChange={setCategoryMediaUrl}
-              imageValue={categoryMediaUrl}
+               imageName={addMedia} 
+               headingName={"Media"} 
+               UploadChange={setCategoryMediaUrl} 
+               previousImage={categoryMediaUrl}
+               isUploaded={()=>{}}
             />
           </div>
           <NotesBox

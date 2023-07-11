@@ -83,6 +83,7 @@ const SubCategoriesTable = ({
   isLoading,
   bulkEdit,
   editSubCategory,
+  bulkDeleteSubCategory,
   archived,
   totalCount
 }) => {
@@ -204,10 +205,13 @@ const SubCategoriesTable = ({
     setRowData(row);
   };
 
-  function deleteData(){
+  function deleteSubData(){
     setShowDeleteModal(false)
-    if(forMassAction === true){
-      setSelectedStatus(massActionStatus)
+    if(selected.length > 0 && forMassAction === true){
+      const newState = selected.map(i=>i)
+      bulkDeleteSubCategory({deletes:newState}).then(()=>{
+        dispatch(showSuccess({ message: "Deleted this sub categories successfully" }));
+      })
       return
     }
     deleteData(rowData)
@@ -271,7 +275,7 @@ const SubCategoriesTable = ({
           </button>
 
           <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Archieved']} headingName="Edit Status"/>
-          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={archived?['Edit','Set as Archived']:["Set as Un-Archived"]}/>
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={archived?['Edit','Set as Archived']:["Delete","Set as Un-Archived"]}/>
         </div>
       )}
       {!error ? (
@@ -504,8 +508,8 @@ const SubCategoriesTable = ({
             <img src={question} alt="question" width={200} />
             <div className="row"></div>
             <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive this category 
-              {forMassAction == false &&<span className="text-blue-2">{rowData?.title} </span>} ?
+              Are you sure you want to Archive this Sub category 
+              {forMassAction == false &&<span className="text-blue-2">{rowData?.name} </span>} ?
             </h6>
             <div className="d-flex justify-content-center mt-4">
               <hr className="hr-grey-6 w-100" />
@@ -516,13 +520,13 @@ const SubCategoriesTable = ({
               className="button-red-outline py-2 px-3 me-5"
               onClick={toggleArchiveModalHandler}
             >
-              <p>Cancel</p>
+              <p>No</p>
             </button>
             <button
               className="button-gradient py-2 px-3 ms-5"
               onClick={deleteRowData}
             >
-              <p>Archived</p>
+              <p>Yes</p>
             </button>
           </DialogActions>
         </Dialog>
@@ -536,7 +540,7 @@ const SubCategoriesTable = ({
        name={"This Sub Category"}
        showCreateModal={showDeleteModal}
        toggleArchiveModalHandler={toggleDeleteModalHandler}
-       handleArchive={deleteData}
+       handleArchive={deleteSubData}
         />
     </React.Fragment>
   );
