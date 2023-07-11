@@ -46,7 +46,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateSubCategoryMutation, useEditSubCategoryMutation, useGetAllCategoriesQuery, useGetAllSubCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
 import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
-import { showSuccess } from "../../../../features/snackbar/snackbarAction";
+import { showError, showSuccess } from "../../../../features/snackbar/snackbarAction";
 import cancel from "../../../../assets/icons/cancel.svg";
 import { LoadingButton } from "@mui/lab";
 
@@ -124,6 +124,8 @@ const EditSubCategories = () => {
     }
   }, [subCategoriesIsSuccess]);
 
+  
+
   const handleSubmit = () => {
     if (subCategoryId !== "") {
       let editItem ={
@@ -152,7 +154,7 @@ const EditSubCategories = () => {
         .unwrap()
         .then(() => {
           dispatch(showSuccess({message:"Sub Category Updated Successfully"}))
-        });
+        }).catch((editSubCategoryError)=>dispatch(showError({ message: editSubCategoryError?.data?.message?.name })))
     } else {
       createSubCategory({
           name: subCategoryName,
@@ -178,8 +180,13 @@ const EditSubCategories = () => {
   }
 
   
-  const toggleCreateSubModalHandler = () => {
+  const toggleCreateSubModalHandler = (flag) => {
+    if(flag){
+      setShowCreateSubModal((prevState) => !prevState);
+      return
+    }
     setShowCreateSubModal((prevState) => !prevState);
+    setCategoryName(subCategoriesData?.data?.data?.[0].category?.[0]?.name || "")
   };
 
 
@@ -205,7 +212,7 @@ const EditSubCategories = () => {
       </div>
       <div className="row mt-3">
         <div className="col-lg-9 mt-3">
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
+          <div className="features border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Sub-Category Name</p>
@@ -265,7 +272,12 @@ const EditSubCategories = () => {
                       MenuProps={{ PaperProps: { sx: { maxHeight: 150 } } }}
                       name="categoryId"
                       value={subCategoryPatentId}
-                      onChange={(e)=>setSubCategoryParentId(e.target.value)}
+                      onChange={(e)=>{
+                        setSubCategoryParentId(e.target.value)
+                        let categoriesId = categoriesData?.data?.data?.map(item=>item?._id)
+                        let indexOfCategory = categoriesId?.indexOf(e.target.value)
+                        setCategoryName(categoriesData?.data?.data?.[indexOfCategory]?.name)
+                      }}
                     >
                       <MenuItem key={""} value={"Select Category"}>
                         Select Category
@@ -299,7 +311,7 @@ const EditSubCategories = () => {
                   disabled={
                     createSubCategoryIsLoading 
                   }
-                  onClick={toggleCreateSubModalHandler}
+                  onClick={()=>toggleCreateSubModalHandler(true)}
                   className="button-gradient py-2 px-5"
                 >
                   <p>Save</p>

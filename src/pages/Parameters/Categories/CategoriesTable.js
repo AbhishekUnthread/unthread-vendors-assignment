@@ -44,7 +44,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
-import question from '../../../assets/images/products/question.svg'
+import question from "../../../assets/images/products/question.svg";
 import moment from "moment";
 // ? TABLE STARTS HERE
 
@@ -144,7 +144,7 @@ const CategoriesTable = ({
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [handleStatusValue, setHandleStatusValue] = useState("in-active");
   const [toggleCategoris, setToggleCategoris] = useState(true);
-  const [showDeleteModal,setShowDeleteModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [forMassAction, setForMassAction] = React.useState(false);
   const [massActionStatus, setMassActionStatus] = React.useState("");
 
@@ -243,7 +243,7 @@ const CategoriesTable = ({
             id,
             status: "archieved",
           };
-        }else if (selectedStatus === "Set as Un-Archived") {
+        } else if (selectedStatus === "Set as Un-Archived") {
           return {
             id,
             status: handleStatusValue,
@@ -255,30 +255,29 @@ const CategoriesTable = ({
           };
         }
       });
-      if(toggleCategoris){
-
+      if (toggleCategoris) {
         bulkEdit({ updates: newState })
           .unwrap()
           .then(() =>
             dispatch(showSuccess({ message: " Status updated successfully" }))
           );
         setSelectedStatus(null);
-      }else{
+      } else {
         bulkSubEdit({ updates: newState })
-        .unwrap()
-        .then(() =>
-          dispatch(showSuccess({ message: " Status updated successfully" }))
-        );
-        setToggleCategoris(true)
-      setSelectedStatus(null);
+          .unwrap()
+          .then(() =>
+            dispatch(showSuccess({ message: " Status updated successfully" }))
+          );
+        setToggleCategoris(true);
+        setSelectedStatus(null);
       }
-      }
+    }
   }, [selected, selectedStatus]);
 
   function handleTableRowChange(row) {
     let categoryId = {};
     categoryId.categoryId = row._id;
-    categoryId.status = ['active','scheduled','in-active']
+    categoryId.status = ["active", "scheduled", "in-active"];
     setFilterParameter(categoryId);
     if (open.length === 0) {
       let item = [];
@@ -300,10 +299,10 @@ const CategoriesTable = ({
     setRowData(row);
   };
 
-  const toggleDeleteModalHandler =(row)=>{
-    setShowDeleteModal((prevState) => !prevState)
+  const toggleDeleteModalHandler = (row) => {
+    setShowDeleteModal((prevState) => !prevState);
     setRowData(row);
-  }
+  };
 
   const toggleUnArchiveModalHandler = (row) => {
     setShowUnArchivedModal((prevState) => !prevState);
@@ -312,9 +311,9 @@ const CategoriesTable = ({
 
   function handleArchived() {
     setShowArchivedModal(false);
-    if(forMassAction === true){
-      setSelectedStatus(massActionStatus)
-      return
+    if (forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      return;
     }
     if (toggleCategoris && forMassAction === false) {
       editCategory({
@@ -340,9 +339,9 @@ const CategoriesTable = ({
 
   function handleUnArchived() {
     setShowUnArchivedModal(false);
-    if(forMassAction === true){
-      setSelectedStatus(massActionStatus)
-      return
+    if (forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      return;
     }
     if (toggleCategoris && forMassAction === false) {
       editCategory({
@@ -368,28 +367,24 @@ const CategoriesTable = ({
     }
   }
 
-  function deleteDatas(){
-    if(forMassAction === true){
-      setSelectedStatus(massActionStatus)
-      return
+  function deleteDatas() {
+    if (forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      return;
     }
-    setShowDeleteModal(false)
-     deleteData(rowData)
-      dispatch(
-        showSuccess({ message: "Deleted this category successfully" })
-      );
-   
-
+    setShowDeleteModal(false);
+    deleteData(rowData);
+    dispatch(showSuccess({ message: "Deleted this category successfully" }));
   }
 
-  const handleMassAction  = (status) => {
+  const handleMassAction = (status) => {
     setMassActionStatus(status);
-    setForMassAction(true)
-    if(status === "Set as Archived") {
+    setForMassAction(true);
+    if (status === "Set as Archived") {
       setShowArchivedModal(true);
-    } else if(status === "Set as Un-Archived") {
+    } else if (status === "Set as Un-Archived") {
       setShowUnArchivedModal(true);
-    } else if(status === "Delete") {
+    } else if (status === "Delete") {
       setShowDeleteModal(true);
     }
   };
@@ -415,7 +410,13 @@ const CategoriesTable = ({
             defaultValue={["Set as Active", "Set as Archived"]}
             headingName="Edit Status"
           />
-          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={archived?['Edit','Set as Archived']:["Set as Un-Archived"]}/>
+          <TableMassActionButton
+            headingName="Mass Action"
+            onSelect={handleMassAction}
+            defaultValue={
+              archived ? ["Edit", "Set as Archived"] : ["Set as Un-Archived"]
+            }
+          />
         </div>
       )}
       {!error ? (
@@ -453,7 +454,7 @@ const CategoriesTable = ({
                             key={index}
                             selected={isItemSelected}
                             className="table-rows"
-                            sx={{ "& > *": { borderBottom: "unset" } }}
+                            // sx={{ "& > *": { borderBottom: "unset" } }}
                           >
                             <TableCell padding="checkbox">
                               <Checkbox
@@ -523,40 +524,55 @@ const CategoriesTable = ({
                             </TableCell>
 
                             <TableCell style={{ width: 180, padding: 0 }}>
-                      <div className="d-block">
-                        <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
-                          style={{background: 
-                            row.status == "active" ? "#A6FAAF" : 
-                            row.status == "in-active" ? "#F67476" : 
-                            row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
-                          }}>
-                          <small className="text-black fw-500">
-                            {
-                              row.status == "active" ? "Active" :  
-                              row.status == "in-active" ? "In-Active" : 
-                              row.status == "archieved" ? "Archived" : "Scheduled"
-                            }
-                          </small>
-                        </div>
-                        { row.status == "scheduled" && 
-                          <div>
-                            <small className="text-blue-2">
-                              {row.startDate && (
-                                <>
-                                  for {moment(row.startDate).format("DD/MM/YYYY")}
-                                </>
-                              )}
-                              {row.startDate && row.endDate && ' '}
-                              {row.endDate && (
-                                <>
-                                  till {moment(row.endDate).format("DD/MM/YYYY")}
-                                </>
-                              )}
-                            </small>
-                          </div>
-                        }
-                      </div>
-                    </TableCell>
+                              <div className="d-block">
+                                <div
+                                  className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
+                                  style={{
+                                    background:
+                                      row.status == "active"
+                                        ? "#A6FAAF"
+                                        : row.status == "in-active"
+                                        ? "#F67476"
+                                        : row.status == "archieved"
+                                        ? "#C8D8FF"
+                                        : "#FEE1A3",
+                                  }}
+                                >
+                                  <small className="text-black fw-500">
+                                    {row.status == "active"
+                                      ? "Active"
+                                      : row.status == "in-active"
+                                      ? "In-Active"
+                                      : row.status == "archieved"
+                                      ? "Archived"
+                                      : "Scheduled"}
+                                  </small>
+                                </div>
+                                {row.status == "scheduled" && (
+                                  <div>
+                                    <small className="text-blue-2">
+                                      {row.startDate && (
+                                        <>
+                                          for{" "}
+                                          {moment(row.startDate).format(
+                                            "DD/MM/YYYY"
+                                          )}
+                                        </>
+                                      )}
+                                      {row.startDate && row.endDate && " "}
+                                      {row.endDate && (
+                                        <>
+                                          till{" "}
+                                          {moment(row.endDate).format(
+                                            "DD/MM/YYYY"
+                                          )}
+                                        </>
+                                      )}
+                                    </small>
+                                  </div>
+                                )}
+                              </div>
+                            </TableCell>
                             <TableCell style={{ width: 120, padding: 0 }}>
                               <div className="d-flex align-items-center">
                                 {edit && archived && (
@@ -601,7 +617,7 @@ const CategoriesTable = ({
                                   <Tooltip title={"Delete"} placement="top">
                                     <div
                                       onClick={(e) => {
-                                        toggleDeleteModalHandler(row)
+                                        toggleDeleteModalHandler(row);
                                       }}
                                       className="table-edit-icon rounded-4 p-2"
                                     >
@@ -666,9 +682,9 @@ const CategoriesTable = ({
                                         numSelected={selected.length}
                                         order={order}
                                         orderBy={orderBy}
-                                        onSelectAllClick={(e)=>{
-                                          setToggleCategoris(false)
-                                          handleSelectAllClickForSub(e)
+                                        onSelectAllClick={(e) => {
+                                          setToggleCategoris(false);
+                                          handleSelectAllClickForSub(e);
                                         }}
                                         onRequestSort={handleRequestSort}
                                         rowCount={subCategoryList?.length}
@@ -713,14 +729,15 @@ const CategoriesTable = ({
                                                         "aria-labelledby":
                                                           labelId,
                                                       }}
-                                                      onClick={(event) =>
-                                                        { 
-                                                         setToggleCategoris(false)
+                                                      onClick={(event) => {
+                                                        setToggleCategoris(
+                                                          false
+                                                        );
                                                         handleClick(
                                                           event,
                                                           row._id
-                                                        )}
-                                                      }
+                                                        );
+                                                      }}
                                                       size="small"
                                                       style={{
                                                         color: "#5C6D8E",
@@ -833,7 +850,7 @@ const CategoriesTable = ({
                                                             </div>
                                                           </Tooltip>
                                                         )}
-                                                      
+
                                                       {deleteSubData && (
                                                         <Tooltip
                                                           title={
@@ -941,51 +958,59 @@ const CategoriesTable = ({
         handleArchive={handleArchived}
       /> */}
       <Dialog
-          open={showArchivedModal}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={toggleArchiveModalHandler}
-          aria-describedby="alert-dialog-slide-description"
-          maxWidth="sm"
-        >
-          <DialogContent className="py-2 px-4 text-center">
-            <img src={question} alt="question" width={200} />
-            <div className="row"></div>
-            <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive this category 
-              {forMassAction == false &&<span className="text-blue-2">{rowData?.title} </span>} ?
-            </h6>
-            <div className="d-flex justify-content-center mt-4">
-              <hr className="hr-grey-6 w-100" />
-            </div>
-          </DialogContent>
-          <DialogActions className="d-flex justify-content-between px-4 pb-4">
-            <button
-              className="button-red-outline py-2 px-3 me-5"
-              onClick={toggleArchiveModalHandler}
-            >
-              <p>Cancel</p>
-            </button>
-            <button
-              className="button-gradient py-2 px-3 ms-5"
-              onClick={handleArchived}
-            >
-              <p>Archived</p>
-            </button>
-          </DialogActions>
-        </Dialog>
+        open={showArchivedModal}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={toggleArchiveModalHandler}
+        aria-describedby="alert-dialog-slide-description"
+        maxWidth="sm"
+      >
+        <DialogContent className="py-2 px-4 text-center">
+          <img src={question} alt="question" width={200} />
+          <div className="row"></div>
+          <h6 className="text-lightBlue mt-2 mb-2">
+            Are you sure you want to Archive this category
+            {forMassAction == false && (
+              <span className="text-blue-2">{rowData?.name} </span>
+            )}
+            ?
+          </h6>
+          {
+           rowData?.totalSubCategory > 0 && <h6 className="text-lightBlue mt-2 mb-2">
+            This category has {rowData?.totalSubCategory} subcategories 
+          </h6>
+          }
+          <div className="d-flex justify-content-center mt-4">
+            <hr className="hr-grey-6 w-100" />
+          </div>
+        </DialogContent>
+        <DialogActions className="d-flex justify-content-between px-4 pb-4">
+          <button
+            className="button-red-outline py-2 px-3 me-5"
+            onClick={toggleArchiveModalHandler}
+          >
+            <p>No</p>
+          </button>
+          <button
+            className="button-gradient py-2 px-3 ms-5"
+            onClick={handleArchived}
+          >
+            <p>Yes</p>
+          </button>
+        </DialogActions>
+      </Dialog>
       <UnArchivedModal
         showUnArchivedModal={showUnArchivedModal}
         closeUnArchivedModal={() => setShowUnArchivedModal(false)}
         handleUnArchived={handleUnArchived}
         handleStatusValue={setHandleStatusValue}
       />
-       <DeleteModal
-       name={""}
-       showCreateModal={showDeleteModal}
-       toggleArchiveModalHandler={toggleDeleteModalHandler}
-       handleArchive={deleteDatas}
-        />
+      <DeleteModal
+        name={""}
+        showCreateModal={showDeleteModal}
+        toggleArchiveModalHandler={toggleDeleteModalHandler}
+        handleArchive={deleteDatas}
+      />
     </React.Fragment>
   );
 };

@@ -59,7 +59,7 @@ const EnhancedTableHeadSubTable = (props) => {
 
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow className="MuiTableHead-root" sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
