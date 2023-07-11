@@ -25,6 +25,7 @@ import {
   TableHead,
   Typography,
   Checkbox,
+  InputAdornment,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -44,6 +45,7 @@ import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 import sort from "../../../assets/icons/sort.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import {
   showSuccess,
@@ -62,6 +64,8 @@ import {
   useSubCategoryBulkCreateTagMutation,
   useBulkEditTagCategoryMutation,
   useBulkEditTagSubCategoryMutation,
+  useBulkDeleteSubCategoryMutation,
+  useBulkDeleteCategoryMutation,
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
@@ -113,20 +117,7 @@ const Categories = () => {
     setSearchValue(event.target.value);
   };
 
-  if (sortFilter) {
-    if (
-      sortFilter === "alphabeticalAtoZ" ||
-      sortFilter === "alphabeticalZtoA"
-    ) {
-      filterParameter.alphabetical =
-        sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
-    } else if (
-      sortFilter === "oldestToNewest" ||
-      sortFilter === "newestToOldest"
-    ) {
-      filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
-    }
-  }
+ 
 
   const categoryTypeQuery =
     categoryType === 0
@@ -155,6 +146,18 @@ const Categories = () => {
   if (searchValue) {
     filterParams.name = searchValue;
   }
+
+  // Check SortOption
+if (sortFilter) {
+  // Check alphabetical sort options
+  if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
+    filterParams.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+  }
+  // Check createdAt sort options
+  else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
+    filterParams.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+  }
+}
 
   const {
     data: categoriesData,
@@ -217,6 +220,22 @@ const Categories = () => {
     },
   ] = useDeleteSubCategoryMutation();
   const [
+    bulkDeleteSubCategory,
+    {
+      isLoading: bulkDeleteSubCategoryIsLoading,
+      isSuccess: bulkDeleteSubCategoryIsSuccess,
+      error: bulkDeleteSubCategoryError,
+    },
+  ] = useBulkDeleteSubCategoryMutation();
+  const [
+    bulkDeleteCategory,
+    {
+      isLoading: bulkDeleteCategoryIsLoading,
+      isSuccess: bulkDeleteCategoryIsSuccess,
+      error: bulkDeleteCategoryError,
+    },
+  ] = useBulkDeleteCategoryMutation();
+  const [
     editCategory,
     {
       isLoading: editCategoryIsLoading,
@@ -266,18 +285,21 @@ const Categories = () => {
         ? multipleCategorySchema
         : categoryValidationSchema,
     onSubmit: (values) => {
-      if (isEditing) {
-        editCategory({ id: editId, details: values })
-          .unwrap()
-          .then(() => categoryFormik.resetForm());
-      } else if (multipleTags.length > 0) {
+      if (multipleTags.length > 0) {
         bulkCreateCategory(multipleTags)
           .unwrap()
-          .then(() => categoryFormik.resetForm());
+          .then(() => {
+            setMultipleTags([])
+            categoryFormik.resetForm()
+          }).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       } else {
         createCategory(values)
           .unwrap()
-          .then(() => categoryFormik.resetForm());
+          .then(() => categoryFormik.resetForm()).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       }
     },
   });
@@ -303,11 +325,15 @@ const Categories = () => {
           .then(() => {
             subCategoryFormik.resetForm();
             setMultipleTagsForSub([]);
-          });
+          }).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       } else {
         createSubCategory(values)
           .unwrap()
-          .then(() => subCategoryFormik.resetForm());
+          .then(() => subCategoryFormik.resetForm()).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       }
     },
   });
@@ -401,48 +427,7 @@ const Categories = () => {
   };
 
   useEffect(() => {
-    if (categoriesError) {
-      setError(true);
-      if (categoriesError.data?.message) {
-        dispatch(showError({ message: categoriesError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-    if (subCategoriesError) {
-      setError(true);
-      if (subCategoriesError.data?.message) {
-        dispatch(showError({ message: subCategoriesError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-
-    if (createCategoryError) {
-      setError(true);
-      if (createCategoryError.data?.message) {
-        dispatch(showError({ message: createCategoryError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-    if (createSubCategoryError) {
-      setError(true);
-      if (createSubCategoryError.data?.message) {
-        dispatch(showError({ message: createSubCategoryError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-
+    
     if (categoriesIsSuccess && subCategoriesIsSuccess) {
       setError(false);
 
@@ -500,12 +485,14 @@ const Categories = () => {
     categoryType,
     bulkTagEditSubCategoryIsSuccess,
     bulkCreateSubTagsIsSuccess,
+    bulkDeleteSubCategoryIsSuccess,
+    bulkDeleteSubCategoryIsSuccess,
     dispatch,
     sortFilter,
   ]);
 
   const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
-    if (event.key === "Enter"||event.type === 'click') {
+    if (event.key === "Enter"|| event.type === 'click') {
       event.preventDefault();
       Formik.validateForm().then(() => {
         if (Formik.isValid && Formik.values.name !== "") {
@@ -642,6 +629,11 @@ const Categories = () => {
                         true
                       )
                     }
+                    endAdornment={
+                      <InputAdornment position="end">
+                          <ChevronRightIcon/>
+                      </InputAdornment>
+                      }
                   />
                   {!!categoryFormik.touched.name &&
                     categoryFormik.errors.name && (
@@ -802,6 +794,11 @@ const Categories = () => {
                         false
                       )
                     }
+                    endAdornment={
+                      <InputAdornment position="end">
+                          <ChevronRightIcon/>
+                      </InputAdornment>
+                      }
                   />
                   {!!subCategoryFormik.touched.name &&
                     subCategoryFormik.errors.name && (
@@ -1035,6 +1032,7 @@ const Categories = () => {
                   bulkSubEdit={bulkEditSubCategory}
                   editCategory={editCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteCategory={bulkDeleteCategory}
                   archived={true}
                   totalCount={categoryTotalCount}
                 />
@@ -1048,6 +1046,7 @@ const Categories = () => {
                   edit={true}
                   bulkEdit={bulkEditSubCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteSubCategory={bulkDeleteSubCategory}
                   archived={true}
                   totalCount={subCategoryTotalCount}
                 />
@@ -1063,6 +1062,7 @@ const Categories = () => {
                   bulkSubEdit={bulkEditSubCategory}
                   editCategory={editCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteCategory={bulkDeleteCategory}
                   archived={false}
                   totalCount={categoryTotalCount}
                 />
@@ -1076,6 +1076,7 @@ const Categories = () => {
                   edit={true}
                   bulkEdit={bulkEditSubCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteSubCategory={bulkDeleteSubCategory}
                   archived={false}
                   totalCount={subCategoryTotalCount}
                 />

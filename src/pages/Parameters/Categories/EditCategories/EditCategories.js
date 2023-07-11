@@ -143,7 +143,7 @@ const EditCategories = () => {
         .unwrap()
         .then(() => {
           dispatch(showSuccess({message:"Category Updated Successfully"}))
-        }).catch((categoriesError)=>dispatch(showError({ message: categoriesError?.data?.message?.name })))
+        }).catch((categoriesError)=>dispatch(showError({ message: categoriesError?.data?.message })))
     } else {
       createCategory({
         showFilter: checked, // Whether to show filters
@@ -351,10 +351,11 @@ const EditCategories = () => {
           /> */}
           <div className="mt-4">
             <UploadMediaBox
-              imageName={addMedia}
-              headingName={"Media"}
-              UploadChange={setCategoryMediaUrl}
-              imageValue={categoryMediaUrl}
+               imageName={addMedia} 
+               headingName={"Media"} 
+               UploadChange={setCategoryMediaUrl} 
+               previousImage={categoryMediaUrl}
+               isUploaded={()=>{}}
             />
           </div>
           <NotesBox

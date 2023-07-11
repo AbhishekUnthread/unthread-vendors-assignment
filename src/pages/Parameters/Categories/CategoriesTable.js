@@ -123,6 +123,7 @@ const CategoriesTable = ({
   subModalOpenHandler,
   bulkEdit,
   bulkSubEdit,
+  bulkDeleteCategory,
   editCategory,
   editSubCategory,
   archived,
@@ -255,22 +256,25 @@ const CategoriesTable = ({
           };
         }
       });
-      if (toggleCategoris) {
-        bulkEdit({ updates: newState })
-          .unwrap()
-          .then(() =>
-            dispatch(showSuccess({ message: " Status updated successfully" }))
-          );
-        setSelectedStatus(null);
-      } else {
-        bulkSubEdit({ updates: newState })
-          .unwrap()
-          .then(() =>
-            dispatch(showSuccess({ message: " Status updated successfully" }))
-          );
-        setToggleCategoris(true);
-        setSelectedStatus(null);
-      }
+      
+        if (toggleCategoris) {
+          bulkEdit({ updates: newState })
+            .unwrap()
+            .then(() =>
+              dispatch(showSuccess({ message: " Status updated successfully" }))
+            );
+          setSelectedStatus(null);
+        } else {
+          bulkSubEdit({ updates: newState })
+            .unwrap()
+            .then(() =>
+              dispatch(showSuccess({ message: " Status updated successfully" }))
+            );
+          setToggleCategoris(true);
+          setSelectedStatus(null);
+        }
+      
+      
     }
   }, [selected, selectedStatus]);
 
@@ -368,9 +372,12 @@ const CategoriesTable = ({
   }
 
   function deleteDatas() {
-    if (forMassAction === true) {
-      setSelectedStatus(massActionStatus);
-      return;
+    if(selected.length > 0 && forMassAction === true){
+      const newState = selected.map(i=>i)
+      bulkDeleteCategory({deletes:newState}).then(()=>{
+        dispatch(showSuccess({ message: "Deleted this categories successfully" }));
+      })
+      return
     }
     setShowDeleteModal(false);
     deleteData(rowData);
@@ -414,7 +421,7 @@ const CategoriesTable = ({
             headingName="Mass Action"
             onSelect={handleMassAction}
             defaultValue={
-              archived ? ["Edit", "Set as Archived"] : ["Set as Un-Archived"]
+              archived ? ["Edit", "Set as Archived"] : ["Delete","Set as Un-Archived"]
             }
           />
         </div>
