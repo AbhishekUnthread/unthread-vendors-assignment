@@ -113,20 +113,7 @@ const Categories = () => {
     setSearchValue(event.target.value);
   };
 
-  if (sortFilter) {
-    if (
-      sortFilter === "alphabeticalAtoZ" ||
-      sortFilter === "alphabeticalZtoA"
-    ) {
-      filterParameter.alphabetical =
-        sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
-    } else if (
-      sortFilter === "oldestToNewest" ||
-      sortFilter === "newestToOldest"
-    ) {
-      filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
-    }
-  }
+ 
 
   const categoryTypeQuery =
     categoryType === 0
@@ -155,6 +142,18 @@ const Categories = () => {
   if (searchValue) {
     filterParams.name = searchValue;
   }
+
+  // Check SortOption
+if (sortFilter) {
+  // Check alphabetical sort options
+  if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
+    filterParams.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+  }
+  // Check createdAt sort options
+  else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
+    filterParams.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+  }
+}
 
   const {
     data: categoriesData,
@@ -266,18 +265,21 @@ const Categories = () => {
         ? multipleCategorySchema
         : categoryValidationSchema,
     onSubmit: (values) => {
-      if (isEditing) {
-        editCategory({ id: editId, details: values })
-          .unwrap()
-          .then(() => categoryFormik.resetForm());
-      } else if (multipleTags.length > 0) {
+      if (multipleTags.length > 0) {
         bulkCreateCategory(multipleTags)
           .unwrap()
-          .then(() => categoryFormik.resetForm());
+          .then(() => {
+            setMultipleTags([])
+            categoryFormik.resetForm()
+          }).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       } else {
         createCategory(values)
           .unwrap()
-          .then(() => categoryFormik.resetForm());
+          .then(() => categoryFormik.resetForm()).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       }
     },
   });
@@ -303,11 +305,15 @@ const Categories = () => {
           .then(() => {
             subCategoryFormik.resetForm();
             setMultipleTagsForSub([]);
-          });
+          }).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       } else {
         createSubCategory(values)
           .unwrap()
-          .then(() => subCategoryFormik.resetForm());
+          .then(() => subCategoryFormik.resetForm()).catch((err)=>{
+            dispatch(showError({message:err?.data?.message}))
+          })
       }
     },
   });
@@ -401,48 +407,7 @@ const Categories = () => {
   };
 
   useEffect(() => {
-    if (categoriesError) {
-      setError(true);
-      if (categoriesError.data?.message) {
-        dispatch(showError({ message: categoriesError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-    if (subCategoriesError) {
-      setError(true);
-      if (subCategoriesError.data?.message) {
-        dispatch(showError({ message: subCategoriesError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-
-    if (createCategoryError) {
-      setError(true);
-      if (createCategoryError.data?.message) {
-        dispatch(showError({ message: createCategoryError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-    if (createSubCategoryError) {
-      setError(true);
-      if (createSubCategoryError.data?.message) {
-        dispatch(showError({ message: createSubCategoryError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-
+    
     if (categoriesIsSuccess && subCategoriesIsSuccess) {
       setError(false);
 

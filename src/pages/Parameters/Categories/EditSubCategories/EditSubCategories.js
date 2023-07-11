@@ -154,7 +154,7 @@ const EditSubCategories = () => {
         .unwrap()
         .then(() => {
           dispatch(showSuccess({message:"Sub Category Updated Successfully"}))
-        }).catch((editSubCategoryError)=>dispatch(showError({ message: editSubCategoryError?.data?.message?.name })))
+        }).catch((editSubCategoryError)=>dispatch(showError({ message: editSubCategoryError?.data?.message })))
     } else {
       createSubCategory({
           name: subCategoryName,
@@ -404,7 +404,7 @@ const EditSubCategories = () => {
             clearDate={clearDate}
               />
           <div className="mt-4">
-            <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setSubCategoryMediaUrl} imageValue={subCategoryMediaUrl} />
+            <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setSubCategoryMediaUrl} previousImage={subCategoryMediaUrl} isUploaded={()=>{}} />
           </div>
           <NotesBox value={subCategoryNotes} onChange={(e) => setSubCategoryNotes(e.target.value)} />
         </div>
