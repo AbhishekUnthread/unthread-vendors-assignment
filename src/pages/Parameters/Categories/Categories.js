@@ -25,6 +25,7 @@ import {
   TableHead,
   Typography,
   Checkbox,
+  InputAdornment,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -44,6 +45,7 @@ import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 import sort from "../../../assets/icons/sort.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import {
   showSuccess,
@@ -490,7 +492,7 @@ if (sortFilter) {
   ]);
 
   const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
-    if (event.key === "Enter"||event.type === 'click') {
+    if (event.key === "Enter"|| event.type === 'click') {
       event.preventDefault();
       Formik.validateForm().then(() => {
         if (Formik.isValid && Formik.values.name !== "") {
@@ -627,6 +629,11 @@ if (sortFilter) {
                         true
                       )
                     }
+                    endAdornment={
+                      <InputAdornment position="end">
+                          <ChevronRightIcon/>
+                      </InputAdornment>
+                      }
                   />
                   {!!categoryFormik.touched.name &&
                     categoryFormik.errors.name && (
@@ -787,6 +794,11 @@ if (sortFilter) {
                         false
                       )
                     }
+                    endAdornment={
+                      <InputAdornment position="end">
+                          <ChevronRightIcon/>
+                      </InputAdornment>
+                      }
                   />
                   {!!subCategoryFormik.touched.name &&
                     subCategoryFormik.errors.name && (
