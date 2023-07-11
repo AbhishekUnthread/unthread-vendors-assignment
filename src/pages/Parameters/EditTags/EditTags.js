@@ -242,9 +242,9 @@ const EditTags = () => {
         </div>
 
         <div className="d-flex align-items-center w-auto pe-0">
-          <button className="button-transparent me-1 py-2 px-3" onClick={handleDuplicate}>
+          {/* <button className="button-transparent me-1 py-2 px-3" onClick={handleDuplicate}>
             <p className="text-lightBlue">Duplicate</p>
-          </button>
+          </button> */}
           {/* <button className="button-transparent me-1 py-2 px-3">
             <p className="text-lightBlue">Archive</p>
           </button> */}
