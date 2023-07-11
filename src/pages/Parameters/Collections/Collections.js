@@ -35,6 +35,8 @@ import {
 import {
   useGetAllCollectionsQuery,
   useDeleteCollectionMutation,
+  useHardDeleteCollectionMutation,
+  useHardBulkDeleteCollectionMutation
 } from "../../../features/parameters/collections/collectionsApiSlice";
 
 
@@ -114,6 +116,24 @@ const Collections = () => {
   } = useGetAllCollectionsQuery({...filterParams});
 
   const [
+    hardDeleteCollection,
+    {
+      isLoading: hardDeleteCollectionIsLoading,
+      isSuccess: hardDeleteCollectionIsSuccess,
+      error: hardDeleteCollectionError,
+    },
+  ] = useHardDeleteCollectionMutation();
+
+  const [
+    bulkDeleteCollection,
+    {
+      isLoading: bulkDeleteCollectionIsLoading,
+      isSuccess: bulkDeleteCollectionIsSuccess,
+      error: bulkDeleteCollectionError,
+    },
+  ] = useHardBulkDeleteCollectionMutation();
+
+  const [
     deleteCollection,
     {
       isLoading: deleteCollectionIsLoading,
@@ -121,6 +141,14 @@ const Collections = () => {
       error: deleteCollectionError,
     },
   ] = useDeleteCollectionMutation();
+
+  const deleteHardCollection = (data) => {
+    hardDeleteCollection(data)
+  }
+
+  const deleteBulkCollection = (data) => {
+    bulkDeleteCollection({deletes: data})
+  }
 
   const handleTabChange = (event, tabIndex) => {
     setCollectionType(tabIndex);
@@ -388,6 +416,8 @@ const Collections = () => {
           <TabPanel value={collectionType} index={3}>
             <CollectionsTable
               deleteData={deleteCollectionHandler}
+              hardDeleteCollection={deleteHardCollection}
+              bulkDelete={deleteBulkCollection}
               isLoading={collectionIsLoading}
               error={error}
               list={collectionList}

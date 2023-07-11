@@ -52,7 +52,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 // ? TABLE STARTS HERE
 
-const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, collectionType }) => {
+const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, collectionType, hardDeleteCollection, bulkDelete }) => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
@@ -116,7 +116,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   };
 
   useEffect(() => {
-    if (selectedStatus !== null) {
+    if (selectedStatus !== null && selectedStatus !== "Delete") {
       const newState = selected.map((id) => {
         if (selectedStatus === "Set as Active") {
           return {
@@ -132,12 +132,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           return {
             id,
             status: "archieved",
-          };
-        } else if (selectedStatus === "Delete") {
-          return {
-            id,
-            status: "in-active",
-            active: false
           };
         } else if (selectedStatus === "Set as Un-Archived") {
           return {
@@ -160,17 +154,14 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
             selectedStatus === "Set as Un-Archived"
               ? "Collection un-archived  successfully"
               : selectedStatus === "Set as Archived"
-                ? "Collection archived  successfully"
-                : selectedStatus === "Delete" ?
-                "Collection deleted successfully" : "Status updated successfully";
+                ? "Collection archived  successfully" : "Status updated successfully";
 
         dispatch(showSuccess({ message: successMessage }));
         setSelectedStatus(null);
         setShowUnArhcivedModal(false)
         setShowDeleteModal(false);
       })}    
-  }, [selected, selectedStatus]);
-  
+  }, [selectedStatus]);  
   
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -310,8 +301,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const handleArchiveModal =()=>{
     if(forMassAction === true) {
       setSelectedStatus(massActionStatus);
+      bulkDelete(selected)
+      setShowDeleteModal(false);
+      dispatch(showSuccess({ message: "Collection deleted successfully!" }));
     } else {
-      deleteData(archiveID);
+      hardDeleteCollection(archiveID?._id);
       toggleArchiveModalHandler();
       dispatch(showSuccess({ message: "Collection deleted successfully!" }));
     }
