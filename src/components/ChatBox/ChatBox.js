@@ -5,6 +5,13 @@ import CallIcon from '@mui/icons-material/Call';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 function ChatBox() {
+  const messages = [
+    'Heyy wassupp',
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit sem maecenas turpis orci mi.',
+    'Wow! Thank you for this quick solution!',
+    'Ye tho mera kaam hai!'
+    // Add more messages as needed
+  ];
   return (
     <React.Fragment>
       <Dialog
@@ -83,14 +90,23 @@ function ChatBox() {
         </DialogTitle>
         <hr className="hr-grey-6 my-0" />
         <DialogContent className="py-3 px-4">
-        <div >
-            <p>Hey wassupp</p>
+        {messages.map((message, index) => (
+        <div
+          style={{
+            display: "flex",
+            padding: "20px",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            marginBottom: "13px",
+            borderRadius: "18px 18px 18px 0px",
+            background: "var(--surface-4, #22233F)",
+            maxWidth : "fit-content"
+            ,
+          }}
+        >{messages}
         </div>
-        <Typography variant="body1" color="textPrimary" >
-        ftyftuf
-      </Typography>
-
-        </DialogContent>
+        ))}
+      </DialogContent>
         <hr className="hr-grey-6 my-0" />
         <DialogActions className="d-flex justify-content-between px-4 py-3">
 

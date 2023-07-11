@@ -10,6 +10,7 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Customers"],
     }),
+
     getAllCustomers: builder.query({
       query: (queries) => {
         let queryString = "";
@@ -26,6 +27,23 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ["Customers"],
     }),
+
+    getSingleCustomer: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+        return {
+          url: `/customer/getSingle${queryString}`,
+        };
+      },
+      providesTags: ["Customers"],
+    }),
     
   }),
 });
@@ -33,4 +51,5 @@ export const customerApiSlice = apiSlice.injectEndpoints({
 export const {
   useCreateCustomerMutation,
   useGetAllCustomersQuery,
+  useGetSingleCustomerQuery
 } = customerApiSlice;

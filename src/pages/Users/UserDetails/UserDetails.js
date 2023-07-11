@@ -217,9 +217,6 @@ const UserDetails = () => {
               sx={{ width: "100%" }}
               className="d-flex justify-content-between tabs-header-box mb-4"
             >
-              {/* variant="scrollable"
-              scrollButtons
-              allowScrollButtonsMobile */}
               <Tabs
                 value={value}
                 onChange={handleChange}
@@ -296,8 +293,8 @@ const UserDetails = () => {
             <Chip label="VIP" size="small" className="px-1" />
             <Chip label="Verified User" size="small" className="ms-2 px-1" />
           </div>
-          <NotesBox />
-          <TagsBox />
+          {/* <NotesBox />
+          <TagsBox /> */}
         </div>
       </div>
     </div>

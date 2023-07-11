@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./EditTags.scss";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 // ! COMPONENT IMPORTS
@@ -17,8 +17,8 @@ import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormContro
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateTagMutation, useEditTagMutation, useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
-import { showSuccess } from "../../../features/snackbar/snackbarAction";
-import SaveFooter from "../../../components/SaveFooter/SaveFooter";
+import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
+import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
 
     // ? DIALOG TRANSITION STARTS HERE
@@ -45,7 +45,11 @@ const EditTags = () => {
   const navigate = useNavigate();
   const [checked, setChecked] = React.useState(false);
   const dispatch = useDispatch();
-  // const [showFilter, setShowFilter] = React.useState(false);
+
+  const [initialName, setInitailName] = useState("");
+  const [initialNotes, setInitailNotes] = useState("");
+  const [initialFilter, setInitailFilter] = useState(false);
+
 
   const{
     data: tagsData,
@@ -72,22 +76,25 @@ const EditTags = () => {
 
       if(editTagIsSuccess)
       {
-        dispatch(showSuccess({ message: "Tag updtaed successfully" }));
+        dispatch(showSuccess({ message: "Tag updated successfully" }));
       }
 
       if(tagsIsSuccess && tagId !== "")
       {
         setTagName(tagsData.data.data[0].name)
+        setInitailName(tagsData.data.data[0].name)
         setTagNotes(tagsData.data.data[0].notes)
+        setInitailNotes(tagsData.data.data[0].notes)
         // setTagStatus(tagsData.data.data[0].status)
         setChecked(tagsData.data.data[0].showFilter)
+        setInitailFilter(tagsData.data.data[0].showFilter)
       }
     }, [tagsIsSuccess,editTagIsSuccess])
 
 
     const handleNameChange = (event) => {
       const newName = event.target.value;
-      setHideFooter(true);
+      // setHideFooter(true);
       validationSchema
       .validate({ tagName: newName })
       .then(() => {
@@ -104,11 +111,11 @@ const EditTags = () => {
     }   
     const tagNotesChange=(event)=>{
       setTagNotes(event.target.value);
-      setHideFooter(true);
+      // setHideFooter(true);
     }
     const handleFilterChange=(event)=>{
       setChecked(event.target.checked);
-      setHideFooter(true);
+      // setHideFooter(true);
     }
 
     const handleSubmit = () => {
@@ -119,26 +126,31 @@ const EditTags = () => {
          id: tagId, 
          details: {
            showFilter: checked, 
-           name: tagName, 
-           notes: tagNotes, 
+           name: tagName.trim(), 
+           notes: tagNotes?tagNotes.trim():tagNotes, 
           //  status: tagStatus?tagStatus:"active" 
          }
        }).unwrap().then(() => {
          navigate("/parameters/tagsManager"); 
-       });
+       })
+       .catch((editTagError)=>dispatch(showError( { message: editTagError?.data?.message } )));
       }
       else
       {
         createTag({
           showFilter: checked, 
-          name: tagName, 
-          notes: tagNotes, 
+          name: tagName.trim(), 
+          notes: tagNotes?tagNotes.trim():tagNotes, 
           // status: tagStatus?tagStatus:"active" 
        }).unwrap().then(() => {
          navigate("/parameters/tagsManager"); 
        });
       }
      }};
+
+     const backHandler = () => {
+      navigate("/parameters/tagsManager");
+    };
 
      const handleSubmitAndAddAnother = () => {
       if(tagId !== "")
@@ -206,6 +218,14 @@ const EditTags = () => {
        };
        // ? DUPLICATE VENDOR DIALOG ENDS HERE
 
+       useEffect(() => {
+        setHideFooter(
+          tagName.trim() !== initialName ||
+          (tagNotes !== initialNotes && tagNotes !== "") ||
+          checked !== initialFilter
+        );
+      }, [tagName, tagNotes, checked]);
+
   return (
     <div className="page container-fluid position-relative user-group">
       <div className="row justify-content-between">
@@ -222,9 +242,9 @@ const EditTags = () => {
         </div>
 
         <div className="d-flex align-items-center w-auto pe-0">
-          <button className="button-transparent me-1 py-2 px-3" onClick={handleDuplicate}>
+          {/* <button className="button-transparent me-1 py-2 px-3" onClick={handleDuplicate}>
             <p className="text-lightBlue">Duplicate</p>
-          </button>
+          </button> */}
           {/* <button className="button-transparent me-1 py-2 px-3">
             <p className="text-lightBlue">Archive</p>
           </button> */}
@@ -304,50 +324,26 @@ const EditTags = () => {
             <AddProducts />
           </div>
         </div>
-        <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
+        <div className="col-lg-3 pe-0 ps-0 ps-lg-3">
           {/* <StatusBox  value={tagStatus} 
            headingName={"Tag Status"}
-           handleProductStatus={tagStatusChange}
+           handleProductStatus={tagStatusChange}  
            toggleData={['active','archived']}
             /> */}
           <NotesBox name="note" value={tagNotes} onChange={tagNotesChange} />
 
         </div>
       </div>
-      {/* <div className="row create-buttons pt-5 pb-3 justify-content-between">
-        <div className="d-flex w-auto px-0">
-          <Link to="/parameters/tagsManager" className="button-red-outline py-2 px-4">
-            <p>Discard</p>
-          </Link>
-
-          <Link
-            to="/parameters/tagsManager"
-            className="button-lightBlue-outline py-2 px-4 ms-3"
-          >
-            <p>Save as Draft</p>
-          </Link>
-        </div>
-        <div className="d-flex w-auto px-0">
-          <Link
-            to="#"
-            className="button-lightBlue-outline py-2 px-4"
-            onClick={handleSubmitAndAddAnother}
-          >
-            <p>Save & Add Another</p>
-          </Link>
-          <Link
-            to="#"
-            className="button-gradient ms-3 py-2 px-4 w-auto"
-            onClick={handleSubmit}
-          >
-            <p>Save</p>
-          </Link>
-        </div>
-      </div> */}
-      { hideFooter && <div className="row create-buttons pt-5 pb-3 justify-content-between">
+      {/* { hideFooter && <div className="row create-buttons pt-5 justify-content-between" style={{ width: '104%' }} >
           <SaveFooter handleSubmit={handleSubmit} />          
-        </div>
-           }
+      </div>
+           } */}
+          <SaveFooterSecondary
+          show={hideFooter}
+          onDiscard={backHandler}
+          isLoading={editTagIsLoading}
+          handleSubmit={handleSubmit}
+        />
 
     </div>
   );
