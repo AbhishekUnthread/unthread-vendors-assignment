@@ -24,7 +24,7 @@ import {
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
-import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
+import SaveFooter, { SaveFooterSecondary, SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
 
     // ? DIALOG TRANSITION STARTS HERE
@@ -419,18 +419,18 @@ const EditVendor = () => {
       </div>
       
 
-      {/* <SaveFooterSecondary
+      <SaveFooterTertiary
           show={hideFooter}
           onDiscard={backHandler}
           isLoading={editVendorIsLoading}
           handleSubmit={handleSubmit}
-        /> */}
+        />
 
 
-        { hideFooter && <div className="row create-buttons pt-5 justify-content-between " style={{ width: '104%' }}>
+        {/* { hideFooter && <div className="row create-buttons pt-5 justify-content-between " style={{ width: '104%' }}>
           <SaveFooter handleSubmit={handleSubmit} />          
         </div>
-           }
+           } */}
 
       <Dialog
         open={openDuplicateVendor}

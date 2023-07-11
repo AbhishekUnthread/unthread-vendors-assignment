@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCreateTagMutation, useEditTagMutation, useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
-import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
+import SaveFooter, { SaveFooterSecondary, SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
 
     // ? DIALOG TRANSITION STARTS HERE
@@ -334,16 +334,16 @@ const EditTags = () => {
 
         </div>
       </div>
-      { hideFooter && <div className="row create-buttons pt-5 justify-content-between" style={{ width: '104%' }} >
+      {/* { hideFooter && <div className="row create-buttons pt-5 justify-content-between" style={{ width: '104%' }} >
           <SaveFooter handleSubmit={handleSubmit} />          
       </div>
-           }
-          {/* <SaveFooterSecondary
+           } */}
+          <SaveFooterTertiary
           show={hideFooter}
           onDiscard={backHandler}
           isLoading={editTagIsLoading}
           handleSubmit={handleSubmit}
-        /> */}
+        />
 
     </div>
   );
