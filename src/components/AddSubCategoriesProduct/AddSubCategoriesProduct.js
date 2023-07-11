@@ -8,10 +8,8 @@ import {
 } from "../TableDependencies/TableDependencies";
 import TableSearch from "../TableSearch/TableSearch";
 // ! IMAGES IMPORTS
-import ringSmall from "../../assets/images/ringSmall.svg";
-import deleteButton from "../../assets/icons/deleteButton.svg";
 import cancel from "../../assets/icons/cancel.svg";
-import arrowDown from "../../assets/icons/arrowDown.svg";
+import question from '../../assets/images/products/question.svg'
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -160,7 +158,7 @@ const AddSubCategoriesProducts = ({id}) => {
   const [searchValue, setSearchValue] = useState("");
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
   const [multipleTagsForSub,setMultipleTagsForSub] = useState([])
-  const [selectedStatus,setSelectedStatus] = useState([])
+  const [selectedStatus,setSelectedStatus] = useState(null)
   const [selected, setSelected] = React.useState([]);
   const [totalCount,setTotalCount] = React.useState(0);
   const [showCreateDeleteModal, setShowCreateDeleteModal] = useState(false);
@@ -767,12 +765,41 @@ const AddSubCategoriesProducts = ({id}) => {
           />
         </div>
       </div>
-      <ArchivedModal
-      name={'Archived'}
-        showCreateModal={showCreateDeleteModal}
-        toggleArchiveModalHandler={toggleArchiveModalHandler}
-        handleArchive={deleteRowData}
-      />
+    
+      <Dialog
+          open={showCreateDeleteModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={toggleArchiveModalHandler}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={question} alt="question" width={200} />
+            <div className="row"></div>
+            <h6 className="text-lightBlue mt-2 mb-2">
+              Are you sure you want to Archive this Sub category 
+              <span className="text-blue-2">{rowData?.name} </span> ?
+            </h6>
+            <div className="d-flex justify-content-center mt-4">
+              <hr className="hr-grey-6 w-100" />
+            </div>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-between px-4 pb-4">
+            <button
+              className="button-red-outline py-2 px-3 me-5"
+              onClick={toggleArchiveModalHandler}
+            >
+              <p>No</p>
+            </button>
+            <button
+              className="button-gradient py-2 px-3 ms-5"
+              onClick={deleteRowData}
+            >
+              <p>Yes</p>
+            </button>
+          </DialogActions>
+        </Dialog>
     </React.Fragment>
   );
 };
