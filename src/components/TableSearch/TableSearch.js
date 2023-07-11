@@ -2,6 +2,7 @@ import React from "react";
 import { styled, InputBase } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
+import _debounce from "lodash/debounce";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
