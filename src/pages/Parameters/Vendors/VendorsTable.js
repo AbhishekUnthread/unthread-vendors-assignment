@@ -322,7 +322,7 @@ const handleUnArchived = () => {
      }
  })
  setShowUnArhcivedModal(false)
- dispatch(showSuccess({ message: "Un-Archived this vendor successfully" }));
+ dispatch(showSuccess({ message: "Vendor Un-Archived successfully" }));
 }
 //unarchive ends here
 const [showDeleteModal, setShowDeleteModal] = React.useState(false);
@@ -333,18 +333,18 @@ const handleDeleteOnClick = (row) => {
   setVendorName(row?.name);
 };
 const handleDelete =()=>{
-  if(selected.length>0)
+  if(selected.length>1)
   {
   bulkDelete({deletes :selected})
   handleDeleteOnClick();
+  setSelected([]);
   }
   else{
     deleteData(vendor?._id);
     handleDeleteOnClick();
-    dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+    // dispatch(showSuccess({ message: "Deleted this collection successfully" }));
   }
   }
-
 
   return (
     <React.Fragment>

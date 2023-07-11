@@ -77,6 +77,7 @@ import {
   useEditTagMutation,
   useBulkCreateTagMutation,
   useBulkEditTagMutation,
+  useBulkDeleteTagMutation,
 } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { useNavigate } from "react-router-dom";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
@@ -289,51 +290,14 @@ const {
   error: tagsError,
 } = useGetAllTagsQuery({...queryParameters,...TagTypeQuery}, { enabled: Object.keys(queryParameters).length > 0 });
 
-    useEffect(() => {
-      if (createTagsIsSuccess) {
-        setShowCreateModal(false);
-        dispatch(showSuccess({ message: "Tag created successfully" }));
-      }
-      if(bulkCreateTagsIsSuccess)
-      {
-        setShowCreateModal(false);
-        dispatch(showSuccess({ message: "Tags created successfully" }));
-      }
-
-    }, [bulkCreateTagsIsSuccess,createTagsIsSuccess])
-    
-
-    
-    useEffect(() => {
-
-      if(editTagIsSuccess)
-      {
-        dispatch(showSuccess({ message: "Status updated successfully" }));
-      }
-
-      if (tagsError) {
-        setError(true);
-        if (tagsError?.data?.message) {
-          dispatch(showError({ message: tagsError.data.message }));
-        } else {
-          dispatch(
-            showError({ message: "Something went wrong!, please try again" })
-          );
-        }
-      }
-      if (tagsIsSuccess || bulkCreateTagsIsSuccess || bulkTagEditIsSuccess) {
-        setError(false);
-        if (tagsType === 0) {
-          setTagsList(tagsData.data.data);
-          setTotalCount(tagsData.data.totalCount);
-        }
-        if (tagsType === 1) {
-          setTagsList(tagsData.data.data);
-          setTotalCount(tagsData.data.totalCount);
-        }
-      }
-      
-    }, [tagsType,tagsIsSuccess,tagsError,tagsData,dispatch,bulkTagEditIsSuccess])
+const [
+  bulkDeleteTag,
+  {
+    isLoading: bulkDeleteTagIsLoading,
+    isSuccess: bulkDeleteTagIsSuccess,
+    error: bulkDeleteTagError,
+  },
+] = useBulkDeleteTagMutation();
     
     const editTagsPageNavigationHandler = (data) => {
       dispatch(updateTagId(data._id)); 
@@ -415,6 +379,10 @@ const {
   const handleDelete = (value) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v.name !== value));
   };
+  
+  const handleBulkDeleteTag =(data)=>{
+    bulkDeleteTag(data);
+    }
 
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
@@ -461,6 +429,111 @@ const {
     //    setAnchorSortE1(null);
     //  };
       // * SORT POPOVERS ENDS
+      useEffect(() => {
+        if (createTagsIsSuccess) {
+          setShowCreateModal(false);
+          dispatch(showSuccess({ message: "Tag created successfully" }));
+        }
+        if(createTagsError)
+        {
+          setError(true);
+          if (createTagsError?.data?.message) {
+            dispatch(showError({ message: createTagsError?.data?.message }));
+          }
+          else {
+            dispatch(
+              showError({ message: "Something went wrong!, please try again" })
+            );
+          }
+        }
+
+      }, [createTagsIsSuccess,createTagsError])
+      
+
+      useEffect(() => {
+
+        if(bulkCreateTagsIsSuccess)
+        {
+          setShowCreateModal(false);
+          dispatch(showSuccess({ message: "Tags created successfully" }));
+        }
+        if (bulkCreateTagsError ) {
+          setError(true);
+          if(bulkCreateTagsError?.data?.message)
+          {
+            dispatch(showError({ message: bulkCreateTagsError.data.message }));
+          }
+          else {
+            dispatch(
+              showError({ message: "Something went wrong!, please try again" })
+            );
+          }
+        }
+  
+      }, [bulkCreateTagsIsSuccess,bulkCreateTagsError])
+      
+      useEffect(() => {
+  
+        if (tagsError) {
+          setError(true);
+          if (tagsError?.data?.message) {
+            dispatch(showError({ message: tagsError.data.message }));
+          } else {
+            dispatch(
+              showError({ message: "Something went wrong!, please try again" })
+            );
+          }
+        }
+        if (tagsIsSuccess) {
+          setError(false);
+          if (tagsType === 0) {
+            setTagsList(tagsData.data.data);
+            setTotalCount(tagsData.data.totalCount);
+          }
+          if (tagsType === 1) {
+            setTagsList(tagsData.data.data);
+            setTotalCount(tagsData.data.totalCount);
+          }
+        }
+        
+      }, [tagsType,tagsIsSuccess,tagsError,tagsData,bulkTagEditIsSuccess,createTagsIsSuccess,createTagsError,bulkCreateTagsIsSuccess,bulkCreateTagsError])
+
+      useEffect(() => {
+        if(deleteTagsIsSuccess)
+        {
+          dispatch(showSuccess({ message: "Tag deleted successfully" }));
+        }
+        if(deleteTagsError)
+        {
+          if (deleteTagsError?.data?.message) {
+            dispatch(showError({ message: deleteTagsError?.data?.message }));
+          }
+          else {
+            dispatch(
+              showError({ message: "Something went wrong!, please try again" })
+            );
+          }
+        }
+      }, [deleteTagsIsSuccess,deleteTagsError])
+  
+      useEffect(() => {
+  
+        if(bulkDeleteTagIsSuccess)
+        {
+          dispatch(showSuccess({ message: "Tags deleted successfully" }));
+        }
+        if(bulkCreateTagsError)
+        {
+          if (bulkCreateTagsError?.data?.message) {
+            dispatch(showError({ message: bulkCreateTagsError?.data?.message }));
+          }
+          else {
+            dispatch(
+              showError({ message: "Something went wrong!, please try again" })
+            );
+          }
+        }
+      }, [bulkDeleteTagIsSuccess,bulkCreateTagsError])
 
   return (
     <div className="container-fluid page">
@@ -1188,6 +1261,7 @@ const {
               totalCount={totalCount}
               tagsType={tagsType}
               bulkEdit={bulkEdit}
+              bulkDelete={handleBulkDeleteTag}
              />
           </TabPanel>
         </Paper>

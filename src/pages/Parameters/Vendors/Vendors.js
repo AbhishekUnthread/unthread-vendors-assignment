@@ -309,87 +309,126 @@ const Vendors = () => {
  // * STATUS POPOVERS ENDS
 
 
-  useEffect(() => {
-  if(createVendorIsSuccess)
-  {
-    setShowCreateModal(false);
-    dispatch(showSuccess({ message: "Vendor created successfully" }));
-  }
-  if(createVendorError)
-  {
-    setError(true);
-    if (createVendorError?.data?.message) {
-      dispatch(showError({ message: createVendorError?.data?.message }));
-    }
-    else {
-      dispatch(
-        showError({ message: "Something went wrong!, please try again" })
-      );
-    }
-  }
-
- }, [createVendorIsSuccess,createVendorError])
- 
-  useEffect(() => {
-
-  if(bulkCreateVendorIsSuccess)
-  {
+    useEffect(() => {
+    if(createVendorIsSuccess)
+    {
       setShowCreateModal(false);
-     dispatch(showSuccess({ message: "Vendors created successfully" }));
-  }
+      dispatch(showSuccess({ message: "Vendor created successfully" }));
+    }
+    if(createVendorError)
+    {
+      setError(true);
+      if (createVendorError?.data?.message) {
+        dispatch(showError({ message: createVendorError?.data?.message }));
+      }
+      else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
 
-  if (bulkCreateVendorError ) {
-    setError(true);
-    if(bulkCreateVendorError?.data?.message)
-    {
-      dispatch(showError({ message: bulkCreateVendorError.data.message }));
-    }
-    else {
-      dispatch(
-        showError({ message: "Something went wrong!, please try again" })
-      );
-    }
-  }
-}, [bulkCreateVendorError,bulkCreateVendorIsSuccess])
+  }, [createVendorIsSuccess,createVendorError])
+  
+    useEffect(() => {
 
-  useEffect(() => {
-  if (vendorsError) {
-    setError(true);
-    if (vendorsError?.data?.message) {
-      dispatch(showError({ message: vendorsError.data.message }));
-    } else {
-      dispatch(
-        showError({ message: "Something went wrong!, please try again" })
-      );
-    }
-  }
-  if (vendorsIsSuccess) {
-    setError(false);
-    if (vendorType === 0) {
-      setVendorList(vendorsData.data.data);
-      setTotalCount(vendorsData.data.totalCount)
-    }
-    if (vendorType === 1) {
-      setVendorList(vendorsData.data.data);
-      setTotalCount(vendorsData.data.totalCount)
-    }
-    if(vendorType === 2)
+    if(bulkCreateVendorIsSuccess)
     {
-      setVendorList(vendorsData.data.data);
-      setTotalCount(vendorsData.data.totalCount)
+        setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Vendors created successfully" }));
     }
-    if(vendorType === 3)
-    {
-      setVendorList(vendorsData.data.data);
-      setTotalCount(vendorsData.data.totalCount)
+
+    if (bulkCreateVendorError ) {
+      setError(true);
+      if(bulkCreateVendorError?.data?.message)
+      {
+        dispatch(showError({ message: bulkCreateVendorError.data.message }));
+      }
+      else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
-  }
-    }, [
-      vendorsData,
-      vendorsIsSuccess,
-      vendorType,
-      createVendorIsSuccess,bulkCreateVendorIsSuccess,createVendorError,bulkCreateVendorError,
-    ]);
+  }, [bulkCreateVendorError,bulkCreateVendorIsSuccess])
+
+    useEffect(() => {
+    if (vendorsError) {
+      setError(true);
+      if (vendorsError?.data?.message) {
+        dispatch(showError({ message: vendorsError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+    if (vendorsIsSuccess) {
+      setError(false);
+      if (vendorType === 0) {
+        setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
+      }
+      if (vendorType === 1) {
+        setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
+      }
+      if(vendorType === 2)
+      {
+        setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
+      }
+      if(vendorType === 3)
+      {
+        setVendorList(vendorsData.data.data);
+        setTotalCount(vendorsData.data.totalCount)
+      }
+    }
+      }, [
+        vendorsData,
+        vendorsIsSuccess,
+        vendorType,
+        vendorsError,
+        createVendorIsSuccess,bulkCreateVendorIsSuccess,createVendorError,bulkCreateVendorError,
+      ]);
+
+    useEffect(() => {
+      if(deleteVendorIsSuccess)
+      {
+        dispatch(showSuccess({ message: "Vendor deleted successfully" }));
+      }
+      if(deleteVendorError)
+      {
+        if (deleteVendorError?.data?.message) {
+          dispatch(showError({ message: deleteVendorError?.data?.message }));
+        }
+        else {
+          dispatch(
+            showError({ message: "Something went wrong!, please try again" })
+          );
+        }
+      }
+    }, [deleteVendorIsSuccess,deleteVendorError])
+
+    useEffect(() => {
+
+      if(bulkDeleteVendorIsSuccess)
+      {
+        dispatch(showSuccess({ message: "Vendors deleted successfully" }));
+      }
+      if(bulkDeleteVendorError)
+      {
+        if (bulkDeleteVendorError?.data?.message) {
+          dispatch(showError({ message: bulkDeleteVendorError?.data?.message }));
+        }
+        else {
+          dispatch(
+            showError({ message: "Something went wrong!, please try again" })
+          );
+        }
+      }
+    }, [bulkDeleteVendorIsSuccess,bulkDeleteVendorError])
+    
 
   return (
     <div className="container-fluid page">
