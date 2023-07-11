@@ -505,13 +505,13 @@ const Categories = () => {
   ]);
 
   const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter"||event.type === 'click') {
       event.preventDefault();
       Formik.validateForm().then(() => {
         if (Formik.isValid && Formik.values.name !== "") {
           Formik.setFieldTouched("name", true);
-          let tagName = tags.map((item) => item.name);
-          if (!tagName.includes(data.name)) {
+          let tagName = tags.map((item) => item.name?.trim()?.toLowerCase());
+          if (!tagName.includes(data.name?.trim()?.toLowerCase())) {
             setTags((prevValues) => [...prevValues, data]);
           }
           if (flag) {
