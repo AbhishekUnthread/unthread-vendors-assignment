@@ -83,6 +83,7 @@ const SubCategoriesTable = ({
   isLoading,
   bulkEdit,
   editSubCategory,
+  bulkDeleteSubCategory,
   archived,
   totalCount
 }) => {
@@ -204,10 +205,13 @@ const SubCategoriesTable = ({
     setRowData(row);
   };
 
-  function deleteData(){
+  function deleteSubData(){
     setShowDeleteModal(false)
-    if(forMassAction === true){
-      setSelectedStatus(massActionStatus)
+    if(selected.length > 0 && forMassAction === true){
+      const newState = selected.map(i=>i)
+      bulkDeleteSubCategory({deletes:newState}).then(()=>{
+        dispatch(showSuccess({ message: "Deleted this sub categories successfully" }));
+      })
       return
     }
     deleteData(rowData)
@@ -271,7 +275,7 @@ const SubCategoriesTable = ({
           </button>
 
           <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Archieved']} headingName="Edit Status"/>
-          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={archived?['Edit','Set as Archived']:["Set as Un-Archived"]}/>
+          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={archived?['Edit','Set as Archived']:["Delete","Set as Un-Archived"]}/>
         </div>
       )}
       {!error ? (
@@ -536,7 +540,7 @@ const SubCategoriesTable = ({
        name={"This Sub Category"}
        showCreateModal={showDeleteModal}
        toggleArchiveModalHandler={toggleDeleteModalHandler}
-       handleArchive={deleteData}
+       handleArchive={deleteSubData}
         />
     </React.Fragment>
   );

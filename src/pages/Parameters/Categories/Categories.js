@@ -62,6 +62,8 @@ import {
   useSubCategoryBulkCreateTagMutation,
   useBulkEditTagCategoryMutation,
   useBulkEditTagSubCategoryMutation,
+  useBulkDeleteSubCategoryMutation,
+  useBulkDeleteCategoryMutation,
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
@@ -215,6 +217,22 @@ if (sortFilter) {
       error: deleteSubCategoryError,
     },
   ] = useDeleteSubCategoryMutation();
+  const [
+    bulkDeleteSubCategory,
+    {
+      isLoading: bulkDeleteSubCategoryIsLoading,
+      isSuccess: bulkDeleteSubCategoryIsSuccess,
+      error: bulkDeleteSubCategoryError,
+    },
+  ] = useBulkDeleteSubCategoryMutation();
+  const [
+    bulkDeleteCategory,
+    {
+      isLoading: bulkDeleteCategoryIsLoading,
+      isSuccess: bulkDeleteCategoryIsSuccess,
+      error: bulkDeleteCategoryError,
+    },
+  ] = useBulkDeleteCategoryMutation();
   const [
     editCategory,
     {
@@ -465,6 +483,8 @@ if (sortFilter) {
     categoryType,
     bulkTagEditSubCategoryIsSuccess,
     bulkCreateSubTagsIsSuccess,
+    bulkDeleteSubCategoryIsSuccess,
+    bulkDeleteSubCategoryIsSuccess,
     dispatch,
     sortFilter,
   ]);
@@ -1000,6 +1020,7 @@ if (sortFilter) {
                   bulkSubEdit={bulkEditSubCategory}
                   editCategory={editCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteCategory={bulkDeleteCategory}
                   archived={true}
                   totalCount={categoryTotalCount}
                 />
@@ -1013,6 +1034,7 @@ if (sortFilter) {
                   edit={true}
                   bulkEdit={bulkEditSubCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteSubCategory={bulkDeleteSubCategory}
                   archived={true}
                   totalCount={subCategoryTotalCount}
                 />
@@ -1028,6 +1050,7 @@ if (sortFilter) {
                   bulkSubEdit={bulkEditSubCategory}
                   editCategory={editCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteCategory={bulkDeleteCategory}
                   archived={false}
                   totalCount={categoryTotalCount}
                 />
@@ -1041,6 +1064,7 @@ if (sortFilter) {
                   edit={true}
                   bulkEdit={bulkEditSubCategory}
                   editSubCategory={editSubCategory}
+                  bulkDeleteSubCategory={bulkDeleteSubCategory}
                   archived={false}
                   totalCount={subCategoryTotalCount}
                 />
