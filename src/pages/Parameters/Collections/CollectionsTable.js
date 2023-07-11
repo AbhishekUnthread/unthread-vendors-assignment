@@ -155,13 +155,22 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
       const requestData = {
         updates: newState
       };
-      bulkEditCollection(requestData).unwrap().then(()=>
-      dispatch(showSuccess({ message: "Status updated successfully" })));
-      setSelectedStatus(null);
-      setShowUnArhcivedModal(false)
-      setShowDeleteModal(false);
-    }
+      bulkEditCollection(requestData).unwrap().then(()=> {
+        const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Collection un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+                ? "Collection archived  successfully"
+                : selectedStatus === "Delete" ?
+                "Collection deleted successfully" : "Status updated successfully";
+
+        dispatch(showSuccess({ message: successMessage }));
+        setSelectedStatus(null);
+        setShowUnArhcivedModal(false)
+        setShowDeleteModal(false);
+      })}    
   }, [selected, selectedStatus]);
+  
   
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);

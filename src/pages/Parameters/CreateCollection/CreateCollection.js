@@ -294,25 +294,28 @@ const CreateCollection = () => {
       }
       let obj={
         ...values,
-        seo: {}
       };
+
+      if (categorySeo?.title || categorySeo?.slug || categorySeo?.urlHandle) {
+        obj.seo = {};
+
+        if (categorySeo?.title) {
+          obj.seo.title = categorySeo.title;
+        }
+
+        if (categorySeo?.slug) {
+          obj.seo.slug = categorySeo.slug;
+        }
+
+        if (categorySeo?.urlHandle) {
+          obj.seo.urlHandle = categorySeo.urlHandle;
+        }
+
+        if(categorySeo?.metaKeywords) {
+          obj.seo.metaKeywords = categorySeo?.metaKeywords
+        }
+      }
       
-      if(categorySeo?.title) {
-        obj.seo.title = categorySeo?.title
-      }
-
-      if(categorySeo?.slug) {
-        obj.seo.slug = categorySeo?.slug
-      }
-
-      if(categorySeo?.urlHandle) {
-        obj.seo.urlHandle = categorySeo?.urlHandle
-      }
-
-      if(categorySeo?.metaKeywords) {
-        obj.seo.metaKeywords = categorySeo?.metaKeywords
-      }
-
       createCollection(obj)
         .unwrap()
         .then(() => { 
@@ -1304,6 +1307,7 @@ const CreateCollection = () => {
                 imageName={addMedia} 
                 headingName={"Media"} 
                 UploadChange={handleMediaUrl} 
+                isUploaded={()=>{}}
               />
             </div>
              {/* {!!collectionFormik.touched.mediaUrl && collectionFormik.errors.mediaUrl && (
