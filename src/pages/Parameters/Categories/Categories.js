@@ -101,7 +101,7 @@ const Categories = () => {
   const [editId, setEditId] = useState(null);
   const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState(['active','scheduled','in-active']);
+  const [statusFilter, setStatusFilter] = React.useState([]);
   const [multipleTags, setMultipleTags] = useState([]);
   const [multipleTagsForSub,setMultipleTagsForSub] = useState([])
   const [searchValue, setSearchValue] = useState("");
@@ -134,8 +134,10 @@ const Categories = () => {
     filterParams.name = searchValue;
   }
 
-  if (categoryType === 0) {
-    filterParams.status = statusFilter;
+  if (statusFilter.length === 0) {
+    filterParams.status =  "active,scheduled,in-active";
+  }else{
+    filterParams.status = statusFilter
   }
 
 
@@ -237,7 +239,7 @@ const Categories = () => {
       name: "",
       description: "<p></p>",
       status: "active",
-      showFilter: true,
+      showFilter: false,
     },
     enableReinitialize: true,
     validationSchema:multipleTags.length>0 ? multipleCategorySchema: categoryValidationSchema,
@@ -263,7 +265,7 @@ const Categories = () => {
       description: "<p></P>",
       status: "active",
       categoryId: "",
-      showFilter: true,
+      showFilter: false,
     },
     enableReinitialize: true,
     validationSchema: multipleTagsForSub.length > 0? multipleSubCategorySchema : subCategoryValidationSchema,
@@ -340,10 +342,11 @@ const Categories = () => {
 
   const handleStatusChange = (event) => {
     const selectedStatus = event.target.value;
+    console.log(selectedStatus)
     if (event.target.value) {
       if (statusFilter.length === 0) {
         let item = [];
-        statusFilter.push(selectedStatus);
+        item.push(selectedStatus);
         setStatusFilter(item);
       }
       if (statusFilter.length > 0 && statusFilter.includes(selectedStatus)) {
@@ -476,16 +479,19 @@ const Categories = () => {
     sortFilter,
   ]);
 
-  const handleAddMultiple = (event,Formik,Tags,data,flag) => {
+  const handleAddMultiple = (event,Formik,setTags,tags,data,flag) => {
     if (event.key === "Enter") {
       event.preventDefault();
       Formik.validateForm().then(() => {
         if (Formik.isValid && Formik.values.name !== "") {
           Formik.setFieldTouched("name", true);
-          Tags((prevValues) => [
-            ...prevValues,
-            data,
-          ]);
+          let tagName = tags.map(item=> item.name)
+          if(!tagName.includes(data.name)){
+            setTags((prevValues) => [
+              ...prevValues,
+              data,
+            ]);
+          }
           if(flag){  
             Formik.resetForm();
           }else{
@@ -598,7 +604,7 @@ const Categories = () => {
                     value={categoryFormik.values.name}
                     onBlur={categoryFormik.handleBlur}
                     onChange={categoryFormik.handleChange}
-                    onKeyDown={(e)=>handleAddMultiple(e,categoryFormik,setMultipleTags,{
+                    onKeyDown={(e)=>handleAddMultiple(e,categoryFormik,setMultipleTags,multipleTags,{
                       name: categoryFormik.values.name,
                       status: "active",
                       showFilter: categoryFormik.values.showFilter,
@@ -750,7 +756,7 @@ const Categories = () => {
                     value={subCategoryFormik.values.name}
                     onBlur={subCategoryFormik.handleBlur}
                     onChange={subCategoryFormik.handleChange}
-                    onKeyDown={(e)=>handleAddMultiple(e,subCategoryFormik,setMultipleTagsForSub,{
+                    onKeyDown={(e)=>handleAddMultiple(e,subCategoryFormik,setMultipleTagsForSub,multipleTagsForSub,{
                       name: subCategoryFormik.values.name,
                       description: "<p></p>",
                       status: "active",
@@ -817,7 +823,9 @@ const Categories = () => {
                   <p className="text-lightBlue">Cancel</p>
                 </button>
                 <LoadingButton
-                onClick={()=>setCategoryType(0)}
+                onClick={()=>{
+                  toggleCreateSubModalHandler()
+                  setCategoryType(0)}}
                   loading={
                     createSubCategoryIsLoading || editSubCategoryIsLoading
                   }

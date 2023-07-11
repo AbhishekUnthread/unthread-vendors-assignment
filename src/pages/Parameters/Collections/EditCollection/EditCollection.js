@@ -320,7 +320,6 @@ const EditCollection = () => {
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
-        seo: {}
       }
       if (startDate1 != null) {
         collectionDetails.startDate = new Date(startDate1);
@@ -329,11 +328,9 @@ const EditCollection = () => {
         collectionDetails.endDate = new Date(endDate1);
       }
 
-      if (collectionSeo && typeof collectionSeo === "object") {
-        for (const key in collectionSeo) {
-          if (collectionSeo[key] !== "" && collectionSeo[key] !== null) {
-            collectionDetails.seo[key] = collectionSeo[key];
-          }
+      for (const key in collectionSeo) {
+        if (collectionSeo[key] === "" && collectionSeo[key] === null) {
+          collectionDetails.seo[key] = collectionSeo[key];
         }
       }
 

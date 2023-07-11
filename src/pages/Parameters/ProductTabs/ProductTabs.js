@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import ProductTabsTable from "./ProductTabsTable";
-import TableSearch from "../../../components/TableSearch/TableSearch";
+import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import PageTitleBar from "../../../components/PageTitleBar/PageTitleBar";
 import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
 
@@ -231,7 +231,7 @@ const ProductTabs = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch onChange={searchHandler} />
+            <TableSearchSecondary onChange={searchHandler} />
           </div>
           <TabPanel value={0} index={0}>
             <ProductTabsTable

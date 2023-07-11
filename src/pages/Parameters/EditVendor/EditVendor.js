@@ -24,7 +24,7 @@ import {
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
-import SaveFooter, { SaveFooterSecondary, SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
+import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
 
     // ? DIALOG TRANSITION STARTS HERE
@@ -419,7 +419,7 @@ const EditVendor = () => {
       </div>
       
 
-      <SaveFooterTertiary
+      <SaveFooterSecondary
           show={hideFooter}
           onDiscard={backHandler}
           isLoading={editVendorIsLoading}

@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCreateTagMutation, useEditTagMutation, useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
-import SaveFooter, { SaveFooterSecondary, SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
+import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
 
     // ? DIALOG TRANSITION STARTS HERE
@@ -338,7 +338,7 @@ const EditTags = () => {
           <SaveFooter handleSubmit={handleSubmit} />          
       </div>
            } */}
-          <SaveFooterTertiary
+          <SaveFooterSecondary
           show={hideFooter}
           onDiscard={backHandler}
           isLoading={editTagIsLoading}
