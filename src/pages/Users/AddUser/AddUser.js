@@ -124,7 +124,7 @@ const AddUser = () => {
       isTemporaryPassword: false
     },
     enableReinitialize: true,
-    validationSchema: customerValidationSchema,
+    // validationSchema: customerValidationSchema,
     onSubmit: (values) => {
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
@@ -134,10 +134,8 @@ const AddUser = () => {
       createCustomer(values)
         .unwrap()
         .then((res) => {
-          if(res.message == "Success") {
             navigate("/users/allUsers");
             dispatch(showSuccess({ message: "Custormer created successfully" }));
-          }
         })
     },
   });
