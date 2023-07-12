@@ -27,15 +27,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, toggleData=['active','in-active'], startDate, endDate, handleStartDate, handleEndDate, clearDate}) => {
 
   const showScheduleData = showSchedule === undefined ? false : true;
-  // ? SCHEDULE PRODUCT DIALOG STARTS HERE
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
   const [startDateLocal, setStartDate] = React.useState(startDate ? moment(startDate).toDate() : null);
   const [endDateLocal, setEndDate] = React.useState("");
-  const startDateNew = moment(startDate).format("DD/MM/YYYY")
-  const startTime = moment(startDate).format("HH:MM a")
-  const endDateNew = moment(endDate).format("DD/MM/YYYY")
-  const endTime = moment(endDate).format("HH:MM a")
-  
+  const startDateNew = moment(startDate).utcOffset("+05:30").format("DD/MM/YYYY")
+  const startTime = moment(startDate).utcOffset("+05:30").format("HH:mm a");
+  const endDateNew = moment(endDate).utcOffset("+05:30").format("DD/MM/YYYY")
+  const endTime = moment(endDate).format("HH:mm A");
+
   const handelScheduleProduct = () => {
     setOpenScheduleProduct(true);
   };
@@ -43,7 +42,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
   const handelScheduleProductClose = () => {
     setOpenScheduleProduct(false);
   };
-  // ? SCHEDULE PRODUCT DIALOG ENDS HERE
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3">
       <div className="d-flex align-items-center justify-content-between">
@@ -141,7 +140,8 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
             />
           </LocalizationProvider>
           <div className="d-flex mb-1 mt-3">
-            <p className="text-lightBlue">End Date</p>             <p className="text-lightBlue">(Optional)</p>
+            <p className="text-lightBlue">End Date</p>
+            <p className="text-lightBlue">(Optional)</p>
 
             <Tooltip title="Lorem ipsum" placement="top">
               <img
@@ -161,6 +161,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
               minDate={startDateLocal}
+              disabled={startDate == null ? true : false}
             />
           </LocalizationProvider>
         </DialogContent>
