@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useReducer } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   FormControl,
   OutlinedInput,
@@ -16,7 +16,7 @@ import AddCustomField from "../../../components/AddCustomField/AddCustomField";
 import AddCustomFieldTable from "../../../components/AddCustomField/AddCustomFieldTable";
 import InfoHeader from "../../../components/Header/InfoHeader";
 import { UploadMediaSmall } from "../../../components/UploadMediaBox/UploadMedia";
-import { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
+import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
 import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
 
 import info from "../../../assets/icons/info.svg";
@@ -226,13 +226,8 @@ const ProductTabInfo = () => {
             .filter((field) => field.title)
             .map((field) => {
               const clonedField = structuredClone(field);
-              if (
-                !["text", "dimension", "image", "weight"].includes(
-                  clonedField.fieldType
-                )
-              ) {
+              if (clonedField.fieldType === "productField") {
                 clonedField.isDefaultHighlight = false;
-                delete clonedField.productValue;
               } else if (!clonedField.isDefaultHighlight) {
                 delete clonedField.productValue;
               }
@@ -269,7 +264,6 @@ const ProductTabInfo = () => {
               })
             );
             formik.resetForm();
-            navigate("/parameters/productTabs");
           });
       }
     },
@@ -404,7 +398,7 @@ const ProductTabInfo = () => {
         isEdit={!!id}
       />
       <form className="product-form" noValidate onSubmit={formik.handleSubmit}>
-        <div className="row mt-3">
+        <div className="row mt-3" style={{ marginBottom: "50px" }}>
           <div className="col-lg-9 mt-3">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
               <div className="col-md-12 px-0 d-flex">
@@ -426,6 +420,7 @@ const ProductTabInfo = () => {
                     <FormControl className="w-100 px-0">
                       <OutlinedInput
                         size="small"
+                        placeholder="Product Details"
                         sx={{ paddingLeft: 0 }}
                         name="title"
                         value={formik.values?.title}
@@ -505,8 +500,7 @@ const ProductTabInfo = () => {
                         formik?.errors?.commonCustomFields[0]
                       }
                     />
-                  </div>
-                  <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4">
+                    <div className="mt-3"></div>
                     <AddCustomField
                       values={formik.values?.commonCustomFields[1]}
                       field="commonCustomFields[1]"
@@ -535,7 +529,7 @@ const ProductTabInfo = () => {
             </div>
           </div>
         </div>
-        <SaveFooterSecondary
+        <SaveFooterTertiary
           show={id ? productsInfoState.isEditing : true}
           onDiscard={backHandler}
           isLoading={createProductTabIsLoading || editProductTabIsLoading}

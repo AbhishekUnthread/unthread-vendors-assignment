@@ -29,7 +29,7 @@ export const productTabsApiSlice = apiSlice.injectEndpoints({
     }),
     deleteProductTab: builder.mutation({
       query: (productTabId) => ({
-        url: `/parameters/productTab/${productTabId}`,
+        url: `/parameters/productTab/hardDelete/${productTabId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["ProductTabs"],

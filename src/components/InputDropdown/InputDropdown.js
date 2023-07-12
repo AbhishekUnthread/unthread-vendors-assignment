@@ -13,14 +13,16 @@ import {
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 
 const InputDropdown = (props) => {
-  const { options, value, onChange, error, onBlur, name } = props;
+  const { options, value, onChange, error, onBlur, name, placeholder } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorInnerEl, setAnchorInnerEl] = useState(null);
   const [currentValue, setCurrentValue] = useState("");
+  const [isPopoverTouched, setIsPopoverTouched] = useState(false);
 
   const handlePopover = (e) => {
     setAnchorEl((prevState) => {
       if (prevState) {
+        setIsPopoverTouched(true);
         return null;
       }
       setAnchorInnerEl(null);
@@ -65,6 +67,7 @@ const InputDropdown = (props) => {
     <>
       <FormControl className="w-100 px-0">
         <OutlinedInput
+          placeholder={placeholder || "Select"}
           value={currentValue}
           onClick={handlePopover}
           onFocus={handlePopover}
@@ -84,7 +87,9 @@ const InputDropdown = (props) => {
             </InputAdornment>
           }
         />
-        {error && <FormHelperText error>{error}</FormHelperText>}
+        {isPopoverTouched && error && (
+          <FormHelperText error>{error}</FormHelperText>
+        )}
       </FormControl>
       <Popover
         anchorOrigin={{
@@ -110,7 +115,10 @@ const InputDropdown = (props) => {
                       key={option.id}
                       className="w-100 button-transparent me-1 py-2 px-2"
                       style={{ justifyContent: "flex-start", gap: "5px" }}
-                      onClick={handleRadioChange.bind(null, option.value)}
+                      onClick={handleRadioChange.bind(null, {
+                        type: option.value,
+                        value: "",
+                      })}
                     >
                       {option.icon}
                       <Typography>{option.title}</Typography>
@@ -161,10 +169,10 @@ const InputDropdown = (props) => {
                                     justifyContent: "flex-start",
                                     gap: "5px",
                                   }}
-                                  onClick={handleRadioChange.bind(
-                                    null,
-                                    innerChildren.value
-                                  )}
+                                  onClick={handleRadioChange.bind(null, {
+                                    type: option.value,
+                                    value: innerChildren.value,
+                                  })}
                                 >
                                   {innerChildren.icon}
                                   <Typography>{innerChildren.title}</Typography>

@@ -86,47 +86,61 @@ const CUSTOM_FIELD_LIST = [
   {
     id: uuidv4(),
     title: "Link to Product Field",
-    value: "",
+    value: "productField",
     children: [
       {
         id: uuidv4(),
         title: "Product Title",
-        value: "productField",
-        children: null,
-        icon: null,
-      },
-      {
-        id: uuidv4(),
-        title: "Product 1st Image",
-        value: "productField",
-        children: null,
-        icon: null,
-      },
-      {
-        id: uuidv4(),
-        title: "Product 2nd Image",
-        value: "productField",
+        value: "title",
         children: null,
         icon: null,
       },
       {
         id: uuidv4(),
         title: "Description",
-        value: "productField",
+        value: "description",
         children: null,
         icon: null,
       },
       {
         id: uuidv4(),
         title: "SKU",
-        value: "productField",
+        value: "SKU",
         children: null,
         icon: null,
       },
       {
         id: uuidv4(),
         title: "Category",
-        value: "productField",
+        value: "category",
+        children: null,
+        icon: null,
+      },
+      {
+        id: uuidv4(),
+        title: "Sub Category",
+        value: "subCategory",
+        children: null,
+        icon: null,
+      },
+      {
+        id: uuidv4(),
+        title: "Tag Manager",
+        value: "tagManager",
+        children: null,
+        icon: null,
+      },
+      {
+        id: uuidv4(),
+        title: "Vendor",
+        value: "vendor",
+        children: null,
+        icon: null,
+      },
+      {
+        id: uuidv4(),
+        title: "Collection",
+        value: "collection",
         children: null,
         icon: null,
       },
@@ -197,7 +211,7 @@ const FieldType = (props) => {
       return (
         <FormControl className="w-100 px-0">
           <OutlinedInput
-            placeholder={"Enter Dimension"}
+            placeholder="Enter Dimension"
             value={value}
             onChange={changeValueHandler}
             name={name}
@@ -217,7 +231,7 @@ const FieldType = (props) => {
       return (
         <FormControl className="w-100 px-0">
           <OutlinedInput
-            placeholder={"Enter Dimension"}
+            placeholder="Enter Weight"
             value={value}
             onChange={changeValueHandler}
             name={name}
@@ -242,11 +256,12 @@ const FieldType = (props) => {
 const AddCustomField = (props) => {
   const { values, field, formik, hideDefaultHighlight, touched, error } = props;
 
-  const changeFieldTypeHandler = (fieldType) => {
-    formik.setFieldValue(`${field}.fieldType`, fieldType);
+  const changeFieldTypeHandler = ({ type, value }) => {
+    formik.setFieldValue(`${field}.fieldType`, type);
+    formik.setFieldValue(`${field}.productValue`, value);
   };
-  const changeVisibilityHandler = (visibility) => {
-    formik.setFieldValue(`${field}.visibility`, visibility);
+  const changeVisibilityHandler = ({ type }) => {
+    formik.setFieldValue(`${field}.visibility`, type);
   };
   const changeProductValueHandler = useCallback((productValue) => {
     formik.setFieldValue(`${field}.productValue`, productValue);
@@ -258,6 +273,7 @@ const AddCustomField = (props) => {
         <Grid item md={6}>
           <FormControl className="w-100 px-0">
             <OutlinedInput
+              placeholder="Enter Custom Title"
               size="small"
               name={`${field}.title`}
               value={values?.title}
@@ -271,7 +287,12 @@ const AddCustomField = (props) => {
         </Grid>
         <Grid item md={4}>
           <InputDropdown
-            value={values?.fieldType}
+            placeholder="Select Field Type"
+            value={
+              values?.fieldType !== "productField"
+                ? values?.fieldType
+                : values?.productValue
+            }
             onChange={changeFieldTypeHandler}
             onBlur={formik?.handleBlur}
             name={`${field}.fieldType`}
@@ -281,6 +302,7 @@ const AddCustomField = (props) => {
         </Grid>
         <Grid item md={2}>
           <InputDropdown
+            placeholder="Select"
             value={values?.visibility}
             onChange={changeVisibilityHandler}
             onBlur={formik?.handleBlur}

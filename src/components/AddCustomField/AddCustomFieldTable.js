@@ -70,13 +70,13 @@ const HEAD_CELLS = [
     align: "left",
     disablePadding: false,
     label: "Show / Hide",
-    width: "12%",
+    width: "16%",
   },
   {
     align: "right",
     disablePadding: false,
     label: "",
-    width: "8%",
+    width: "5%",
   },
 ];
 
