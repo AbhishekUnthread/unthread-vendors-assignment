@@ -18,6 +18,7 @@ import {
 import TableHeader from "../../../components/TableHeader/TableHeader";
 import EditButton from "../../../components/EditButton/EditButton";
 import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
+import NoData from "../../../components/NoData/NoData";
 
 const DragHandle = SortableHandle(() => (
   <TableCell>
@@ -106,9 +107,7 @@ const ProductTabsTable = (props) => {
   }
 
   if (data && !data.length) {
-    return (
-      <span className="d-flex justify-content-center m-3">No data found</span>
-    );
+    return <NoData />;
   }
 
   return (

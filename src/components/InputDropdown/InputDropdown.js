@@ -13,7 +13,16 @@ import {
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 
 const InputDropdown = (props) => {
-  const { options, value, onChange, error, onBlur, name, placeholder } = props;
+  const {
+    options,
+    value,
+    onChange,
+    error,
+    onBlur,
+    name,
+    placeholder,
+    saveTried,
+  } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorInnerEl, setAnchorInnerEl] = useState(null);
   const [currentValue, setCurrentValue] = useState("");
@@ -62,6 +71,10 @@ const InputDropdown = (props) => {
       setCurrentValue("");
     }
   }, [value, options]);
+
+  useEffect(() => {
+    saveTried && setIsPopoverTouched(true);
+  }, [saveTried]);
 
   return (
     <>
