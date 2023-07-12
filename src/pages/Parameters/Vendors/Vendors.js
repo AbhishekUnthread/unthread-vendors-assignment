@@ -447,10 +447,10 @@ const Vendors = () => {
     }, [bulkDeleteVendorIsSuccess,bulkDeleteVendorError])
 
     useEffect(() => {
-      if(editVendorIsSuccess)
-      {
-        dispatch(showSuccess({ message: "Status updated successfully" }));
-      }
+      // if(editVendorIsSuccess)
+      // {
+      //   dispatch(showSuccess({ message: "Status updated successfully" }));
+      // }
       if(editVendorError)
       {
         if (editVendorError?.data?.message) {
@@ -465,10 +465,10 @@ const Vendors = () => {
     }, [editVendorIsSuccess,editVendorError])
 
     useEffect(() => {
-      if(bulkVendorEditIsSuccess)
-      {
-        dispatch(showSuccess({ message: "Status updated successfully" }));
-      }
+      // if(bulkVendorEditIsSuccess)
+      // {
+      //   dispatch(showSuccess({ message: "Status updated successfully" }));
+      // }
       if(bulkVendorEditError)
       {
         if (bulkVendorEditError?.data?.message) {

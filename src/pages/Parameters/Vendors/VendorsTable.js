@@ -154,7 +154,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
       });
       setState(newState);
       bulkEdit({ updates: newState })
-      // .unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      .unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
       setSelectedStatus(null);
       setSelected([]);
     }
@@ -191,7 +191,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
       }
     });
     bulkEdit({ updates: newState })
-    // .unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Archived Successfully" })));
     setOpenUnArchivePopUp(false);
     setSelected([]);
   };
@@ -236,7 +236,6 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     }
   };
 
-console.log("efdew",selected)
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
@@ -285,7 +284,7 @@ console.log("efdew",selected)
         };
     });
     bulkEdit({ updates: newState })
-    // .unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Archived Successfully" })));
     setSelected([]);
     }
     else{
@@ -296,6 +295,8 @@ console.log("efdew",selected)
           showFilter:false
         }
     })
+    .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Archived Successfully" })));
+
     }
     setArchivedModal(false);
     setVendorName("");
@@ -323,9 +324,8 @@ const handleUnArchived = () => {
        status: vendorStatus,
        showFilter:true
      }
- })
- setShowUnArhcivedModal(false)
-//  dispatch(showSuccess({ message: "Vendor Un-Archived successfully" }));
+ }).unwrap().then(()=>dispatch(showSuccess({ message: "Vendor Un-Archived successfully" })))
+    setShowUnArhcivedModal(false)
 }
 //unarchive ends here
 const [showDeleteModal, setShowDeleteModal] = React.useState(false);
@@ -624,13 +624,13 @@ const handleDelete =()=>{
               className="button-red-outline py-2 px-3 me-5"
               onClick={handleModalClose}
             >
-              <p>Cancel</p>
+              <p>No</p>
             </button>
             <button
               className="button-gradient py-2 px-3 ms-5"
               onClick={handleArchivedModalOnSave}
             >
-              <p>Archived</p>
+              <p>Yes</p>
             </button>
           </DialogActions>
       </Dialog>

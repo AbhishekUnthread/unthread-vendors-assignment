@@ -596,13 +596,13 @@ const handleDelete =()=>{
               className="button-red-outline py-2 px-3 me-5"
               onClick={handleModalClose}
             >
-              <p>Cancel</p>
+              <p>No</p>
             </button>
             <button
               className="button-gradient py-2 px-3 ms-5"
               onClick={handleArchivedModalOnSave}
             >
-              <p>Archived</p>
+              <p>Yes</p>
             </button>
           </DialogActions>
       </Dialog>
