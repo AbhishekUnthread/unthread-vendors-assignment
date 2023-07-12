@@ -28,6 +28,7 @@ import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import DuplicateCollection from "./DuplicateCollection/DuplicateCollection";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 // !IMAGES IMPORTS
 import unthreadLogo from "../../../assets/images/unthreadLogo.png"
 
@@ -41,6 +42,8 @@ import { updateCollectionId } from "../../../features/parameters/collections/col
 import { useBulkEditCollectionMutation, useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import question from '../../../assets/images/products/question.svg'
+import unArchived from "../../../assets/images/Components/Archived.png"
+import closeModal from "../../../assets/icons/closeModal.svg"
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from "moment";
 
@@ -72,7 +75,9 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const [massActionStatus, setMassActionStatus] = React.useState("");
   const [forMassAction, setForMassAction] = React.useState(false);
   const [collectionTitle, setCollectionTitle] = useState("");
-  const [duplicateModal, setDuplicateModal] = useState(false)
+  const [duplicateModal, setDuplicateModal] = useState(false);
+
+  console.log(forMassAction,'forMassAction')
 
   const handleStatusValue = (value) => {
     setStatusValue(value);
@@ -106,6 +111,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     setCollectionTitle(title);
     setArchivedModal(true);
     setCollectionId(id);
+    setForMassAction(false)
   }
 
   const toggleArchiveModalHandler = (row) => {
@@ -593,7 +599,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
             <span className="d-flex justify-content-center m-3">Loading...</span>
           ) : (
             <span className="d-flex justify-content-center m-3">
-              No data found
+              <NoDataFound />
             </span>
           )
         ) : (
@@ -609,28 +615,34 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           maxWidth="sm"
         >
           <DialogContent className="py-2 px-4 text-center">
-            <img src={question} alt="question" width={200} />
+            <img src={closeModal} alt="question" width={40} className="closeModal" onClick={handleModalClose}/>
+            <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
             <div className="row"></div>
-            <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive this collection  
-              {forMassAction == false &&<span className="text-blue-2"> {collectionTitle} </span>} ?
+            <h5 className="text-lightBlue mt-2 mb-3">
+              Archive   
+              <span className="text-blue-2"> "{forMassAction == true ? "these" : collectionTitle }" </span>
+              collection ?
+            </h5>
+            <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
+              <span className="text-blue-2"> 0 products </span> 
+              in this collection will be unassigned from it.
             </h6>
-            <div className="d-flex justify-content-center mt-4">
-              <hr className="hr-grey-6 w-100" />
-            </div>
+            <h6 className="mt-2 mb-4" style={{color: "#5C6D8E"}}>
+              Would you like to Archive this Collection ?
+            </h6>
           </DialogContent>
-          <DialogActions className="d-flex justify-content-between px-4 pb-4">
+          <DialogActions className="d-flex justify-content-center px-4 pb-4">
             <button
-              className="button-red-outline py-2 px-3 me-5"
+              className="button-lightBlue-outline py-2 px-3 me-4"
               onClick={handleModalClose}
             >
               <p>Cancel</p>
             </button>
             <button
-              className="button-gradient py-2 px-3 ms-5"
+              className="button-red-outline py-2 px-3"
               onClick={handleArchivedModalClose}
             >
-              <p>Archived</p>
+              <p>Archive</p>
             </button>
           </DialogActions>
         </Dialog>
@@ -639,6 +651,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           toggleArchiveModalHandler={toggleArchiveModalHandler}
           handleArchive={handleArchiveModal} 
           name={forMassAction == false ? name : ""} 
+          deleteType={"Collection"}
         />
         <UnArchivedModal 
           handleStatusValue={handleStatusValue}
@@ -646,6 +659,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
           name={forMassAction == false ? name : "this"}
+          nameType={"Collection"}
         />
 
         <DuplicateCollection 
