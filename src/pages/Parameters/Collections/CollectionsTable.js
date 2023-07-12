@@ -160,6 +160,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
         setSelectedStatus(null);
         setShowUnArhcivedModal(false)
         setShowDeleteModal(false);
+        setSelected([])
       })}    
   }, [selectedStatus]);  
   
@@ -304,6 +305,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
       bulkDelete(selected)
       setShowDeleteModal(false);
       dispatch(showSuccess({ message: "Collection deleted successfully!" }));
+      setSelected([])
     } else {
       hardDeleteCollection(archiveID?._id);
       toggleArchiveModalHandler();
