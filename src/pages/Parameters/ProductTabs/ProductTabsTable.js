@@ -122,7 +122,10 @@ const ProductTabsTable = (props) => {
                 <SortableRow index={index} key={item._id}>
                   <TableRow hover tabIndex={-1} className="table-rows">
                     <DragHandle />
-                    <TableCell sx={{ textTransform: "capitalize" }}>
+                    <TableCell
+                      onClick={onEdit.bind(null, index + 1)}
+                      sx={{ textTransform: "capitalize", cursor: "pointer" }}
+                    >
                       <p className="text-lightBlue fw-600">{item.title}</p>
                     </TableCell>
                     <TableCell>
@@ -162,7 +165,7 @@ const ProductTabsTable = (props) => {
         </Table>
       </TableContainer>
 
-      <TablePagination
+      {/* <TablePagination
         rowsPerPageOptions={PAGINATION_ROWS}
         component="div"
         count={totalCount || 0}
@@ -171,7 +174,7 @@ const ProductTabsTable = (props) => {
         onPageChange={onPageChange}
         onRowsPerPageChange={onRowsPerPageChange}
         className="table-pagination"
-      />
+      /> */}
     </>
   );
 };

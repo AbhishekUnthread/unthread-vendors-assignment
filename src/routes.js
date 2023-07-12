@@ -70,6 +70,7 @@ import EditSubCategories from "./pages/Parameters/Categories/EditSubCategories/E
 import EditCollection from "./pages/Parameters/Collections/EditCollection/EditCollection";
 import ProductTabs from "./pages/Parameters/ProductTabs/ProductTabs";
 import ProductTabInfo from "./pages/Parameters/ProductTabs/ProductTabInfo";
+import OptionsInfo from "./pages/Parameters/Options/OptionsInfo";
 
 const router = () => {
   const loginStatus = store.getState().auth.isLoggedIn;
@@ -238,8 +239,8 @@ const router = () => {
                   element: <EditSubCategories />,
                 },
                 {
-                  path: "variantSets",
-                  element: <VariantSets />,
+                  path: "options/create",
+                  element: <OptionsInfo />,
                 },
                 {
                   path: "variantSets/edit",
