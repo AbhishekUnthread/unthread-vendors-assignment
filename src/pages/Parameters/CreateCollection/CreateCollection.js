@@ -336,9 +336,9 @@ const CreateCollection = () => {
     if(endDate1 !== null){
       collectionFormik.setFieldValue("endDate", endDate1);
     }
-    // if(startDate1 !== null){
-    //   collectionFormik.setFieldValue("status", "scheduled");
-    // }
+    if(startDate1 !== null){
+      collectionFormik.setFieldValue("status", "scheduled");
+    }
   },[appTextEditor, startDate1, endDate1])
 
   useEffect(() => {

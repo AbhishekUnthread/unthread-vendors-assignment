@@ -131,12 +131,13 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker
-              value={startDateLocal}
+              value={startDate ? startDate : null}
               onChange={(newValue) => {
                 setStartDate(newValue);
                 handleStartDate(newValue)
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
+              minDate={new Date()}
             />
           </LocalizationProvider>
           <div className="d-flex mb-1 mt-3">
@@ -153,12 +154,13 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker
-              value={endDateLocal}
+              value={endDate ? endDate : null }
               onChange={(newValue) => {
                 setEndDate(newValue);
                 handleEndDate(newValue);
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
+              minDate={startDateLocal}
             />
           </LocalizationProvider>
         </DialogContent>

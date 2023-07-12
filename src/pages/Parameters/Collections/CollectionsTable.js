@@ -160,6 +160,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
         setSelectedStatus(null);
         setShowUnArhcivedModal(false)
         setShowDeleteModal(false);
+        setSelected([])
       })}    
   }, [selectedStatus]);  
   
@@ -304,6 +305,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
       bulkDelete(selected)
       setShowDeleteModal(false);
       dispatch(showSuccess({ message: "Collection deleted successfully!" }));
+      setSelected([])
     } else {
       hardDeleteCollection(archiveID?._id);
       toggleArchiveModalHandler();
@@ -435,7 +437,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                     </TableCell>
                     <TableCell style={{ width: 180, padding: 10 }}>
                       <div className="d-block">
-                        <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
+                        <div className="rounded-pill d-flex px-2 py-1 statusBoxWidth" 
                           style={{background: 
                             row.status == "active" ? "#A6FAAF" : 
                             row.status == "in-active" ? "#F67476" : 
