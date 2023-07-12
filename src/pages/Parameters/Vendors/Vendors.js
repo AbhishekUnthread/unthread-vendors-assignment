@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect } from "react";
+import React, { forwardRef, useState, useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 // ! COMPONENT IMPORTS
@@ -8,7 +8,7 @@ import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
-import TableSearch from "../../../components/TableSearch/TableSearch";
+import TableSearch, { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
 import {
   showSuccess,
@@ -67,9 +67,42 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
+const initialQueryFilterState = {
+  pageSize: 5,
+  pageNo: 1,
+  name:"",
+};
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_SIZE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      pageSize: +action.value,
+    };
+  }
+  if (action.type === "CHANGE_PAGE") {
+    return {
+      ...state,
+      pageNo: action.pageNo +1,
+    };
+  }
+  if (action.type === "SEARCH") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      name: action.name,
+    };
+  }
+  return initialQueryFilterState;
+};
+
 const Vendors = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
   const [vendorType, setVendorType] = useState(0);
   const [vendorList, setVendorList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -108,11 +141,11 @@ const Vendors = () => {
       queryParameters.status = selectedStatusOption;
     }
   }
-  if(searchValue)
-  {
-    queryParameters.name = searchValue;
-  }
-  if (!selectedSortOption && selectedStatusOption === null && !searchValue) {
+  // if(searchValue)
+  // {
+  //   queryParameters.name = searchValue;
+  // }
+  if (!selectedSortOption && selectedStatusOption === null) {
     queryParameters.status = "active";
     queryParameters.status = "in-active"
   }
@@ -135,7 +168,7 @@ const Vendors = () => {
       isLoading: vendorsIsLoading, 
       isSuccess: vendorsIsSuccess, 
       error: vendorsError, 
-    } = useGetAllVendorsQuery({...queryParameters,...vendorTypeQuery}, { enabled: Object.keys(queryParameters).length > 0 }); 
+    } = useGetAllVendorsQuery({...queryParameters,...vendorTypeQuery,...queryFilterState}, { enabled: Object.keys(queryParameters).length > 0 }); 
     // The `enabled` option determines whether the useGetAllVendorsQuery hook should be enabled or disabled based on the presence of query parameters.
     // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
   
@@ -212,6 +245,18 @@ const Vendors = () => {
       },
     });
 
+    const handleChangeRowsPerPage = (event) => {
+      dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
+    };
+  
+    const handleChangePage = (_, pageNo) => {
+      dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+    };
+
+    const handleSearchChange = (value) => {
+      dispatchQueryFilter({ type: "SEARCH", name: value });
+    };
+
     const toggleCreateModalHandler = () => {
       setShowCreateModal((prevState) => !prevState);
       vendorFormik.resetForm();
@@ -273,9 +318,9 @@ const Vendors = () => {
     bulkDeleteVendor(data);
     }
 
-  const handleSearchChange = (event) => {
-      setSearchValue(event.target.value);
-    };
+  // const handleSearchChange = (event) => {
+  //     setSearchValue(event.target.value);
+  //   };
 
  // * SORT POPOVERS STARTS HERE
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
@@ -645,7 +690,7 @@ const Vendors = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange} />
+            <TableSearchSecondary onChange={handleSearchChange} />
             <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idStatus}
@@ -903,6 +948,10 @@ const Vendors = () => {
               deleteData={handleDeleteVendor}
               editVendor={editVendor}
               bulkEdit ={bulkEdit}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
             />
           </TabPanel>
           <TabPanel value={vendorType} index={1}>
@@ -914,6 +963,10 @@ const Vendors = () => {
               totalCount={totalCount}
               editVendor={editVendor}
               bulkEdit ={bulkEdit}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
 
             />
           </TabPanel>
@@ -926,6 +979,10 @@ const Vendors = () => {
               totalCount={totalCount}
               editVendor={editVendor}
               bulkEdit ={bulkEdit}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
             />
           </TabPanel>
           <TabPanel value={vendorType} index={3}>
@@ -940,6 +997,10 @@ const Vendors = () => {
               vendorType={vendorType}
               editVendor={editVendor}
               bulkEdit ={bulkEdit}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
             />
           </TabPanel>
         </Paper>

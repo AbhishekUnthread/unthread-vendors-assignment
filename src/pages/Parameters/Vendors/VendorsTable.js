@@ -82,12 +82,12 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType, bulkDelete,editVendor,bulkEdit }) => {
+const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType, bulkDelete,editVendor,bulkEdit,rowsPerPage,changeRowsPerPage,changePage,page }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [page, setPage] = React.useState(0);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [selectedMassStatus, setSelectedMassStatus] = React.useState(null);
   const [showCreateModal, setShowCreateModal] = React.useState(false);
@@ -191,7 +191,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
       }
     });
     bulkEdit({ updates: newState })
-    .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Archived Successfully" })));
+    .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Un-Archived Successfully" })));
     setOpenUnArchivePopUp(false);
     setSelected([]);
   };
@@ -200,12 +200,12 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     setOpenUnArchivePopUp(false)
   }
   
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
+  // const emptyRows =
+  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -256,10 +256,10 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     setSelected(newSelected);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
   
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
@@ -403,7 +403,6 @@ const handleDelete =()=>{
                 />
                 <TableBody>
                   {stableSort(list, getComparator(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
                       const isItemSelected = isSelected(row._id);
                       const labelId = `enhanced-table-checkbox-${index}`;
@@ -568,7 +567,7 @@ const handleDelete =()=>{
                         </TableRow>
                       );
                     })}
-                  {emptyRows > 0 && (
+                  {/* {emptyRows > 0 && (
                     <TableRow
                       style={{
                         height: 53 * emptyRows,
@@ -576,7 +575,7 @@ const handleDelete =()=>{
                     >
                       <TableCell colSpan={6} />
                     </TableRow>
-                  )}
+                  )} */}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -585,9 +584,9 @@ const handleDelete =()=>{
               component="div"
               count={totalCount}
               rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              page={page-1}
+              onPageChange={changePage}
+              onRowsPerPageChange={changeRowsPerPage}
               className="table-pagination"
             />
           </>
