@@ -254,7 +254,15 @@ const FieldType = (props) => {
 };
 
 const AddCustomField = (props) => {
-  const { values, field, formik, hideDefaultHighlight, touched, error } = props;
+  const {
+    values,
+    field,
+    formik,
+    hideDefaultHighlight,
+    touched,
+    error,
+    saveTried,
+  } = props;
 
   const changeFieldTypeHandler = ({ type, value }) => {
     formik.setFieldValue(`${field}.fieldType`, type);
@@ -298,6 +306,7 @@ const AddCustomField = (props) => {
             name={`${field}.fieldType`}
             options={CUSTOM_FIELD_LIST}
             error={!!touched?.fieldType && error?.fieldType}
+            saveTried={saveTried}
           />
         </Grid>
         <Grid item md={2}>
@@ -309,6 +318,7 @@ const AddCustomField = (props) => {
             name={`${field}.visibility`}
             options={CUSTOM_FIELD_DISPLAY}
             error={!!touched?.visibility && error?.visibility}
+            saveTried={saveTried}
           />
         </Grid>
       </Grid>

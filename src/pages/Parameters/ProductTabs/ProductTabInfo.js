@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useReducer } from "react";
+import { useEffect, useCallback, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -135,6 +135,7 @@ const queryFilterReducer = (state, action) => {
 const ProductTabInfo = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [saveTried, setSaveTried] = useState(false);
   let { id } = useParams();
   const [productsInfoState, dispatchProductsInfo] = useReducer(
     productsTabReducer,
@@ -322,6 +323,12 @@ const ProductTabInfo = () => {
     navigate(`/parameters/productTabs/edit/${pageNo - 1}`);
   };
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    setSaveTried(true);
+    formik.handleSubmit();
+  };
+
   useEffect(() => {
     if (createProductTabIsError) {
       if (createProductTabError.data?.message) {
@@ -397,7 +404,7 @@ const ProductTabInfo = () => {
         onNext={nextPageHandler}
         isEdit={!!id}
       />
-      <form className="product-form" noValidate onSubmit={formik.handleSubmit}>
+      <form className="product-form" noValidate onSubmit={submitHandler}>
         <div className="row mt-3" style={{ marginBottom: "50px" }}>
           <div className="col-lg-9 mt-3">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -488,6 +495,7 @@ const ProductTabInfo = () => {
                 <Grid item md={12}>
                   <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4">
                     <AddCustomField
+                      saveTried={saveTried}
                       values={formik.values?.commonCustomFields[0]}
                       field="commonCustomFields[0]"
                       formik={formik}
@@ -502,6 +510,7 @@ const ProductTabInfo = () => {
                     />
                     <div className="mt-3"></div>
                     <AddCustomField
+                      saveTried={saveTried}
                       values={formik.values?.commonCustomFields[1]}
                       field="commonCustomFields[1]"
                       formik={formik}
@@ -518,6 +527,7 @@ const ProductTabInfo = () => {
                 </Grid>
                 <Grid item md={12}>
                   <AddCustomFieldTable
+                    saveTried={saveTried}
                     formik={formik}
                     data={formik.values?.customFields}
                     onSort={() => {}}

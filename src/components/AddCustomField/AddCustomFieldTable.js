@@ -81,7 +81,14 @@ const HEAD_CELLS = [
 ];
 
 const AddCustomFieldTable = (props) => {
-  const { formik, data, onAdd, onSort = () => {}, onDeleteField } = props;
+  const {
+    formik,
+    data,
+    onAdd,
+    onSort = () => {},
+    onDeleteField,
+    saveTried,
+  } = props;
 
   return (
     <TableContainer>
@@ -100,6 +107,7 @@ const AddCustomFieldTable = (props) => {
 
                       <TableCell colSpan={3}>
                         <AddCustomField
+                          saveTried={saveTried}
                           values={formik?.values?.customFields[index]}
                           field={`customFields[${index}]`}
                           formik={formik}
