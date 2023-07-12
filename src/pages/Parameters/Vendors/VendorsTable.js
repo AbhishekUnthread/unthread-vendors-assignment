@@ -82,7 +82,7 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType, bulkDelete }) => {
+const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType, bulkDelete,editVendor,bulkEdit }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -111,21 +111,21 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     setName(row?.name);
   };
 
-  const [
-    editVendor,
-    { data: editData,
-      isLoading: editVendorIsLoading,
-      isSuccess: editVendorIsSuccess,
-      error: editVendorError },
-  ] = useEditVendorMutation();
+  // const [
+  //   editVendor,
+  //   { data: editData,
+  //     isLoading: editVendorIsLoading,
+  //     isSuccess: editVendorIsSuccess,
+  //     error: editVendorError },
+  // ] = useEditVendorMutation();
 
-  const[bulkEdit,
-  {
-    data: bulkEditVendor,
-    isLoading: bulkVendorEditLoading,
-    isSuccess: bulkVendorEditIsSuccess,
-    error: bulkVendorEditError,
-  }]=useBulkEditVendorMutation();
+  // const[bulkEdit,
+  // {
+  //   data: bulkEditVendor,
+  //   isLoading: bulkVendorEditLoading,
+  //   isSuccess: bulkVendorEditIsSuccess,
+  //   error: bulkVendorEditError,
+  // }]=useBulkEditVendorMutation();
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -153,7 +153,8 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
         }
       });
       setState(newState);
-      bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      bulkEdit({ updates: newState })
+      // .unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
       setSelectedStatus(null);
       setSelected([]);
     }
@@ -189,7 +190,8 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
         };
       }
     });
-    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    bulkEdit({ updates: newState })
+    // .unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
     setOpenUnArchivePopUp(false);
     setSelected([]);
   };
@@ -282,7 +284,8 @@ console.log("efdew",selected)
           status: "archieved",
         };
     });
-    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    bulkEdit({ updates: newState })
+    // .unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
     setSelected([]);
     }
     else{
@@ -322,7 +325,7 @@ const handleUnArchived = () => {
      }
  })
  setShowUnArhcivedModal(false)
- dispatch(showSuccess({ message: "Vendor Un-Archived successfully" }));
+//  dispatch(showSuccess({ message: "Vendor Un-Archived successfully" }));
 }
 //unarchive ends here
 const [showDeleteModal, setShowDeleteModal] = React.useState(false);

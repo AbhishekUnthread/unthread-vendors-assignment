@@ -21,6 +21,7 @@ import {
   useBulkCreateVendorMutation,
   useEditVendorMutation,
   useBulkDeleteVendorMutation,
+  useBulkEditVendorMutation,
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import "../../Products/AllProducts/AllProducts.scss";
 // ! ASSETS IMPORTS
@@ -174,6 +175,22 @@ const Vendors = () => {
       },
     ] = useBulkDeleteVendorMutation();
 
+    const [
+      editVendor,
+      { data: editData,
+        isLoading: editVendorIsLoading,
+        isSuccess: editVendorIsSuccess,
+        error: editVendorError },
+    ] = useEditVendorMutation();
+  
+    const[bulkEdit,
+    {
+      data: bulkEditVendor,
+      isLoading: bulkVendorEditLoading,
+      isSuccess: bulkVendorEditIsSuccess,
+      error: bulkVendorEditError,
+    }]=useBulkEditVendorMutation();
+
 
     const vendorFormik = useFormik({
       initialValues: {
@@ -190,7 +207,7 @@ const Vendors = () => {
         }
         else
         {
-          createVendor(values)
+          createVendor(values.name.trim(),values.status,values.showFilter)
         }
       },
     });
@@ -389,7 +406,7 @@ const Vendors = () => {
         vendorsIsSuccess,
         vendorType,
         vendorsError,
-        createVendorIsSuccess,bulkCreateVendorIsSuccess,createVendorError,bulkCreateVendorError,
+        createVendorIsSuccess,bulkCreateVendorIsSuccess,createVendorError,bulkCreateVendorError,editVendorIsSuccess,bulkVendorEditIsSuccess,editVendorError,bulkVendorEditError
       ]);
 
     useEffect(() => {
@@ -428,6 +445,42 @@ const Vendors = () => {
         }
       }
     }, [bulkDeleteVendorIsSuccess,bulkDeleteVendorError])
+
+    useEffect(() => {
+      if(editVendorIsSuccess)
+      {
+        dispatch(showSuccess({ message: "Status updated successfully" }));
+      }
+      if(editVendorError)
+      {
+        if (editVendorError?.data?.message) {
+          dispatch(showError({ message: editVendorError?.data?.message }));
+        }
+        else {
+          dispatch(
+            showError({ message: "Something went wrong!, please try again" })
+          );
+        }
+      }
+    }, [editVendorIsSuccess,editVendorError])
+
+    useEffect(() => {
+      if(bulkVendorEditIsSuccess)
+      {
+        dispatch(showSuccess({ message: "Status updated successfully" }));
+      }
+      if(bulkVendorEditError)
+      {
+        if (bulkVendorEditError?.data?.message) {
+          dispatch(showError({ message: bulkVendorEditError?.data?.message }));
+        }
+        else {
+          dispatch(
+            showError({ message: "Something went wrong!, please try again" })
+          );
+        }
+      }
+    }, [bulkVendorEditIsSuccess,bulkVendorEditError])
     
 
   return (
@@ -541,63 +594,6 @@ const Vendors = () => {
                 />
               ))}
                 </div>
-            {/* <br/>
-                <p className="text-lightBlue mb-2">Description</p>
-                <FormControl className="col-7 px-0">
-                  <OutlinedInput
-                    placeholder="Enter Description"
-                    size="small"
-                    value={vendorFormik.values.description}
-                    onBlur={vendorFormik.handleBlur}
-                    onChange={vendorFormik.handleChange}
-                    name="description"
-                  />
-                  {!!vendorFormik.touched.description &&
-                    vendorFormik.errors.description && (
-                      <FormHelperText error>
-                        {vendorFormik.errors.description}
-                      </FormHelperText>
-                    )}
-                </FormControl> */}
-
-                {/* <div className="d-flex">
-                    <Chip
-                      label='Hi'
-                      size="small"
-                      className="mt-3 me-2"
-                    ></Chip>
-              </div> */}
-
-                 {/* <p className="text-lightBlue mb-2 mt-3">Vendor Category</p>
-              <FormControl
-                //   sx={{ m: 0, minWidth: 120, width: "100%" }}
-                size="small"
-                className="col-md-7"
-              >
-                <Select
-                  labelId="demo-select-small"
-                  id="demo-select-small"
-                  value={vendorCategory}
-                  onChange={handleVendorCategoryChange}
-                  size="small"
-                >
-                  <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                    None
-                  </MenuItem>
-                  <MenuItem value={10} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                    JWL 1
-                  </MenuItem>
-                  <MenuItem value={20} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                    FLAGSHIP VENDOR
-                  </MenuItem>
-                  <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                    JWL 2
-                  </MenuItem>
-                  <MenuItem value={40} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                    JWL 3
-                  </MenuItem>
-                </Select>
-              </FormControl>  */}
               </DialogContent>
 
               <hr className="hr-grey-6 my-0" />
@@ -905,6 +901,8 @@ const Vendors = () => {
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
               deleteData={handleDeleteVendor}
+              editVendor={editVendor}
+              bulkEdit ={bulkEdit}
             />
           </TabPanel>
           <TabPanel value={vendorType} index={1}>
@@ -914,6 +912,8 @@ const Vendors = () => {
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
+              editVendor={editVendor}
+              bulkEdit ={bulkEdit}
 
             />
           </TabPanel>
@@ -924,7 +924,8 @@ const Vendors = () => {
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
-
+              editVendor={editVendor}
+              bulkEdit ={bulkEdit}
             />
           </TabPanel>
           <TabPanel value={vendorType} index={3}>
@@ -937,7 +938,8 @@ const Vendors = () => {
               deleteData={handleDeleteVendor}
               bulkDelete={handleBulkDeleteVendor}
               vendorType={vendorType}
-
+              editVendor={editVendor}
+              bulkEdit ={bulkEdit}
             />
           </TabPanel>
         </Paper>
