@@ -207,7 +207,7 @@ const Vendors = () => {
         }
         else
         {
-          createVendor(values.name.trim(),values.status,values.showFilter)
+          createVendor(values)
         }
       },
     });
