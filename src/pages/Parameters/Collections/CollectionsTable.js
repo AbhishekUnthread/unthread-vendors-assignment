@@ -650,7 +650,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           showCreateModal={showDeleteModal}
           toggleArchiveModalHandler={toggleArchiveModalHandler}
           handleArchive={handleArchiveModal} 
-          name={forMassAction == false ? name : ""} 
+          name={forMassAction == false ? name : "these"} 
           deleteType={"Collection"}
         />
         <UnArchivedModal 
