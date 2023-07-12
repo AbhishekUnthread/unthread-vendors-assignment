@@ -52,7 +52,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 const 
-TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,tagsType}) => {
+TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,tagsType,bulkDelete}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -257,7 +257,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,ta
           status: "archieved",
         };
     });
-    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Tag Archived successfully" })));
     setSelected([]);
     }
     else
@@ -268,7 +268,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,ta
           status: "archieved",
           showFilter:false
         }
-    })
+    }).unwrap().then(()=>dispatch(showSuccess({ message: " Tag Archived successfully" })));
     }
   }
 // Archive ends here
@@ -309,7 +309,7 @@ const handleUnArchived = () => {
   })
   }
  setShowUnArhcivedModal(false)
- dispatch(showSuccess({ message: "Un-Archived this tag successfully" }));
+ dispatch(showSuccess({ message: "Tag Un-Archived Successfully" }));
 }
 //unarchive ends here
 const [showDeleteModal, setShowDeleteModal] = React.useState(false);
@@ -320,10 +320,18 @@ const handleDeleteOnClick = (row) => {
   setTagName(row?.name);
 };
 const handleDelete =()=>{
-  console.log({rrl:tag._id})
-  deleteData(tag?._id);
-  handleDeleteOnClick();
-  dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+  if(selected.length >1)
+  {
+    bulkDelete({deletes :selected})
+    handleDeleteOnClick();
+    setSelected([]);
+  }
+  else{
+    deleteData(tag?._id);
+    handleDeleteOnClick();
+    // dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+  }
+
 }
 
   return (

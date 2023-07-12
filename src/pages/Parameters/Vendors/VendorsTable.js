@@ -82,7 +82,7 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType }) => {
+const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType, bulkDelete }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -234,7 +234,7 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     }
   };
 
-
+console.log("efdew",selected)
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
@@ -322,7 +322,7 @@ const handleUnArchived = () => {
      }
  })
  setShowUnArhcivedModal(false)
- dispatch(showSuccess({ message: "Un-Archived this vendor successfully" }));
+ dispatch(showSuccess({ message: "Vendor Un-Archived successfully" }));
 }
 //unarchive ends here
 const [showDeleteModal, setShowDeleteModal] = React.useState(false);
@@ -333,24 +333,18 @@ const handleDeleteOnClick = (row) => {
   setVendorName(row?.name);
 };
 const handleDelete =()=>{
-  if(selected.length>0)
+  if(selected.length>1)
   {
-    const newState = selected.map((id) => {
-      return {
-        id
-      };
-  });
+  bulkDelete({deletes :selected})
   handleDeleteOnClick();
-  console.log("ffwe",newState)
-
+  setSelected([]);
   }
   else{
     deleteData(vendor?._id);
     handleDeleteOnClick();
-    dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+    // dispatch(showSuccess({ message: "Deleted this collection successfully" }));
   }
   }
-
 
   return (
     <React.Fragment>
