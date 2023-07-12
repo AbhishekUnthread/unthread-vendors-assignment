@@ -46,7 +46,7 @@ const UnArchivedModal = ({
         onClose={closeUnArchivedModal}
       >
         <DialogContent className="py-2 px-4 text-center">
-          <img src={closeModal} alt="question" width={40} className="closeModal" 
+          <img src={closeModal} alt="question" width={40} className="closeModal c-pointer" 
             onClick={closeUnArchivedModal}
           />
           <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>

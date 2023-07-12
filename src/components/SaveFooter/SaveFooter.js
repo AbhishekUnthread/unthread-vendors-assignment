@@ -10,6 +10,7 @@ const SaveFooter = ({
   handleSubmitAndAddAnother,
   saveAsDraft,
   saveAddAnother,
+  handleDiscard
 }) => {
   const navigate = useNavigate();
 
@@ -18,7 +19,7 @@ const SaveFooter = ({
       <div className="d-flex w-auto px-0">
         <button
           className="button-red-outline py-2 px-4"
-          onClick={() => navigate(-1)}
+          onClick={handleDiscard}
         >
           <p>Discard</p>
         </button>

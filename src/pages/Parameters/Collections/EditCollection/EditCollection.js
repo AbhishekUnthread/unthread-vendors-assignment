@@ -10,7 +10,8 @@ import UploadBanner from "../../../../components/UploadBanner/UploadBanner";
 import StatusBox from "../../../../components/StatusBox/StatusBox";
 import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
 import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
-import AddHeader from "../../../../components/AddHeader/AddHeader"
+import AddHeader from "../../../../components/AddHeader/AddHeader";
+import DiscardModal from "../../../../components/Discard/DiscardModal";
 import {
   EnhancedTableHead,
   stableSort,
@@ -246,6 +247,7 @@ const EditCollection = () => {
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
+  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
 
    const clearDate = () => {
     setStartDate1(null);
@@ -271,6 +273,14 @@ const EditCollection = () => {
     if(event == true) {
       setHideFooter(true)
     }
+  }
+
+  const toggleDiscardModal = () => {
+    setShowDiscardModal((prevState) => !prevState);
+  };
+
+  const handleDiscard = () => {
+    setShowDiscardModal(true);
   }
 
   const {
@@ -1357,7 +1367,7 @@ const EditCollection = () => {
         </div>
 
         { hideFooter && 
-          <SaveFooter handleSubmit={handleSubmit} />          
+          <SaveFooter handleSubmit={handleSubmit} handleDiscard={handleDiscard} />          
          }
       <Dialog
         open={openDuplicateCollection}
@@ -1491,6 +1501,10 @@ const EditCollection = () => {
           </div>
         </DialogActions>
       </Dialog>
+      <DiscardModal           
+        showDiscardModal={showDiscardModal}
+        toggleDiscardModal={toggleDiscardModal}
+      />
       </div>
   );
 };
