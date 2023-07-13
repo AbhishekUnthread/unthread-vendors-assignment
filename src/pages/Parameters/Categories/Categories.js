@@ -387,6 +387,8 @@ const Categories = () => {
   });
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
+    setCategoryList([])
+    setSubCategoryList([])
     setCategoryType(tabIndex);
     setSearchValue("");
   };
@@ -473,21 +475,22 @@ const Categories = () => {
     deleteSubCategory(data._id);
   };
 
+
   useEffect(() => {
     if (categoriesIsSuccess && subCategoriesIsSuccess) {
       setError(false);
 
       if (categoryType === 0) {
-        setCategoryList(categoriesData?.data?.data);
-        setCategoryTotalCount(categoriesData?.data?.totalCount);
+        setCategoryList(categoriesData.data.data);
+        setCategoryTotalCount(categoriesData.data.totalCount);
       }
       if (categoryType === 1) {
-        setSubCategoryList(subCategoriesData?.data?.data);
-        setSubCategoryTotalCount(subCategoriesData?.data?.totalCount);
+        setSubCategoryList(subCategoriesData.data.data);
+        setSubCategoryTotalCount(subCategoriesData.data.totalCount);
       }
       if (categoryType === 2) {
-        setCategoryList(categoriesData?.data?.data);
-        setCategoryTotalCount(categoriesData?.data?.totalCount);
+        setCategoryList([...categoriesData.data.data]);
+        setCategoryTotalCount(categoriesData.data.totalCount);
       }
       if (categoryType === 3) {
         setSubCategoryList(subCategoriesData.data.data);
@@ -514,7 +517,8 @@ const Categories = () => {
     bulkTagEditSubCategoryIsSuccess,
     bulkCreateSubTagsIsSuccess,
     bulkDeleteSubCategoryIsSuccess,
-    bulkDeleteSubCategoryIsSuccess,
+    deleteCategoryIsSuccess,
+    deleteSubCategoryIsSuccess,
     dispatch,
     sortFilter,
   ]);

@@ -272,7 +272,7 @@ const CategoriesTable = ({
         bulkSubEdit({ updates: newState })
           .unwrap()
           .then(() =>
-            dispatch(showSuccess({ message: " Status updated successfully" }))
+            dispatch(showSuccess({ message: "Sub Categoris Status updated successfully" }))
           );
         setSelected([]);
         setToggleCategoris(true);
@@ -388,7 +388,7 @@ const CategoriesTable = ({
     }
     setShowDeleteModal(false);
     deleteData(rowData);
-    dispatch(showSuccess({ message: "Deleted this category successfully" }));
+    // dispatch(showSuccess({ message: "Deleted this category successfully" }));
   }
 
   const handleMassAction = (status) => {
