@@ -101,7 +101,7 @@ export const SidebarData = [
       },
       {
         title: "Options",
-        path: "/parameters/variantSets",
+        path: "/parameters/options",
         image: parameters,
       },
       {

@@ -18,6 +18,7 @@ import {
 import TableHeader from "../../../components/TableHeader/TableHeader";
 import EditButton from "../../../components/EditButton/EditButton";
 import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 
 const DragHandle = SortableHandle(() => (
   <TableCell>
@@ -106,9 +107,7 @@ const ProductTabsTable = (props) => {
   }
 
   if (data && !data.length) {
-    return (
-      <span className="d-flex justify-content-center m-3">No data found</span>
-    );
+    return <NoDataFound />;
   }
 
   return (
@@ -122,7 +121,10 @@ const ProductTabsTable = (props) => {
                 <SortableRow index={index} key={item._id}>
                   <TableRow hover tabIndex={-1} className="table-rows">
                     <DragHandle />
-                    <TableCell sx={{ textTransform: "capitalize" }}>
+                    <TableCell
+                      onClick={onEdit.bind(null, index + 1)}
+                      sx={{ textTransform: "capitalize", cursor: "pointer" }}
+                    >
                       <p className="text-lightBlue fw-600">{item.title}</p>
                     </TableCell>
                     <TableCell>
@@ -162,7 +164,7 @@ const ProductTabsTable = (props) => {
         </Table>
       </TableContainer>
 
-      <TablePagination
+      {/* <TablePagination
         rowsPerPageOptions={PAGINATION_ROWS}
         component="div"
         count={totalCount || 0}
@@ -171,7 +173,7 @@ const ProductTabsTable = (props) => {
         onPageChange={onPageChange}
         onRowsPerPageChange={onRowsPerPageChange}
         className="table-pagination"
-      />
+      /> */}
     </>
   );
 };

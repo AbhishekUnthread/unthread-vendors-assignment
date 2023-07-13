@@ -41,6 +41,7 @@ import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 
 // ? TABLE STARTS HERE
 function createData(vId, vendorsName, noOfProducts, status) {
@@ -82,12 +83,12 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType }) => {
+const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType, bulkDelete,editVendor,bulkEdit,rowsPerPage,changeRowsPerPage,changePage,page }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [page, setPage] = React.useState(0);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [selectedMassStatus, setSelectedMassStatus] = React.useState(null);
   const [showCreateModal, setShowCreateModal] = React.useState(false);
@@ -111,21 +112,21 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     setName(row?.name);
   };
 
-  const [
-    editVendor,
-    { data: editData,
-      isLoading: editVendorIsLoading,
-      isSuccess: editVendorIsSuccess,
-      error: editVendorError },
-  ] = useEditVendorMutation();
+  // const [
+  //   editVendor,
+  //   { data: editData,
+  //     isLoading: editVendorIsLoading,
+  //     isSuccess: editVendorIsSuccess,
+  //     error: editVendorError },
+  // ] = useEditVendorMutation();
 
-  const[bulkEdit,
-  {
-    data: bulkEditVendor,
-    isLoading: bulkVendorEditLoading,
-    isSuccess: bulkVendorEditIsSuccess,
-    error: bulkVendorEditError,
-  }]=useBulkEditVendorMutation();
+  // const[bulkEdit,
+  // {
+  //   data: bulkEditVendor,
+  //   isLoading: bulkVendorEditLoading,
+  //   isSuccess: bulkVendorEditIsSuccess,
+  //   error: bulkVendorEditError,
+  // }]=useBulkEditVendorMutation();
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -153,7 +154,8 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
         }
       });
       setState(newState);
-      bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+      bulkEdit({ updates: newState })
+      .unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
       setSelectedStatus(null);
       setSelected([]);
     }
@@ -189,7 +191,8 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
         };
       }
     });
-    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    bulkEdit({ updates: newState })
+    .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Un-Archived Successfully" })));
     setOpenUnArchivePopUp(false);
     setSelected([]);
   };
@@ -198,12 +201,12 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     setOpenUnArchivePopUp(false)
   }
   
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
+  // const emptyRows =
+  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -234,7 +237,6 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     }
   };
 
-
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
@@ -255,10 +257,10 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     setSelected(newSelected);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
   
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
@@ -282,7 +284,8 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
           status: "archieved",
         };
     });
-    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    bulkEdit({ updates: newState })
+    .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Archived Successfully" })));
     setSelected([]);
     }
     else{
@@ -293,6 +296,8 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
           showFilter:false
         }
     })
+    .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Archived Successfully" })));
+
     }
     setArchivedModal(false);
     setVendorName("");
@@ -320,9 +325,8 @@ const handleUnArchived = () => {
        status: vendorStatus,
        showFilter:true
      }
- })
- setShowUnArhcivedModal(false)
- dispatch(showSuccess({ message: "Un-Archived this vendor successfully" }));
+ }).unwrap().then(()=>dispatch(showSuccess({ message: "Vendor Un-Archived successfully" })))
+    setShowUnArhcivedModal(false)
 }
 //unarchive ends here
 const [showDeleteModal, setShowDeleteModal] = React.useState(false);
@@ -333,24 +337,18 @@ const handleDeleteOnClick = (row) => {
   setVendorName(row?.name);
 };
 const handleDelete =()=>{
-  if(selected.length>0)
+  if(selected.length>1)
   {
-    const newState = selected.map((id) => {
-      return {
-        id
-      };
-  });
+  bulkDelete({deletes :selected})
   handleDeleteOnClick();
-  console.log("ffwe",newState)
-
+  setSelected([]);
   }
   else{
     deleteData(vendor?._id);
     handleDeleteOnClick();
-    dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+    // dispatch(showSuccess({ message: "Deleted this collection successfully" }));
   }
   }
-
 
   return (
     <React.Fragment>
@@ -406,7 +404,6 @@ const handleDelete =()=>{
                 />
                 <TableBody>
                   {stableSort(list, getComparator(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
                       const isItemSelected = isSelected(row._id);
                       const labelId = `enhanced-table-checkbox-${index}`;
@@ -571,7 +568,7 @@ const handleDelete =()=>{
                         </TableRow>
                       );
                     })}
-                  {emptyRows > 0 && (
+                  {/* {emptyRows > 0 && (
                     <TableRow
                       style={{
                         height: 53 * emptyRows,
@@ -579,7 +576,7 @@ const handleDelete =()=>{
                     >
                       <TableCell colSpan={6} />
                     </TableRow>
-                  )}
+                  )} */}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -588,9 +585,9 @@ const handleDelete =()=>{
               component="div"
               count={totalCount}
               rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              page={page-1}
+              onPageChange={changePage}
+              onRowsPerPageChange={changeRowsPerPage}
               className="table-pagination"
             />
           </>
@@ -598,12 +595,13 @@ const handleDelete =()=>{
           <span className="d-flex justify-content-center m-3">Loading...</span>
         ) : (
           <span className="d-flex justify-content-center m-3">
-            No data found
+          <NoDataFound />
           </span>
         )
       ) : (
         <></>
       )}
+
       <Dialog
           open={archivedModal}
           TransitionComponent={Transition}
@@ -627,13 +625,13 @@ const handleDelete =()=>{
               className="button-red-outline py-2 px-3 me-5"
               onClick={handleModalClose}
             >
-              <p>Cancel</p>
+              <p>No</p>
             </button>
             <button
               className="button-gradient py-2 px-3 ms-5"
               onClick={handleArchivedModalOnSave}
             >
-              <p>Archived</p>
+              <p>Yes</p>
             </button>
           </DialogActions>
       </Dialog>

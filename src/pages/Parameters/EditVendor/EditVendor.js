@@ -26,6 +26,7 @@ import { useGetAllProductsQuery } from "../../../features/products/product/produ
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
+import DiscardModal from "../../../components/Discard/DiscardModal";
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -56,6 +57,7 @@ const EditVendor = () => {
   const [vendorIndex, setVendorIndex] = useState();
   const [hideFooter, setHideFooter] = useState(false);
   const [vendorNameError, setVendorNameError] = useState('');
+  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
 
   const [initialName, setInitailName] = useState("");
   const [initialNotes, setInitailNotes] = useState("");
@@ -213,7 +215,11 @@ const EditVendor = () => {
     }};
 
     const backHandler = () => {
-      navigate("/parameters/vendors");
+      setShowDiscardModal(true);
+      // navigate("/parameters/vendors");
+    };
+    const toggleDiscardModal = () => {
+      setShowDiscardModal(false);;
     };
     
     const handleSubmitAndAddAnother = () => {
@@ -308,21 +314,20 @@ const EditVendor = () => {
     <div className="page container-fluid position-relative user-group">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/parameters/vendors" className="d-flex">
             <img
               src={arrowLeft}
               alt="arrowLeft"
               width={9}
               className="c-pointer"
+              onClick={backHandler}
             />
-          </Link>
           <h5 className="page-heading ms-2 ps-1">{vendorName}</h5>
         </div>
 
         <div className="d-flex align-items-center w-auto pe-0">
-          <button className="button-transparent me-1 py-2 px-3" onClick={handleDuplicate}>
+          {/* <button className="button-transparent me-1 py-2 px-3" onClick={handleDuplicate}>
             <p className="text-lightBlue">Duplicate</p>
-          </button>
+          </button> */}
           {/* <button className="button-transparent me-1 py-2 px-3">
             <p className="text-lightBlue">Preview</p>
           </button> */}
@@ -424,7 +429,8 @@ const EditVendor = () => {
           onDiscard={backHandler}
           isLoading={editVendorIsLoading}
           handleSubmit={handleSubmit}
-        />
+
+      />
 
 
         {/* { hideFooter && <div className="row create-buttons pt-5 justify-content-between " style={{ width: '104%' }}>
@@ -568,6 +574,11 @@ const EditVendor = () => {
           </div>
         </DialogActions>
       </Dialog>
+      <DiscardModal 
+      showDiscardModal={showDiscardModal}   
+      toggleDiscardModal={toggleDiscardModal}
+
+      />
     </div>
   );
 };

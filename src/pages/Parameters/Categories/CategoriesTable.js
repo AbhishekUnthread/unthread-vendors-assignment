@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import { EnhancedTableGapHead } from "../../../components/TableDependenciesWithGap/TableDependenciesWithGap";
 import {
@@ -46,6 +46,7 @@ import TableMassActionButton from "../../../components/TableMassActionButton/Tab
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 import question from "../../../assets/images/products/question.svg";
 import moment from "moment";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -125,16 +126,21 @@ const CategoriesTable = ({
   bulkSubEdit,
   bulkDeleteCategory,
   editCategory,
+  editSubPageHandler,
   editSubCategory,
   archived,
   totalCount,
+  editPageHandler,
+  rowsPerPage,
+  changeRowsPerPage,
+  changePage,
+  page,
 }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [filterParameter, setFilterParameter] = useState();
@@ -163,13 +169,6 @@ const CategoriesTable = ({
       setSubCategoryList(subCategoriesData?.data?.data);
     }
   }, [subCategoriesIsSuccess, subCategoriesData]);
-
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -214,11 +213,6 @@ const CategoriesTable = ({
     setSelected(newSelected);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const toggleCreateSubModalHandler = () => {
@@ -232,6 +226,7 @@ const CategoriesTable = ({
 
   useEffect(() => {
     // Update the state only if the selectedStatus state has a value
+    console.log(selectedStatus);
     if (selectedStatus !== null) {
       const newState = selected.map((id) => {
         if (selectedStatus === "Set as Active") {
@@ -256,25 +251,25 @@ const CategoriesTable = ({
           };
         }
       });
-      
-        if (toggleCategoris) {
-          bulkEdit({ updates: newState })
-            .unwrap()
-            .then(() =>
-              dispatch(showSuccess({ message: " Status updated successfully" }))
-            );
-          setSelectedStatus(null);
-        } else {
-          bulkSubEdit({ updates: newState })
-            .unwrap()
-            .then(() =>
-              dispatch(showSuccess({ message: " Status updated successfully" }))
-            );
-          setToggleCategoris(true);
-          setSelectedStatus(null);
-        }
-      
-      
+
+      if (toggleCategoris) {
+        bulkEdit({ updates: newState })
+          .unwrap()
+          .then(() =>
+            dispatch(showSuccess({ message: " Status updated successfully" }))
+          );
+        setSelected([]);
+        setSelectedStatus(null);
+      } else {
+        bulkSubEdit({ updates: newState })
+          .unwrap()
+          .then(() =>
+            dispatch(showSuccess({ message: " Status updated successfully" }))
+          );
+        setSelected([]);
+        setToggleCategoris(true);
+        setSelectedStatus(null);
+      }
     }
   }, [selected, selectedStatus]);
 
@@ -372,12 +367,16 @@ const CategoriesTable = ({
   }
 
   function deleteDatas() {
-    if(selected.length > 0 && forMassAction === true){
-      const newState = selected.map(i=>i)
-      bulkDeleteCategory({deletes:newState}).then(()=>{
-        dispatch(showSuccess({ message: "Deleted this categories successfully" }));
-      })
-      return
+    if (selected.length > 0 && forMassAction === true) {
+      const newState = selected.map((i) => i);
+      bulkDeleteCategory({ deletes: newState }).then(() => {
+        dispatch(
+          showSuccess({ message: "Deleted this categories successfully" })
+        );
+      });
+      setSelectedStatus(null);
+      setSelected([]);
+      return;
     }
     setShowDeleteModal(false);
     deleteData(rowData);
@@ -421,7 +420,9 @@ const CategoriesTable = ({
             headingName="Mass Action"
             onSelect={handleMassAction}
             defaultValue={
-              archived ? ["Edit", "Set as Archived"] : ["Delete","Set as Un-Archived"]
+              archived
+                ? ["Edit", "Set as Archived"]
+                : ["Delete", "Set as Un-Archived"]
             }
           />
         </div>
@@ -445,9 +446,8 @@ const CategoriesTable = ({
                   mainHeadCells={mainHeadCells}
                 />
                 <TableBody>
-                  {stableSort(list, getComparator(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, index) => {
+                  {stableSort(list, getComparator(order, orderBy)).map(
+                    (row, index) => {
                       const isItemSelected = isSelected(row._id);
                       const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -508,10 +508,7 @@ const CategoriesTable = ({
                             >
                               <Link
                                 className="text-decoration-none"
-                                to="/parameters/categories/edit"
-                                onClick={() => {
-                                  dispatch(updateCategoryId(row._id));
-                                }}
+                                onClick={editPageHandler.bind(null, index + 1)}
                               >
                                 <p className="text-lightBlue rounded-circle fw-600">
                                   {row.name}
@@ -533,7 +530,7 @@ const CategoriesTable = ({
                             <TableCell style={{ width: 180, padding: 0 }}>
                               <div className="d-block">
                                 <div
-                                  className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
+                                  className="rounded-pill d-flex px-2 py-1  statusBoxWidth"
                                   style={{
                                     background:
                                       row.status == "active"
@@ -603,10 +600,10 @@ const CategoriesTable = ({
                                   <Tooltip title="Edit" placement="top">
                                     <Link
                                       className="text-decoration-none"
-                                      to="/parameters/categories/edit"
-                                      onClick={() => {
-                                        dispatch(updateCategoryId(row._id));
-                                      }}
+                                      onClick={editPageHandler.bind(
+                                        null,
+                                        index + 1
+                                      )}
                                     >
                                       <div className="table-edit-icon rounded-4 p-2">
                                         <EditOutlinedIcon
@@ -701,220 +698,194 @@ const CategoriesTable = ({
                                         {stableSort(
                                           subCategoryList,
                                           getComparator(order, orderBy)
-                                        )
-                                          .slice(
-                                            page * rowsPerPage,
-                                            page * rowsPerPage + rowsPerPage
-                                          )
-                                          .map((row, index) => {
-                                            const isItemSelected = isSelected(
-                                              row._id
-                                            );
-                                            const labelId = `enhanced-table-checkbox-${index}`;
+                                        ).map((row, index) => {
+                                          const isItemSelected = isSelected(
+                                            row._id
+                                          );
+                                          const labelId = `enhanced-table-checkbox-${index}`;
 
-                                            return (
-                                              <React.Fragment key={row._id}>
-                                                <TableRow
-                                                  hover
-                                                  role="checkbox"
-                                                  aria-checked={isItemSelected}
-                                                  tabIndex={-1}
-                                                  key={index}
-                                                  selected={isItemSelected}
-                                                  className="table-rows"
-                                                  sx={{
-                                                    "& > *": {
-                                                      borderBottom: "unset",
-                                                    },
+                                          return (
+                                            <React.Fragment key={row._id}>
+                                              <TableRow
+                                                hover
+                                                role="checkbox"
+                                                aria-checked={isItemSelected}
+                                                tabIndex={-1}
+                                                key={index}
+                                                selected={isItemSelected}
+                                                className="table-rows"
+                                                sx={{
+                                                  "& > *": {
+                                                    borderBottom: "unset",
+                                                  },
+                                                }}
+                                              >
+                                                <TableCell />
+                                                <TableCell padding="checkbox">
+                                                  <Checkbox
+                                                    checked={isItemSelected}
+                                                    inputProps={{
+                                                      "aria-labelledby":
+                                                        labelId,
+                                                    }}
+                                                    onClick={(event) => {
+                                                      setToggleCategoris(false);
+                                                      handleClick(
+                                                        event,
+                                                        row._id
+                                                      );
+                                                    }}
+                                                    size="small"
+                                                    style={{
+                                                      color: "#5C6D8E",
+                                                    }}
+                                                  />
+                                                </TableCell>
+                                                <TableCell
+                                                  component="th"
+                                                  id={labelId}
+                                                  scope="row"
+                                                  padding="none"
+                                                >
+                                                  <Link
+                                                    className="text-decoration-none"
+                                                    onClick={editSubPageHandler.bind(
+                                                      null,
+                                                      index + 1
+                                                    )}
+                                                  >
+                                                    <p className="text-lightBlue rounded-circle fw-600">
+                                                      {row.name}
+                                                    </p>
+                                                  </Link>
+                                                </TableCell>
+
+                                                <TableCell
+                                                  style={{ width: 180 }}
+                                                >
+                                                  <p className="text-lightBlue">
+                                                    {row.totalProduct}
+                                                  </p>
+                                                </TableCell>
+
+                                                <TableCell
+                                                  style={{
+                                                    width: 120,
+                                                    padding: 0,
                                                   }}
                                                 >
-                                                  <TableCell />
-                                                  <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                      checked={isItemSelected}
-                                                      inputProps={{
-                                                        "aria-labelledby":
-                                                          labelId,
-                                                      }}
-                                                      onClick={(event) => {
-                                                        setToggleCategoris(
-                                                          false
-                                                        );
-                                                        handleClick(
-                                                          event,
-                                                          row._id
-                                                        );
-                                                      }}
-                                                      size="small"
+                                                  <div className="d-flex align-items-center">
+                                                    <div
+                                                      className="rounded-pill d-flex px-2 py-1 "
                                                       style={{
-                                                        color: "#5C6D8E",
-                                                      }}
-                                                    />
-                                                  </TableCell>
-                                                  <TableCell
-                                                    component="th"
-                                                    id={labelId}
-                                                    scope="row"
-                                                    padding="none"
-                                                  >
-                                                    <Link
-                                                      className="text-decoration-none"
-                                                      // to="/parameters/categories/edit"
-                                                      // onClick={()=>{
-                                                      //   dispatch(updateCategoryId(row._id))
-                                                      // }}
-                                                    >
-                                                      <p className="text-lightBlue rounded-circle fw-600">
-                                                        {row.name}
-                                                      </p>
-                                                    </Link>
-                                                  </TableCell>
-
-                                                  <TableCell
-                                                    style={{ width: 180 }}
-                                                  >
-                                                    <p className="text-lightBlue">
-                                                      {row.totalProduct}
-                                                    </p>
-                                                  </TableCell>
-
-                                                  <TableCell
-                                                    style={{
-                                                      width: 120,
-                                                      padding: 0,
-                                                    }}
-                                                  >
-                                                    <div className="d-flex align-items-center">
-                                                      <div
-                                                        className="rounded-pill d-flex px-2 py-1 c-pointer"
-                                                        style={{
-                                                          background:
-                                                            row.status ==
-                                                            "active"
-                                                              ? "#A6FAAF"
-                                                              : row.status ==
-                                                                "in-active"
-                                                              ? "#F67476"
-                                                              : row.status ==
-                                                                "archieved"
-                                                              ? "#C8D8FF"
-                                                              : "#FEE1A3",
-                                                        }}
-                                                      >
-                                                        <small className="text-black fw-400">
-                                                          {row.status ==
-                                                          "active"
-                                                            ? "Active"
+                                                        background:
+                                                          row.status == "active"
+                                                            ? "#A6FAAF"
                                                             : row.status ==
                                                               "in-active"
-                                                            ? "In-Active"
+                                                            ? "#F67476"
                                                             : row.status ==
                                                               "archieved"
-                                                            ? "Archived"
-                                                            : "Scheduled"}
-                                                        </small>
-                                                      </div>
-                                                    </div>
-                                                  </TableCell>
-                                                  <TableCell
-                                                    style={{
-                                                      width: 120,
-                                                      padding: 0,
-                                                    }}
-                                                  >
-                                                    <div className="d-flex align-items-center">
-                                                      {edit &&
-                                                        row?.status !==
-                                                          "archieved" && (
-                                                          <Tooltip
-                                                            title="Edit"
-                                                            placement="top"
-                                                          >
-                                                            <div
-                                                              onClick={(e) => {
-                                                                dispatch(
-                                                                  updateCategoryId(
-                                                                    row._id
-                                                                  )
-                                                                );
-                                                              }}
-                                                              className="table-edit-icon rounded-4 p-2"
-                                                            >
-                                                              <Link
-                                                                className="text-decoration-none"
-                                                                to="/parameters/subCategories/edit"
-                                                              >
-                                                                <EditOutlinedIcon
-                                                                  sx={{
-                                                                    color:
-                                                                      "#5c6d8e",
-                                                                    fontSize: 18,
-                                                                    cursor:
-                                                                      "pointer",
-                                                                  }}
-                                                                />
-                                                              </Link>
-                                                            </div>
-                                                          </Tooltip>
-                                                        )}
-
-                                                      {deleteSubData && (
-                                                        <Tooltip
-                                                          title={
-                                                            row?.status ===
+                                                            ? "#C8D8FF"
+                                                            : "#FEE1A3",
+                                                      }}
+                                                    >
+                                                      <small className="text-black fw-400">
+                                                        {row.status == "active"
+                                                          ? "Active"
+                                                          : row.status ==
+                                                            "in-active"
+                                                          ? "In-Active"
+                                                          : row.status ==
                                                             "archieved"
-                                                              ? "Un Archived"
-                                                              : "Archived"
-                                                          }
+                                                          ? "Archived"
+                                                          : "Scheduled"}
+                                                      </small>
+                                                    </div>
+                                                  </div>
+                                                </TableCell>
+                                                <TableCell
+                                                  style={{
+                                                    width: 120,
+                                                    padding: 0,
+                                                  }}
+                                                >
+                                                  <div className="d-flex align-items-center">
+                                                    {edit &&
+                                                      row?.status !==
+                                                        "archieved" && (
+                                                        <Tooltip
+                                                          title="Edit"
                                                           placement="top"
                                                         >
-                                                          <div
-                                                            onClick={(e) => {
-                                                              setToggleCategoris(
-                                                                false
-                                                              );
-                                                              if (
-                                                                row?.status !==
-                                                                "archieved"
-                                                              ) {
-                                                                toggleArchiveModalHandler(
-                                                                  row
-                                                                );
-                                                              } else {
-                                                                toggleUnArchiveModalHandler(
-                                                                  row
-                                                                );
-                                                              }
-                                                            }}
-                                                            className="table-edit-icon rounded-4 p-2"
-                                                          >
-                                                            <InventoryIcon
-                                                              sx={{
-                                                                color:
-                                                                  "#5c6d8e",
-                                                                fontSize: 18,
-                                                                cursor:
-                                                                  "pointer",
-                                                              }}
-                                                            />
+                                                          <div className="table-edit-icon rounded-4 p-2">
+                                                            <Link
+                                                              className="text-decoration-none"
+                                                              onClick={editSubPageHandler.bind(
+                                                                null,
+                                                                index + 1
+                                                              )}
+                                                            >
+                                                              <EditOutlinedIcon
+                                                                sx={{
+                                                                  color:
+                                                                    "#5c6d8e",
+                                                                  fontSize: 18,
+                                                                  cursor:
+                                                                    "pointer",
+                                                                }}
+                                                              />
+                                                            </Link>
                                                           </div>
                                                         </Tooltip>
                                                       )}
-                                                    </div>
-                                                  </TableCell>
-                                                </TableRow>
-                                              </React.Fragment>
-                                            );
-                                          })}
-                                        {emptyRows > 0 && (
-                                          <TableRow
-                                            style={{
-                                              height: 53 * emptyRows,
-                                            }}
-                                          >
-                                            <TableCell colSpan={6} />
-                                          </TableRow>
-                                        )}
+
+                                                    {deleteSubData && (
+                                                      <Tooltip
+                                                        title={
+                                                          row?.status ===
+                                                          "archieved"
+                                                            ? "Un Archived"
+                                                            : "Archived"
+                                                        }
+                                                        placement="top"
+                                                      >
+                                                        <div
+                                                          onClick={(e) => {
+                                                            setToggleCategoris(
+                                                              false
+                                                            );
+                                                            if (
+                                                              row?.status !==
+                                                              "archieved"
+                                                            ) {
+                                                              toggleArchiveModalHandler(
+                                                                row
+                                                              );
+                                                            } else {
+                                                              toggleUnArchiveModalHandler(
+                                                                row
+                                                              );
+                                                            }
+                                                          }}
+                                                          className="table-edit-icon rounded-4 p-2"
+                                                        >
+                                                          <InventoryIcon
+                                                            sx={{
+                                                              color: "#5c6d8e",
+                                                              fontSize: 18,
+                                                              cursor: "pointer",
+                                                            }}
+                                                          />
+                                                        </div>
+                                                      </Tooltip>
+                                                    )}
+                                                  </div>
+                                                </TableCell>
+                                              </TableRow>
+                                            </React.Fragment>
+                                          );
+                                        })}
                                       </TableBody>
                                     </Table>
                                   </TableContainer>
@@ -924,15 +895,7 @@ const CategoriesTable = ({
                           </TableRow>
                         </React.Fragment>
                       );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: 53 * emptyRows,
-                      }}
-                    >
-                      <TableCell colSpan={6} />
-                    </TableRow>
+                    }
                   )}
                 </TableBody>
               </Table>
@@ -943,8 +906,8 @@ const CategoriesTable = ({
               count={totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              onPageChange={changePage}
+              onRowsPerPageChange={changeRowsPerPage}
               className="table-pagination"
             />
           </React.Fragment>
@@ -952,18 +915,13 @@ const CategoriesTable = ({
           <span className="d-flex justify-content-center m-3">Loading...</span>
         ) : (
           <span className="d-flex justify-content-center m-3">
-            No data found
+            <NoDataFound />
           </span>
         )
       ) : (
         <></>
       )}
-      {/* <ArchivedModal
-        name={forMassAction == false ?"Archived":""}
-        showCreateModal={showArchivedModal}
-        toggleArchiveModalHandler={toggleArchiveModalHandler}
-        handleArchive={handleArchived}
-      /> */}
+
       <Dialog
         open={showArchivedModal}
         TransitionComponent={Transition}
@@ -982,11 +940,11 @@ const CategoriesTable = ({
             )}
             ?
           </h6>
-          {
-           rowData?.totalSubCategory > 0 && <h6 className="text-lightBlue mt-2 mb-2">
-            This category has {rowData?.totalSubCategory} subcategories 
-          </h6>
-          }
+          {rowData?.totalSubCategory > 0 && (
+            <h6 className="text-lightBlue mt-2 mb-2">
+              This category has {rowData?.totalSubCategory} subcategories
+            </h6>
+          )}
           <div className="d-flex justify-content-center mt-4">
             <hr className="hr-grey-6 w-100" />
           </div>
@@ -1011,9 +969,11 @@ const CategoriesTable = ({
         closeUnArchivedModal={() => setShowUnArchivedModal(false)}
         handleUnArchived={handleUnArchived}
         handleStatusValue={setHandleStatusValue}
+        name={forMassAction == false ? rowData?.name : selected.length}
+        nameType={forMassAction == false ? "Category": "Categories"}
       />
       <DeleteModal
-        name={""}
+         name={forMassAction == false ? `${rowData?.name} Category ` : `${selected.length} Categories ` }
         showCreateModal={showDeleteModal}
         toggleArchiveModalHandler={toggleDeleteModalHandler}
         handleArchive={deleteDatas}

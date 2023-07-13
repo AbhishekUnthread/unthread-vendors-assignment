@@ -92,5 +92,39 @@ const SaveFooterSecondary = (props) => {
   );
 };
 
+const SaveFooterTertiary = (props) => {
+  const { onDiscard, show, isLoading } = props;
+  return (
+    <Slide direction="up" in={show} mountOnEnter unmountOnExit>
+      <div
+        className="row create-buttons pt-5 pb-3 justify-content-between"
+        style={{ width: "102%" }}
+      >
+        <div className="d-flex w-auto px-0">
+          {onDiscard && (
+            <button
+              onClick={onDiscard}
+              className="button-red-outline py-2 px-4"
+              type="button"
+            >
+              <p>Discard</p>
+            </button>
+          )}
+        </div>
+        <div className="d-flex w-auto px-0">
+          <LoadingButton
+            className="button-gradient ms-3 py-2 px-4 w-auto"
+            type="submit"
+            loading={isLoading}
+            disabled={isLoading}
+          >
+            <p>Save</p>
+          </LoadingButton>
+        </div>
+      </div>
+    </Slide>
+  );
+};
+
 export default SaveFooter;
-export { SaveFooterSecondary};
+export { SaveFooterSecondary, SaveFooterTertiary };

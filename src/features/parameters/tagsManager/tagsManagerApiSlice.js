@@ -37,9 +37,17 @@ export const tagsManagerApiSlice = apiSlice.injectEndpoints({
 
     deleteTag: builder.mutation({
       query: (tagId) => ({
-        url: `/parameters/tagManager/${tagId}`,
+        url: `/parameters/tagManager/hardDelete/${tagId}`,
         method: "DELETE",
         body: tagId,
+      }),
+      invalidatesTags: ["TagsManager"],
+    }),
+    bulkDeleteTag:builder.mutation({
+      query: (deletes) => ({
+        url: `parameters/tagManager/bulkDelete`,
+        method: "DELETE",
+        body: deletes,
       }),
       invalidatesTags: ["TagsManager"],
     }),
@@ -72,5 +80,6 @@ export const {
   useDeleteTagMutation,
   useEditTagMutation,
   useBulkCreateTagMutation,
-  useBulkEditTagMutation
+  useBulkEditTagMutation,
+  useBulkDeleteTagMutation,
 } = tagsManagerApiSlice;

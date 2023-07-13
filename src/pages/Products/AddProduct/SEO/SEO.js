@@ -22,16 +22,13 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
 
   const [viewAll,setViewAll] = useState(false);
 
-  const [checked, setChecked] = React.useState(false);
 
   function generateUrlName(name="") {
     const formattedName = "https://example.com/"+name?.toLowerCase()?.replace(/\s+/g, '-');
     return formattedName;
   }
 
-  const handleCheckboxChange = (event) => {
-    setChecked(event.target.checked);
-  };
+ 
 
   function isEmpty(obj) {
     for (var prop in obj) {
@@ -52,7 +49,6 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
     enableReinitialize: true,
   });
   useEffect(()=>{
-    
     if(!isEmpty(seoValue) && isFirstTimeRender === true && seoName !==''){
       seoFormik.setFieldValue("title", seoValue && seoValue.title ? seoValue.title : seoName);
       seoFormik.setFieldValue("description", seoValue && seoValue.description ? seoValue.description : "");
@@ -71,7 +67,7 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
     
   },[seoValue,seoName,isFirstTimeRender])
   
-  useEffect(()=>{
+  function handleSubmit(){
     let seoItems={}
     seoItems.title = seoFormik.values?.title
     if(seoFormik.initialValues.slug !== seoFormik.values.slug || seoValue?.slug !== seoFormik.values.slug){
@@ -85,11 +81,13 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
       seoItems.metaKeywords = multipleTags
     }
     handleSeoChange(seoItems)
-    
-  },[seoFormik.values])
+  }
   // ? SWITCH STARTS HERE
   const [checkedSwitch, setCheckedSwitch] = React.useState(true);
   const handleSwitchChange = (event) => {
+    if(event.target.checked === false){
+      handleSeoChange({})
+    }
     setCheckedSwitch(event.target.checked);
   };
   // ? SWITCH ENDS HERE
@@ -108,6 +106,7 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
       });
     }
   };
+ 
   const handleDelete = (value) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
@@ -166,9 +165,12 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
             <div className="d-flex flex-column p-3">
               <div className="d-flex justify-content-between">
                 <p className="text-lightBlue">Metadata Preview</p>
-                <small className="text-lightBlue text-blue-2 c-pointer" onClick={() => setViewAll(prevState => !prevState)}>
-                  { viewAll == false ? "SEO Edit" : "Save" }
-                </small>
+                { viewAll == false ?<small className="text-lightBlue text-blue-2 c-pointer" onClick={() => setViewAll(prevState => !prevState)}>
+                   SEO Edit
+                </small>:<small className="text-lightBlue text-blue-2 c-pointer" onClick={() => {
+                  handleSubmit()
+                  setViewAll(prevState => !prevState)
+                  }}>Save</small>}
               </div>
               <small className="text-lightBlue mt-3 mb-2 fw-500">
                 {seoFormik.values.title}
