@@ -35,6 +35,7 @@ import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 import question from '../../../assets/images/products/question.svg'
 import moment from "moment";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 
 // ? TABLE STARTS HERE
 
@@ -465,7 +466,7 @@ const SubCategoriesTable = ({
           <span className="d-flex justify-content-center m-3">Loading...</span>
         ) : (
           <span className="d-flex justify-content-center m-3">
-            No data found
+             <NoDataFound />
           </span>
         )
       ) : (

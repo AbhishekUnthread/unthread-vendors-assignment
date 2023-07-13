@@ -46,6 +46,7 @@ import TableMassActionButton from "../../../components/TableMassActionButton/Tab
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 import question from "../../../assets/images/products/question.svg";
 import moment from "moment";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -918,18 +919,13 @@ const CategoriesTable = ({
           <span className="d-flex justify-content-center m-3">Loading...</span>
         ) : (
           <span className="d-flex justify-content-center m-3">
-            No data found
+             <NoDataFound />
           </span>
         )
       ) : (
         <></>
       )}
-      {/* <ArchivedModal
-        name={forMassAction == false ?"Archived":""}
-        showCreateModal={showArchivedModal}
-        toggleArchiveModalHandler={toggleArchiveModalHandler}
-        handleArchive={handleArchived}
-      /> */}
+      
       <Dialog
         open={showArchivedModal}
         TransitionComponent={Transition}
