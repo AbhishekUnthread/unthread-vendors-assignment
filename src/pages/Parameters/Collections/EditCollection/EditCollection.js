@@ -248,6 +248,7 @@ const EditCollection = () => {
   const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
   const [showDiscardModal, setShowDiscardModal] = React.useState(false);
+  const [duplicateTitleNew, setDuplicateTitleNew] = useState("")
 
    const clearDate = () => {
     setStartDate1(null);
@@ -312,6 +313,17 @@ const EditCollection = () => {
       error: editCollectionError,
     }
   ] = useEditCollectionMutation();
+
+  const handleDuplicateTitle = (e) => {
+    const value = e.target.value;
+    setDuplicateTitleNew(value)
+  };
+
+  useEffect(() => {
+    if(duplicateTitleNew == "" && collectionTitle) {
+      setDuplicateTitleNew(`${collectionTitle} copy`);
+    }
+  }, [collectionTitle]);
 
   useEffect(() => {
     if (collectionIsSuccess) {
@@ -565,13 +577,9 @@ const EditCollection = () => {
     setOpenDuplicateCollection(false);
   };
 
-  const handleDuplicateTitleChange = (event) => {
-    setCollectionDuplicateTitle(event.target.value);
-  };
-
   const scheduleDuplicateCollection = () => {
     const collectionData = {
-      title: collectionDuplicateTitle,
+      title: duplicateTitleNew,
       filter: collectionFilter,
       status: collectionStatus,
       isVisibleFrontend: collectionVisibility,
@@ -1411,7 +1419,8 @@ const EditCollection = () => {
               placeholder="Mirosa Collection_copy"
               size="small"
               name="title"
-              value={collectionDuplicateTitle}
+              value={duplicateTitleNew}
+              onChange={handleDuplicateTitle}
             />
           </FormControl>
           <hr className="hr-grey-6 my-0" />

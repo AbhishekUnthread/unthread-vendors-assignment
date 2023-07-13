@@ -623,7 +623,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
             <div className="row"></div>
             <h5 className="text-lightBlue mt-2 mb-3">
               Archive   
-              <span className="text-blue-2"> "{forMassAction == true ? "these" : collectionTitle }" </span>
+              <span className="text-blue-2"> "{forMassAction == true ? selected.length : collectionTitle }" </span>
               collection ?
             </h5>
             <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
@@ -653,7 +653,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           showCreateModal={showDeleteModal}
           toggleArchiveModalHandler={toggleArchiveModalHandler}
           handleArchive={handleArchiveModal} 
-          name={forMassAction == false ? name : "these"} 
+          name={forMassAction == false ? name : selected.length} 
           deleteType={"Collection"}
         />
         <UnArchivedModal 
@@ -661,7 +661,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
-          name={forMassAction == false ? name : "this"}
+          name={forMassAction == false ? name : selected.length}
           nameType={"Collection"}
         />
 
