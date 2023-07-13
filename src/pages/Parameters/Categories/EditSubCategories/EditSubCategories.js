@@ -212,6 +212,9 @@ const EditSubCategories = () => {
       if (values.endDate) {
         editItems.endDate = new Date(values.endDate);
       }
+      if(subCategoryPatentId){
+        editItems.categoryId= subCategoryPatentId
+      }
       editSubCategory({
         id: subCategoriesData?.data?.data?.[0]?._id, // ID of the category
         details: editItems,
