@@ -73,8 +73,9 @@ const EditVendor = () => {
   const [vendorNotes, setVendorNotes] = useState("")
   const [vendorStatus, setVendorStatus] = useState("active")
   const [vendorFlagShip, setVendorFlagShip] = useState("")
+  const [vendorId, setVendorId] = useState();
   const [checked, setChecked] = React.useState(false);
-  const vendorId = useSelector((state)=>state.vendor.vendorId)
+  // const vendorId = useSelector((state)=>state.vendor.vendorId)
   const [products,setProducts] = React.useState([])
   const [vendorDuplicateName, setVendorDuplicateName] = useState("");
   const [duplicateDescription, setDuplicateDescription] = useState(false);
@@ -124,9 +125,9 @@ const EditVendor = () => {
   } = useGetAllVendorsQuery(
     {
       ...queryFilterState,
-      ...decodedObject?.queryParameters,
-      ...decodedObject?.vendorTypeQuery,
-      name: decodedObject?.queryFilterState?.name,
+      ...(decodedObject?.queryParameters || {}),
+      ...(decodedObject?.vendorTypeQuery || {}),
+      name: decodedObject?.queryFilterState?.name||"",
     }
     // ,
     // queryFilterState,
@@ -134,10 +135,14 @@ const EditVendor = () => {
     //   skip: queryFilterState.pageNo ? false : true,
     // }
   );
-  
-  console.log("queryParameters",decodedObject?.queryParameters);
-  console.log("vendorTypeQuery",decodedObject?.vendorTypeQuery);
-  console.log("queryFilterState",decodedObject?.queryFilterState?.name);
+
+  // console.log({vendorId:vendorId})
+  // console.log({name : vendorName})
+  // console.log({vendorsData : vendorsData})
+  // console.log({id:id})
+  // console.log("queryParameters",decodedObject?.queryParameters);
+  // console.log("vendorTypeQuery",decodedObject?.vendorTypeQuery);
+  // console.log("queryFilterState",decodedObject?.queryFilterState?.name);
 
 
 
@@ -149,46 +154,7 @@ const EditVendor = () => {
       error: editVendorError },
   ] = useEditVendorMutation();
   
-  useEffect(() => {
-    if(editVendorIsSuccess)
-    {
-      dispatch(showSuccess({ message: "Vendor updated successfully" }));
-    }
-
-    if(editVendorError)
-    {
-      if (editVendorError?.data?.message) {
-        dispatch(showError({ message: editVendorError?.data?.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong, please try again" })
-        );
-      }
-    }
-
-    if(vendorProductsDataIsSuccess)
-    {
-      setProducts(vendorProductsData)
-    }
-
-    if (vendorsIsSuccess ) {
-      dispatchQueryFilter({
-        type: "SET_TOTAL_COUNT",
-        totalCount: vendorsData.totalCount,
-      });
-
-      setVendorName(vendorsData.data.data[0].name);
-      setInitailName(vendorsData.data.data[0].name)
-      setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
-      setVendorNotes(vendorsData.data.data[0].notes)
-      setInitailNotes(vendorsData.data.data[0].notes)
-      setVendorStatus(vendorsData.data.data[0].status)
-      setInitailStatus(vendorsData.data.data[0].status)
-      setChecked(vendorsData.data.data[0].showFilter)
-      setInitailFilter(vendorsData.data.data[0].showFilter)
-    }
-  }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess,editVendorError]);
-
+  
 
   // const getNextVendorId = () => {
   //   setVendorIndex(prevIndex => (prevIndex + 1) % vendorsData.data.data.length);
@@ -202,7 +168,10 @@ const EditVendor = () => {
 
   const nextPageHandler = () => {
     const { pageNo, totalCount } = queryFilterState;
-    if (pageNo + 1 > totalCount) {
+    console.log({pageNo:pageNo});
+    console.log({totalCount:totalCount})
+
+    if (pageNo+1 > totalCount) {
       return;
     }
     navigate(`/parameters/vendors/edit/${pageNo + 1}/${filter}`);
@@ -214,9 +183,7 @@ const EditVendor = () => {
       return;
     }
     navigate(`/parameters/vendors/edit/${pageNo - 1}/${filter}`);
-  };
-  console.log({vendorsData : vendorsData})
-  
+  };  
     const vendorNotesChange=(event)=>{
       setVendorNotes(event.target.value);
       // setHideFooter(true);
@@ -386,8 +353,48 @@ const EditVendor = () => {
       const parsedObject = JSON.parse(decodedString);
   
       setDecodedObject(parsedObject);
-    }, []);
+    }, [vendorsData,vendorsIsSuccess,id]);
 
+    useEffect(() => {
+      if(editVendorIsSuccess)
+      {
+        dispatch(showSuccess({ message: "Vendor updated successfully" }));
+      }
+  
+      if(editVendorError)
+      {
+        if (editVendorError?.data?.message) {
+          dispatch(showError({ message: editVendorError?.data?.message }));
+        } else {
+          dispatch(
+            showError({ message: "Something went wrong, please try again" })
+          );
+        }
+      }
+  
+      if(vendorProductsDataIsSuccess)
+      {
+        setProducts(vendorProductsData)
+      }
+  
+      if (vendorsIsSuccess ) {
+        dispatchQueryFilter({
+          type: "SET_TOTAL_COUNT",
+          totalCount: vendorsData?.data?.totalCount,
+        });
+        setVendorId(vendorsData.data.data[0]?._id)
+        setVendorName(vendorsData.data.data[0]?.name);
+        setInitailName(vendorsData.data.data[0]?.name)
+        setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
+        setVendorNotes(vendorsData.data.data[0].notes)
+        setInitailNotes(vendorsData.data.data[0].notes)
+        setVendorStatus(vendorsData.data.data[0].status)
+        setInitailStatus(vendorsData.data.data[0].status)
+        setChecked(vendorsData.data.data[0].showFilter)
+        setInitailFilter(vendorsData.data.data[0].showFilter)
+      }
+    }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess,editVendorError,id,filter,vendorsData]);
+    
     
   return (
     <div className="page container-fluid position-relative user-group">
