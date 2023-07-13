@@ -36,7 +36,8 @@ const apiSlice = createApi({
     "CustomersAddress",
     "Country",
     "State",
-    "City"
+    "City",
+    "Seos",
   ],
   endpoints: (builder) => ({}),
 });
