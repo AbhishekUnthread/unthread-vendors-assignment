@@ -18,15 +18,16 @@ import { useFormik } from "formik";
 import { useCreateSeoMutation } from "../../../../features/seo/seoApiSlice";
 import { useDispatch } from "react-redux";
 import { showError, showSuccess } from "../../../../features/snackbar/snackbarAction";
-const SEO = ({ seoName, seoValue, handleSeoChange,refrenceId }) => {
+const SEO = ({ seoName, seoValue, handleSeoChange,refrenceId,toggleState }) => {
   const [multipleTags, setMultipleTags] = useState([]);
   const [isFirstTimeRender, setIsFirstTimeRender] = useState(true);
   const [retainValue,setReatinValue] = useState({})
   const dispatch = useDispatch()
   // ? CHECKBOX STARTS HERE
 
-  const [checkedSwitch, setCheckedSwitch] = React.useState(false);
+  const [checkedSwitch, setCheckedSwitch] = React.useState(toggleState);
   const [viewAll, setViewAll] = useState(false);
+  let seoItems = {};
 
   const [
     createSeo,
@@ -95,7 +96,7 @@ const SEO = ({ seoName, seoValue, handleSeoChange,refrenceId }) => {
   }, [seoValue, seoName, isFirstTimeRender]);
 
   function handleSubmit() {
-    let seoItems = {};
+   
     seoItems.title = seoFormik.values?.title;
     if (
       seoFormik.initialValues.slug !== seoFormik.values.slug ||
@@ -111,6 +112,20 @@ const SEO = ({ seoName, seoValue, handleSeoChange,refrenceId }) => {
     }
     handleSeoChange(seoItems);
   }
+
+  useEffect(()=>{
+    if(checkedSwitch === true){
+      if (multipleTags.length > 0) {
+        seoItems.metaKeywords = multipleTags;
+      }
+      if (seoFormik.values?.description) {
+        seoItems.description = seoFormik.values?.description;
+        seoItems.title = seoFormik.values?.title;
+        seoItems.slug = seoFormik.values.slug
+      }
+      handleSeoChange(seoItems);
+    }
+  },[seoFormik.values])
 
   function handleSeoCreate(){
     let seoItems = {};
@@ -129,6 +144,7 @@ const SEO = ({ seoName, seoValue, handleSeoChange,refrenceId }) => {
       seoItems.metaKeywords = multipleTags;
     }
     createSeo(seoItems).unwrap().then(()=>{
+      handleSeoChange({})
      dispatch(showSuccess({message:"Seo created for this category"}))
     }).catch((err)=> dispatch(showError({message: err?.data?.message})))
   }

@@ -66,6 +66,7 @@ const initialState = {
   confirmationMessage: "",
   isEditing: false,
   initialInfo: null,
+  isSeoEditDone:false,
 };
 
 const initialQueryFilterState = {
@@ -90,6 +91,12 @@ const categoryReducer = (state, action) => {
     return {
       ...initialState,
       isEditing: false,
+    };
+  }
+  if (action.type === "DISABLE_SEO") {
+    return {
+      ...initialState,
+      isSeoEditDone: false,
     };
   }
 
@@ -197,12 +204,12 @@ const EditSubCategories = () => {
       if (values.mediaUrl) {
         editItems.mediaUrl = values.mediaUrl;
       }
-      if (isEmpty(values.seo)) {
-        editItems.seo = {
-          title: values.name,
-          slug: "https://example.com/" + values.name,
-        };
-      }
+      // if (isEmpty(values.seo)) {
+      //   editItems.seo = {
+      //     title: values.name,
+      //     slug: "https://example.com/" + values.name,
+      //   };
+      // }
       if (!isEmpty(values.seo)) {
         editItems.seo = values.seo;
       }
@@ -224,6 +231,7 @@ const EditSubCategories = () => {
           dispatch(
             showSuccess({ message: "Sub Category Updated Successfully" })
           );
+          dispatchCategory({ type: "DISABLE_SEO" })
         });
     },
   });
@@ -537,6 +545,7 @@ const EditSubCategories = () => {
                 categoryEditFormik.setFieldValue("seo", val)
               }
               refrenceId={id ? subCategoriesData?.data?.data?.[0]?._id : ""}
+              toggleState={id ? categoryState.isSeoEditDone : false}
             />
           </div>
         </div>
