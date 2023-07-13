@@ -64,7 +64,7 @@ const EditVendor = () => {
 
   const navigate= useNavigate();
   const dispatch = useDispatch();
-  let { id } = useParams();
+  let { id,filter } = useParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -89,6 +89,8 @@ const EditVendor = () => {
   const [initialStatus, setInitailStatus] = useState("active");
   const [initialFilter, setInitailFilter] = useState(false);
 
+  const [decodedObject, setDecodedObject] = useState(null);
+
   
   const {
     data : vendorProductsData,
@@ -106,14 +108,38 @@ const EditVendor = () => {
     },
   ] = useCreateVendorMutation();
 
+  // const {
+  //   data: vendorsData,
+  //   isLoading: vendorsIsLoading,
+  //   isSuccess: vendorsIsSuccess,
+  //   error: vendorsError,
+  // } = useGetAllVendorsQuery({...decodedObject.queryParameters,...decodedObject.vendorTypeQuery,...decodedObject.queryFilterState.name},queryFilterState, {
+  //   skip: queryFilterState.pageNo ? false : true,
+  // });
   const {
     data: vendorsData,
     isLoading: vendorsIsLoading,
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
-  } = useGetAllVendorsQuery(queryFilterState, {
-    skip: queryFilterState.pageNo ? false : true,
-  });
+  } = useGetAllVendorsQuery(
+    {
+      ...queryFilterState,
+      ...decodedObject?.queryParameters,
+      ...decodedObject?.vendorTypeQuery,
+      name: decodedObject?.queryFilterState?.name,
+    }
+    // ,
+    // queryFilterState,
+    // {
+    //   skip: queryFilterState.pageNo ? false : true,
+    // }
+  );
+  
+  console.log("queryParameters",decodedObject?.queryParameters);
+  console.log("vendorTypeQuery",decodedObject?.vendorTypeQuery);
+  console.log("queryFilterState",decodedObject?.queryFilterState?.name);
+
+
 
   const [
     editVendor,
@@ -135,7 +161,7 @@ const EditVendor = () => {
         dispatch(showError({ message: editVendorError?.data?.message }));
       } else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Something went wrong, please try again" })
         );
       }
     }
@@ -179,7 +205,7 @@ const EditVendor = () => {
     if (pageNo + 1 > totalCount) {
       return;
     }
-    navigate(`/parameters/vendors/edit/${pageNo + 1}`);
+    navigate(`/parameters/vendors/edit/${pageNo + 1}/${filter}`);
   };
 
   const prevPageHandler = () => {
@@ -187,7 +213,7 @@ const EditVendor = () => {
     if (pageNo - 1 === 0) {
       return;
     }
-    navigate(`/parameters/vendors/edit/${pageNo - 1}`);
+    navigate(`/parameters/vendors/edit/${pageNo - 1}/${filter}`);
   };
   console.log({vendorsData : vendorsData})
   
@@ -352,6 +378,16 @@ const EditVendor = () => {
         dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
       }
     }, [id]);
+
+    useEffect(() => {
+      const encodedString = filter; // The encoded string from the URL or any source
+  
+      const decodedString = decodeURIComponent(encodedString);
+      const parsedObject = JSON.parse(decodedString);
+  
+      setDecodedObject(parsedObject);
+    }, []);
+
     
   return (
     <div className="page container-fluid position-relative user-group">

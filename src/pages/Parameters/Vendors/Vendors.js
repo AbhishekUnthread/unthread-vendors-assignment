@@ -268,12 +268,14 @@ const Vendors = () => {
     };
 
     const editCategoryPageNavigationHandler = (data,index) => {
-      let status = "all"
       setIsEditing(true);
       // dispatch(updateVendorId(data._id)); 
+      const combinedObject = { queryParameters, vendorTypeQuery, queryFilterState };
+      const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));    
+
       const currentTabNo =
       index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-      navigate(`./edit/${currentTabNo}/${status}`);
+      navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
     };
 
     const changeVendorTypeHandler = (_event, tabIndex) => {
@@ -388,7 +390,7 @@ const Vendors = () => {
       }
       else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Something went wrong, please try again" })
         );
       }
     }
@@ -411,7 +413,7 @@ const Vendors = () => {
       }
       else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Something went wrong, please try again" })
         );
       }
     }
@@ -424,7 +426,7 @@ const Vendors = () => {
         dispatch(showError({ message: vendorsError.data.message }));
       } else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Something went wrong, please try again" })
         );
       }
     }
@@ -469,7 +471,7 @@ const Vendors = () => {
         }
         else {
           dispatch(
-            showError({ message: "Something went wrong!, please try again" })
+            showError({ message: "Something went wrong, please try again" })
           );
         }
       }
@@ -488,7 +490,7 @@ const Vendors = () => {
         }
         else {
           dispatch(
-            showError({ message: "Something went wrong!, please try again" })
+            showError({ message: "Something went wrong, please try again" })
           );
         }
       }
@@ -506,7 +508,7 @@ const Vendors = () => {
         }
         else {
           dispatch(
-            showError({ message: "Something went wrong!, please try again" })
+            showError({ message: "Something went wrong, please try again" })
           );
         }
       }
@@ -524,7 +526,7 @@ const Vendors = () => {
         }
         else {
           dispatch(
-            showError({ message: "Something went wrong!, please try again" })
+            showError({ message: "Something went wrong, please try again" })
           );
         }
       }
