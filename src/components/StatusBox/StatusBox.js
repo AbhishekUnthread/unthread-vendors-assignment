@@ -31,7 +31,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
   const [startDateLocal, setStartDate] = React.useState(startDate ? moment(startDate).toDate() : null);
   const [endDateLocal, setEndDate] = React.useState("");
   const startDateNew = moment(startDate).utcOffset("+05:30").format("DD/MM/YYYY")
-  const startTime = moment(startDate).utcOffset("+05:30").format("HH:mm a");
+  const startTime = moment(startDate).utcOffset("+05:30").format("HH:mm A");
   const endDateNew = moment(endDate).utcOffset("+05:30").format("DD/MM/YYYY")
   const endTime = moment(endDate).format("HH:mm A");
 
