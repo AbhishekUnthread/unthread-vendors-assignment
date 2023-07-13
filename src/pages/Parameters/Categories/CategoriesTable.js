@@ -679,7 +679,7 @@ const CategoriesTable = ({
                                 unmountOnExit
                               >
                                 <React.Fragment>
-                                  <TableContainer>
+                                  <TableContainer style={{ padding: '20px' }}>
                                     <Table
                                       sx={{ minWidth: 750 }}
                                       aria-labelledby="tableTitle"
