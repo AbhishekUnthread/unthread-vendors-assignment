@@ -37,7 +37,8 @@ import { useDispatch } from "react-redux";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { LoadingButton } from "@mui/lab";
 import question from "../../../assets/icons/question.svg"
-import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+// import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 import DeleteIcon from '@mui/icons-material/Delete';
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
@@ -655,7 +656,7 @@ const handleDelete =()=>{
             <div className="row"></div>
             <h5 className="text-lightBlue mt-2 mb-3">
               Archive   
-              <span className="text-blue-2"> {`${selected.length > 1 ? `${selected.length} vendors` : ""}${vendorName}`}? </span>
+              <span className="text-blue-2"> {selected.length >= 1 ? `${selected.length} vendors` : vendorName}? </span>
             </h5>
             <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
               <span className="text-blue-2"> 0 products </span> 
@@ -686,7 +687,8 @@ const handleDelete =()=>{
         showCreateModal={showDeleteModal}
         toggleArchiveModalHandler={handleDeleteOnClick}
         handleArchive={handleDelete}
-        name={`${selected.length > 1 ? `${selected.length} vendors` : ''}${vendorName}`}
+        name={selected.length >= 1 ? selected.length : vendorName}
+        deleteType={"Vendor"}
       />
 
       <UnArchivedModal 
