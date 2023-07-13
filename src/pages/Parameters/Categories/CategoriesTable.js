@@ -981,7 +981,7 @@ const CategoriesTable = ({
         nameType={"category"}
       />
       <DeleteModal
-        name={""}
+        name={rowData?.name}
         showCreateModal={showDeleteModal}
         toggleArchiveModalHandler={toggleDeleteModalHandler}
         handleArchive={deleteDatas}
