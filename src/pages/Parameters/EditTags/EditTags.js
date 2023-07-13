@@ -292,6 +292,7 @@ const EditTags = () => {
               <br />
               </>
               }
+              <div className="small">
               <FormControlLabel
                         control={
                           <Checkbox
@@ -314,8 +315,10 @@ const EditTags = () => {
                             color: "#c8d8ff",
                           },
                         }}
-                        className=" px-0"
+                        className=" px-0 me-1"
                  />
+                 <button className="reset link" sx={{color:"#658DED"}}>(manage)</button>
+                </div>
             </div>
           </div>
 
