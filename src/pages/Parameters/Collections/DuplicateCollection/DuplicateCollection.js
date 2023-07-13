@@ -51,7 +51,8 @@ const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollection
   const [endDate1, setEndDate1] = useState(null)
   const collectionId = useSelector((state)=>state.collection.collectionId)
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
-  const [collectionSeo,setCollectionSeo] = useState({})
+  const [collectionSeo,setCollectionSeo] = useState({});
+  const [duplicateTitleNew, setDuplicateTitleNew] = useState(collectionTitle)
 
   const {
     data: collectionData,
@@ -78,6 +79,14 @@ const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollection
       error: editCollectionError,
     }
   ] = useEditCollectionMutation();
+
+  const handleDuplicateTitle = (e) => {
+  const userInput = e.target.value;
+  setDuplicateTitleNew(userInput !== "" ? `${collectionTitle} ${userInput}` : collectionTitle);
+};
+  console.log(collectionTitle,'collectionTitle');
+
+  console.log(duplicateTitleNew,'duplicateTitleNew');
 
  useEffect(() => {
   if (collectionIsSuccess && collectionData?.data?.data.length > 0) {
@@ -175,7 +184,8 @@ const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollection
             placeholder="Mirosa Collection_copy"
             size="small"
             name="title"
-            value={collectionDuplicateTitle}
+            value={duplicateTitleNew}
+            onChange={handleDuplicateTitle}
           />
         </FormControl>
         <hr className="hr-grey-6 my-0" />
