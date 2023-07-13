@@ -37,6 +37,7 @@ import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import DeleteIcon from '@mui/icons-material/Delete';
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 
 
 
@@ -566,7 +567,7 @@ const handleDelete =()=>{
           <span className="d-flex justify-content-center m-3">Loading...</span>
         ) : (
           <span className="d-flex justify-content-center m-3">
-            No data found
+          <NoDataFound />
           </span>
         )
       ) : (

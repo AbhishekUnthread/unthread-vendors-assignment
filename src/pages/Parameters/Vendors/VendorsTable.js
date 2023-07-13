@@ -41,6 +41,7 @@ import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 
 // ? TABLE STARTS HERE
 function createData(vId, vendorsName, noOfProducts, status) {
@@ -594,12 +595,13 @@ const handleDelete =()=>{
           <span className="d-flex justify-content-center m-3">Loading...</span>
         ) : (
           <span className="d-flex justify-content-center m-3">
-            No data found
+          <NoDataFound />
           </span>
         )
       ) : (
         <></>
       )}
+
       <Dialog
           open={archivedModal}
           TransitionComponent={Transition}
