@@ -536,6 +536,7 @@ const EditSubCategories = () => {
               handleSeoChange={(val) =>
                 categoryEditFormik.setFieldValue("seo", val)
               }
+              refrenceId={id ? subCategoriesData?.data?.data?.[0]?._id : ""}
             />
           </div>
         </div>
