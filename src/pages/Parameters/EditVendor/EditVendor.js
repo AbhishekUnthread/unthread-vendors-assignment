@@ -352,7 +352,7 @@ const EditVendor = () => {
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Name</p>
-                <Tooltip title="Lorem ipsum" placement="top">
+                <Tooltip title="Enter Name" placement="top">
                   <img
                     src={info}
                     alt="info"
@@ -372,6 +372,7 @@ const EditVendor = () => {
               <br />
               </>
               }
+              <div className="small">
               <FormControlLabel
                         control={
                           <Checkbox
@@ -394,8 +395,10 @@ const EditVendor = () => {
                             color: "#c8d8ff",
                           },
                         }}
-                        className=" px-0"
+                        className=" px-0 me-1"
                  />
+                 <button className="reset link">(manage)</button>
+                 </div>
             </div>
           </div>
 
