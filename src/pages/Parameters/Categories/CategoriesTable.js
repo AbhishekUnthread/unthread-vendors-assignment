@@ -977,6 +977,8 @@ const CategoriesTable = ({
         closeUnArchivedModal={() => setShowUnArchivedModal(false)}
         handleUnArchived={handleUnArchived}
         handleStatusValue={setHandleStatusValue}
+        name={rowData?.name}
+        nameType={"category"}
       />
       <DeleteModal
         name={""}
