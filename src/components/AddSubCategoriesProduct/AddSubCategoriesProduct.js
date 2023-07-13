@@ -616,6 +616,7 @@ const AddSubCategoriesProducts = ({ id }) => {
                     <p className="text-lightBlue">Cancel</p>
                   </button>
                   <LoadingButton
+                  type="button"
                     loading={createSubCategoryIsLoading}
                     disabled={createSubCategoryIsLoading}
                     onClick={handlesubmit}
@@ -635,6 +636,7 @@ const AddSubCategoriesProducts = ({ id }) => {
             <button
               className="button-gradient w-100 py-2 px-3"
               onClick={subModalOpenHandler}
+              type="button"
             >
               <p>+ Add Sub Categories</p>
             </button>

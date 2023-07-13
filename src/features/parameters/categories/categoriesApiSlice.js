@@ -56,7 +56,7 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: tagsDetails,
       }),
-      invalidatesTags: ["SubCategories"],
+      invalidatesTags: ["SubCategories","Categories"],
     }),
     createSubCategory: builder.mutation({
       query: (subCategoryDetails) => ({
@@ -64,7 +64,7 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: subCategoryDetails,
       }),
-      invalidatesTags: ["SubCategories"],
+      invalidatesTags: ["SubCategories","Categories"],
     }),
     deleteCategory: builder.mutation({
       query: (categoryId) => ({
