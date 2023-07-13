@@ -261,6 +261,7 @@ const CategoriesTable = ({
             .then(() =>
               dispatch(showSuccess({ message: " Status updated successfully" }))
             );
+            setSelected([])
           setSelectedStatus(null);
         } else {
           bulkSubEdit({ updates: newState })
@@ -268,6 +269,7 @@ const CategoriesTable = ({
             .then(() =>
               dispatch(showSuccess({ message: " Status updated successfully" }))
             );
+            setSelected([])
           setToggleCategoris(true);
           setSelectedStatus(null);
         }
@@ -375,6 +377,8 @@ const CategoriesTable = ({
       bulkDeleteCategory({deletes:newState}).then(()=>{
         dispatch(showSuccess({ message: "Deleted this categories successfully" }));
       })
+      setSelectedStatus(null);
+      setSelected([])
       return
     }
     setShowDeleteModal(false);

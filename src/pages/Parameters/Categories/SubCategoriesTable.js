@@ -152,6 +152,7 @@ const SubCategoriesTable = ({
 
   useEffect(() => {
     // Update the state only if the selectedStatus state has a value
+    console.log(selectedStatus)
     if (selectedStatus !== null) {
       const newState = selected.map((id) => {
         if (selectedStatus === "Set as Active") {
@@ -159,7 +160,7 @@ const SubCategoriesTable = ({
             id,
             status: "active",
           };
-        } else if (selectedStatus === "Set as Archieved") {
+        } else if (selectedStatus === "Set as Archived") {
           return {
             id,
             status: "archieved",
@@ -182,6 +183,7 @@ const SubCategoriesTable = ({
           dispatch(showSuccess({ message: "Sub Categories Status updated successfully" }))
         );
       setSelectedStatus(null);
+      setSelected([])
     }
   }, [selected, selectedStatus]);
 
@@ -207,6 +209,8 @@ const SubCategoriesTable = ({
       bulkDeleteSubCategory({deletes:newState}).then(()=>{
         dispatch(showSuccess({ message: "Deleted this sub categories successfully" }));
       })
+      setSelectedStatus(null);
+      setSelected([])
       return
     }
     deleteData(rowData)
