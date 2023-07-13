@@ -1,12 +1,12 @@
 import React from "react";
-import noData from "../../assets/icons/noData.svg";
+import noData from "../../assets/images/Components/NoData.png";
 
 const NoDataFound = () => {
 
   return (
     <div>
         <div className="d-flex justify-content-center mt-5 mb-4">
-            <img src={noData} width={120} />
+            <img src={noData} width={140} />
         </div>
         <h2 className="text-lightBlue mt-2 mb-4 text-center">
             No data available

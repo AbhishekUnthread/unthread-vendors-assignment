@@ -43,6 +43,8 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
     setOpenScheduleProduct(false);
   };
 
+  const minDateTime = startDate ? moment(startDate).add(10, 'minutes') : null;
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3">
       <div className="d-flex align-items-center justify-content-between">
@@ -80,7 +82,7 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
         </ToggleButton>
       </ToggleButtonGroup>
       {showScheduleData && (
-          <div className="d-flex align-items-center mt-2 c-pointer">
+          <div className="d-flex align-items-center mt-4 c-pointer">
             <img src={clock} alt="clock" className="me-1" width={12} />
             <small className="text-blue-2" onClick={handelScheduleProduct}>
               Schedule {startDate == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate == null ? '' : `till ${endDateNew} at ${endTime}` }
@@ -88,8 +90,8 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
           </div>
       )}
       {startDate != null && (
-          <div className="d-flex justify-content-between px-4 py-3">
-            <small className="text-blue-2" style={{cursor: 'pointer'}} onClick={handelScheduleProduct}>Edit</small>
+          <div className="d-flex justify-content-end px-4 py-3">
+            <small className="text-blue-2 px-3" style={{cursor: 'pointer'}} onClick={handelScheduleProduct}>Edit</small>
             <small style={{color: '#F67476', cursor: 'pointer'}} onClick={clearDate}>Clear</small>
           </div>
       )}
@@ -160,7 +162,8 @@ const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductSta
                 handleEndDate(newValue);
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
-              minDate={startDateLocal}
+              minDate={startDate}
+              minTime={minDateTime}
               disabled={startDate == null ? true : false}
             />
           </LocalizationProvider>
