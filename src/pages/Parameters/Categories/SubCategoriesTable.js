@@ -351,10 +351,10 @@ const SubCategoriesTable = ({
                           >
                             <Link
                               className="text-decoration-none"
-                              to="/parameters/subCategories/edit"
-                              onClick={() => {
-                                dispatch(updateCategoryId(row._id));
-                              }}
+                              onClick={editPageHandler.bind(
+                                null,
+                                index + 1
+                              )}
                             >
                               <p className="text-lightBlue rounded-circle fw-600">
                                 {row.name}
