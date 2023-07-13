@@ -974,11 +974,11 @@ const CategoriesTable = ({
         closeUnArchivedModal={() => setShowUnArchivedModal(false)}
         handleUnArchived={handleUnArchived}
         handleStatusValue={setHandleStatusValue}
-        name={forMassAction == false ? rowData?.name : selected.length}
-        nameType={forMassAction == false ? "Category": "Categories"}
+        name={selected.length == 0 ? rowData?.name : selected.length}
+        nameType={selected.length == 0 ? "Category": "Categories"}
       />
       <DeleteModal
-         name={forMassAction == false ? `${rowData?.name} Category ` : `${selected.length} Categories ` }
+         name={selected.length == 0 ? `${rowData?.name} Category ` : `${selected.length} Categories ` }
         showCreateModal={showDeleteModal}
         toggleArchiveModalHandler={toggleDeleteModalHandler}
         handleArchive={deleteDatas}

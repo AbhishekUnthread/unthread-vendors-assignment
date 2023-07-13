@@ -569,12 +569,12 @@ const SubCategoriesTable = ({
         closeUnArchivedModal={() => setShowUnArchivedModal(false)}
         handleUnArchived={handleUnArchived}
         handleStatusValue={setHandleStatusValue}
-        name={forMassAction == false ? rowData?.name : selected.length}
-        nameType={forMassAction == false ? "Sub category" : "Sub categories"}
+        name={selected.length == 0 ? rowData?.name : selected.length}
+        nameType={selected.length == 0 ? "Sub category" : "Sub categories"}
       />
       <DeleteModal
         name={
-          forMassAction == false
+          selected.length == 0
             ? `${rowData?.name} sub category `
             : `${selected.length} sub categories `
         }
