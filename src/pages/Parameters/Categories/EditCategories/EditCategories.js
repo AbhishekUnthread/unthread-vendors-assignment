@@ -153,7 +153,7 @@ const EditCategories = () => {
       showFilter: categoriesData?.data?.data?.[0]?.showFilter,
       startDate: categoriesData?.data?.data?.[0]?.startDate || null,
       endDate: categoriesData?.data?.data?.[0]?.endDate || null,
-      mediaUrl: categoriesData?.data?.data?.[0]?.mediaUrl,
+      mediaUrl: categoriesData?.data?.data?.[0]?.mediaUrl || "",
       seo: categoriesData?.data?.data?.[0]?.seos || {},
     },
     enableReinitialize: true,
@@ -201,11 +201,13 @@ const EditCategories = () => {
   };
 
   useEffect(()=>{
-    if(categoryDescription === ""){
-      setCategoryDescription(categoryEditFormik.values.description)
+    if(categoryDescription === "<p></p>"){
+      categoryEditFormik.setFieldValue("description",categoryEditFormik.values.description)
     }
-    categoryEditFormik.setFieldValue("description", categoryDescription);
+    categoryEditFormik.setFieldValue("description",categoryDescription)
   },[categoryDescription])
+
+  
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -216,7 +218,7 @@ const EditCategories = () => {
     navigate("/parameters/categories");
   };
 
- 
+
   const nextPageHandler = () => {
     const { pageNo, totalCount } = queryFilterState;
     if (pageNo + 1 > totalCount) {
@@ -262,6 +264,8 @@ const EditCategories = () => {
     categoriesIsSuccess,
     dispatch,
   ]);
+
+  
 
   useEffect(() => {
     if (
@@ -361,7 +365,9 @@ const EditCategories = () => {
               </div>
               <AppTextEditor
                 value={categoryDescription}
-                setFieldValue={(val) => setCategoryDescription(val)}
+                setFieldValue={(val) => {
+                  setCategoryDescription(val)
+                }}
               />
             </div>
           </div>

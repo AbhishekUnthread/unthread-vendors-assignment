@@ -375,7 +375,10 @@ const Categories = () => {
       } else {
         createSubCategory(values)
           .unwrap()
-          .then(() => subCategoryFormik.resetForm())
+          .then(() => {
+            setSortFilter("newestToOldest")
+            subCategoryFormik.resetForm()
+          })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
           });
@@ -441,7 +444,6 @@ const Categories = () => {
 
   const handleStatusChange = (event) => {
     const selectedStatus = event.target.value;
-    console.log(selectedStatus);
     if (event.target.value) {
       if (statusFilter.length === 0) {
         let item = [];
@@ -476,22 +478,24 @@ const Categories = () => {
       setError(false);
 
       if (categoryType === 0) {
-        setCategoryList(categoriesData.data.data);
-        setCategoryTotalCount(categoriesData.data.totalCount);
+        setCategoryList(categoriesData?.data?.data);
+        setCategoryTotalCount(categoriesData?.data?.totalCount);
       }
       if (categoryType === 1) {
-        setSubCategoryList(subCategoriesData.data.data);
-        setSubCategoryTotalCount(subCategoriesData.data.totalCount);
+        setSubCategoryList(subCategoriesData?.data?.data);
+        setSubCategoryTotalCount(subCategoriesData?.data?.totalCount);
       }
       if (categoryType === 2) {
-        setCategoryList(categoriesData.data.data);
-        setCategoryTotalCount(categoriesData.data.totalCount);
+        setCategoryList(categoriesData?.data?.data);
+        setCategoryTotalCount(categoriesData?.data?.totalCount);
       }
       if (categoryType === 3) {
         setSubCategoryList(subCategoriesData.data.data);
         setSubCategoryTotalCount(subCategoriesData.data.totalCount);
       }
     }
+
+   
     
   }, [
     categoriesData,
@@ -784,8 +788,8 @@ const Categories = () => {
                   <p className="text-lightBlue">Cancel</p>
                 </button>
                 <LoadingButton
-                  loading={createCategoryIsLoading || editCategoryIsLoading}
-                  disabled={createCategoryIsLoading || editCategoryIsLoading}
+                  loading={createCategoryIsLoading }
+                  disabled={createCategoryIsLoading}
                   type="submit"
                   className="button-gradient py-2 px-5"
                 >
@@ -969,10 +973,10 @@ const Categories = () => {
                 </button>
                 <LoadingButton
                   loading={
-                    createSubCategoryIsLoading || editSubCategoryIsLoading
+                    createSubCategoryIsLoading
                   }
                   disabled={
-                    createSubCategoryIsLoading || editSubCategoryIsLoading
+                    createSubCategoryIsLoading 
                   }
                   type="submit"
                   className="button-gradient py-2 px-5"

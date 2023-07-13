@@ -230,7 +230,7 @@ const EditSubCategories = () => {
   };
 
   useEffect(() => {
-    if (subCategoryDescription === "") {
+    if (subCategoryDescription === "<p></p>") {
       setSubCategoryDescription(categoryEditFormik.values.description);
     }
     categoryEditFormik.setFieldValue("description", subCategoryDescription);
@@ -246,6 +246,7 @@ const EditSubCategories = () => {
   };
 
   const nextPageHandler = () => {
+    setSubCategoryDescription("")
     const { pageNo, totalCount } = queryFilterState;
     if (pageNo + 1 > totalCount) {
       return;
@@ -254,6 +255,7 @@ const EditSubCategories = () => {
   };
 
   const prevPageHandler = () => {
+    setSubCategoryDescription("")
     const { pageNo } = queryFilterState;
     if (pageNo - 1 === 0) {
       return;
@@ -282,9 +284,9 @@ const EditSubCategories = () => {
         type: "SET_TOTAL_COUNT",
         totalCount: subCategoriesData.totalCount,
       });
-      setCategoryName(subCategoriesData.data.data[0].category?.[0]?.name || "");
+      setCategoryName(subCategoriesData?.data?.data?.[0].category?.[0]?.name || "");
       setSubCategoryParentId(
-        subCategoriesData.data.data[0].category?.[0]?._id || ""
+        subCategoriesData?.data?.data?.[0]?.category?.[0]?._id || ""
       );
     }
   }, [

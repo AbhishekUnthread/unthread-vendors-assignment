@@ -348,7 +348,7 @@ const SubCategoriesTable = ({
                           </TableCell>
                           <TableCell style={{ width: 180, padding: 0 }}>
                       <div className="d-block">
-                        <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
+                        <div className="rounded-pill d-flex px-2 py-1  statusBoxWidth" 
                           style={{background: 
                             row.status == "active" ? "#A6FAAF" : 
                             row.status == "in-active" ? "#F67476" : 
