@@ -36,6 +36,7 @@ import {
   Dialog,
   Slide,
   Tooltip,
+  InputAdornment,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
@@ -51,14 +52,14 @@ import {
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { showSuccess } from "../../features/snackbar/snackbarAction";
+import { showError, showSuccess } from "../../features/snackbar/snackbarAction";
 import { useDispatch } from "react-redux";
 import TableEditStatusButton from "../TableEditStatusButton/TableEditStatusButton";
 import { updateCategoryId } from "../../features/parameters/categories/categorySlice";
 import { Link, useNavigate } from "react-router-dom";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import ArchivedModal from "../../components/DeleteDailogueModal/DeleteModal";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 // ? TABLE STARTS HERE
 function createData(pId, productName, category, price) {
@@ -307,23 +308,30 @@ const AddSubCategoriesProducts = ({ id }) => {
     editSubCategoryIsSuccess,
   ]);
 
-  const handleAddMultiple = (event, Formik, Tags, data, flag) => {
-    if (event.key === "Enter") {
+  const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
+    if (event.key === "Enter" || event.type === "click") {
       event.preventDefault();
       Formik.validateForm().then(() => {
         if (Formik.isValid && Formik.values.name !== "") {
           Formik.setFieldTouched("name", true);
-          Tags((prevValues) => [...prevValues, data]);
-          if (flag) {
-            Formik.resetForm();
-          } else {
-            Formik.setFieldValue("name", "");
+          let tagName = tags.map((item) => item.name?.trim()?.toLowerCase());
+          let valueExists = tagName.includes(data.name?.trim()?.toLowerCase());
+          if (!valueExists) {
+            setTags((prevValues) => [...prevValues, data]);
+            if (flag) {
+              Formik.resetForm();
+            } else {
+              Formik.setFieldValue("name", "");
+            }
+          }
+
+          if (valueExists) {
+            dispatch(showError({ message: "Duplicate Name Value" }));
           }
         }
       });
     }
   };
-
   useEffect(() => {
     // Update the state only if the selectedStatus state has a value
     if (selectedStatus !== null) {
@@ -554,6 +562,29 @@ const AddSubCategoriesProducts = ({ id }) => {
                           },
                           false
                         )
+                      }
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <ChevronRightIcon
+                            className="c-pointer"
+                            onClick={(e) =>
+                              handleAddMultiple(
+                                e,
+                                subCategoryFormik,
+                                setMultipleTagsForSub,
+                                multipleTagsForSub,
+                                {
+                                  name: subCategoryFormik.values.name,
+                                  description: "<p></p>",
+                                  status: "active",
+                                  categoryId: subCategoryFormik.values.categoryId,
+                                  showFilter: subCategoryFormik.values.showFilter,
+                                },
+                                false
+                              )
+                            }
+                          />
+                        </InputAdornment>
                       }
                     />
                     {!!subCategoryFormik.touched.name &&
