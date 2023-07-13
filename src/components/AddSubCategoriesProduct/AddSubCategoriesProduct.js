@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useReducer, useState } from "react";
 import "../AddProducts/AddProducts.scss";
 // ! COMPONENT IMPORTS
 import {
@@ -47,7 +47,7 @@ import { showSuccess } from "../../features/snackbar/snackbarAction";
 import { useDispatch } from "react-redux";
 import TableEditStatusButton from "../TableEditStatusButton/TableEditStatusButton";
 import { updateCategoryId } from "../../features/parameters/categories/categorySlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ArchivedModal from "../../components/DeleteDailogueModal/DeleteModal";
@@ -152,8 +152,35 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const initialQueryFilterState = {
+  pageSize: 1,
+  pageNo: null,
+  totalCount: 0,
+}
+
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_NO") {
+    return {
+      ...state,
+      pageNo: +action.pageNo,
+    };
+  }
+  if (action.type === "SET_TOTAL_COUNT") {
+    return {
+      ...state,
+      totalCount: action.totalCount,
+    };
+  }
+  return initialQueryFilterState;
+};
+
 const AddSubCategoriesProducts = ({id}) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
   const [subCategoryList,setSubCategoryList] = useState([])
   const [searchValue, setSearchValue] = useState("");
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
@@ -168,6 +195,8 @@ const AddSubCategoriesProducts = ({id}) => {
   if (searchValue) {
     filterParameter.name = searchValue;
   }
+
+ 
   
 
   const {
@@ -178,7 +207,9 @@ const AddSubCategoriesProducts = ({id}) => {
   } = useGetAllSubCategoriesQuery({
     categoryId:id,
     status:['active','in-active'],
-    ...filterParameter
+    ...filterParameter,
+    ...queryFilterState, 
+      skip: queryFilterState.pageNo ? false : true,
   });
 
   const [
@@ -341,9 +372,7 @@ const AddSubCategoriesProducts = ({id}) => {
   // * TABLE STARTS HERE
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("productName");
-  
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+ 
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -389,20 +418,22 @@ const AddSubCategoriesProducts = ({id}) => {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+ 
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+
+
   // * TABLE ENDS HERE
+
+  const handleChangeRowsPerPage = (event) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value: event.target.value });
+  };
+
+  const handleChangePage = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+  };
 
   const toggleArchiveModalHandler = (row) => {
     setShowCreateDeleteModal((prevState) => !prevState);
@@ -419,6 +450,12 @@ const AddSubCategoriesProducts = ({id}) => {
     })
     dispatch(showSuccess({ message: "Archived this Sub category successfully" }));
   }
+
+  const editSubPageHandler = (index) => {
+    const currentTabNo =
+      index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
+    navigate(`/parameters/subCategories/edit/${currentTabNo}`);
+  };
 
   return (
     <React.Fragment>
@@ -633,7 +670,6 @@ const AddSubCategoriesProducts = ({id}) => {
               />
               <TableBody>
                 {stableSort(subCategoryList, getComparator(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
                     const isItemSelected = isSelected(row._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
@@ -703,10 +739,7 @@ const AddSubCategoriesProducts = ({id}) => {
                         <Tooltip title="Edit" placement="top">
                                   <Link
                                     className="text-decoration-none"
-                                    to="/parameters/subCategories/edit"
-                                    onClick={() => {
-                                      dispatch(updateCategoryId(row._id));
-                                    }}
+                                   onClick={editSubPageHandler.bind(null,index+1)}
                                   >
                                     <div className="table-edit-icon rounded-4 p-2">
                                       <EditOutlinedIcon
@@ -741,15 +774,7 @@ const AddSubCategoriesProducts = ({id}) => {
                       </TableRow>
                     );
                   })}
-                {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: 53 * emptyRows,
-                    }}
-                  >
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
+               
               </TableBody>
             </Table>
           </TableContainer>
@@ -757,8 +782,8 @@ const AddSubCategoriesProducts = ({id}) => {
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={totalCount}
-            rowsPerPage={rowsPerPage}
-            page={page}
+            rowsPerPage={queryFilterState.pageSize}
+            page={queryFilterState.pageNo}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             className="table-pagination"

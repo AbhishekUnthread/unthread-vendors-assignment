@@ -85,14 +85,14 @@ const SubCategoriesTable = ({
   editSubCategory,
   bulkDeleteSubCategory,
   archived,
-  totalCount
+  totalCount,
+  editPageHandler,
+  rowsPerPage,changeRowsPerPage,changePage,page
 }) => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [showArchivedModal, setShowArchivedModal] = useState(false);
   const [rowData, setRowData] = useState({});
   const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
@@ -102,12 +102,9 @@ const SubCategoriesTable = ({
   const [forMassAction, setForMassAction] = React.useState(false);
   const [massActionStatus, setMassActionStatus] = React.useState("");
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+
+  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -144,10 +141,7 @@ const SubCategoriesTable = ({
     setSelected(newSelected);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+ 
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -218,7 +212,7 @@ const SubCategoriesTable = ({
   }
 
   function deleteRowData() {
-    showArchivedModal(false);
+    setShowArchivedModal(false);
     if(forMassAction === true){
       setSelectedStatus(massActionStatus)
       return
@@ -298,7 +292,6 @@ const SubCategoriesTable = ({
                 />
                 <TableBody>
                   {stableSort(list, getComparator(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
                       const isItemSelected = isSelected(row._id);
                       const labelId = `enhanced-table-checkbox-${index}`;
@@ -394,10 +387,7 @@ const SubCategoriesTable = ({
                                 <Tooltip title="Edit" placement="top">
                                   <Link
                                     className="text-decoration-none"
-                                    to="/parameters/subCategories/edit"
-                                    onClick={() => {
-                                      dispatch(updateCategoryId(row._id));
-                                    }}
+                                    onClick={editPageHandler.bind(null, index + 1)}
                                   >
                                     <div className="table-edit-icon rounded-4 p-2">
                                       <EditOutlinedIcon
@@ -457,15 +447,6 @@ const SubCategoriesTable = ({
                         </TableRow>
                       );
                     })}
-                  {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: 53 * emptyRows,
-                      }}
-                    >
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -475,8 +456,8 @@ const SubCategoriesTable = ({
               count={totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              onPageChange={changePage}
+              onRowsPerPageChange={changeRowsPerPage}
               className="table-pagination"
             />
           </React.Fragment>

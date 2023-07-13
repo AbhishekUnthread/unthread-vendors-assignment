@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import { EnhancedTableGapHead } from "../../../components/TableDependenciesWithGap/TableDependenciesWithGap";
 import {
@@ -125,16 +125,19 @@ const CategoriesTable = ({
   bulkSubEdit,
   bulkDeleteCategory,
   editCategory,
+  editSubPageHandler,
   editSubCategory,
   archived,
   totalCount,
+  editPageHandler,
+  rowsPerPage,changeRowsPerPage,changePage,page
 }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+ ;
   const [open, setOpen] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [filterParameter, setFilterParameter] = useState();
@@ -164,12 +167,9 @@ const CategoriesTable = ({
     }
   }, [subCategoriesIsSuccess, subCategoriesData]);
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
+  
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+ 
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -214,10 +214,7 @@ const CategoriesTable = ({
     setSelected(newSelected);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+ 
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -396,6 +393,9 @@ const CategoriesTable = ({
     }
   };
 
+
+  
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -445,8 +445,7 @@ const CategoriesTable = ({
                   mainHeadCells={mainHeadCells}
                 />
                 <TableBody>
-                  {stableSort(list, getComparator(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  {stableSort(list, getComparator(order, orderBy))              
                     .map((row, index) => {
                       const isItemSelected = isSelected(row._id);
                       const labelId = `enhanced-table-checkbox-${index}`;
@@ -508,10 +507,7 @@ const CategoriesTable = ({
                             >
                               <Link
                                 className="text-decoration-none"
-                                to="/parameters/categories/edit"
-                                onClick={() => {
-                                  dispatch(updateCategoryId(row._id));
-                                }}
+                                onClick={editPageHandler.bind(null, index + 1)}
                               >
                                 <p className="text-lightBlue rounded-circle fw-600">
                                   {row.name}
@@ -533,7 +529,7 @@ const CategoriesTable = ({
                             <TableCell style={{ width: 180, padding: 0 }}>
                               <div className="d-block">
                                 <div
-                                  className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
+                                  className="rounded-pill d-flex px-2 py-1  statusBoxWidth"
                                   style={{
                                     background:
                                       row.status == "active"
@@ -603,10 +599,7 @@ const CategoriesTable = ({
                                   <Tooltip title="Edit" placement="top">
                                     <Link
                                       className="text-decoration-none"
-                                      to="/parameters/categories/edit"
-                                      onClick={() => {
-                                        dispatch(updateCategoryId(row._id));
-                                      }}
+                                      onClick={editPageHandler.bind(null, index + 1)}
                                     >
                                       <div className="table-edit-icon rounded-4 p-2">
                                         <EditOutlinedIcon
@@ -759,10 +752,7 @@ const CategoriesTable = ({
                                                   >
                                                     <Link
                                                       className="text-decoration-none"
-                                                      // to="/parameters/categories/edit"
-                                                      // onClick={()=>{
-                                                      //   dispatch(updateCategoryId(row._id))
-                                                      // }}
+                                                      onClick={editSubPageHandler.bind(null, index + 1)}
                                                     >
                                                       <p className="text-lightBlue rounded-circle fw-600">
                                                         {row.name}
@@ -786,7 +776,7 @@ const CategoriesTable = ({
                                                   >
                                                     <div className="d-flex align-items-center">
                                                       <div
-                                                        className="rounded-pill d-flex px-2 py-1 c-pointer"
+                                                        className="rounded-pill d-flex px-2 py-1 "
                                                         style={{
                                                           background:
                                                             row.status ==
@@ -831,18 +821,11 @@ const CategoriesTable = ({
                                                             placement="top"
                                                           >
                                                             <div
-                                                              onClick={(e) => {
-                                                                dispatch(
-                                                                  updateCategoryId(
-                                                                    row._id
-                                                                  )
-                                                                );
-                                                              }}
                                                               className="table-edit-icon rounded-4 p-2"
                                                             >
                                                               <Link
                                                                 className="text-decoration-none"
-                                                                to="/parameters/subCategories/edit"
+                                                                onClick={editSubPageHandler.bind(null, index + 1)}
                                                               >
                                                                 <EditOutlinedIcon
                                                                   sx={{
@@ -906,15 +889,7 @@ const CategoriesTable = ({
                                               </React.Fragment>
                                             );
                                           })}
-                                        {emptyRows > 0 && (
-                                          <TableRow
-                                            style={{
-                                              height: 53 * emptyRows,
-                                            }}
-                                          >
-                                            <TableCell colSpan={6} />
-                                          </TableRow>
-                                        )}
+                                        
                                       </TableBody>
                                     </Table>
                                   </TableContainer>
@@ -925,15 +900,6 @@ const CategoriesTable = ({
                         </React.Fragment>
                       );
                     })}
-                  {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: 53 * emptyRows,
-                      }}
-                    >
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -943,8 +909,8 @@ const CategoriesTable = ({
               count={totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              onPageChange={changePage}
+              onRowsPerPageChange={changeRowsPerPage}
               className="table-pagination"
             />
           </React.Fragment>

@@ -45,7 +45,7 @@ import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 import sort from "../../../assets/icons/sort.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import {
   showSuccess,
@@ -69,6 +69,30 @@ import {
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
+import { useNavigate } from "react-router-dom";
+
+const initialQueryFilterState = {
+  pageSize: 5,
+  pageNo: 0,
+  totalCount: 0,
+};
+
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_SIZE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      pageSize: +action.value,
+    };
+  }
+  if (action.type === "CHANGE_PAGE") {
+    return {
+      ...state,
+      pageNo: action.pageNo,
+    };
+  }
+  return initialQueryFilterState;
+};
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -94,6 +118,11 @@ const subCategoryValidationSchema = Yup.object({
 
 const Categories = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
   const [categoryType, setCategoryType] = useState(0);
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
@@ -116,8 +145,6 @@ const Categories = () => {
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
   };
-
- 
 
   const categoryTypeQuery =
     categoryType === 0
@@ -148,29 +175,44 @@ const Categories = () => {
   }
 
   // Check SortOption
-if (sortFilter) {
-  // Check alphabetical sort options
-  if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
-    filterParams.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+  if (sortFilter) {
+    // Check alphabetical sort options
+    if (
+      sortFilter === "alphabeticalAtoZ" ||
+      sortFilter === "alphabeticalZtoA"
+    ) {
+      filterParams.alphabetical =
+        sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+    }
+    // Check createdAt sort options
+    else if (
+      sortFilter === "oldestToNewest" ||
+      sortFilter === "newestToOldest"
+    ) {
+      filterParams.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+    }
   }
-  // Check createdAt sort options
-  else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
-    filterParams.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
-  }
-}
 
   const {
     data: categoriesData,
     isLoading: categoriesIsLoading,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({ ...filterParams });
+  } = useGetAllCategoriesQuery({
+    ...filterParams,
+    pageSize: queryFilterState.pageSize,
+    pageNo: queryFilterState.pageNo + 1,
+  });
   const {
     data: subCategoriesData,
     isLoading: subCategoriesIsLoading,
     isSuccess: subCategoriesIsSuccess,
     error: subCategoriesError,
-  } = useGetAllSubCategoriesQuery({ ...filterParams });
+  } = useGetAllSubCategoriesQuery({
+    ...filterParams,
+    pageSize: queryFilterState.pageSize,
+    pageNo: queryFilterState.pageNo + 1,
+  });
   const [
     createCategory,
     {
@@ -289,17 +331,19 @@ if (sortFilter) {
         bulkCreateCategory(multipleTags)
           .unwrap()
           .then(() => {
-            setMultipleTags([])
-            categoryFormik.resetForm()
-          }).catch((err)=>{
-            dispatch(showError({message:err?.data?.message}))
+            setMultipleTags([]);
+            categoryFormik.resetForm();
           })
+          .catch((err) => {
+            dispatch(showError({ message: err?.data?.message }));
+          });
       } else {
         createCategory(values)
           .unwrap()
-          .then(() => categoryFormik.resetForm()).catch((err)=>{
-            dispatch(showError({message:err?.data?.message}))
-          })
+          .then(() => categoryFormik.resetForm())
+          .catch((err) => {
+            dispatch(showError({ message: err?.data?.message }));
+          });
       }
     },
   });
@@ -318,22 +362,23 @@ if (sortFilter) {
         : subCategoryValidationSchema,
     onSubmit: (values) => {
       toggleCreateSubModalHandler();
-      setCategoryType(1);
       if (multipleTagsForSub.length > 0) {
         bulkCreateSubCategory(multipleTagsForSub)
           .unwrap()
           .then(() => {
             subCategoryFormik.resetForm();
             setMultipleTagsForSub([]);
-          }).catch((err)=>{
-            dispatch(showError({message:err?.data?.message}))
           })
+          .catch((err) => {
+            dispatch(showError({ message: err?.data?.message }));
+          });
       } else {
         createSubCategory(values)
           .unwrap()
-          .then(() => subCategoryFormik.resetForm()).catch((err)=>{
-            dispatch(showError({message:err?.data?.message}))
-          })
+          .then(() => subCategoryFormik.resetForm())
+          .catch((err) => {
+            dispatch(showError({ message: err?.data?.message }));
+          });
       }
     },
   });
@@ -427,7 +472,6 @@ if (sortFilter) {
   };
 
   useEffect(() => {
-    
     if (categoriesIsSuccess && subCategoriesIsSuccess) {
       setError(false);
 
@@ -448,27 +492,7 @@ if (sortFilter) {
         setSubCategoryTotalCount(subCategoriesData.data.totalCount);
       }
     }
-    if (createCategoryIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Category created successfully" }));
-    }
-
-    if (deleteCategoryIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Category deleted successfully" }));
-    }
-    if (bulkCreateTagsIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Categories created successfully" }));
-    }
-    if (createSubCategoryIsSuccess) {
-      setShowCreateSubModal(false);
-      dispatch(showSuccess({ message: "Sub Category created successfully" }));
-    }
-    if (deleteSubCategoryIsSuccess) {
-      setShowCreateSubModal(false);
-      dispatch(showSuccess({ message: "Sub Category deleted successfully" }));
-    }
+    
   }, [
     categoriesData,
     subCategoriesData,
@@ -491,8 +515,36 @@ if (sortFilter) {
     sortFilter,
   ]);
 
+  useEffect(() => {
+    if (createCategoryIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Category created successfully" }));
+    }
+  
+    if (deleteCategoryIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Category deleted successfully" }));
+    }
+  
+    if (bulkCreateTagsIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Categories created successfully" }));
+    }
+  
+    if (createSubCategoryIsSuccess) {
+      setShowCreateSubModal(false);
+      dispatch(showSuccess({ message: "Sub Category created successfully" }));
+    }
+  
+    if (deleteSubCategoryIsSuccess) {
+      setShowCreateSubModal(false);
+      dispatch(showSuccess({ message: "Sub Category deleted successfully" }));
+    }
+  }, [createCategoryIsSuccess, deleteCategoryIsSuccess, bulkCreateTagsIsSuccess, createSubCategoryIsSuccess, deleteSubCategoryIsSuccess]);
+  
+
   const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
-    if (event.key === "Enter"|| event.type === 'click') {
+    if (event.key === "Enter" || event.type === "click") {
       event.preventDefault();
       Formik.validateForm().then(() => {
         if (Formik.isValid && Formik.values.name !== "") {
@@ -518,6 +570,26 @@ if (sortFilter) {
   const subModalOpenHandler = (row) => {
     setShowCreateSubModal((prev) => !prev);
     subCategoryFormik.setFieldValue("categoryId", row._id);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value: event.target.value });
+  };
+
+  const handleChangePage = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+  };
+
+  const editPageHandler = (index) => {
+    const currentTabNo =
+      index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
+    navigate(`./edit/${currentTabNo}`);
+  };
+
+  const editSubPageHandler = (index) => {
+    const currentTabNo =
+      index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
+    navigate(`/parameters/subCategories/edit/${currentTabNo}`);
   };
 
   return (
@@ -631,24 +703,27 @@ if (sortFilter) {
                     }
                     endAdornment={
                       <InputAdornment position="end">
-                          <ChevronRightIcon className="c-pointer"  onClick={(e) =>
-                      handleAddMultiple(
-                        e,
-                        categoryFormik,
-                        setMultipleTags,
-                        multipleTags,
-                        {
-                          name: categoryFormik.values.name,
-                          status: "active",
-                          showFilter: categoryFormik.values.showFilter,
-                          description: "<p></p>",
-                          type: "active",
-                        },
-                        true
-                      )
-                    }/>
+                        <ChevronRightIcon
+                          className="c-pointer"
+                          onClick={(e) =>
+                            handleAddMultiple(
+                              e,
+                              categoryFormik,
+                              setMultipleTags,
+                              multipleTags,
+                              {
+                                name: categoryFormik.values.name,
+                                status: "active",
+                                showFilter: categoryFormik.values.showFilter,
+                                description: "<p></p>",
+                                type: "active",
+                              },
+                              true
+                            )
+                          }
+                        />
                       </InputAdornment>
-                      }
+                    }
                   />
                   {!!categoryFormik.touched.name &&
                     categoryFormik.errors.name && (
@@ -811,24 +886,27 @@ if (sortFilter) {
                     }
                     endAdornment={
                       <InputAdornment position="end">
-                          <ChevronRightIcon className="c-pointer"  onClick={(e) =>
-                      handleAddMultiple(
-                        e,
-                        subCategoryFormik,
-                        setMultipleTagsForSub,
-                        multipleTagsForSub,
-                        {
-                          name: subCategoryFormik.values.name,
-                          description: "<p></p>",
-                          status: "active",
-                          categoryId: subCategoryFormik.values.categoryId,
-                          showFilter: subCategoryFormik.values.showFilter,
-                        },
-                        false
-                      )
-                    }/>
+                        <ChevronRightIcon
+                          className="c-pointer"
+                          onClick={(e) =>
+                            handleAddMultiple(
+                              e,
+                              subCategoryFormik,
+                              setMultipleTagsForSub,
+                              multipleTagsForSub,
+                              {
+                                name: subCategoryFormik.values.name,
+                                description: "<p></p>",
+                                status: "active",
+                                categoryId: subCategoryFormik.values.categoryId,
+                                showFilter: subCategoryFormik.values.showFilter,
+                              },
+                              false
+                            )
+                          }
+                        />
                       </InputAdornment>
-                      }
+                    }
                   />
                   {!!subCategoryFormik.touched.name &&
                     subCategoryFormik.errors.name && (
@@ -1064,6 +1142,12 @@ if (sortFilter) {
                   editSubCategory={editSubCategory}
                   bulkDeleteCategory={bulkDeleteCategory}
                   archived={true}
+                  changeRowsPerPage={handleChangeRowsPerPage}
+                  rowsPerPage={queryFilterState.pageSize}
+                  changePage={handleChangePage}
+                  page={queryFilterState.pageNo}
+                  editSubPageHandler={editSubPageHandler}
+                  editPageHandler={editPageHandler}
                   totalCount={categoryTotalCount}
                 />
               </TabPanel>
@@ -1078,6 +1162,11 @@ if (sortFilter) {
                   editSubCategory={editSubCategory}
                   bulkDeleteSubCategory={bulkDeleteSubCategory}
                   archived={true}
+                  changeRowsPerPage={handleChangeRowsPerPage}
+                  rowsPerPage={queryFilterState.pageSize}
+                  changePage={handleChangePage}
+                  page={queryFilterState.pageNo}
+                  editPageHandler={editSubPageHandler}
                   totalCount={subCategoryTotalCount}
                 />
               </TabPanel>
@@ -1094,6 +1183,12 @@ if (sortFilter) {
                   editSubCategory={editSubCategory}
                   bulkDeleteCategory={bulkDeleteCategory}
                   archived={false}
+                  changeRowsPerPage={handleChangeRowsPerPage}
+                  rowsPerPage={queryFilterState.pageSize}
+                  changePage={handleChangePage}
+                  page={queryFilterState.pageNo}
+                  editPageHandler={editPageHandler}
+                  editSubPageHandler={editSubPageHandler}
                   totalCount={categoryTotalCount}
                 />
               </TabPanel>
@@ -1107,6 +1202,11 @@ if (sortFilter) {
                   bulkEdit={bulkEditSubCategory}
                   editSubCategory={editSubCategory}
                   bulkDeleteSubCategory={bulkDeleteSubCategory}
+                  changeRowsPerPage={handleChangeRowsPerPage}
+                  rowsPerPage={queryFilterState.pageSize}
+                  changePage={handleChangePage}
+                  page={queryFilterState.pageNo}
+                  editPageHandler={editSubPageHandler}
                   archived={false}
                   totalCount={subCategoryTotalCount}
                 />
