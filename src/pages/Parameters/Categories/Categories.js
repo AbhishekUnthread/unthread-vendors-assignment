@@ -72,7 +72,7 @@ import "../../Products/AllProducts/AllProducts.scss";
 import { useNavigate } from "react-router-dom";
 
 const initialQueryFilterState = {
-  pageSize: 5,
+  pageSize: 10,
   pageNo: 0,
   totalCount: 0,
 };
