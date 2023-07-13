@@ -68,7 +68,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 const initialQueryFilterState = {
-  pageSize: 5,
+  pageSize: 10,
   pageNo: 1,
   name:"",
 };
