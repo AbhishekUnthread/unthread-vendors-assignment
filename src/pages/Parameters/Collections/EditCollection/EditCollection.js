@@ -11,7 +11,8 @@ import StatusBox from "../../../../components/StatusBox/StatusBox";
 import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
 import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
 import AddHeader from "../../../../components/AddHeader/AddHeader";
-import DiscardModal from "../../../../components/Discard/DiscardModal";
+import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
+import { SaveFooterTertiary } from "../../../../components/SaveFooter/SaveFooter";
 import {
   EnhancedTableHead,
   stableSort,
@@ -232,7 +233,6 @@ const likeProductRows = [
 const EditCollection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState(false);
   const [collectionTitle, setCollectionTitle] = useState("");
   const [collectionNote, setCollectionNote] = useState("");
   const [collectionStatus, setCollectionStatus] = React.useState("active");
@@ -247,7 +247,6 @@ const EditCollection = () => {
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
-  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
   const [duplicateTitleNew, setDuplicateTitleNew] = useState("")
 
    const clearDate = () => {
@@ -276,12 +275,8 @@ const EditCollection = () => {
     }
   }
 
-  const toggleDiscardModal = () => {
-    setShowDiscardModal((prevState) => !prevState);
-  };
-
-  const handleDiscard = () => {
-    setShowDiscardModal(true);
+  const backHandler = () => {
+    navigate("/parameters/collections");
   }
 
   const {
@@ -1374,9 +1369,12 @@ const EditCollection = () => {
           </div>
         </div>
 
-        { hideFooter && 
-          <SaveFooter handleSubmit={handleSubmit} handleDiscard={handleDiscard} />          
-         }
+        <SaveFooterTertiary 
+          show={hideFooter} 
+          onDiscard={backHandler} 
+          isLoading={createCollectionIsLoading || editCollectionIsLoading}
+        />  
+
       <Dialog
         open={openDuplicateCollection}
         TransitionComponent={Transition}
@@ -1510,9 +1508,10 @@ const EditCollection = () => {
           </div>
         </DialogActions>
       </Dialog>
-      <DiscardModal           
-        showDiscardModal={showDiscardModal}
-        toggleDiscardModal={toggleDiscardModal}
+
+      <DiscardModalSecondary           
+        when={true}
+        message="collection tab"
       />
       </div>
   );
