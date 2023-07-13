@@ -104,7 +104,7 @@ function isEmpty(obj) {
     }
   }
 
-  return true
+  return true;
 }
 
 const EditCategories = () => {
@@ -121,8 +121,6 @@ const EditCategories = () => {
     initialQueryFilterState
   );
   const [categoryDescription, setCategoryDescription] = useState("");
-
-
 
   const {
     data: categoriesData,
@@ -166,17 +164,17 @@ const EditCategories = () => {
         // isVisibleFrontend: categoryVisibility,
         notes: values.notes,
       };
-      if(values.mediaUrl){
-        editItems.mediaUrl = values.mediaUrl
+      if (values.mediaUrl) {
+        editItems.mediaUrl = values.mediaUrl;
       }
-      if(isEmpty(values.seo)){
-        editItems.seo ={
-          title:values.name,
-          slug:"https://example.com/"+values.name
-        }
+      if (isEmpty(values.seo)) {
+        editItems.seo = {
+          title: values.name,
+          slug: "https://example.com/" + values.name,
+        };
       }
-      if(!isEmpty(values.seo)){
-        editItems.seo = values.seo
+      if (!isEmpty(values.seo)) {
+        editItems.seo = values.seo;
       }
       if (values.startDate) {
         editItems.startDate = new Date(values.startDate);
@@ -191,7 +189,7 @@ const EditCategories = () => {
         .unwrap()
         .then(() => {
           dispatch(showSuccess({ message: "Category Updated Successfully" }));
-        })
+        });
     },
   });
 
@@ -200,14 +198,15 @@ const EditCategories = () => {
     categoryEditFormik.setFieldValue("endDate", null);
   };
 
-  useEffect(()=>{
-    if(categoryDescription === "<p></p>"){
-      categoryEditFormik.setFieldValue("description",categoryEditFormik.values.description)
+  useEffect(() => {
+    if (categoryDescription === "<p></p>") {
+      categoryEditFormik.setFieldValue(
+        "description",
+        categoryEditFormik.values.description
+      );
     }
-    categoryEditFormik.setFieldValue("description",categoryDescription)
-  },[categoryDescription])
-
-  
+    categoryEditFormik.setFieldValue("description", categoryDescription);
+  }, [categoryDescription]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -217,7 +216,6 @@ const EditCategories = () => {
   const backHandler = () => {
     navigate("/parameters/categories");
   };
-
 
   const nextPageHandler = () => {
     const { pageNo, totalCount } = queryFilterState;
@@ -265,8 +263,6 @@ const EditCategories = () => {
     dispatch,
   ]);
 
-  
-
   useEffect(() => {
     if (
       id &&
@@ -290,7 +286,7 @@ const EditCategories = () => {
   };
 
   return (
-    <div  className="page container-fluid position-relative user-group">
+    <div className="page container-fluid position-relative user-group">
       <InfoHeader
         title={categoryEditFormik.values.name || "Edit category"}
         onBack={backHandler}
@@ -301,7 +297,7 @@ const EditCategories = () => {
       />
       <form noValidate onSubmit={submitHandler} className="row mt-3">
         <div className="col-lg-9 mt-3">
-          <div className="features border-grey-5 rounded-8 p-3 row attributes">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Category Name</p>
@@ -329,7 +325,7 @@ const EditCategories = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                    name="showFilter"
+                      name="showFilter"
                       inputProps={{ "aria-label": "controlled" }}
                       checked={categoryEditFormik.values.showFilter}
                       onChange={categoryEditFormik.handleChange}
@@ -366,13 +362,13 @@ const EditCategories = () => {
               <AppTextEditor
                 value={categoryDescription}
                 setFieldValue={(val) => {
-                  setCategoryDescription(val)
+                  setCategoryDescription(val);
                 }}
               />
             </div>
           </div>
 
-          <div className="border-grey-5 rounded-8 p-3 row features mt-4">
+          <div className="border-grey-5 rounded-8 p-3 row bg-black-15 mt-4">
             <Box
               sx={{ width: "100%" }}
               className="d-flex justify-content-between tabs-header-box"
@@ -394,7 +390,9 @@ const EditCategories = () => {
                   <AddCategoriesProducts />
                 </TabPanel>
                 <TabPanel value={categoryType} index={1}>
-                  <AddSubCategoriesProducts id={id ? categoriesData?.data?.data?.[0]?._id :""} />
+                  <AddSubCategoriesProducts
+                    id={id ? categoriesData?.data?.data?.[0]?._id : ""}
+                  />
                 </TabPanel>
               </>
             }
@@ -406,6 +404,7 @@ const EditCategories = () => {
               handleSeoChange={(val) =>
                 categoryEditFormik.setFieldValue("seo", val)
               }
+              refrenceId={id ? categoriesData?.data?.data?.[0]?._id : ""}
             />
           </div>
         </div>
@@ -449,11 +448,11 @@ const EditCategories = () => {
             onChange={categoryEditFormik.handleChange}
           />
         </div>
-      <SaveFooterTertiary
-        show={id ? categoryState.isEditing : true}
-        onDiscard={backHandler}
-        isLoading={editCategoryIsLoading}
-      />
+        <SaveFooterTertiary
+          show={id ? categoryState.isEditing : true}
+          onDiscard={backHandler}
+          isLoading={editCategoryIsLoading}
+        />
       </form>
     </div>
   );

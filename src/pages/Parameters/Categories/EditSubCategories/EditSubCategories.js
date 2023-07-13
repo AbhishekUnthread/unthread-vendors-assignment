@@ -212,8 +212,8 @@ const EditSubCategories = () => {
       if (values.endDate) {
         editItems.endDate = new Date(values.endDate);
       }
-      if(subCategoryPatentId){
-        editItems.categoryId= subCategoryPatentId
+      if (subCategoryPatentId) {
+        editItems.categoryId = subCategoryPatentId;
       }
       editSubCategory({
         id: subCategoriesData?.data?.data?.[0]?._id, // ID of the category
@@ -249,7 +249,7 @@ const EditSubCategories = () => {
   };
 
   const nextPageHandler = () => {
-    setSubCategoryDescription("")
+    setSubCategoryDescription("");
     const { pageNo, totalCount } = queryFilterState;
     if (pageNo + 1 > totalCount) {
       return;
@@ -258,7 +258,7 @@ const EditSubCategories = () => {
   };
 
   const prevPageHandler = () => {
-    setSubCategoryDescription("")
+    setSubCategoryDescription("");
     const { pageNo } = queryFilterState;
     if (pageNo - 1 === 0) {
       return;
@@ -287,7 +287,9 @@ const EditSubCategories = () => {
         type: "SET_TOTAL_COUNT",
         totalCount: subCategoriesData.totalCount,
       });
-      setCategoryName(subCategoriesData?.data?.data?.[0].category?.[0]?.name || "");
+      setCategoryName(
+        subCategoriesData?.data?.data?.[0].category?.[0]?.name || ""
+      );
       setSubCategoryParentId(
         subCategoriesData?.data?.data?.[0]?.category?.[0]?._id || ""
       );
@@ -324,7 +326,6 @@ const EditSubCategories = () => {
       subCategoriesData?.data?.data?.[0].category?.[0]?.name || ""
     );
   };
-
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryType(tabIndex);
@@ -435,7 +436,7 @@ const EditSubCategories = () => {
 
       <form noValidate onSubmit={submitHandler} className="row mt-3">
         <div className="col-lg-9 mt-3">
-          <div className="features border-grey-5 rounded-8 p-3 row attributes">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Sub-Category Name</p>
@@ -505,7 +506,7 @@ const EditSubCategories = () => {
             </div>
           </div>
 
-          <div className="border-grey-5 rounded-8 p-3 row features mt-4">
+          <div className="border-grey-5 rounded-8 p-3 row bg-black-15 mt-4">
             <Box
               sx={{ width: "100%" }}
               className="d-flex justify-content-between tabs-header-box"
@@ -528,13 +529,16 @@ const EditSubCategories = () => {
               </>
             }
           </div>
-          <SEO
-            seoName={categoryEditFormik.values.name || ""}
-            seoValue={categoryEditFormik.values.seo}
-            handleSeoChange={(val) =>
-              categoryEditFormik.setFieldValue("seo", val)
-            }
-          />
+          <div className="mt-4">
+            <SEO
+              seoName={categoryEditFormik.values.name || ""}
+              seoValue={categoryEditFormik.values.seo}
+              handleSeoChange={(val) =>
+                categoryEditFormik.setFieldValue("seo", val)
+              }
+              refrenceId={id ? subCategoriesData?.data?.data?.[0]?._id : ""}
+            />
+          </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
           <StatusBox

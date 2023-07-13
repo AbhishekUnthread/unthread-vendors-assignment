@@ -38,7 +38,7 @@ const AddHeader = ({
               style={{ marginLeft: "10px" }}
             >
               {subHeading}
-              <span className="text-blue-2 c-pointer">{subHighlightstext}</span>
+              <small className="text-blue-2 c-pointer">{subHighlightstext}</small>
             </small>
           </div>
         </div>

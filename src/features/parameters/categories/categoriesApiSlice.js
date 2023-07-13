@@ -57,9 +57,6 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
         body: tagsDetails,
       }),
       invalidatesTags: ["SubCategories"],
-      onSuccess: (result, _, api) => {
-        api.endpoints.getAllCategories.refetch();
-      },
     }),
     createSubCategory: builder.mutation({
       query: (subCategoryDetails) => ({
@@ -68,10 +65,6 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
         body: subCategoryDetails,
       }),
       invalidatesTags: ["SubCategories"],
-      onSuccess: (result, _, api) => {
-        api.endpoints.getAllCategories.refetch();
-      },
-     
     }),
     deleteCategory: builder.mutation({
       query: (categoryId) => ({
