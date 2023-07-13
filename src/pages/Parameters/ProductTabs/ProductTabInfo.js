@@ -34,27 +34,29 @@ import {
 } from "../../../features/parameters/productTabs/productTabsApiSlice";
 
 const commonCustomFieldSchema = Yup.object().shape({
-  title: Yup.string().min(3, "Too short").required("Required"),
+  title: Yup.string().trim().min(3, "Too short").required("Required"),
   fieldType: Yup.string()
     .oneOf(["text", "dimension", "image", "weight", "productField"])
     .required("Required"),
   isDefaultHighlight: Yup.boolean().optional(),
-  productValue: Yup.string().when(
-    ["isDefaultHighlight", "fieldType"],
-    ([isDefaultHighlight, fieldType], schema) => {
-      if (
-        isDefaultHighlight &&
-        ["text", "dimension", "image", "weight"].includes(fieldType)
-      ) {
-        return schema.required("Required");
+  productValue: Yup.string()
+    .trim()
+    .when(
+      ["isDefaultHighlight", "fieldType"],
+      ([isDefaultHighlight, fieldType], schema) => {
+        if (
+          isDefaultHighlight &&
+          ["text", "dimension", "image", "weight"].includes(fieldType)
+        ) {
+          return schema.required("Required");
+        }
+        return schema;
       }
-      return schema;
-    }
-  ),
+    ),
   visibility: Yup.string().oneOf(["show", "hide"]).required("Required"),
 });
 const customFieldSchema = Yup.object().shape({
-  title: Yup.string().min(3, "Too short").required("Required"),
+  title: Yup.string().trim().min(3, "Too short").required("Required"),
   fieldType: Yup.string()
     .oneOf(["text", "dimension", "image", "weight", "productField"])
     .required("Required"),
@@ -135,7 +137,6 @@ const queryFilterReducer = (state, action) => {
 const ProductTabInfo = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [saveTried, setSaveTried] = useState(false);
   let { id } = useParams();
   const [productsInfoState, dispatchProductsInfo] = useReducer(
     productsTabReducer,
@@ -213,6 +214,7 @@ const ProductTabInfo = () => {
         {
           title: "",
           fieldType: "",
+          productValue: "",
           visibility: "",
         },
       ],
@@ -229,14 +231,33 @@ const ProductTabInfo = () => {
               const clonedField = structuredClone(field);
               if (clonedField.fieldType === "productField") {
                 clonedField.isDefaultHighlight = false;
-              } else if (!clonedField.isDefaultHighlight) {
-                delete clonedField.productValue;
+              } else if (
+                ["text", "dimension", "image", "weight"].includes(
+                  clonedField.fieldType
+                )
+              ) {
+                if (!clonedField.isDefaultHighlight) {
+                  clonedField.isDefaultHighlight = false;
+                  delete clonedField.productValue;
+                }
               }
               return clonedField;
             })
         : null;
       productTabValues.customFields = productTabValues?.customFields?.length
-        ? productTabValues?.customFields.filter((field) => field.title)
+        ? productTabValues?.customFields
+            .filter((field) => field.title)
+            .map((field) => {
+              const clonedField = structuredClone(field);
+              if (
+                ["text", "dimension", "image", "weight"].includes(
+                  clonedField.fieldType
+                )
+              ) {
+                delete clonedField.productValue;
+              }
+              return clonedField;
+            })
         : null;
       for (const key in productTabValues) {
         if (!productTabValues[key] || !productTabValues[key]?.length)
@@ -302,6 +323,7 @@ const ProductTabInfo = () => {
     const newCustomFields = formik?.values?.customFields.concat({
       title: "",
       fieldType: "",
+      productValue: "",
       visibility: "",
     });
     formik.setFieldValue("customFields", newCustomFields);
@@ -321,12 +343,6 @@ const ProductTabInfo = () => {
       return;
     }
     navigate(`/parameters/productTabs/edit/${pageNo - 1}`);
-  };
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    setSaveTried(true);
-    formik.handleSubmit();
   };
 
   useEffect(() => {
@@ -404,7 +420,7 @@ const ProductTabInfo = () => {
         onNext={nextPageHandler}
         isEdit={!!id}
       />
-      <form className="product-form" noValidate onSubmit={submitHandler}>
+      <form className="product-form" noValidate onSubmit={formik.handleSubmit}>
         <div className="row mt-3" style={{ marginBottom: "50px" }}>
           <div className="col-lg-9 mt-3">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -495,7 +511,6 @@ const ProductTabInfo = () => {
                 <Grid item md={12}>
                   <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4">
                     <AddCustomField
-                      saveTried={saveTried}
                       values={formik.values?.commonCustomFields[0]}
                       field="commonCustomFields[0]"
                       formik={formik}
@@ -510,7 +525,6 @@ const ProductTabInfo = () => {
                     />
                     <div className="mt-3"></div>
                     <AddCustomField
-                      saveTried={saveTried}
                       values={formik.values?.commonCustomFields[1]}
                       field="commonCustomFields[1]"
                       formik={formik}
@@ -527,7 +541,6 @@ const ProductTabInfo = () => {
                 </Grid>
                 <Grid item md={12}>
                   <AddCustomFieldTable
-                    saveTried={saveTried}
                     formik={formik}
                     data={formik.values?.customFields}
                     onSort={() => {}}
