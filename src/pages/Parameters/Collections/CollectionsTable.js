@@ -615,7 +615,10 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           maxWidth="sm"
         >
           <DialogContent className="py-2 px-4 text-center">
-            <img src={closeModal} alt="question" width={40} className="closeModal" onClick={handleModalClose}/>
+            <img src={closeModal} alt="question" width={40} 
+              className="closeModal c-pointer" 
+              onClick={handleModalClose}
+            />
             <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
             <div className="row"></div>
             <h5 className="text-lightBlue mt-2 mb-3">
