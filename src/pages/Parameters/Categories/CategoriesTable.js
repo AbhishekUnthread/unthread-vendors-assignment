@@ -239,6 +239,11 @@ const CategoriesTable = ({
             id,
             status: "archieved",
           };
+        } else if (selectedStatus === "Set as in-Active") {
+          return {
+            id,
+            status: "in-active",
+          };
         } else if (selectedStatus === "Set as Un-Archived") {
           return {
             id,
@@ -256,7 +261,7 @@ const CategoriesTable = ({
         bulkEdit({ updates: newState })
           .unwrap()
           .then(() =>
-            dispatch(showSuccess({ message: " Status updated successfully" }))
+            dispatch(showSuccess({ message: "Categories Status updated successfully" }))
           );
         setSelected([]);
         setSelectedStatus(null);
@@ -413,7 +418,7 @@ const CategoriesTable = ({
 
           <TableEditStatusButton
             onSelect={handleStatusSelect}
-            defaultValue={["Set as Active", "Set as Archived"]}
+            defaultValue={["Set as Active", "Set as in-Active"]}
             headingName="Edit Status"
           />
           <TableMassActionButton

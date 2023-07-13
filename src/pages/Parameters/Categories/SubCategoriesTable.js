@@ -162,6 +162,11 @@ const SubCategoriesTable = ({
             id,
             status: "archieved",
           };
+        }else if (selectedStatus === "Set as in-Active") {
+          return {
+            id,
+            status: "in-active",
+          };
         } else if (selectedStatus === "Set as Un-Archived") {
           return {
             id,
@@ -282,7 +287,7 @@ const SubCategoriesTable = ({
 
           <TableEditStatusButton
             onSelect={handleStatusSelect}
-            defaultValue={["Set as Active", "Set as Archived"]}
+            defaultValue={["Set as Active", "Set as in-Active"]}
             headingName="Edit Status"
           />
           <TableMassActionButton
