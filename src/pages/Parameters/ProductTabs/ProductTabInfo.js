@@ -18,6 +18,7 @@ import InfoHeader from "../../../components/Header/InfoHeader";
 import { UploadMediaSmall } from "../../../components/UploadMediaBox/UploadMedia";
 import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
 import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
+import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -563,6 +564,10 @@ const ProductTabInfo = () => {
         onCancel={CancelDeleteFieldHandler}
         show={productsInfoState.showDeleteModal}
         message={productsInfoState.confirmationMessage}
+      />
+      <DiscardModalSecondary
+        when={!_.isEqual(formik.values, formik.initialValues)}
+        message="product tab"
       />
     </div>
   );

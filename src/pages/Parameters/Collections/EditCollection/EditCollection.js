@@ -341,7 +341,7 @@ const EditCollection = () => {
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
-        seo: collectionSeo
+        ...(collectionSeo== null ? { seo: collectionSeo } : "")
       }
       if (startDate1 != null) {
         collectionDetails.startDate = new Date(startDate1);
@@ -366,7 +366,7 @@ const EditCollection = () => {
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
-        seo: collectionSeo,
+        ...(collectionSeo ? { seo: collectionSeo } : "")
       })
         .unwrap()
         navigate("/parameters/collection");

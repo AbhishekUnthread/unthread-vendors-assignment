@@ -1,25 +1,5 @@
-import React from "react";
-import "./UserDetails.scss";
+import { forwardRef, useState } from "react";
 import { Link } from "react-router-dom";
-// ! COMPONENT IMPORTS
-import TabPanel from "../../../components/TabPanel/TabPanel";
-import UserOrders from "./UserOrders/UserOrders";
-import UserInformation from "./UserInformation/UserInformation";
-import NotesBox from "../../../components/NotesBox/NotesBox";
-import TagsBox from "../../../components/TagsBox/TagsBox";
-// ! IMAGES IMPORTS
-import arrowLeft from "../../../assets/icons/arrowLeft.svg";
-import paginationRight from "../../../assets/icons/paginationRight.svg";
-import paginationLeft from "../../../assets/icons/paginationLeft.svg";
-import email from "../../../assets/icons/email.svg";
-import phone from "../../../assets/icons/phone.svg";
-import message from "../../../assets/icons/message.svg";
-import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
-import block from "../../../assets/images/users/block.svg";
-import userLarge from "../../../assets/images/users/userLarge.svg";
-import verified from "../../../assets/icons/verified.svg";
-import copy from "../../../assets/icons/copy.svg";
-// ! MATERIAL IMPORTS
 import {
   Box,
   Tab,
@@ -31,23 +11,43 @@ import {
   Popover,
   Chip,
 } from "@mui/material";
-// ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
+import { useGetCustomerQuery } from "../../../features/customers/customer/customerApiSlice";
+
+import "./UserDetails.scss";
+
+import TabPanel from "../../../components/TabPanel/TabPanel";
+import UserOrders from "./UserOrders/UserOrders";
+import UserInformation from "./UserInformation/UserInformation";
+import NotesBox from "../../../components/NotesBox/NotesBox";
+import TagsBox from "../../../components/TagsBox/TagsBox";
+
+import arrowLeft from "../../../assets/icons/arrowLeft.svg";
+import paginationRight from "../../../assets/icons/paginationRight.svg";
+import paginationLeft from "../../../assets/icons/paginationLeft.svg";
+import email from "../../../assets/icons/email.svg";
+import phone from "../../../assets/icons/phone.svg";
+import message from "../../../assets/icons/message.svg";
+import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
+import block from "../../../assets/images/users/block.svg";
+import userLarge from "../../../assets/images/users/userLarge.svg";
+import verified from "../../../assets/icons/verified.svg";
+import copy from "../../../assets/icons/copy.svg";
+
+const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-// ? DIALOG TRANSITION ENDS HERE
 
 const UserDetails = () => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   // * CONTACT POPOVERS STARTS
-  const [anchorContactEl, setContactEl] = React.useState(null);
+  const [anchorContactEl, setContactEl] = useState(null);
 
   const handleContactClick = (event) => {
     setContactEl(event.currentTarget);
@@ -62,7 +62,7 @@ const UserDetails = () => {
   // * CONTACT POPOVERS ENDS
 
   // ? BLOCK DIALOG STARTS HERE
-  const [openBlock, setOpenBlock] = React.useState(false);
+  const [openBlock, setOpenBlock] = useState(false);
 
   const handleBlock = () => {
     setOpenBlock(true);
