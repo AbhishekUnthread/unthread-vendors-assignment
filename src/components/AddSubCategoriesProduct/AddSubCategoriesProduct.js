@@ -371,6 +371,12 @@ const AddSubCategoriesProducts = ({ id }) => {
     setMultipleTagsForSub([]);
   };
 
+  function handlesubmit(){
+    setShowCreateSubModal((prevState) => !prevState);
+    setMultipleTagsForSub([]);
+    subCategoryFormik.handleSubmit()
+  }
+
   const subModalOpenHandler = () => {
     setShowCreateSubModal((prev) => !prev);
     subCategoryFormik.setFieldValue("categoryId", id);
@@ -489,7 +495,7 @@ const AddSubCategoriesProducts = ({ id }) => {
               </DialogTitle>
               <hr className="hr-grey-6 my-0" />
 
-              <form noValidate onSubmit={subCategoryFormik.handleSubmit}>
+              <div>
                 <DialogContent className="py-3 px-4">
                   <p className="text-lightBlue mb-2">Select Category</p>
                   <FormControl
@@ -612,13 +618,13 @@ const AddSubCategoriesProducts = ({ id }) => {
                   <LoadingButton
                     loading={createSubCategoryIsLoading}
                     disabled={createSubCategoryIsLoading}
-                    type="submit"
+                    onClick={handlesubmit}
                     className="button-gradient py-2 px-5"
                   >
                     <p>Save</p>
                   </LoadingButton>
                 </DialogActions>
-              </form>
+              </div>
             </Dialog>
             <TableSearch
               searchValue={searchValue}

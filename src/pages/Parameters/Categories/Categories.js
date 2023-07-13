@@ -539,6 +539,12 @@ const Categories = () => {
       setShowCreateSubModal(false);
       dispatch(showSuccess({ message: "Sub Category created successfully" }));
     }
+
+    if(bulkCreateSubTagsIsSuccess){
+      setShowCreateSubModal(false);
+      dispatch(showSuccess({ message: "Sub Categories created successfully" }));
+    }
+
   
     if (deleteSubCategoryIsSuccess) {
       setShowCreateSubModal(false);
