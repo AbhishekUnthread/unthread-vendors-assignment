@@ -267,10 +267,13 @@ const Vendors = () => {
   
     };
 
-    const editCategoryPageNavigationHandler = (data) => {
+    const editCategoryPageNavigationHandler = (data,index) => {
+      let status = "all"
       setIsEditing(true);
-      dispatch(updateVendorId(data._id)); 
-      navigate("edit");
+      // dispatch(updateVendorId(data._id)); 
+      const currentTabNo =
+      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
+      navigate(`./edit/${currentTabNo}/${status}`);
     };
 
     const changeVendorTypeHandler = (_event, tabIndex) => {

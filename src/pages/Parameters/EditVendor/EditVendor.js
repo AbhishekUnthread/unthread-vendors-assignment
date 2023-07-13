@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "./EditVendor.scss";
 // ! COMPONENT IMPORTS
 import NotesBox from "../../../components/NotesBox/NotesBox";
@@ -37,11 +37,38 @@ import * as Yup from 'yup';
       vendorName: Yup.string().max(50, 'Name cannot exceed 50 characters').required('Name is required'),
     });
 
+    const initialQueryFilterState = {
+      pageSize: 1,
+      pageNo: null,
+      totalCount: 0,
+    };
+
+    const queryFilterReducer = (state, action) => {
+      if (action.type === "SET_PAGE_NO") {
+        return {
+          ...state,
+          pageNo: +action.pageNo,
+        };
+      }
+      if (action.type === "SET_TOTAL_COUNT") {
+        return {
+          ...state,
+          totalCount: action.totalCount,
+        };
+      }
+      return initialQueryFilterState;
+    };
+
 
 const EditVendor = () => {
 
   const navigate= useNavigate();
   const dispatch = useDispatch();
+  let { id } = useParams();
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
   const [vendorName, setVendorName] = useState("")
   const [vendorNotes, setVendorNotes] = useState("")
   const [vendorStatus, setVendorStatus] = useState("active")
@@ -84,7 +111,9 @@ const EditVendor = () => {
     isLoading: vendorsIsLoading,
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
-  } = useGetAllVendorsQuery({ createdAt:"-1",id:vendorId });
+  } = useGetAllVendorsQuery(queryFilterState, {
+    skip: queryFilterState.pageNo ? false : true,
+  });
 
   const [
     editVendor,
@@ -116,16 +145,12 @@ const EditVendor = () => {
       setProducts(vendorProductsData)
     }
 
-    if (vendorsIsSuccess && vendorId !== "") {
-      // If vendorsIsSuccess is true, set the vendor name based on the data from the API response
+    if (vendorsIsSuccess ) {
+      dispatchQueryFilter({
+        type: "SET_TOTAL_COUNT",
+        totalCount: vendorsData.totalCount,
+      });
 
-      // setIndex(vendorsData.data.data.findIndex(vendor => vendor._id === vendorId));
-      // const vendor = vendorsData.data.data[index];
-      // setVendorName(vendor?.name);
-      // setVendorFlagShip(vendor?.isFlagShip);
-      // setVendorNotes(vendor?.notes);
-      // setVendorStatus(vendor?.status);
-      // setChecked(vendor?.showFilter);
       setVendorName(vendorsData.data.data[0].name);
       setInitailName(vendorsData.data.data[0].name)
       setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
@@ -138,15 +163,33 @@ const EditVendor = () => {
     }
   }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess,editVendorError]);
 
-  const getNextVendorId = () => {
-    setVendorIndex(prevIndex => (prevIndex + 1) % vendorsData.data.data.length);
-    setIndex(vendorIndex)
+
+  // const getNextVendorId = () => {
+  //   setVendorIndex(prevIndex => (prevIndex + 1) % vendorsData.data.data.length);
+  //   setIndex(vendorIndex)
+  // };
+
+  // const getPreviousVendorId = () => {
+  //   setVendorIndex(prevIndex => (prevIndex === 0 ? vendorsData.data.data.length - 1 : prevIndex - 1));
+  //   setIndex(vendorsData.data.data[vendorIndex])
+  // };
+
+  const nextPageHandler = () => {
+    const { pageNo, totalCount } = queryFilterState;
+    if (pageNo + 1 > totalCount) {
+      return;
+    }
+    navigate(`/parameters/vendors/edit/${pageNo + 1}`);
   };
 
-  const getPreviousVendorId = () => {
-    setVendorIndex(prevIndex => (prevIndex === 0 ? vendorsData.data.data.length - 1 : prevIndex - 1));
-    setIndex(vendorsData.data.data[vendorIndex])
+  const prevPageHandler = () => {
+    const { pageNo } = queryFilterState;
+    if (pageNo - 1 === 0) {
+      return;
+    }
+    navigate(`/parameters/vendors/edit/${pageNo - 1}`);
   };
+  console.log({vendorsData : vendorsData})
   
     const vendorNotesChange=(event)=>{
       setVendorNotes(event.target.value);
@@ -250,10 +293,10 @@ const EditVendor = () => {
     };
 
 
-    const handleNextItem = ()=>{
-      getNextVendorId();
+    // const handleNextItem = ()=>{
+    //   getNextVendorId();
       
-    }
+    // }
 
 
    // ? DUPLICATE VENDOR DIALOG STARTS HERE
@@ -303,6 +346,12 @@ const EditVendor = () => {
         checked !== initialFilter
       );
     }, [vendorName, vendorNotes, vendorStatus, checked]);
+
+    useEffect(() => {
+      if (id) {
+        dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+      }
+    }, [id]);
     
   return (
     <div className="page container-fluid position-relative user-group">
@@ -331,13 +380,14 @@ const EditVendor = () => {
             alt="paginationLeft"
             className="c-pointer"
             width={30}
+            onClick={prevPageHandler}
           />
           <img
             src={paginationRight}
             alt="paginationRight"
             className="c-pointer"
             width={30}
-            onClick={handleNextItem}
+            onClick={nextPageHandler}
           />
         </div>
       </div>
