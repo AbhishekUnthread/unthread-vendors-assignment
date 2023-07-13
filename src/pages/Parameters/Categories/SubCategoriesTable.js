@@ -273,7 +273,7 @@ const SubCategoriesTable = ({
             </small>
           </button>
 
-          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Archieved']} headingName="Edit Status"/>
+          <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Archived']} headingName="Edit Status"/>
           <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={archived?['Edit','Set as Archived']:["Delete","Set as Un-Archived"]}/>
         </div>
       )}
