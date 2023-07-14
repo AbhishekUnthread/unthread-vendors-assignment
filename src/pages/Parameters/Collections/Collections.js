@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useReducer } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   Box,
   Checkbox,
@@ -16,7 +16,7 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import CollectionsTable from "./CollectionsTable";
-import TableSearch from "../../../components/TableSearch/TableSearch";
+import TableSearch, { TableSearchSecondary} from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
@@ -39,9 +39,38 @@ import {
   useHardBulkDeleteCollectionMutation
 } from "../../../features/parameters/collections/collectionsApiSlice";
 
+const initialQueryFilterState = {
+  pageSize: 10,
+  pageNo: 1,
+  name:"",
+};
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_SIZE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      pageSize: +action.value,
+    };
+  }
+  if (action.type === "CHANGE_PAGE") {
+    return {
+      ...state,
+      pageNo: action.pageNo +1,
+    };
+  }
+  if (action.type === "SEARCH") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      name: action.name,
+    };
+  }
+  return initialQueryFilterState;
+};
 
 const Collections = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [error, setError] = useState(false);
   const [collectionList, setCollectionList] = useState([]);
   const [collectionType, setCollectionType] = useState(0);
@@ -49,12 +78,16 @@ const Collections = () => {
   const [sortFilter, setSortFilter] = useState("newestToOldest");
   const [statusFilter, setStatusFilter] = useState([]);
   const [searchValue, setSearchValue] = useState("");
-  
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+
   const filterParameter = {};
 
-  const handleSearchChange = (event) => {
-    setSearchValue(event.target.value);
-  }
+  // const handleSearchChange = (event) => {
+  //   setSearchValue(event.target.value);
+  // }
 
   const handleStatusChange = (event) => {
     const { value } = event.target;
@@ -113,7 +146,7 @@ const Collections = () => {
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({...filterParams});
+  } = useGetAllCollectionsQuery({ ...filterParameter, ...collectionTypeQuery, ...queryFilterState});
 
   const [
     hardDeleteCollection,
@@ -152,6 +185,28 @@ const Collections = () => {
 
   const handleTabChange = (event, tabIndex) => {
     setCollectionType(tabIndex);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
+  };
+
+  const handleChangePage = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+  };
+
+  const handleSearchChange = (value) => {
+    dispatchQueryFilter({ type: "SEARCH", name: value });
+  };
+
+  const editCategoryPageNavigationHandler = (data,index) => {
+    const combinedObject = { filterParameter, collectionTypeQuery, queryFilterState };
+    const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));    
+
+    const currentTabNo =
+    index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
+
+    navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
   };
 
    // * SORT POPOVERS STARTS
@@ -283,7 +338,7 @@ const Collections = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange}/>
+            <TableSearchSecondary onChange={handleSearchChange} />
              <div className="d-flex">
               <button
                 className="button-grey py-2 px-3 ms-2"
@@ -393,6 +448,11 @@ const Collections = () => {
               error={error}
               list={collectionList}
               pageLength={pageLength}
+              edit={editCategoryPageNavigationHandler}
+              rowsPerPage={queryFilterState.pageSize}
+              page={queryFilterState.pageNo}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handleChangePage}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={1}>
@@ -402,6 +462,11 @@ const Collections = () => {
               error={error}
               list={collectionList}
               pageLength={pageLength}
+              edit={editCategoryPageNavigationHandler}
+              rowsPerPage={queryFilterState.pageSize}
+              page={queryFilterState.pageNo}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handleChangePage}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={2}>
@@ -411,6 +476,11 @@ const Collections = () => {
               error={error}
               list={collectionList}
               pageLength={pageLength}
+              edit={editCategoryPageNavigationHandler}
+              rowsPerPage={queryFilterState.pageSize}
+              page={queryFilterState.pageNo}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handleChangePage}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={3}>
@@ -423,6 +493,11 @@ const Collections = () => {
               list={collectionList}
               pageLength={pageLength}
               collectionType={collectionType}
+              edit={editCategoryPageNavigationHandler}
+              rowsPerPage={queryFilterState.pageSize}
+              page={queryFilterState.pageNo}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handleChangePage}
             />
           </TabPanel>
         </Paper>
