@@ -14,6 +14,7 @@ import VisibilityBox from "../../../../components/VisibilityBox/VisibilityBox";
 import SaveFooter, {
   SaveFooterTertiary,
 } from "../../../../components/SaveFooter/SaveFooter";
+import DiscardModal from "../../../../components/Discard/DiscardModal";
 import AddHeader from "../../../../components/AddHeader/AddHeader";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
@@ -129,6 +130,7 @@ const EditCategories = () => {
   );
   const [categoryDescription, setCategoryDescription] = useState("");
   const [decodedObject, setDecodedObject] = useState(null);
+  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
 
   const {
     data: categoriesData,
@@ -227,7 +229,8 @@ const EditCategories = () => {
   };
 
   const backHandler = () => {
-    navigate("/parameters/categories");
+    // navigate(-1);
+    setShowDiscardModal(true);
   };
 
   const nextPageHandler = () => {
@@ -275,6 +278,10 @@ const EditCategories = () => {
     categoriesIsSuccess,
     dispatch,
   ]);
+
+  const toggleDiscardModal = () => {
+    setShowDiscardModal(false);;
+  };
 
   useEffect(() => {
     const encodedString = filter; // The encoded string from the URL or any source
@@ -477,6 +484,11 @@ const EditCategories = () => {
           isLoading={editCategoryIsLoading}
         />
       </form>
+      <DiscardModal
+      showDiscardModal={showDiscardModal}   
+      toggleDiscardModal={toggleDiscardModal}
+
+      />
     </div>
   );
 };

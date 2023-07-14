@@ -56,6 +56,7 @@ import {
   showError,
   showSuccess,
 } from "../../../../features/snackbar/snackbarAction";
+import DiscardModal from "../../../../components/Discard/DiscardModal";
 import cancel from "../../../../assets/icons/cancel.svg";
 import { LoadingButton } from "@mui/lab";
 import _ from "lodash";
@@ -152,6 +153,7 @@ const EditSubCategories = () => {
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
   const [subCategoryPatentId, setSubCategoryParentId] = useState("");
   const [decodedObject, setDecodedObject] = useState(null);
+  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
 
   const {
     data: categoriesData,
@@ -257,7 +259,12 @@ const EditSubCategories = () => {
   };
 
   const backHandler = () => {
-    navigate("/parameters/categories");
+    // navigate("/parameters/categories");
+    setShowDiscardModal(true)
+  };
+
+  const toggleDiscardModal = () => {
+    setShowDiscardModal(false);;
   };
 
   const nextPageHandler = () => {
@@ -604,6 +611,11 @@ const EditSubCategories = () => {
           isLoading={editSubCategoryIsLoading}
         />
       </form>
+      <DiscardModal
+      showDiscardModal={showDiscardModal}   
+      toggleDiscardModal={toggleDiscardModal}
+
+      />
     </div>
   );
 };
