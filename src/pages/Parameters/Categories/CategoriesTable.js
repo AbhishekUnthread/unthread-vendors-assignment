@@ -301,7 +301,7 @@ const CategoriesTable = ({
 
   useEffect(()=>{
     if(cateoryOpenState?.open === true){
-      setFilterParameter(cateoryOpenState.id);
+      setFilterParameter({categoryId:cateoryOpenState.id,status:["active", "scheduled", "in-active"]});
       if (open.length === 0) {
         let item = [];
         item.push(cateoryOpenState.id);
