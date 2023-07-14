@@ -509,6 +509,8 @@ const Categories = () => {
   useEffect(() => {
     if (categoriesIsSuccess && subCategoriesIsSuccess) {
       setError(false);
+      setCategoryList([])
+      setSubCategoryList([])
 
       if (categoryType === 0) {
         setCategoryList(categoriesData.data.data);
