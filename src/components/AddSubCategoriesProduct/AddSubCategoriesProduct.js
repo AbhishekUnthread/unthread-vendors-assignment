@@ -39,7 +39,6 @@ import {
   InputAdornment,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
-import SearchIcon from "@mui/icons-material/Search";
 import {
   useBulkEditTagSubCategoryMutation,
   useCreateSubCategoryMutation,
@@ -55,8 +54,7 @@ import * as Yup from "yup";
 import { showError, showSuccess } from "../../features/snackbar/snackbarAction";
 import { useDispatch } from "react-redux";
 import TableEditStatusButton from "../TableEditStatusButton/TableEditStatusButton";
-import { updateCategoryId } from "../../features/parameters/categories/categorySlice";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -149,8 +147,8 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 const initialQueryFilterState = {
-  pageSize: 5,
-  pageNo: 0,
+  pageSize: 10,
+  pageNo: 1,
   totalCount: 0,
 };
 
@@ -203,7 +201,7 @@ const AddSubCategoriesProducts = ({ id }) => {
     status: ["active", "in-active"],
     ...filterParameter,
     pageSize:queryFilterState.pageSize,
-    pageNo:queryFilterState.pageNo+1,
+    pageNo:queryFilterState.pageNo,
     skip: queryFilterState.pageNo ? false : true,
   });
 
@@ -222,6 +220,7 @@ const AddSubCategoriesProducts = ({ id }) => {
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
   } = useGetAllCategoriesQuery({});
+  
 
   const [
     bulkCreateSubCategory,
@@ -464,9 +463,11 @@ const AddSubCategoriesProducts = ({ id }) => {
   }
 
   const editSubPageHandler = (index) => {
+    const combinedObject = { filterParams:filterParameter, queryFilterState };
+    const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));
     const currentTabNo =
-      index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
-    navigate(`/parameters/subCategories/edit/${currentTabNo}`);
+      index + (queryFilterState.pageNo  - 1) * queryFilterState.pageSize;
+    navigate(`/parameters/subCategories/edit/${currentTabNo}/${encodedCombinedObject}`);
   };
 
   return (
