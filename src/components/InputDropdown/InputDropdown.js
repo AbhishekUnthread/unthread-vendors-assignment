@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 
+import "./InputDropdown.scss";
+
 const InputDropdown = (props) => {
   const {
     options,
@@ -128,7 +130,7 @@ const InputDropdown = (props) => {
                   return (
                     <button
                       key={option.id}
-                      className="w-100 button-transparent me-1 py-2 px-2"
+                      className="w-100 button-transparent me-1 py-2 px-2 dropdown-options"
                       style={{ justifyContent: "flex-start", gap: "5px" }}
                       onClick={handleRadioChange.bind(null, {
                         type: option.value,
@@ -143,7 +145,7 @@ const InputDropdown = (props) => {
                   return (
                     <div key={option.id}>
                       <button
-                        className="w-100 button-transparent me-1 py-2 px-2"
+                        className="w-100 button-transparent me-1 py-2 px-2 dropdown-options"
                         style={{ justifyContent: "flex-start", gap: "5px" }}
                         onClick={handleInnerPopover}
                         onFocus={handleInnerPopover}
@@ -179,7 +181,7 @@ const InputDropdown = (props) => {
                               return (
                                 <button
                                   key={innerChildren.id}
-                                  className="w-100 button-transparent me-1 py-2 px-2"
+                                  className="w-100 button-transparent me-1 py-2 px-2 dropdown-options"
                                   style={{
                                     justifyContent: "flex-start",
                                     gap: "5px",

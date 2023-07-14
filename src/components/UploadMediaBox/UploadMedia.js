@@ -23,7 +23,7 @@ const UploadMediaSmall = (props) => {
   const [uploadFile, { data, isSuccess, isError }] = UseFileUpload();
   const dispatch = useDispatch();
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isFocused } = useDropzone({
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".svg"],
     },
@@ -57,7 +57,12 @@ const UploadMediaSmall = (props) => {
           <img src={info} alt="info" className=" c-pointer" width={13.5} />
         </Tooltip>
       </div>
-      <div {...getRootProps({})} className="small-upload-container">
+      <div
+        {...getRootProps({})}
+        className={
+          isFocused ? "small-upload-container focus" : "small-upload-container"
+        }
+      >
         {isHttpValid(fileSrc) && (
           <div className="cancel-button-container">
             <CancelButton onClick={cancelHandler} />

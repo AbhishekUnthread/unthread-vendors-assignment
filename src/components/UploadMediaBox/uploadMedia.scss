@@ -5,11 +5,15 @@
   align-items: center;
   justify-content: space-between;
   border: 1px solid #38395c;
-  padding: 5px 14px;
-  border-radius: 4px;
+  padding: 4.5px 14px;
+  border-radius: 5px;
   gap: 8px;
   cursor: pointer;
   position: relative;
+
+  &.focus {
+    box-shadow: inset 0px 0px 0px 2px $lightBlue !important;
+  }
 
   .cancel-button-container {
     position: absolute;
