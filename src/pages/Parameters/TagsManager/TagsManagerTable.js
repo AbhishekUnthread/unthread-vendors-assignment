@@ -386,7 +386,7 @@ const handleDelete =()=>{
           <TableBody>
             {stableSort(list, getComparator(order, orderBy))
               .map((row, index) => {
-                const isItemSelected = isSelected(row._id);
+                const isItemSelected = isSelected(row?._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -405,7 +405,7 @@ const handleDelete =()=>{
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row._id)}
+                        onClick={(event) => handleClick(event, row?._id)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -423,7 +423,7 @@ const handleDelete =()=>{
                       >
                       <div className="d-flex align-items-center py-2"
                               onClick={()=>{
-                                dispatch(updateTagId(row._id));
+                                dispatch(updateTagId(row?._id));
                                 navigate("/parameters/tagsManager/edit")
                                 }}
                       >
@@ -435,7 +435,7 @@ const handleDelete =()=>{
                     </TableCell>
 
                     <TableCell style={{ width: 180 }}>
-                    <p className="text-lightBlue">{row.totalProduct}</p>
+                    <p className="text-lightBlue">{row?.totalProduct}</p>
                     </TableCell>
 
                     {/* <TableCell style={{ width: 140, padding: 0 }}>

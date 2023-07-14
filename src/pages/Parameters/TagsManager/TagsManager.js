@@ -491,7 +491,7 @@ const [
           }
           else {
             dispatch(
-              showError({ message: "Something went wrong!, please try again" })
+              showError({ message: "Something went wrong, please try again" })
             );
           }
         }
@@ -514,7 +514,7 @@ const [
           }
           else {
             dispatch(
-              showError({ message: "Something went wrong!, please try again" })
+              showError({ message: "Something went wrong, please try again" })
             );
           }
         }
@@ -529,7 +529,7 @@ const [
             dispatch(showError({ message: tagsError.data.message }));
           } else {
             dispatch(
-              showError({ message: "Something went wrong!, please try again" })
+              showError({ message: "Something went wrong, please try again" })
             );
           }
         }
@@ -559,7 +559,7 @@ const [
           }
           else {
             dispatch(
-              showError({ message: "Something went wrong!, please try again" })
+              showError({ message: "Something went wrong, please try again" })
             );
           }
         }
@@ -578,7 +578,7 @@ const [
           }
           else {
             dispatch(
-              showError({ message: "Something went wrong!, please try again" })
+              showError({ message: "Something went wrong, please try again" })
             );
           }
         }

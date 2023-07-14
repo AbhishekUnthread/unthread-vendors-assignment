@@ -532,7 +532,7 @@ const handleDelete =()=>{
                                 <Tooltip title="Edit" placement="top">
                                   <Link
                                     onClick={(e) => {
-                                      edit(row);
+                                      edit(row,index+1,vendorType);
                                     }}
                                     className="table-edit-icon rounded-4 p-2"
                                   >
