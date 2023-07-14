@@ -136,6 +136,8 @@ const CategoriesTable = ({
   changeRowsPerPage,
   changePage,
   page,
+  cateoryOpenState,
+  setCategoryOpenState,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -300,6 +302,33 @@ const CategoriesTable = ({
       setOpen(item);
     }
   }
+
+  useEffect(()=>{
+    if(cateoryOpenState?.open === true){
+      if (open.length === 0) {
+        let item = [];
+        item.push(cateoryOpenState.id);
+        setOpen(item);
+        setFilterParameter(cateoryOpenState.id)
+      }
+      if (open.length > 0 && open.includes(cateoryOpenState.id)) {
+        setOpen((item) => item.filter((i) => i !== cateoryOpenState.id));
+        setFilterParameter(cateoryOpenState.id)
+      }
+      if (open.length > 0 && !open.includes(cateoryOpenState.id)) {
+        let item = [];
+        item.push(cateoryOpenState.id);
+        setOpen(item);
+        setFilterParameter(cateoryOpenState.id)
+      }
+      let state={
+        id:"",
+        open:false
+      }
+      setCategoryOpenState(state)
+
+    }
+  },[cateoryOpenState])
 
   const toggleArchiveModalHandler = (row) => {
     setShowArchivedModal((prevState) => !prevState);
@@ -962,7 +991,7 @@ const CategoriesTable = ({
             category ?
           </h5>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
-            <span className="text-blue-2"> 0 products </span>
+            <span className="text-blue-2"> {rowData?.totalSubCategory} {rowData?.totalSubCategory > 1 ? "SubCategory":"SubCategories"} </span>
             in this collection will be unassigned from it.
           </h6>
           <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>

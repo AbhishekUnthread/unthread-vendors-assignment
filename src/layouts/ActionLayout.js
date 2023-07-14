@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, CircularProgress } from "@mui/material";
+import  ScrollToTop  from "../ScrollToTop"
 
 import { checkUserStatus } from "../features/user/userAction";
 import { checkLoginStatus } from "../features/auth/authAction";
@@ -37,7 +38,8 @@ const ActionLayout = () => {
     );
   }, [location]);
 
-  return (
+  return (<>
+   <ScrollToTop />
     <Box className="main-box-secondary">
       {(loginStatus === false && isAuthScreen) ||
       (loginStatus && isAuthScreen === false) ? (
@@ -48,6 +50,7 @@ const ActionLayout = () => {
         </div>
       )}
     </Box>
+  </>
   );
 };
 

@@ -69,7 +69,7 @@ import {
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const initialQueryFilterState = {
   pageSize: 10,
@@ -123,6 +123,7 @@ const Categories = () => {
     queryFilterReducer,
     initialQueryFilterState
   );
+  const[searchParams, setSearchParams] = useSearchParams();
   const [categoryType, setCategoryType] = useState(0);
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
@@ -131,7 +132,6 @@ const Categories = () => {
   const [showCreatePopover, setShowCreatePopover] = useState(null);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editId, setEditId] = useState(null);
   const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
   const [statusFilter, setStatusFilter] = React.useState([]);
@@ -140,6 +140,11 @@ const Categories = () => {
   const [searchValue, setSearchValue] = useState("");
   const [categoryTotalCount, setCategoryTotalCount] = React.useState([]);
   const [subCategoryTotalCount, setSubCategoryTotalCount] = React.useState([]);
+  const [cateoryOpenState,setCategoryOpenState]=useState({
+    id:"",
+    open:false,
+  })
+   
   const filterParameter = {};
 
   const handleSearchChange = (event) => {
@@ -368,6 +373,11 @@ const Categories = () => {
           .then(() => {
             subCategoryFormik.resetForm();
             setMultipleTagsForSub([]);
+            let state={
+              ...cateoryOpenState,
+              open:true
+            }
+            setCategoryOpenState(state)
           })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
@@ -376,8 +386,12 @@ const Categories = () => {
         createSubCategory(values)
           .unwrap()
           .then(() => {
-            setSortFilter("newestToOldest");
             subCategoryFormik.resetForm();
+            let state={
+              ...cateoryOpenState,
+              open:true
+            }
+            setCategoryOpenState(state)
           })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
@@ -391,6 +405,7 @@ const Categories = () => {
     setSubCategoryList([]);
     setCategoryType(tabIndex);
     setSearchValue("");
+    setSearchParams({status:tabIndex})
   };
 
   const toggleCreateModalHandler = () => {
@@ -398,7 +413,6 @@ const Categories = () => {
     setShowCreatePopover(null);
     categoryFormik.resetForm();
     setIsEditing(false);
-    setEditId(null);
     setMultipleTags([]);
   };
 
@@ -407,7 +421,6 @@ const Categories = () => {
     setShowCreatePopover(null);
     subCategoryFormik.resetForm();
     setIsEditing(false);
-    setEditId(null);
     setMultipleTagsForSub([]);
   };
 
@@ -557,6 +570,25 @@ const Categories = () => {
     deleteSubCategoryIsSuccess,
   ]);
 
+  useEffect(() => {
+    if(+searchParams.get("status")===0)
+    {
+      setCategoryType(0);
+    }
+    else if(+searchParams.get("status")===1)
+    {
+      setCategoryType(1);
+    }
+    else if(+searchParams.get("status")===2)
+    {
+      setCategoryType(2);
+    }
+    else if(+searchParams.get("status")===3)
+    {
+      setCategoryType(3);
+    }
+}, [searchParams])
+
   const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
     if (event.key === "Enter" || event.type === "click") {
       event.preventDefault();
@@ -589,6 +621,11 @@ const Categories = () => {
   const subModalOpenHandler = (row) => {
     setShowCreateSubModal((prev) => !prev);
     subCategoryFormik.setFieldValue("categoryId", row._id);
+    let state={
+      ...cateoryOpenState,
+      id:row._id,
+    }
+    setCategoryOpenState(state)
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -1165,6 +1202,8 @@ const Categories = () => {
                   editSubPageHandler={editSubPageHandler}
                   editPageHandler={editPageHandler}
                   totalCount={categoryTotalCount}
+                  cateoryOpenState={cateoryOpenState}
+                  setCategoryOpenState={setCategoryOpenState}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={1}>
@@ -1206,6 +1245,8 @@ const Categories = () => {
                   editPageHandler={editPageHandler}
                   editSubPageHandler={editSubPageHandler}
                   totalCount={categoryTotalCount}
+                  cateoryOpenState={cateoryOpenState}
+                  setCategoryOpenState={setCategoryOpenState}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={3}>
