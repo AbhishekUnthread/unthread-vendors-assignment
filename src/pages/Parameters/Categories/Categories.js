@@ -116,6 +116,12 @@ const subCategoryValidationSchema = Yup.object({
   categoryId: Yup.string().required("required"),
 });
 
+function generateUrlName(name = "") {
+  const formattedName =
+    "https://example.com/" + name?.toLowerCase()?.replace(/ /g, '-');
+  return formattedName;
+
+}
 const Categories = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -347,7 +353,7 @@ const Categories = () => {
           ...values,
           seo:{
             title:values.name,
-            slug:"https://example.com/" + values.name,
+            slug:generateUrlName(values.name),
           }
         })
           .unwrap()
@@ -393,7 +399,7 @@ const Categories = () => {
           ...values,
           seo:{
             title:values.name,
-            slug:"https://example.com/" + values.name,
+            slug:generateUrlName(values.name),
           }
         })
           .unwrap()
@@ -619,7 +625,7 @@ const Categories = () => {
           }
 
           if (valueExists) {
-            dispatch(showError({ message: "Duplicate Name Value" }));
+            dispatch(showError({ message: "Duplicate Name  Value" }));
           }
         }
       });
