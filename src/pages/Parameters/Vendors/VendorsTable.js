@@ -446,7 +446,7 @@ const handleDelete =()=>{
                             <div className="d-flex align-items-center py-2"
                               onClick={()=>{
                                 dispatch(updateVendorId(row._id));
-                                navigate("/parameters/vendors/edit")
+                                edit(row,index+1,vendorType);
                                 }}
                             >
                               <p className="text-lightBlue rounded-circle fw-600">

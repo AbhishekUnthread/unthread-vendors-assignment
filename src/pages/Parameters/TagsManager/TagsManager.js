@@ -1192,6 +1192,8 @@ const [
                   name="controlled-radio-buttons-group"
                   value={selectedSortOption}
                   onChange={handleSortRadioChange}
+                  defaultValue="newestToOldest"
+
                 >
                   <FormControlLabel
                     value="newestToOldest"

@@ -251,7 +251,7 @@ const EditVendor = () => {
 
 
     const backHandler = () => {
-      navigate(-1);
+      navigate(`/parameters/vendors?status=${decodedObject?.tab}`);
       // setShowDiscardModal(true);
       // navigate("/parameters/vendors");
     };
@@ -686,10 +686,10 @@ const EditVendor = () => {
       toggleDiscardModal={toggleDiscardModal}
      /> */}
 
-     <DiscardModalSecondary
+     {/* <DiscardModalSecondary
         when={showDiscardModal}
         message="vendors tab"
-      />
+      /> */}
      
      
     </div>
