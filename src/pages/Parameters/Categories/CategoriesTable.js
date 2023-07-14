@@ -136,6 +136,8 @@ const CategoriesTable = ({
   changeRowsPerPage,
   changePage,
   page,
+  cateoryOpenState,
+  setCategoryOpenState,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -300,6 +302,30 @@ const CategoriesTable = ({
       setOpen(item);
     }
   }
+
+  useEffect(()=>{
+    if(cateoryOpenState?.open === true){
+      if (open.length === 0) {
+        let item = [];
+        item.push(cateoryOpenState.id);
+        setOpen(item);
+      }
+      if (open.length > 0 && open.includes(cateoryOpenState.id)) {
+        setOpen((item) => item.filter((i) => i !== cateoryOpenState.id));
+      }
+      if (open.length > 0 && !open.includes(cateoryOpenState.id)) {
+        let item = [];
+        item.push(cateoryOpenState.id);
+        setOpen(item);
+      }
+      let state={
+        id:"",
+        open:false
+      }
+      setCategoryOpenState(state)
+
+    }
+  },[cateoryOpenState])
 
   const toggleArchiveModalHandler = (row) => {
     setShowArchivedModal((prevState) => !prevState);

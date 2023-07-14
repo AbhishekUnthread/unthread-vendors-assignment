@@ -131,7 +131,6 @@ const Categories = () => {
   const [showCreatePopover, setShowCreatePopover] = useState(null);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editId, setEditId] = useState(null);
   const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
   const [statusFilter, setStatusFilter] = React.useState([]);
@@ -140,6 +139,11 @@ const Categories = () => {
   const [searchValue, setSearchValue] = useState("");
   const [categoryTotalCount, setCategoryTotalCount] = React.useState([]);
   const [subCategoryTotalCount, setSubCategoryTotalCount] = React.useState([]);
+  const [cateoryOpenState,setCategoryOpenState]=useState({
+    id:"",
+    open:false,
+  })
+   
   const filterParameter = {};
 
   const handleSearchChange = (event) => {
@@ -368,6 +372,11 @@ const Categories = () => {
           .then(() => {
             subCategoryFormik.resetForm();
             setMultipleTagsForSub([]);
+            let state={
+              ...cateoryOpenState,
+              open:true
+            }
+            setCategoryOpenState(state)
           })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
@@ -376,8 +385,12 @@ const Categories = () => {
         createSubCategory(values)
           .unwrap()
           .then(() => {
-            setSortFilter("newestToOldest");
             subCategoryFormik.resetForm();
+            let state={
+              ...cateoryOpenState,
+              open:true
+            }
+            setCategoryOpenState(state)
           })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
@@ -398,7 +411,6 @@ const Categories = () => {
     setShowCreatePopover(null);
     categoryFormik.resetForm();
     setIsEditing(false);
-    setEditId(null);
     setMultipleTags([]);
   };
 
@@ -407,7 +419,6 @@ const Categories = () => {
     setShowCreatePopover(null);
     subCategoryFormik.resetForm();
     setIsEditing(false);
-    setEditId(null);
     setMultipleTagsForSub([]);
   };
 
@@ -589,6 +600,11 @@ const Categories = () => {
   const subModalOpenHandler = (row) => {
     setShowCreateSubModal((prev) => !prev);
     subCategoryFormik.setFieldValue("categoryId", row._id);
+    let state={
+      ...cateoryOpenState,
+      id:row._id,
+    }
+    setCategoryOpenState(state)
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -1165,6 +1181,8 @@ const Categories = () => {
                   editSubPageHandler={editSubPageHandler}
                   editPageHandler={editPageHandler}
                   totalCount={categoryTotalCount}
+                  cateoryOpenState={cateoryOpenState}
+                  setCategoryOpenState={setCategoryOpenState}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={1}>
@@ -1206,6 +1224,8 @@ const Categories = () => {
                   editPageHandler={editPageHandler}
                   editSubPageHandler={editSubPageHandler}
                   totalCount={categoryTotalCount}
+                  cateoryOpenState={cateoryOpenState}
+                  setCategoryOpenState={setCategoryOpenState}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={3}>
