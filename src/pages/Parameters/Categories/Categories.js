@@ -600,15 +600,19 @@ const Categories = () => {
   };
 
   const editPageHandler = (index) => {
+    const combinedObject = { filterParams, queryFilterState };
+      const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));
     const currentTabNo =
       index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
-    navigate(`./edit/${currentTabNo}`);
+    navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
   };
 
   const editSubPageHandler = (index) => {
+    const combinedObject = { filterParams, queryFilterState };
+    const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));
     const currentTabNo =
       index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
-    navigate(`/parameters/subCategories/edit/${currentTabNo}`);
+    navigate(`/parameters/subCategories/edit/${currentTabNo}/${encodedCombinedObject}`);
   };
 
   return (

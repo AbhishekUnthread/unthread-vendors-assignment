@@ -118,7 +118,7 @@ const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let { id } = useParams();
+  let { id,filter } = useParams();
   const [categoryState, dispatchCategory] = useReducer(
     categoryReducer,
     initialState
@@ -128,6 +128,7 @@ const EditCategories = () => {
     initialQueryFilterState
   );
   const [categoryDescription, setCategoryDescription] = useState("");
+  const [decodedObject, setDecodedObject] = useState(null);
 
   const {
     data: categoriesData,
@@ -135,8 +136,12 @@ const EditCategories = () => {
     isError: categoriesIsError,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery(queryFilterState, {
+  } = useGetAllCategoriesQuery({
+    ...queryFilterState,
+    ...(decodedObject?.filterParams || {}),
     skip: queryFilterState.pageNo ? false : true,
+    name:decodedObject?.filterParams?.name || "",
+
   });
 
   const [
@@ -230,7 +235,7 @@ const EditCategories = () => {
     if (pageNo + 1 > totalCount) {
       return;
     }
-    navigate(`/parameters/categories/edit/${pageNo + 1}`);
+    navigate(`/parameters/categories/edit/${pageNo + 1}/${filter}`);
   };
 
   const prevPageHandler = () => {
@@ -238,7 +243,7 @@ const EditCategories = () => {
     if (pageNo - 1 === 0) {
       return;
     }
-    navigate(`/parameters/categories/edit/${pageNo - 1}`);
+    navigate(`/parameters/categories/edit/${pageNo - 1}/${filter}`);
   };
 
   useEffect(() => {
@@ -260,7 +265,7 @@ const EditCategories = () => {
     if (categoriesIsSuccess) {
       dispatchQueryFilter({
         type: "SET_TOTAL_COUNT",
-        totalCount: categoriesData.totalCount,
+        totalCount: categoriesData?.data?.totalCount,
       });
     }
   }, [
@@ -270,6 +275,15 @@ const EditCategories = () => {
     categoriesIsSuccess,
     dispatch,
   ]);
+
+  useEffect(() => {
+    const encodedString = filter; // The encoded string from the URL or any source
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+
+    setDecodedObject(parsedObject);
+  }, [categoriesData,categoriesIsSuccess,id]);
 
   useEffect(() => {
     if (

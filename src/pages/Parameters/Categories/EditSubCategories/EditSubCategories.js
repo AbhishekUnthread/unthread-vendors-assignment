@@ -137,7 +137,7 @@ const EditSubCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let { id } = useParams();
+  let { id,filter } = useParams();
   const [categoryState, dispatchCategory] = useReducer(
     categoryReducer,
     initialState
@@ -151,6 +151,7 @@ const EditSubCategories = () => {
 
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
   const [subCategoryPatentId, setSubCategoryParentId] = useState("");
+  const [decodedObject, setDecodedObject] = useState(null);
 
   const {
     data: categoriesData,
@@ -165,8 +166,11 @@ const EditSubCategories = () => {
     isSuccess: subCategoriesIsSuccess,
     isError: subCategoriesIsError,
     error: subCategoriesError,
-  } = useGetAllSubCategoriesQuery(queryFilterState, {
+  } = useGetAllSubCategoriesQuery({
+    ...queryFilterState,
+    ...(decodedObject?.filterParams || {}),
     skip: queryFilterState.pageNo ? false : true,
+    name:decodedObject?.filterParams?.name || "",
   });
 
   const [
@@ -262,7 +266,7 @@ const EditSubCategories = () => {
     if (pageNo + 1 > totalCount) {
       return;
     }
-    navigate(`/parameters/subCategories/edit/${pageNo + 1}`);
+    navigate(`/parameters/subCategories/edit/${pageNo + 1}/${filter}`);
   };
 
   const prevPageHandler = () => {
@@ -271,7 +275,7 @@ const EditSubCategories = () => {
     if (pageNo - 1 === 0) {
       return;
     }
-    navigate(`/parameters/subCategories/edit/${pageNo - 1}`);
+    navigate(`/parameters/subCategories/edit/${pageNo - 1}/${filter}`);
   };
 
   useEffect(() => {
@@ -293,7 +297,7 @@ const EditSubCategories = () => {
     if (subCategoriesIsSuccess) {
       dispatchQueryFilter({
         type: "SET_TOTAL_COUNT",
-        totalCount: subCategoriesData.totalCount,
+        totalCount: subCategoriesData?.data?.totalCount,
       });
       setCategoryName(
         subCategoriesData?.data?.data?.[0].category?.[0]?.name || ""
@@ -309,6 +313,15 @@ const EditSubCategories = () => {
     subCategoriesIsSuccess,
     dispatch,
   ]);
+
+  useEffect(() => {
+    const encodedString = filter; // The encoded string from the URL or any source
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+
+    setDecodedObject(parsedObject);
+  }, [subCategoriesData,subCategoriesIsSuccess,id]);
 
   useEffect(() => {
     if (
