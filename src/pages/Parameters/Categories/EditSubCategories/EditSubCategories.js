@@ -66,6 +66,7 @@ const initialState = {
   confirmationMessage: "",
   isEditing: false,
   initialInfo: null,
+  isSeoEditDone:false,
 };
 
 const initialQueryFilterState = {
@@ -90,6 +91,12 @@ const categoryReducer = (state, action) => {
     return {
       ...initialState,
       isEditing: false,
+    };
+  }
+  if (action.type === "DISABLE_SEO") {
+    return {
+      ...initialState,
+      isSeoEditDone: false,
     };
   }
 
@@ -130,7 +137,7 @@ const EditSubCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let { id } = useParams();
+  let { id,filter } = useParams();
   const [categoryState, dispatchCategory] = useReducer(
     categoryReducer,
     initialState
@@ -144,6 +151,7 @@ const EditSubCategories = () => {
 
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
   const [subCategoryPatentId, setSubCategoryParentId] = useState("");
+  const [decodedObject, setDecodedObject] = useState(null);
 
   const {
     data: categoriesData,
@@ -158,8 +166,11 @@ const EditSubCategories = () => {
     isSuccess: subCategoriesIsSuccess,
     isError: subCategoriesIsError,
     error: subCategoriesError,
-  } = useGetAllSubCategoriesQuery(queryFilterState, {
+  } = useGetAllSubCategoriesQuery({
+    ...queryFilterState,
+    ...(decodedObject?.filterParams || {}),
     skip: queryFilterState.pageNo ? false : true,
+    name:decodedObject?.filterParams?.name || "",
   });
 
   const [
@@ -197,12 +208,12 @@ const EditSubCategories = () => {
       if (values.mediaUrl) {
         editItems.mediaUrl = values.mediaUrl;
       }
-      if (isEmpty(values.seo)) {
-        editItems.seo = {
-          title: values.name,
-          slug: "https://example.com/" + values.name,
-        };
-      }
+      // if (isEmpty(values.seo)) {
+      //   editItems.seo = {
+      //     title: values.name,
+      //     slug: "https://example.com/" + values.name,
+      //   };
+      // }
       if (!isEmpty(values.seo)) {
         editItems.seo = values.seo;
       }
@@ -224,6 +235,7 @@ const EditSubCategories = () => {
           dispatch(
             showSuccess({ message: "Sub Category Updated Successfully" })
           );
+          dispatchCategory({ type: "DISABLE_SEO" })
         });
     },
   });
@@ -254,7 +266,7 @@ const EditSubCategories = () => {
     if (pageNo + 1 > totalCount) {
       return;
     }
-    navigate(`/parameters/subCategories/edit/${pageNo + 1}`);
+    navigate(`/parameters/subCategories/edit/${pageNo + 1}/${filter}`);
   };
 
   const prevPageHandler = () => {
@@ -263,7 +275,7 @@ const EditSubCategories = () => {
     if (pageNo - 1 === 0) {
       return;
     }
-    navigate(`/parameters/subCategories/edit/${pageNo - 1}`);
+    navigate(`/parameters/subCategories/edit/${pageNo - 1}/${filter}`);
   };
 
   useEffect(() => {
@@ -285,7 +297,7 @@ const EditSubCategories = () => {
     if (subCategoriesIsSuccess) {
       dispatchQueryFilter({
         type: "SET_TOTAL_COUNT",
-        totalCount: subCategoriesData.totalCount,
+        totalCount: subCategoriesData?.data?.totalCount,
       });
       setCategoryName(
         subCategoriesData?.data?.data?.[0].category?.[0]?.name || ""
@@ -301,6 +313,15 @@ const EditSubCategories = () => {
     subCategoriesIsSuccess,
     dispatch,
   ]);
+
+  useEffect(() => {
+    const encodedString = filter; // The encoded string from the URL or any source
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+
+    setDecodedObject(parsedObject);
+  }, [subCategoriesData,subCategoriesIsSuccess,id]);
 
   useEffect(() => {
     if (
@@ -537,6 +558,7 @@ const EditSubCategories = () => {
                 categoryEditFormik.setFieldValue("seo", val)
               }
               refrenceId={id ? subCategoriesData?.data?.data?.[0]?._id : ""}
+              toggleState={id ? categoryState.isSeoEditDone : false}
             />
           </div>
         </div>

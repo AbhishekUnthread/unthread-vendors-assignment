@@ -231,11 +231,11 @@ const router = () => {
                   element: <Categories />,
                 },
                 {
-                  path: "categories/edit/:id",
+                  path: "categories/edit/:id/:filter",
                   element: <EditCategories />,
                 },
                 {
-                  path: "subCategories/edit/:id",
+                  path: "subCategories/edit/:id/:filter",
                   element: <EditSubCategories />,
                 },
                 {

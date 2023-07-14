@@ -51,6 +51,7 @@ const initialState = {
   confirmationMessage: "",
   isEditing: false,
   initialInfo: null,
+  isSeoEditDone:false,
 };
 
 const initialQueryFilterState = {
@@ -75,6 +76,12 @@ const categoryReducer = (state, action) => {
     return {
       ...initialState,
       isEditing: false,
+    };
+  }
+  if (action.type === "DISABLE_SEO") {
+    return {
+      ...initialState,
+      isSeoEditDone: false,
     };
   }
 
@@ -111,7 +118,7 @@ const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let { id } = useParams();
+  let { id,filter } = useParams();
   const [categoryState, dispatchCategory] = useReducer(
     categoryReducer,
     initialState
@@ -121,6 +128,7 @@ const EditCategories = () => {
     initialQueryFilterState
   );
   const [categoryDescription, setCategoryDescription] = useState("");
+  const [decodedObject, setDecodedObject] = useState(null);
 
   const {
     data: categoriesData,
@@ -128,8 +136,12 @@ const EditCategories = () => {
     isError: categoriesIsError,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery(queryFilterState, {
+  } = useGetAllCategoriesQuery({
+    ...queryFilterState,
+    ...(decodedObject?.filterParams || {}),
     skip: queryFilterState.pageNo ? false : true,
+    name:decodedObject?.filterParams?.name || "",
+
   });
 
   const [
@@ -167,12 +179,12 @@ const EditCategories = () => {
       if (values.mediaUrl) {
         editItems.mediaUrl = values.mediaUrl;
       }
-      if (isEmpty(values.seo)) {
-        editItems.seo = {
-          title: values.name,
-          slug: "https://example.com/" + values.name,
-        };
-      }
+      // if (isEmpty(values.seo)) {
+      //   editItems.seo = {
+      //     title: values.name,
+      //     slug: "https://example.com/" + values.name,
+      //   };
+      // }
       if (!isEmpty(values.seo)) {
         editItems.seo = values.seo;
       }
@@ -189,6 +201,7 @@ const EditCategories = () => {
         .unwrap()
         .then(() => {
           dispatch(showSuccess({ message: "Category Updated Successfully" }));
+          dispatchCategory({ type: "DISABLE_SEO" })
         });
     },
   });
@@ -222,7 +235,7 @@ const EditCategories = () => {
     if (pageNo + 1 > totalCount) {
       return;
     }
-    navigate(`/parameters/categories/edit/${pageNo + 1}`);
+    navigate(`/parameters/categories/edit/${pageNo + 1}/${filter}`);
   };
 
   const prevPageHandler = () => {
@@ -230,7 +243,7 @@ const EditCategories = () => {
     if (pageNo - 1 === 0) {
       return;
     }
-    navigate(`/parameters/categories/edit/${pageNo - 1}`);
+    navigate(`/parameters/categories/edit/${pageNo - 1}/${filter}`);
   };
 
   useEffect(() => {
@@ -252,7 +265,7 @@ const EditCategories = () => {
     if (categoriesIsSuccess) {
       dispatchQueryFilter({
         type: "SET_TOTAL_COUNT",
-        totalCount: categoriesData.totalCount,
+        totalCount: categoriesData?.data?.totalCount,
       });
     }
   }, [
@@ -262,6 +275,15 @@ const EditCategories = () => {
     categoriesIsSuccess,
     dispatch,
   ]);
+
+  useEffect(() => {
+    const encodedString = filter; // The encoded string from the URL or any source
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+
+    setDecodedObject(parsedObject);
+  }, [categoriesData,categoriesIsSuccess,id]);
 
   useEffect(() => {
     if (
@@ -405,6 +427,7 @@ const EditCategories = () => {
                 categoryEditFormik.setFieldValue("seo", val)
               }
               refrenceId={id ? categoriesData?.data?.data?.[0]?._id : ""}
+              toggleState={id ? categoryState.isSeoEditDone : false}
             />
           </div>
         </div>
