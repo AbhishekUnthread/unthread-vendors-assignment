@@ -988,7 +988,7 @@ const CategoriesTable = ({
             category ?
           </h5>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
-            <span className="text-blue-2"> 0 products </span>
+            <span className="text-blue-2"> {rowData?.totalSubCategory} {rowData?.totalSubCategory > 1 ? "SubCategory":"SubCategories"} </span>
             in this collection will be unassigned from it.
           </h6>
           <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>
