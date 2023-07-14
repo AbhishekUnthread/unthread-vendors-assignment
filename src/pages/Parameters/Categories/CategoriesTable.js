@@ -218,10 +218,6 @@ const CategoriesTable = ({
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const toggleCreateSubModalHandler = () => {
-    // setShowCreateSubModal((prevState) => !prevState);
-    // setShowCreatePopover(null);
-  };
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -305,21 +301,21 @@ const CategoriesTable = ({
 
   useEffect(()=>{
     if(cateoryOpenState?.open === true){
+      setFilterParameter({categoryId:cateoryOpenState.id,status:["active", "scheduled", "in-active"]});
       if (open.length === 0) {
         let item = [];
         item.push(cateoryOpenState.id);
         setOpen(item);
-        setFilterParameter(cateoryOpenState.id)
+        
       }
       if (open.length > 0 && open.includes(cateoryOpenState.id)) {
         setOpen((item) => item.filter((i) => i !== cateoryOpenState.id));
-        setFilterParameter(cateoryOpenState.id)
+        
       }
       if (open.length > 0 && !open.includes(cateoryOpenState.id)) {
         let item = [];
         item.push(cateoryOpenState.id);
         setOpen(item);
-        setFilterParameter(cateoryOpenState.id)
       }
       let state={
         id:"",
@@ -988,11 +984,15 @@ const CategoriesTable = ({
               {" "}
               "{selected.length == 0 ? rowData?.name : selected.length}"{" "}
             </span>
-            category ?
+            {selected.length > 1 ? "Category" : " Categoris"}
           </h5>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
+            <span className="text-blue-2"> 0 products </span>
+            in this Category will be unassigned from it.
+          </h6>
+          <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
             <span className="text-blue-2"> {rowData?.totalSubCategory} {rowData?.totalSubCategory > 1 ? "SubCategory":"SubCategories"} </span>
-            in this collection will be unassigned from it.
+            in this category will be unassigned from it.
           </h6>
           <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>
             Would you like to Archive this Category ?

@@ -557,14 +557,14 @@ const SubCategoriesTable = ({
               {" "}
               "{selected.length == 0 ? rowData?.name : selected.length}"{" "}
             </span>
-            category ?
+            {selected.length > 1 ? "Category ?" : " Categoris ?"}
           </h5>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
             <span className="text-blue-2"> 0 products </span>
-            in this collection will be unassigned from it.
+            in this Sub Category will be unassigned from it.
           </h6>
           <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>
-            Would you like to Archive this Category ?
+            Would you like to Archive this Sub Category ?
           </h6>
         </DialogContent>
         <DialogActions className="d-flex justify-content-center px-4 pb-4">

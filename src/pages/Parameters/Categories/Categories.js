@@ -116,6 +116,12 @@ const subCategoryValidationSchema = Yup.object({
   categoryId: Yup.string().required("required"),
 });
 
+function generateUrlName(name = "") {
+  const formattedName =
+    "https://example.com/" + name?.toLowerCase()?.replace(/ /g, '-');
+  return formattedName;
+
+}
 const Categories = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -343,7 +349,13 @@ const Categories = () => {
             dispatch(showError({ message: err?.data?.message }));
           });
       } else {
-        createCategory(values)
+        createCategory({
+          ...values,
+          seo:{
+            title:values.name,
+            slug:generateUrlName(values.name),
+          }
+        })
           .unwrap()
           .then(() => categoryFormik.resetForm())
           .catch((err) => {
@@ -383,7 +395,13 @@ const Categories = () => {
             dispatch(showError({ message: err?.data?.message }));
           });
       } else {
-        createSubCategory(values)
+        createSubCategory({
+          ...values,
+          seo:{
+            title:values.name,
+            slug:generateUrlName(values.name),
+          }
+        })
           .unwrap()
           .then(() => {
             subCategoryFormik.resetForm();
@@ -607,7 +625,7 @@ const Categories = () => {
           }
 
           if (valueExists) {
-            dispatch(showError({ message: "Duplicate Name Value" }));
+            dispatch(showError({ message: "Duplicate Name  Value" }));
           }
         }
       });
@@ -793,6 +811,7 @@ const Categories = () => {
                     )}
                 </FormControl>
                 <br />
+                <div className="small">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -817,6 +836,8 @@ const Categories = () => {
                   }}
                   className=" px-0"
                 />
+                <button className="reset link">(manage)</button>
+                </div>
                 <div className="d-flex">
                   {multipleTags &&
                     multipleTags.map((data, index) => {
@@ -832,6 +853,7 @@ const Categories = () => {
                         ></Chip>
                       );
                     })}
+                    
                 </div>
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
@@ -973,6 +995,7 @@ const Categories = () => {
                     )}
                 </FormControl>
                 <br />
+                <div className="small">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -997,7 +1020,8 @@ const Categories = () => {
                   }}
                   className=" px-0"
                 />
-
+                 <button className="reset link">(manage)</button>
+                 </div>
                 <div className="d-flex">
                   {multipleTagsForSub &&
                     multipleTagsForSub.map((data, index) => {
