@@ -66,6 +66,7 @@ const initialState = {
   confirmationMessage: "",
   isEditing: false,
   initialInfo: null,
+  isSeoEditDone:false,
 };
 
 const initialQueryFilterState = {
@@ -90,6 +91,12 @@ const categoryReducer = (state, action) => {
     return {
       ...initialState,
       isEditing: false,
+    };
+  }
+  if (action.type === "DISABLE_SEO") {
+    return {
+      ...initialState,
+      isSeoEditDone: false,
     };
   }
 
@@ -130,7 +137,7 @@ const EditSubCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let { id } = useParams();
+  let { id,filter } = useParams();
   const [categoryState, dispatchCategory] = useReducer(
     categoryReducer,
     initialState
@@ -144,6 +151,7 @@ const EditSubCategories = () => {
 
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
   const [subCategoryPatentId, setSubCategoryParentId] = useState("");
+  const [decodedObject, setDecodedObject] = useState(null);
 
   const {
     data: categoriesData,
@@ -158,8 +166,11 @@ const EditSubCategories = () => {
     isSuccess: subCategoriesIsSuccess,
     isError: subCategoriesIsError,
     error: subCategoriesError,
-  } = useGetAllSubCategoriesQuery(queryFilterState, {
+  } = useGetAllSubCategoriesQuery({
+    ...queryFilterState,
+    ...(decodedObject?.filterParams || {}),
     skip: queryFilterState.pageNo ? false : true,
+    name:decodedObject?.filterParams?.name || "",
   });
 
   const [
@@ -197,12 +208,12 @@ const EditSubCategories = () => {
       if (values.mediaUrl) {
         editItems.mediaUrl = values.mediaUrl;
       }
-      if (isEmpty(values.seo)) {
-        editItems.seo = {
-          title: values.name,
-          slug: "https://example.com/" + values.name,
-        };
-      }
+      // if (isEmpty(values.seo)) {
+      //   editItems.seo = {
+      //     title: values.name,
+      //     slug: "https://example.com/" + values.name,
+      //   };
+      // }
       if (!isEmpty(values.seo)) {
         editItems.seo = values.seo;
       }
@@ -212,8 +223,8 @@ const EditSubCategories = () => {
       if (values.endDate) {
         editItems.endDate = new Date(values.endDate);
       }
-      if(subCategoryPatentId){
-        editItems.categoryId= subCategoryPatentId
+      if (subCategoryPatentId) {
+        editItems.categoryId = subCategoryPatentId;
       }
       editSubCategory({
         id: subCategoriesData?.data?.data?.[0]?._id, // ID of the category
@@ -224,6 +235,7 @@ const EditSubCategories = () => {
           dispatch(
             showSuccess({ message: "Sub Category Updated Successfully" })
           );
+          dispatchCategory({ type: "DISABLE_SEO" })
         });
     },
   });
@@ -249,21 +261,21 @@ const EditSubCategories = () => {
   };
 
   const nextPageHandler = () => {
-    setSubCategoryDescription("")
+    setSubCategoryDescription("");
     const { pageNo, totalCount } = queryFilterState;
     if (pageNo + 1 > totalCount) {
       return;
     }
-    navigate(`/parameters/subCategories/edit/${pageNo + 1}`);
+    navigate(`/parameters/subCategories/edit/${pageNo + 1}/${filter}`);
   };
 
   const prevPageHandler = () => {
-    setSubCategoryDescription("")
+    setSubCategoryDescription("");
     const { pageNo } = queryFilterState;
     if (pageNo - 1 === 0) {
       return;
     }
-    navigate(`/parameters/subCategories/edit/${pageNo - 1}`);
+    navigate(`/parameters/subCategories/edit/${pageNo - 1}/${filter}`);
   };
 
   useEffect(() => {
@@ -285,9 +297,11 @@ const EditSubCategories = () => {
     if (subCategoriesIsSuccess) {
       dispatchQueryFilter({
         type: "SET_TOTAL_COUNT",
-        totalCount: subCategoriesData.totalCount,
+        totalCount: subCategoriesData?.data?.totalCount,
       });
-      setCategoryName(subCategoriesData?.data?.data?.[0].category?.[0]?.name || "");
+      setCategoryName(
+        subCategoriesData?.data?.data?.[0].category?.[0]?.name || ""
+      );
       setSubCategoryParentId(
         subCategoriesData?.data?.data?.[0]?.category?.[0]?._id || ""
       );
@@ -299,6 +313,15 @@ const EditSubCategories = () => {
     subCategoriesIsSuccess,
     dispatch,
   ]);
+
+  useEffect(() => {
+    const encodedString = filter; // The encoded string from the URL or any source
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+
+    setDecodedObject(parsedObject);
+  }, [subCategoriesData,subCategoriesIsSuccess,id]);
 
   useEffect(() => {
     if (
@@ -324,7 +347,6 @@ const EditSubCategories = () => {
       subCategoriesData?.data?.data?.[0].category?.[0]?.name || ""
     );
   };
-
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryType(tabIndex);
@@ -435,7 +457,7 @@ const EditSubCategories = () => {
 
       <form noValidate onSubmit={submitHandler} className="row mt-3">
         <div className="col-lg-9 mt-3">
-          <div className="features border-grey-5 rounded-8 p-3 row attributes">
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Sub-Category Name</p>
@@ -505,7 +527,7 @@ const EditSubCategories = () => {
             </div>
           </div>
 
-          <div className="border-grey-5 rounded-8 p-3 row features mt-4">
+          <div className="border-grey-5 rounded-8 p-3 row bg-black-15 mt-4">
             <Box
               sx={{ width: "100%" }}
               className="d-flex justify-content-between tabs-header-box"
@@ -528,13 +550,17 @@ const EditSubCategories = () => {
               </>
             }
           </div>
-          <SEO
-            seoName={categoryEditFormik.values.name || ""}
-            seoValue={categoryEditFormik.values.seo}
-            handleSeoChange={(val) =>
-              categoryEditFormik.setFieldValue("seo", val)
-            }
-          />
+          <div className="mt-4">
+            <SEO
+              seoName={categoryEditFormik.values.name || ""}
+              seoValue={categoryEditFormik.values.seo}
+              handleSeoChange={(val) =>
+                categoryEditFormik.setFieldValue("seo", val)
+              }
+              refrenceId={id ? subCategoriesData?.data?.data?.[0]?._id : ""}
+              toggleState={id ? categoryState.isSeoEditDone : false}
+            />
+          </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
           <StatusBox

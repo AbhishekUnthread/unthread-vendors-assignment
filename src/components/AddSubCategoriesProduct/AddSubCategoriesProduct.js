@@ -36,9 +36,9 @@ import {
   Dialog,
   Slide,
   Tooltip,
+  InputAdornment,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
-import SearchIcon from "@mui/icons-material/Search";
 import {
   useBulkEditTagSubCategoryMutation,
   useCreateSubCategoryMutation,
@@ -51,14 +51,13 @@ import {
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { showSuccess } from "../../features/snackbar/snackbarAction";
+import { showError, showSuccess } from "../../features/snackbar/snackbarAction";
 import { useDispatch } from "react-redux";
 import TableEditStatusButton from "../TableEditStatusButton/TableEditStatusButton";
-import { updateCategoryId } from "../../features/parameters/categories/categorySlice";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import ArchivedModal from "../../components/DeleteDailogueModal/DeleteModal";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 // ? TABLE STARTS HERE
 function createData(pId, productName, category, price) {
@@ -148,8 +147,8 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 const initialQueryFilterState = {
-  pageSize: 5,
-  pageNo: 0,
+  pageSize: 10,
+  pageNo: 1,
   totalCount: 0,
 };
 
@@ -202,7 +201,7 @@ const AddSubCategoriesProducts = ({ id }) => {
     status: ["active", "in-active"],
     ...filterParameter,
     pageSize:queryFilterState.pageSize,
-    pageNo:queryFilterState.pageNo+1,
+    pageNo:queryFilterState.pageNo,
     skip: queryFilterState.pageNo ? false : true,
   });
 
@@ -221,6 +220,7 @@ const AddSubCategoriesProducts = ({ id }) => {
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
   } = useGetAllCategoriesQuery({});
+  
 
   const [
     bulkCreateSubCategory,
@@ -307,23 +307,30 @@ const AddSubCategoriesProducts = ({ id }) => {
     editSubCategoryIsSuccess,
   ]);
 
-  const handleAddMultiple = (event, Formik, Tags, data, flag) => {
-    if (event.key === "Enter") {
+  const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
+    if (event.key === "Enter" || event.type === "click") {
       event.preventDefault();
       Formik.validateForm().then(() => {
         if (Formik.isValid && Formik.values.name !== "") {
           Formik.setFieldTouched("name", true);
-          Tags((prevValues) => [...prevValues, data]);
-          if (flag) {
-            Formik.resetForm();
-          } else {
-            Formik.setFieldValue("name", "");
+          let tagName = tags.map((item) => item.name?.trim()?.toLowerCase());
+          let valueExists = tagName.includes(data.name?.trim()?.toLowerCase());
+          if (!valueExists) {
+            setTags((prevValues) => [...prevValues, data]);
+            if (flag) {
+              Formik.resetForm();
+            } else {
+              Formik.setFieldValue("name", "");
+            }
+          }
+
+          if (valueExists) {
+            dispatch(showError({ message: "Duplicate Name Value" }));
           }
         }
       });
     }
   };
-
   useEffect(() => {
     // Update the state only if the selectedStatus state has a value
     if (selectedStatus !== null) {
@@ -370,6 +377,12 @@ const AddSubCategoriesProducts = ({ id }) => {
 
     setMultipleTagsForSub([]);
   };
+
+  function handlesubmit(){
+    setShowCreateSubModal((prevState) => !prevState);
+    setMultipleTagsForSub([]);
+    subCategoryFormik.handleSubmit()
+  }
 
   const subModalOpenHandler = () => {
     setShowCreateSubModal((prev) => !prev);
@@ -450,9 +463,11 @@ const AddSubCategoriesProducts = ({ id }) => {
   }
 
   const editSubPageHandler = (index) => {
+    const combinedObject = { filterParams:filterParameter, queryFilterState };
+    const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));
     const currentTabNo =
-      index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
-    navigate(`/parameters/subCategories/edit/${currentTabNo}`);
+      index + (queryFilterState.pageNo  - 1) * queryFilterState.pageSize;
+    navigate(`/parameters/subCategories/edit/${currentTabNo}/${encodedCombinedObject}`);
   };
 
   return (
@@ -489,7 +504,7 @@ const AddSubCategoriesProducts = ({ id }) => {
               </DialogTitle>
               <hr className="hr-grey-6 my-0" />
 
-              <form noValidate onSubmit={subCategoryFormik.handleSubmit}>
+              <div>
                 <DialogContent className="py-3 px-4">
                   <p className="text-lightBlue mb-2">Select Category</p>
                   <FormControl
@@ -548,6 +563,29 @@ const AddSubCategoriesProducts = ({ id }) => {
                           },
                           false
                         )
+                      }
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <ChevronRightIcon
+                            className="c-pointer"
+                            onClick={(e) =>
+                              handleAddMultiple(
+                                e,
+                                subCategoryFormik,
+                                setMultipleTagsForSub,
+                                multipleTagsForSub,
+                                {
+                                  name: subCategoryFormik.values.name,
+                                  description: "<p></p>",
+                                  status: "active",
+                                  categoryId: subCategoryFormik.values.categoryId,
+                                  showFilter: subCategoryFormik.values.showFilter,
+                                },
+                                false
+                              )
+                            }
+                          />
+                        </InputAdornment>
                       }
                     />
                     {!!subCategoryFormik.touched.name &&
@@ -610,15 +648,16 @@ const AddSubCategoriesProducts = ({ id }) => {
                     <p className="text-lightBlue">Cancel</p>
                   </button>
                   <LoadingButton
+                  type="button"
                     loading={createSubCategoryIsLoading}
                     disabled={createSubCategoryIsLoading}
-                    type="submit"
+                    onClick={handlesubmit}
                     className="button-gradient py-2 px-5"
                   >
                     <p>Save</p>
                   </LoadingButton>
                 </DialogActions>
-              </form>
+              </div>
             </Dialog>
             <TableSearch
               searchValue={searchValue}
@@ -629,6 +668,7 @@ const AddSubCategoriesProducts = ({ id }) => {
             <button
               className="button-gradient w-100 py-2 px-3"
               onClick={subModalOpenHandler}
+              type="button"
             >
               <p>+ Add Sub Categories</p>
             </button>

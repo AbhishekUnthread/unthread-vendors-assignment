@@ -29,11 +29,11 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
             <div className="row"></div>
             <h5 className="text-lightBlue mt-2 mb-2">
               Delete  
-              <span className="text-blue-2"> "{name}" </span> collection ?
+              <span className="text-blue-2"> "{name}" </span> {deleteType} ?
             </h5>
             <h6 className="mt-3 mb-4" style={{color: "#5C6D8E"}}>
               This will delete the collection from the dashboard and it can't be undone. 
-              Are you sure you want to delete the collection ?
+              Are you sure you want to delete the {deleteType} ?
             </h6>
         </DialogContent>
         <DialogActions className="d-flex justify-content-center px-4 pb-4">

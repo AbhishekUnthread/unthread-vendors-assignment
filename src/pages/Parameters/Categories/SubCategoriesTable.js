@@ -33,7 +33,8 @@ import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
-import question from "../../../assets/images/products/question.svg";
+import unArchived from "../../../assets/images/Components/Archived.png";
+import closeModal from "../../../assets/icons/closeModal.svg";
 import moment from "moment";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 
@@ -162,6 +163,11 @@ const SubCategoriesTable = ({
             id,
             status: "archieved",
           };
+        }else if (selectedStatus === "Set as in-Active") {
+          return {
+            id,
+            status: "in-active",
+          };
         } else if (selectedStatus === "Set as Un-Archived") {
           return {
             id,
@@ -282,7 +288,7 @@ const SubCategoriesTable = ({
 
           <TableEditStatusButton
             onSelect={handleStatusSelect}
-            defaultValue={["Set as Active", "Set as Archived"]}
+            defaultValue={["Set as Active", "Set as in-Active"]}
             headingName="Edit Status"
           />
           <TableMassActionButton
@@ -496,7 +502,7 @@ const SubCategoriesTable = ({
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 15]}
+              rowsPerPageOptions={[10, 15]}
               component="div"
               count={totalCount}
               rowsPerPage={rowsPerPage}
@@ -531,31 +537,48 @@ const SubCategoriesTable = ({
         maxWidth="sm"
       >
         <DialogContent className="py-2 px-4 text-center">
-          <img src={question} alt="question" width={200} />
+          <img
+            src={closeModal}
+            alt="question"
+            width={40}
+            className="closeModal"
+            onClick={toggleArchiveModalHandler}
+          />
+          <img
+            src={unArchived}
+            alt="question"
+            width={160}
+            className="mb-4 mt-4"
+          />
           <div className="row"></div>
-          <h6 className="text-lightBlue mt-2 mb-2">
-            Are you sure you want to Archive this Sub category
-            {forMassAction == false && (
-              <span className="text-blue-2">{rowData?.name} </span>
-            )}{" "}
-            ?
+          <h5 className="text-lightBlue mt-2 mb-3">
+            Archive
+            <span className="text-blue-2">
+              {" "}
+              "{selected.length == 0 ? rowData?.name : selected.length}"{" "}
+            </span>
+            category ?
+          </h5>
+          <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
+            <span className="text-blue-2"> 0 products </span>
+            in this collection will be unassigned from it.
           </h6>
-          <div className="d-flex justify-content-center mt-4">
-            <hr className="hr-grey-6 w-100" />
-          </div>
+          <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>
+            Would you like to Archive this Category ?
+          </h6>
         </DialogContent>
-        <DialogActions className="d-flex justify-content-between px-4 pb-4">
+        <DialogActions className="d-flex justify-content-center px-4 pb-4">
           <button
-            className="button-red-outline py-2 px-3 me-5"
+            className="button-lightBlue-outline py-2 px-3 me-4"
             onClick={toggleArchiveModalHandler}
           >
-            <p>No</p>
+            <p>Cancel</p>
           </button>
           <button
-            className="button-gradient py-2 px-3 ms-5"
+            className="button-red-outline py-2 px-3"
             onClick={deleteRowData}
           >
-            <p>Yes</p>
+            <p>Archive</p>
           </button>
         </DialogActions>
       </Dialog>
@@ -564,12 +587,12 @@ const SubCategoriesTable = ({
         closeUnArchivedModal={() => setShowUnArchivedModal(false)}
         handleUnArchived={handleUnArchived}
         handleStatusValue={setHandleStatusValue}
-        name={forMassAction == false ? rowData?.name : selected.length}
-        nameType={forMassAction == false ? "Sub category" : "Sub categories"}
+        name={selected.length == 0 ? rowData?.name : selected.length}
+        nameType={selected.length == 0 ? "Sub category" : "Sub categories"}
       />
       <DeleteModal
         name={
-          forMassAction == false
+          selected.length == 0
             ? `${rowData?.name} sub category `
             : `${selected.length} sub categories `
         }

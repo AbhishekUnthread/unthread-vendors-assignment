@@ -231,11 +231,11 @@ const router = () => {
                   element: <Categories />,
                 },
                 {
-                  path: "categories/edit/:id",
+                  path: "categories/edit/:id/:filter",
                   element: <EditCategories />,
                 },
                 {
-                  path: "subCategories/edit/:id",
+                  path: "subCategories/edit/:id/:filter",
                   element: <EditSubCategories />,
                 },
                 {
@@ -255,7 +255,7 @@ const router = () => {
                   element: <Vendors />,
                 },
                 {
-                  path: "vendors/edit",
+                  path: "vendors/edit/:id/:filter",
                   element: <EditVendor />,
                 },
                 {

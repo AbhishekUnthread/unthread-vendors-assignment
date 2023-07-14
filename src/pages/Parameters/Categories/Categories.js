@@ -72,7 +72,7 @@ import "../../Products/AllProducts/AllProducts.scss";
 import { useNavigate } from "react-router-dom";
 
 const initialQueryFilterState = {
-  pageSize: 5,
+  pageSize: 10,
   pageNo: 0,
   totalCount: 0,
 };
@@ -376,8 +376,8 @@ const Categories = () => {
         createSubCategory(values)
           .unwrap()
           .then(() => {
-            setSortFilter("newestToOldest")
-            subCategoryFormik.resetForm()
+            setSortFilter("newestToOldest");
+            subCategoryFormik.resetForm();
           })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
@@ -387,6 +387,8 @@ const Categories = () => {
   });
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
+    setCategoryList([]);
+    setSubCategoryList([]);
     setCategoryType(tabIndex);
     setSearchValue("");
   };
@@ -478,25 +480,22 @@ const Categories = () => {
       setError(false);
 
       if (categoryType === 0) {
-        setCategoryList(categoriesData?.data?.data);
-        setCategoryTotalCount(categoriesData?.data?.totalCount);
+        setCategoryList(categoriesData.data.data);
+        setCategoryTotalCount(categoriesData.data.totalCount);
       }
       if (categoryType === 1) {
-        setSubCategoryList(subCategoriesData?.data?.data);
-        setSubCategoryTotalCount(subCategoriesData?.data?.totalCount);
+        setSubCategoryList(subCategoriesData.data.data);
+        setSubCategoryTotalCount(subCategoriesData.data.totalCount);
       }
       if (categoryType === 2) {
-        setCategoryList(categoriesData?.data?.data);
-        setCategoryTotalCount(categoriesData?.data?.totalCount);
+        setCategoryList([...categoriesData.data.data]);
+        setCategoryTotalCount(categoriesData.data.totalCount);
       }
       if (categoryType === 3) {
         setSubCategoryList(subCategoriesData.data.data);
         setSubCategoryTotalCount(subCategoriesData.data.totalCount);
       }
     }
-
-   
-    
   }, [
     categoriesData,
     subCategoriesData,
@@ -514,7 +513,8 @@ const Categories = () => {
     bulkTagEditSubCategoryIsSuccess,
     bulkCreateSubTagsIsSuccess,
     bulkDeleteSubCategoryIsSuccess,
-    bulkDeleteSubCategoryIsSuccess,
+    deleteCategoryIsSuccess,
+    deleteSubCategoryIsSuccess,
     dispatch,
     sortFilter,
   ]);
@@ -524,28 +524,38 @@ const Categories = () => {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Category created successfully" }));
     }
-  
+
     if (deleteCategoryIsSuccess) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Category deleted successfully" }));
     }
-  
+
     if (bulkCreateTagsIsSuccess) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Categories created successfully" }));
     }
-  
+
     if (createSubCategoryIsSuccess) {
       setShowCreateSubModal(false);
       dispatch(showSuccess({ message: "Sub Category created successfully" }));
     }
-  
+
+    if (bulkCreateSubTagsIsSuccess) {
+      setShowCreateSubModal(false);
+      dispatch(showSuccess({ message: "Sub Categories created successfully" }));
+    }
+
     if (deleteSubCategoryIsSuccess) {
       setShowCreateSubModal(false);
       dispatch(showSuccess({ message: "Sub Category deleted successfully" }));
     }
-  }, [createCategoryIsSuccess, deleteCategoryIsSuccess, bulkCreateTagsIsSuccess, createSubCategoryIsSuccess, deleteSubCategoryIsSuccess]);
-  
+  }, [
+    createCategoryIsSuccess,
+    deleteCategoryIsSuccess,
+    bulkCreateTagsIsSuccess,
+    createSubCategoryIsSuccess,
+    deleteSubCategoryIsSuccess,
+  ]);
 
   const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
     if (event.key === "Enter" || event.type === "click") {
@@ -554,13 +564,18 @@ const Categories = () => {
         if (Formik.isValid && Formik.values.name !== "") {
           Formik.setFieldTouched("name", true);
           let tagName = tags.map((item) => item.name?.trim()?.toLowerCase());
-          if (!tagName.includes(data.name?.trim()?.toLowerCase())) {
+          let valueExists = tagName.includes(data.name?.trim()?.toLowerCase());
+          if (!valueExists) {
             setTags((prevValues) => [...prevValues, data]);
+            if (flag) {
+              Formik.resetForm();
+            } else {
+              Formik.setFieldValue("name", "");
+            }
           }
-          if (flag) {
-            Formik.resetForm();
-          } else {
-            Formik.setFieldValue("name", "");
+
+          if (valueExists) {
+            dispatch(showError({ message: "Duplicate Name Value" }));
           }
         }
       });
@@ -585,15 +600,19 @@ const Categories = () => {
   };
 
   const editPageHandler = (index) => {
+    const combinedObject = { filterParams, queryFilterState };
+      const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));
     const currentTabNo =
       index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
-    navigate(`./edit/${currentTabNo}`);
+    navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
   };
 
   const editSubPageHandler = (index) => {
+    const combinedObject = { filterParams, queryFilterState };
+    const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));
     const currentTabNo =
       index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
-    navigate(`/parameters/subCategories/edit/${currentTabNo}`);
+    navigate(`/parameters/subCategories/edit/${currentTabNo}/${encodedCombinedObject}`);
   };
 
   return (
@@ -788,7 +807,7 @@ const Categories = () => {
                   <p className="text-lightBlue">Cancel</p>
                 </button>
                 <LoadingButton
-                  loading={createCategoryIsLoading }
+                  loading={createCategoryIsLoading}
                   disabled={createCategoryIsLoading}
                   type="submit"
                   className="button-gradient py-2 px-5"
@@ -846,9 +865,6 @@ const Categories = () => {
                       onBlur={subCategoryFormik.handleBlur}
                       onChange={subCategoryFormik.handleChange}
                     >
-                      <MenuItem key={""} value={"Select Category"}>
-                        Select Category
-                      </MenuItem>
                       {categoriesData.data.data.map((option) => (
                         <MenuItem key={option._id} value={option._id}>
                           {option.name}
@@ -972,12 +988,8 @@ const Categories = () => {
                   <p className="text-lightBlue">Cancel</p>
                 </button>
                 <LoadingButton
-                  loading={
-                    createSubCategoryIsLoading
-                  }
-                  disabled={
-                    createSubCategoryIsLoading 
-                  }
+                  loading={createSubCategoryIsLoading}
+                  disabled={createSubCategoryIsLoading}
                   type="submit"
                   className="button-gradient py-2 px-5"
                 >
