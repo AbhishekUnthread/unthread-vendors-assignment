@@ -66,16 +66,13 @@ const UnArchivedModal = ({
             value={statusValue}
             onChange={handleStatusRadio}
             className="d-flex justify-content-between px-4 py-3"
-            // onClick={(newValue) => {
-            //   handleValue(newValue.target.value)
-            // }}
           >
             <FormControlLabel
               value="active"
               control={<Radio size="small" />}
               label="Active"
               sx={{
-                color: "#5C6D8E",
+                color: statusValue == "active" ? "#c8d8ff" : "#5C6D8E",
               }}
             />
             <FormControlLabel
@@ -83,7 +80,7 @@ const UnArchivedModal = ({
               control={<Radio size="small" />}
               label="In-Active"
               sx={{
-                color: "#5C6D8E",
+                color: statusValue == "in-active" ? "#c8d8ff" : "#5C6D8E",
               }}
             />
           </RadioGroup>

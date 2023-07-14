@@ -9,9 +9,9 @@ const NoDataFound = () => {
             <img src={noData} width={120} />
         </div>
         <h4 className="page-heading w-auto ps-0 text-center">No data available</h4>
-        <h5 className="mt-2 mb-5 text-center" style={{color: "#414C65"}}>
+        <h6 className="mt-2 mb-5 text-center" style={{color: "#414C65"}}>
             There is no available data to display
-        </h5>
+        </h6>
     </div>
   );
 };
