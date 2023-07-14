@@ -15,23 +15,34 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useFormik } from "formik";
-const SEO = ({seoName,seoValue, handleSeoChange }) => {
+import { useCreateSeoMutation } from "../../../../features/seo/seoApiSlice";
+import { useDispatch } from "react-redux";
+import { showError, showSuccess } from "../../../../features/snackbar/snackbarAction";
+const SEO = ({ seoName, seoValue, handleSeoChange,refrenceId,toggleState }) => {
   const [multipleTags, setMultipleTags] = useState([]);
-  const [isFirstTimeRender,setIsFirstTimeRender] = useState(true)
+  const [isFirstTimeRender, setIsFirstTimeRender] = useState(true);
+  const [retainValue,setReatinValue] = useState({})
+  const dispatch = useDispatch()
   // ? CHECKBOX STARTS HERE
 
-  const [viewAll,setViewAll] = useState(false);
+  const [checkedSwitch, setCheckedSwitch] = React.useState(toggleState);
+  const [viewAll, setViewAll] = useState(false);
+  let seoItems = {};
 
-  const [checked, setChecked] = React.useState(false);
+  const [
+    createSeo,
+    {
+      isLoading: createSeoIsLoading,
+      isSuccess: createSeoIsSuccess,
+      error: createSeoError,
+    },
+  ] = useCreateSeoMutation();
 
-  function generateUrlName(name="") {
-    const formattedName = "https://example.com/"+name?.toLowerCase()?.replace(/\s+/g, '-');
+  function generateUrlName(name = "") {
+    const formattedName =
+      "https://example.com/" + name?.toLowerCase()?.replace(/\s+/g, "-");
     return formattedName;
   }
-
-  const handleCheckboxChange = (event) => {
-    setChecked(event.target.checked);
-  };
 
   function isEmpty(obj) {
     for (var prop in obj) {
@@ -39,58 +50,112 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
         return false;
       }
     }
-  
-    return true
+
+    return true;
   }
 
   // ? CHECKBOX ENDS HERE
   const seoFormik = useFormik({
     initialValues: {
-      title:"",
+      title: "",
       slug: "https://example.com/",
     },
     enableReinitialize: true,
   });
-  useEffect(()=>{
-    if(!isEmpty(seoValue) && isFirstTimeRender === true){
-      console.log(seoValue,!isEmpty(seoValue),isFirstTimeRender)
-      seoFormik.setFieldValue("title", seoValue && seoValue.title ? seoValue.title : seoName);
-      seoFormik.setFieldValue("description", seoValue && seoValue.description ? seoValue.description : "");
-      seoFormik.setFieldValue("slug", seoValue && seoValue.slug ? seoValue.slug : generateUrlName(seoName));
-      setMultipleTags(seoValue && seoValue.metaKeywords ? seoValue.metaKeywords : []);
-      setIsFirstTimeRender(false)
+  useEffect(() => {
+    if (!isEmpty(seoValue) && isFirstTimeRender === true && seoName !== "") {
+      seoFormik.setFieldValue(
+        "title",
+        seoValue && seoValue.title ? seoValue.title : seoName
+      );
+      seoFormik.setFieldValue(
+        "description",
+        seoValue && seoValue.description ? seoValue.description : ""
+      );
+      seoFormik.setFieldValue(
+        "slug",
+        seoValue && seoValue.slug ? seoValue.slug : generateUrlName(seoName)
+      );
+      setMultipleTags(
+        seoValue && seoValue.metaKeywords ? seoValue.metaKeywords : []
+      );
+      setIsFirstTimeRender(false);
+      setCheckedSwitch(true);
+      setReatinValue(seoValue)
     }
 
-    if(isEmpty(seoValue) && seoName){
-      console.log(seoValue,isEmpty(seoValue))
-      seoFormik.setFieldValue("title", seoValue && seoValue.title ? seoValue.title : seoName);
-      seoFormik.setFieldValue("description", seoValue && seoValue.description ? seoValue.description : "");
-      seoFormik.setFieldValue("slug", seoValue && seoValue.slug ? seoValue.slug : generateUrlName(seoName));
-      setMultipleTags(seoValue && seoValue.metaKeywords ? seoValue.metaKeywords : []);
+    if (isEmpty(seoValue) && isFirstTimeRender === true && seoName !== "") {
+      seoFormik.setFieldValue("title", seoName);
+      seoFormik.setFieldValue("description", "");
+      seoFormik.setFieldValue("slug", generateUrlName(seoName));
+      setMultipleTags([]);
+      setIsFirstTimeRender(false);
+      setCheckedSwitch(false);
+      setReatinValue(seoValue)
     }
-    
-  },[seoValue,isFirstTimeRender])
-  
-  useEffect(()=>{
-    let seoItems={}
-    seoItems.title = seoFormik.values?.title
-    if(seoFormik.initialValues.slug !== seoFormik.values.slug || seoValue?.slug !== seoFormik.values.slug){
+  }, [seoValue, seoName, isFirstTimeRender]);
 
-      seoItems.slug = seoFormik.values.slug
+  function handleSubmit() {
+   
+    seoItems.title = seoFormik.values?.title;
+    if (
+      seoFormik.initialValues.slug !== seoFormik.values.slug ||
+      seoValue?.slug !== seoFormik.values.slug
+    ) {
+      seoItems.slug = seoFormik.values.slug;
     }
-    if(seoFormik.values?.description){
-      seoItems.description =seoFormik.values?.description
+    if (seoFormik.values?.description) {
+      seoItems.description = seoFormik.values?.description;
     }
-    if(multipleTags.length > 0){
-      seoItems.metaKeywords = multipleTags
+    if (multipleTags.length > 0) {
+      seoItems.metaKeywords = multipleTags;
     }
-    handleSeoChange(seoItems)
-    
+    handleSeoChange(seoItems);
+  }
+
+  useEffect(()=>{
+    if(checkedSwitch === true){
+      if (multipleTags.length > 0) {
+        seoItems.metaKeywords = multipleTags;
+      }
+      if (seoFormik.values?.description) {
+        seoItems.description = seoFormik.values?.description;
+        seoItems.title = seoFormik.values?.title;
+        seoItems.slug = seoFormik.values.slug
+      }
+      handleSeoChange(seoItems);
+    }
   },[seoFormik.values])
+
+  function handleSeoCreate(){
+    let seoItems = {};
+    seoItems.title = seoFormik.values?.title;
+    seoItems.refrenceId =refrenceId
+    if (
+      seoFormik.initialValues.slug !== seoFormik.values.slug ||
+      seoValue?.slug !== seoFormik.values.slug
+    ) {
+      seoItems.slug = seoFormik.values.slug;
+    }
+    if (seoFormik.values?.description) {
+      seoItems.description = seoFormik.values?.description;
+    }
+    if (multipleTags.length > 0) {
+      seoItems.metaKeywords = multipleTags;
+    }
+    createSeo(seoItems).unwrap().then(()=>{
+      handleSeoChange({})
+     dispatch(showSuccess({message:"Seo created for this category"}))
+    }).catch((err)=> dispatch(showError({message: err?.data?.message})))
+  }
   // ? SWITCH STARTS HERE
-  const [checkedSwitch, setCheckedSwitch] = React.useState(true);
   const handleSwitchChange = (event) => {
     setCheckedSwitch(event.target.checked);
+    if (event.target.checked === false) {
+      handleSeoChange(retainValue);
+      return;
+    }
+    handleSubmit();
   };
   // ? SWITCH ENDS HERE
   const handleAddMultiple = (event) => {
@@ -103,11 +168,12 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
             ...prevValues,
             seoFormik.values.metaKeywords,
           ]);
-          seoFormik.setFieldValue('metaKeywords',"")
+          seoFormik.setFieldValue("metaKeywords", "");
         }
       });
     }
   };
+
   const handleDelete = (value) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
@@ -166,16 +232,32 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
             <div className="d-flex flex-column p-3">
               <div className="d-flex justify-content-between">
                 <p className="text-lightBlue">Metadata Preview</p>
-                <small className="text-lightBlue text-blue-2 c-pointer" onClick={() => setViewAll(prevState => !prevState)}>
-                  { viewAll == false ? "SEO Edit" : "Save" }
-                </small>
+                {viewAll == false ? (
+                  <small
+                    className="text-lightBlue text-blue-2 c-pointer"
+                    onClick={() => {
+                      handleSubmit();
+                      setViewAll((prevState) => !prevState);
+                    }}
+                  >
+                    SEO Edit
+                  </small>
+                ) : (
+                  <small
+                    className="text-lightBlue text-blue-2 c-pointer"
+                    onClick={() => {
+                      handleSeoCreate();
+                      setViewAll((prevState) => !prevState);
+                    }}
+                  >
+                    Save
+                  </small>
+                )}
               </div>
               <small className="text-lightBlue mt-3 mb-2 fw-500">
                 {seoFormik.values.title}
               </small>
-              <small className="text-blue-2">
-                {seoFormik.values.slug}
-              </small>
+              <small className="text-blue-2">{seoFormik.values.slug}</small>
               <small className="mt-2 text-grey-6">
                 {seoFormik.values.description}
               </small>
@@ -263,7 +345,6 @@ const SEO = ({seoName,seoValue, handleSeoChange }) => {
               </FormControl>
             </React.Fragment>
           )}
-          
         </React.Fragment>
       )}
     </div>

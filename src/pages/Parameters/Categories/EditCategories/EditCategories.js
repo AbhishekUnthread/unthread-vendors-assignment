@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import "../../EditVendor/EditVendor.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import NotesBox from "../../../../components/NotesBox/NotesBox";
@@ -11,17 +11,16 @@ import TabPanel from "../../../../components/TabPanel/TabPanel";
 import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox";
 import SEO from "../../../Products/AddProduct/SEO/SEO";
 import VisibilityBox from "../../../../components/VisibilityBox/VisibilityBox";
-import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
+import SaveFooter, {
+  SaveFooterTertiary,
+} from "../../../../components/SaveFooter/SaveFooter";
 import AddHeader from "../../../../components/AddHeader/AddHeader";
 // ! IMAGES IMPORTS
-import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
 import info from "../../../../assets/icons/info.svg";
-import paginationRight from "../../../../assets/icons/paginationRight.svg";
-import paginationLeft from "../../../../assets/icons/paginationLeft.svg";
 import addMedia from "../../../../assets/icons/addMedia.svg";
+import _ from "lodash";
 // ! MATERIAL IMPORTS
 import {
-  Autocomplete,
   Box,
   Checkbox,
   FormControl,
@@ -36,46 +35,114 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { updateCategoryId } from "../../../../features/parameters/categories/categorySlice";
 import {
   useCreateCategoryMutation,
   useEditCategoryMutation,
   useGetAllCategoriesQuery,
 } from "../../../../features/parameters/categories/categoriesApiSlice";
-import { UseEditCategory } from "../../../../features/parameters/categories/categoriesEditHook";
-import { showError, showSuccess } from "../../../../features/snackbar/snackbarAction";
+import {
+  showError,
+  showSuccess,
+} from "../../../../features/snackbar/snackbarAction";
+import { useFormik } from "formik";
+import InfoHeader from "../../../../components/Header/InfoHeader";
+
+const initialState = {
+  confirmationMessage: "",
+  isEditing: false,
+  initialInfo: null,
+  isSeoEditDone:false,
+};
+
+const initialQueryFilterState = {
+  pageSize: 1,
+  pageNo: null,
+  totalCount: 0,
+};
+
+const categoryReducer = (state, action) => {
+  if (action.type === "REMOVE_DELETE") {
+    return {
+      ...initialState,
+    };
+  }
+  if (action.type === "ENABLE_EDIT") {
+    return {
+      ...initialState,
+      isEditing: true,
+    };
+  }
+  if (action.type === "DISABLE_EDIT") {
+    return {
+      ...initialState,
+      isEditing: false,
+    };
+  }
+  if (action.type === "DISABLE_SEO") {
+    return {
+      ...initialState,
+      isSeoEditDone: false,
+    };
+  }
+
+  return initialState;
+};
+
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_NO") {
+    return {
+      ...state,
+      pageNo: +action.pageNo,
+    };
+  }
+  if (action.type === "SET_TOTAL_COUNT") {
+    return {
+      ...state,
+      totalCount: action.totalCount,
+    };
+  }
+  return initialQueryFilterState;
+};
+
+function isEmpty(obj) {
+  for (var prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [categoryName, setCategoryName] = useState("");
+  let { id,filter } = useParams();
+  const [categoryState, dispatchCategory] = useReducer(
+    categoryReducer,
+    initialState
+  );
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
   const [categoryDescription, setCategoryDescription] = useState("");
-  const [categoryStatus, setCategoryStatus] = useState("");
-  const [categoryNotes, setCategoryNotes] = useState('')
-  const [startDate, setStartDate] = useState(null)
-  const [endDate, setEndDate] = useState(null)
-  // const [categoryVisibility, setCategoryVisibility] = useState(false);
-  const [categorySeo,setCategorySeo] = useState({})
-  const [categoryMediaUrl, setCategoryMediaUrl] = useState('')
-  const [checked, setChecked] = useState(false);
-  const categoryId = useSelector((state) => state.category.categoryId);
-
-  const [
-    createCategory,
-    {
-      isLoading: createCategoryIsLoading,
-      isSuccess: createCategoryIsSuccess,
-      error: createCategoryError,
-    },
-  ] = useCreateCategoryMutation();
+  const [decodedObject, setDecodedObject] = useState(null);
 
   const {
     data: categoriesData,
     isLoading: categoriesIsLoading,
+    isError: categoriesIsError,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({ createdAt: "-1", id: categoryId });
+  } = useGetAllCategoriesQuery({
+    ...queryFilterState,
+    ...(decodedObject?.filterParams || {}),
+    skip: queryFilterState.pageNo ? false : true,
+    name:decodedObject?.filterParams?.name || "",
+
+  });
 
   const [
     editCategory,
@@ -87,145 +154,150 @@ const EditCategories = () => {
     },
   ] = useEditCategoryMutation();
 
-  useEffect(() => {
-    if (categoriesIsSuccess && categoryId !== "") {
-      // If categoriesIsSuccess is true, set the category name based on the data from the API response
-      setCategoryName(categoriesData.data.data[0].name);
-      setCategoryDescription(categoriesData.data.data[0].description);
-      setCategoryStatus(categoriesData.data.data[0].status);
-      // setCategoryVisibility(categoriesData.data.data[0].isVisibleFrontend)
-      setCategoryNotes(categoriesData.data.data[0].notes)
-      setChecked(categoriesData.data.data[0].showFilter)
-      setStartDate(categoriesData.data.data[0].startDate || null)
-      setEndDate(categoriesData.data.data[0].endDate || null)
-      setCategoryMediaUrl(categoriesData.data.data[0].mediaUrl)
-      setCategorySeo(categoriesData.data.data[0]?.seos ? categoriesData.data.data[0]?.seos :{})
-      
-    }
-  }, [categoriesIsSuccess, dispatch]);
-
-
-  useEffect(()=>{
-    if(categoriesError){
-      if (categoriesError.data?.message) {
-        dispatch(showError({ message: categoriesError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );}
-    }
-  },[categoriesError])
-
-
-  const handleNameChange = (event) => {
-    setCategoryName(event.target.value); // Updating the category name based on the input value
-  };
-
-  const clearDate = () => {
-    setStartDate(null);
-    setEndDate(null);
-  };
-
-  const handleSubmit = () => {
-    if (categoryId !== "") {
-      // Calling Category edit API
+  const categoryEditFormik = useFormik({
+    initialValues: {
+      name: categoriesData?.data?.data?.[0]?.name || "",
+      description: categoriesData?.data?.data?.[0]?.description,
+      status: categoriesData?.data?.data?.[0]?.status,
+      notes: categoriesData?.data?.data?.[0]?.notes,
+      showFilter: categoriesData?.data?.data?.[0]?.showFilter,
+      startDate: categoriesData?.data?.data?.[0]?.startDate || null,
+      endDate: categoriesData?.data?.data?.[0]?.endDate || null,
+      mediaUrl: categoriesData?.data?.data?.[0]?.mediaUrl || "",
+      seo: categoriesData?.data?.data?.[0]?.seos || {},
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
       let editItems = {
-        showFilter: checked, // Whether to show filters
-        name: categoryName, // Category name
-        description: categoryDescription, // Category description
-        status: startDate === null  ?  categoryStatus :"scheduled", // Category status
+        showFilter: values.showFilter, // Whether to show filters
+        name: values.name, // Category name
+        description: values.description, // Category description
+        status: values.startDate === null ? values.status : "scheduled", // Category status
         // isVisibleFrontend: categoryVisibility,
-        notes: categoryNotes,
-        mediaUrl: categoryMediaUrl,
-        seo: categorySeo,
+        notes: values.notes,
       };
-      if (startDate) {
-        editItems.startDate = new Date(startDate);
+      if (values.mediaUrl) {
+        editItems.mediaUrl = values.mediaUrl;
       }
-      if (endDate) {
-        editItems.endDate = new Date(endDate);
+      // if (isEmpty(values.seo)) {
+      //   editItems.seo = {
+      //     title: values.name,
+      //     slug: "https://example.com/" + values.name,
+      //   };
+      // }
+      if (!isEmpty(values.seo)) {
+        editItems.seo = values.seo;
+      }
+      if (values.startDate) {
+        editItems.startDate = new Date(values.startDate);
+      }
+      if (values.endDate) {
+        editItems.endDate = new Date(values.endDate);
       }
       editCategory({
-        id: categoryId, // ID of the category
+        id: categoriesData?.data?.data?.[0]?._id, // ID of the category
         details: editItems,
       })
         .unwrap()
         .then(() => {
-          dispatch(showSuccess({message:"Category Updated Successfully"}))
-        })
-    } else {
-      createCategory({
-        showFilter: checked, // Whether to show filters
-        name: categoryName, // Category name
-        description: categoryDescription, // Category description
-        status: categoryStatus, // Category status
-        // isVisibleFrontend: categoryVisibility,
-        notes: categoryNotes,
-        startDate: startDate,
-        endDate: endDate,
-        mediaUrl: categoryMediaUrl,
-        seo: categorySeo,
-      })
-        .unwrap()
-        .then(() => {
-          navigate("/parameters/categories"); // Navigating to categories page after successful creation
+          dispatch(showSuccess({ message: "Category Updated Successfully" }));
+          dispatchCategory({ type: "DISABLE_SEO" })
         });
+    },
+  });
+
+  const clearDate = () => {
+    categoryEditFormik.setFieldValue("startDate", null);
+    categoryEditFormik.setFieldValue("endDate", null);
+  };
+
+  useEffect(() => {
+    if (categoryDescription === "<p></p>") {
+      categoryEditFormik.setFieldValue(
+        "description",
+        categoryEditFormik.values.description
+      );
     }
+    categoryEditFormik.setFieldValue("description", categoryDescription);
+  }, [categoryDescription]);
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    categoryEditFormik.handleSubmit();
   };
 
-  const handleSubmitAndAddAnother = () => {
-    if (categoryId !== "") {
-      // Calling Category edit API
-      editCategory({
-        id: categoryId, // ID of the category
-        details: {
-          showFilter: checked, // Whether to show filters
-          name: categoryName, // Category name
-          description: categoryDescription, // Category description
-          status: categoryStatus, // Category status,
-          // isVisibleFrontend: categoryVisibility,
-          notes: categoryNotes,
-          startDate: startDate,
-          endDate: endDate,
-          mediaUrl: categoryMediaUrl,
-          seo: categorySeo,
-        },
-      })
-        .unwrap()
-        .then(() => {
-          navigate("/parameters/categories/edit"); // Navigating to edit page after successful edit
-        });
-    } else {
-      createCategory({
-        showFilter: checked, // Whether to show filters
-        name: categoryName, // Category name
-        description: categoryDescription, // Category description
-        status: categoryStatus, // Category status
-        // isVisibleFrontend: categoryVisibility,
-        notes: categoryNotes,
-        startDate: startDate,
-        endDate: endDate,
-        mediaUrl: categoryMediaUrl,
-        seo: categorySeo,
-      })
-        .unwrap()
-        .then(() => {
-          navigate("/parameters/categories/edit"); // Navigating to categories page after successful creation
-        });
+  const backHandler = () => {
+    navigate("/parameters/categories");
+  };
+
+  const nextPageHandler = () => {
+    const { pageNo, totalCount } = queryFilterState;
+    if (pageNo + 1 > totalCount) {
+      return;
     }
-
-    resetValues(); // Resetting the category
-    dispatch(updateCategoryId(""));
+    navigate(`/parameters/categories/edit/${pageNo + 1}/${filter}`);
   };
 
-  const resetValues = () => {
-    setCategoryName("");
-    setCategoryDescription("");
-    setCategoryStatus("active");
-    setCategoryNotes("");
-    // setCategoryVisibility(false);
-    setChecked(false);
+  const prevPageHandler = () => {
+    const { pageNo } = queryFilterState;
+    if (pageNo - 1 === 0) {
+      return;
+    }
+    navigate(`/parameters/categories/edit/${pageNo - 1}/${filter}`);
   };
+
+  useEffect(() => {
+    if (id) {
+      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (categoriesError) {
+      if (categoriesError?.data?.message) {
+        dispatch(showError({ message: categoriesError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+    if (categoriesIsSuccess) {
+      dispatchQueryFilter({
+        type: "SET_TOTAL_COUNT",
+        totalCount: categoriesData?.data?.totalCount,
+      });
+    }
+  }, [
+    categoriesData,
+    categoriesError,
+    categoriesIsError,
+    categoriesIsSuccess,
+    dispatch,
+  ]);
+
+  useEffect(() => {
+    const encodedString = filter; // The encoded string from the URL or any source
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+
+    setDecodedObject(parsedObject);
+  }, [categoriesData,categoriesIsSuccess,id]);
+
+  useEffect(() => {
+    if (
+      id &&
+      !_.isEqual(categoryEditFormik.values, categoryEditFormik.initialValues)
+    ) {
+      dispatchCategory({ type: "ENABLE_EDIT" });
+    } else if (
+      id &&
+      _.isEqual(categoryEditFormik.values, categoryEditFormik.initialValues)
+    ) {
+      dispatchCategory({ type: "DISABLE_EDIT" });
+    }
+  }, [categoryEditFormik.initialValues, categoryEditFormik.values, id]);
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryType(tabIndex);
@@ -237,11 +309,15 @@ const EditCategories = () => {
 
   return (
     <div className="page container-fluid position-relative user-group">
-      <AddHeader
-        headerName={categoryName || ""}
-        navigateLink={"/parameters/categories"}
+      <InfoHeader
+        title={categoryEditFormik.values.name || "Edit category"}
+        onBack={backHandler}
+        onPreview={() => {}}
+        onPrev={prevPageHandler}
+        onNext={nextPageHandler}
+        isEdit={!!id}
       />
-      <div className="row mt-3">
+      <form noValidate onSubmit={submitHandler} className="row mt-3">
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
             <div className="col-md-12 px-0">
@@ -258,9 +334,10 @@ const EditCategories = () => {
               </div>
               <FormControl className="w-100 px-0">
                 <OutlinedInput
-                  value={categoryName}
-                  onChange={handleNameChange}
-                  placeholder="Gold Products"
+                  name="name"
+                  value={categoryEditFormik.values.name}
+                  onChange={categoryEditFormik.handleChange}
+                  placeholder="Category Name"
                   size="small"
                 />
               </FormControl>
@@ -270,9 +347,10 @@ const EditCategories = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
+                      name="showFilter"
                       inputProps={{ "aria-label": "controlled" }}
-                      checked={checked}
-                      onChange={(e) => setChecked(e.target.checked)}
+                      checked={categoryEditFormik.values.showFilter}
+                      onChange={categoryEditFormik.handleChange}
                       size="small"
                       style={{
                         color: "#5C6D8E",
@@ -305,12 +383,14 @@ const EditCategories = () => {
               </div>
               <AppTextEditor
                 value={categoryDescription}
-                setFieldValue={(val) => setCategoryDescription(val)}
+                setFieldValue={(val) => {
+                  setCategoryDescription(val);
+                }}
               />
             </div>
           </div>
 
-          <div className="border-grey-5 rounded-8 p-3 row features mt-4">
+          <div className="border-grey-5 rounded-8 p-3 row bg-black-15 mt-4">
             <Box
               sx={{ width: "100%" }}
               className="d-flex justify-content-between tabs-header-box"
@@ -332,26 +412,42 @@ const EditCategories = () => {
                   <AddCategoriesProducts />
                 </TabPanel>
                 <TabPanel value={categoryType} index={1}>
-                  <AddSubCategoriesProducts id={categoryId} />
+                  <AddSubCategoriesProducts
+                    id={id ? categoriesData?.data?.data?.[0]?._id : ""}
+                  />
                 </TabPanel>
               </>
             }
           </div>
           <div className="mt-4">
-            <SEO seoName={categoryName} seoValue={categorySeo} handleSeoChange={setCategorySeo} />
+            <SEO
+              seoName={categoryEditFormik.values.name || ""}
+              seoValue={categoryEditFormik.values.seo}
+              handleSeoChange={(val) =>
+                categoryEditFormik.setFieldValue("seo", val)
+              }
+              refrenceId={id ? categoriesData?.data?.data?.[0]?._id : ""}
+              toggleState={id ? categoryState.isSeoEditDone : false}
+            />
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
           <StatusBox
             headingName={"Category Status"}
-            value={categoryStatus}
-            handleProductStatus={(_, val) => setCategoryStatus(val)}
+            value={categoryEditFormik.values.status}
+            handleProductStatus={(_, val) =>
+              categoryEditFormik.setFieldValue("status", val)
+            }
             toggleData={["active", "in-active"]}
             showSchedule={true}
-            startDate={startDate}
-            endDate={endDate}
-            handleStartDate={setStartDate}
-            handleEndDate={setEndDate}
+            startDate={categoryEditFormik.values.startDate}
+            endDate={categoryEditFormik.values.endDate}
+            handleStartDate={(val) =>
+              categoryEditFormik.setFieldValue("startDate", val)
+            }
+            handleEndDate={(val) =>
+              categoryEditFormik.setFieldValue("endDate", val)
+            }
             clearDate={clearDate}
           />
           {/* <VisibilityBox value={categoryVisibility}
@@ -362,18 +458,25 @@ const EditCategories = () => {
             <UploadMediaBox
               imageName={addMedia}
               headingName={"Media"}
-              UploadChange={setCategoryMediaUrl}
-              imageValue={categoryMediaUrl}
+              UploadChange={(url) =>
+                categoryEditFormik.setFieldValue("mediaUrl", url)
+              }
+              previousImage={categoryEditFormik.values.mediaUrl}
+              isUploaded={() => {}}
             />
           </div>
           <NotesBox
             name={"notes"}
-            value={categoryNotes}
-            onChange={(e) => setCategoryNotes(e.target.value)}
+            value={categoryEditFormik.values.notes}
+            onChange={categoryEditFormik.handleChange}
           />
         </div>
-      </div>
-      <SaveFooter handleSubmit={handleSubmit} />
+        <SaveFooterTertiary
+          show={id ? categoryState.isEditing : true}
+          onDiscard={backHandler}
+          isLoading={editCategoryIsLoading}
+        />
+      </form>
     </div>
   );
 };

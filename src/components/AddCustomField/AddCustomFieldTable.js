@@ -24,7 +24,7 @@ import TableHeader from "../TableHeader/TableHeader";
 import TableEditStatusButton from "../TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../TableMassActionButton/TableMassActionButton";
 import EditButton from "../EditButton/EditButton";
-import RemoveIconButton from "../RemoveIconButton/RemoveIconButton";
+import DeleteIconButton from "../DeleteIconButton/DeleteIconButton";
 import AddCustomField from "./AddCustomField";
 
 const DragHandle = SortableHandle(() => (
@@ -64,19 +64,19 @@ const HEAD_CELLS = [
     align: "left",
     disablePadding: false,
     label: "Input Field Type",
-    width: "25%",
+    width: "27%",
   },
   {
     align: "left",
     disablePadding: false,
     label: "Show / Hide",
-    width: "12%",
+    width: "16%",
   },
   {
     align: "right",
     disablePadding: false,
     label: "",
-    width: "8%",
+    width: "3%",
   },
 ];
 
@@ -116,7 +116,7 @@ const AddCustomFieldTable = (props) => {
                       </TableCell>
                       <TableCell>
                         <div className="d-flex align-items-center justify-content-end">
-                          <RemoveIconButton
+                          <DeleteIconButton
                             onClick={onDeleteField.bind(null, {
                               deleteIndex: index,
                               message: data.title,

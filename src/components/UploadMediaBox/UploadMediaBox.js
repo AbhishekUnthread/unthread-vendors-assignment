@@ -36,9 +36,13 @@ const UploadMediaBox = ({
   headingName,
   UploadChange,
   imageValue,
+  previousImage,
+  isUploaded
 }) => {
   const [inputUrl, setInputUrl] = useState("");
   const [uploadFile, uploadState] = UseFileUpload();
+
+  console.log(previousImage,'previousImage');
   // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
@@ -49,11 +53,14 @@ const UploadMediaBox = ({
         uploadFile({ file: acceptedFiles[0] });
       },
     });
+
   useEffect(() => {
     if (uploadState.data?.url) {
       UploadChange(uploadState.data?.url);
+      isUploaded(true);
     } else {
       UploadChange(inputUrl);
+      isUploaded(false);
     }
   }, [uploadState, inputUrl]);
   useEffect(() => {
@@ -155,7 +162,7 @@ const UploadMediaBox = ({
               ? uploadState?.data?.url
               : inputUrl !== ""
               ? inputUrl
-              : imageName
+              : previousImage ? previousImage : imageName
           }
           className="w-100"
           style={{ height: "150px" }}

@@ -56,7 +56,7 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: tagsDetails,
       }),
-      invalidatesTags: ["SubCategories"],
+      invalidatesTags: ["SubCategories","Categories"],
     }),
     createSubCategory: builder.mutation({
       query: (subCategoryDetails) => ({
@@ -64,19 +64,35 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: subCategoryDetails,
       }),
-      invalidatesTags: ["SubCategories"],
+      invalidatesTags: ["SubCategories","Categories"],
     }),
     deleteCategory: builder.mutation({
       query: (categoryId) => ({
-        url: `/parameters/category/${categoryId}`,
+        url: `/parameters/category/hardDelete/${categoryId}`,
         method: "DELETE",
         body: categoryId,
       }),
       invalidatesTags: ["Categories"],
     }),
+    bulkDeleteCategory: builder.mutation({
+      query: ( details ) => ({
+        url: `/parameters/category/bulkDelete`,
+        method: "DELETE",
+        body: details,
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+    bulkDeleteSubCategory: builder.mutation({
+      query: (details ) => ({
+        url: `/parameters/subCategory/bulkDelete`,
+        method: "DELETE",
+        body: details,
+      }),
+      invalidatesTags: ["SubCategories"],
+    }),
     deleteSubCategory: builder.mutation({
       query: (subCategoryId) => ({
-        url: `/parameters/subCategory/${subCategoryId}`,
+        url: `/parameters/subCategory/hardDelete/${subCategoryId}`,
         method: "DELETE",
         body: subCategoryId,
       }),
@@ -131,4 +147,6 @@ export const {
   useSubCategoryBulkCreateTagMutation,
   useBulkEditTagCategoryMutation,
   useBulkEditTagSubCategoryMutation,
+  useBulkDeleteCategoryMutation,
+  useBulkDeleteSubCategoryMutation,
 } = categoriesApiSlice;

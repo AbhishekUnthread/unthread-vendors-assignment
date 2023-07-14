@@ -26,6 +26,7 @@ import { useGetAllProductsQuery } from "../../../features/products/product/produ
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
+import DiscardModal from "../../../components/Discard/DiscardModal";
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -84,6 +85,7 @@ const EditVendor = () => {
   const [vendorIndex, setVendorIndex] = useState();
   const [hideFooter, setHideFooter] = useState(false);
   const [vendorNameError, setVendorNameError] = useState('');
+  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
 
   const [initialName, setInitailName] = useState("");
   const [initialNotes, setInitailNotes] = useState("");
@@ -251,6 +253,12 @@ const EditVendor = () => {
 
     const backHandler = () => {
       navigate(-1);
+      setShowDiscardModal(true);
+      // navigate("/parameters/vendors");
+    };
+  
+    const toggleDiscardModal = () => {
+      setShowDiscardModal(false);;
     };
     
     const handleSubmitAndAddAnother = () => {
@@ -408,7 +416,6 @@ const EditVendor = () => {
               className="c-pointer"
               onClick={backHandler}
             />
-
           <h5 className="page-heading ms-2 ps-1">{vendorName}</h5>
         </div>
 
@@ -441,7 +448,7 @@ const EditVendor = () => {
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Name</p>
-                <Tooltip title="Lorem ipsum" placement="top">
+                <Tooltip title="Enter Name" placement="top">
                   <img
                     src={info}
                     alt="info"
@@ -461,6 +468,7 @@ const EditVendor = () => {
               <br />
               </>
               }
+              <div className="small">
               <FormControlLabel
                         control={
                           <Checkbox
@@ -483,8 +491,10 @@ const EditVendor = () => {
                             color: "#c8d8ff",
                           },
                         }}
-                        className=" px-0"
+                        className=" px-0 me-1"
                  />
+                 <button className="reset link">(manage)</button>
+                 </div>
             </div>
           </div>
 
@@ -518,6 +528,7 @@ const EditVendor = () => {
           onDiscard={backHandler}
           isLoading={editVendorIsLoading}
           handleSubmit={handleSubmit}
+
       />
 
 
@@ -662,6 +673,11 @@ const EditVendor = () => {
           </div>
         </DialogActions>
       </Dialog>
+      <DiscardModal 
+      showDiscardModal={showDiscardModal}   
+      toggleDiscardModal={toggleDiscardModal}
+
+      />
     </div>
   );
 };

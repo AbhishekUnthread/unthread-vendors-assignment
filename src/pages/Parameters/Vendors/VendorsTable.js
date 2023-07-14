@@ -37,10 +37,14 @@ import { useDispatch } from "react-redux";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { LoadingButton } from "@mui/lab";
 import question from "../../../assets/icons/question.svg"
-import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+// import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 import DeleteIcon from '@mui/icons-material/Delete';
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
+import unArchived from "../../../assets/images/Components/Archived.png"
+import closeModal from "../../../assets/icons/closeModal.svg"
 
 // ? TABLE STARTS HERE
 function createData(vId, vendorsName, noOfProducts, status) {
@@ -594,13 +598,14 @@ const handleDelete =()=>{
           <span className="d-flex justify-content-center m-3">Loading...</span>
         ) : (
           <span className="d-flex justify-content-center m-3">
-            No data found
+          <NoDataFound />
           </span>
         )
       ) : (
         <></>
       )}
-      <Dialog
+
+      {/* <Dialog
           open={archivedModal}
           TransitionComponent={Transition}
           keepMounted
@@ -632,12 +637,58 @@ const handleDelete =()=>{
               <p>Yes</p>
             </button>
           </DialogActions>
-      </Dialog>
+      </Dialog> */}
+
+      <Dialog
+          open={archivedModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleModalClose}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={closeModal} alt="question" width={40} 
+              className="closeModal c-pointer" 
+              onClick={handleModalClose}
+            />
+            <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
+            <div className="row"></div>
+            <h5 className="text-lightBlue mt-2 mb-3">
+              Archive   
+              <span className="text-blue-2"> {selected.length >= 1 ? `${selected.length} vendors` : vendorName}? </span>
+            </h5>
+            <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
+              <span className="text-blue-2"> 0 products </span> 
+              in this collection will be unassigned from it.
+            </h6>
+            <h6 className="mt-2 mb-4" style={{color: "#5C6D8E"}}>
+              Would you like to Archive this Vendor ?
+            </h6>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-center px-4 pb-4">
+            <button
+              className="button-lightBlue-outline py-2 px-3 me-4"
+              onClick={handleModalClose}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-red-outline py-2 px-3"
+              onClick={handleArchivedModalOnSave}
+            >
+              <p>Archive</p>
+            </button>
+          </DialogActions>
+        </Dialog>
+
+
       <DeleteModal
         showCreateModal={showDeleteModal}
         toggleArchiveModalHandler={handleDeleteOnClick}
         handleArchive={handleDelete}
-        name={`${selected.length > 1 ? `${selected.length} vendors` : ''}${vendorName}`}
+        name={selected.length >= 1 ? selected.length : vendorName}
+        deleteType={"Vendor"}
       />
 
       <UnArchivedModal 
@@ -645,6 +696,8 @@ const handleDelete =()=>{
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
+          name={vendorName}
+          nameType={"Vendor"}
         />
         
           <UnArchivedModal 
@@ -652,6 +705,8 @@ const handleDelete =()=>{
           showUnArchivedModal={openUnArchivePopUp}
           closeUnArchivedModal={closeMassUnArchivedModal}
           handleUnArchived={handleMassUnArchived}
+          nameType={"Vendor"}
+          name={selected.length}
         />
         
 

@@ -13,6 +13,7 @@ import UploadBanner from "../../../components/UploadBanner/UploadBanner";
 import StatusBox from "../../../components/StatusBox/StatusBox";
 import VisibilityBox from '../../../components/VisibilityBox/VisibilityBox'
 import AddHeader from "../../../components/AddHeader/AddHeader"
+import DiscardModal from "../../../components/Discard/DiscardModal";
 import {
   EnhancedTableHead,
   stableSort,
@@ -223,21 +224,19 @@ const likeProductRows = [
 // ? LIKE PRODUCTS TABLE ENDS HERE
 
 const collectionValidationSchema = Yup.object({
-  title: Yup.string().trim().min(3).required("Required"),
-  // description : Yup.string().trim().min(10).required("Required"),
-  // mediaUrl : Yup.string().trim().required("Required"),
+  title: Yup.string().trim().min(3).required("Required")
 });
 
 const CreateCollection = () => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
-  const [error, setError] = useState(false);
   const [startDate1, setStartDate] = useState(null);
   const [endDate1, setEndDate] = useState(null);
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
   const [categorySeo,setCategorySeo] = useState({});
   const [appTextEditor, setAppTextEditor] = useState()
+  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
 
   const clearDate = () => {
     setStartDate(null);
@@ -258,6 +257,14 @@ const CreateCollection = () => {
     collectionFormik?.setFieldValue("status", status);
   }
 
+  const toggleDiscardModal = () => {
+    setShowDiscardModal((prevState) => !prevState);
+  };
+
+  const handleDiscard = () => {
+    setShowDiscardModal(true);
+  }
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
@@ -276,6 +283,7 @@ const CreateCollection = () => {
 
   const collectionFormik = useFormik({
     initialValues: {
+      title: "",
       status: "in-active",
       isVisibleFrontend: false,
       filter: false,
@@ -288,11 +296,37 @@ const CreateCollection = () => {
           delete values[key] 
         }
       }
-      createCollection(values)
+      let obj={
+        ...values,
+      };
+
+      if (categorySeo?.title || categorySeo?.slug || categorySeo?.urlHandle) {
+        obj.seo = {};
+
+        if (categorySeo?.title) {
+          obj.seo.title = categorySeo.title;
+        }
+
+        if (categorySeo?.slug) {
+          obj.seo.slug = categorySeo.slug;
+        }
+
+        if (categorySeo?.urlHandle) {
+          obj.seo.urlHandle = categorySeo.urlHandle;
+        }
+
+        if(categorySeo?.metaKeywords) {
+          obj.seo.metaKeywords = categorySeo?.metaKeywords
+        }
+      }
+      
+      createCollection(obj)
         .unwrap()
-        .then(() => collectionFormik.resetForm());
-        navigate("/parameters/collections");
-        dispatch(showSuccess({ message: "Collection created successfully" }));
+        .then(() => { 
+          navigate("/parameters/collections");
+          dispatch(showSuccess({ message: "Collection created successfully" }));
+        });
+       
     },
   });
 
@@ -306,19 +340,18 @@ const CreateCollection = () => {
     if(endDate1 !== null){
       collectionFormik.setFieldValue("endDate", endDate1);
     }
-    // if(startDate1 !== null){
-    //   collectionFormik.setFieldValue("status", "scheduled");
-    // }
+    if(startDate1 !== null){
+      collectionFormik.setFieldValue("status", "scheduled");
+    }
   },[appTextEditor, startDate1, endDate1])
 
   useEffect(() => {
     if (createCollectionError) {
-      setError(true);
       if (createCollectionError?.data?.message) {
         dispatch(showError({ message: createCollectionError.data.message }));
       } else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Oops! Failed to create Collection. Please try again." })
         );
       }
     }
@@ -489,7 +522,6 @@ const CreateCollection = () => {
 
    useEffect(() => {
     if (collectionError) {
-      setError(true);
       if (collectionError?.data?.message) {
         dispatch(showError({ message: collectionError.data.message }));
       } else {
@@ -499,7 +531,6 @@ const CreateCollection = () => {
       }
     }
     if (collectionIsSuccess) {
-      setError(false);
         setCollectionList(collectionData.data.data);
     }
   }, [
@@ -547,10 +578,10 @@ const CreateCollection = () => {
                   />
                 </FormControl>
                 {!!collectionFormik.touched.title && collectionFormik.errors.title && (
-                    <FormHelperText error>
-                      {collectionFormik.errors.title}
-                    </FormHelperText>
-                  )}
+                  <FormHelperText error>
+                    {collectionFormik.errors.title}
+                  </FormHelperText>
+                )}
                 <FormGroup>
                   <div className="d-flex align-items-center col-12 px-0">
                     <FormControlLabel
@@ -1048,9 +1079,9 @@ const CreateCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO 
-                name={collectionFormik.values.title} 
-                value={categorySeo} 
+              <SEO  
+                seoName={collectionFormik.values.title} 
+                seoValue={categorySeo} 
                 handleSeoChange={setCategorySeo} 
               />
             </div>
@@ -1272,7 +1303,7 @@ const CreateCollection = () => {
               handleEndDate={setEndDate}
               clearDate={clearDate}
             />
-            <VisibilityBox name={"isVisibleFrontend"} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
+            {/* <VisibilityBox name={"isVisibleFrontend"} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} /> */}
             <div className="mt-4">
               <UploadMediaBox 
                 name={"mediaUrl"}  
@@ -1280,6 +1311,7 @@ const CreateCollection = () => {
                 imageName={addMedia} 
                 headingName={"Media"} 
                 UploadChange={handleMediaUrl} 
+                isUploaded={()=>{}}
               />
             </div>
              {/* {!!collectionFormik.touched.mediaUrl && collectionFormik.errors.mediaUrl && (
@@ -1299,12 +1331,12 @@ const CreateCollection = () => {
         </div>
         <div className="row create-buttons pt-5 pb-3 justify-content-between">
           <div className="d-flex w-auto px-0">
-            <Link
-              to="/parameters/collections"
+            <button
               className="button-red-outline py-2 px-4"
+              onClick={handleDiscard}
             >
               <p>Discard</p>
-            </Link>
+            </button>
           </div>
           <div className="d-flex w-auto px-0">
               <LoadingButton
@@ -1318,6 +1350,10 @@ const CreateCollection = () => {
           </div>
         </div>
       </div>
+      <DiscardModal           
+        showDiscardModal={showDiscardModal}
+        toggleDiscardModal={toggleDiscardModal}
+      />
     </form>
   );
 };

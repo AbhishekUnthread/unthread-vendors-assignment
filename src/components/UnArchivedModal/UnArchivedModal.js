@@ -12,6 +12,7 @@ import {
 } from '@mui/material'
 import React, { forwardRef } from 'react'
 import unArchived from "../../assets/images/Components/Archived.png"
+import closeModal from "../../assets/icons/closeModal.svg";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -23,7 +24,8 @@ const UnArchivedModal = ({
     closeUnArchivedModal, 
     handleUnArchived, 
     handleStatusValue,
-    name 
+    name,
+    nameType
   }) => {
   const [statusValue, setStatusValue] = React.useState("in-active");
 
@@ -44,13 +46,17 @@ const UnArchivedModal = ({
         onClose={closeUnArchivedModal}
       >
         <DialogContent className="py-2 px-4 text-center">
-          <img src={unArchived} alt="question" width={200} />
+          <img src={closeModal} alt="question" width={40} className="closeModal c-pointer" 
+            onClick={closeUnArchivedModal}
+          />
+          <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
           <div className="row"></div>
-            <h6 className="text-lightBlue mt-2 mb-2">
+            <h5 className="text-lightBlue mt-2 mb-2">
               Before un-archiving 
-              <span className="text-blue-2"> {name} </span>
-               item, please set it's status.
-            </h6>
+              <span className="text-blue-2"> "{name}" </span>
+              {nameType},
+                please set it's status.
+            </h5>
         </DialogContent>
         <div className="d-flex justify-content-center">
           <RadioGroup
@@ -60,16 +66,13 @@ const UnArchivedModal = ({
             value={statusValue}
             onChange={handleStatusRadio}
             className="d-flex justify-content-between px-4 py-3"
-            // onClick={(newValue) => {
-            //   handleValue(newValue.target.value)
-            // }}
           >
             <FormControlLabel
               value="active"
               control={<Radio size="small" />}
               label="Active"
               sx={{
-                color: "#c8d8ff",
+                color: statusValue == "active" ? "#c8d8ff" : "#5C6D8E",
               }}
             />
             <FormControlLabel
@@ -77,28 +80,25 @@ const UnArchivedModal = ({
               control={<Radio size="small" />}
               label="In-Active"
               sx={{
-                color: "#c8d8ff",
+                color: statusValue == "in-active" ? "#c8d8ff" : "#5C6D8E",
               }}
             />
           </RadioGroup>
         </div>
-         <div className="d-flex justify-content-center mt-4">
-            <hr className="hr-grey-6 w-100" />
-          </div>
-        <DialogActions className="d-flex justify-content-between px-4 py-3">
+        <DialogActions className="d-flex justify-content-center px-4 py-3">
           <button
-            className="button-grey py-2 px-5"
+              className="button-lightBlue-outline py-2 px-3 me-4"
             onClick={closeUnArchivedModal}
             type="button"
           >
-            <p className="text-lightBlue">No</p>
+            <p className="text-lightBlue">Cancel</p>
           </button>
           <LoadingButton
-            className="button-gradient py-2 px-5"
+            className="button-gradient py-2 px-3"
             type="button"
             onClick={handleUnArchived}
           >
-            <p>Yes</p>
+            <p>Un-Archive</p>
           </LoadingButton>
         </DialogActions>
       </Dialog>
