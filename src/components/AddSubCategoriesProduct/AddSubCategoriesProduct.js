@@ -286,6 +286,8 @@ const AddSubCategoriesProducts = ({ id }) => {
           .then(() => {
             setShowCreateSubModal(false);
             subCategoryFormik.resetForm();
+          }).catch((err) => {
+            dispatch(showError({ message: err?.data?.message }));
           });
       }
     },
