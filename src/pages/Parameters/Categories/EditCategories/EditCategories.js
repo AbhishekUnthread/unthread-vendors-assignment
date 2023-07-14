@@ -228,7 +228,7 @@ const EditCategories = () => {
   };
 
   const backHandler = () => {
-    navigate(-1);
+    navigate("/parameters/categories");
     
   };
 
@@ -431,7 +431,6 @@ const EditCategories = () => {
                 categoryEditFormik.setFieldValue("seo", val)
               }
               refrenceId={id ? categoriesData?.data?.data?.[0]?._id : ""}
-              toggleState={id ? categoryState.isSeoEditDone : false}
             />
           </div>
         </div>

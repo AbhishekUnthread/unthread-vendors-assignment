@@ -158,6 +158,8 @@ const CategoriesTable = ({
   const [forMassAction, setForMassAction] = React.useState(false);
   const [massActionStatus, setMassActionStatus] = React.useState("");
 
+  console.log(list)
+
   const {
     data: subCategoriesData,
     isLoading: subCategoriesIsLoading,
