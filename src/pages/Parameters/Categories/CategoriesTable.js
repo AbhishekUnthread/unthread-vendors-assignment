@@ -309,14 +309,17 @@ const CategoriesTable = ({
         let item = [];
         item.push(cateoryOpenState.id);
         setOpen(item);
+        setFilterParameter(cateoryOpenState.id)
       }
       if (open.length > 0 && open.includes(cateoryOpenState.id)) {
         setOpen((item) => item.filter((i) => i !== cateoryOpenState.id));
+        setFilterParameter(cateoryOpenState.id)
       }
       if (open.length > 0 && !open.includes(cateoryOpenState.id)) {
         let item = [];
         item.push(cateoryOpenState.id);
         setOpen(item);
+        setFilterParameter(cateoryOpenState.id)
       }
       let state={
         id:"",

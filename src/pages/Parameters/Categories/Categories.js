@@ -69,7 +69,7 @@ import {
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const initialQueryFilterState = {
   pageSize: 10,
@@ -123,6 +123,7 @@ const Categories = () => {
     queryFilterReducer,
     initialQueryFilterState
   );
+  const[searchParams, setSearchParams] = useSearchParams();
   const [categoryType, setCategoryType] = useState(0);
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
@@ -404,6 +405,7 @@ const Categories = () => {
     setSubCategoryList([]);
     setCategoryType(tabIndex);
     setSearchValue("");
+    setSearchParams({status:tabIndex})
   };
 
   const toggleCreateModalHandler = () => {
@@ -567,6 +569,25 @@ const Categories = () => {
     createSubCategoryIsSuccess,
     deleteSubCategoryIsSuccess,
   ]);
+
+  useEffect(() => {
+    if(+searchParams.get("status")===0)
+    {
+      setCategoryType(0);
+    }
+    else if(+searchParams.get("status")===1)
+    {
+      setCategoryType(1);
+    }
+    else if(+searchParams.get("status")===2)
+    {
+      setCategoryType(2);
+    }
+    else if(+searchParams.get("status")===3)
+    {
+      setCategoryType(3);
+    }
+}, [searchParams])
 
   const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
     if (event.key === "Enter" || event.type === "click") {
