@@ -83,6 +83,7 @@ const InputDropdown = (props) => {
     <>
       <FormControl className="w-100 px-0">
         <OutlinedInput
+          className="input-dropdown"
           placeholder={placeholder || "Select"}
           value={currentValue}
           onClick={handlePopover}

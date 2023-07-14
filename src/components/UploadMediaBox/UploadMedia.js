@@ -15,6 +15,8 @@ import CancelButton from "../CancelButton/CancelButton";
 import "./uploadMedia.scss";
 
 import info from "../../assets/icons/info.svg";
+import { ReactComponent as UploadIcon } from "../../assets/icons/upload.svg";
+import { ReactComponent as ImagePlaceHolder } from "../../assets/icons/imagePlaceHolder.svg";
 
 const UploadMediaSmall = (props) => {
   const { fileSrc, error, onUpload, onBlur, name } = props;
@@ -29,6 +31,11 @@ const UploadMediaSmall = (props) => {
       uploadFile({ file: acceptedFiles[0] });
     },
   });
+
+  const cancelHandler = (e) => {
+    e.stopPropagation();
+    onUpload("");
+  };
 
   useEffect(() => {
     if (isError) {
@@ -51,24 +58,19 @@ const UploadMediaSmall = (props) => {
         </Tooltip>
       </div>
       <div {...getRootProps({})} className="small-upload-container">
+        {isHttpValid(fileSrc) && (
+          <div className="cancel-button-container">
+            <CancelButton onClick={cancelHandler} />
+          </div>
+        )}
         <span className="icon-placeholder">
           {!fileSrc ? (
-            <ImageOutlinedIcon
-              sx={{
-                color: "#5c6d8e",
-                fontSize: 20,
-              }}
-            />
+            <ImagePlaceHolder className="svg" width={20} height={20} />
           ) : (
             <img src={fileSrc} className="icon" alt="icon" />
           )}
         </span>
-        <FileUploadIcon
-          sx={{
-            color: "#5c6d8e",
-            fontSize: 25,
-          }}
-        />
+        <UploadIcon className="svg" width={20} height={20} />
         <span className="small text-lightBlue">Upload Image</span>
       </div>
       <FormControl className="w-100 px-0">
@@ -124,19 +126,13 @@ const UploadMediaLarge = (props) => {
           </div>
         )}
         {!isHttpValid(fileSrc) ? (
-          <>
+          <div className="upload-text">
             <div className="upload-icon">
-              <FileUploadIcon
-                sx={{
-                  color: "#5c6d8e",
-                  fontSize: 25,
-                }}
-              />
-
+              <UploadIcon className="svg" width={20} height={20} />
               <span className="small text-lightBlue">Add Image / Video</span>
             </div>
             <span className="small text-grey-6">or drop files to upload</span>
-          </>
+          </div>
         ) : (
           <img src={fileSrc} className="media" alt="icon" />
         )}
