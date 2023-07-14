@@ -7,7 +7,31 @@
   border: 1px solid #38395c;
   padding: 5px 14px;
   border-radius: 4px;
+  gap: 8px;
   cursor: pointer;
+  position: relative;
+
+  .cancel-button-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(50%, -50%);
+
+    button {
+      border-radius: 50%;
+      width: 4px;
+      height: 4px;
+      display: grid;
+      place-content: center;
+      background: $lightBlue;
+    }
+  }
+
+  .svg {
+    path {
+      fill: #5c6d8e;
+    }
+  }
 
   &:focus-visible {
     outline: none;
@@ -30,13 +54,18 @@
 
 .large-upload-container {
   display: grid;
-  place-content: center;
   gap: 5px;
   background-color: $black9;
   min-height: 150px;
   border: 1px dashed #38395c;
   position: relative;
   cursor: pointer;
+
+  .upload-text {
+    display: grid;
+    gap: 5px;
+    place-content: center;
+  }
 
   .upload-icon {
     display: flex;
