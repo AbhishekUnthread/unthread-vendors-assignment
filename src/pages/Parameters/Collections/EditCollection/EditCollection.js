@@ -10,7 +10,9 @@ import UploadBanner from "../../../../components/UploadBanner/UploadBanner";
 import StatusBox from "../../../../components/StatusBox/StatusBox";
 import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
 import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
-import AddHeader from "../../../../components/AddHeader/AddHeader"
+import AddHeader from "../../../../components/AddHeader/AddHeader";
+import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
+import { SaveFooterTertiary } from "../../../../components/SaveFooter/SaveFooter";
 import {
   EnhancedTableHead,
   stableSort,
@@ -231,7 +233,6 @@ const likeProductRows = [
 const EditCollection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState(false);
   const [collectionTitle, setCollectionTitle] = useState("");
   const [collectionNote, setCollectionNote] = useState("");
   const [collectionStatus, setCollectionStatus] = React.useState("active");
@@ -246,6 +247,7 @@ const EditCollection = () => {
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
+  const [duplicateTitleNew, setDuplicateTitleNew] = useState("")
 
    const clearDate = () => {
     setStartDate1(null);
@@ -271,6 +273,10 @@ const EditCollection = () => {
     if(event == true) {
       setHideFooter(true)
     }
+  }
+
+  const backHandler = () => {
+    navigate("/parameters/collections");
   }
 
   const {
@@ -303,6 +309,17 @@ const EditCollection = () => {
     }
   ] = useEditCollectionMutation();
 
+  const handleDuplicateTitle = (e) => {
+    const value = e.target.value;
+    setDuplicateTitleNew(value)
+  };
+
+  useEffect(() => {
+    if(duplicateTitleNew == "" && collectionTitle) {
+      setDuplicateTitleNew(`${collectionTitle} copy`);
+    }
+  }, [collectionTitle]);
+
   useEffect(() => {
     if (collectionIsSuccess) {
       setCollectionTitle(newCollectionData?.title);
@@ -331,7 +348,7 @@ const EditCollection = () => {
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
-        seo: collectionSeo
+        ...(collectionSeo== null ? { seo: collectionSeo } : "")
       }
       if (startDate1 != null) {
         collectionDetails.startDate = new Date(startDate1);
@@ -356,7 +373,7 @@ const EditCollection = () => {
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
-        seo: collectionSeo,
+        ...(collectionSeo ? { seo: collectionSeo } : "")
       })
         .unwrap()
         navigate("/parameters/collection");
@@ -555,13 +572,9 @@ const EditCollection = () => {
     setOpenDuplicateCollection(false);
   };
 
-  const handleDuplicateTitleChange = (event) => {
-    setCollectionDuplicateTitle(event.target.value);
-  };
-
   const scheduleDuplicateCollection = () => {
     const collectionData = {
-      title: collectionDuplicateTitle,
+      title: duplicateTitleNew,
       filter: collectionFilter,
       status: collectionStatus,
       isVisibleFrontend: collectionVisibility,
@@ -1356,9 +1369,12 @@ const EditCollection = () => {
           </div>
         </div>
 
-        { hideFooter && 
-          <SaveFooter handleSubmit={handleSubmit} />          
-         }
+        <SaveFooterTertiary 
+          show={hideFooter} 
+          onDiscard={backHandler} 
+          isLoading={createCollectionIsLoading || editCollectionIsLoading}
+        />  
+
       <Dialog
         open={openDuplicateCollection}
         TransitionComponent={Transition}
@@ -1401,7 +1417,8 @@ const EditCollection = () => {
               placeholder="Mirosa Collection_copy"
               size="small"
               name="title"
-              value={collectionDuplicateTitle}
+              value={duplicateTitleNew}
+              onChange={handleDuplicateTitle}
             />
           </FormControl>
           <hr className="hr-grey-6 my-0" />
@@ -1491,6 +1508,11 @@ const EditCollection = () => {
           </div>
         </DialogActions>
       </Dialog>
+
+      <DiscardModalSecondary           
+        when={true}
+        message="collection tab"
+      />
       </div>
   );
 };

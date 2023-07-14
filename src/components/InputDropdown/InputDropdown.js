@@ -21,17 +21,17 @@ const InputDropdown = (props) => {
     onBlur,
     name,
     placeholder,
-    saveTried,
+    isSubmitting,
   } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorInnerEl, setAnchorInnerEl] = useState(null);
   const [currentValue, setCurrentValue] = useState("");
-  const [isPopoverTouched, setIsPopoverTouched] = useState(false);
+  const [isTouched, setIsTouched] = useState(false);
 
   const handlePopover = (e) => {
     setAnchorEl((prevState) => {
       if (prevState) {
-        setIsPopoverTouched(true);
+        setIsTouched(true);
         return null;
       }
       setAnchorInnerEl(null);
@@ -50,6 +50,7 @@ const InputDropdown = (props) => {
   const handleRadioChange = (value) => {
     onChange(value);
     setAnchorEl(null);
+    setIsTouched(true);
   };
 
   useEffect(() => {
@@ -73,8 +74,10 @@ const InputDropdown = (props) => {
   }, [value, options]);
 
   useEffect(() => {
-    saveTried && setIsPopoverTouched(true);
-  }, [saveTried]);
+    if (isSubmitting) {
+      setIsTouched(true);
+    }
+  }, [isSubmitting]);
 
   return (
     <>
@@ -100,9 +103,7 @@ const InputDropdown = (props) => {
             </InputAdornment>
           }
         />
-        {isPopoverTouched && error && (
-          <FormHelperText error>{error}</FormHelperText>
-        )}
+        {isTouched && error && <FormHelperText error>{error}</FormHelperText>}
       </FormControl>
       <Popover
         anchorOrigin={{

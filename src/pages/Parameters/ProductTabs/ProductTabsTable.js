@@ -18,7 +18,7 @@ import {
 import TableHeader from "../../../components/TableHeader/TableHeader";
 import EditButton from "../../../components/EditButton/EditButton";
 import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
-import NoData from "../../../components/NoData/NoData";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 
 const DragHandle = SortableHandle(() => (
   <TableCell>
@@ -107,7 +107,7 @@ const ProductTabsTable = (props) => {
   }
 
   if (data && !data.length) {
-    return <NoData />;
+    return <NoDataFound />;
   }
 
   return (

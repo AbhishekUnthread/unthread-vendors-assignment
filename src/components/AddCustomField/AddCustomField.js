@@ -254,19 +254,11 @@ const FieldType = (props) => {
 };
 
 const AddCustomField = (props) => {
-  const {
-    values,
-    field,
-    formik,
-    hideDefaultHighlight,
-    touched,
-    error,
-    saveTried,
-  } = props;
+  const { values, field, formik, hideDefaultHighlight, touched, error } = props;
 
   const changeFieldTypeHandler = ({ type, value }) => {
-    formik.setFieldValue(`${field}.fieldType`, type);
     formik.setFieldValue(`${field}.productValue`, value);
+    formik.setFieldValue(`${field}.fieldType`, type);
   };
   const changeVisibilityHandler = ({ type }) => {
     formik.setFieldValue(`${field}.visibility`, type);
@@ -306,7 +298,7 @@ const AddCustomField = (props) => {
             name={`${field}.fieldType`}
             options={CUSTOM_FIELD_LIST}
             error={!!touched?.fieldType && error?.fieldType}
-            saveTried={saveTried}
+            isSubmitting={formik.isSubmitting}
           />
         </Grid>
         <Grid item md={2}>
@@ -318,7 +310,7 @@ const AddCustomField = (props) => {
             name={`${field}.visibility`}
             options={CUSTOM_FIELD_DISPLAY}
             error={!!touched?.visibility && error?.visibility}
-            saveTried={saveTried}
+            isSubmitting={formik.isSubmitting}
           />
         </Grid>
       </Grid>

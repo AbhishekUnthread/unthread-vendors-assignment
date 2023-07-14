@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "./EditVendor.scss";
 // ! COMPONENT IMPORTS
 import NotesBox from "../../../components/NotesBox/NotesBox";
@@ -26,6 +26,7 @@ import { useGetAllProductsQuery } from "../../../features/products/product/produ
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
+import DiscardModal from "../../../components/Discard/DiscardModal";
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -37,17 +38,45 @@ import * as Yup from 'yup';
       vendorName: Yup.string().max(50, 'Name cannot exceed 50 characters').required('Name is required'),
     });
 
+    const initialQueryFilterState = {
+      pageSize: 1,
+      pageNo: null,
+      totalCount: 0,
+    };
+
+    const queryFilterReducer = (state, action) => {
+      if (action.type === "SET_PAGE_NO") {
+        return {
+          ...state,
+          pageNo: +action.pageNo,
+        };
+      }
+      if (action.type === "SET_TOTAL_COUNT") {
+        return {
+          ...state,
+          totalCount: action.totalCount,
+        };
+      }
+      return initialQueryFilterState;
+    };
+
 
 const EditVendor = () => {
 
   const navigate= useNavigate();
   const dispatch = useDispatch();
+  let { id,filter } = useParams();
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
   const [vendorName, setVendorName] = useState("")
   const [vendorNotes, setVendorNotes] = useState("")
   const [vendorStatus, setVendorStatus] = useState("active")
   const [vendorFlagShip, setVendorFlagShip] = useState("")
+  const [vendorId, setVendorId] = useState();
   const [checked, setChecked] = React.useState(false);
-  const vendorId = useSelector((state)=>state.vendor.vendorId)
+  // const vendorId = useSelector((state)=>state.vendor.vendorId)
   const [products,setProducts] = React.useState([])
   const [vendorDuplicateName, setVendorDuplicateName] = useState("");
   const [duplicateDescription, setDuplicateDescription] = useState(false);
@@ -56,11 +85,14 @@ const EditVendor = () => {
   const [vendorIndex, setVendorIndex] = useState();
   const [hideFooter, setHideFooter] = useState(false);
   const [vendorNameError, setVendorNameError] = useState('');
+  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
 
   const [initialName, setInitailName] = useState("");
   const [initialNotes, setInitailNotes] = useState("");
   const [initialStatus, setInitailStatus] = useState("active");
   const [initialFilter, setInitailFilter] = useState(false);
+
+  const [decodedObject, setDecodedObject] = useState(null);
 
   
   const {
@@ -79,12 +111,42 @@ const EditVendor = () => {
     },
   ] = useCreateVendorMutation();
 
+  // const {
+  //   data: vendorsData,
+  //   isLoading: vendorsIsLoading,
+  //   isSuccess: vendorsIsSuccess,
+  //   error: vendorsError,
+  // } = useGetAllVendorsQuery({...decodedObject.queryParameters,...decodedObject.vendorTypeQuery,...decodedObject.queryFilterState.name},queryFilterState, {
+  //   skip: queryFilterState.pageNo ? false : true,
+  // });
   const {
     data: vendorsData,
     isLoading: vendorsIsLoading,
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
-  } = useGetAllVendorsQuery({ createdAt:"-1",id:vendorId });
+  } = useGetAllVendorsQuery(
+    {
+      ...queryFilterState,
+      ...(decodedObject?.queryParameters || {}),
+      ...(decodedObject?.vendorTypeQuery || {}),
+      name: decodedObject?.queryFilterState?.name||"",
+    }
+    // ,
+    // queryFilterState,
+    // {
+    //   skip: queryFilterState.pageNo ? false : true,
+    // }
+  );
+
+  // console.log({vendorId:vendorId})
+  // console.log({name : vendorName})
+  // console.log({vendorsData : vendorsData})
+  // console.log({id:id})
+  // console.log("queryParameters",decodedObject?.queryParameters);
+  // console.log("vendorTypeQuery",decodedObject?.vendorTypeQuery);
+  // console.log("queryFilterState",decodedObject?.queryFilterState?.name);
+
+
 
   const [
     editVendor,
@@ -94,60 +156,36 @@ const EditVendor = () => {
       error: editVendorError },
   ] = useEditVendorMutation();
   
-  useEffect(() => {
-    if(editVendorIsSuccess)
-    {
-      dispatch(showSuccess({ message: "Vendor updated successfully" }));
-    }
-
-    if(editVendorError)
-    {
-      if (editVendorError?.data?.message) {
-        dispatch(showError({ message: editVendorError?.data?.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-
-    if(vendorProductsDataIsSuccess)
-    {
-      setProducts(vendorProductsData)
-    }
-
-    if (vendorsIsSuccess && vendorId !== "") {
-      // If vendorsIsSuccess is true, set the vendor name based on the data from the API response
-
-      // setIndex(vendorsData.data.data.findIndex(vendor => vendor._id === vendorId));
-      // const vendor = vendorsData.data.data[index];
-      // setVendorName(vendor?.name);
-      // setVendorFlagShip(vendor?.isFlagShip);
-      // setVendorNotes(vendor?.notes);
-      // setVendorStatus(vendor?.status);
-      // setChecked(vendor?.showFilter);
-      setVendorName(vendorsData.data.data[0].name);
-      setInitailName(vendorsData.data.data[0].name)
-      setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
-      setVendorNotes(vendorsData.data.data[0].notes)
-      setInitailNotes(vendorsData.data.data[0].notes)
-      setVendorStatus(vendorsData.data.data[0].status)
-      setInitailStatus(vendorsData.data.data[0].status)
-      setChecked(vendorsData.data.data[0].showFilter)
-      setInitailFilter(vendorsData.data.data[0].showFilter)
-    }
-  }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess,editVendorError]);
-
-  const getNextVendorId = () => {
-    setVendorIndex(prevIndex => (prevIndex + 1) % vendorsData.data.data.length);
-    setIndex(vendorIndex)
-  };
-
-  const getPreviousVendorId = () => {
-    setVendorIndex(prevIndex => (prevIndex === 0 ? vendorsData.data.data.length - 1 : prevIndex - 1));
-    setIndex(vendorsData.data.data[vendorIndex])
-  };
   
+
+  // const getNextVendorId = () => {
+  //   setVendorIndex(prevIndex => (prevIndex + 1) % vendorsData.data.data.length);
+  //   setIndex(vendorIndex)
+  // };
+
+  // const getPreviousVendorId = () => {
+  //   setVendorIndex(prevIndex => (prevIndex === 0 ? vendorsData.data.data.length - 1 : prevIndex - 1));
+  //   setIndex(vendorsData.data.data[vendorIndex])
+  // };
+
+  const nextPageHandler = () => {
+    const { pageNo, totalCount } = queryFilterState;
+    console.log({pageNo:pageNo});
+    console.log({totalCount:totalCount})
+
+    if (pageNo+1 > totalCount) {
+      return;
+    }
+    navigate(`/parameters/vendors/edit/${pageNo + 1}/${filter}`);
+  };
+
+  const prevPageHandler = () => {
+    const { pageNo } = queryFilterState;
+    if (pageNo - 1 === 0) {
+      return;
+    }
+    navigate(`/parameters/vendors/edit/${pageNo - 1}/${filter}`);
+  };  
     const vendorNotesChange=(event)=>{
       setVendorNotes(event.target.value);
       // setHideFooter(true);
@@ -213,7 +251,11 @@ const EditVendor = () => {
     }};
 
     const backHandler = () => {
-      navigate("/parameters/vendors");
+      setShowDiscardModal(true);
+      // navigate("/parameters/vendors");
+    };
+    const toggleDiscardModal = () => {
+      setShowDiscardModal(false);;
     };
     
     const handleSubmitAndAddAnother = () => {
@@ -250,10 +292,10 @@ const EditVendor = () => {
     };
 
 
-    const handleNextItem = ()=>{
-      getNextVendorId();
+    // const handleNextItem = ()=>{
+    //   getNextVendorId();
       
-    }
+    // }
 
 
    // ? DUPLICATE VENDOR DIALOG STARTS HERE
@@ -303,19 +345,74 @@ const EditVendor = () => {
         checked !== initialFilter
       );
     }, [vendorName, vendorNotes, vendorStatus, checked]);
+
+    useEffect(() => {
+      if (id) {
+        dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+      }
+    }, [id]);
+
+    useEffect(() => {
+      const encodedString = filter; // The encoded string from the URL or any source
+  
+      const decodedString = decodeURIComponent(encodedString);
+      const parsedObject = JSON.parse(decodedString);
+  
+      setDecodedObject(parsedObject);
+    }, [vendorsData,vendorsIsSuccess,id]);
+
+    useEffect(() => {
+      if(editVendorIsSuccess)
+      {
+        dispatch(showSuccess({ message: "Vendor updated successfully" }));
+      }
+  
+      if(editVendorError)
+      {
+        if (editVendorError?.data?.message) {
+          dispatch(showError({ message: editVendorError?.data?.message }));
+        } else {
+          dispatch(
+            showError({ message: "Something went wrong, please try again" })
+          );
+        }
+      }
+  
+      if(vendorProductsDataIsSuccess)
+      {
+        setProducts(vendorProductsData)
+      }
+  
+      if (vendorsIsSuccess ) {
+        dispatchQueryFilter({
+          type: "SET_TOTAL_COUNT",
+          totalCount: vendorsData?.data?.totalCount,
+        });
+        setVendorId(vendorsData.data.data[0]?._id)
+        setVendorName(vendorsData.data.data[0]?.name);
+        setInitailName(vendorsData.data.data[0]?.name)
+        setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
+        setVendorNotes(vendorsData.data.data[0].notes)
+        setInitailNotes(vendorsData.data.data[0].notes)
+        setVendorStatus(vendorsData.data.data[0].status)
+        setInitailStatus(vendorsData.data.data[0].status)
+        setChecked(vendorsData.data.data[0].showFilter)
+        setInitailFilter(vendorsData.data.data[0].showFilter)
+      }
+    }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess,editVendorError,id,filter,vendorsData]);
+    
     
   return (
     <div className="page container-fluid position-relative user-group">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/parameters/vendors" className="d-flex">
             <img
               src={arrowLeft}
               alt="arrowLeft"
               width={9}
               className="c-pointer"
+              onClick={backHandler}
             />
-          </Link>
           <h5 className="page-heading ms-2 ps-1">{vendorName}</h5>
         </div>
 
@@ -331,13 +428,14 @@ const EditVendor = () => {
             alt="paginationLeft"
             className="c-pointer"
             width={30}
+            onClick={prevPageHandler}
           />
           <img
             src={paginationRight}
             alt="paginationRight"
             className="c-pointer"
             width={30}
-            onClick={handleNextItem}
+            onClick={nextPageHandler}
           />
         </div>
       </div>
@@ -347,7 +445,7 @@ const EditVendor = () => {
             <div className="col-md-12 px-0">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue me-2">Name</p>
-                <Tooltip title="Lorem ipsum" placement="top">
+                <Tooltip title="Enter Name" placement="top">
                   <img
                     src={info}
                     alt="info"
@@ -367,6 +465,7 @@ const EditVendor = () => {
               <br />
               </>
               }
+              <div className="small">
               <FormControlLabel
                         control={
                           <Checkbox
@@ -389,8 +488,10 @@ const EditVendor = () => {
                             color: "#c8d8ff",
                           },
                         }}
-                        className=" px-0"
+                        className=" px-0 me-1"
                  />
+                 <button className="reset link">(manage)</button>
+                 </div>
             </div>
           </div>
 
@@ -424,6 +525,7 @@ const EditVendor = () => {
           onDiscard={backHandler}
           isLoading={editVendorIsLoading}
           handleSubmit={handleSubmit}
+
       />
 
 
@@ -568,6 +670,11 @@ const EditVendor = () => {
           </div>
         </DialogActions>
       </Dialog>
+      <DiscardModal 
+      showDiscardModal={showDiscardModal}   
+      toggleDiscardModal={toggleDiscardModal}
+
+      />
     </div>
   );
 };

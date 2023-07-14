@@ -28,7 +28,7 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       providesTags: ["Customers"],
     }),
 
-    getSingleCustomer: builder.query({
+    getCustomer: builder.query({
       query: (queries) => {
         let queryString = "";
         for (const key in queries) {
@@ -39,7 +39,7 @@ export const customerApiSlice = apiSlice.injectEndpoints({
           }
         }
         return {
-          url: `/customer/getSingle${queryString}`,
+          url: `/customer${queryString}`,
         };
       },
       providesTags: ["Customers"],
@@ -51,5 +51,5 @@ export const customerApiSlice = apiSlice.injectEndpoints({
 export const {
   useCreateCustomerMutation,
   useGetAllCustomersQuery,
-  useGetSingleCustomerQuery
+  useGetCustomerQuery
 } = customerApiSlice;

@@ -13,6 +13,7 @@ import UploadBanner from "../../../components/UploadBanner/UploadBanner";
 import StatusBox from "../../../components/StatusBox/StatusBox";
 import VisibilityBox from '../../../components/VisibilityBox/VisibilityBox'
 import AddHeader from "../../../components/AddHeader/AddHeader"
+import DiscardModal from "../../../components/Discard/DiscardModal";
 import {
   EnhancedTableHead,
   stableSort,
@@ -223,21 +224,19 @@ const likeProductRows = [
 // ? LIKE PRODUCTS TABLE ENDS HERE
 
 const collectionValidationSchema = Yup.object({
-  title: Yup.string().trim().min(3).required("Required"),
-  // description : Yup.string().trim().min(10).required("Required"),
-  // mediaUrl : Yup.string().trim().required("Required"),
+  title: Yup.string().trim().min(3).required("Required")
 });
 
 const CreateCollection = () => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
-  const [error, setError] = useState(false);
   const [startDate1, setStartDate] = useState(null);
   const [endDate1, setEndDate] = useState(null);
   const [collectionList, setCollectionList] = useState()
   const collectionId = useSelector((state) => state.collection.collectionId);
   const [categorySeo,setCategorySeo] = useState({});
   const [appTextEditor, setAppTextEditor] = useState()
+  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
 
   const clearDate = () => {
     setStartDate(null);
@@ -258,9 +257,13 @@ const CreateCollection = () => {
     collectionFormik?.setFieldValue("status", status);
   }
 
-  useEffect(() => {
-    console.log(categorySeo,'categorySeo')
-  },[categorySeo])
+  const toggleDiscardModal = () => {
+    setShowDiscardModal((prevState) => !prevState);
+  };
+
+  const handleDiscard = () => {
+    setShowDiscardModal(true);
+  }
 
   const {
     data: collectionData,
@@ -280,6 +283,7 @@ const CreateCollection = () => {
 
   const collectionFormik = useFormik({
     initialValues: {
+      title: "",
       status: "in-active",
       isVisibleFrontend: false,
       filter: false,
@@ -574,10 +578,10 @@ const CreateCollection = () => {
                   />
                 </FormControl>
                 {!!collectionFormik.touched.title && collectionFormik.errors.title && (
-                    <FormHelperText error>
-                      {collectionFormik.errors.title}
-                    </FormHelperText>
-                  )}
+                  <FormHelperText error>
+                    {collectionFormik.errors.title}
+                  </FormHelperText>
+                )}
                 <FormGroup>
                   <div className="d-flex align-items-center col-12 px-0">
                     <FormControlLabel
@@ -1299,7 +1303,7 @@ const CreateCollection = () => {
               handleEndDate={setEndDate}
               clearDate={clearDate}
             />
-            <VisibilityBox name={"isVisibleFrontend"} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} />
+            {/* <VisibilityBox name={"isVisibleFrontend"} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} /> */}
             <div className="mt-4">
               <UploadMediaBox 
                 name={"mediaUrl"}  
@@ -1327,12 +1331,12 @@ const CreateCollection = () => {
         </div>
         <div className="row create-buttons pt-5 pb-3 justify-content-between">
           <div className="d-flex w-auto px-0">
-            <Link
-              to="/parameters/collections"
+            <button
               className="button-red-outline py-2 px-4"
+              onClick={handleDiscard}
             >
               <p>Discard</p>
-            </Link>
+            </button>
           </div>
           <div className="d-flex w-auto px-0">
               <LoadingButton
@@ -1346,6 +1350,10 @@ const CreateCollection = () => {
           </div>
         </div>
       </div>
+      <DiscardModal           
+        showDiscardModal={showDiscardModal}
+        toggleDiscardModal={toggleDiscardModal}
+      />
     </form>
   );
 };

@@ -29,6 +29,8 @@ import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 import sort from "../../../assets/icons/sort.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg"
+import info from "../../../assets/icons/info.svg";
+
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -54,6 +56,7 @@ import {
   Autocomplete,
   FormGroup,
   InputAdornment,
+  Tooltip,
 } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -68,7 +71,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 const initialQueryFilterState = {
-  pageSize: 5,
+  pageSize: 10,
   pageNo: 1,
   name:"",
 };
@@ -267,10 +270,15 @@ const Vendors = () => {
   
     };
 
-    const editCategoryPageNavigationHandler = (data) => {
+    const editCategoryPageNavigationHandler = (data,index) => {
       setIsEditing(true);
-      dispatch(updateVendorId(data._id)); 
-      navigate("edit");
+      // dispatch(updateVendorId(data._id)); 
+      const combinedObject = { queryParameters, vendorTypeQuery, queryFilterState };
+      const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));    
+
+      const currentTabNo =
+      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
+      navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
     };
 
     const changeVendorTypeHandler = (_event, tabIndex) => {
@@ -385,7 +393,7 @@ const Vendors = () => {
       }
       else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Something went wrong, please try again" })
         );
       }
     }
@@ -408,7 +416,7 @@ const Vendors = () => {
       }
       else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Something went wrong, please try again" })
         );
       }
     }
@@ -421,7 +429,7 @@ const Vendors = () => {
         dispatch(showError({ message: vendorsError.data.message }));
       } else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Something went wrong, please try again" })
         );
       }
     }
@@ -466,7 +474,7 @@ const Vendors = () => {
         }
         else {
           dispatch(
-            showError({ message: "Something went wrong!, please try again" })
+            showError({ message: "Something went wrong, please try again" })
           );
         }
       }
@@ -485,7 +493,7 @@ const Vendors = () => {
         }
         else {
           dispatch(
-            showError({ message: "Something went wrong!, please try again" })
+            showError({ message: "Something went wrong, please try again" })
           );
         }
       }
@@ -503,7 +511,7 @@ const Vendors = () => {
         }
         else {
           dispatch(
-            showError({ message: "Something went wrong!, please try again" })
+            showError({ message: "Something went wrong, please try again" })
           );
         }
       }
@@ -521,7 +529,7 @@ const Vendors = () => {
         }
         else {
           dispatch(
-            showError({ message: "Something went wrong!, please try again" })
+            showError({ message: "Something went wrong, please try again" })
           );
         }
       }
@@ -579,7 +587,17 @@ const Vendors = () => {
 
             <form noValidate onSubmit={vendorFormik.handleSubmit}>
               <DialogContent className="py-3 px-4">
-                <p className="text-lightBlue mb-2">Vendor Name *</p>
+              <div className="d-flex mb-2">
+                <p className="text-lightBlue me-2 ">Vendor Name </p>
+                <Tooltip title="Enter Name" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
                     sx={{pr:1}}
@@ -592,7 +610,9 @@ const Vendors = () => {
                     onKeyDown={handleAddMultiple}
                     endAdornment={
                     <InputAdornment position="end">
-                        <ChevronRightIcon className="c-pointer" onClick={handleAddMultiple}/>
+                    <Tooltip title="Create Multiple Vendor" placement="top">
+                    <ChevronRightIcon className="c-pointer" onClick={handleAddMultiple}/>
+                    </Tooltip>                        
                     </InputAdornment>
                     }
                   />
@@ -604,6 +624,7 @@ const Vendors = () => {
                   )}
                 </FormControl>
                 <br />
+                <div className="small">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -626,8 +647,10 @@ const Vendors = () => {
                       color: "#c8d8ff",
                     },
                   }}
-                  className=" px-0"
+                  className=" px-0 me-1"
                 />
+                <button className="reset link">(manage)</button>
+                </div>
                 <div >
                 {multipleVendors && multipleVendors.map((value, index) => (
                 <Chip

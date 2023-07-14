@@ -62,7 +62,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [state, setState] = React.useState([]);
   const [collectionId, setCollectionId] = React.useState('')
@@ -615,12 +615,15 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           maxWidth="sm"
         >
           <DialogContent className="py-2 px-4 text-center">
-            <img src={closeModal} alt="question" width={40} className="closeModal" onClick={handleModalClose}/>
+            <img src={closeModal} alt="question" width={40} 
+              className="closeModal c-pointer" 
+              onClick={handleModalClose}
+            />
             <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
             <div className="row"></div>
             <h5 className="text-lightBlue mt-2 mb-3">
               Archive   
-              <span className="text-blue-2"> "{forMassAction == true ? "these" : collectionTitle }" </span>
+              <span className="text-blue-2"> "{forMassAction == true ? selected.length : collectionTitle }" </span>
               collection ?
             </h5>
             <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
@@ -650,7 +653,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           showCreateModal={showDeleteModal}
           toggleArchiveModalHandler={toggleArchiveModalHandler}
           handleArchive={handleArchiveModal} 
-          name={forMassAction == false ? name : "these"} 
+          name={forMassAction == false ? name : selected.length} 
           deleteType={"Collection"}
         />
         <UnArchivedModal 
@@ -658,7 +661,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
-          name={forMassAction == false ? name : "this"}
+          name={forMassAction == false ? name : selected.length}
           nameType={"Collection"}
         />
 

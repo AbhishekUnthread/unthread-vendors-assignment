@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Dialog,
@@ -38,20 +37,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollectionClose}) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [collectionTitle, setCollectionTitle] = useState("");
   const [collectionNote, setCollectionNote] = useState("");
   const [collectionStatus, setCollectionStatus] = React.useState("active");
   const [collectionDescription, setCollectionDescription] = useState("");
   const [collectionVisibility, setCollectionVisibility] = useState(false);
   const [collectionFilter, setCollectionFilter] = useState(false);
-  const [collectionDuplicateTitle, setCollectionDuplicateTitle] = useState("");
   const [duplicateDescription, setDuplicateDescription] = useState(false);
   const [startDate1, setStartDate1] = useState(null)
   const [endDate1, setEndDate1] = useState(null)
   const collectionId = useSelector((state)=>state.collection.collectionId)
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
-  const [collectionSeo,setCollectionSeo] = useState({})
+  const [collectionSeo,setCollectionSeo] = useState({});
+  const [duplicateTitleNew, setDuplicateTitleNew] = useState("")
 
   const {
     data: collectionData,
@@ -79,6 +77,17 @@ const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollection
     }
   ] = useEditCollectionMutation();
 
+  const handleDuplicateTitle = (e) => {
+    const value = e.target.value;
+    setDuplicateTitleNew(value)
+  };
+
+  useEffect(() => {
+    if(duplicateTitleNew == "" && collectionTitle) {
+      setDuplicateTitleNew(`${collectionTitle} copy`);
+    }
+  }, [collectionTitle]);
+
  useEffect(() => {
   if (collectionIsSuccess && collectionData?.data?.data.length > 0) {
     const newCollectionData = collectionData.data.data[0];
@@ -92,9 +101,6 @@ const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollection
     setEndDate1(newCollectionData?.endDate);
     setCollectionMediaUrl(newCollectionData?.mediaUrl);
     setCollectionSeo(newCollectionData?.seos || {});
-
-    const duplicateTitle = `${newCollectionData?.title} Copy`;
-    setCollectionDuplicateTitle(duplicateTitle);
   }
 }, [collectionIsSuccess, collectionData, dispatch]);
 
@@ -112,7 +118,7 @@ const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollection
 
   const scheduleDuplicateCollection = () => {
     const collectionData = {
-      title: collectionDuplicateTitle,
+      title: duplicateTitleNew,
       filter: collectionFilter,
       status: collectionStatus,
       isVisibleFrontend: collectionVisibility,
@@ -127,7 +133,7 @@ const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollection
       .unwrap()
       .then((res) => {
         handleDuplicateCollectionClose(false);
-        dispatch(showSuccess({ message: "Duplicate Created of this collection successfully" }));
+        dispatch(showSuccess({ message: "Duplicate Created successfully" }));
         dispatch(updateCollectionId(res?.data?._id));
       });
   };
@@ -149,7 +155,10 @@ const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollection
             src={cancel}
             alt="cancel"
             width={30}
-            onClick={handleDuplicateCollectionClose}
+            onClick={() => {
+              setDuplicateTitleNew("")
+              handleDuplicateCollectionClose()
+            }}
             className="c-pointer"
           />
         </div>
@@ -175,7 +184,8 @@ const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollection
             placeholder="Mirosa Collection_copy"
             size="small"
             name="title"
-            value={collectionDuplicateTitle}
+            value={duplicateTitleNew}
+            onChange={handleDuplicateTitle}
           />
         </FormControl>
         <hr className="hr-grey-6 my-0" />
@@ -252,7 +262,10 @@ const DuplicateCollection = ({openDuplicateCollection, handleDuplicateCollection
         <div className="d-flex justify-content-between w-100">
           <button
             className="button-grey py-2 px-5"
-            onClick={handleDuplicateCollectionClose}
+            onClick={() => {
+              setDuplicateTitleNew("")
+              handleDuplicateCollectionClose()
+            }}
           >
             <p className="text-lightBlue">Cancel</p>
           </button>

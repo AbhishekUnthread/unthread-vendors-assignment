@@ -20,6 +20,7 @@ import { updateTagId } from "../../../features/parameters/tagsManager/tagsManage
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
+import DiscardModal from "../../../components/Discard/DiscardModal";
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -33,6 +34,8 @@ import * as Yup from 'yup';
 
 
 const EditTags = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [tagName,setTagName] = React.useState("");
   const tagId = useSelector((state)=>state.tags.tagId);
   const [tagStatus, setTagStatus] = React.useState("active")
@@ -41,10 +44,8 @@ const EditTags = () => {
   const [duplicateDescription, setDuplicateDescription] = React.useState(false);
   const [hideFooter, setHideFooter] = React.useState(false);
   const [tagNameError, setTagNameError] = React.useState('');
-
-  const navigate = useNavigate();
+  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
   const [checked, setChecked] = React.useState(false);
-  const dispatch = useDispatch();
 
   const [initialName, setInitailName] = useState("");
   const [initialNotes, setInitailNotes] = useState("");
@@ -149,7 +150,11 @@ const EditTags = () => {
      }};
 
      const backHandler = () => {
-      navigate("/parameters/tagsManager");
+      setShowDiscardModal(true);
+      // navigate("/parameters/tagsManager");
+    };
+    const toggleDiscardModal = () => {
+      setShowDiscardModal(false);;
     };
 
      const handleSubmitAndAddAnother = () => {
@@ -230,14 +235,13 @@ const EditTags = () => {
     <div className="page container-fluid position-relative user-group">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/parameters/tagsManager" className="d-flex">
             <img
               src={arrowLeft}
               alt="arrowLeft"
               width={9}
               className="c-pointer"
+              onClick={backHandler}
             />
-          </Link>
           <h5 className="page-heading ms-2 ps-1">{tagName}</h5>
         </div>
 
@@ -288,6 +292,7 @@ const EditTags = () => {
               <br />
               </>
               }
+              <div className="small">
               <FormControlLabel
                         control={
                           <Checkbox
@@ -310,8 +315,10 @@ const EditTags = () => {
                             color: "#c8d8ff",
                           },
                         }}
-                        className=" px-0"
+                        className=" px-0 me-1"
                  />
+                 <button className="reset link" sx={{color:"#658DED"}}>(manage)</button>
+                </div>
             </div>
           </div>
 
@@ -344,6 +351,10 @@ const EditTags = () => {
           isLoading={editTagIsLoading}
           handleSubmit={handleSubmit}
         />
+              <DiscardModal 
+              showDiscardModal={showDiscardModal}   
+              toggleDiscardModal={toggleDiscardModal}
+              />
 
     </div>
   );

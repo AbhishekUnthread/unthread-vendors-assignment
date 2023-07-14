@@ -59,6 +59,7 @@ import {
   FormHelperText,
   Popover,
   FormGroup,
+  Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import { LoadingButton } from "@mui/lab";
@@ -83,6 +84,7 @@ import { useNavigate } from "react-router-dom";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import sort from "../../../assets/icons/sort.svg";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import info from "../../../assets/icons/info.svg";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = forwardRef(function Transition(props, ref) {
@@ -180,7 +182,7 @@ const likeHeadCells = [
 
 
 const initialQueryFilterState = {
-  pageSize: 5,
+  pageSize: 10,
   pageNo: 1,
   name:"",
 };
@@ -489,7 +491,7 @@ const [
           }
           else {
             dispatch(
-              showError({ message: "Something went wrong!, please try again" })
+              showError({ message: "Something went wrong, please try again" })
             );
           }
         }
@@ -512,7 +514,7 @@ const [
           }
           else {
             dispatch(
-              showError({ message: "Something went wrong!, please try again" })
+              showError({ message: "Something went wrong, please try again" })
             );
           }
         }
@@ -527,7 +529,7 @@ const [
             dispatch(showError({ message: tagsError.data.message }));
           } else {
             dispatch(
-              showError({ message: "Something went wrong!, please try again" })
+              showError({ message: "Something went wrong, please try again" })
             );
           }
         }
@@ -557,7 +559,7 @@ const [
           }
           else {
             dispatch(
-              showError({ message: "Something went wrong!, please try again" })
+              showError({ message: "Something went wrong, please try again" })
             );
           }
         }
@@ -576,7 +578,7 @@ const [
           }
           else {
             dispatch(
-              showError({ message: "Something went wrong!, please try again" })
+              showError({ message: "Something went wrong, please try again" })
             );
           }
         }
@@ -635,7 +637,17 @@ const [
             <hr className="hr-grey-6 my-0" />
             <form noValidate onSubmit={TagFormik.handleSubmit}>
             <DialogContent className="py-3 px-4">
-              <p className="text-lightBlue mb-2">Create Tags</p>
+            <div className="d-flex mb-2">
+              <p className="text-lightBlue me-2">Create Tags</p>
+              <Tooltip title="Enter Tag Name" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
               <FormControl className="col-7 px-0">
                 <OutlinedInput
                  sx={{pr:1}}
@@ -648,7 +660,9 @@ const [
                  onKeyDown={handleAddMultiple}
                  endAdornment={
                     <InputAdornment position="end">
+                    <Tooltip title="Create Multiple Tags" placement="top">
                         <ChevronRightIcon className="c-pointer" onClick={handleAddMultiple}/>
+                    </Tooltip>
                     </InputAdornment>
                     }
                   />
@@ -659,6 +673,7 @@ const [
                   )}
               </FormControl>
               <br />
+              <div className="small">
               <FormControlLabel
                   control={
                     <Checkbox
@@ -681,8 +696,10 @@ const [
                       color: "#c8d8ff",
                     },
                   }}
-                  className=" px-0"
+                  className=" px-0 me-1"
                 />
+                <button className="reset link">(manage)</button>
+              </div>
               <div className="d-flex">
                 {multipleTags && multipleTags.map((data, index) => {
                   return (
