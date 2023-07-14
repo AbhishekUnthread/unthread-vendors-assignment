@@ -63,7 +63,8 @@ const SEO = ({ seoName, seoValue, handleSeoChange, refrenceId }) => {
     initialValues: {
       title: seoValue.title || seoName,
       slug: "https://example.com/"+seoName,
-      description: seoValue.description ? seoValue.description : ""
+      description: seoValue.description ? seoValue.description : "",
+      metaKeywords: "",
     },
     enableReinitialize: true,
   });
@@ -99,10 +100,9 @@ const SEO = ({ seoName, seoValue, handleSeoChange, refrenceId }) => {
   }
 
   useEffect(() => {
-    if (multipleTags.length > 0) {
+    
+    if ( !_.isEqual(seoFormik.initialValues, seoFormik.values)) {
       seoItems.metaKeywords = multipleTags;
-    }
-    if ( !_.isEqual(seoFormik.initialValues.description, seoFormik.values.description)) {
       seoItems.description = seoFormik.values?.description;
       seoItems.title = seoFormik.values?.title;
       seoItems.slug = seoFormik.values.slug;
@@ -153,6 +153,7 @@ const SEO = ({ seoName, seoValue, handleSeoChange, refrenceId }) => {
   };
 
   const handleDelete = (value) => {
+    console.log(value)
     setMultipleTags((prevValues) => prevValues.filter((v) => v !== value));
   };
 
