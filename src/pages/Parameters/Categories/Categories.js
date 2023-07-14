@@ -811,6 +811,7 @@ const Categories = () => {
                     )}
                 </FormControl>
                 <br />
+                <div className="small">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -835,6 +836,8 @@ const Categories = () => {
                   }}
                   className=" px-0"
                 />
+                <button className="reset link">(manage)</button>
+                </div>
                 <div className="d-flex">
                   {multipleTags &&
                     multipleTags.map((data, index) => {
@@ -850,6 +853,7 @@ const Categories = () => {
                         ></Chip>
                       );
                     })}
+                    
                 </div>
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
@@ -991,6 +995,7 @@ const Categories = () => {
                     )}
                 </FormControl>
                 <br />
+                <div className="small">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -1015,7 +1020,8 @@ const Categories = () => {
                   }}
                   className=" px-0"
                 />
-
+                 <button className="reset link">(manage)</button>
+                 </div>
                 <div className="d-flex">
                   {multipleTagsForSub &&
                     multipleTagsForSub.map((data, index) => {
