@@ -1,5 +1,5 @@
 import React, { forwardRef, useState, useEffect, useReducer } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link,useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 // ! COMPONENT IMPORTS
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -74,6 +74,7 @@ const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 1,
   name:"",
+  searchValue:""
 };
 const queryFilterReducer = (state, action) => {
   if (action.type === "SET_PAGE_SIZE") {
@@ -95,18 +96,29 @@ const queryFilterReducer = (state, action) => {
       pageNo: initialQueryFilterState.pageNo,
       name: action.name,
     };
+    
   }
+  if (action.type === "SET_SEARCH_VALUE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      searchValue: action.searchValue,
+    };
+    
+  }
+
   return initialQueryFilterState;
 };
 
 const Vendors = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const[searchParams, setSearchParams] = useSearchParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
-  const [vendorType, setVendorType] = useState(0);
+  const [vendorType, setVendorType] = useState(null);
   const [vendorList, setVendorList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [error, setError] = useState(false);
@@ -116,6 +128,7 @@ const Vendors = () => {
   const [searchValue, setSearchValue] = React.useState("");
   const [multipleVendors,setMultipleVendors] = React.useState([]);
   const [totalCount,setTotalCount] = React.useState([]);
+  const [tabPath,setTabPath] = useState('all');
 
   const vendorValidationSchema = Yup.object({
     name: Yup.string().trim().min(3).required("Required"),
@@ -153,6 +166,8 @@ const Vendors = () => {
     queryParameters.status = "in-active"
   }
   
+  console.log(searchParams.get("status"))
+
   const vendorTypeQuery =
     vendorType === 0
       ? selectedStatusOption.length>0
@@ -260,6 +275,10 @@ const Vendors = () => {
       dispatchQueryFilter({ type: "SEARCH", name: value });
     };
 
+    const handleSearchValue =(value)=>{
+      dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
+    }
+
     const toggleCreateModalHandler = () => {
       setShowCreateModal((prevState) => !prevState);
       vendorFormik.resetForm();
@@ -273,7 +292,7 @@ const Vendors = () => {
     const editCategoryPageNavigationHandler = (data,index) => {
       setIsEditing(true);
       // dispatch(updateVendorId(data._id)); 
-      const combinedObject = { queryParameters, vendorTypeQuery, queryFilterState };
+      const combinedObject = { queryParameters, vendorTypeQuery, queryFilterState,tab:vendorType };
       const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));    
 
       const currentTabNo =
@@ -283,6 +302,25 @@ const Vendors = () => {
 
     const changeVendorTypeHandler = (_event, tabIndex) => {
       setVendorType(tabIndex);
+      dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
+      dispatchQueryFilter({ type: "SEARCH", name: "" });
+
+      setSelectedSortOption('');
+      setSelectedStatusOption('')
+      setSearchParams({status:tabIndex})
+// if (tabIndex === 0) {
+//   setTabPath('all');
+// } else if (tabIndex === 1) {
+//   setTabPath('active') ;
+// } else if (tabIndex === 2) {
+//   setTabPath('in-active') ;
+// } else if (tabIndex === 3) {
+//   setTabPath('archived') ;
+// } else {
+// }
+      // navigate(`/parameters/vendors`)
+      // navigate(`/parameters/vendors?status=${tabPath}`);
+
     };
 
     const handleAddMultiple = (event) => {
@@ -535,6 +573,27 @@ const Vendors = () => {
       }
     }, [bulkVendorEditIsSuccess,bulkVendorEditError])
     
+    useEffect(() => {
+        if(+searchParams.get("status")===0)
+        {
+          setVendorType(0);
+        }
+        else if(+searchParams.get("status")===1)
+        {
+          setVendorType(1);
+        }
+        else if(+searchParams.get("status")===2)
+        {
+          console.log("check")
+          setVendorType(2);
+        }
+        else if(+searchParams.get("status")===3)
+        {
+          setVendorType(3);
+        }
+    }, [searchParams])
+    
+    console.log({vendorType})
 
   return (
     <div className="container-fluid page">
@@ -713,7 +772,7 @@ const Vendors = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearchSecondary onChange={handleSearchChange} />
+            <TableSearchSecondary onSearchValueChange={handleSearchValue} value={queryFilterState.searchValue} onChange={handleSearchChange} />
             <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idStatus}

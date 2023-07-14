@@ -233,7 +233,7 @@ const EditVendor = () => {
           status: vendorStatus?vendorStatus:"active" // Vendor status
         }
       }).unwrap().then(() => {
-        navigate("/parameters/vendors"); // Navigating to vendors page after successful edit
+        navigate(`/parameters/vendors?status=${decodedObject?.tab}`); // Navigating to vendors page after successful edit
       })
       .catch((editVendorError)=>dispatch(showError( { message: editVendorError?.data?.message } )));
      }
@@ -250,10 +250,13 @@ const EditVendor = () => {
      }
     }};
 
+
     const backHandler = () => {
+      navigate(-1);
       setShowDiscardModal(true);
       // navigate("/parameters/vendors");
     };
+  
     const toggleDiscardModal = () => {
       setShowDiscardModal(false);;
     };
