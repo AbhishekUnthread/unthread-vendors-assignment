@@ -416,7 +416,7 @@ const [
         }
         else{
           dispatch(
-            showError({ message: "Duplicate Tag Value" })
+            showError({ message: `${TagFormik.values.name.trim()} already exists` })
           );
         }
         }

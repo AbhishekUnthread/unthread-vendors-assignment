@@ -305,7 +305,7 @@ const Vendors = () => {
             }
             else{
               dispatch(
-                showError({ message: "Duplicate Name Value" })
+                showError({ message: `${vendorFormik.values.name.trim()} already exists` })
               );
             }
           }
