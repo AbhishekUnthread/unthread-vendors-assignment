@@ -203,7 +203,7 @@ const router = () => {
                   element: <CreateCollection />,
                 },
                 {
-                  path: "collections/edit",
+                  path: "collections/edit/:id/:filter",
                   element: <EditCollection />,
                 },
                 {

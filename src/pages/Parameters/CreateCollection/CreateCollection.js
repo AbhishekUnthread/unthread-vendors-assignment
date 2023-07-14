@@ -543,7 +543,7 @@ const CreateCollection = () => {
   return (
     <form noValidate onSubmit={collectionFormik.handleSubmit}>
       <div className="page container-fluid position-relative user-group">
-        <AddHeader headerName={"Create Collection"} previewButton={"Preveiw"} navigateLink={"/parameters/collections"}/>
+        <AddHeader headerName={"Create Collection"} navigateLink={"/parameters/collections"}/>
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">

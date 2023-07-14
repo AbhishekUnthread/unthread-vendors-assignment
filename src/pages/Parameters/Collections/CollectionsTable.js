@@ -29,6 +29,8 @@ import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import DuplicateCollection from "./DuplicateCollection/DuplicateCollection";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
+import TableLoader from "../../../components/Loader/TableLoader";
+import PageLoader from "../../../components/Loader/PageLoader";
 // !IMAGES IMPORTS
 import unthreadLogo from "../../../assets/images/unthreadLogo.png"
 
@@ -55,14 +57,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 // ? TABLE STARTS HERE
 
-const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, collectionType, hardDeleteCollection, bulkDelete }) => {
+const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, collectionType, hardDeleteCollection, bulkDelete, edit, rowsPerPage, page, changeRowsPerPage, changePage }) => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  // const [page, setPage] = React.useState(0);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [state, setState] = React.useState([]);
   const [collectionId, setCollectionId] = React.useState('')
@@ -213,12 +215,12 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     },
   ];
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
+  // const emptyRows =
+  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -258,10 +260,10 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     setSelected(newSelected);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -382,7 +384,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           />
           <TableBody>
             {stableSort(list, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -519,10 +521,9 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                         <div className="d-flex align-items-center">
                           <Tooltip title="Edit" placement="top">
                             <div className="table-edit-icon rounded-4 p-2" 
-                                onClick={()=>{
-                                  dispatch(updateCollectionId(row._id));
-                                  navigate("/parameters/collections/edit")
-                                }}
+                                onClick={(e) => {
+                                      edit(row,index+1,collectionType);
+                                    }}
                             >
                               <EditOutlinedIcon
                                 sx={{
@@ -571,7 +572,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                   </TableRow>
                 );
               })}
-            {emptyRows > 0 && (
+            {/* {emptyRows > 0 && (
               <TableRow
                 style={{
                   height: 53 * emptyRows,
@@ -579,7 +580,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
               >
                 <TableCell colSpan={6} />
               </TableRow>
-            )}
+            )} */}
           </TableBody>
         </Table>
       </TableContainer>
@@ -589,14 +590,16 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
         component="div"
         count={pageLength}
         rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        page={page - 1}
+        onPageChange={changePage}
+        onRowsPerPageChange={changeRowsPerPage}
         className="table-pagination"
       />
       </>
       ) : isLoading ? (
-            <span className="d-flex justify-content-center m-3">Loading...</span>
+            <span className="d-flex justify-content-center m-3">
+              <TableLoader />
+            </span>
           ) : (
             <span className="d-flex justify-content-center m-3">
               <NoDataFound />
