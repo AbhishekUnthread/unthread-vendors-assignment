@@ -59,7 +59,7 @@ const TableSearch = ({ searchValue, handleSearchChange }) => {
 };
 
 const TableSearchSecondary = (props) => {
-  const { onChange } = props;
+  const { onChange,value,onSearchValueChange } = props;
 
   const search = _debounce((value) => {
     onChange(value);
@@ -67,6 +67,7 @@ const TableSearchSecondary = (props) => {
 
   const onSearch = (e) => {
     search(e.target.value);
+    onSearchValueChange(e.target.value)
   };
 
   return (
@@ -78,6 +79,7 @@ const TableSearchSecondary = (props) => {
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
         onChange={onSearch}
+        value={value}
       />
     </Search>
   );

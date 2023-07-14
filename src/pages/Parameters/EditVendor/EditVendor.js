@@ -231,7 +231,7 @@ const EditVendor = () => {
           status: vendorStatus?vendorStatus:"active" // Vendor status
         }
       }).unwrap().then(() => {
-        navigate("/parameters/vendors"); // Navigating to vendors page after successful edit
+        navigate(`/parameters/vendors?status=${decodedObject?.tab}`); // Navigating to vendors page after successful edit
       })
       .catch((editVendorError)=>dispatch(showError( { message: editVendorError?.data?.message } )));
      }
@@ -248,8 +248,9 @@ const EditVendor = () => {
      }
     }};
 
+
     const backHandler = () => {
-      navigate("/parameters/vendors");
+      navigate(-1);
     };
     
     const handleSubmitAndAddAnother = () => {
@@ -400,14 +401,14 @@ const EditVendor = () => {
     <div className="page container-fluid position-relative user-group">
       <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/parameters/vendors" className="d-flex">
             <img
               src={arrowLeft}
               alt="arrowLeft"
               width={9}
               className="c-pointer"
+              onClick={backHandler}
             />
-          </Link>
+
           <h5 className="page-heading ms-2 ps-1">{vendorName}</h5>
         </div>
 
