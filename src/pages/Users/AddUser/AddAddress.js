@@ -1,18 +1,6 @@
-import React, { useState } from "react";
-import "./AddUser.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useFormik } from "formik";
-import { useDispatch, useSelector } from "react-redux";
-
-// ! COMPONENT IMPORTS
-import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
-import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
-import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import AppCitySelect from "../../../components/AddCitySelect/AddCitySelect";
-// ! IMAGES IMPORTS
-import archivedGrey from "../../../assets/icons/archivedGrey.svg";
-import editGrey from "../../../assets/icons/editGrey.svg";
-// ! MATERIAL IMPORTS
 import {
   FormControl,
   InputAdornment,
@@ -22,14 +10,17 @@ import {
   Chip,
 } from "@mui/material";
 
-import {
-  showSuccess,
-  showError,
-} from "../../../features/snackbar/snackbarAction";
+import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
+import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
+import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
+import AppCitySelect from "../../../components/AddCitySelect/AddCitySelect";
+
+import archivedGrey from "../../../assets/icons/archivedGrey.svg";
+import editGrey from "../../../assets/icons/editGrey.svg";
+
+import "./AddUser.scss";
 
 const AddAddress = ({ customerAddressDetails }) => {
-  let navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const customerAddressFormik = useFormik({
     initialValues: {
@@ -49,7 +40,6 @@ const AddAddress = ({ customerAddressDetails }) => {
         }
       }
       customerAddressDetails(values)
-      console.log(values, 'values for creating customers')
     },
   });
 
@@ -86,14 +76,14 @@ const AddAddress = ({ customerAddressDetails }) => {
   }
 
   // ? ADDRESS STARTS HERE
-  const [address, setAddress] = React.useState(false);
+  const [address, setAddress] = useState(false);
 
   const handleAddressChange = () => {
     setAddress(prevState => !prevState)
   };
   // ? ADDRESS ENDS HERE
   // ? ADDRESS STARTS HERE
-  const [savedAddress, setSavedAddress] = React.useState(false);
+  const [savedAddress, setSavedAddress] = useState(false);
 
   // ? ADDRESS ENDS HERE
 
@@ -152,201 +142,189 @@ const AddAddress = ({ customerAddressDetails }) => {
             </div>
         )}
         {address && (
-            // <form noValidate onSubmit={customerAddressFormik.handleSubmit}>
-                <div className="col-12 mt-3">
-                    <div className="row py-3 rounded-8 border-grey-5 bg-black-13">
-                        <div className="col-md-12">
-                            <p className="text-lightBlue mb-1">Name</p>
-                            <FormControl className="w-100 px-0">
-                                <OutlinedInput
-                                    placeholder="Office Address, Home Address"
-                                    size="small"
-                                    name="name"
-                                    value={customerAddressFormik.values.name}
-                                    onChange={customerAddressFormik.handleChange}
-                                />
-                            </FormControl>
-                            <small className="text-grey-6">
-                                Name this address Ex. Office Address, Home Address
-                            </small>
-                        </div>
-                        <div className="col-12">
-                            <FormControlLabel
-                                control={
-                                <Checkbox
-                                    name="isDefaultAddress"
-                                    value={customerAddressFormik.values.isDefaultAddress}
-                                    onChange={customerAddressFormik.handleChange}
-                                    inputProps={{ "aria-label": "controlled" }}
-                                    size="small"
-                                    style={{
-                                    color: "#5C6D8E",
-                                    }}
-                                />
-                                }
-                                label="Set as Default Address"
-                                sx={{
-                                "& .MuiTypography-root": {
-                                    fontSize: 13,
-                                    color: "#c8d8ff",
-                                },
+            <div className="col-12 mt-3">
+                <div className="row py-3 rounded-8 border-grey-5 bg-black-13">
+                    <div className="col-md-12">
+                        <p className="text-lightBlue mb-1">Name</p>
+                        <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                                placeholder="Office Address, Home Address"
+                                size="small"
+                                name="name"
+                                value={customerAddressFormik.values.name}
+                                onChange={customerAddressFormik.handleChange}
+                            />
+                        </FormControl>
+                        <small className="text-grey-6">
+                            Name this address Ex. Office Address, Home Address
+                        </small>
+                    </div>
+                    <div className="col-12">
+                        <FormControlLabel
+                            control={
+                            <Checkbox
+                                name="isDefaultAddress"
+                                value={customerAddressFormik.values.isDefaultAddress}
+                                onChange={customerAddressFormik.handleChange}
+                                inputProps={{ "aria-label": "controlled" }}
+                                size="small"
+                                style={{
+                                color: "#5C6D8E",
                                 }}
                             />
-                        </div>
-                        <div className="col-md-6 mt-3">
-                            <p className="text-lightBlue mb-1">First Name</p>
-                            <FormControl className="w-100 px-0">
-                                <OutlinedInput
-                                placeholder="Enter First Name"
-                                size="small"
-                                name="firstName"
-                                value={customerAddressFormik.values.firstName}
-                                onChange={customerAddressFormik.handleChange}
-                                />
-                            </FormControl>
-                        </div>
-                        <div className="col-md-6 mt-3">
-                            <p className="text-lightBlue mb-1">Last Name</p>
-                            <FormControl className="w-100 px-0">
-                                <OutlinedInput
-                                placeholder="Enter Last Name"
-                                size="small"
-                                name="lastName"
-                                value={customerAddressFormik.values.lastName}
-                                onChange={customerAddressFormik.handleChange}
-                                />
-                            </FormControl>
-                        </div>
-                        <div className="col-md-12 mt-3">
-                            <p className="text-lightBlue mb-1">Company Name</p>
-                            <FormControl className="w-100 px-0">
-                                <OutlinedInput
-                                    placeholder="Enter Email ID"
-                                    size="small"
-                                    name="companyName"
-                                    value={customerAddressFormik.values.companyName}
-                                    onChange={customerAddressFormik.handleChange}
-                                />
-                            </FormControl>
-                        </div>
-                        <div className="col-md-12 mt-3">
-                            <p className="text-lightBlue mb-1">Mobile Number</p>
-                            <FormControl className="w-100 px-0">
-                                <OutlinedInput
-                                    placeholder="Enter Mobile Number"
-                                    size="small"
-                                    sx={{ paddingLeft: 0 }}
-                                    name="phone"
-                                    value={customerAddressFormik.values.phone}
-                                    onChange={customerAddressFormik.handleChange}
-                                    startAdornment={
-                                    <InputAdornment position="start">
-                                        <AppMobileCodeSelect 
-                                            value={customerAddressFormik.values.countryCode}
-                                            GetCountryCode={GetCountryCode}
-                                            SelectCountryCode = {SelectCountryCode}
-                                            name="countryCode" 
-                                        />
-                                    </InputAdornment>
-                                }
-                                />
-                            </FormControl>
-                        </div>
-                        <div className="col-md-12 mt-3 add-user-country">
-                            <p className="text-lightBlue mb-1">Country</p>
-                            <AppCountrySelect 
-                                value={customerAddressFormik.values.country}
-                                GetCountryName={GetCountryName}
-                                SelectCountryName={SelectCountryName}
-                                name="country" 
-                            />
-                        </div>
-                        <div className="col-md-6 mt-3">
-                            <p className="text-lightBlue mb-1">Address Line 1</p>
-                            <FormControl className="w-100 px-0">
-                                <OutlinedInput
-                                    placeholder="Enter Address Line 1"
-                                    size="small"
-                                    name="line1"
-                                    value={customerAddressFormik.values.line1}
-                                    onChange={customerAddressFormik.handleChange}
-                                />
-                            </FormControl>
-                        </div>
-                        <div className="col-md-6 mt-3">
-                            <p className="text-lightBlue mb-1">Address Line 2</p>
-                            <FormControl className="w-100 px-0">
-                                <OutlinedInput
-                                    placeholder="Enter Address Line 2"
-                                    size="small"
-                                    name="line2"
-                                    value={customerAddressFormik.values.line2}
-                                    onChange={customerAddressFormik.handleChange}
-                                />
-                            </FormControl>
-                        </div>
-                        <div className="col-md-6 mt-3">
-                            <p className="text-lightBlue mb-1">Town/City</p>
-                            {/* <FormControl className="w-100 px-0">
-                                <OutlinedInput
-                                    placeholder="Enter Town/City"
-                                    size="small"
-                                    name="city"
-                                    value={customerAddressFormik.values.city}
-                                    onChange={customerAddressFormik.handleChange}
-                                />
-                            </FormControl> */}
-                            <AppCitySelect 
-                                value={customerAddressFormik.values.city}
-                                getCityName={getCityName}
-                                SelectCityName={SelectCityName}
-                                name="city" 
-                            />
-
-                        </div>
-                        <div className="col-md-6 mt-3">
-                            <p className="text-lightBlue mb-1">Zipcode/Postalcode</p>
-                            <FormControl className="w-100 px-0">
-                                <OutlinedInput
-                                    placeholder="Enter Zipcode/Postalcode"
-                                    size="small"
-                                    name="pinCode"
-                                    value={customerAddressFormik.values.pinCode}
-                                    onChange={customerAddressFormik.handleChange}
-                                />
-                            </FormControl>
-                        </div>
-                        <div className="col-md-12 mt-3  add-user-country">
-                        <div className="d-flex align-items-center justify-content-between">
-                            <p className="text-lightBlue mb-1">State or Region</p>
-                            <small className="text-grey-6 mb-1">(Optional)</small>
-                        </div>
-                        <AppStateSelect 
-                            value={customerAddressFormik.values.state}
-                            getStateName={getStateName}
-                            SelectStateName={SelectStateName}
-                            name="state" 
+                            }
+                            label="Set as Default Address"
+                            sx={{
+                            "& .MuiTypography-root": {
+                                fontSize: 13,
+                                color: "#c8d8ff",
+                            },
+                            }}
                         />
-                        </div>
-                        <div className="col-12 mt-4 d-flex justify-content-between">
-                        <Link
-                            onClick={handleAddressChange}
-                            className="button-red-outline py-2 px-4"
-                        >
-                            <p>Discard</p>
-                        </Link>
+                    </div>
+                    <div className="col-md-6 mt-3">
+                        <p className="text-lightBlue mb-1">First Name</p>
+                        <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                            placeholder="Enter First Name"
+                            size="small"
+                            name="firstName"
+                            value={customerAddressFormik.values.firstName}
+                            onChange={customerAddressFormik.handleChange}
+                            />
+                        </FormControl>
+                    </div>
+                    <div className="col-md-6 mt-3">
+                        <p className="text-lightBlue mb-1">Last Name</p>
+                        <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                            placeholder="Enter Last Name"
+                            size="small"
+                            name="lastName"
+                            value={customerAddressFormik.values.lastName}
+                            onChange={customerAddressFormik.handleChange}
+                            />
+                        </FormControl>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <p className="text-lightBlue mb-1">Company Name</p>
+                        <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                                placeholder="Enter Email ID"
+                                size="small"
+                                name="companyName"
+                                value={customerAddressFormik.values.companyName}
+                                onChange={customerAddressFormik.handleChange}
+                            />
+                        </FormControl>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <p className="text-lightBlue mb-1">Mobile Number</p>
+                        <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                                placeholder="Enter Mobile Number"
+                                size="small"
+                                sx={{ paddingLeft: 0 }}
+                                name="phone"
+                                value={customerAddressFormik.values.phone}
+                                onChange={customerAddressFormik.handleChange}
+                                startAdornment={
+                                <InputAdornment position="start">
+                                    <AppMobileCodeSelect 
+                                        value={customerAddressFormik.values.countryCode}
+                                        GetCountryCode={GetCountryCode}
+                                        SelectCountryCode = {SelectCountryCode}
+                                        name="countryCode" 
+                                    />
+                                </InputAdornment>
+                            }
+                            />
+                        </FormControl>
+                    </div>
+                    <div className="col-md-12 mt-3 add-user-country">
+                        <p className="text-lightBlue mb-1">Country</p>
+                        <AppCountrySelect 
+                            value={customerAddressFormik.values.country}
+                            GetCountryName={GetCountryName}
+                            SelectCountryName={SelectCountryName}
+                            name="country" 
+                        />
+                    </div>
+                    <div className="col-md-6 mt-3">
+                        <p className="text-lightBlue mb-1">Address Line 1</p>
+                        <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                                placeholder="Enter Address Line 1"
+                                size="small"
+                                name="line1"
+                                value={customerAddressFormik.values.line1}
+                                onChange={customerAddressFormik.handleChange}
+                            />
+                        </FormControl>
+                    </div>
+                    <div className="col-md-6 mt-3">
+                        <p className="text-lightBlue mb-1">Address Line 2</p>
+                        <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                                placeholder="Enter Address Line 2"
+                                size="small"
+                                name="line2"
+                                value={customerAddressFormik.values.line2}
+                                onChange={customerAddressFormik.handleChange}
+                            />
+                        </FormControl>
+                    </div>
+                    <div className="col-md-6 mt-3">
+                        <p className="text-lightBlue mb-1">Town/City</p>
+                        <AppCitySelect 
+                            value={customerAddressFormik.values.city}
+                            getCityName={getCityName}
+                            SelectCityName={SelectCityName}
+                            name="city" 
+                        />
+                    </div>
+                    <div className="col-md-6 mt-3">
+                        <p className="text-lightBlue mb-1">Zipcode/Postalcode</p>
+                        <FormControl className="w-100 px-0">
+                            <OutlinedInput
+                                placeholder="Enter Zipcode/Postalcode"
+                                size="small"
+                                name="pinCode"
+                                value={customerAddressFormik.values.pinCode}
+                                onChange={customerAddressFormik.handleChange}
+                            />
+                        </FormControl>
+                    </div>
+                    <div className="col-md-12 mt-3  add-user-country">
+                    <div className="d-flex align-items-center justify-content-between">
+                        <p className="text-lightBlue mb-1">State or Region</p>
+                        <small className="text-grey-6 mb-1">(Optional)</small>
+                    </div>
+                    <AppStateSelect 
+                        value={customerAddressFormik.values.state}
+                        getStateName={getStateName}
+                        SelectStateName={SelectStateName}
+                        name="state" 
+                    />
+                    </div>
+                    <div className="col-12 mt-4 d-flex justify-content-between">
+                    <Link
+                        onClick={handleAddressChange}
+                        className="button-red-outline py-2 px-4"
+                    >
+                        <p>Discard</p>
+                    </Link>
 
-                        <button
-                            type="button"
-                            onClick={() => customerAddressFormik.handleSubmit()}
-                            className="button-gradient py-2 px-4 w-auto"
-                        >
-                            <p>Save</p>
-                        </button>
-                        </div>
+                    <button
+                        type="button"
+                        onClick={() => customerAddressFormik.handleSubmit()}
+                        className="button-gradient py-2 px-4 w-auto"
+                    >
+                        <p>Save</p>
+                    </button>
                     </div>
                 </div>
-            // </form>
+            </div>
         )}
     </div>
   );

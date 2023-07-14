@@ -1,21 +1,12 @@
-import React from "react";
-import "./AddUser.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
-
-// ! COMPONENT IMPORTS
-import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
-import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
-import NotesBox from "../../../components/NotesBox/NotesBox";
-import TagsBox from "../../../components/TagsBox/TagsBox";
-import SaveFooter from "../../../components/SaveFooter/SaveFooter";
-import AddAddress from "./AddAddress";
-// ! IMAGES IMPORTS
-import arrowLeft from "../../../assets/icons/arrowLeft.svg";
-import addMedia from "../../../assets/icons/addMedia.svg";
-// ! MATERIAL IMPORTS
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import {
   FormControl,
   FormHelperText,
@@ -29,27 +20,34 @@ import {
   Autocomplete,
 } from "@mui/material";
 
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
+import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
+import NotesBox from "../../../components/NotesBox/NotesBox";
+import TagsBox from "../../../components/TagsBox/TagsBox";
+import SaveFooter from "../../../components/SaveFooter/SaveFooter";
+import AddAddress from "./AddAddress";
 
-// ! MATERIAL ICONS IMPORTS
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import arrowLeft from "../../../assets/icons/arrowLeft.svg";
+import addMedia from "../../../assets/icons/addMedia.svg";
 
-import {useCreateCustomerMutation} from "../../../features/customers/customer/customerApiSlice"
-import { useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
-import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
+import "./AddUser.scss";
 
 import {
   showSuccess,
   showError,
 } from "../../../features/snackbar/snackbarAction";
 
+import {useCreateCustomerMutation} from "../../../features/customers/customer/customerApiSlice"
+import { useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
+import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
+
 const customerValidationSchema = Yup.object({
   firstName: Yup.string().trim().min(3).required("Required"),
   lastName: Yup.string().trim().min(3).required("Required"),
+  dob: Yup.date().required("Required"),
+  gender: Yup.string().required("Required"),
   email: Yup.string().email().required("Required"),
+  countryCode: Yup.number().required("Required"),
   phone: Yup.number().required("Required"),
   password:  Yup
     .string()
@@ -120,11 +118,19 @@ const AddUser = () => {
 
   const customerFormik = useFormik({
     initialValues: {
+      firstName: "",
+      lastName: "",
+      dob: "",
+      gender: "",
+      countryCode: "",
+      phone: "",
+      email: "",
+      password: "",
       isSendEmail: false,
       isTemporaryPassword: false
     },
     enableReinitialize: true,
-    // validationSchema: customerValidationSchema,
+    validationSchema: customerValidationSchema,
     onSubmit: (values) => {
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
@@ -252,6 +258,11 @@ const AddUser = () => {
                         </MenuItem>
                       </Select>
                     </FormControl>
+                    {!!customerFormik.touched.gender && customerFormik.errors.gender && (
+                      <FormHelperText error>
+                        {customerFormik.errors.gender}
+                      </FormHelperText>
+                    )}
                   </div>
                   <div className="col-md-12 mt-3">
                     <p className="text-lightBlue mb-1">Mobile Number</p>
@@ -281,6 +292,11 @@ const AddUser = () => {
                     {!!customerFormik.touched.phone && customerFormik.errors.phone && (
                       <FormHelperText error>
                         {customerFormik.errors.phone}
+                      </FormHelperText>
+                    )}
+                    {!!customerFormik.touched.countryCode && customerFormik.errors.countryCode && (
+                      <FormHelperText error>
+                        {customerFormik.errors.countryCode}
                       </FormHelperText>
                     )}
                   </div>
@@ -345,6 +361,47 @@ const AddUser = () => {
                     />
                   </div>
                   <div className="col-md-12 mt-3">
+                    <p className="text-lightBlue mb-1">Password</p>
+                    <FormControl className="w-100 px-0">
+                      <OutlinedInput 
+                        placeholder="Enter Password" 
+                        size="small"
+                        value={customerFormik.values.password}
+                        onBlur={customerFormik.handleBlur}
+                        onChange={customerFormik.handleChange}
+                        name="password"  
+                      />
+                    </FormControl>
+                     {!!customerFormik.touched.password && customerFormik.errors.password && (
+                      <FormHelperText error>
+                        {customerFormik.errors.password}
+                      </FormHelperText>
+                    )}
+                  </div>
+                  <div className="col-md-12">
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          name="isTemporaryPassword"
+                          value={customerFormik.values.isTemporaryPassword}
+                          onChange={customerFormik.handleChange}
+                          inputProps={{ "aria-label": "controlled" }}
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                          }}
+                        />
+                      }
+                      label="Use Temporary Password"
+                      sx={{
+                        "& .MuiTypography-root": {
+                          fontSize: 13,
+                          color: "#c8d8ff",
+                        },
+                      }}
+                    />
+                  </div>
+                  <div className="col-md-12 mt-3">
                     <p className="text-lightBlue mb-1">User Group</p>
                     <Autocomplete
                       multiple
@@ -381,42 +438,6 @@ const AddUser = () => {
                       )}
                     />
                   </div>
-                  <div className="col-md-12 mt-3">
-                    <p className="text-lightBlue mb-1">Password</p>
-                    <FormControl className="w-100 px-0">
-                      <OutlinedInput 
-                        placeholder="Enter Password" 
-                        size="small"
-                        value={customerFormik.values.password}
-                        onBlur={customerFormik.handleBlur}
-                        onChange={customerFormik.handleChange}
-                        name="password"  
-                      />
-                    </FormControl>
-                  </div>
-                  <div className="col-md-12">
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          name="isTemporaryPassword"
-                          value={customerFormik.values.isTemporaryPassword}
-                          onChange={customerFormik.handleChange}
-                          inputProps={{ "aria-label": "controlled" }}
-                          size="small"
-                          style={{
-                            color: "#5C6D8E",
-                          }}
-                        />
-                      }
-                      label="Use Temporary Password"
-                      sx={{
-                        "& .MuiTypography-root": {
-                          fontSize: 13,
-                          color: "#c8d8ff",
-                        },
-                      }}
-                    />
-                  </div>
                 </div>
               </div>
             </div>
@@ -434,6 +455,7 @@ const AddUser = () => {
               imageName={addMedia} 
               headingName={"Media"} 
               UploadChange={handleMediaUrl} 
+              isUploaded={()=>{}}
             />
             <TagsBox 
               name="tags"
