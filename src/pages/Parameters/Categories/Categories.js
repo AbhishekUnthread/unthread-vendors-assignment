@@ -343,7 +343,13 @@ const Categories = () => {
             dispatch(showError({ message: err?.data?.message }));
           });
       } else {
-        createCategory(values)
+        createCategory({
+          ...values,
+          seo:{
+            title:values.name,
+            slug:"https://example.com/" + values.name,
+          }
+        })
           .unwrap()
           .then(() => categoryFormik.resetForm())
           .catch((err) => {
@@ -383,7 +389,13 @@ const Categories = () => {
             dispatch(showError({ message: err?.data?.message }));
           });
       } else {
-        createSubCategory(values)
+        createSubCategory({
+          ...values,
+          seo:{
+            title:values.name,
+            slug:"https://example.com/" + values.name,
+          }
+        })
           .unwrap()
           .then(() => {
             subCategoryFormik.resetForm();
