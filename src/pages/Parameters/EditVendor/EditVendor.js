@@ -26,7 +26,7 @@ import { useGetAllProductsQuery } from "../../../features/products/product/produ
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
-import DiscardModal from "../../../components/Discard/DiscardModal";
+import DiscardModal, { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -251,12 +251,13 @@ const EditVendor = () => {
     }};
 
     const backHandler = () => {
-      setShowDiscardModal(true);
+      navigate(-1);
+      // setShowDiscardModal(true);
       // navigate("/parameters/vendors");
     };
-    const toggleDiscardModal = () => {
-      setShowDiscardModal(false);;
-    };
+    // const toggleDiscardModal = () => {
+    //   setShowDiscardModal(false);;
+    // };
     
     const handleSubmitAndAddAnother = () => {
       if(vendorId !== "")
@@ -339,6 +340,12 @@ const EditVendor = () => {
 
     useEffect(() => {
       setHideFooter(
+        vendorName.trim() !== initialName ||
+        (vendorNotes !== initialNotes && vendorNotes !== "") ||
+        vendorStatus !== initialStatus ||
+        checked !== initialFilter
+      );
+      setShowDiscardModal(
         vendorName.trim() !== initialName ||
         (vendorNotes !== initialNotes && vendorNotes !== "") ||
         vendorStatus !== initialStatus ||
@@ -670,11 +677,17 @@ const EditVendor = () => {
           </div>
         </DialogActions>
       </Dialog>
-      <DiscardModal 
+      {/* <DiscardModal 
       showDiscardModal={showDiscardModal}   
       toggleDiscardModal={toggleDiscardModal}
+     /> */}
 
+     <DiscardModalSecondary
+        when={showDiscardModal}
+        message="vendors tab"
       />
+     
+     
     </div>
   );
 };
