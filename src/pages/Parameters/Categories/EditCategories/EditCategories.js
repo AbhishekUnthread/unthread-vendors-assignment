@@ -10,11 +10,10 @@ import AddSubCategoriesProducts from "../../../../components/AddSubCategoriesPro
 import TabPanel from "../../../../components/TabPanel/TabPanel";
 import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox";
 import SEO from "../../../Products/AddProduct/SEO/SEO";
-import VisibilityBox from "../../../../components/VisibilityBox/VisibilityBox";
 import SaveFooter, {
   SaveFooterTertiary,
 } from "../../../../components/SaveFooter/SaveFooter";
-import DiscardModal from "../../../../components/Discard/DiscardModal";
+import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
 import AddHeader from "../../../../components/AddHeader/AddHeader";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
@@ -130,7 +129,7 @@ const EditCategories = () => {
   );
   const [categoryDescription, setCategoryDescription] = useState("");
   const [decodedObject, setDecodedObject] = useState(null);
-  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
+ 
 
   const {
     data: categoriesData,
@@ -229,8 +228,8 @@ const EditCategories = () => {
   };
 
   const backHandler = () => {
-    // navigate(-1);
-    setShowDiscardModal(true);
+    navigate(-1);
+    
   };
 
   const nextPageHandler = () => {
@@ -279,9 +278,7 @@ const EditCategories = () => {
     dispatch,
   ]);
 
-  const toggleDiscardModal = () => {
-    setShowDiscardModal(false);;
-  };
+  
 
   useEffect(() => {
     const encodedString = filter; // The encoded string from the URL or any source
@@ -484,11 +481,11 @@ const EditCategories = () => {
           isLoading={editCategoryIsLoading}
         />
       </form>
-      <DiscardModal
-      showDiscardModal={showDiscardModal}   
-      toggleDiscardModal={toggleDiscardModal}
-
+      <DiscardModalSecondary
+        when={!_.isEqual(categoryEditFormik.values, categoryEditFormik.initialValues)}
+        message="Category"
       />
+      
     </div>
   );
 };
