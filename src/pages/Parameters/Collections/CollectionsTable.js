@@ -661,16 +661,16 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           showCreateModal={showDeleteModal}
           toggleArchiveModalHandler={toggleArchiveModalHandler}
           handleArchive={handleArchiveModal} 
-          name={forMassAction == false ? name : selected.length} 
-          deleteType={forMassAction == false ? "Collection" : "Collections"}
+          name={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length} 
+          deleteType={ forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" }
         />
         <UnArchivedModal 
           handleStatusValue={handleStatusValue}
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
-          name={forMassAction == false ? name : selected.length}
-          nameType={forMassAction == false ? "Collection" : "Collections"}
+          name={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length} 
+          nameType={ forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" }
         />
 
         <DuplicateCollection 

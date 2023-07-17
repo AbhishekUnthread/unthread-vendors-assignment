@@ -8,9 +8,14 @@ const Transition = forwardRef(function Transition(props, ref) {
   });
   // ? DIALOG TRANSITION ENDS HERE
 
-const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,name, deleteType}) => {
+const DeleteModal = ({
+  showCreateModal,
+  toggleArchiveModalHandler,
+  handleArchive,
+  name, 
+  deleteType
+}) => {
 
-  console.log(deleteType,'deleteType')
   return (
     <>
     <Dialog
@@ -32,7 +37,7 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
               <span className="text-blue-2"> "{name}" </span> {deleteType} ?
             </h5>
             <h6 className="mt-3 mb-4" style={{color: "#5C6D8E"}}>
-              This will delete the collection from the dashboard and it can't be undone. 
+              This will delete the {deleteType} from the dashboard and it can't be undone. 
               Are you sure you want to delete the {deleteType} ?
             </h6>
         </DialogContent>
