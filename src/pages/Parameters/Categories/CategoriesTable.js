@@ -983,17 +983,16 @@ const CategoriesTable = ({
           <h5 className="text-lightBlue mt-2 mb-3">
             Archive
             <span className="text-blue-2">
-              {" "}
-              "{selected.length == 0 ? rowData?.name : selected.length}"{" "}
+              "{selected.length == 0 ? rowData?.name : selected.length}
             </span>
-            {selected.length > 1 ? "Category" : " Categoris"}
+            {selected.length > 1 ? "Categories ?" : " Category ?"}
           </h5>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
             <span className="text-blue-2"> 0 products </span>
             in this Category will be unassigned from it.
           </h6>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
-            <span className="text-blue-2"> {rowData?.totalSubCategory} {rowData?.totalSubCategory > 1 ? "SubCategory":"SubCategories"} </span>
+            <span className="text-blue-2"> {rowData?.totalSubCategory} {rowData?.totalSubCategory > 1 ? "SubCategories":"SubCategory"} </span>
             in this category will be Archive from it.
           </h6>
           <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>
