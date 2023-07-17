@@ -652,24 +652,6 @@ const CategoriesTable = ({
                                     </Link>
                                   </Tooltip>
                                 )}
-                                {!archived && (
-                                  <Tooltip title={"Delete"} placement="top">
-                                    <div
-                                      onClick={(e) => {
-                                        toggleDeleteModalHandler(row);
-                                      }}
-                                      className="table-edit-icon rounded-4 p-2"
-                                    >
-                                      <DeleteIcon
-                                        sx={{
-                                          color: "#5c6d8e",
-                                          fontSize: 18,
-                                          cursor: "pointer",
-                                        }}
-                                      />
-                                    </div>
-                                  </Tooltip>
-                                )}
                                 {deleteData && (
                                   <Tooltip
                                     title={
@@ -688,6 +670,24 @@ const CategoriesTable = ({
                                       className="table-edit-icon rounded-4 p-2"
                                     >
                                       <InventoryIcon
+                                        sx={{
+                                          color: "#5c6d8e",
+                                          fontSize: 18,
+                                          cursor: "pointer",
+                                        }}
+                                      />
+                                    </div>
+                                  </Tooltip>
+                                )}
+                                {!archived && (
+                                  <Tooltip title={"Delete"} placement="top">
+                                    <div
+                                      onClick={(e) => {
+                                        toggleDeleteModalHandler(row);
+                                      }}
+                                      className="table-edit-icon rounded-4 p-2"
+                                    >
+                                      <DeleteIcon
                                         sx={{
                                           color: "#5c6d8e",
                                           fontSize: 18,
