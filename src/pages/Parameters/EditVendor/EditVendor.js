@@ -32,6 +32,7 @@ import _ from "lodash";
     };
     const initialVendorState = {
       isEditing: false,
+      edited:false,
     };
 
     const queryFilterReducer = (state, action) => {
@@ -54,16 +55,28 @@ import _ from "lodash";
 
       if (action.type === "ENABLE_EDIT") {
         return {
-          ...initialVendorState,
+          ...state,
           isEditing: true,
         };
       }
       if (action.type === "DISABLE_EDIT") {
         return {
-          ...initialVendorState,
+          ...state,
           isEditing: false,
         };
       }  
+      if (action.type === "EDITED_ENABLE") {
+        return {
+          ...initialVendorState,
+          edited: true,
+        };
+      } 
+      if (action.type === "EDITED_DISABLE") {
+        return {
+          ...initialVendorState,
+          edited: false,
+        };
+      } 
       return initialVendorState;
     };
 
@@ -205,6 +218,7 @@ const EditVendor = () => {
       enableReinitialize: true,
       validationSchema : vendorValidationSchema,
       onSubmit: (values)=>{
+        dispatchVendor({ type: "EDITED_DISABLE" });
         if(id)
          {
           editVendor({
@@ -225,7 +239,17 @@ const EditVendor = () => {
         }
       }
     })
-    console.log({filter :formik.values?.filter})
+
+    useEffect(() => {
+      if(!_.isEqual(formik.values, formik.initialValues))
+      {
+        dispatchVendor({ type: "EDITED_ENABLE" });
+        console.log("in if block")
+      }
+
+    }, [formik.values,formik.initialValues])
+
+    
     useEffect(() => {
       if (id && !_.isEqual(formik.values, formik.initialValues)) {
         dispatchVendor({ type: "ENABLE_EDIT" });
@@ -233,6 +257,7 @@ const EditVendor = () => {
         dispatchVendor({ type: "DISABLE_EDIT" });
       }
     }, [formik.initialValues, formik.values, id]);
+
 
   return (
     <div className="page container-fluid position-relative user-group">
@@ -339,7 +364,7 @@ const EditVendor = () => {
           isLoading={editVendorIsLoading}
         />
       <DiscardModalSecondary
-        when={formik.handleSubmit?false :!_.isEqual(formik.values, formik.initialValues)}
+        when={vendorState.edited}
         message="vendor tab"
       />
     </form>
