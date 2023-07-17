@@ -215,7 +215,7 @@ const SubCategoriesTable = ({
       const newState = selected.map((i) => i);
       bulkDeleteSubCategory({ deletes: newState }).then(() => {
         dispatch(
-          showSuccess({ message: "Deleted this sub categories successfully" })
+          showSuccess({ message: " Sub categories Deleted successfully" })
         );
       });
       setSelectedStatus(null);
@@ -238,7 +238,7 @@ const SubCategoriesTable = ({
       },
     });
     dispatch(
-      showSuccess({ message: "This Sub category Archived successfully" })
+      showSuccess({ message: "Sub category Archived successfully" })
     );
   }
 
@@ -255,7 +255,7 @@ const SubCategoriesTable = ({
       },
     });
     dispatch(
-      showSuccess({ message: "This Sub category Un-Archived successfully" })
+      showSuccess({ message: "Sub category Un-Archived successfully" })
     );
   }
 

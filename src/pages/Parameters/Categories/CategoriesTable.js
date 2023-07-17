@@ -356,7 +356,7 @@ const CategoriesTable = ({
           status: "archieved",
         },
       });
-      dispatch(showSuccess({ message: "This category Archived successfully" }));
+      dispatch(showSuccess({ message: "Category Archived successfully" }));
     } else {
       editSubCategory({
         id: rowData._id,
@@ -365,7 +365,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "This Sub category Archived  successfully" })
+        showSuccess({ message: "Sub category Archived  successfully" })
       );
       setToggleCategoris(true);
     }
@@ -385,7 +385,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "This category Un-Archived successfully" })
+        showSuccess({ message: "Category Un-Archived successfully" })
       );
     } else {
       editSubCategory({
@@ -395,7 +395,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "This sub Category Un-Archived successfully" })
+        showSuccess({ message: "Sub Category Un-Archived successfully" })
       );
       setToggleCategoris(true);
     }
@@ -406,7 +406,7 @@ const CategoriesTable = ({
       const newState = selected.map((i) => i);
       bulkDeleteCategory({ deletes: newState }).then(() => {
         dispatch(
-          showSuccess({ message: "Deleted this categories successfully" })
+          showSuccess({ message: "This categories Deleted successfully" })
         );
       });
       setSelectedStatus(null);
