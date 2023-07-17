@@ -258,7 +258,7 @@ const EditSubCategories = () => {
   };
 
   const backHandler = () => {
-    navigate("/parameters/categories")
+    navigate("/parameters/categories?status=1")
     
   };
 
