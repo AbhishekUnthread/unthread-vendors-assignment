@@ -340,12 +340,14 @@ const Categories = () => {
         ? multipleCategorySchema
         : categoryValidationSchema,
     onSubmit: (values) => {
+      toggleCreateModalHandler()
       if (multipleTags.length > 0) {
         bulkCreateCategory(multipleTags)
           .unwrap()
           .then(() => {
             setMultipleTags([]);
             categoryFormik.resetForm();
+            dispatch(showSuccess({ message: "Categories created successfully" }));
           })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
@@ -359,7 +361,10 @@ const Categories = () => {
           }
         })
           .unwrap()
-          .then(() => categoryFormik.resetForm())
+          .then(() => {
+            categoryFormik.resetForm()
+            dispatch(showSuccess({ message: " Category created successfully" }));
+          })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
           });
@@ -392,6 +397,7 @@ const Categories = () => {
               open:true
             }
             setCategoryOpenState(state)
+            dispatch(showSuccess({ message: "Sub Categories created successfully" }));
           })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
@@ -412,6 +418,7 @@ const Categories = () => {
               open:true
             }
             setCategoryOpenState(state)
+            dispatch(showSuccess({ message: "Sub Category created successfully" }));
           })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
@@ -555,29 +562,10 @@ const Categories = () => {
   ]);
 
   useEffect(() => {
-    if (createCategoryIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Category created successfully" }));
-    }
-
+  
     if (deleteCategoryIsSuccess) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Category deleted successfully" }));
-    }
-
-    if (bulkCreateTagsIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Categories created successfully" }));
-    }
-
-    if (createSubCategoryIsSuccess) {
-      setShowCreateSubModal(false);
-      dispatch(showSuccess({ message: "Sub Category created successfully" }));
-    }
-
-    if (bulkCreateSubTagsIsSuccess) {
-      setShowCreateSubModal(false);
-      dispatch(showSuccess({ message: "Sub Categories created successfully" }));
     }
 
     if (deleteSubCategoryIsSuccess) {
