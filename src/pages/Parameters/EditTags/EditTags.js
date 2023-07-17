@@ -20,7 +20,7 @@ import { updateTagId } from "../../../features/parameters/tagsManager/tagsManage
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
-import DiscardModal from "../../../components/Discard/DiscardModal";
+import DiscardModal, { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -150,12 +150,13 @@ const EditTags = () => {
      }};
 
      const backHandler = () => {
-      setShowDiscardModal(true);
+      navigate(-1);
+      // setShowDiscardModal(true);
       // navigate("/parameters/tagsManager");
     };
-    const toggleDiscardModal = () => {
-      setShowDiscardModal(false);;
-    };
+    // const toggleDiscardModal = () => {
+    //   setShowDiscardModal(false);;
+    // };
 
      const handleSubmitAndAddAnother = () => {
       if(tagId !== "")
@@ -225,6 +226,11 @@ const EditTags = () => {
 
        useEffect(() => {
         setHideFooter(
+          tagName.trim() !== initialName ||
+          (tagNotes !== initialNotes && tagNotes !== "") ||
+          checked !== initialFilter
+        );
+        setShowDiscardModal(
           tagName.trim() !== initialName ||
           (tagNotes !== initialNotes && tagNotes !== "") ||
           checked !== initialFilter
@@ -351,10 +357,14 @@ const EditTags = () => {
           isLoading={editTagIsLoading}
           handleSubmit={handleSubmit}
         />
-              <DiscardModal 
+              {/* <DiscardModal 
               showDiscardModal={showDiscardModal}   
               toggleDiscardModal={toggleDiscardModal}
-              />
+              /> */}
+              <DiscardModalSecondary
+        when={showDiscardModal}
+        message="vendors tab"
+      />
 
     </div>
   );

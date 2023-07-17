@@ -26,7 +26,7 @@ import { useGetAllProductsQuery } from "../../../features/products/product/produ
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import SaveFooter, { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
 import * as Yup from 'yup';
-import DiscardModal from "../../../components/Discard/DiscardModal";
+import DiscardModal, { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
 
     // ? DIALOG TRANSITION STARTS HERE
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -73,7 +73,6 @@ const EditVendor = () => {
   const [vendorName, setVendorName] = useState("")
   const [vendorNotes, setVendorNotes] = useState("")
   const [vendorStatus, setVendorStatus] = useState("active")
-  const [vendorFlagShip, setVendorFlagShip] = useState("")
   const [vendorId, setVendorId] = useState();
   const [checked, setChecked] = React.useState(false);
   // const vendorId = useSelector((state)=>state.vendor.vendorId)
@@ -94,13 +93,6 @@ const EditVendor = () => {
 
   const [decodedObject, setDecodedObject] = useState(null);
 
-  
-  const {
-    data : vendorProductsData,
-    isLoading:vendorProductsDataIsLoading,
-    isSuccess:vendorProductsDataIsSuccess,
-    error:vendorProductsDataErro
-  }= useGetAllProductsQuery({id:vendorId});
 
   const [
     createVendor,
@@ -222,17 +214,24 @@ const EditVendor = () => {
       if (!vendorNameError) {
      if(vendorId !== "")
      {
+      setInitailName(vendorsData.data.data[0]?.name)
+      setInitailNotes(vendorsData.data.data[0]?.notes)
+      setInitailStatus(vendorsData.data.data[0]?.status)
+      setInitailFilter(vendorsData.data.data[0]?.showFilter)
+      
+
        // Calling Vendor edit API
        editVendor({
         id: vendorId, // ID of the vendor
         details: {
-          isFlagShip: vendorFlagShip, // Flagship status of the vendor
           showFilter: checked?checked:false, // Whether to show filters
           name: vendorName.trim(), // Vendor name
           notes: vendorNotes?vendorNotes.trim():vendorNotes, // Vendor description
           status: vendorStatus?vendorStatus:"active" // Vendor status
         }
       }).unwrap().then(() => {
+        console.log("checking...")
+        setShowDiscardModal(false)
         navigate(`/parameters/vendors?status=${decodedObject?.tab}`); // Navigating to vendors page after successful edit
       })
       .catch((editVendorError)=>dispatch(showError( { message: editVendorError?.data?.message } )));
@@ -252,14 +251,13 @@ const EditVendor = () => {
 
 
     const backHandler = () => {
-      navigate(-1);
-      setShowDiscardModal(true);
+      navigate(`/parameters/vendors?status=${decodedObject?.tab}`);
+      // setShowDiscardModal(true);
       // navigate("/parameters/vendors");
     };
-  
-    const toggleDiscardModal = () => {
-      setShowDiscardModal(false);;
-    };
+    // const toggleDiscardModal = () => {
+    //   setShowDiscardModal(false);;
+    // };
     
     const handleSubmitAndAddAnother = () => {
       if(vendorId !== "")
@@ -268,13 +266,13 @@ const EditVendor = () => {
         editVendor({
           id: vendorId, // ID of the vendor
           details: {
-            isFlagShip: vendorFlagShip, // Flagship status of the vendor
             showFilter: checked, // Whether to show filters
             name: vendorName, // Vendor name
             notes: vendorNotes, // Vendor description
             status: vendorStatus?vendorStatus:"active" // Vendor status
           }
         }).unwrap().then(() => {
+
           navigate("/parameters/vendors/edit"); // Navigating to edit page after successful edit     
           
         });
@@ -347,7 +345,18 @@ const EditVendor = () => {
         vendorStatus !== initialStatus ||
         checked !== initialFilter
       );
-    }, [vendorName, vendorNotes, vendorStatus, checked]);
+      if(!editVendorIsLoading)
+      {
+        setShowDiscardModal(
+          vendorName.trim() !== initialName ||
+          (vendorNotes !== initialNotes && vendorNotes !== "") ||
+          vendorStatus !== initialStatus ||
+          checked !== initialFilter
+        );
+      }
+
+    }, [vendorName, vendorNotes, vendorStatus, checked,editVendorIsLoading]);
+    console.log("showDiscard",showDiscardModal)
 
     useEffect(() => {
       if (id) {
@@ -367,6 +376,7 @@ const EditVendor = () => {
     useEffect(() => {
       if(editVendorIsSuccess)
       {
+        setShowDiscardModal(false);
         dispatch(showSuccess({ message: "Vendor updated successfully" }));
       }
   
@@ -380,13 +390,13 @@ const EditVendor = () => {
           );
         }
       }
+
   
-      if(vendorProductsDataIsSuccess)
-      {
-        setProducts(vendorProductsData)
-      }
-  
-      if (vendorsIsSuccess ) {
+    }, [editVendorIsSuccess,editVendorError,dispatch]);
+    
+
+    useEffect(() => {
+      if (vendorsIsSuccess) {
         dispatchQueryFilter({
           type: "SET_TOTAL_COUNT",
           totalCount: vendorsData?.data?.totalCount,
@@ -394,15 +404,15 @@ const EditVendor = () => {
         setVendorId(vendorsData.data.data[0]?._id)
         setVendorName(vendorsData.data.data[0]?.name);
         setInitailName(vendorsData.data.data[0]?.name)
-        setVendorFlagShip(vendorsData.data.data[0].isFlagShip)
-        setVendorNotes(vendorsData.data.data[0].notes)
-        setInitailNotes(vendorsData.data.data[0].notes)
-        setVendorStatus(vendorsData.data.data[0].status)
-        setInitailStatus(vendorsData.data.data[0].status)
-        setChecked(vendorsData.data.data[0].showFilter)
-        setInitailFilter(vendorsData.data.data[0].showFilter)
+        setVendorNotes(vendorsData.data.data[0]?.notes)
+        setInitailNotes(vendorsData.data.data[0]?.notes)
+        setVendorStatus(vendorsData.data.data[0]?.status)
+        setInitailStatus(vendorsData.data.data[0]?.status)
+        setChecked(vendorsData.data.data[0]?.showFilter)
+        setInitailFilter(vendorsData.data.data[0]?.showFilter)
       }
-    }, [vendorsIsSuccess,vendorProductsDataIsSuccess,vendorProductsData,vendorId,index,editVendorIsSuccess,editVendorError,id,filter,vendorsData]);
+    }, [vendorsIsSuccess,vendorsData])
+    
     
     
   return (
@@ -505,7 +515,6 @@ const EditVendor = () => {
               </h6>
             </div>
             <AddProducts 
-            isLoading={vendorProductsDataIsLoading}
             list={products}
             />
           </div>
@@ -528,7 +537,6 @@ const EditVendor = () => {
           onDiscard={backHandler}
           isLoading={editVendorIsLoading}
           handleSubmit={handleSubmit}
-
       />
 
 
@@ -673,11 +681,17 @@ const EditVendor = () => {
           </div>
         </DialogActions>
       </Dialog>
-      <DiscardModal 
+      {/* <DiscardModal 
       showDiscardModal={showDiscardModal}   
       toggleDiscardModal={toggleDiscardModal}
+     /> */}
 
-      />
+     {/* <DiscardModalSecondary
+        when={showDiscardModal}
+        message="vendors tab"
+      /> */}
+     
+     
     </div>
   );
 };

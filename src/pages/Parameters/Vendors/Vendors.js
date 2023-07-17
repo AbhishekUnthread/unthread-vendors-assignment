@@ -125,10 +125,8 @@ const Vendors = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = React.useState("newestToOldest");
   const [selectedStatusOption, setSelectedStatusOption] = React.useState([]);
-  const [searchValue, setSearchValue] = React.useState("");
   const [multipleVendors,setMultipleVendors] = React.useState([]);
   const [totalCount,setTotalCount] = React.useState([]);
-  const [tabPath,setTabPath] = useState('all');
 
   const vendorValidationSchema = Yup.object({
     name: Yup.string().trim().min(3).required("Required"),
@@ -343,7 +341,7 @@ const Vendors = () => {
             }
             else{
               dispatch(
-                showError({ message: "Duplicate Name Value" })
+                showError({ message: `${vendorFormik.values.name.trim()} already exists` })
               );
             }
           }
@@ -863,6 +861,7 @@ const Vendors = () => {
                   name="controlled-radio-buttons-group"
                   value={selectedSortOption}
                   onChange={handleSortRadioChange}
+                  defaultValue="newestToOldest"
                 >
                   <FormControlLabel
                     value="newestToOldest"
