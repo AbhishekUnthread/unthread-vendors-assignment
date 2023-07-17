@@ -56,6 +56,7 @@ import {
   showError,
   showSuccess,
 } from "../../../../features/snackbar/snackbarAction";
+import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
 import cancel from "../../../../assets/icons/cancel.svg";
 import { LoadingButton } from "@mui/lab";
 import _ from "lodash";
@@ -257,9 +258,11 @@ const EditSubCategories = () => {
   };
 
   const backHandler = () => {
-    navigate("/parameters/categories");
+    navigate("/parameters/categories")
+    
   };
 
+ 
   const nextPageHandler = () => {
     setSubCategoryDescription("");
     const { pageNo, totalCount } = queryFilterState;
@@ -558,7 +561,6 @@ const EditSubCategories = () => {
                 categoryEditFormik.setFieldValue("seo", val)
               }
               refrenceId={id ? subCategoriesData?.data?.data?.[0]?._id : ""}
-              toggleState={id ? categoryState.isSeoEditDone : false}
             />
           </div>
         </div>
@@ -604,6 +606,10 @@ const EditSubCategories = () => {
           isLoading={editSubCategoryIsLoading}
         />
       </form>
+      <DiscardModalSecondary
+        when={!_.isEqual(categoryEditFormik.values, categoryEditFormik.initialValues)}
+        message="Category"
+      />
     </div>
   );
 };

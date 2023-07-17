@@ -10,10 +10,10 @@ import AddSubCategoriesProducts from "../../../../components/AddSubCategoriesPro
 import TabPanel from "../../../../components/TabPanel/TabPanel";
 import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox";
 import SEO from "../../../Products/AddProduct/SEO/SEO";
-import VisibilityBox from "../../../../components/VisibilityBox/VisibilityBox";
 import SaveFooter, {
   SaveFooterTertiary,
 } from "../../../../components/SaveFooter/SaveFooter";
+import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
 import AddHeader from "../../../../components/AddHeader/AddHeader";
 // ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
@@ -129,6 +129,7 @@ const EditCategories = () => {
   );
   const [categoryDescription, setCategoryDescription] = useState("");
   const [decodedObject, setDecodedObject] = useState(null);
+ 
 
   const {
     data: categoriesData,
@@ -228,6 +229,7 @@ const EditCategories = () => {
 
   const backHandler = () => {
     navigate("/parameters/categories");
+    
   };
 
   const nextPageHandler = () => {
@@ -275,6 +277,8 @@ const EditCategories = () => {
     categoriesIsSuccess,
     dispatch,
   ]);
+
+  
 
   useEffect(() => {
     const encodedString = filter; // The encoded string from the URL or any source
@@ -427,7 +431,6 @@ const EditCategories = () => {
                 categoryEditFormik.setFieldValue("seo", val)
               }
               refrenceId={id ? categoriesData?.data?.data?.[0]?._id : ""}
-              toggleState={id ? categoryState.isSeoEditDone : false}
             />
           </div>
         </div>
@@ -477,6 +480,11 @@ const EditCategories = () => {
           isLoading={editCategoryIsLoading}
         />
       </form>
+      <DiscardModalSecondary
+        when={!_.isEqual(categoryEditFormik.values, categoryEditFormik.initialValues)}
+        message="Category"
+      />
+      
     </div>
   );
 };

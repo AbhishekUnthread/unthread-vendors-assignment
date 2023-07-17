@@ -136,6 +136,8 @@ const CategoriesTable = ({
   changeRowsPerPage,
   changePage,
   page,
+  cateoryOpenState,
+  setCategoryOpenState,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -155,6 +157,8 @@ const CategoriesTable = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [forMassAction, setForMassAction] = React.useState(false);
   const [massActionStatus, setMassActionStatus] = React.useState("");
+
+  console.log(list)
 
   const {
     data: subCategoriesData,
@@ -216,10 +220,6 @@ const CategoriesTable = ({
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const toggleCreateSubModalHandler = () => {
-    // setShowCreateSubModal((prevState) => !prevState);
-    // setShowCreatePopover(null);
-  };
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -301,6 +301,33 @@ const CategoriesTable = ({
     }
   }
 
+  useEffect(()=>{
+    if(cateoryOpenState?.open === true){
+      setFilterParameter({categoryId:cateoryOpenState.id,status:["active", "scheduled", "in-active"]});
+      if (open.length === 0) {
+        let item = [];
+        item.push(cateoryOpenState.id);
+        setOpen(item);
+        
+      }
+      if (open.length > 0 && open.includes(cateoryOpenState.id)) {
+        setOpen((item) => item.filter((i) => i !== cateoryOpenState.id));
+        
+      }
+      if (open.length > 0 && !open.includes(cateoryOpenState.id)) {
+        let item = [];
+        item.push(cateoryOpenState.id);
+        setOpen(item);
+      }
+      let state={
+        id:"",
+        open:false
+      }
+      setCategoryOpenState(state)
+
+    }
+  },[cateoryOpenState])
+
   const toggleArchiveModalHandler = (row) => {
     setShowArchivedModal((prevState) => !prevState);
     setRowData(row);
@@ -329,7 +356,7 @@ const CategoriesTable = ({
           status: "archieved",
         },
       });
-      dispatch(showSuccess({ message: "Archived this category successfully" }));
+      dispatch(showSuccess({ message: "This category Archived successfully" }));
     } else {
       editSubCategory({
         id: rowData._id,
@@ -338,7 +365,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "Archived this Sub category successfully" })
+        showSuccess({ message: "This Sub category Archived  successfully" })
       );
       setToggleCategoris(true);
     }
@@ -358,7 +385,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "Un-Archived this category successfully" })
+        showSuccess({ message: "This category Un-Archived successfully" })
       );
     } else {
       editSubCategory({
@@ -368,7 +395,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "Un-Archived this sub Category successfully" })
+        showSuccess({ message: "This sub Category Un-Archived successfully" })
       );
       setToggleCategoris(true);
     }
@@ -625,24 +652,6 @@ const CategoriesTable = ({
                                     </Link>
                                   </Tooltip>
                                 )}
-                                {!archived && (
-                                  <Tooltip title={"Delete"} placement="top">
-                                    <div
-                                      onClick={(e) => {
-                                        toggleDeleteModalHandler(row);
-                                      }}
-                                      className="table-edit-icon rounded-4 p-2"
-                                    >
-                                      <DeleteIcon
-                                        sx={{
-                                          color: "#5c6d8e",
-                                          fontSize: 18,
-                                          cursor: "pointer",
-                                        }}
-                                      />
-                                    </div>
-                                  </Tooltip>
-                                )}
                                 {deleteData && (
                                   <Tooltip
                                     title={
@@ -661,6 +670,24 @@ const CategoriesTable = ({
                                       className="table-edit-icon rounded-4 p-2"
                                     >
                                       <InventoryIcon
+                                        sx={{
+                                          color: "#5c6d8e",
+                                          fontSize: 18,
+                                          cursor: "pointer",
+                                        }}
+                                      />
+                                    </div>
+                                  </Tooltip>
+                                )}
+                                {!archived && (
+                                  <Tooltip title={"Delete"} placement="top">
+                                    <div
+                                      onClick={(e) => {
+                                        toggleDeleteModalHandler(row);
+                                      }}
+                                      className="table-edit-icon rounded-4 p-2"
+                                    >
+                                      <DeleteIcon
                                         sx={{
                                           color: "#5c6d8e",
                                           fontSize: 18,
@@ -959,11 +986,15 @@ const CategoriesTable = ({
               {" "}
               "{selected.length == 0 ? rowData?.name : selected.length}"{" "}
             </span>
-            category ?
+            {selected.length > 1 ? "Category" : " Categoris"}
           </h5>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
             <span className="text-blue-2"> 0 products </span>
-            in this collection will be unassigned from it.
+            in this Category will be unassigned from it.
+          </h6>
+          <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
+            <span className="text-blue-2"> {rowData?.totalSubCategory} {rowData?.totalSubCategory > 1 ? "SubCategory":"SubCategories"} </span>
+            in this category will be Archive from it.
           </h6>
           <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>
             Would you like to Archive this Category ?

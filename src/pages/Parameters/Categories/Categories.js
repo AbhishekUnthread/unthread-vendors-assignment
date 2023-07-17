@@ -26,6 +26,7 @@ import {
   Typography,
   Checkbox,
   InputAdornment,
+  Tooltip,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -45,6 +46,7 @@ import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 import sort from "../../../assets/icons/sort.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
+import info from "../../../assets/icons/info.svg";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import {
@@ -69,7 +71,7 @@ import {
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const initialQueryFilterState = {
   pageSize: 10,
@@ -116,6 +118,12 @@ const subCategoryValidationSchema = Yup.object({
   categoryId: Yup.string().required("required"),
 });
 
+function generateUrlName(name = "") {
+  const formattedName =
+    "https://example.com/" + name?.toLowerCase()?.replace(/ /g, '-');
+  return formattedName;
+
+}
 const Categories = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -123,6 +131,7 @@ const Categories = () => {
     queryFilterReducer,
     initialQueryFilterState
   );
+  const[searchParams, setSearchParams] = useSearchParams();
   const [categoryType, setCategoryType] = useState(0);
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
@@ -131,7 +140,6 @@ const Categories = () => {
   const [showCreatePopover, setShowCreatePopover] = useState(null);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editId, setEditId] = useState(null);
   const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
   const [statusFilter, setStatusFilter] = React.useState([]);
@@ -140,6 +148,11 @@ const Categories = () => {
   const [searchValue, setSearchValue] = useState("");
   const [categoryTotalCount, setCategoryTotalCount] = React.useState([]);
   const [subCategoryTotalCount, setSubCategoryTotalCount] = React.useState([]);
+  const [cateoryOpenState,setCategoryOpenState]=useState({
+    id:"",
+    open:false,
+  })
+   
   const filterParameter = {};
 
   const handleSearchChange = (event) => {
@@ -338,7 +351,13 @@ const Categories = () => {
             dispatch(showError({ message: err?.data?.message }));
           });
       } else {
-        createCategory(values)
+        createCategory({
+          ...values,
+          seo:{
+            title:values.name,
+            slug:generateUrlName(values.name),
+          }
+        })
           .unwrap()
           .then(() => categoryFormik.resetForm())
           .catch((err) => {
@@ -368,16 +387,31 @@ const Categories = () => {
           .then(() => {
             subCategoryFormik.resetForm();
             setMultipleTagsForSub([]);
+            let state={
+              ...cateoryOpenState,
+              open:true
+            }
+            setCategoryOpenState(state)
           })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
           });
       } else {
-        createSubCategory(values)
+        createSubCategory({
+          ...values,
+          seo:{
+            title:values.name,
+            slug:generateUrlName(values.name),
+          }
+        })
           .unwrap()
           .then(() => {
-            setSortFilter("newestToOldest");
             subCategoryFormik.resetForm();
+            let state={
+              ...cateoryOpenState,
+              open:true
+            }
+            setCategoryOpenState(state)
           })
           .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
@@ -389,8 +423,9 @@ const Categories = () => {
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryList([]);
     setSubCategoryList([]);
-    setCategoryType(tabIndex);
     setSearchValue("");
+    setSearchParams({status:tabIndex})
+    setCategoryType(tabIndex);
   };
 
   const toggleCreateModalHandler = () => {
@@ -398,7 +433,6 @@ const Categories = () => {
     setShowCreatePopover(null);
     categoryFormik.resetForm();
     setIsEditing(false);
-    setEditId(null);
     setMultipleTags([]);
   };
 
@@ -407,7 +441,6 @@ const Categories = () => {
     setShowCreatePopover(null);
     subCategoryFormik.resetForm();
     setIsEditing(false);
-    setEditId(null);
     setMultipleTagsForSub([]);
   };
 
@@ -478,6 +511,8 @@ const Categories = () => {
   useEffect(() => {
     if (categoriesIsSuccess && subCategoriesIsSuccess) {
       setError(false);
+      setCategoryList([])
+      setSubCategoryList([])
 
       if (categoryType === 0) {
         setCategoryList(categoriesData.data.data);
@@ -488,7 +523,7 @@ const Categories = () => {
         setSubCategoryTotalCount(subCategoriesData.data.totalCount);
       }
       if (categoryType === 2) {
-        setCategoryList([...categoriesData.data.data]);
+        setCategoryList(categoriesData.data.data);
         setCategoryTotalCount(categoriesData.data.totalCount);
       }
       if (categoryType === 3) {
@@ -557,6 +592,25 @@ const Categories = () => {
     deleteSubCategoryIsSuccess,
   ]);
 
+  useEffect(() => {
+    if(+searchParams.get("status")===0)
+    {
+      setCategoryType(0);
+    }
+    else if(+searchParams.get("status")===1)
+    {
+      setCategoryType(1);
+    }
+    else if(+searchParams.get("status")===2)
+    {
+      setCategoryType(2);
+    }
+    else if(+searchParams.get("status")===3)
+    {
+      setCategoryType(3);
+    }
+}, [searchParams])
+
   const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
     if (event.key === "Enter" || event.type === "click") {
       event.preventDefault();
@@ -575,7 +629,7 @@ const Categories = () => {
           }
 
           if (valueExists) {
-            dispatch(showError({ message: "Duplicate Name Value" }));
+            dispatch(showError({ message: "Duplicate Name  Value" }));
           }
         }
       });
@@ -589,6 +643,11 @@ const Categories = () => {
   const subModalOpenHandler = (row) => {
     setShowCreateSubModal((prev) => !prev);
     subCategoryFormik.setFieldValue("categoryId", row._id);
+    let state={
+      ...cateoryOpenState,
+      id:row._id,
+    }
+    setCategoryOpenState(state)
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -679,9 +738,17 @@ const Categories = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">{`${
-                    isEditing ? "Edit" : "Create"
-                  } Category`}</h5>
+                <div className="d-flex mb-2">
+                <p className="text-lightBlue me-2 ">Create Category </p>
+                <Tooltip title="Enter Name" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -699,7 +766,17 @@ const Categories = () => {
             <hr className="hr-grey-6 my-0" />
             <form noValidate onSubmit={categoryFormik.handleSubmit}>
               <DialogContent className="py-3 px-4">
-                <p className="text-lightBlue mb-2">Category Name</p>
+              <div className="d-flex mb-2 mt-2">
+                <p className="text-lightBlue me-2 ">Category Name </p>
+                <Tooltip title="Enter Name" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
                     placeholder="Enter Category Name"
@@ -756,6 +833,7 @@ const Categories = () => {
                     )}
                 </FormControl>
                 <br />
+                <div className="small">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -780,6 +858,8 @@ const Categories = () => {
                   }}
                   className=" px-0"
                 />
+                <button className="reset link">(manage)</button>
+                </div>
                 <div className="d-flex">
                   {multipleTags &&
                     multipleTags.map((data, index) => {
@@ -795,6 +875,7 @@ const Categories = () => {
                         ></Chip>
                       );
                     })}
+                    
                 </div>
               </DialogContent>
               <hr className="hr-grey-6 my-0" />
@@ -848,7 +929,17 @@ const Categories = () => {
 
             <form noValidate onSubmit={subCategoryFormik.handleSubmit}>
               <DialogContent className="py-3 px-4">
-                <p className="text-lightBlue mb-2">Select Category</p>
+              <div className="d-flex mb-2 mt-2">
+                <p className="text-lightBlue me-2 ">Select Category </p>
+                <Tooltip title="Select category" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
                 <FormControl
                   //   sx={{ m: 0, minWidth: 120, width: "100%" }}
                   size="small"
@@ -879,7 +970,17 @@ const Categories = () => {
                       </FormHelperText>
                     )}
                 </FormControl>
-                <p className="text-lightBlue mb-2 mt-3">Sub Category</p>
+                <div className="d-flex mb-2 mt-2">
+                <p className="text-lightBlue me-2 ">Sub Category Name </p>
+                <Tooltip title="Enter Name" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
                 <FormControl className="col-md-7 px-0">
                   <OutlinedInput
                     placeholder="Enter Sub Category Name"
@@ -936,6 +1037,7 @@ const Categories = () => {
                     )}
                 </FormControl>
                 <br />
+                <div className="small">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -960,7 +1062,8 @@ const Categories = () => {
                   }}
                   className=" px-0"
                 />
-
+                 <button className="reset link">(manage)</button>
+                 </div>
                 <div className="d-flex">
                   {multipleTagsForSub &&
                     multipleTagsForSub.map((data, index) => {
@@ -1165,6 +1268,8 @@ const Categories = () => {
                   editSubPageHandler={editSubPageHandler}
                   editPageHandler={editPageHandler}
                   totalCount={categoryTotalCount}
+                  cateoryOpenState={cateoryOpenState}
+                  setCategoryOpenState={setCategoryOpenState}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={1}>
@@ -1206,6 +1311,8 @@ const Categories = () => {
                   editPageHandler={editPageHandler}
                   editSubPageHandler={editSubPageHandler}
                   totalCount={categoryTotalCount}
+                  cateoryOpenState={cateoryOpenState}
+                  setCategoryOpenState={setCategoryOpenState}
                 />
               </TabPanel>
               <TabPanel value={categoryType} index={3}>

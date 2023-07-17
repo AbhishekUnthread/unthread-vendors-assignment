@@ -238,7 +238,7 @@ const SubCategoriesTable = ({
       },
     });
     dispatch(
-      showSuccess({ message: "Archived this Sub category successfully" })
+      showSuccess({ message: "This Sub category Archived successfully" })
     );
   }
 
@@ -255,7 +255,7 @@ const SubCategoriesTable = ({
       },
     });
     dispatch(
-      showSuccess({ message: "Un-Archived this Sub category successfully" })
+      showSuccess({ message: "This Sub category Un-Archived successfully" })
     );
   }
 
@@ -449,24 +449,6 @@ const SubCategoriesTable = ({
                                   </Link>
                                 </Tooltip>
                               )}
-                              {!archived && (
-                                <Tooltip title={"Archived"} placement="top">
-                                  <div
-                                    onClick={(e) => {
-                                      toggleDeleteModalHandler(row);
-                                    }}
-                                    className="table-edit-icon rounded-4 p-2"
-                                  >
-                                    <DeleteIcon
-                                      sx={{
-                                        color: "#5c6d8e",
-                                        fontSize: 18,
-                                        cursor: "pointer",
-                                      }}
-                                    />
-                                  </div>
-                                </Tooltip>
-                              )}
                               {deleteData && (
                                 <Tooltip
                                   title={archived ? "Archived" : "Un Archived"}
@@ -483,6 +465,24 @@ const SubCategoriesTable = ({
                                     className="table-edit-icon rounded-4 p-2"
                                   >
                                     <InventoryIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </div>
+                                </Tooltip>
+                              )}
+                               {!archived && (
+                                <Tooltip title={"Delete"} placement="top">
+                                  <div
+                                    onClick={(e) => {
+                                      toggleDeleteModalHandler(row);
+                                    }}
+                                    className="table-edit-icon rounded-4 p-2"
+                                  >
+                                    <DeleteIcon
                                       sx={{
                                         color: "#5c6d8e",
                                         fontSize: 18,
@@ -557,14 +557,14 @@ const SubCategoriesTable = ({
               {" "}
               "{selected.length == 0 ? rowData?.name : selected.length}"{" "}
             </span>
-            category ?
+            {selected.length > 1 ? "Category ?" : " Categoris ?"}
           </h5>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
             <span className="text-blue-2"> 0 products </span>
-            in this collection will be unassigned from it.
+            in this Sub Category will be Archive from it.
           </h6>
           <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>
-            Would you like to Archive this Category ?
+            Would you like to Archive this Sub Category ?
           </h6>
         </DialogContent>
         <DialogActions className="d-flex justify-content-center px-4 pb-4">
