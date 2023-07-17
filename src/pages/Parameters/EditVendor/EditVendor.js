@@ -33,6 +33,7 @@ import _ from "lodash";
     const initialVendorState = {
       isEditing: false,
       edited:false,
+      discarded : false
     };
 
     const queryFilterReducer = (state, action) => {
@@ -67,16 +68,29 @@ import _ from "lodash";
       }  
       if (action.type === "EDITED_ENABLE") {
         return {
-          ...initialVendorState,
+          ...state,
           edited: true,
         };
       } 
       if (action.type === "EDITED_DISABLE") {
         return {
-          ...initialVendorState,
+          ...state,
           edited: false,
         };
       } 
+      if (action.type === "ENABLE_DISCARD") {
+        return {
+          ...state,
+          discarded: true,
+        };
+        
+      } 
+      if (action.type === "DISABLE_DISCARD") {
+        return {
+          ...state,
+          discarded:false,
+        };
+      }
       return initialVendorState;
     };
 
@@ -144,7 +158,14 @@ const EditVendor = () => {
     if (pageNo+1 > totalCount) {
       return;
     }
-    navigate(`/parameters/vendors/edit/${pageNo + 1}/${filter}`);
+    new Promise ((resolve)=>{
+      if(vendorState.discarded)
+      {
+        dispatchVendor({ type: "EDITED_DISABLE" });
+      }
+      resolve();
+  }).then(()=>{navigate(`/parameters/vendors/edit/${pageNo + 1}/${filter}`)})
+    
   };
 
   const prevPageHandler = () => {
@@ -153,10 +174,16 @@ const EditVendor = () => {
       return;
     }
     navigate(`/parameters/vendors/edit/${pageNo - 1}/${filter}`);
+
   };  
 
+    const handleDiscardCount=()=>{
+      console.log("call")
+      dispatchVendor({ type: "ENABLE_DISCARD" });
+    }
+    
     const backHandler = () => {
-      navigate("/parameters/vendors");
+      navigate(`/parameters/vendors?status=${decodedObject.tab}`);
     };
 
     useEffect(() => {
@@ -207,7 +234,6 @@ const EditVendor = () => {
 
     }, [vendorsIsSuccess,vendorsIsError,vendorsError,editVendorIsSuccess,id,filter,vendorsData,dispatch]);
 
-
     const formik = useFormik({
       initialValues :{
         name : vendorsData?.data?.data[0].name || "",
@@ -234,11 +260,14 @@ const EditVendor = () => {
             dispatch(
               showSuccess({ message: "Vendor edited successfully" })
             );
-            navigate("/parameters/vendors");                
+            navigate(`/parameters/vendors?status=${decodedObject.tab}`);               
           });
         }
       }
     })
+
+    // console.log("gregregrg",_.isEqual(formik.values, formik.initialValues));
+    console.log("gfewfefeeuw",vendorState.discarded)
 
     useEffect(() => {
       if(!_.isEqual(formik.values, formik.initialValues))
@@ -256,11 +285,16 @@ const EditVendor = () => {
       } else if (id && _.isEqual(formik.values, formik.initialValues)) {
         dispatchVendor({ type: "DISABLE_EDIT" });
       }
-    }, [formik.initialValues, formik.values, id]);
+
+      if(vendorState.discarded && id && !_.isEqual(formik.values, formik.initialValues))
+      {
+        dispatchVendor({ type: "DISABLE_DISCARD" });
+      }
+    }, [formik.initialValues, formik.values, id,vendorState.discarded ]);
 
 
   return (
-    <div className="page container-fluid position-relative user-group">
+    <div className="page container-fluid position-relative user-group" style={{display:"grid", gridTemplateRows:"auto 1fr"}}>
         <InfoHeader
         title={formik.values.name || "Edit Vendor"}
         onBack={backHandler}
@@ -268,7 +302,7 @@ const EditVendor = () => {
         onNext={nextPageHandler}
         isEdit={!!id}
       />
-    <form className="vendor-form" noValidate onSubmit={formik.handleSubmit}>
+    <form className="vendor-form" noValidate onSubmit={formik.handleSubmit} style={{display:"grid", gridTemplateRows:"1fr auto"}} >
       <div className="row mt-3" style={{ marginBottom: "80px" }}>
         <div className="col-lg-9 mt-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -366,6 +400,7 @@ const EditVendor = () => {
       <DiscardModalSecondary
         when={vendorState.edited}
         message="vendor tab"
+        onDiscard={handleDiscardCount}
       />
     </form>
 
