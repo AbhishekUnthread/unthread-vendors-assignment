@@ -1,3 +1,5 @@
+import _debounce from "lodash/throttle";
+
 import arrowLeft from "../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../assets/icons/paginationLeft.svg";
@@ -5,6 +7,15 @@ import paginationLeft from "../../assets/icons/paginationLeft.svg";
 const InfoHeader = (props) => {
   const { title, onBack, onDuplicate, onPreview, onPrev, onNext, isEdit } =
     props;
+
+  const nextHandler = _debounce(onNext, 750, {
+    leading: false,
+    trailing: true,
+  });
+  const backHandler = _debounce(onPrev, 750, {
+    leading: false,
+    trailing: true,
+  });
 
   return (
     <div className="row justify-content-between">
@@ -38,7 +49,7 @@ const InfoHeader = (props) => {
           </button>
         )}
         {isEdit && onPrev && (
-          <button onClick={onPrev} className="reset">
+          <button onClick={backHandler} className="reset">
             <img
               src={paginationLeft}
               alt="paginationLeft"
@@ -48,7 +59,7 @@ const InfoHeader = (props) => {
           </button>
         )}
         {isEdit && onNext && (
-          <button onClick={onNext} className="reset">
+          <button onClick={nextHandler} className="reset">
             <img
               src={paginationRight}
               alt="paginationRight"
