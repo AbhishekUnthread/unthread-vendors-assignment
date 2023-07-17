@@ -61,13 +61,22 @@ const DiscardModal = ({ showDiscardModal, toggleDiscardModal }) => {
   );
 };
 
-const DiscardModalSecondary = ({ when = false, message }) => {
+const DiscardModalSecondary = ({ when = false, message,onDiscard }) => {
   return (
     <ReactRouterPrompt when={when}>
       {({ isActive, onConfirm, onCancel }) =>
         isActive && (
           <AlertDialog
-            onConfirm={onConfirm}
+            onConfirm={()=>{
+              if(onDiscard)
+              {
+                onDiscard();
+                onConfirm();
+              }
+              else{
+                onConfirm();
+              }
+            }}
             onCancel={onCancel}
             show={isActive}
             title="Exit without saving?"
