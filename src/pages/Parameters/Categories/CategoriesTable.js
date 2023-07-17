@@ -356,7 +356,7 @@ const CategoriesTable = ({
           status: "archieved",
         },
       });
-      dispatch(showSuccess({ message: "Archived this category successfully" }));
+      dispatch(showSuccess({ message: "This category Archived successfully" }));
     } else {
       editSubCategory({
         id: rowData._id,
@@ -365,7 +365,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "Archived this Sub category successfully" })
+        showSuccess({ message: "This Sub category Archived  successfully" })
       );
       setToggleCategoris(true);
     }
@@ -385,7 +385,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "Un-Archived this category successfully" })
+        showSuccess({ message: "This category Un-Archived successfully" })
       );
     } else {
       editSubCategory({
@@ -395,7 +395,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "Un-Archived this sub Category successfully" })
+        showSuccess({ message: "This sub Category Un-Archived successfully" })
       );
       setToggleCategoris(true);
     }

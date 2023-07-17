@@ -238,7 +238,7 @@ const SubCategoriesTable = ({
       },
     });
     dispatch(
-      showSuccess({ message: "Archived this Sub category successfully" })
+      showSuccess({ message: "This Sub category Archived successfully" })
     );
   }
 
@@ -255,7 +255,7 @@ const SubCategoriesTable = ({
       },
     });
     dispatch(
-      showSuccess({ message: "Un-Archived this Sub category successfully" })
+      showSuccess({ message: "This Sub category Un-Archived successfully" })
     );
   }
 
