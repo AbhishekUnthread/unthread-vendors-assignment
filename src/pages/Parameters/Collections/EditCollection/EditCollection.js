@@ -417,7 +417,7 @@ console.log(filter, "filter filter filter")
       setCollectionVisibility(newCollectionData?.isVisibleFrontend)
       setCollectionNote(newCollectionData?.notes)
       setCollectionFilter(newCollectionData?.filter)
-      setStartDate1(newCollectionData.startDate);
+      setStartDate1(newCollectionData?.startDate);
       setEndDate1(newCollectionData?.endDate)
       setCollectionMediaUrl(newCollectionData?.mediaUrl)
       setCollectionSeo(newCollectionData?.seos || {})
