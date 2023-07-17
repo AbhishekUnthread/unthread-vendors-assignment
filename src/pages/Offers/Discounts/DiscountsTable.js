@@ -89,12 +89,11 @@ const rows = [
   ),
 ];
 
-const DiscountsTable = () => {
+const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage,changePage,page}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
 
   const headCells = [
     {
@@ -135,12 +134,6 @@ const DiscountsTable = () => {
     },
   ];
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -150,7 +143,7 @@ const DiscountsTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.dId);
+      const newSelected = list.map((n) => n.dId);
       setSelected(newSelected);
       return;
     }
@@ -175,11 +168,6 @@ const DiscountsTable = () => {
     }
 
     setSelected(newSelected);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
@@ -215,14 +203,13 @@ const DiscountsTable = () => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={rows.length}
+            rowCount={list.length}
             headCells={headCells}
           />
           <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {stableSort(list, getComparator(order, orderBy))
               .map((row, index) => {
-                const isItemSelected = isSelected(row.dId);
+                const isItemSelected = isSelected(row?._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -231,7 +218,7 @@ const DiscountsTable = () => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.dId}
+                    key={row?._id}
                     selected={isItemSelected}
                     className="table-rows"
                   >
@@ -241,7 +228,7 @@ const DiscountsTable = () => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.dId)}
+                        onClick={(event) => handleClick(event, row?._id)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -263,7 +250,7 @@ const DiscountsTable = () => {
                           width={45}
                         /> */}
                         <p className="text-lightBlue rounded-circle fw-600">
-                          {row.discountName}
+                          {row.name}
                         </p>
                       </div>
                     </TableCell>
@@ -357,26 +344,17 @@ const DiscountsTable = () => {
                   </TableRow>
                 );
               })}
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
-              >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={totalCount}
         rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        page={page-1}
+        onPageChange={changePage}
+        onRowsPerPageChange={changeRowsPerPage}
         className="table-pagination"
       />
     </React.Fragment>
