@@ -1235,7 +1235,11 @@ const EditCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO seoName={collectionTitle} seoValue={collectionSeo} handleSeoChange={setCollectionSeo} />
+              <SEO 
+                seoName={collectionTitle} 
+                seoValue={collectionSeo} 
+                handleSeoChange={setCollectionSeo} 
+              />
             </div>
 
             <SwipeableDrawer
