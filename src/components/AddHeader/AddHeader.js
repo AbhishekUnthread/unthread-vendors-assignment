@@ -51,23 +51,27 @@ const AddHeader = ({
         >
           <p className="text-lightBlue">{duplicateButton}</p>
         </button>
-        <button className="button-transparent me-1 py-2 px-3">
-          <p className="text-lightBlue">{previewButton}</p>
-        </button>
-        <img
-          onClick={handlePrev}
-          src={paginationLeft}
-          alt="paginationLeft"
-          className="c-pointer"
-          width={30}
-        />
-        <img
-          onClick={handleNext}
-          src={paginationRight}
-          alt="paginationRight"
-          className="c-pointer"
-          width={30}
-        />
+        { previewButton && 
+          <>
+            <button className="button-transparent me-1 py-2 px-3">
+              <p className="text-lightBlue">{previewButton}</p>
+            </button>
+            <img
+              onClick={handlePrev}
+              src={paginationLeft}
+              alt="paginationLeft"
+              className="c-pointer"
+              width={30}
+            />
+            <img
+              onClick={handleNext}
+              src={paginationRight}
+              alt="paginationRight"
+              className="c-pointer"
+              width={30}
+            />
+          </> 
+        }
       </div>
     </div>
   );

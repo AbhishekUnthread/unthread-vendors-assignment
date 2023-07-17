@@ -76,6 +76,26 @@
       cursor: not-allowed;
     }
   }
+  &-grey-outline {
+    border: 1px solid $lightBlue;
+    background: $black15;
+    border-radius: 5px;
+    color: $lightBlue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    min-width: max-content;
+    cursor: pointer;
+    &:hover {
+      background: $black16;
+      border: 1px solid $black16;
+    }
+    &:disabled {
+      background: $grey1;
+      cursor: not-allowed;
+    }
+  }
   &-gradient {
     display: flex;
     flex-direction: row;
@@ -938,6 +958,14 @@ textarea {
     bottom: 0;
     width: 100%;
     background: linear-gradient(180deg, rgba(17, 15, 38, 0) 0%, #110f26 47.98%);
+  }
+}
+
+.input-dropdown {
+  cursor: pointer !important;
+
+  input {
+    cursor: pointer;
   }
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useReducer, useState } from "react";
+import { useEffect, useCallback, useReducer } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -262,7 +262,9 @@ const ProductTabInfo = () => {
         : null;
       for (const key in productTabValues) {
         if (!productTabValues[key] || !productTabValues[key]?.length)
+          // if (key !== "mediaUrl") {
           delete productTabValues[key];
+        // }
       }
       if (id) {
         editProductTab({
@@ -422,12 +424,15 @@ const ProductTabInfo = () => {
         isEdit={!!id}
       />
       <form className="product-form" noValidate onSubmit={formik.handleSubmit}>
-        <div className="row mt-3" style={{ marginBottom: "50px" }}>
+        <div className="row mt-3" style={{ marginBottom: "80px" }}>
           <div className="col-lg-9 mt-3">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
               <div className="col-md-12 px-0 d-flex">
-                <Grid container spacing={2}>
-                  <Grid item md={9}>
+                <div
+                  className="d-flex align-items-start"
+                  style={{ gap: "20px", width: "100%" }}
+                >
+                  <div style={{ flex: 1 }}>
                     <div className="d-flex mb-1">
                       <label className="small text-lightBlue me-2">
                         Enter Tab Title
@@ -444,12 +449,13 @@ const ProductTabInfo = () => {
                     <FormControl className="w-100 px-0">
                       <OutlinedInput
                         size="small"
-                        placeholder="Product Details"
+                        placeholder="Enter Tab Title"
                         sx={{ paddingLeft: 0 }}
                         name="title"
                         value={formik.values?.title}
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
+                        autoFocus={true}
                       />
                       {!!formik.touched.title && formik.errors.title && (
                         <FormHelperText error>
@@ -457,8 +463,8 @@ const ProductTabInfo = () => {
                         </FormHelperText>
                       )}
                     </FormControl>
-                  </Grid>
-                  <Grid item md={3}>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
                     <UploadMediaSmall
                       fileSrc={formik.values?.mediaUrl}
                       error={
@@ -468,8 +474,8 @@ const ProductTabInfo = () => {
                       onBlur={formik.handleBlur}
                       name="mediaUrl"
                     />
-                  </Grid>
-                </Grid>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -508,7 +514,7 @@ const ProductTabInfo = () => {
                   </span>
                 </div>
               </div>
-              <Grid container spacing={2}>
+              <Grid container rowSpacing={2}>
                 <Grid item md={12}>
                   <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4">
                     <AddCustomField

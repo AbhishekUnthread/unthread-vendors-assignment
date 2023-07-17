@@ -18,6 +18,7 @@ import {
 import TableHeader from "../../../components/TableHeader/TableHeader";
 import EditButton from "../../../components/EditButton/EditButton";
 import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
+import DeleteIconButton from "../../../components/DeleteIconButton/DeleteIconButton";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 
 const DragHandle = SortableHandle(() => (
@@ -147,7 +148,7 @@ const ProductTabsTable = (props) => {
                     <TableCell>
                       <div className="d-flex align-items-center justify-content-end">
                         <EditButton onClick={onEdit.bind(null, index + 1)} />
-                        <RemoveIconButton
+                        <DeleteIconButton
                           onClick={onDelete.bind(null, {
                             id: item._id,
                             message: `delete ${item.title} product tab`,

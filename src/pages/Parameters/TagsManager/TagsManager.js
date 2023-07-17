@@ -416,7 +416,7 @@ const [
         }
         else{
           dispatch(
-            showError({ message: "Duplicate Tag Value" })
+            showError({ message: `${TagFormik.values.name.trim()} already exists` })
           );
         }
         }
@@ -1192,6 +1192,8 @@ const [
                   name="controlled-radio-buttons-group"
                   value={selectedSortOption}
                   onChange={handleSortRadioChange}
+                  defaultValue="newestToOldest"
+
                 >
                   <FormControlLabel
                     value="newestToOldest"

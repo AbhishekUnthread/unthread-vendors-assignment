@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect, useReducer } from "react";
 import "../../CreateCollection/CreateCollection.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import SEO from "../../../Products/AddProduct/SEO/SEO";
@@ -12,7 +12,7 @@ import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
 import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
 import AddHeader from "../../../../components/AddHeader/AddHeader";
 import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
-import { SaveFooterTertiary } from "../../../../components/SaveFooter/SaveFooter";
+import { SaveFooterSecondary } from "../../../../components/SaveFooter/SaveFooter";
 import {
   EnhancedTableHead,
   stableSort,
@@ -76,7 +76,9 @@ import {
   useEditCollectionMutation,
 } from "../../../../features/parameters/collections/collectionsApiSlice";
 import { updateCollectionId } from "../../../../features/parameters/collections/collectionSlice";
-
+import paginationRight from "../../../../assets/icons/paginationRight.svg";
+import paginationLeft from "../../../../assets/icons/paginationLeft.svg";
+import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -230,6 +232,28 @@ const likeProductRows = [
 ];
 // ? LIKE PRODUCTS TABLE ENDS HERE
 
+const initialQueryFilterState = {
+      pageSize: 1,
+      pageNo: null,
+      totalCount: 0,
+    };
+
+  const queryFilterReducer = (state, action) => {
+    if (action.type === "SET_PAGE_NO") {
+      return {
+        ...state,
+        pageNo: +action.pageNo,
+      };
+    }
+    if (action.type === "SET_TOTAL_COUNT") {
+      return {
+        ...state,
+        totalCount: action.totalCount,
+      };
+    }
+    return initialQueryFilterState;
+  };
+
 const EditCollection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -243,11 +267,23 @@ const EditCollection = () => {
   const [duplicateDescription, setDuplicateDescription] = useState(false);
   const [startDate1, setStartDate1] = useState(null)
   const [endDate1, setEndDate1] = useState(null)
-  const collectionId = useSelector((state)=>state.collection.collectionId)
+  // const collectionId = useSelector((state)=>state.collection.collectionId)
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
   const [duplicateTitleNew, setDuplicateTitleNew] = useState("")
+  let { id,filter } = useParams();
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+  const [collectionId, setCollectionId] = useState();
+  const [decodedObject, setDecodedObject] = useState(null);
+  const [index, setIndex] = useState(null);
+
+
+console.log(id, "id id id")
+console.log(filter, "filter filter filter")
 
    const clearDate = () => {
     setStartDate1(null);
@@ -284,11 +320,48 @@ const EditCollection = () => {
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({ createdAt:"-1", id: collectionId });
+  } = useGetAllCollectionsQuery({
+      ...queryFilterState,
+      ...(decodedObject?.filterParameter || {}),
+      ...(decodedObject?.collectionTypeQuery || {}),
+      name: decodedObject?.queryFilterState?.name||"",
+    });
+
+    const nextPageHandler = () => {
+    const { pageNo, totalCount } = queryFilterState;
+    console.log({pageNo:pageNo});
+    console.log({totalCount:totalCount})
+
+    if (pageNo+1 > totalCount) {
+      return;
+    }
+    navigate(`/parameters/collections/edit/${pageNo + 1}/${filter}`);
+  };
+
+  const prevPageHandler = () => {
+    const { pageNo } = queryFilterState;
+    if (pageNo - 1 === 0) {
+      return;
+    }
+    navigate(`/parameters/collections/edit/${pageNo - 1}/${filter}`);
+  };  
+
+  useEffect(() => {
+      if (id) {
+        dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+      }
+    }, [id]);
+
+    useEffect(() => {
+      const encodedString = filter;
+  
+      const decodedString = decodeURIComponent(encodedString);
+      const parsedObject = JSON.parse(decodedString);
+  
+      setDecodedObject(parsedObject);
+    }, []);
 
   const newCollectionData = collectionData?.data?.data[0];
-
-  console.log(newCollectionData,'newCollectionData');
 
   const [
     createCollection,
@@ -321,14 +394,30 @@ const EditCollection = () => {
   }, [collectionTitle]);
 
   useEffect(() => {
+      if(editCollectionError)
+      {
+        if (editCollectionError?.data?.message) {
+          dispatch(showError({ message: editCollectionError?.data?.message }));
+        } else {
+          dispatch(
+            showError({ message: "Something went wrong, please try again" })
+          );
+        }
+      }
+
     if (collectionIsSuccess) {
+      dispatchQueryFilter({
+        type: "SET_TOTAL_COUNT",
+        totalCount: collectionData?.data?.totalCount,
+      });
+      setCollectionId(newCollectionData?._id)
       setCollectionTitle(newCollectionData?.title);
       setCollectionDescription(newCollectionData?.description);
       setCollectionStatus(newCollectionData?.status);
       setCollectionVisibility(newCollectionData?.isVisibleFrontend)
       setCollectionNote(newCollectionData?.notes)
       setCollectionFilter(newCollectionData?.filter)
-      setStartDate1(newCollectionData.startDate);
+      setStartDate1(newCollectionData?.startDate);
       setEndDate1(newCollectionData?.endDate)
       setCollectionMediaUrl(newCollectionData?.mediaUrl)
       setCollectionSeo(newCollectionData?.seos || {})
@@ -336,7 +425,7 @@ const EditCollection = () => {
       const duplicateTitle = `${newCollectionData?.title} Copy`;
       setCollectionDuplicateTitle(duplicateTitle);
     }
-  }, [collectionIsSuccess, dispatch]);
+  }, [collectionIsSuccess, collectionId, index, editCollectionIsSuccess, editCollectionError, id, filter, collectionData ]);
 
   const handleSubmit = () => {
     if (collectionId !== "") {
@@ -362,8 +451,10 @@ const EditCollection = () => {
         details: collectionDetails
       })
         .unwrap()
-        navigate("/parameters/collections");
-        dispatch(showSuccess({ message: "Collection updated successfully!" }));
+        .then(() => { 
+          dispatch(showSuccess({ message: "Collection updated successfully" }));
+          setHideFooter(false)
+        })
     }else {
       createCollection({
         title: collectionTitle, 
@@ -376,8 +467,9 @@ const EditCollection = () => {
         ...(collectionSeo ? { seo: collectionSeo } : "")
       })
         .unwrap()
-        navigate("/parameters/collection");
-        dispatch(showSuccess({ message: "Collection updated successfully!" }));
+        .then(() => { 
+          dispatch(showSuccess({ message: "Collection updated successfully!" }));
+        });
     }
   }
 
@@ -608,7 +700,35 @@ const EditCollection = () => {
 
   return (
       <div className="page container-fluid position-relative user-group">
-        <AddHeader headerName={collectionTitle} previewButton={"Preveiw"} navigateLink={"/parameters/collections"} duplicateButton={"Duplicate"} handleDuplicate={handleDuplicate}/>
+        <div className="row justify-content-between">
+        <div className="d-flex align-items-center w-auto ps-0">
+            <img
+              src={arrowLeft}
+              alt="arrowLeft"
+              width={9}
+              className="c-pointer"
+              onClick={backHandler}
+            />
+          <h5 className="page-heading ms-2 ps-1">{collectionTitle}</h5>
+        </div>
+
+        <div className="d-flex align-items-center w-auto pe-0">
+          <img
+            src={paginationLeft}
+            alt="paginationLeft"
+            className="c-pointer"
+            width={30}
+            onClick={prevPageHandler}
+          />
+          <img
+            src={paginationRight}
+            alt="paginationRight"
+            className="c-pointer"
+            width={30}
+            onClick={nextPageHandler}
+          />
+        </div>
+      </div>
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -1369,7 +1489,8 @@ const EditCollection = () => {
           </div>
         </div>
 
-        <SaveFooterTertiary 
+        <SaveFooterSecondary
+          handleSubmit={handleSubmit} 
           show={hideFooter} 
           onDiscard={backHandler} 
           isLoading={createCollectionIsLoading || editCollectionIsLoading}
@@ -1510,7 +1631,7 @@ const EditCollection = () => {
       </Dialog>
 
       <DiscardModalSecondary           
-        when={true}
+        when={hideFooter}
         message="collection tab"
       />
       </div>
