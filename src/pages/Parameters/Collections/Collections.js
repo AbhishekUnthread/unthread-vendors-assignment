@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { 
   Box,
   Checkbox,
@@ -42,7 +42,8 @@ import {
 const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 1,
-  name:"",
+  title:"",
+  searchValue:""
 };
 const queryFilterReducer = (state, action) => {
   if (action.type === "SET_PAGE_SIZE") {
@@ -62,7 +63,14 @@ const queryFilterReducer = (state, action) => {
     return {
       ...state,
       pageNo: initialQueryFilterState.pageNo,
-      name: action.name,
+      title: action.title,
+    };
+  }
+  if (action.type === "SET_SEARCH_VALUE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      searchValue: action.searchValue,
     };
   }
   return initialQueryFilterState;
@@ -71,23 +79,19 @@ const queryFilterReducer = (state, action) => {
 const Collections = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const[searchParams, setSearchParams] = useSearchParams();
   const [error, setError] = useState(false);
   const [collectionList, setCollectionList] = useState([]);
   const [collectionType, setCollectionType] = useState(0);
   const [pageLength, setPageLegnth] = useState();
   const [sortFilter, setSortFilter] = useState("newestToOldest");
   const [statusFilter, setStatusFilter] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
 
   const filterParameter = {};
-
-  // const handleSearchChange = (event) => {
-  //   setSearchValue(event.target.value);
-  // }
 
   const handleStatusChange = (event) => {
     const { value } = event.target;
@@ -132,14 +136,6 @@ const Collections = () => {
     : {};
 
   const filterParams = { ...filterParameter, ...collectionTypeQuery };
-  
-  if (searchValue) {
-    filterParams.title = searchValue;
-  }
-
-  // if (collectionType === 0) {
-  //   filterParams.status = statusFilter;
-  // }
 
   const {
     data: collectionData,
@@ -196,8 +192,12 @@ const Collections = () => {
   };
 
   const handleSearchChange = (value) => {
-    dispatchQueryFilter({ type: "SEARCH", name: value });
+    dispatchQueryFilter({ type: "SEARCH", title: value });
   };
+
+  const handleSearchValue =(value)=>{
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
+  }
 
   const editCategoryPageNavigationHandler = (data,index) => {
     const combinedObject = { filterParameter, collectionTypeQuery, queryFilterState };
@@ -208,6 +208,16 @@ const Collections = () => {
 
     navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
   };
+
+  const changeVendorTypeHandler = (_event, tabIndex) => {
+    setCollectionType(tabIndex);
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
+    setSortFilter('');
+    setStatusFilter('')
+    setSearchParams({status:tabIndex})
+  };
+
 
    // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
@@ -296,6 +306,27 @@ const Collections = () => {
     dispatch,
   ]);
 
+  useEffect(() => {
+        if(+searchParams.get("status")===0)
+        {
+          setCollectionType(0);
+        }
+        else if(+searchParams.get("status")===1)
+        {
+          setCollectionType(1);
+        }
+        else if(+searchParams.get("status")===2)
+        {
+          console.log("check")
+          setCollectionType(2);
+        }
+        else if(+searchParams.get("status")===3)
+        {
+          setCollectionType(3);
+        }
+    }, [searchParams])
+    
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -327,7 +358,7 @@ const Collections = () => {
           >
             <Tabs
               value={collectionType}
-              onChange={handleTabChange}
+              onChange={changeVendorTypeHandler}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
@@ -338,7 +369,7 @@ const Collections = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearchSecondary onChange={handleSearchChange} />
+            <TableSearchSecondary onSearchValueChange={handleSearchValue} value={queryFilterState.searchValue} onChange={handleSearchChange} />
              <div className="d-flex">
               <button
                 className="button-grey py-2 px-3 ms-2"

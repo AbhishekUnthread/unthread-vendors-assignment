@@ -26,6 +26,7 @@ import {
   Typography,
   Checkbox,
   InputAdornment,
+  Tooltip,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -45,6 +46,7 @@ import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 import sort from "../../../assets/icons/sort.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
+import info from "../../../assets/icons/info.svg";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import {
@@ -421,9 +423,9 @@ const Categories = () => {
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryList([]);
     setSubCategoryList([]);
-    setCategoryType(tabIndex);
     setSearchValue("");
     setSearchParams({status:tabIndex})
+    setCategoryType(tabIndex);
   };
 
   const toggleCreateModalHandler = () => {
@@ -521,7 +523,7 @@ const Categories = () => {
         setSubCategoryTotalCount(subCategoriesData.data.totalCount);
       }
       if (categoryType === 2) {
-        setCategoryList([...categoriesData.data.data]);
+        setCategoryList(categoriesData.data.data);
         setCategoryTotalCount(categoriesData.data.totalCount);
       }
       if (categoryType === 3) {
@@ -736,9 +738,17 @@ const Categories = () => {
             <DialogTitle>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex flex-column ">
-                  <h5 className="text-lightBlue fw-500">{`${
-                    isEditing ? "Edit" : "Create"
-                  } Category`}</h5>
+                <div className="d-flex mb-2">
+                <p className="text-lightBlue me-2 ">Create Category </p>
+                <Tooltip title="Enter Name" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
 
                   <small className="text-grey-6 mt-1 d-block">
                     ⓘ Some Dummy Content to explain
@@ -756,7 +766,17 @@ const Categories = () => {
             <hr className="hr-grey-6 my-0" />
             <form noValidate onSubmit={categoryFormik.handleSubmit}>
               <DialogContent className="py-3 px-4">
-                <p className="text-lightBlue mb-2">Category Name</p>
+              <div className="d-flex mb-2 mt-2">
+                <p className="text-lightBlue me-2 ">Category Name </p>
+                <Tooltip title="Enter Name" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
                     placeholder="Enter Category Name"
@@ -909,7 +929,17 @@ const Categories = () => {
 
             <form noValidate onSubmit={subCategoryFormik.handleSubmit}>
               <DialogContent className="py-3 px-4">
-                <p className="text-lightBlue mb-2">Select Category</p>
+              <div className="d-flex mb-2 mt-2">
+                <p className="text-lightBlue me-2 ">Select Category </p>
+                <Tooltip title="Select category" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
                 <FormControl
                   //   sx={{ m: 0, minWidth: 120, width: "100%" }}
                   size="small"
@@ -940,7 +970,17 @@ const Categories = () => {
                       </FormHelperText>
                     )}
                 </FormControl>
-                <p className="text-lightBlue mb-2 mt-3">Sub Category</p>
+                <div className="d-flex mb-2 mt-2">
+                <p className="text-lightBlue me-2 ">Sub Category Name </p>
+                <Tooltip title="Enter Name" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
                 <FormControl className="col-md-7 px-0">
                   <OutlinedInput
                     placeholder="Enter Sub Category Name"
