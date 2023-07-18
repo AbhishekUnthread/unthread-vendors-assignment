@@ -9,7 +9,6 @@ import categoryReducer from "../features/parameters/categories/categorySlice";
 import collectionReducer from "../features/parameters/collections/collectionSlice"
 import productReducer from "../features/products/product/productReducer";
 
-import collectionReducer from "../features/parameters/collections/collectionSlice";
 
 const store = configureStore({
   reducer: {
