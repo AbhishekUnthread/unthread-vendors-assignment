@@ -220,7 +220,7 @@ const AddProduct = () => {
             <div className="d-flex my-4 flex-wrap">
               <h6 className="text-lightBlue">₹ {productInfo?.price?.price}</h6>
               <small className="ms-2 me-3 text-grey-6 ">
-                <s>₹ 100,000</s>
+                <s>₹ {productInfo?.price?.price}</s>
               </small>
               <small className="text-lightBlue">{productInfo?.price?.discount}%&nbsp;OFF</small>
             </div>
