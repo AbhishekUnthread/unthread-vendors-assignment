@@ -1,13 +1,16 @@
 import { Box, Dialog, DialogActions, DialogContent, Slide, Typography } from '@mui/material'
 import React, { forwardRef } from 'react'
-import Delete from "../../assets/images/Components/Cancel.png";
+import Delete from "../../assets/icons/newDelete.svg";
+import closeModal from "../../assets/icons/closeModal.svg";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
   // ? DIALOG TRANSITION ENDS HERE
 
-const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,name}) => {
+const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,name, deleteType}) => {
+
+  console.log(deleteType,'deleteType')
   return (
     <>
     <Dialog
@@ -15,40 +18,36 @@ const DeleteModal = ({showCreateModal,toggleArchiveModalHandler,handleArchive,na
         keepMounted
         aria-describedby="alert-dialog-slide-description"
         maxWidth="xs"
-        fullWidth={true}
         open={showCreateModal}
         onClose={toggleArchiveModalHandler}
       >
-        <hr className="hr-grey-6 my-0" />
-        <DialogContent className="py-3 px-4">
-          <Box sx={{  display: 'flex', justifyContent: 'center' }}>
-            <img 
-              src={Delete}
-              alt="questionMark"
-              width="250px"
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={closeModal} alt="question" width={40} className="closeModal c-pointer" 
+              onClick={toggleArchiveModalHandler}
             />
-          </Box>
-          <Typography
-            variant="h5"
-            align="center"
-            sx={{ color: "lightBlue", marginBottom: 2 }}
-          >
-            Are you sure you want to delete permanently {name} ?
-          </Typography>
-          <br />
+            <img src={Delete} alt="question" width={160} className="mb-4 mt-4"/>
+            <div className="row"></div>
+            <h5 className="text-lightBlue mt-2 mb-2">
+              Delete  
+              <span className="text-blue-2"> "{name}" </span> {deleteType} ?
+            </h5>
+            <h6 className="mt-3 mb-4" style={{color: "#5C6D8E"}}>
+              This will delete the collection from the dashboard and it can't be undone. 
+              Are you sure you want to delete the {deleteType} ?
+            </h6>
         </DialogContent>
-        <DialogActions className="d-flex justify-content-between px-4 pb-4">
+        <DialogActions className="d-flex justify-content-center px-4 pb-4">
           <button
-            className="button-red-outline py-2 px-3 me-5"
+            className="button-lightBlue-outline py-2 px-3 me-4"
             onClick={toggleArchiveModalHandler}
           >
-            <p>No</p>
+            <p>Cancel</p>
           </button>
           <button
-            className="button-gradient py-2 px-3 ms-5"
+            className="button-red-outline py-2 px-3"
             onClick={handleArchive}
           >
-            <p>Yes</p>
+            <p>Delete {deleteType}</p>
           </button>
         </DialogActions>
       </Dialog>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // ! IMAGES IMPORTS
 import info from "../../assets/icons/info.svg";
 import cancel from "../../assets/icons/cancel.svg";
@@ -84,7 +84,11 @@ const taggedWithData = [
   { title: "Tag 12", value: "tag12" },
 ];
 
-const TagsBox = () => {
+const TagsBox = ({tagsList, selectedTagList}) => {
+
+  const handleTagList = (event, value) => {
+    selectedTagList(value.map(option => option.name))
+  }
   // ? TAGS DIALOG STARTS HERE
   const [openTags, setOpenTags] = React.useState(false);
 
@@ -314,9 +318,10 @@ const TagsBox = () => {
         multiple
         id="checkboxes-tags-demo"
         sx={{ width: "100%" }}
-        options={taggedWithData}
+        options={tagsList}
         disableCloseOnSelect
-        getOptionLabel={(option) => option.title}
+        getOptionLabel={(option) => option.name}
+        onChange={handleTagList}
         size="small"
         renderOption={(props, option, { selected }) => (
           <li {...props}>
@@ -330,7 +335,7 @@ const TagsBox = () => {
                 marginRight: 0,
               }}
             />
-            <small className="text-lightBlue">{option.title}</small>
+            <small className="text-lightBlue">{option.name}</small>
           </li>
         )}
         renderInput={(params) => (

@@ -9,7 +9,7 @@ import "../../Products/AllProducts/AllProducts.scss";
 // ! COMPONENT IMPORTS
 import TagsManagerTable from "./TagsManagerTable";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import TableSearch from "../../../components/TableSearch/TableSearch";
+import TableSearch, { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
@@ -59,6 +59,7 @@ import {
   FormHelperText,
   Popover,
   FormGroup,
+  Tooltip,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import { LoadingButton } from "@mui/lab";
@@ -77,11 +78,13 @@ import {
   useEditTagMutation,
   useBulkCreateTagMutation,
   useBulkEditTagMutation,
+  useBulkDeleteTagMutation,
 } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { useNavigate } from "react-router-dom";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import sort from "../../../assets/icons/sort.svg";
-
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import info from "../../../assets/icons/info.svg";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = forwardRef(function Transition(props, ref) {
@@ -177,7 +180,43 @@ const likeHeadCells = [
 
 // ? TABLE ENDS HERE
 
+
+const initialQueryFilterState = {
+  pageSize: 10,
+  pageNo: 1,
+  name:"",
+};
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_SIZE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      pageSize: +action.value,
+    };
+  }
+  if (action.type === "CHANGE_PAGE") {
+    return {
+      ...state,
+      pageNo: action.pageNo +1,
+    };
+  }
+  if (action.type === "SEARCH") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      name: action.name,
+    };
+  }
+  return initialQueryFilterState;
+};
+
 const TagsManager = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [tagsType, setTagsType] = useState(0);
   const [tagsList, setTagsList] = useState([]);
@@ -186,8 +225,7 @@ const TagsManager = () => {
   const [selectedSortOption, setSelectedSortOption] = React.useState("newestToOldest");
   const [searchValue, setSearchValue] = useState("");
   const [totalCount,setTotalCount] = React.useState([]);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+
 
   
   const tagsValidationSchema = Yup.object({
@@ -223,11 +261,11 @@ const TagsManager = () => {
       queryParameters.createdAt = selectedSortOption === "oldestToNewest" ? "1" : "-1";
     }
   }
-  if(searchValue)
-  {
-  queryParameters.name = searchValue;
-  }
-  if (!selectedSortOption && !searchValue) {
+  // if(searchValue)
+  // {
+  // queryParameters.name = searchValue;
+  // }
+  if (!selectedSortOption) {
     queryParameters.createdAt = "-1"; // Set default createdAt value
   }
   const TagTypeQuery =tagsType === 0 ? { status: "active" }: tagsType === 1 ? { status: "archieved" }
@@ -287,49 +325,16 @@ const {
   isLoading: tagsIsLoading,
   isSuccess: tagsIsSuccess,
   error: tagsError,
-} = useGetAllTagsQuery({...queryParameters,...TagTypeQuery}, { enabled: Object.keys(queryParameters).length > 0 });
+} = useGetAllTagsQuery({...queryParameters,...TagTypeQuery,...queryFilterState}, { enabled: Object.keys(queryParameters).length > 0 });
 
-    
-    useEffect(() => {
-
-      if(editTagIsSuccess)
-      {
-        dispatch(showSuccess({ message: "Status updtaed successfully" }));
-      }
-
-      if (tagsError) {
-        setError(true);
-        if (tagsError?.data?.message) {
-          dispatch(showError({ message: tagsError.data.message }));
-        } else {
-          dispatch(
-            showError({ message: "Something went wrong!, please try again" })
-          );
-        }
-      }
-      if (tagsIsSuccess || bulkCreateTagsIsSuccess || bulkTagEditIsSuccess) {
-        setError(false);
-        if (tagsType === 0) {
-          setTagsList(tagsData.data.data);
-          setTotalCount(tagsData.data.totalCount);
-        }
-        if (tagsType === 1) {
-          setTagsList(tagsData.data.data);
-          setTotalCount(tagsData.data.totalCount);
-        }
-      }
-
-      if (createTagsIsSuccess) {
-        setShowCreateModal(false);
-        dispatch(showSuccess({ message: "Tag created successfully" }));
-      }
-      if(bulkCreateTagsIsSuccess)
-      {
-        setShowCreateModal(false);
-        dispatch(showSuccess({ message: "Tags created successfully" }));
-      }
-      
-    }, [tagsType,tagsIsSuccess,tagsError,tagsData,dispatch,bulkCreateTagsIsSuccess,bulkTagEditIsSuccess])
+const [
+  bulkDeleteTag,
+  {
+    isLoading: bulkDeleteTagIsLoading,
+    isSuccess: bulkDeleteTagIsSuccess,
+    error: bulkDeleteTagError,
+  },
+] = useBulkDeleteTagMutation();
     
     const editTagsPageNavigationHandler = (data) => {
       dispatch(updateTagId(data._id)); 
@@ -380,18 +385,42 @@ const {
     },
   });
 
+  const handleChangeRowsPerPage = (event) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
+  };
+
+  const handleChangePage = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+  };
+
+  const handleSearchChange = (value) => {
+    dispatchQueryFilter({ type: "SEARCH", name: value });
+  };
+
   const handleAddMultiple = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter'||event.type === 'click') {
       event.preventDefault();
       TagFormik.validateForm().then(() => {
-        if (TagFormik.isValid && TagFormik.values.name !== '') {
+        if (TagFormik.isValid && TagFormik.values.name.trim() !== '') {
           TagFormik.setFieldTouched('name', true);
+
+        // Check if the entered tag already exists in the array
+        const tagExists = multipleTags.some(
+          (tag) => tag.name.toLowerCase().trim() === TagFormik.values.name.toLowerCase().trim()
+        );
+        if (!tagExists) {
           setMultipleTags((prevValues) => [
             ...prevValues,
-            { name: TagFormik.values.name, status: 'active', filter: TagFormik.values.showFilter },
+            { name: TagFormik.values.name.trim(), status: 'active', filter: TagFormik.values.showFilter },
           ]);
-          TagFormik.resetForm();
         }
+        else{
+          dispatch(
+            showError({ message: `${TagFormik.values.name.trim()} already exists` })
+          );
+        }
+        }
+        TagFormik.resetForm();
       });
     }
   };
@@ -399,10 +428,14 @@ const {
   const handleDelete = (value) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v.name !== value));
   };
+  
+  const handleBulkDeleteTag =(data)=>{
+    bulkDeleteTag(data);
+    }
 
-  const handleSearchChange = (event) => {
-    setSearchValue(event.target.value);
-  };
+  // const handleSearchChange = (event) => {
+  //   setSearchValue(event.target.value);
+  // };
 
    // * SORT POPOVERS STARTS HERE
    const [anchorSortEl, setAnchorSortEl] = React.useState(null);
@@ -445,6 +478,111 @@ const {
     //    setAnchorSortE1(null);
     //  };
       // * SORT POPOVERS ENDS
+      useEffect(() => {
+        if (createTagsIsSuccess) {
+          setShowCreateModal(false);
+          dispatch(showSuccess({ message: "Tag created successfully" }));
+        }
+        if(createTagsError)
+        {
+          setError(true);
+          if (createTagsError?.data?.message) {
+            dispatch(showError({ message: createTagsError?.data?.message }));
+          }
+          else {
+            dispatch(
+              showError({ message: "Something went wrong, please try again" })
+            );
+          }
+        }
+
+      }, [createTagsIsSuccess,createTagsError])
+      
+
+      useEffect(() => {
+
+        if(bulkCreateTagsIsSuccess)
+        {
+          setShowCreateModal(false);
+          dispatch(showSuccess({ message: "Tags created successfully" }));
+        }
+        if (bulkCreateTagsError ) {
+          setError(true);
+          if(bulkCreateTagsError?.data?.message)
+          {
+            dispatch(showError({ message: bulkCreateTagsError.data.message }));
+          }
+          else {
+            dispatch(
+              showError({ message: "Something went wrong, please try again" })
+            );
+          }
+        }
+  
+      }, [bulkCreateTagsIsSuccess,bulkCreateTagsError])
+      
+      useEffect(() => {
+  
+        if (tagsError) {
+          setError(true);
+          if (tagsError?.data?.message) {
+            dispatch(showError({ message: tagsError.data.message }));
+          } else {
+            dispatch(
+              showError({ message: "Something went wrong, please try again" })
+            );
+          }
+        }
+        if (tagsIsSuccess) {
+          setError(false);
+          if (tagsType === 0) {
+            setTagsList(tagsData.data.data);
+            setTotalCount(tagsData.data.totalCount);
+          }
+          if (tagsType === 1) {
+            setTagsList(tagsData.data.data);
+            setTotalCount(tagsData.data.totalCount);
+          }
+        }
+        
+      }, [tagsType,tagsIsSuccess,tagsError,tagsData,bulkTagEditIsSuccess,createTagsIsSuccess,createTagsError,bulkCreateTagsIsSuccess,bulkCreateTagsError])
+
+      useEffect(() => {
+        if(deleteTagsIsSuccess)
+        {
+          dispatch(showSuccess({ message: "Tag deleted successfully" }));
+        }
+        if(deleteTagsError)
+        {
+          if (deleteTagsError?.data?.message) {
+            dispatch(showError({ message: deleteTagsError?.data?.message }));
+          }
+          else {
+            dispatch(
+              showError({ message: "Something went wrong, please try again" })
+            );
+          }
+        }
+      }, [deleteTagsIsSuccess,deleteTagsError])
+  
+      useEffect(() => {
+  
+        if(bulkDeleteTagIsSuccess)
+        {
+          dispatch(showSuccess({ message: "Tags deleted successfully" }));
+        }
+        if(bulkCreateTagsError)
+        {
+          if (bulkCreateTagsError?.data?.message) {
+            dispatch(showError({ message: bulkCreateTagsError?.data?.message }));
+          }
+          else {
+            dispatch(
+              showError({ message: "Something went wrong, please try again" })
+            );
+          }
+        }
+      }, [bulkDeleteTagIsSuccess,bulkCreateTagsError])
 
   return (
     <div className="container-fluid page">
@@ -499,9 +637,20 @@ const {
             <hr className="hr-grey-6 my-0" />
             <form noValidate onSubmit={TagFormik.handleSubmit}>
             <DialogContent className="py-3 px-4">
-              <p className="text-lightBlue mb-2">Create Tags</p>
+            <div className="d-flex mb-2">
+              <p className="text-lightBlue me-2">Create Tags</p>
+              <Tooltip title="Enter Tag Name" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
               <FormControl className="col-7 px-0">
                 <OutlinedInput
+                 sx={{pr:1}}
                  placeholder="Enter Tag Name" 
                  size="small"
                  name="name"
@@ -509,6 +658,13 @@ const {
                  onChange={TagFormik.handleChange}
                  onBlur={TagFormik.handleBlur}
                  onKeyDown={handleAddMultiple}
+                 endAdornment={
+                    <InputAdornment position="end">
+                    <Tooltip title="Create Multiple Tags" placement="top">
+                        <ChevronRightIcon className="c-pointer" onClick={handleAddMultiple}/>
+                    </Tooltip>
+                    </InputAdornment>
+                    }
                   />
                 {!!TagFormik.touched.name && TagFormik.errors.name && (
                     <FormHelperText error>
@@ -517,6 +673,7 @@ const {
                   )}
               </FormControl>
               <br />
+              <div className="small">
               <FormControlLabel
                   control={
                     <Checkbox
@@ -539,8 +696,10 @@ const {
                       color: "#c8d8ff",
                     },
                   }}
-                  className=" px-0"
+                  className=" px-0 me-1"
                 />
+                <button className="reset link">(manage)</button>
+              </div>
               <div className="d-flex">
                 {multipleTags && multipleTags.map((data, index) => {
                   return (
@@ -572,7 +731,7 @@ const {
               // disabled={createTagsIsLoading}
               type="submit"
               >
-                <p>Save</p>
+                <p>Create</p>
               </LoadingButton>
             </DialogActions>
             </form>
@@ -1002,7 +1161,7 @@ const {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange}/>
+            <TableSearchSecondary onChange={handleSearchChange}/>
             <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idSort}
@@ -1033,6 +1192,8 @@ const {
                   name="controlled-radio-buttons-group"
                   value={selectedSortOption}
                   onChange={handleSortRadioChange}
+                  defaultValue="newestToOldest"
+
                 >
                   <FormControlLabel
                     value="newestToOldest"
@@ -1154,6 +1315,10 @@ const {
               edit={editTagsPageNavigationHandler}
               bulkEdit={bulkEdit}
               totalCount={totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
             />
           </TabPanel>
           <TabPanel value={tagsType} index={1}>
@@ -1166,6 +1331,11 @@ const {
               totalCount={totalCount}
               tagsType={tagsType}
               bulkEdit={bulkEdit}
+              bulkDelete={handleBulkDeleteTag}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
              />
           </TabPanel>
         </Paper>

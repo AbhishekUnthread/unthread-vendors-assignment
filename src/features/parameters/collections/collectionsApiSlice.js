@@ -35,6 +35,22 @@ export const collectionApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Collections"],
     }),
+    hardDeleteCollection: builder.mutation({
+      query: (collectionId) => ({
+        url: `/parameters/collection/hardDelete/${collectionId}`,
+        method: "DELETE",
+        body: collectionId,
+      }),
+      invalidatesTags: ["Collections"],
+    }),
+    hardBulkDeleteCollection: builder.mutation({
+      query: (collectionDelete) => ({
+        url: `/parameters/collection/bulkDelete`,
+        method: "DELETE",
+        body: collectionDelete,
+      }),
+      invalidatesTags: ["Collections"],
+    }),
     editCollection: builder.mutation({
       query: ({ id, details }) => ({
         url: `/parameters/collection/${id}`,
@@ -60,4 +76,6 @@ export const {
   useDeleteCollectionMutation,
   useEditCollectionMutation,
   useBulkEditCollectionMutation,
+  useHardDeleteCollectionMutation,
+  useHardBulkDeleteCollectionMutation
 } = collectionApiSlice;

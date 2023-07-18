@@ -1,5 +1,5 @@
-import React, { forwardRef, useState, useEffect, useReducer } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useReducer } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { 
   Box,
   Checkbox,
@@ -16,8 +16,7 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import CollectionsTable from "./CollectionsTable";
-import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import TableSearch from "../../../components/TableSearch/TableSearch";
+import TableSearch, { TableSearchSecondary} from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
@@ -35,76 +34,75 @@ import {
 
 import {
   useGetAllCollectionsQuery,
-  useCreateCollectionMutation,
   useDeleteCollectionMutation,
-  useEditCollectionMutation,
+  useHardDeleteCollectionMutation,
+  useHardBulkDeleteCollectionMutation
 } from "../../../features/parameters/collections/collectionsApiSlice";
 
-const eventHandler = (e) => {
-  e.stopPropagation();
-  console.log(e.target);
+const initialQueryFilterState = {
+  pageSize: 10,
+  pageNo: 1,
+  title:"",
+  searchValue:""
 };
-
-const initialCollectionState = {
-  status: "",
-  start: 0,
-  limit: 10,
-  total: null,
-};
-
-const collectionsReducer = (state, action) => {
-  switch (action.type) {
-    case "STATUS": {
-      return {
-        ...state,
-        status: action.payload,
-      };
-    }
-    default: {
-      return initialCollectionState;
-    }
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_SIZE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      pageSize: +action.value,
+    };
   }
+  if (action.type === "CHANGE_PAGE") {
+    return {
+      ...state,
+      pageNo: action.pageNo +1,
+    };
+  }
+  if (action.type === "SEARCH") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      title: action.title,
+    };
+  }
+  if (action.type === "SET_SEARCH_VALUE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      searchValue: action.searchValue,
+    };
+  }
+  return initialQueryFilterState;
 };
 
 const Collections = () => {
   const dispatch = useDispatch();
-  const [value, setValue] = useState(0);
+  const navigate = useNavigate();
+  const[searchParams, setSearchParams] = useSearchParams();
   const [error, setError] = useState(false);
   const [collectionList, setCollectionList] = useState([]);
   const [collectionType, setCollectionType] = useState(0);
-  const [collectionsStatus, setCollectionsStatus] = useState("");
   const [pageLength, setPageLegnth] = useState();
-  const [collectionState, collectionDispatch] = useReducer(
-    collectionsReducer,
-    initialCollectionState
+  const [sortFilter, setSortFilter] = useState("newestToOldest");
+  const [statusFilter, setStatusFilter] = useState([]);
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
   );
-  const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState(["active","in-active","scheduled"]);
-  const [searchValue, setSearchValue] = useState("");
-  
+
   const filterParameter = {};
 
-  const handleSearchChange = (event) => {
-    setSearchValue(event.target.value);
-  }
-
   const handleStatusChange = (event) => {
-    const selectedStatus = event.target.value;
-    if (event.target.value) {
-      if (statusFilter.length === 0) {
-        let item = [];
-        statusFilter.push(selectedStatus);
-        setStatusFilter(item);
+    const { value } = event.target;
+  
+    setStatusFilter((prevSelected) => {
+      if (prevSelected.includes(value)) {
+        return prevSelected.filter((option) => option !== value);
+      } else {
+        return [...prevSelected, value];
       }
-      if (statusFilter.length > 0 && statusFilter.includes(selectedStatus)) {
-        setStatusFilter((item) => item.filter((i) => i !== selectedStatus));
-      }
-      if (statusFilter.length > 0 && !statusFilter.includes(selectedStatus)) {
-        let item = [...statusFilter];
-        item.push(selectedStatus);
-        setStatusFilter(item);
-      }
-    }
+    });
   };
   
   if (sortFilter) {
@@ -115,28 +113,54 @@ const Collections = () => {
       filterParameter.createdAt = sortFilter == "oldestToNewest" ? "1" : "-1";
     }
   }
+
+  if (statusFilter !== null) {
+    if (Array.isArray(statusFilter)) {
+      filterParameter.status = statusFilter.join(',');
+    } else {
+      filterParameter.status = statusFilter;
+    }
+  }
+
+  if (statusFilter == null) {
+    filterParameter.status = "active";
+    filterParameter.status = "in-active";
+    filterParameter.status = "active"
+  }
   
-  const collectionTypeQuery = collectionType === 0 ? { createdAt: -1 }
+  const collectionTypeQuery = 
+      collectionType === 0 ? statusFilter.length > 0 ? { status: statusFilter } : { status: ["active","in-active","scheduled"] }
     : collectionType === 1 ? { status: "active" }
     : collectionType === 2 ? { createdAt: -1, status: "in-active" }
     : collectionType === 3 ? { createdAt: -1, status: "archieved" }
     : {};
 
   const filterParams = { ...filterParameter, ...collectionTypeQuery };
-  if (searchValue) {
-    filterParams.title = searchValue;
-  }
-
-  if (collectionType === 0) {
-    filterParams.status = statusFilter;
-  }
 
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({...filterParams});
+  } = useGetAllCollectionsQuery({ ...filterParameter, ...collectionTypeQuery, ...queryFilterState});
+
+  const [
+    hardDeleteCollection,
+    {
+      isLoading: hardDeleteCollectionIsLoading,
+      isSuccess: hardDeleteCollectionIsSuccess,
+      error: hardDeleteCollectionError,
+    },
+  ] = useHardDeleteCollectionMutation();
+
+  const [
+    bulkDeleteCollection,
+    {
+      isLoading: bulkDeleteCollectionIsLoading,
+      isSuccess: bulkDeleteCollectionIsSuccess,
+      error: bulkDeleteCollectionError,
+    },
+  ] = useHardBulkDeleteCollectionMutation();
 
   const [
     deleteCollection,
@@ -147,9 +171,53 @@ const Collections = () => {
     },
   ] = useDeleteCollectionMutation();
 
+  const deleteHardCollection = (data) => {
+    hardDeleteCollection(data)
+  }
+
+  const deleteBulkCollection = (data) => {
+    bulkDeleteCollection({deletes: data})
+  }
+
   const handleTabChange = (event, tabIndex) => {
     setCollectionType(tabIndex);
   };
+
+  const handleChangeRowsPerPage = (event) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
+  };
+
+  const handleChangePage = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+  };
+
+  const handleSearchChange = (value) => {
+    dispatchQueryFilter({ type: "SEARCH", title: value });
+  };
+
+  const handleSearchValue =(value)=>{
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
+  }
+
+  const editCategoryPageNavigationHandler = (data,index) => {
+    const combinedObject = { filterParameter, collectionTypeQuery, queryFilterState };
+    const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));    
+
+    const currentTabNo =
+    index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
+
+    navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
+  };
+
+  const changeVendorTypeHandler = (_event, tabIndex) => {
+    setCollectionType(tabIndex);
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
+    setSortFilter('');
+    setStatusFilter('')
+    setSearchParams({status:tabIndex})
+  };
+
 
    // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
@@ -238,6 +306,27 @@ const Collections = () => {
     dispatch,
   ]);
 
+  useEffect(() => {
+        if(+searchParams.get("status")===0)
+        {
+          setCollectionType(0);
+        }
+        else if(+searchParams.get("status")===1)
+        {
+          setCollectionType(1);
+        }
+        else if(+searchParams.get("status")===2)
+        {
+          console.log("check")
+          setCollectionType(2);
+        }
+        else if(+searchParams.get("status")===3)
+        {
+          setCollectionType(3);
+        }
+    }, [searchParams])
+    
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -269,7 +358,7 @@ const Collections = () => {
           >
             <Tabs
               value={collectionType}
-              onChange={handleTabChange}
+              onChange={changeVendorTypeHandler}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
@@ -280,7 +369,7 @@ const Collections = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch searchValue={searchValue} handleSearchChange={handleSearchChange}/>
+            <TableSearchSecondary onSearchValueChange={handleSearchValue} value={queryFilterState.searchValue} onChange={handleSearchChange} />
              <div className="d-flex">
               <button
                 className="button-grey py-2 px-3 ms-2"
@@ -306,26 +395,23 @@ const Collections = () => {
                 onClose={handleStatusClose}
                 className="columns"
               >
-                <FormControl className="px-2 py-1">
+                <FormControl className="px-2 py-1" onChange={handleStatusChange}>
                   <FormControlLabel
                     value="active"
                     control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="Active"
-                    onChange={handleStatusChange}
                     checked={statusFilter.includes('active')}
                   />
                   <FormControlLabel
                     value="in-active"
                     control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="In-Active"
-                    onChange={handleStatusChange}
                     checked={statusFilter.includes('in-active')}
                   />
                   <FormControlLabel
                     value="scheduled"
                     control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="Scheduled"
-                    onChange={handleStatusChange}
                     checked={statusFilter.includes('scheduled')}
                   />
                 </FormControl>
@@ -393,6 +479,11 @@ const Collections = () => {
               error={error}
               list={collectionList}
               pageLength={pageLength}
+              edit={editCategoryPageNavigationHandler}
+              rowsPerPage={queryFilterState.pageSize}
+              page={queryFilterState.pageNo}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handleChangePage}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={1}>
@@ -402,6 +493,11 @@ const Collections = () => {
               error={error}
               list={collectionList}
               pageLength={pageLength}
+              edit={editCategoryPageNavigationHandler}
+              rowsPerPage={queryFilterState.pageSize}
+              page={queryFilterState.pageNo}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handleChangePage}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={2}>
@@ -411,16 +507,28 @@ const Collections = () => {
               error={error}
               list={collectionList}
               pageLength={pageLength}
+              edit={editCategoryPageNavigationHandler}
+              rowsPerPage={queryFilterState.pageSize}
+              page={queryFilterState.pageNo}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handleChangePage}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={3}>
             <CollectionsTable
               deleteData={deleteCollectionHandler}
+              hardDeleteCollection={deleteHardCollection}
+              bulkDelete={deleteBulkCollection}
               isLoading={collectionIsLoading}
               error={error}
               list={collectionList}
               pageLength={pageLength}
               collectionType={collectionType}
+              edit={editCategoryPageNavigationHandler}
+              rowsPerPage={queryFilterState.pageSize}
+              page={queryFilterState.pageNo}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handleChangePage}
             />
           </TabPanel>
         </Paper>

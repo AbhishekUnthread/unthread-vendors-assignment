@@ -1,5 +1,9 @@
 @import "./styles/global";
 
+.reset {
+  all: unset;
+}
+
 .main-box {
   min-height: calc(100vh - 56px);
   margin-top: 3.4rem;
@@ -72,6 +76,26 @@
       cursor: not-allowed;
     }
   }
+  &-grey-outline {
+    border: 1px solid $lightBlue;
+    background: $black15;
+    border-radius: 5px;
+    color: $lightBlue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    min-width: max-content;
+    cursor: pointer;
+    &:hover {
+      background: $black16;
+      border: 1px solid $black16;
+    }
+    &:disabled {
+      background: $grey1;
+      cursor: not-allowed;
+    }
+  }
   &-gradient {
     display: flex;
     flex-direction: row;
@@ -128,24 +152,24 @@
     }
   }
   &-red-outline {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    background: transparent;
-    border-radius: 5px;
-    border: 1px solid $red2;
-    color: $red2;
-    text-decoration: none;
-    min-width: max-content;
-    cursor: pointer;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background: transparent !important;
+    border-radius: 5px !important;
+    border: 1px solid $red2 !important;
+    color: $red2 !important;
+    text-decoration: none !important;
+    min-width: max-content !important;
+    cursor: pointer !important;
     &:hover {
-      background: $red2;
-      color: $black1;
+      background: $red2 !important;
+      color: $black1 !important;
     }
     &:disabled {
-      background: $grey1;
-      cursor: not-allowed;
+      background: $grey1 !important;
+      cursor: not-allowed !important;
     }
   }
   &-green-outline {
@@ -937,6 +961,25 @@ textarea {
   }
 }
 
+.input-dropdown {
+  cursor: pointer !important;
+
+  input {
+    cursor: pointer;
+  }
+}
+
+.MuiFormHelperText-root {
+  margin-left: 0 !important;
+  font-size: 0.6rem !important;
+  color: $grey6 !important;
+}
+
+.MuiFormHelperText-root.Mui-error {
+  color: $red1 !important;
+  font-size: 0.75rem !important;
+}
+
 // ? DATE PICKER STYLES STARTS HERE
 
 .MuiInputAdornment-root {
@@ -960,6 +1003,95 @@ textarea {
   }
   .MuiButtonBase-root {
     color: $lightBlue;
+  }
+}
+
+.link {
+  color: $blue1;
+}
+
+.snackbar {
+  background-color: #070616 !important;
+
+  &.success {
+    border-radius: 6px !important;
+    margin: auto;
+    border: 1px solid rgba($green4, 40%) !important;
+
+    .container {
+      background-color: rgba($green4, 0.1) !important;
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 6px 18px !important;
+    }
+
+    p {
+      color: lighten($green4, 10%) !important;
+    }
+    button {
+      color: lighten($green4, 10%) !important;
+    }
+  }
+  &.error {
+    border: 1px solid rgba($red6, 40%) !important;
+    border-radius: 6px !important;
+    margin: auto;
+
+    .container {
+      background-color: rgba($red6, 0.1) !important;
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 6px 18px !important;
+    }
+
+    p {
+      color: lighten($red6, 10%) !important;
+    }
+    button {
+      color: lighten($red6, 10%) !important;
+    }
+  }
+  &.info {
+    border: 1px solid rgba($lightBlue, 40%) !important;
+    border-radius: 6px !important;
+    margin: auto;
+
+    .container {
+      background-color: rgba($lightBlue, 0.1) !important;
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 6px 18px !important;
+    }
+
+    p {
+      color: lighten($lightBlue, 10%) !important;
+    }
+    button {
+      color: lighten($lightBlue, 10%) !important;
+    }
+  }
+  &.warning {
+    border: 1px solid rgba($yellow2, 40%) !important;
+    border-radius: 6px !important;
+    margin: auto;
+
+    .container {
+      background-color: rgba($yellow2, 0.1) !important;
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 6px 18px !important;
+    }
+
+    p {
+      color: lighten($yellow2, 10%) !important;
+    }
+    button {
+      color: lighten($yellow2, 10%) !important;
+    }
   }
 }
 

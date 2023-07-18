@@ -3,15 +3,35 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 
-export default function AppStateSelect() {
+import { useGetAllStateQuery } from "../../features/master/state/stateApiSlice";
+
+export default function AppStateSelect({ getStateName, SelectStateName }) {
+  const handleStateName = (event) => {
+    getStateName(event.target.value)
+  }
+
+  const selectStateName = (event, value) => {
+    SelectStateName(value._id)
+  }
+
+   const {
+    data: stateData,
+    isLoading: stateIsLoading,
+    isSuccess: stateIsSuccess,
+    error: stateError,
+  } = useGetAllStateQuery({createdAt: -1});
+
+  console.log(stateData?.data?.data,"stateData")
+
   return (
     <Autocomplete
       id="country-select-demo"
       sx={{ width: 300 }}
-      options={states}
+      options={stateData?.data?.data}
       autoHighlight
       size="small"
-      getOptionLabel={(option) => option.label}
+      getOptionLabel={(option) => option?.name}
+      onChange={selectStateName}
       renderOption={(props, option) => (
         <Box
           component="li"
@@ -19,7 +39,7 @@ export default function AppStateSelect() {
           {...props}
         >
           <small className="text-lightBlue my-1">
-            {option.label} ({option.code})
+            {option.name}
           </small>
         </Box>
       )}
@@ -32,6 +52,7 @@ export default function AppStateSelect() {
             ...params.inputProps,
             autoComplete: "new-password", // disable autocomplete and autofill
           }}
+          onChange={handleStateName}
         />
       )}
     />

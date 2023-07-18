@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import './Collections.scss';
@@ -27,6 +27,10 @@ import {
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import DuplicateCollection from "./DuplicateCollection/DuplicateCollection";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
+import TableLoader from "../../../components/Loader/TableLoader";
+import PageLoader from "../../../components/Loader/PageLoader";
 // !IMAGES IMPORTS
 import unthreadLogo from "../../../assets/images/unthreadLogo.png"
 
@@ -40,6 +44,8 @@ import { updateCollectionId } from "../../../features/parameters/collections/col
 import { useBulkEditCollectionMutation, useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import question from '../../../assets/images/products/question.svg'
+import unArchived from "../../../assets/images/Components/Archived.png"
+import closeModal from "../../../assets/icons/closeModal.svg"
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from "moment";
 
@@ -51,14 +57,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 // ? TABLE STARTS HERE
 
-const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, collectionType }) => {
+const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, collectionType, hardDeleteCollection, bulkDelete, edit, rowsPerPage, page, changeRowsPerPage, changePage }) => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [page, setPage] = React.useState(0);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [state, setState] = React.useState([]);
   const [collectionId, setCollectionId] = React.useState('')
@@ -69,7 +75,11 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const [unArchiveID, setUnArchiveID] = React.useState(false);
   const [statusValue, setStatusValue] = React.useState("in-active");
   const [massActionStatus, setMassActionStatus] = React.useState("");
-  const [forMassAction, setForMassAction] = React.useState(false)
+  const [forMassAction, setForMassAction] = React.useState(false);
+  const [collectionTitle, setCollectionTitle] = useState("");
+  const [duplicateModal, setDuplicateModal] = useState(false);
+
+  console.log(forMassAction,'forMassAction')
 
   const handleStatusValue = (value) => {
     setStatusValue(value);
@@ -99,19 +109,22 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     }
   ] = useBulkEditCollectionMutation();
 
-  const handleArchive = (id) => {
+  const handleArchive = (id, title) => {
+    setCollectionTitle(title);
     setArchivedModal(true);
     setCollectionId(id);
+    setForMassAction(false)
   }
 
   const toggleArchiveModalHandler = (row) => {
+    setForMassAction(false)
     setShowDeleteModal((prevState) => !prevState);
     setArchiveID(row);
-    setName(row?.name);
+    setName(row?.title);
   };
 
   useEffect(() => {
-    if (selectedStatus !== null) {
+    if (selectedStatus !== null && selectedStatus !== "Delete") {
       const newState = selected.map((id) => {
         if (selectedStatus === "Set as Active") {
           return {
@@ -127,12 +140,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           return {
             id,
             status: "archieved",
-          };
-        } else if (selectedStatus === "Delete") {
-          return {
-            id,
-            status: "in-active",
-            active: false
           };
         } else if (selectedStatus === "Set as Un-Archived") {
           return {
@@ -150,13 +157,20 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
       const requestData = {
         updates: newState
       };
-      bulkEditCollection(requestData).unwrap().then(()=>
-      dispatch(showSuccess({ message: "Status updated successfully" })));
-      setSelectedStatus(null);
-      setShowUnArhcivedModal(false)
-      setShowDeleteModal(false);
-    }
-  }, [selected, selectedStatus]);
+      bulkEditCollection(requestData).unwrap().then(()=> {
+        const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Collection un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+                ? "Collection archived  successfully" : "Status updated successfully";
+
+        dispatch(showSuccess({ message: successMessage }));
+        setSelectedStatus(null);
+        setShowUnArhcivedModal(false)
+        setShowDeleteModal(false);
+        setSelected([])
+      })}    
+  }, [selectedStatus]);  
   
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -165,8 +179,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const handleMassAction  = (status) => {
     setForMassAction(true)
     setMassActionStatus(status);
-    if(collectionType !== 3) {
-      setSelectedStatus(status);
+    if(collectionType !== 3 && status === "Set as Archived") {
+      setArchivedModal(true);
     } else if(collectionType === 3 && status === "Set as Un-Archived") {
       setShowUnArhcivedModal(true);
     } else if(collectionType === 3 && status === "Delete") {
@@ -201,12 +215,12 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     },
   ];
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
+  // const emptyRows =
+  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -215,13 +229,17 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   };
 
   const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = list.map((n) => n._id);
-      setSelected(newSelected);
-      return;
+    if(selected.length>0) {
+      setSelected([]);
     }
-    setSelected([]);
-  };
+    else if(event.target.checked) {
+      const newSelected = list.slice(0, rowsPerPage).map((n) => n._id);
+      setSelected(newSelected);
+    }
+    else {
+      setSelected([]);
+    }
+  };  
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -242,29 +260,36 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     setSelected(newSelected);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const [openArchivedModal, setArchivedModal] = React.useState(false);
 
   const handleArchivedModalClose = () => {
-    setArchivedModal(false);
-     editCollection({
-        id: collectionId,
-        details : {
-          status: "archieved"
-        }
-    })
-    dispatch(showSuccess({ message: "Archived this collection successfully" }));
+    if(forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      setArchivedModal(false);
+    } else {
+      setArchivedModal(false);
+      editCollection({
+          id: collectionId,
+          details : {
+            status: "archieved"
+          }
+      })
+      dispatch(showSuccess({ message: "Collection archived successfully!" }));
+    }
   }
 
-  const handleUnArchive = (id) => {
+  const handleUnArchive = (id, title) => {
+    setForMassAction(false)
     setShowUnArhcivedModal(true)
     setUnArchiveID(id)
+    setName(title)
   }
 
   const handleUnArchived = () => {
@@ -278,17 +303,21 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           }
       })
       setShowUnArhcivedModal(false)
-      dispatch(showSuccess({ message: "Un-Archived this collection successfully" }));
+      dispatch(showSuccess({ message: "Collection un-archived successfully" }));
     }
   }
 
   const handleArchiveModal =()=>{
     if(forMassAction === true) {
       setSelectedStatus(massActionStatus);
+      bulkDelete(selected)
+      setShowDeleteModal(false);
+      dispatch(showSuccess({ message: "Collection deleted successfully!" }));
+      setSelected([])
     } else {
-      deleteData(archiveID);
+      hardDeleteCollection(archiveID?._id);
       toggleArchiveModalHandler();
-      dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+      dispatch(showSuccess({ message: "Collection deleted successfully!" }));
     }
   }
 
@@ -296,7 +325,13 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     setArchivedModal(false);
   };
 
-  console.log(list, 'sfkdksf lfsdj')
+  const handleDuplicateCollectionClose = () => {
+    setDuplicateModal(false)
+  }
+
+  const handleDuplicateCollection = (row) => {
+    setDuplicateModal(true)
+  }
 
   return (
     <React.Fragment>
@@ -349,7 +384,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           />
           <TableBody>
             {stableSort(list, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -408,9 +443,9 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                     <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.totalProduct}</p>
                     </TableCell>
-                    <TableCell style={{ width: 140, padding: 0 }}>
+                    <TableCell style={{ width: 180, padding: 10 }}>
                       <div className="d-block">
-                        <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
+                        <div className="rounded-pill d-flex px-2 py-1 statusBoxWidth" 
                           style={{background: 
                             row.status == "active" ? "#A6FAAF" : 
                             row.status == "in-active" ? "#F67476" : 
@@ -446,6 +481,22 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                     {row.status == "archieved" ?
                       <TableCell style={{ width: 140, padding: 0 }}>
                          <div className="d-flex align-items-center">
+                          <Tooltip title="Un-Archive" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2"
+                              onClick={() => {
+                                handleUnArchive(row._id, row.title)
+                                }
+                              }
+                            >
+                              <InventoryIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
                           {deleteData && (
                           <Tooltip title="Delete" placement="top">
                             <div className="table-edit-icon rounded-4 p-2" 
@@ -463,22 +514,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                             </div>
                           </Tooltip>
                           )}
-                          <Tooltip title="Un-Archive" placement="top">
-                            <div className="table-edit-icon rounded-4 p-2"
-                              onClick={() => {
-                                handleUnArchive(row._id)
-                                }
-                              }
-                            >
-                              <InventoryIcon
-                                sx={{
-                                  color: "#5c6d8e",
-                                  fontSize: 18,
-                                  cursor: "pointer",
-                                }}
-                              />
-                            </div>
-                          </Tooltip>
                         </div>
                       </TableCell>
                       :
@@ -486,10 +521,9 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                         <div className="d-flex align-items-center">
                           <Tooltip title="Edit" placement="top">
                             <div className="table-edit-icon rounded-4 p-2" 
-                                onClick={()=>{
-                                  dispatch(updateCollectionId(row._id));
-                                  navigate("/parameters/collections/edit")
-                                }}
+                                onClick={(e) => {
+                                      edit(row,index+1,collectionType);
+                                    }}
                             >
                               <EditOutlinedIcon
                                 sx={{
@@ -500,8 +534,13 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                               />
                             </div>
                           </Tooltip>
-                          <Tooltip title="Copy" placement="top">
-                            <div className="table-edit-icon rounded-4 p-2">
+                          <Tooltip title="Duplicate" placement="top">
+                            <div className="table-edit-icon rounded-4 p-2"
+                              onClick={() => {
+                                dispatch(updateCollectionId(row._id));
+                                handleDuplicateCollection(row)
+                              }}
+                            >
                               <ContentCopyIcon
                                 sx={{
                                   color: "#5c6d8e",
@@ -514,7 +553,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                           <Tooltip title="Archive" placement="top">
                             <div className="table-edit-icon rounded-4 p-2"
                               onClick={() => {
-                                handleArchive(row._id)
+                                handleArchive(row._id, row?.title)
                                 }
                               }
                             >
@@ -533,7 +572,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                   </TableRow>
                 );
               })}
-            {emptyRows > 0 && (
+            {/* {emptyRows > 0 && (
               <TableRow
                 style={{
                   height: 53 * emptyRows,
@@ -541,7 +580,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
               >
                 <TableCell colSpan={6} />
               </TableRow>
-            )}
+            )} */}
           </TableBody>
         </Table>
       </TableContainer>
@@ -551,17 +590,19 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
         component="div"
         count={pageLength}
         rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        page={page - 1}
+        onPageChange={changePage}
+        onRowsPerPageChange={changeRowsPerPage}
         className="table-pagination"
       />
       </>
       ) : isLoading ? (
-            <span className="d-flex justify-content-center m-3">Loading...</span>
+            <span className="d-flex justify-content-center m-3">
+              <TableLoader />
+            </span>
           ) : (
             <span className="d-flex justify-content-center m-3">
-              No data found
+              <NoDataFound />
             </span>
           )
         ) : (
@@ -577,27 +618,37 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           maxWidth="sm"
         >
           <DialogContent className="py-2 px-4 text-center">
-            <img src={question} alt="question" width={200} />
+            <img src={closeModal} alt="question" width={40} 
+              className="closeModal c-pointer" 
+              onClick={handleModalClose}
+            />
+            <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
             <div className="row"></div>
-            <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive this collection ?
+            <h5 className="text-lightBlue mt-2 mb-3">
+              Archive   
+              <span className="text-blue-2"> "{forMassAction == true ? selected.length : collectionTitle }" </span>
+              collection ?
+            </h5>
+            <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
+              <span className="text-blue-2"> 0 products </span> 
+              in this collection will be unassigned from it.
             </h6>
-            <div className="d-flex justify-content-center mt-4">
-              <hr className="hr-grey-6 w-100" />
-            </div>
+            <h6 className="mt-2 mb-4" style={{color: "#5C6D8E"}}>
+              Would you like to Archive this Collection ?
+            </h6>
           </DialogContent>
-          <DialogActions className="d-flex justify-content-between px-4 pb-4">
+          <DialogActions className="d-flex justify-content-center px-4 pb-4">
             <button
-              className="button-red-outline py-2 px-3 me-5"
+              className="button-lightBlue-outline py-2 px-3 me-4"
               onClick={handleModalClose}
             >
               <p>Cancel</p>
             </button>
             <button
-              className="button-gradient py-2 px-3 ms-5"
+              className="button-red-outline py-2 px-3"
               onClick={handleArchivedModalClose}
             >
-              <p>Archived</p>
+              <p>Archive</p>
             </button>
           </DialogActions>
         </Dialog>
@@ -605,13 +656,21 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           showCreateModal={showDeleteModal}
           toggleArchiveModalHandler={toggleArchiveModalHandler}
           handleArchive={handleArchiveModal} 
-          name={name} 
+          name={forMassAction == false ? name : selected.length} 
+          deleteType={"Collection"}
         />
         <UnArchivedModal 
           handleStatusValue={handleStatusValue}
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
+          name={forMassAction == false ? name : selected.length}
+          nameType={"Collection"}
+        />
+
+        <DuplicateCollection 
+          openDuplicateCollection={duplicateModal}
+          handleDuplicateCollectionClose={handleDuplicateCollectionClose}
         />
     </React.Fragment>
   );

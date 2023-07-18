@@ -69,6 +69,8 @@ import EditCategories from "./pages/Parameters/Categories/EditCategories/EditCat
 import EditSubCategories from "./pages/Parameters/Categories/EditSubCategories/EditSubCategories";
 import EditCollection from "./pages/Parameters/Collections/EditCollection/EditCollection";
 import ProductTabs from "./pages/Parameters/ProductTabs/ProductTabs";
+import ProductTabInfo from "./pages/Parameters/ProductTabs/ProductTabInfo";
+import OptionsInfo from "./pages/Parameters/Options/OptionsInfo";
 
 const router = () => {
   const loginStatus = store.getState().auth.isLoggedIn;
@@ -201,12 +203,20 @@ const router = () => {
                   element: <CreateCollection />,
                 },
                 {
-                  path: "collections/edit",
+                  path: "collections/edit/:id/:filter",
                   element: <EditCollection />,
                 },
                 {
                   path: "productTabs",
                   element: <ProductTabs />,
+                },
+                {
+                  path: "productTabs/create",
+                  element: <ProductTabInfo />,
+                },
+                {
+                  path: "productTabs/edit/:id",
+                  element: <ProductTabInfo />,
                 },
                 {
                   path: "additionalFields",
@@ -221,16 +231,16 @@ const router = () => {
                   element: <Categories />,
                 },
                 {
-                  path: "categories/edit",
+                  path: "categories/edit/:id/:filter",
                   element: <EditCategories />,
                 },
                 {
-                  path: "subCategories/edit",
+                  path: "subCategories/edit/:id/:filter",
                   element: <EditSubCategories />,
                 },
                 {
-                  path: "variantSets",
-                  element: <VariantSets />,
+                  path: "options/create",
+                  element: <OptionsInfo />,
                 },
                 {
                   path: "variantSets/edit",
@@ -245,7 +255,7 @@ const router = () => {
                   element: <Vendors />,
                 },
                 {
-                  path: "vendors/edit",
+                  path: "vendors/edit/:id/:filter",
                   element: <EditVendor />,
                 },
                 {

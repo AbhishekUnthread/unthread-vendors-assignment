@@ -12,13 +12,21 @@ import {
 } from '@mui/material'
 import React, { forwardRef } from 'react'
 import unArchived from "../../assets/images/Components/Archived.png"
+import closeModal from "../../assets/icons/closeModal.svg";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
   // ? DIALOG TRANSITION ENDS HERE
 
-const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnArchived, handleStatusValue }) => {
+const UnArchivedModal = ({ 
+    showUnArchivedModal, 
+    closeUnArchivedModal, 
+    handleUnArchived, 
+    handleStatusValue,
+    name,
+    nameType
+  }) => {
   const [statusValue, setStatusValue] = React.useState("in-active");
 
   const handleStatusRadio = (event) => {
@@ -27,8 +35,6 @@ const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnAr
     handleStatusValue(value);
   }
 
-  console.log(statusValue,'statusValue')
-
   return (
     <>
     <Dialog
@@ -36,24 +42,21 @@ const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnAr
         keepMounted
         aria-describedby="alert-dialog-slide-description"
         maxWidth="xs"
-        fullWidth={true}
         open={showUnArchivedModal}
         onClose={closeUnArchivedModal}
       >
-        <hr className="hr-grey-6 my-0" />
-        <DialogContent className="py-3 px-4">
-          <Box sx={{  display: 'flex', justifyContent: 'center' }}>
-            <img src={unArchived} alt="questionMark" style={{width: '300px', height: '300px'}}/>
-          </Box>
-          <Typography
-            variant="h5"
-            align="center"
-            sx={{ color: "lightBlue", marginBottom: 2 }}
-          >
-            Before un-archiving this item, 
-            please set it's status.
-          </Typography>
-          <br />
+        <DialogContent className="py-2 px-4 text-center">
+          <img src={closeModal} alt="question" width={40} className="closeModal c-pointer" 
+            onClick={closeUnArchivedModal}
+          />
+          <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
+          <div className="row"></div>
+            <h5 className="text-lightBlue mt-2 mb-2">
+              Before un-archiving 
+              <span className="text-blue-2"> "{name}" </span>
+              {nameType},
+                please set it's status.
+            </h5>
         </DialogContent>
         <div className="d-flex justify-content-center">
           <RadioGroup
@@ -63,36 +66,39 @@ const UnArchivedModal = ({ showUnArchivedModal, closeUnArchivedModal, handleUnAr
             value={statusValue}
             onChange={handleStatusRadio}
             className="d-flex justify-content-between px-4 py-3"
-            // onClick={(newValue) => {
-            //   handleValue(newValue.target.value)
-            // }}
           >
             <FormControlLabel
               value="active"
               control={<Radio size="small" />}
               label="Active"
+              sx={{
+                color: statusValue == "active" ? "#c8d8ff" : "#5C6D8E",
+              }}
             />
             <FormControlLabel
               value="in-active"
               control={<Radio size="small" />}
               label="In-Active"
+              sx={{
+                color: statusValue == "in-active" ? "#c8d8ff" : "#5C6D8E",
+              }}
             />
           </RadioGroup>
         </div>
-        <DialogActions className="d-flex justify-content-between px-4 py-3">
+        <DialogActions className="d-flex justify-content-center px-4 py-3">
           <button
-            className="button-grey py-2 px-5"
+              className="button-lightBlue-outline py-2 px-3 me-4"
             onClick={closeUnArchivedModal}
             type="button"
           >
-            <p className="text-lightBlue">No</p>
+            <p className="text-lightBlue">Cancel</p>
           </button>
           <LoadingButton
-            className="button-gradient py-2 px-5"
+            className="button-gradient py-2 px-3"
             type="button"
             onClick={handleUnArchived}
           >
-            <p>Yes</p>
+            <p>Un-Archive</p>
           </LoadingButton>
         </DialogActions>
       </Dialog>

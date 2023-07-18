@@ -31,32 +31,44 @@ const rejectStyle = {
   borderColor: "#FF1744",
 };
 // ? FILE UPLOAD ENDS HERE
-const UploadMediaBox = ({ imageName, headingName ,UploadChange, imageValue}) => {
-  const [inputUrl,setInputUrl] =useState('')
- const  [uploadFile, uploadState] = UseFileUpload()
+const UploadMediaBox = ({
+  imageName,
+  headingName,
+  UploadChange,
+  imageValue,
+  previousImage,
+  isUploaded
+}) => {
+  const [inputUrl, setInputUrl] = useState("");
+  const [uploadFile, uploadState] = UseFileUpload();
+
+  console.log(previousImage,'previousImage');
   // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
       accept: {
         "image/*": [".jpeg", ".jpg", ".png"],
       },
-    onDrop: acceptedFiles => {
-      uploadFile({file:acceptedFiles[0]})
-    }
+      onDrop: (acceptedFiles) => {
+        uploadFile({ file: acceptedFiles[0] });
+      },
     });
-    useEffect(()=>{
-      if(uploadState.data?.url){
-        UploadChange(uploadState.data?.url)
-      }else{
-        UploadChange(inputUrl)
-      }
-    },[uploadState,inputUrl])
-    useEffect(() => {
-      if(imageValue){
-        setInputUrl(imageValue)
-      }
-    },[imageValue])
-    
+
+  useEffect(() => {
+    if (uploadState.data?.url) {
+      UploadChange(uploadState.data?.url);
+      isUploaded(true);
+    } else {
+      UploadChange(inputUrl);
+      isUploaded(false);
+    }
+  }, [uploadState, inputUrl]);
+  useEffect(() => {
+    if (imageValue) {
+      setInputUrl(imageValue);
+    }
+  }, [imageValue]);
+
   const style = useMemo(
     () => ({
       ...baseStyle,
@@ -117,10 +129,18 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange, imageValue}) => 
               </Tooltip>
             </div>
             <FormControl className="px-0">
-              <OutlinedInput value={inputUrl} onChange={e=> setInputUrl(e.target.value)} placeholder="Enter URL Link" size="small" />
+              <OutlinedInput
+                value={inputUrl}
+                onChange={(e) => setInputUrl(e.target.value)}
+                placeholder="Enter URL Link"
+                size="small"
+              />
             </FormControl>
             {/* <div className="d-flex"> */}
-            <button onClick={handleSaveFilterClose} className="ms-auto button-gradient py-1 px-4 mt-3">
+            <button
+              onClick={handleSaveFilterClose}
+              className="ms-auto button-gradient py-1 px-4 mt-3"
+            >
               <p>Add Media</p>
             </button>
             {/* </div> */}
@@ -136,7 +156,18 @@ const UploadMediaBox = ({ imageName, headingName ,UploadChange, imageValue}) => 
           //   event.target.value = null;
           // }}
         />
-        <img src={uploadState?.data?.url ? uploadState?.data?.url : inputUrl !== "" ? inputUrl : imageName } className="w-100" style={{height: "150px"}} alt="" />
+        <img
+          src={
+            uploadState?.data?.url
+              ? uploadState?.data?.url
+              : inputUrl !== ""
+              ? inputUrl
+              : previousImage ? previousImage : imageName
+          }
+          className="w-100"
+          style={{ height: "150px" }}
+          alt=""
+        />
       </div>
     </div>
   );

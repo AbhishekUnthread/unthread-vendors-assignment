@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect, useReducer } from "react";
 import "../../CreateCollection/CreateCollection.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import SEO from "../../../Products/AddProduct/SEO/SEO";
@@ -10,7 +10,9 @@ import UploadBanner from "../../../../components/UploadBanner/UploadBanner";
 import StatusBox from "../../../../components/StatusBox/StatusBox";
 import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
 import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
-import AddHeader from "../../../../components/AddHeader/AddHeader"
+import AddHeader from "../../../../components/AddHeader/AddHeader";
+import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
+import { SaveFooterSecondary } from "../../../../components/SaveFooter/SaveFooter";
 import {
   EnhancedTableHead,
   stableSort,
@@ -73,6 +75,10 @@ import {
   useDeleteCollectionMutation,
   useEditCollectionMutation,
 } from "../../../../features/parameters/collections/collectionsApiSlice";
+import { updateCollectionId } from "../../../../features/parameters/collections/collectionSlice";
+import paginationRight from "../../../../assets/icons/paginationRight.svg";
+import paginationLeft from "../../../../assets/icons/paginationLeft.svg";
+import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -226,14 +232,31 @@ const likeProductRows = [
 ];
 // ? LIKE PRODUCTS TABLE ENDS HERE
 
-const collectionValidationSchema = Yup.object({
-  title: Yup.string().trim().min(3).required("required"),
-});
+const initialQueryFilterState = {
+      pageSize: 1,
+      pageNo: null,
+      totalCount: 0,
+    };
+
+  const queryFilterReducer = (state, action) => {
+    if (action.type === "SET_PAGE_NO") {
+      return {
+        ...state,
+        pageNo: +action.pageNo,
+      };
+    }
+    if (action.type === "SET_TOTAL_COUNT") {
+      return {
+        ...state,
+        totalCount: action.totalCount,
+      };
+    }
+    return initialQueryFilterState;
+  };
 
 const EditCollection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState(false);
   const [collectionTitle, setCollectionTitle] = useState("");
   const [collectionNote, setCollectionNote] = useState("");
   const [collectionStatus, setCollectionStatus] = React.useState("active");
@@ -244,32 +267,99 @@ const EditCollection = () => {
   const [duplicateDescription, setDuplicateDescription] = useState(false);
   const [startDate1, setStartDate1] = useState(null)
   const [endDate1, setEndDate1] = useState(null)
-  const collectionId = useSelector((state)=>state.collection.collectionId)
+  // const collectionId = useSelector((state)=>state.collection.collectionId)
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [duplicateTitleNew, setDuplicateTitleNew] = useState("")
+  let { id,filter } = useParams();
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+  const [collectionId, setCollectionId] = useState();
+  const [decodedObject, setDecodedObject] = useState(null);
+  const [index, setIndex] = useState(null);
 
-  const handleSchedule = (start, end) => {
-    console.log(start,'start')
-    setStartDate(start);
-    setEndDate(end);
-  };
-  console.log(moment(startDate).toDate(), 'startDate startDate');
-  console.log(moment(startDate1).toDate(), 'startDate1 dsfn');
+
+console.log(id, "id id id")
+console.log(filter, "filter filter filter")
 
    const clearDate = () => {
     setStartDate1(null);
     setEndDate1(null);
   }  
 
+  const handleStartDate = (event) => {
+    setStartDate1(event)
+    setHideFooter(true)
+  }
+
+  const handleEndDate = (event) => {
+    setEndDate1(event)
+    setHideFooter(true)
+  }
+
+  const handleIncludeFilter = (event) => {
+    setCollectionFilter(event.target.checked)
+    setHideFooter(true)
+  }
+
+  const isUploaded = (event) => {
+    if(event == true) {
+      setHideFooter(true)
+    }
+  }
+
+  const backHandler = () => {
+    navigate("/parameters/collections");
+  }
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({ createdAt:"-1", id: collectionId });
+  } = useGetAllCollectionsQuery({
+      ...queryFilterState,
+      ...(decodedObject?.filterParameter || {}),
+      ...(decodedObject?.collectionTypeQuery || {}),
+      name: decodedObject?.queryFilterState?.name||"",
+    });
+
+    const nextPageHandler = () => {
+    const { pageNo, totalCount } = queryFilterState;
+    console.log({pageNo:pageNo});
+    console.log({totalCount:totalCount})
+
+    if (pageNo+1 > totalCount) {
+      return;
+    }
+    navigate(`/parameters/collections/edit/${pageNo + 1}/${filter}`);
+  };
+
+  const prevPageHandler = () => {
+    const { pageNo } = queryFilterState;
+    if (pageNo - 1 === 0) {
+      return;
+    }
+    navigate(`/parameters/collections/edit/${pageNo - 1}/${filter}`);
+  };  
+
+  useEffect(() => {
+      if (id) {
+        dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+      }
+    }, [id]);
+
+    useEffect(() => {
+      const encodedString = filter;
+  
+      const decodedString = decodeURIComponent(encodedString);
+      const parsedObject = JSON.parse(decodedString);
+  
+      setDecodedObject(parsedObject);
+    }, []);
 
   const newCollectionData = collectionData?.data?.data[0];
 
@@ -292,20 +382,50 @@ const EditCollection = () => {
     }
   ] = useEditCollectionMutation();
 
+  const handleDuplicateTitle = (e) => {
+    const value = e.target.value;
+    setDuplicateTitleNew(value)
+  };
+
   useEffect(() => {
+    if(duplicateTitleNew == "" && collectionTitle) {
+      setDuplicateTitleNew(`${collectionTitle} copy`);
+    }
+  }, [collectionTitle]);
+
+  useEffect(() => {
+      if(editCollectionError)
+      {
+        if (editCollectionError?.data?.message) {
+          dispatch(showError({ message: editCollectionError?.data?.message }));
+        } else {
+          dispatch(
+            showError({ message: "Something went wrong, please try again" })
+          );
+        }
+      }
+
     if (collectionIsSuccess) {
+      dispatchQueryFilter({
+        type: "SET_TOTAL_COUNT",
+        totalCount: collectionData?.data?.totalCount,
+      });
+      setCollectionId(newCollectionData?._id)
       setCollectionTitle(newCollectionData?.title);
       setCollectionDescription(newCollectionData?.description);
       setCollectionStatus(newCollectionData?.status);
       setCollectionVisibility(newCollectionData?.isVisibleFrontend)
       setCollectionNote(newCollectionData?.notes)
       setCollectionFilter(newCollectionData?.filter)
-      setStartDate1(newCollectionData.startDate);
+      setStartDate1(newCollectionData?.startDate);
       setEndDate1(newCollectionData?.endDate)
       setCollectionMediaUrl(newCollectionData?.mediaUrl)
       setCollectionSeo(newCollectionData?.seos || {})
+
+      const duplicateTitle = `${newCollectionData?.title} Copy`;
+      setCollectionDuplicateTitle(duplicateTitle);
     }
-  }, [collectionIsSuccess]);
+  }, [collectionIsSuccess, collectionId, index, editCollectionIsSuccess, editCollectionError, id, filter, collectionData ]);
 
   const handleSubmit = () => {
     if (collectionId !== "") {
@@ -313,11 +433,11 @@ const EditCollection = () => {
         title: collectionTitle, 
         filter: collectionFilter, 
         description: collectionDescription, 
-        status: startDate1 === null ? collectionStatus : "scheduled",
+        status: startDate1 == null ? collectionStatus : "scheduled",
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
-        seo: {}
+        ...(collectionSeo== null ? { seo: collectionSeo } : "")
       }
       if (startDate1 != null) {
         collectionDetails.startDate = new Date(startDate1);
@@ -326,21 +446,15 @@ const EditCollection = () => {
         collectionDetails.endDate = new Date(endDate1);
       }
 
-      if (collectionSeo && typeof collectionSeo === "object") {
-        for (const key in collectionSeo) {
-          if (collectionSeo[key] !== "" && collectionSeo[key] !== null) {
-            collectionDetails.seo[key] = collectionSeo[key];
-          }
-        }
-      }
-
       editCollection({
         id: collectionId,
         details: collectionDetails
       })
         .unwrap()
-        navigate("/parameters/collections");
-        dispatch(showSuccess({ message: "Edited this collection successfully" }));
+        .then(() => { 
+          dispatch(showSuccess({ message: "Collection updated successfully" }));
+          setHideFooter(false)
+        })
     }else {
       createCollection({
         title: collectionTitle, 
@@ -350,22 +464,22 @@ const EditCollection = () => {
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
-        seo: collectionSeo,
+        ...(collectionSeo ? { seo: collectionSeo } : "")
       })
         .unwrap()
-        navigate("/parameters/collection");
-        dispatch(showSuccess({ message: "Edited this collection successfully" }));
+        .then(() => { 
+          dispatch(showSuccess({ message: "Collection updated successfully!" }));
+        });
     }
   }
 
   useEffect(() => {
     if (createCollectionError) {
-      setError(true);
       if (createCollectionError?.data?.message) {
         dispatch(showError({ message: createCollectionError.data.message }));
       } else {
         dispatch(
-          showError({ message: "Something went wrong!, please try again" })
+          showError({ message: "Failed to update Collection. Please try again." })
         );
       }
     }
@@ -550,15 +664,11 @@ const EditCollection = () => {
     setOpenDuplicateCollection(false);
   };
 
-  const handleDuplicateTitleChange = (event) => {
-    setCollectionDuplicateTitle(event.target.value);
-  };
-
   const scheduleDuplicateCollection = () => {
     const collectionData = {
-      title: collectionDuplicateTitle,
+      title: duplicateTitleNew,
       filter: collectionFilter,
-      status: collectionStatus ? collectionStatus : "active",
+      status: collectionStatus,
       isVisibleFrontend: collectionVisibility,
       notes: collectionNote,
     };
@@ -569,10 +679,12 @@ const EditCollection = () => {
 
     createCollection(collectionData)
       .unwrap()
-      .then(() => {
+      .then((res) => {
         setOpenDuplicateCollection(false);
+        dispatch(showSuccess({ message: "Duplicate Created of this collection successfully" }));
+        dispatch(updateCollectionId(res?.data?._id));
+        navigate("/parameters/collections/edit")
       });
-      dispatch(showSuccess({ message: "Duplicate Created of this collection successfully" }));
   };
   // ? DUPLICATE COLLECTION DIALOG ENDS HERE
 
@@ -588,7 +700,35 @@ const EditCollection = () => {
 
   return (
       <div className="page container-fluid position-relative user-group">
-        <AddHeader headerName={collectionTitle} previewButton={"Preveiw"} navigateLink={"/parameters/collections"} duplicateButton={"Duplicate"} handleDuplicate={handleDuplicate}/>
+        <div className="row justify-content-between">
+        <div className="d-flex align-items-center w-auto ps-0">
+            <img
+              src={arrowLeft}
+              alt="arrowLeft"
+              width={9}
+              className="c-pointer"
+              onClick={backHandler}
+            />
+          <h5 className="page-heading ms-2 ps-1">{collectionTitle}</h5>
+        </div>
+
+        <div className="d-flex align-items-center w-auto pe-0">
+          <img
+            src={paginationLeft}
+            alt="paginationLeft"
+            className="c-pointer"
+            width={30}
+            onClick={prevPageHandler}
+          />
+          <img
+            src={paginationRight}
+            alt="paginationRight"
+            className="c-pointer"
+            width={30}
+            onClick={nextPageHandler}
+          />
+        </div>
+      </div>
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -621,7 +761,7 @@ const EditCollection = () => {
                           name="filter"
                           inputProps={{ "aria-label": "controlled" }}
                           checked={collectionFilter}
-                          onChange={(e)=>setCollectionFilter(e.target.checked)}
+                          onChange={handleIncludeFilter}
                           size="small"
                           style={{
                             color: "#5C6D8E",
@@ -1102,7 +1242,7 @@ const EditCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO name={collectionTitle} value={collectionSeo} handleSeoChange={setCollectionSeo} />
+              <SEO seoName={collectionTitle} seoValue={collectionSeo} handleSeoChange={setCollectionSeo} />
             </div>
 
             <SwipeableDrawer
@@ -1314,21 +1454,33 @@ const EditCollection = () => {
               value={collectionStatus} 
                handleProductStatus={(event, newStatus) => {
                 setCollectionStatus(newStatus)
+                setHideFooter(true)
               }}
-              handleSchedule={handleSchedule}
               startDate={startDate1}
               endDate={endDate1}
               showSchedule={true}
-              handleStartDate={setStartDate1}
-              handleEndDate={setEndDate1}
+              handleStartDate={handleStartDate}
+              handleEndDate={handleEndDate}
               clearDate={clearDate}
             />
-            <VisibilityBox value={collectionVisibility} onChange={(_,val)=>setCollectionVisibility(val)}/>
+            {/* <VisibilityBox 
+              value={collectionVisibility} 
+              onChange={(_,val)=>setCollectionVisibility(val)}
+            /> */}
             <div className="mt-4">
-              <UploadMediaBox imageName={addMedia} headingName={"Media"} UploadChange={setCollectionMediaUrl} />
+              <UploadMediaBox 
+                imageName={addMedia} 
+                headingName={"Media"} 
+                UploadChange={setCollectionMediaUrl} 
+                previousImage={collectionMediaUrl}
+                isUploaded={isUploaded}
+              />
             </div>
             <div className="mt-4">
-              <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />
+              <UploadBanner 
+                imageName={addMedia} 
+                headingName={"Up Selling Banners"} 
+              />
             </div>
             <NotesBox 
               name={"notes"}
@@ -1337,9 +1489,13 @@ const EditCollection = () => {
           </div>
         </div>
 
-        { hideFooter && 
-          <SaveFooter handleSubmit={handleSubmit} />          
-         }
+        <SaveFooterSecondary
+          handleSubmit={handleSubmit} 
+          show={hideFooter} 
+          onDiscard={backHandler} 
+          isLoading={createCollectionIsLoading || editCollectionIsLoading}
+        />  
+
       <Dialog
         open={openDuplicateCollection}
         TransitionComponent={Transition}
@@ -1382,8 +1538,8 @@ const EditCollection = () => {
               placeholder="Mirosa Collection_copy"
               size="small"
               name="title"
-              value={collectionDuplicateTitle}
-              onChange={handleDuplicateTitleChange}
+              value={duplicateTitleNew}
+              onChange={handleDuplicateTitle}
             />
           </FormControl>
           <hr className="hr-grey-6 my-0" />
@@ -1473,6 +1629,11 @@ const EditCollection = () => {
           </div>
         </DialogActions>
       </Dialog>
+
+      <DiscardModalSecondary           
+        when={hideFooter}
+        message="collection tab"
+      />
       </div>
   );
 };

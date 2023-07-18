@@ -18,6 +18,8 @@ import {
   Typography,
 } from "@mui/material";
 // ! COMPONENT IMPORTS
+import unArchived from "../../../assets/images/Components/Archived.png"
+import closeModal from "../../../assets/icons/closeModal.svg"
 import {
   EnhancedTableHead,
   stableSort,
@@ -33,10 +35,12 @@ import { useDispatch } from "react-redux";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { LoadingButton } from "@mui/lab";
 import question from "../../../assets/icons/question.svg"
-import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+// import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import DeleteIcon from '@mui/icons-material/Delete';
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 
 
 
@@ -52,12 +56,12 @@ const Transition = forwardRef(function Transition(props, ref) {
 // ? DIALOG TRANSITION ENDS HERE
 
 const 
-TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,tagsType}) => {
+TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,tagsType,bulkDelete,rowsPerPage,changeRowsPerPage,changePage,page}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [page, setPage] = React.useState(0);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [state, setState] = React.useState([]);
   const [showCreateModal, setShowCreateModal] = React.useState(false);
@@ -109,12 +113,12 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,ta
     },
   ];
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
+  // const emptyRows =
+  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -218,10 +222,10 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,ta
     setSelected(newSelected);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -257,7 +261,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,ta
           status: "archieved",
         };
     });
-    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
+    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Tag Archived successfully" })));
     setSelected([]);
     }
     else
@@ -268,7 +272,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,ta
           status: "archieved",
           showFilter:false
         }
-    })
+    }).unwrap().then(()=>dispatch(showSuccess({ message: " Tag Archived successfully" })));
     }
   }
 // Archive ends here
@@ -284,8 +288,8 @@ const handleUnArchive = (row) => {
 const closeUnArchivedModal = () => {
   setShowUnArhcivedModal(false)
 }
-const handleValue = (e) => {
-  setTagStatus(e.target.value)
+const handleValue = (value) => {
+  setTagStatus(value)
 }
 const handleUnArchived = () => {
   if(selected.length>0)
@@ -309,7 +313,7 @@ const handleUnArchived = () => {
   })
   }
  setShowUnArhcivedModal(false)
- dispatch(showSuccess({ message: "Un-Archived this tag successfully" }));
+ dispatch(showSuccess({ message: "Tag Un-Archived Successfully" }));
 }
 //unarchive ends here
 const [showDeleteModal, setShowDeleteModal] = React.useState(false);
@@ -320,10 +324,18 @@ const handleDeleteOnClick = (row) => {
   setTagName(row?.name);
 };
 const handleDelete =()=>{
-  console.log({rrl:tag._id})
-  deleteData(tag?._id);
-  handleDeleteOnClick();
-  dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+  if(selected.length >1)
+  {
+    bulkDelete({deletes :selected})
+    handleDeleteOnClick();
+    setSelected([]);
+  }
+  else{
+    deleteData(tag?._id);
+    handleDeleteOnClick();
+    // dispatch(showSuccess({ message: "Deleted this collection successfully" }));
+  }
+
 }
 
   return (
@@ -376,9 +388,8 @@ const handleDelete =()=>{
           />
           <TableBody>
             {stableSort(list, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const isItemSelected = isSelected(row._id);
+                const isItemSelected = isSelected(row?._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -397,7 +408,7 @@ const handleDelete =()=>{
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row._id)}
+                        onClick={(event) => handleClick(event, row?._id)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -415,7 +426,7 @@ const handleDelete =()=>{
                       >
                       <div className="d-flex align-items-center py-2"
                               onClick={()=>{
-                                dispatch(updateTagId(row._id));
+                                dispatch(updateTagId(row?._id));
                                 navigate("/parameters/tagsManager/edit")
                                 }}
                       >
@@ -427,7 +438,7 @@ const handleDelete =()=>{
                     </TableCell>
 
                     <TableCell style={{ width: 180 }}>
-                    <p className="text-lightBlue">{row.totalProduct}</p>
+                    <p className="text-lightBlue">{row?.totalProduct}</p>
                     </TableCell>
 
                     {/* <TableCell style={{ width: 140, padding: 0 }}>
@@ -533,7 +544,7 @@ const handleDelete =()=>{
                   </TableRow>
                 );
               })}
-            {emptyRows > 0 && (
+            {/* {emptyRows > 0 && (
               <TableRow
                 style={{
                   height: 53 * emptyRows,
@@ -541,7 +552,7 @@ const handleDelete =()=>{
               >
                 <TableCell colSpan={6} />
               </TableRow>
-            )}
+            )} */}
           </TableBody>
         </Table>
       </TableContainer>
@@ -550,22 +561,22 @@ const handleDelete =()=>{
         component="div"
         count={totalCount}
         rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        page={page-1}
+        onPageChange={changePage}
+        onRowsPerPageChange={changeRowsPerPage}
         className="table-pagination"
       />
       </>): isLoading ? (
           <span className="d-flex justify-content-center m-3">Loading...</span>
         ) : (
           <span className="d-flex justify-content-center m-3">
-            No data found
+          <NoDataFound />
           </span>
         )
       ) : (
         <></>
       )}
-      <Dialog
+      {/* <Dialog
           open={archivedModal}
           TransitionComponent={Transition}
           keepMounted
@@ -577,7 +588,7 @@ const handleDelete =()=>{
             <img src={question} alt="question" width={200} />
             <div className="row"></div>
             <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive {tagName} ?
+              Are you sure you want to Archive <span className="text-blue-2">{tagName}</span> ?
             </h6>
             <div className="d-flex justify-content-center mt-4">
               <hr className="hr-grey-6 w-100" />
@@ -588,24 +599,33 @@ const handleDelete =()=>{
               className="button-red-outline py-2 px-3 me-5"
               onClick={handleModalClose}
             >
-              <p>Cancel</p>
+              <p>No</p>
             </button>
             <button
               className="button-gradient py-2 px-3 ms-5"
               onClick={handleArchivedModalOnSave}
             >
-              <p>Archived</p>
+              <p>Yes</p>
             </button>
           </DialogActions>
-      </Dialog>
-      <DeleteModal showCreateModal={showDeleteModal} toggleArchiveModalHandler={handleDeleteOnClick} handleArchive={handleDelete} name={tagName} />
+      </Dialog> */}
+      <DeleteModal 
+      showCreateModal={showDeleteModal} 
+      toggleArchiveModalHandler={handleDeleteOnClick} 
+      handleArchive={handleDelete} 
+      name={selected.length >= 1 ? selected.length : tagName}
+      deleteType={"Tag"}
+       />
+
       {/* <UnArchivedModal 
-          handleValue={handleValue}
+          handleStatusValue={handleValue}
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
+          name={selected.length >= 1 ? selected.length : tagName}
+          nameType={"Tag"}
         /> */}
-      <Dialog
+      {/* <Dialog
           open={showUnArchivedModal}
           TransitionComponent={Transition}
           keepMounted
@@ -635,6 +655,95 @@ const handleDelete =()=>{
               onClick={handleUnArchived}
             >
               <p>Activate</p>
+            </button>
+          </DialogActions>
+      </Dialog> */}
+      <Dialog
+          open={showUnArchivedModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={closeUnArchivedModal}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={closeModal} alt="question" width={40} 
+              className="closeModal c-pointer" 
+              onClick={closeUnArchivedModal}
+            />
+            <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
+            <div className="row"></div>
+            <h5 className="text-lightBlue mt-2 mb-3">
+              Are you sure you want to Un-Archive <span className="text-blue-2">  {tagName} </span> ?         
+            </h5>
+            <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
+              <span className="text-blue-2"> 0 products </span> 
+              in this collection will be unassigned from it.
+            </h6>
+            <h6 className="mt-2 mb-4" style={{color: "#5C6D8E"}}>
+              Would you like to Archive this Tag ?
+            </h6>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-center px-4 pb-4">
+            <button
+              className="button-lightBlue-outline py-2 px-3 me-4"
+              onClick={closeUnArchivedModal}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-red-outline py-2 px-3"
+              onClick={handleUnArchived}
+            >
+              <p>Un-Archive</p>
+            </button>
+          </DialogActions>
+      </Dialog>
+
+
+
+
+
+
+      <Dialog
+          open={archivedModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleModalClose}
+          aria-describedby="alert-dialog-slide-description"
+          maxWidth="sm"
+        >
+          <DialogContent className="py-2 px-4 text-center">
+            <img src={closeModal} alt="question" width={40} 
+              className="closeModal c-pointer" 
+              onClick={handleModalClose}
+            />
+            <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
+            <div className="row"></div>
+            <h5 className="text-lightBlue mt-2 mb-3">
+              Archive   
+              <span className="text-blue-2"> {selected.length >= 1 ? `${selected.length} tags` : tagName}? </span>
+            </h5>
+            <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
+              <span className="text-blue-2"> 0 products </span> 
+              in this collection will be unassigned from it.
+            </h6>
+            <h6 className="mt-2 mb-4" style={{color: "#5C6D8E"}}>
+              Would you like to Archive this Tag ?
+            </h6>
+          </DialogContent>
+          <DialogActions className="d-flex justify-content-center px-4 pb-4">
+            <button
+              className="button-lightBlue-outline py-2 px-3 me-4"
+              onClick={handleModalClose}
+            >
+              <p>Cancel</p>
+            </button>
+            <button
+              className="button-red-outline py-2 px-3"
+              onClick={handleArchivedModalOnSave}
+            >
+              <p>Archive</p>
             </button>
           </DialogActions>
       </Dialog>

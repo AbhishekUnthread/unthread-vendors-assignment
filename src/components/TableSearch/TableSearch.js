@@ -2,6 +2,7 @@ import React from "react";
 import { styled, InputBase } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
+import _debounce from "lodash/debounce";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -46,7 +47,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 // ? SEARCH INPUT ENDS HERE
 
-const TableSearch = ({searchValue,handleSearchChange}) => {
+const DEBOUNCE_TIME = 500;
+
+const TableSearch = ({ searchValue, handleSearchChange }) => {
   return (
     <Search>
       <SearchIconWrapper>
@@ -62,4 +65,32 @@ const TableSearch = ({searchValue,handleSearchChange}) => {
   );
 };
 
+const TableSearchSecondary = (props) => {
+  const { onChange,value,onSearchValueChange } = props;
+
+  const search = _debounce((value) => {
+    onChange(value);
+  }, DEBOUNCE_TIME);
+
+  const onSearch = (e) => {
+    search(e.target.value);
+    onSearchValueChange(e.target.value)
+  };
+
+  return (
+    <Search>
+      <SearchIconWrapper>
+        <SearchIcon sx={{ color: "#c8d8ff" }} />
+      </SearchIconWrapper>
+      <StyledInputBase
+        placeholder="Search…"
+        inputProps={{ "aria-label": "search" }}
+        onChange={onSearch}
+        value={value}
+      />
+    </Search>
+  );
+};
+
 export default TableSearch;
+export { TableSearchSecondary };

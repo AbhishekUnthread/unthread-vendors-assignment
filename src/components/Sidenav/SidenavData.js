@@ -95,23 +95,23 @@ export const SidebarData = [
     image: parameters,
     subNav: [
       {
-        title: "Collections",
-        path: "/parameters/collections",
-        image: parameters,
-      },
-      {
         title: "Categories",
         path: "/parameters/categories",
         image: parameters,
       },
-      // {
-      //   title: "Product Tabs",
-      //   path: "/parameters/productTabs",
-      //   image: parameters,
-      // },
       {
-        title: "Vendors",
-        path: "/parameters/vendors",
+        title: "Options",
+        path: "/parameters/options",
+        image: parameters,
+      },
+      {
+        title: "Product Tabs",
+        path: "/parameters/productTabs",
+        image: parameters,
+      },
+      {
+        title: "Collections",
+        path: "/parameters/collections",
         image: parameters,
       },
       {
@@ -120,20 +120,21 @@ export const SidebarData = [
         image: parameters,
       },
       {
-        title: "Option Sets",
-        path: "/parameters/variantSets",
+        title: "Vendors",
+        path: "/parameters/vendors",
         image: parameters,
       },
-      {
-        title: "Additional Fields",
-        path: "/parameters/additionalFields",
-        image: parameters,
-      },
-      {
-        title: "Price Master",
-        path: "/parameters/priceMaster",
-        image: parameters,
-      },
+
+      // {
+      //   title: "Additional Fields",
+      //   path: "/parameters/additionalFields",
+      //   image: parameters,
+      // },
+      // {
+      //   title: "Price Master",
+      //   path: "/parameters/priceMaster",
+      //   image: parameters,
+      // },
     ],
   },
   {
