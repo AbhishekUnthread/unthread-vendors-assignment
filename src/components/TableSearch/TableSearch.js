@@ -2,7 +2,7 @@ import React from "react";
 import { styled, InputBase } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
-import _debounce from "lodash/debounce";
+import { useDebounce } from "../../hooks/optimization";
 
 // ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
@@ -66,15 +66,15 @@ const TableSearch = ({ searchValue, handleSearchChange }) => {
 };
 
 const TableSearchSecondary = (props) => {
-  const { onChange,value,onSearchValueChange } = props;
+  const { onChange, value, onSearchValueChange } = props;
 
-  const search = _debounce((value) => {
+  const debouncedSearch = useDebounce(() => {
     onChange(value);
-  }, DEBOUNCE_TIME);
+  });
 
   const onSearch = (e) => {
-    search(e.target.value);
-    onSearchValueChange(e.target.value)
+    onSearchValueChange(e.target.value);
+    debouncedSearch();
   };
 
   return (
