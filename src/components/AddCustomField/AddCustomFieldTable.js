@@ -119,7 +119,9 @@ const AddCustomFieldTable = (props) => {
                           <DeleteIconButton
                             onClick={onDeleteField.bind(null, {
                               deleteIndex: index,
-                              message: data.title,
+                              message: data.title
+                                ? `${data.title} custom field`
+                                : "custom field",
                             })}
                             title="Delete"
                           />

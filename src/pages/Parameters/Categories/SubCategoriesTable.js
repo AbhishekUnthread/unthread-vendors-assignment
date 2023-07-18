@@ -215,7 +215,7 @@ const SubCategoriesTable = ({
       const newState = selected.map((i) => i);
       bulkDeleteSubCategory({ deletes: newState }).then(() => {
         dispatch(
-          showSuccess({ message: "Deleted this sub categories successfully" })
+          showSuccess({ message: " Sub categories Deleted successfully" })
         );
       });
       setSelectedStatus(null);
@@ -238,7 +238,7 @@ const SubCategoriesTable = ({
       },
     });
     dispatch(
-      showSuccess({ message: "This Sub category Archived successfully" })
+      showSuccess({ message: "Sub category Archived successfully" })
     );
   }
 
@@ -255,7 +255,7 @@ const SubCategoriesTable = ({
       },
     });
     dispatch(
-      showSuccess({ message: "This Sub category Un-Archived successfully" })
+      showSuccess({ message: "Sub category Un-Archived successfully" })
     );
   }
 
@@ -557,7 +557,7 @@ const SubCategoriesTable = ({
               {" "}
               "{selected.length == 0 ? rowData?.name : selected.length}"{" "}
             </span>
-            {selected.length > 1 ? "Category ?" : " Categoris ?"}
+            {selected.length > 1 ? "Categories ?" : " Category ?"}
           </h5>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
             <span className="text-blue-2"> 0 products </span>

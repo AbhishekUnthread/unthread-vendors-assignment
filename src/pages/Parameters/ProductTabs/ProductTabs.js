@@ -7,7 +7,7 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 import ProductTabsTable from "./ProductTabsTable";
 import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import PageTitleBar from "../../../components/PageTitleBar/PageTitleBar";
-import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
+import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
 
 import {
   useGetAllProductTabsQuery,
@@ -32,6 +32,7 @@ const initialProductsTabState = {
   deleteId: null,
   confirmationMessage: "",
   showDeleteModal: false,
+  search: "",
 };
 
 const queryFilterReducer = (state, action) => {
@@ -62,6 +63,7 @@ const productsTabReducer = (state, action) => {
   if (action.type === "SET_DATA") {
     return {
       ...initialProductsTabState,
+      search: state.search,
       data: action.data,
       totalCount: action.totalCount,
     };
@@ -69,6 +71,7 @@ const productsTabReducer = (state, action) => {
   if (action.type === "SORT_DATA") {
     return {
       ...initialProductsTabState,
+      search: state.search,
       totalCount: state.totalCount,
       data: action.data,
     };
@@ -76,6 +79,7 @@ const productsTabReducer = (state, action) => {
   if (action.type === "SET_DELETE") {
     return {
       ...state,
+      search: state.search,
       deleteId: action.id,
       confirmationMessage: action.message || "",
       showDeleteModal: true,
@@ -84,8 +88,15 @@ const productsTabReducer = (state, action) => {
   if (action.type === "REMOVE_DELETE") {
     return {
       ...initialProductsTabState,
+      search: state.search,
       totalCount: state.totalCount,
       data: state.data,
+    };
+  }
+  if (action.type === "SEARCH_VALUE") {
+    return {
+      ...state,
+      search: action.search,
     };
   }
   return initialProductsTabState;
@@ -131,6 +142,10 @@ const ProductTabs = () => {
 
   const searchHandler = (value) => {
     dispatchQueryFilter({ type: "SEARCH_TITLE", title: value });
+  };
+
+  const searchValueHandler = (value) => {
+    dispatchProductsTab({ type: "SEARCH_VALUE", search: value });
   };
 
   const sortHandler = (sortedData) => {
@@ -234,7 +249,11 @@ const ProductTabs = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearchSecondary onChange={searchHandler} />
+            <TableSearchSecondary
+              onChange={searchHandler}
+              onSearchValueChange={searchValueHandler}
+              value={productsTabState.search}
+            />
           </div>
           <TabPanel value={0} index={0}>
             <ProductTabsTable
@@ -253,12 +272,13 @@ const ProductTabs = () => {
           </TabPanel>
         </Paper>
       </div>
-      <ConfirmationModal
+      <DeleteModalSecondary
         onConfirm={deleteConfirmationHandler}
         onCancel={CancelDeleteHandler}
         show={productsTabState.showDeleteModal}
         isLoading={deleteProductTabIsLoading}
         message={productsTabState.confirmationMessage}
+        title="product tab"
       />
     </div>
   );

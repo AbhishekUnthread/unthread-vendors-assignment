@@ -9,15 +9,14 @@ function ChatBox() {
     'Heyy wassupp',
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit sem maecenas turpis orci mi.',
     'Wow! Thank you for this quick solution!',
-    'Ye tho mera kaam hai!'
     // Add more messages as needed
   ];
   return (
     <React.Fragment>
-      <Dialog
-        open={true}
-        fullWidth={true}
-      >
+        <Dialog
+          open={true}
+          fullWidth={true}
+        >
         <DialogTitle>
           <div className="d-flex">
             <img
@@ -89,13 +88,12 @@ function ChatBox() {
                         </div>
         </DialogTitle>
         <hr className="hr-grey-6 my-0" />
-        <DialogContent className="py-3 px-4">
+        <DialogContent className="py-3 px-4 d-flex row ">
         {messages.map((message, index) => (
+          <>
         <div
           style={{
-            display: "flex",
             padding: "20px",
-            flexDirection: "column",
             alignItems: "flex-start",
             marginBottom: "13px",
             borderRadius: "18px 18px 18px 0px",
@@ -103,8 +101,49 @@ function ChatBox() {
             maxWidth : "fit-content"
             ,
           }}
-        >{messages}
+        >
+          <div
+            style={{
+              color: "var(--light-theme-color-white, #FFF)",
+              textAlign: "left",
+              fontFamily: "SF Pro Text",
+              fontSize: "16px",
+              fontStyle: "normal",
+              fontWeight: 400,
+              lineHeight: "140.3%",
+            }}
+          >
+            {message}
+          </div>
         </div>
+        <div
+          style={{
+            padding: "20px",
+            alignItems: "flex-start",
+            justifyContent: "flex-end",
+            gap:"10px",
+            marginBottom: "13px",
+            borderRadius: "18px 0px 18px 18px",
+            background: "linear-gradient(311deg, rgba(89, 97, 248, 0.50) 0%, rgba(242, 217, 247, 0.50) 100%)",
+            maxWidth : "fit-content"
+            ,
+          }}
+        >
+          <div
+            style={{
+              color: "var(--light-theme-color-white, #FFF)",
+              textAlign: "right",
+              fontFamily: "SF Pro Text",
+              fontSize: "16px",
+              fontStyle: "normal",
+              fontWeight: 400,
+              lineHeight: "140.3%",
+            }}
+          >
+            {message}
+          </div>
+        </div>
+        </>
         ))}
       </DialogContent>
         <hr className="hr-grey-6 my-0" />

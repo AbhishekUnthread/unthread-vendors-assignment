@@ -20,9 +20,11 @@ import AddCustomField from "../../../components/AddCustomField/AddCustomField";
 import AddCustomFieldTable from "../../../components/AddCustomField/AddCustomFieldTable";
 import InfoHeader from "../../../components/Header/InfoHeader";
 import { UploadMediaSmall } from "../../../components/UploadMediaBox/UploadMedia";
-import { SaveFooterSecondary } from "../../../components/SaveFooter/SaveFooter";
+import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
 import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
 import Attribute from "../../../components/Options/Attribute/Attribute";
+import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
+import OptionsAttributeTable from "./OptionsAttributeTable";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -73,7 +75,7 @@ const OptionsInfo = () => {
         <div className="row mt-3">
           <div className="col-lg-9 mt-3">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-              <div className="col-md-12 px-0 d-flex">
+              <div className="col-md-12 px-0 d-flex mb-4">
                 <Grid container spacing={2}>
                   <Grid item md={12}>
                     <Grid container spacing={2}>
@@ -148,51 +150,70 @@ const OptionsInfo = () => {
                     </Grid>
                   </Grid>
                   <Grid item md={12}>
-                    <div className="d-flex  mb-1">
-                      <p className="text-lightBlue me-2">Frontend Appearance</p>
-                      <Tooltip title="Lorem ipsum" placement="top">
-                        <img
-                          src={info}
-                          alt="info"
-                          className=" c-pointer"
-                          width={13.5}
-                        />
-                      </Tooltip>
-                    </div>
-
-                    <FormControl
-                      sx={{
-                        m: 0,
-                        minWidth: 120,
-                        width: "100%",
-                      }}
-                      size="small"
-                    >
-                      <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        size="small"
-                      >
-                        {FRONTEND_APPEARANCE.map((appearance) => {
-                          return (
-                            <MenuItem
-                              key={appearance.id}
-                              value={appearance.value}
-                              sx={{ fontSize: 13, color: "#5c6d8e" }}
+                    <Grid container spacing={2}>
+                      <Grid item md={6}>
+                        <div>
+                          <div className="d-flex  mb-1">
+                            <p className="text-lightBlue me-2">
+                              Frontend Appearance
+                            </p>
+                            <Tooltip title="Lorem ipsum" placement="top">
+                              <img
+                                src={info}
+                                alt="info"
+                                className=" c-pointer"
+                                width={13.5}
+                              />
+                            </Tooltip>
+                          </div>
+                          <FormControl
+                            sx={{
+                              m: 0,
+                              minWidth: 120,
+                              width: "100%",
+                            }}
+                            size="small"
+                          >
+                            <Select
+                              labelId="demo-select-small"
+                              id="demo-select-small"
+                              size="small"
                             >
-                              {appearance.text}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
-                    </FormControl>
+                              {FRONTEND_APPEARANCE.map((appearance) => {
+                                return (
+                                  <MenuItem
+                                    key={appearance.id}
+                                    value={appearance.value}
+                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
+                                  >
+                                    {appearance.text}
+                                  </MenuItem>
+                                );
+                              })}
+                            </Select>
+                          </FormControl>
+                        </div>
+                      </Grid>
+                      <Grid item md={6}>
+                        <div
+                          className="d-flex align-items-center justify-content-between"
+                          style={{ marginTop: "32px" }}
+                        >
+                          <p className="text-lightBlue">
+                            Is this option based on price master?
+                          </p>
+                          <AntSwitch />
+                        </div>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
               </div>
+              <OptionsAttributeTable />
             </div>
           </div>
         </div>
-        <SaveFooterSecondary
+        <SaveFooterTertiary
           show={true}
           onDiscard={() => {}}
           isLoading={false}
