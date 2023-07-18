@@ -49,14 +49,20 @@ const AlertDialog = (props) => {
       <hr className="hr-grey-6 my-0" />
 
       <DialogContent className="py-3 px-4 d-flex align-items-center">
-        {icon}
+        <img src={icon} alt="icon" style={{ width: "80px", height: "80px" }} />
         <div>
-          <p style={{ fontSize: "16px" }} className="text-grey-6 mx-4">
-            {primaryMessage || "Are you sure?"}
-          </p>
-          <p style={{ fontSize: "16px" }} className="text-grey-6 mx-4">
-            {secondaryMessage}
-          </p>
+          <p
+            style={{ fontSize: "16px" }}
+            className="text-grey-6 mx-4"
+            dangerouslySetInnerHTML={{
+              __html: primaryMessage || "Are you sure?",
+            }}
+          ></p>
+          <p
+            style={{ fontSize: "16px" }}
+            className="text-grey-6 mx-4"
+            dangerouslySetInnerHTML={{ __html: secondaryMessage }}
+          ></p>
         </div>
       </DialogContent>
       <DialogActions className="d-flex justify-content-end px-4 py-3">

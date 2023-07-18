@@ -151,7 +151,7 @@ const ProductTabsTable = (props) => {
                         <DeleteIconButton
                           onClick={onDelete.bind(null, {
                             id: item._id,
-                            message: `delete ${item.title} product tab`,
+                            message: `${item.title} product tab`,
                           })}
                           title="Delete"
                         />

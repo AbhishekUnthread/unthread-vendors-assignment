@@ -17,8 +17,8 @@ import AddCustomFieldTable from "../../../components/AddCustomField/AddCustomFie
 import InfoHeader from "../../../components/Header/InfoHeader";
 import { UploadMediaSmall } from "../../../components/UploadMediaBox/UploadMedia";
 import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
-import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
 import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
+import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -565,11 +565,12 @@ const ProductTabInfo = () => {
           isLoading={createProductTabIsLoading || editProductTabIsLoading}
         />
       </form>
-      <ConfirmationModal
+      <DeleteModalSecondary
         onConfirm={deleteFieldConfirmationHandler}
         onCancel={CancelDeleteFieldHandler}
         show={productsInfoState.showDeleteModal}
         message={productsInfoState.confirmationMessage}
+        title="custom field"
       />
       <DiscardModalSecondary
         when={!_.isEqual(formik.values, formik.initialValues)}
