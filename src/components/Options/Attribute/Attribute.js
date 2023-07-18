@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import { UploadMediaSmall } from "../../UploadMediaBox/UploadMedia";
 import ColorInput from "../../ColorInput/ColorInput";
+import AddIconButton from "../../AddIconButton/AddIconButton";
+import DeleteIconButton from "../../DeleteIconButton/DeleteIconButton";
 
 const CUSTOM_FIELD_DISPLAY = [
   {
@@ -31,7 +33,7 @@ const Attribute = () => {
           <OutlinedInput size="small" name="" />
         </FormControl>
       </Grid>
-      <Grid item sx={{ display: "grid", alignItems: "center" }}>
+      {/* <Grid item sx={{ display: "grid", alignItems: "center" }}>
         <UploadMediaSmall disableLabel={true} />
       </Grid>
       <Grid item sx={{ display: "grid", alignItems: "center" }}>
@@ -71,6 +73,12 @@ const Attribute = () => {
             <ColorInput />
           </Grid>
         </Grid>
+      </Grid> */}
+      <Grid item sx={{ display: "grid", alignItems: "center" }}>
+        <AddIconButton title="Add" />
+      </Grid>
+      <Grid item sx={{ display: "grid", alignItems: "center" }}>
+        <DeleteIconButton title="Delete" />
       </Grid>
     </Grid>
   );
