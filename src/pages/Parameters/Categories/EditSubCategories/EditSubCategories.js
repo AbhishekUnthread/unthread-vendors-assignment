@@ -209,12 +209,6 @@ const EditSubCategories = () => {
       if (values.mediaUrl) {
         editItems.mediaUrl = values.mediaUrl;
       }
-      // if (isEmpty(values.seo)) {
-      //   editItems.seo = {
-      //     title: values.name,
-      //     slug: "https://example.com/" + values.name,
-      //   };
-      // }
       if (!isEmpty(values.seo)) {
         editItems.seo = values.seo;
       }
