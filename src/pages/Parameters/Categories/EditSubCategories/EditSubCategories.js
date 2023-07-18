@@ -258,7 +258,7 @@ const EditSubCategories = () => {
   };
 
   const backHandler = () => {
-    navigate("/parameters/categories")
+    navigate("/parameters/categories?status=1")
     
   };
 
@@ -453,7 +453,8 @@ const EditSubCategories = () => {
         handleSubClick={toggleCreateSubModalHandler}
         subHeading={`Parent Category: ${categoryName}`}
         subHighlightstext={"(Change)"}
-        navigateLink={"/parameters/categories"}
+        navigateLink={"/parameters/categories?status=1"}
+        previewButton={true}
         handleNext={nextPageHandler}
         handlePrev={prevPageHandler}
       />
