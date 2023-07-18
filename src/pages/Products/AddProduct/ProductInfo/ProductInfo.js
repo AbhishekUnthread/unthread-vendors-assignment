@@ -50,11 +50,14 @@ import StatusBox from "../../../../components/StatusBox/StatusBox";
 import { updateproduct } from "../../../../features/products/product/productReducer";
 import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
 import { useGetAllVendorsQuery } from "../../../../features/parameters/vendors/vendorsApiSlice";
-import { useGetAllCategoriesQuery, useGetAllSubCategoriesQuery } from "../../../../features/parameters/categories/categoriesApiSlice";
+import {
+  useGetAllCategoriesQuery,
+  useGetAllSubCategoriesQuery,
+} from "../../../../features/parameters/categories/categoriesApiSlice";
 import { useGetAllTagsQuery } from "../../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { useGetAllCollectionsQuery } from "../../../../features/parameters/collections/collectionsApiSlice";
 import { SaveFooterTertiary } from "../../../../components/SaveFooter/SaveFooter";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -134,7 +137,6 @@ const rejectStyle = {
 
 // ? COLLECTIONS AUTOCOMPLETE STARTS HERE
 
-
 const vendorData = [
   { title: "Content 1", value: "content1" },
   { title: "Content 2", value: "content2" },
@@ -162,7 +164,6 @@ const discountData = [
   { title: "80%", value: 80 },
 ];
 
-
 // ? COLLECTIONS AUTOCOMPLETE ENDS HERE
 
 const productValidationSchema = Yup.object({
@@ -172,19 +173,19 @@ const productValidationSchema = Yup.object({
 });
 
 const productTypeInitialState = {
-  category:[],
-  subCategory:[],
-  tags:[],
-  collection:[],
-  vendor:[],
-  isEditing:false
-}
+  category: [],
+  subCategory: [],
+  tags: [],
+  collection: [],
+  vendor: [],
+  isEditing: false,
+};
 
-const productTypeReducer = (state,action)=>{
+const productTypeReducer = (state, action) => {
   if (action.type === "SET_CATEGORY_DATA") {
     return {
       ...state,
-      category:action.data
+      category: action.data,
     };
   }
   if (action.type === "SET_SUB_CATEGORY_DATA") {
@@ -226,15 +227,22 @@ const productTypeReducer = (state,action)=>{
     };
   }
   return productTypeInitialState;
+};
 
+function isEmpty(obj) {
+  for (var prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+  }
+
+  return true;
 }
-
-
 
 const ProductInfo = () => {
   // ? TOGGLE BUTTONS STARTS HERE
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [appTextEditor, setAppTextEditor] = useState("<p></p>");
   const [productTypeState, dispatchProductType] = useReducer(
     productTypeReducer,
@@ -246,7 +254,7 @@ const ProductInfo = () => {
     isLoading: vendorsIsLoading, // Loading state of the vendors data
     isSuccess: vendorsIsSuccess, // Success state of the vendors data
     error: vendorsError, // Error state of the vendors data
-  } = useGetAllVendorsQuery(); 
+  } = useGetAllVendorsQuery();
 
   const {
     data: categoriesData,
@@ -267,7 +275,7 @@ const ProductInfo = () => {
     isLoading: tagsIsLoading,
     isSuccess: tagsIsSuccess,
     error: tagsError,
-  } = useGetAllTagsQuery()
+  } = useGetAllTagsQuery();
 
   const [
     createProduct,
@@ -291,32 +299,50 @@ const ProductInfo = () => {
     }
   }, [createProductIsSuccess]);
 
-  useEffect(()=>{
-    if(categoriesIsSuccess){
-      dispatchProductType({type:"SET_CATEGORY_DATA",data:categoriesData?.data?.data})
+  useEffect(() => {
+    if (categoriesIsSuccess) {
+      dispatchProductType({
+        type: "SET_CATEGORY_DATA",
+        data: categoriesData?.data?.data,
+      });
     }
     if (subCategoriesIsSuccess) {
-      dispatchProductType({ type: "SET_SUB_CATEGORY_DATA", data: subCategoriesData?.data?.data });
+      dispatchProductType({
+        type: "SET_SUB_CATEGORY_DATA",
+        data: subCategoriesData?.data?.data,
+      });
     }
-  
+
     if (tagsIsSuccess) {
       dispatchProductType({ type: "SET_TAG_DATA", data: tagsData?.data?.data });
     }
-  
+
     if (vendorsIsSuccess) {
-      dispatchProductType({ type: "SET_VENDOR_DATA", data: vendorsData?.data?.data });
-    }
-  
-    if (collectionIsSuccess) {
-      dispatchProductType({ type: "SET_COLLECTION_DATA", data: collectionData?.data?.data });
+      dispatchProductType({
+        type: "SET_VENDOR_DATA",
+        data: vendorsData?.data?.data,
+      });
     }
 
-  },[categoriesIsSuccess,subCategoriesIsSuccess,tagsIsSuccess,vendorsIsSuccess,collectionIsSuccess])
+    if (collectionIsSuccess) {
+      dispatchProductType({
+        type: "SET_COLLECTION_DATA",
+        data: collectionData?.data?.data,
+      });
+    }
+  }, [
+    categoriesIsSuccess,
+    subCategoriesIsSuccess,
+    tagsIsSuccess,
+    vendorsIsSuccess,
+    collectionIsSuccess,
+  ]);
 
   const productFormik = useFormik({
     initialValues: {
       title: "",
       status: "active",
+      description:"<p></p>",
       price: {
         priceOnRequest: false,
         dynamicPricing: false,
@@ -333,18 +359,73 @@ const ProductInfo = () => {
         isViewSimilarItem: false,
       },
       productType: {
-        categoryId: "",
-        vendorId: "",
+        categoryId: null,
+        vendorId: null,
         tagManagerId: [],
         collectionId: [],
-        subCategoryId: "",
+        subCategoryId: null,
       },
     },
     enableReinitialize: true,
     validationSchema: productValidationSchema,
     onSubmit: (values) => {
-      console.log(values);
-      createProduct(values)
+      let CreateData = {
+        title: values.title,
+        status: values.status,
+        description:values.description,
+        price: {
+          priceOnRequest: values.price.priceOnRequest,
+          dynamicPricing: values.price.dynamicPricing,
+          price: values.price.price,
+          discount: values.price.discount,
+        },
+        availableFor: {
+          isReturnable: values.availableFor.isReturnable,
+          isCod: values.availableFor.isCod,
+          isLifeTimeExchange: values.availableFor.isLifeTimeExchange,
+          isLifeTimeBuyBack: values.availableFor.isLifeTimeBuyBack,
+          isNextDayShipping: values.availableFor.isNextDayShipping,
+          isTryOn: values.availableFor.isTryOn,
+          isViewSimilarItem: values.availableFor.isViewSimilarItem,
+        },
+      };
+      let productType = {};
+      if (values.productType.categoryId !== null) {
+        productType = {
+          ...productType,
+          categoryId: values.productType.categoryId?._id,
+        };
+      }
+      if (values.productType.subCategoryId !== null) {
+        productType = {
+          ...productType,
+          subCategoryId: values.productType.subCategoryId?._id,
+        };
+      }
+      if (values.productType.vendorId !== null) {
+        productType = {
+          ...productType,
+          vendorId: values.productType.vendorId?._id,
+        };
+      }
+      if (values.productType.collectionId.length !== 0) {
+        let ids = values.productType.collectionId.map(i=> i._id)
+        productType = {
+          ...productType,
+          collectionId: ids,
+        };
+      }
+      if (values.productType.tagManagerId.length !== 0) {
+        let ids = values.productType.tagManagerId.map(i=> i._id)
+        productType = {
+          ...productType,
+          tagManagerId: ids,
+        };
+      }
+      if(!isEmpty(productType)){
+         CreateData.productType =productType
+      }
+      createProduct(CreateData)
         .unwrap()
         .then(() => {
           productFormik.resetForm();
@@ -431,29 +512,26 @@ const ProductInfo = () => {
     }
   }
 
-  const handleCategoryChange = (e,newvalue)=>{
-   console.log(newvalue)
-  }
-  const handleSubCategoryChange = (e,newvalue)=>{
-    
-  }
-  const handleCollectionChange = (e,newvalue)=>{
-    console.log(newvalue,"collect")
-    
-  }
-  const handleTagChange = (e,newvalue)=>{
-    
-  }
-  const handleVendorChange = (e,newvalue)=> {
-    
-  }
-
+  const handleCategoryChange = (e, newvalue) => {
+    productFormik.setFieldValue("productType.subCategoryId", newvalue);
+  };
+  const handleSubCategoryChange = (e, newvalue) => {
+    productFormik.setFieldValue("productType.categoryId", newvalue);
+  };
+  const handleCollectionChange = (e, newvalue) => {
+    productFormik.setFieldValue("productType.collectionId", newvalue);
+  };
+  const handleTagChange = (e, newvalue) => {
+    productFormik.setFieldValue("productType.tagManagerId", newvalue);
+  };
+  const handleVendorChange = (e, newvalue) => {
+    productFormik.setFieldValue("productType.vendorId", newvalue);
+  };
 
   // ? CHECKBOX STARTS HERE
 
   const backHandler = () => {
-    navigate(-1)
-    
+    navigate(-1);
   };
 
   function handleDiscountChange(e, newValue) {
@@ -613,15 +691,9 @@ const ProductInfo = () => {
   // * METAL FILTER POPOVERS ENDS
 
   useEffect(() => {
-    if (
-      
-      !_.isEqual(productFormik.values, productFormik.initialValues)
-    ) {
+    if (!_.isEqual(productFormik.values, productFormik.initialValues)) {
       dispatchProductType({ type: "ENABLE_EDIT" });
-    } else if (
-      
-      _.isEqual(productFormik.values, productFormik.initialValues)
-    ) {
+    } else if (_.isEqual(productFormik.values, productFormik.initialValues)) {
       dispatchProductType({ type: "DISABLE_EDIT" });
     }
   }, [productFormik.initialValues, productFormik.values]);
@@ -846,9 +918,7 @@ const ProductInfo = () => {
                 getOptionLabel={(option) => option.name}
                 renderOption={(props, option) => (
                   <li {...props}>
-                    <small className="text-lightBlue my-1">
-                      {option.name}
-                    </small>
+                    <small className="text-lightBlue my-1">{option.name}</small>
                   </li>
                 )}
                 sx={{
@@ -880,9 +950,7 @@ const ProductInfo = () => {
                 getOptionLabel={(option) => option.name}
                 renderOption={(props, option) => (
                   <li {...props}>
-                    <small className="text-lightBlue my-1">
-                      {option.name}
-                    </small>
+                    <small className="text-lightBlue my-1">{option.name}</small>
                   </li>
                 )}
                 sx={{
@@ -914,9 +982,7 @@ const ProductInfo = () => {
                 getOptionLabel={(option) => option.name}
                 renderOption={(props, option) => (
                   <li {...props}>
-                    <small className="text-lightBlue my-1">
-                      {option.name}
-                    </small>
+                    <small className="text-lightBlue my-1">{option.name}</small>
                   </li>
                 )}
                 sx={{
@@ -2107,10 +2173,10 @@ const ProductInfo = () => {
         </FormGroup>
       </div>
       <SaveFooterTertiary
-          show={ productTypeState.isEditing || true}
-          onDiscard={backHandler}
-          isLoading={createProductIsLoading}
-        />
+        show={productTypeState.isEditing || true}
+        onDiscard={backHandler}
+        isLoading={createProductIsLoading}
+      />
       <DiscardModalSecondary
         when={!_.isEqual(productFormik.values, productFormik.initialValues)}
         message="Product Info"
