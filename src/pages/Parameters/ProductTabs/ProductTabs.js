@@ -143,6 +143,9 @@ const ProductTabs = () => {
   const editHandler = (index) => {
     const currentTabNo =
       index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
+      console.log(index, 'index')
+
+      console.log(currentTabNo, 'currentTabNo')
     navigate(`./edit/${currentTabNo}`);
   };
 

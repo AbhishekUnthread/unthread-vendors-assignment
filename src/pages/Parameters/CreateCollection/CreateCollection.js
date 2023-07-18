@@ -607,7 +607,7 @@ const CreateCollection = () => {
                         },
                       }}
                     />
-                    <span className="text-blue-2 c-pointer">(manage)</span>
+                    <span className="text-blue-2 c-pointer checkboxText">(manage)</span>
                   </div>
                 </FormGroup>
               </div>
