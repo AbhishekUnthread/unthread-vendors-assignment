@@ -343,6 +343,7 @@ const ProductInfo = () => {
       title: "",
       status: "active",
       description:"<p></p>",
+      categoryName:"",
       price: {
         priceOnRequest: false,
         dynamicPricing: false,
@@ -514,6 +515,7 @@ const ProductInfo = () => {
 
   const handleCategoryChange = (e, newvalue) => {
     productFormik.setFieldValue("productType.subCategoryId", newvalue);
+    productFormik.setFieldValue("categoryName",newvalue?.name)
   };
   const handleSubCategoryChange = (e, newvalue) => {
     productFormik.setFieldValue("productType.categoryId", newvalue);

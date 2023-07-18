@@ -121,6 +121,12 @@ const AddProduct = () => {
   //   }
   // };
 
+  function calculateDiscountedPrice(price, discountPercentage) {
+    let discountAmount = price * (discountPercentage / 100);
+    let discountedPrice = price - discountAmount;
+    return discountedPrice;
+  }
+
   return (
     <div className="page container-fluid position-relative">
       <div className="row justify-content-between">
@@ -215,10 +221,10 @@ const AddProduct = () => {
               SKU123456&nbsp;|&nbsp;JWLellers
             </small>
             <div>
-              <small className="text-grey-6">Diamond Ring</small>
+              <small className="text-grey-6">{productInfo?.categoryName}</small>
             </div>
             <div className="d-flex my-4 flex-wrap">
-              <h6 className="text-lightBlue">₹ {productInfo?.price?.price}</h6>
+              <h6 className="text-lightBlue">₹ {calculateDiscountedPrice(productInfo?.price?.price,productInfo?.price?.discount)}</h6>
               <small className="ms-2 me-3 text-grey-6 ">
                 <s>₹ {productInfo?.price?.price}</s>
               </small>
