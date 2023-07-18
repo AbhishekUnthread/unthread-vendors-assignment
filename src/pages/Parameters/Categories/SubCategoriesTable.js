@@ -357,10 +357,13 @@ const SubCategoriesTable = ({
                           >
                             <Link
                               className="text-decoration-none"
-                              onClick={editPageHandler.bind(
-                                null,
-                                index + 1
-                              )}
+                              onClick={() => {
+                                if (archived === true) {
+                                  editPageHandler(index + 1);
+                                  return;
+                                }
+                                return;
+                              }}
                             >
                               <p className="text-lightBlue rounded-circle fw-600">
                                 {row.name}
