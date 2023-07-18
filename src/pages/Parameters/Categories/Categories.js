@@ -206,6 +206,8 @@ const Categories = () => {
     }
   }
 
+  console.log(filterParams)
+
   const {
     data: categoriesData,
     isLoading: categoriesIsLoading,
@@ -374,7 +376,7 @@ const Categories = () => {
   const subCategoryFormik = useFormik({
     initialValues: {
       name: "",
-      description: "<p></P>",
+      description: "<p></p>",
       status: "active",
       categoryId: "",
       showFilter: false,

@@ -187,7 +187,7 @@ const EditSubCategories = () => {
   const categoryEditFormik = useFormik({
     initialValues: {
       name: subCategoriesData?.data?.data?.[0]?.name || "",
-      description: subCategoriesData?.data?.data?.[0]?.description,
+      description: subCategoriesData?.data?.data?.[0]?.description || "<p></p>",
       status: subCategoriesData?.data?.data?.[0]?.status,
       notes: subCategoriesData?.data?.data?.[0]?.notes,
       showFilter: subCategoriesData?.data?.data?.[0]?.showFilter,
@@ -217,9 +217,6 @@ const EditSubCategories = () => {
       }
       if (values.endDate) {
         editItems.endDate = new Date(values.endDate);
-      }
-      if (subCategoryPatentId) {
-        editItems.categoryId = subCategoryPatentId;
       }
       editSubCategory({
         id: subCategoriesData?.data?.data?.[0]?._id, // ID of the category
@@ -345,6 +342,23 @@ const EditSubCategories = () => {
     );
   };
 
+  const handleParentCategoryChange = ()=>{
+   
+    editSubCategory({
+      id: subCategoriesData?.data?.data?.[0]?._id, // ID of the category
+      details: {
+        categoryId:subCategoryPatentId
+      },
+    })
+      .unwrap()
+      .then(() => {
+        dispatch(
+          showSuccess({ message: "Sub Category Parent Updated Successfully" })
+        );
+        dispatchCategory({ type: "DISABLE_SEO" })
+      });
+  }
+
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryType(tabIndex);
     if (tabIndex === 0) {
@@ -352,6 +366,7 @@ const EditSubCategories = () => {
     if (tabIndex === 1) {
     }
   };
+
 
   return (
     <div className="page container-fluid position-relative user-group">
@@ -433,7 +448,10 @@ const EditSubCategories = () => {
               <p className="text-lightBlue">Cancel</p>
             </button>
             <LoadingButton
-              onClick={() => toggleCreateSubModalHandler(true)}
+              onClick={() => {
+                toggleCreateSubModalHandler(true)
+                handleParentCategoryChange()
+              }}
               className="button-gradient py-2 px-5"
             >
               <p>Save</p>
