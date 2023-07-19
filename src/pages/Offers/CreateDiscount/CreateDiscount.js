@@ -87,27 +87,21 @@ const queryFilterReducer = (state, action) => {
 const discountFormatSchema = Yup.object().shape({
   discountType: Yup.string()
     .oneOf(
-      ["none", "productDiscount", "cartDiscount", "freeShiping", "buyXGetY", "bulkDiscountPricing", ""],
+      ["productDiscount", "cartDiscount", "freeShiping", "buyXGetY", "bulkDiscountPricing", ""],
       "Invalid Discount Type"
     )
     .required("Discount Type is required"),
   discountFormat: Yup.string()
     .oneOf(
-      ["none", "automaticDiscount", "discountCouponCode"],
+      ["automaticDiscount", "discountCouponCode"],
       "Invalid Discount Format"
     )
     .required("Discount Format is required"),
-    discountCode: Yup.string().test(
-      "requiredDiscountCode",
-      "Discount Code is required",
-      function (value) {
-        const { discountFormat } = this.parent;
-        if (discountFormat !== "none") {
-          return Yup.string().required().isValidSync(value);
-        }
-        return true;
-      }
-    ),   
+    discountCode:  Yup.string()
+    .trim()
+    .matches(/^[a-zA-Z0-9]+$/, "Discount Code must be alphanumeric")
+    .max(6, "Discount Code cannot exceed 6 characters")
+    .required("Discount Code is required"),
 });
 
 const discountValidationSchema = Yup.object().shape({
@@ -249,12 +243,14 @@ const CreateDiscount = () => {
 
   // console.log({discountType:formik.values?.discountFormat?.discountType})
   // console.log({discountFormat:formik.values?.discountFormat?.discountFormat})
+  console.log({discountCode:formik.values?.discountFormat?.discountCode})
+
 
 
   
   // console.log({discountTypeError:formik?.errors?.discountFormat?.discountType})
   // console.log({discountFormatError:formik?.errors?.discountFormat?.discountFormat})
-  // console.log({discountCodeError:formik?.errors?.discountFormat?.discountCode})
+  console.log({discountCodeError:formik?.errors?.discountFormat?.discountCode})
 
 
 

@@ -1,10 +1,31 @@
-import { FormControl, FormHelperText, InputAdornment, MenuItem, OutlinedInput, Select, Tooltip } from '@mui/material'
+import { Button, FormControl, FormHelperText, InputAdornment, MenuItem, OutlinedInput, Select, Tooltip } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import info from "../../assets/icons/info.svg";
 
 
 function DiscountFormat({value,field,formik,touched,error}) {
     const [touch, setTouch] = useState(false);
+    const [generatedCode, setGeneratedCode] = useState(""); 
+
+    const generateRandomCode = () => {
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const codeLength = 6;
+      let result = "";
+    
+      for (let i = 0; i < codeLength; i++) {
+        // Ensure the first character is a letter
+        const charSet = i === 0 ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : characters;
+        result += charSet.charAt(Math.floor(Math.random() * charSet.length));
+      }
+    
+      return result;
+    };
+    
+  
+    const handleGenerateCode = () => {
+      const randomCode = generateRandomCode();
+      formik.setFieldValue(`${field}.discountCode`, randomCode);
+    };
 
   const handleDiscountType = (event) => {
     formik.setFieldValue(`${field}.discountType`, event.target.value);
@@ -20,6 +41,10 @@ function DiscountFormat({value,field,formik,touched,error}) {
     }
   }, [formik.isSubmitting]);
 //   console.log({touch:touch})
+
+  // useEffect(() => {
+  //   formik.setFieldValue(`${field}.discountCode`, "");
+  // }, [value?.discountFormat]);
   
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -66,12 +91,6 @@ function DiscountFormat({value,field,formik,touched,error}) {
               name={`${field}.discountType`}
               size="small"
             >
-              <MenuItem
-                value="none"
-                sx={{ fontSize: 13, color: "#5c6d8e" }} 
-              >
-                None
-              </MenuItem>
               <MenuItem
                 value="productDiscount"
                 sx={{ fontSize: 13, color: "#5c6d8e" }}
@@ -134,12 +153,6 @@ function DiscountFormat({value,field,formik,touched,error}) {
               size="small"
             >
               <MenuItem
-                value="none"
-                sx={{ fontSize: 13, color: "#5c6d8e" }}
-              >
-                None
-              </MenuItem>
-              <MenuItem
                 value="automaticDiscount"
                 sx={{ fontSize: 13, color: "#5c6d8e" }}
               >
@@ -174,19 +187,26 @@ function DiscountFormat({value,field,formik,touched,error}) {
           <OutlinedInput
             placeholder="Enter Discount Code"
             size="small"
+            value={value?.discountCode}
+            onChange={(e) => {
+              const capitalizedValue = e.target.value.toUpperCase();
+              formik.setFieldValue(`${field}.discountCode`, capitalizedValue);
+            }}
+            onBlur={formik?.handleBlur}
+            name={`${field}.discountCode`}
             endAdornment={
                 value?.discountFormat === "automaticDiscount"
                 ? null
                 : (
-                    <InputAdornment position="end">
-                    Generate Code
+                    <InputAdornment position="end" onClick={handleGenerateCode}>
+                        Generate Code
                     </InputAdornment>
                 )
             }
             />
           </FormControl>
           <small className="mt-1 text-grey-6 font1">
-            {!!touched?.discountFormat && error?.discountCode ? (
+            {!!touched?.discountCode && error?.discountCode ? (
                 <FormHelperText error>{error?.discountCode}</FormHelperText>
             ) : (
                 <>
