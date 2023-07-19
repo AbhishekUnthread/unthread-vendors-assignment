@@ -35,7 +35,7 @@ function DiscountFormat({value,field,formik,touched,error}) {
     formik.setFieldValue(`${field}.discountFormat`, event.target.value);
     formik.setFieldValue(`${field}.discountCode`, "");
   };
-  // ? DISCOUNT FORMAT SELECT ENDS HERE
+
   // useEffect(() => {
   //   if (formik.isSubmitting) {
   //       setTouch(true)
