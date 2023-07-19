@@ -9,23 +9,38 @@ import {
   Checkbox,
   FormControlLabel,
   Tooltip,
+  FormHelperText,
 } from "@mui/material";
 
-const MaximumDiscountUsers = () => {
+const MaximumDiscountUsers = ({value,field,formik,touched,error}) => {
   // ? CHECKBOX STARTS HERE
-  const [checkedNumberofTimes, setCheckedNumberofTimes] = React.useState(false);
-
   const handleNumberofTimesChange = (event) => {
-    setCheckedNumberofTimes(event.target.checked);
+    formik.setFieldValue(`${field}.limitDiscountNumber`, event.target.checked);
   };
-
-  const [checkedNumberOfTimesUsage, setCheckedNumberOfTimesUsage] =
-    React.useState(false);
 
   const handleNumberofTimesUsageChange = (event) => {
-    setCheckedNumberOfTimesUsage(event.target.checked);
+    formik.setFieldValue(`${field}.limitUsagePerCustomer`, event.target.checked);
   };
   // ? CHECKBOX ENDS HERE
+
+  const handleTotal = (event) => {
+    const numericValue = event.target.value.replace(/[^\d]/g, ''); 
+    formik.handleChange({
+      target: {
+        name: `${field}.total`,
+        value: numericValue,
+      },
+    });
+  };
+  const handlePerCustomer = (event) => {
+    const numericValue = event.target.value.replace(/[^\d]/g, ''); 
+    formik.handleChange({
+      target: {
+        name: `${field}.perCustomer`,
+        value: numericValue,
+      },
+    });
+  };
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -49,7 +64,7 @@ const MaximumDiscountUsers = () => {
         <FormControlLabel
           control={
             <Checkbox
-              checked={checkedNumberofTimes}
+              checked={value?.limitDiscountNumber}
               onChange={handleNumberofTimesChange}
               inputProps={{ "aria-label": "controlled" }}
               size="small"
@@ -71,7 +86,7 @@ const MaximumDiscountUsers = () => {
           className="px-0"
         />
 
-        {checkedNumberofTimes && (
+        {value?.limitDiscountNumber && (
           <div className="discount-inputs ps-4 ms-1 mb-3">
             <div className="d-flex mb-1">
               <small className="text-lightBlue">Enter Number</small>
@@ -88,17 +103,24 @@ const MaximumDiscountUsers = () => {
               <OutlinedInput
                 placeholder="Enter Value"
                 size="small"
+                value={value?.total}
+                onChange={handleTotal}
+                onBlur={formik?.handleBlur}
+                name={`${field}.total`}    
                 endAdornment={
                   <InputAdornment position="end">times</InputAdornment>
                 }
               />
             </FormControl>
+            {!!touched?.total && error?.total && (
+              <FormHelperText error>{error?.total}</FormHelperText>
+            )}
           </div>
         )}
         <FormControlLabel
           control={
             <Checkbox
-              checked={checkedNumberOfTimesUsage}
+              checked={value?.limitUsagePerCustomer}
               onChange={handleNumberofTimesUsageChange}
               inputProps={{ "aria-label": "controlled" }}
               size="small"
@@ -119,7 +141,7 @@ const MaximumDiscountUsers = () => {
           }}
           className="px-0"
         />
-        {checkedNumberOfTimesUsage && (
+        {value?.limitUsagePerCustomer && (
           <div className="discount-inputs ps-4 ms-1">
             <div className="d-flex mb-1">
               <small className="text-lightBlue">Enter Number</small>
@@ -136,11 +158,18 @@ const MaximumDiscountUsers = () => {
               <OutlinedInput
                 placeholder="Enter Value"
                 size="small"
+                value={value?.perCustomer}
+                onChange={handlePerCustomer}
+                onBlur={formik?.handleBlur}
+                name={`${field}.perCustomer`}    
                 endAdornment={
                   <InputAdornment position="end">per customer</InputAdornment>
                 }
               />
             </FormControl>
+            {!!touched?.perCustomer && error?.perCustomer && (
+              <FormHelperText error>{error?.perCustomer}</FormHelperText>
+            )}
           </div>
         )}
       </div>

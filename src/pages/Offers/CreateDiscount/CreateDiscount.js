@@ -85,6 +85,33 @@ const queryFilterReducer = (state, action) => {
   return initialQueryFilterState;
 };
 
+
+const maximumDiscountValidationSchema = Yup.object().shape({
+  limitDiscountNumber: Yup.boolean(),
+  limitUsagePerCustomer: Yup.boolean(),
+  total: Yup.number().test(
+    'is-total-numeric',
+    'required',
+    function (value) {
+      if (this.parent.limitDiscountNumber) {
+        return Yup.number().required().isValidSync(value);
+      }
+      return true;
+    }
+  ),
+  perCustomer: Yup.number().test(
+    'is-perCustomer-numeric',
+    'required',
+    function (value) {
+      if (this.parent.limitUsagePerCustomer) {
+        return Yup.number().required().isValidSync(value);
+      }
+      return true;
+    }
+  ),
+});
+
+
 const minimumRequirementValidationSchema = Yup.object().shape({
     requirement: Yup.string()
       .oneOf([ "none","minAmount","minQuantity"], "Invalid Requirement")
@@ -138,6 +165,11 @@ const discountValidationSchema = Yup.object().shape({
     .required("Status is required"),
   discountFormat: discountFormatSchema,
   minimumRequirement :minimumRequirementValidationSchema,
+  returnExchange : Yup.string()
+  .oneOf(["allowed", "notAllowed"], "Invalid")
+  .required("required"),
+  maximumDiscount:maximumDiscountValidationSchema,
+
 });
 
 const CreateDiscount = () => {
@@ -261,6 +293,13 @@ const CreateDiscount = () => {
       minimumRequirement: {
         requirement : null,
         value : "",
+      },
+      returnExchange : "allowed",
+      maximumDiscount : {
+        limitDiscountNumber:false,
+        limitUsagePerCustomer:false,
+        total: null,
+        perCustomer:null,
       }
     },
     enableReinitialize: true,
@@ -1775,8 +1814,21 @@ const CreateDiscount = () => {
           </div>
           <ReturnAndExchangeCondition
             sectionHeading={"Return & Exchange Condition"}
+            value ={formik.values?.returnExchange}
+            field = "returnExchange"
+            formik={formik}
           />
-          <MaximumDiscountUsers />
+          <MaximumDiscountUsers 
+            value ={formik.values?.maximumDiscount}
+            field = "maximumDiscount"
+            formik={formik}
+            touched={
+                  formik?.touched?.maximumDiscount
+                }
+            error={
+                  formik?.errors?.maximumDiscount
+                }
+          />
 
           {/* <ReturnAndExchangeCondition
             sectionHeading={"Discount Combinations"}
