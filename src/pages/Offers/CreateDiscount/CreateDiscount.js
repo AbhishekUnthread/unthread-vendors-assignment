@@ -327,11 +327,6 @@ const CreateDiscount = () => {
   console.log({MinimumRequirementError:formik?.errors?.minimumRequirement?.requirement})
 
 
-
-
-
-
-
   return (
     <div className="page container-fluid position-relative">
       <InfoHeader
