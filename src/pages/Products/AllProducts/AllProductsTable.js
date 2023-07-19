@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef, useState } from "react";
 // ! COMPONENT IMPORTS
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import ProductDrawerTable from "../ProductDrawerTable";
@@ -39,6 +39,10 @@ import {
   MenuItem,
   Select,
   FormControl,
+  Slide,
+  DialogContent,
+  DialogActions,
+  Dialog,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -48,6 +52,11 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import TableSearch from "../../../components/TableSearch/TableSearch";
+import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
+import { useDispatch } from "react-redux";
+import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
+import unArchived from "../../../assets/images/Components/Archived.png";
+import closeModal from "../../../assets/icons/closeModal.svg";
 
 const activityData = [
   {
@@ -259,20 +268,67 @@ const headCells = [
 ];
 
 // ? TABLE ENDS HERE
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
-const AllProductsTable = ({list,totalCount}) => {
+const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changePage,page,editProduct}) => {
+  const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("productName");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
+  const [showArchivedModal, setShowArchivedModal] = useState(false);
+  const [rowData, setRowData] = useState({});
+  const [handleStatusValue, setHandleStatusValue] = useState("in-active");
+ 
+  
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  
+  const toggleArchiveModalHandler = (row) => {
+    setShowArchivedModal((prevState) => !prevState);
+    setRowData(row);
   };
+
+  const toggleUnArchiveModalHandler = (row) => {
+    setShowUnArchivedModal((prevState) => !prevState);
+    setRowData(row);
+  };
+
+  function handleArchive() {
+    setShowArchivedModal(false);
+   
+    editProduct({
+      id: rowData._id,
+      details: {
+        status: "archived",
+      },
+    }).then(()=>{
+
+      dispatch(
+        showSuccess({ message: "Product Archived successfully" })
+      );
+    }).catch((err) => {
+      dispatch(showError({ message: err?.data?.message }));
+    });
+  }
+
+
+  function handleUnArchived() {
+    setShowUnArchivedModal(false);
+   
+    editProduct({
+      id: rowData._id,
+      details: {
+        status: handleStatusValue,
+      },
+    });
+    dispatch(
+      showSuccess({ message: "Product Un-Archived successfully" })
+    );
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -309,10 +365,7 @@ const AllProductsTable = ({list,totalCount}) => {
     setSelected(newSelected);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -799,7 +852,7 @@ const AllProductsTable = ({list,totalCount}) => {
                             Add or Remove Collections
                           </small>
                           <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                            <small className="text-lightBlue font2 d-block">
+                            <small  onClick={()=>toggleArchiveModalHandler(row)} className="text-lightBlue font2 d-block">
                               Archive Product
                             </small>
                             <img src={deleteRed} alt="delete" className="" />
@@ -810,26 +863,17 @@ const AllProductsTable = ({list,totalCount}) => {
                   </TableRow>
                 );
               })}
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
-              >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[ 10, 25]}
         component="div"
         count={totalCount}
         rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        page={page-1}
+        onPageChange={changePage}
+        onRowsPerPageChange={changeRowsPerPage}
         className="table-pagination"
       />
 
@@ -1187,6 +1231,65 @@ const AllProductsTable = ({list,totalCount}) => {
           </div>
         </div>
       </SwipeableDrawer>
+      <Dialog
+        open={showArchivedModal}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={toggleArchiveModalHandler}
+        aria-describedby="alert-dialog-slide-description"
+        maxWidth="sm"
+      >
+        <DialogContent className="py-2 px-4 text-center">
+          <img
+            src={closeModal}
+            alt="question"
+            width={40}
+            className="closeModal"
+            onClick={toggleArchiveModalHandler}
+          />
+          <img
+            src={unArchived}
+            alt="question"
+            width={160}
+            className="mb-4 mt-4"
+          />
+          <div className="row"></div>
+          <h5 className="text-lightBlue mt-2 mb-3">
+            Archive
+            <span className="text-blue-2">
+              {" "}
+              "{selected.length == 0 ? rowData?.title: selected.length}"{" "}
+            </span>
+            {selected.length > 1 ? "Products ?" : " Product ?"}
+          </h5>
+          
+          <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>
+            Would you like to Archive this Product ?
+          </h6>
+        </DialogContent>
+        <DialogActions className="d-flex justify-content-center px-4 pb-4">
+          <button
+            className="button-lightBlue-outline py-2 px-3 me-4"
+            onClick={toggleArchiveModalHandler}
+          >
+            <p>Cancel</p>
+          </button>
+          <button
+            className="button-red-outline py-2 px-3"
+            onClick={handleArchive}
+          >
+            <p>Archive</p>
+          </button>
+        </DialogActions>
+      </Dialog>
+      <UnArchivedModal
+        showUnArchivedModal={showUnArchivedModal}
+        closeUnArchivedModal={() => setShowUnArchivedModal(false)}
+        handleUnArchived={handleUnArchived}
+        handleStatusValue={setHandleStatusValue}
+        name={selected.length == 0 ? rowData?.name : selected.length}
+        nameType={selected.length == 0 ? "Sub category" : "Sub categories"}
+      />
     </React.Fragment>
   );
 };

@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useReducer, useState } from "react";
 import "./AllProducts.scss";
 import { useDropzone } from "react-dropzone";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 // ! IMAGES IMPORTS
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import columns from "../../../assets/icons/columns.svg";
@@ -56,9 +56,14 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import { useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
+import { useEditProductMutation, useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
 import { useGetAllVendorsQuery } from "../../../features/parameters/vendors/vendorsApiSlice";
-import { useGetAllCategoriesQuery } from "../../../features/parameters/categories/categoriesApiSlice";
+import {
+  useGetAllCategoriesQuery,
+  useGetAllSubCategoriesQuery,
+} from "../../../features/parameters/categories/categoriesApiSlice";
+import { useGetAllCollectionsQuery } from "../../../features/parameters/collections/collectionsApiSlice";
+import { useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 
 // ? FILTER ACCORDIAN STARTS HERE
 const Accordion = styled((props) => (
@@ -130,7 +135,6 @@ const rejectStyle = {
 };
 // ? FILE UPLOAD ENDS HERE
 
-
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
   { title: "Tag 2", value: "tag2" },
@@ -146,115 +150,490 @@ const taggedWithData = [
   { title: "Tag 12", value: "tag12" },
 ];
 
+const initialQueryFilterState = {
+  pageSize: 10,
+  pageNo: 1,
+  totalCount: 0,
+  title: "",
+  category: null,
+  subCategory: null,
+  vendor: null,
+  collection: null,
+  tagManager: null,
+};
+const productTypeInitialState = {
+  category: [],
+  subCategory: [],
+  tags: [],
+  collection: [],
+  vendor: [],
+  isEditing: false,
+};
+
+const productTypeReducer = (state, action) => {
+  if (action.type === "SET_CATEGORY_DATA") {
+    return {
+      ...state,
+      category: action.data,
+    };
+  }
+  if (action.type === "SET_SUB_CATEGORY_DATA") {
+    return {
+      ...state,
+      subCategory: action.data,
+    };
+  }
+  if (action.type === "SET_TAG_DATA") {
+    return {
+      ...state,
+      tags: action.data,
+    };
+  }
+  if (action.type === "SET_COLLECTION_DATA") {
+    return {
+      ...state,
+      collection: action.data,
+    };
+  }
+
+  if (action.type === "SET_VENDOR_DATA") {
+    return {
+      ...state,
+      vendor: action.data,
+    };
+  }
+
+  if (action.type === "ENABLE_EDIT") {
+    return {
+      ...state,
+      isEditing: true,
+    };
+  }
+  if (action.type === "DISABLE_EDIT") {
+    return {
+      ...state,
+      isEditing: false,
+    };
+  }
+  return productTypeInitialState;
+};
+
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_SIZE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      pageSize: +action.value,
+    };
+  }
+  if (action.type === "CHANGE_PAGE") {
+    return {
+      ...state,
+      pageNo: action.pageNo,
+    };
+  }
+  if (action.type === "SEARCH") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      title: action.name,
+    };
+  }
+  if (action.type === "SEARCH_CATEGORY") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      category: action.data,
+    };
+  }
+  if (action.type === "SEARCH_SUB_CATEGORY") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      subCategory: action.data,
+    };
+  }
+  if (action.type === "SEARCH_COLLECTION") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      collection: action.data,
+    };
+  }
+  if (action.type === "SEARCH_TAG") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      tagManager: action.data,
+    };
+  }
+  if (action.type === "SEARCH_VENDOR") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      vendor: action.data,
+    };
+  }
+  return initialQueryFilterState;
+};
+
 const AllProducts = () => {
-  const handleDelete = () => {
-    console.info("You clicked the delete icon.");
-  };
-  const [value, setValue] = React.useState(0);
+  const [productTypeState, dispatchProductType] = useReducer(
+    productTypeReducer,
+    productTypeInitialState
+  );
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+  const [productType, setProductType] = React.useState(0);
   const [valueExport, setExportValue] = React.useState(0);
   const [importValue, setImportValue] = React.useState("importProducts");
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState(['active']);
+  const [statusFilter, setStatusFilter] = React.useState([]);
   const [importSecondValue, setImportSecondValue] =
     React.useState("uploadLineSheet");
-    const [searchValue, setSearchValue] = useState("");
-  const [productList,SetProductList] = useState([])
-  const [ totalProduct,setTotalProduct] = useState("")
-  const [vendorData,setVendorData] = useState([])
-  const [categoryData,setCategoryData] = useState([])
-  const [vendorValue,setVendorValue] = useState("")
-  const [categoryValue,setCategoryValue] = useState("")
-    const filterParameter = {};
+  const [searchValue, setSearchValue] = useState("");
+  const [productList, SetProductList] = useState([]);
+  const [totalProduct, setTotalProduct] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [chipData, setChipData] = useState([]);
 
+  const filterParameter = {};
 
-    const handleSearchChange = (event) => { 
-      setSearchValue(event.target.value);
-    }
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+    dispatchQueryFilter({ type: "SEARCH", name: event.target.value });
+    setChipData((data) => {
+      // Filter out any chip that starts with "title"
+      const filteredData = data.filter((item) => !item.startsWith("title"));
 
-    if (sortFilter) {
-      if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
-        filterParameter.alphabetical = sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+      // If event.target.value is not empty, add the new title chip
+      if (event.target.value.trim() !== "") {
+        filteredData.push(`title is ${event.target.value}`);
       }
-      else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
-        filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
-      }
+
+      return filteredData;
+    });
+  };
+
+  if (sortFilter) {
+    if (
+      sortFilter === "alphabeticalAtoZ" ||
+      sortFilter === "alphabeticalZtoA"
+    ) {
+      filterParameter.alphabetical =
+        sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
+    } else if (
+      sortFilter === "oldestToNewest" ||
+      sortFilter === "newestToOldest"
+    ) {
+      filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
+    }
+  }
+
+  const ProductTypeQuery =
+    productType === 0
+      ? {
+          createdAt: -1,
+          status:
+            statusFilter.length > 0
+              ? statusFilter
+              : "active,in-active,scheduled",
+        }
+      : productType === 1
+      ? { createdAt: -1, status: "active" }
+      : productType === 2
+      ? { createdAt: -1, status: "in-active" }
+      : productType === 3
+      ? { createdAt: -1, status: "archieved" }
+      : {};
+
+  const filterParams = { ...filterParameter, ...ProductTypeQuery };
+
+  const {
+    data: productsData,
+    isLoading: productsIsLoading,
+    isSuccess: productsIsSuccess,
+    error: productsError,
+  } = useGetAllProductsQuery({ ...filterParams, ...queryFilterState });
+
+  const {
+    data: vendorsData, // Data received from the useGetAllVendorsQuery hook
+    isLoading: vendorsIsLoading, // Loading state of the vendors data
+    isSuccess: vendorsIsSuccess, // Success state of the vendors data
+    error: vendorsError, // Error state of the vendors data
+  } = useGetAllVendorsQuery();
+
+  const {
+    data: categoriesData,
+    isLoading: categoriesIsLoading,
+    isSuccess: categoriesIsSuccess,
+    error: categoriesError,
+  } = useGetAllCategoriesQuery();
+
+  const {
+    data: subCategoriesData,
+    isLoading: subCategoriesIsLoading,
+    isSuccess: subCategoriesIsSuccess,
+    error: subCategoriesError,
+  } = useGetAllSubCategoriesQuery();
+
+  const {
+    data: tagsData,
+    isLoading: tagsIsLoading,
+    isSuccess: tagsIsSuccess,
+    error: tagsError,
+  } = useGetAllTagsQuery();
+
+  const {
+    data: collectionData,
+    isLoading: collectionIsLoading,
+    isSuccess: collectionIsSuccess,
+    error: collectionError,
+  } = useGetAllCollectionsQuery();
+
+  const [
+    editProduct,
+    {
+      isLoading: editProductIsLoading,
+      isSuccess: editProductIsSuccess,
+      error: editProductError,
+    },
+  ] = useEditProductMutation();
+
+  useEffect(() => {
+    if (productsIsSuccess && productsData?.data?.data) {
+      SetProductList(productsData?.data?.data);
+      setTotalProduct(productsData?.data?.totalCount);
+    }
+  }, [productsIsSuccess, productsData]);
+
+  useEffect(() => {
+    if (categoriesIsSuccess) {
+      dispatchProductType({
+        type: "SET_CATEGORY_DATA",
+        data: categoriesData?.data?.data,
+      });
+    }
+    if (subCategoriesIsSuccess) {
+      dispatchProductType({
+        type: "SET_SUB_CATEGORY_DATA",
+        data: subCategoriesData?.data?.data,
+      });
     }
 
-    const ProductTypeQuery = value === 0 ? { createdAt: -1 }
-    : value === 1 ? { status: "active" }
-    : value === 2 ? { createdAt: -1, status: "in-active" }
-    : value === 3 ? { createdAt: -1, status: "archieved" }
-    : {};
-
-    const filterParams = { ...filterParameter, ...ProductTypeQuery };
-
-
-    if (searchValue) {
-      filterParams.title = searchValue;
+    if (tagsIsSuccess) {
+      dispatchProductType({ type: "SET_TAG_DATA", data: tagsData?.data?.data });
     }
 
-    if(vendorValue){
-      filterParams.vendor = vendorValue;
+    if (vendorsIsSuccess) {
+      dispatchProductType({
+        type: "SET_VENDOR_DATA",
+        data: vendorsData?.data?.data,
+      });
     }
 
-    if(categoryValue){
-      filterParams.category = categoryValue;
+    if (collectionIsSuccess) {
+      dispatchProductType({
+        type: "SET_COLLECTION_DATA",
+        data: collectionData?.data?.data,
+      });
     }
+  }, [
+    categoriesIsSuccess,
+    subCategoriesIsSuccess,
+    tagsIsSuccess,
+    vendorsIsSuccess,
+    collectionIsSuccess,
+  ]);
 
-    if (value === 0) {
-      filterParams.status = statusFilter;
+  const handleDelete = (item) => {
+    setChipData(chipData.filter((i) => i !== item));
+    if (item.startsWith("vendor")) {
+      dispatchQueryFilter({
+        type: "SEARCH_VENDOR",
+        data: null,
+      });
     }
-
-    const {
-      data: productsData,
-      isLoading: productsIsLoading,
-      isSuccess: productsIsSuccess,
-      error: productsError,
-    } = useGetAllProductsQuery({...filterParams});
-
-    const {
-      data: vendorsData, // Data received from the useGetAllVendorsQuery hook
-      isLoading: vendorsIsLoading, // Loading state of the vendors data
-      isSuccess: vendorsIsSuccess, // Success state of the vendors data
-      error: vendorsError, // Error state of the vendors data
-    } = useGetAllVendorsQuery(); 
-
-    const {
-      data: categoriesData,
-      isLoading: categoriesIsLoading,
-      isSuccess: categoriesIsSuccess,
-      error: categoriesError,
-    } = useGetAllCategoriesQuery();
-
-    useEffect(()=>{
-      if(productsIsSuccess && productsData?.data?.data){
-        SetProductList(productsData?.data?.data)
-        setTotalProduct(productsData?.data?.totalCount)
-      }
-    },[productsIsSuccess,productsData])
-
-    useEffect(()=>{
-      if(vendorsIsSuccess && vendorsData?.data?.data){
-        setVendorData(vendorsData?.data?.data)
-      }
-    },[vendorsIsSuccess,vendorsData])
-
-    useEffect(()=>{
-      if(categoriesIsSuccess && categoriesData?.data?.data){
-        setCategoryData(categoriesData?.data?.data)
-      }
-    },[categoriesIsSuccess,categoriesData])
-
-
-    function handleVendorChange(e,newValue){
-     setVendorValue(newValue.name || "")
-      setAnchorVendorEl(false)
+    if (item.startsWith("Tag")) {
+      dispatchQueryFilter({
+        type: "SEARCH_TAG",
+        data: null,
+      });
     }
+    if (item.startsWith("Category")) {
+      dispatchQueryFilter({
+        type: "SEARCH_CATEGORY",
+        data: null,
+      });
+    }
+    if (item.startsWith("Sub")) {
+      dispatchQueryFilter({
+        type: "SEARCH_SUB_CATEGORY",
+        data: null,
+      });
+    }
+    if (item.startsWith("Collection")) {
+      dispatchQueryFilter({
+        type: "SEARCH_COLLECTION",
+        data: null,
+      });
+    }
+    if (item.startsWith("title")) {
+      dispatchQueryFilter({ type: "SEARCH", name: "" });
+      setSearchValue("");
+    }
+  };
 
-    function handleCategoryChange(e,newValue){
-      setCategoryValue(newValue.name || "")
-       setAnchorCategoryEl(false)
-     }
+  function handleVendorChange(e, newValue) {
+    dispatchQueryFilter({
+      type: "SEARCH_VENDOR",
+      data: newValue?.name || null,
+    });
+    if (newValue?.name) {
+      setChipData((data) => {
+        // Filter out any chip that starts with
+        const filteredData = data.filter((item) => !item.startsWith("vendor"));
+        filteredData.push(`vendor is ${newValue?.name}`);
+
+        return filteredData;
+      });
+    } else {
+      setChipData((data) => {
+        // Filter out any chip that starts with
+        const filteredData = data.filter((item) => !item.startsWith("vendor"));
+
+        return filteredData;
+      });
+    }
+  }
+
+  function handleTagChange(e, newValue) {
+    dispatchQueryFilter({
+      type: "SEARCH_TAG",
+      data: newValue?.name || null,
+    });
+    if (newValue?.name) {
+      setChipData((data) => {
+        // Filter out any chip that starts with
+        const filteredData = data.filter((item) => !item.startsWith("Tag"));
+        filteredData.push(`Tag is ${newValue?.name}`);
+
+        return filteredData;
+      });
+    } else {
+      setChipData((data) => {
+        // Filter out any chip that starts with
+        const filteredData = data.filter((item) => !item.startsWith("Tag"));
+
+        return filteredData;
+      });
+    }
+  }
+
+  function handleCategoryChange(e, newValue) {
+    dispatchQueryFilter({
+      type: "SEARCH_CATEGORY",
+      data: newValue?.name || null,
+    });
+    if (newValue?.name) {
+      setChipData((data) => {
+        // Filter out any chip that starts with
+        const filteredData = data.filter(
+          (item) => !item.startsWith("Category")
+        );
+        filteredData.push(`Category is ${newValue?.name}`);
+
+        return filteredData;
+      });
+    } else {
+      setChipData((data) => {
+        // Filter out any chip that starts with
+        const filteredData = data.filter(
+          (item) => !item.startsWith("Category")
+        );
+
+        return filteredData;
+      });
+    }
+  }
+
+  function handleSubCategoryChange(e, newValue) {
+    dispatchQueryFilter({
+      type: "SEARCH_SUB_CATEGORY",
+      data: newValue?.name || null,
+    });
+    if (newValue?.name) {
+      setChipData((data) => {
+        // Filter out any chip that starts with
+        const filteredData = data.filter((item) => !item.startsWith("Sub"));
+        filteredData.push(`Sub category is ${newValue?.name}`);
+
+        return filteredData;
+      });
+    } else {
+      setChipData((data) => {
+        // Filter out any chip that starts with
+        const filteredData = data.filter((item) => !item.startsWith("Sub"));
+
+        return filteredData;
+      });
+    }
+  }
+  function handleCollectionChange(e, newValue) {
+    dispatchQueryFilter({
+      type: "SEARCH_COLLECTION",
+      data: newValue?.title || null,
+    });
+    if (newValue?.name) {
+      setChipData((data) => {
+        // Filter out any chip that starts with
+        const filteredData = data.filter(
+          (item) => !item.startsWith("Collection")
+        );
+        filteredData.push(`Collection is ${newValue?.name}`);
+
+        return filteredData;
+      });
+    } else {
+      setChipData((data) => {
+        // Filter out any chip that starts with
+        const filteredData = data.filter(
+          (item) => !item.startsWith("Collection")
+        );
+
+        return filteredData;
+      });
+    }
+  }
+
+  function clearAllFilter() {
+    setChipData([]);
+    dispatchQueryFilter({
+      type: "SEARCH_VENDOR",
+      data: null,
+    });
+    dispatchQueryFilter({
+      type: "SEARCH_TAG",
+      data: null,
+    });
+    dispatchQueryFilter({
+      type: "SEARCH_CATEGORY",
+      data: null,
+    });
+    dispatchQueryFilter({
+      type: "SEARCH_SUB_CATEGORY",
+      data: null,
+    });
+    dispatchQueryFilter({
+      type: "SEARCH_COLLECTION",
+      data: null,
+    });
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
+    setSearchValue("");
+    setStatusFilter([]);
+  }
 
   const handleImportChange = (event, newValue) => {
     setImportValue(newValue);
@@ -263,11 +642,41 @@ const AllProducts = () => {
     setImportSecondValue(newValue);
   };
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleChange = (event, tabIndex) => {
+    setProductType(tabIndex);
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
+    setSearchParams({ status: tabIndex });
+    setSearchValue("");
+  };
+
+  const handleStatusChange = (event) => {
+    const selectedStatus = event.target.value;
+    if (event.target.value) {
+      if (statusFilter.length === 0) {
+        let item = [];
+        item.push(selectedStatus);
+        setStatusFilter(item);
+      }
+      if (statusFilter.length > 0 && statusFilter.includes(selectedStatus)) {
+        setStatusFilter((item) => item.filter((i) => i !== selectedStatus));
+      }
+      if (statusFilter.length > 0 && !statusFilter.includes(selectedStatus)) {
+        let item = [...statusFilter];
+        item.push(selectedStatus);
+        setStatusFilter(item);
+      }
+    }
   };
   const handleExportChange = (event, newValue) => {
     setExportValue(newValue);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value: event.target.value });
+  };
+
+  const handleChangePage = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
   };
 
   // ? FILTER DRAWER STARTS HERE
@@ -462,6 +871,18 @@ const AllProducts = () => {
     [isFocused, isDragAccept, isDragReject]
   );
   // ? FILE UPLOAD ENDS HERE
+
+  useEffect(() => {
+    if (+searchParams.get("status") === 0) {
+      setProductType(0);
+    } else if (+searchParams.get("status") === 1) {
+      setProductType(1);
+    } else if (+searchParams.get("status") === 2) {
+      setProductType(2);
+    } else if (+searchParams.get("status") === 3) {
+      setProductType(3);
+    }
+  }, [searchParams]);
 
   return (
     <div className="container-fluid page">
@@ -878,14 +1299,14 @@ const AllProducts = () => {
               scrollButtons
               allowScrollButtonsMobile */}
             <Tabs
-              value={value}
+              value={productType}
               onChange={handleChange}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
               <Tab label="All" className="tabs-head" />
-              <Tab label="Live" className="tabs-head" />
-              <Tab label="Draft" className="tabs-head" />
+              <Tab label="Active" className="tabs-head" />
+              <Tab label="In Active" className="tabs-head" />
               <Tab label="Archived" className="tabs-head" />
             </Tabs>
             <div
@@ -929,7 +1350,10 @@ const AllProducts = () => {
             </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 px-2 justify-content-between">
-          <TableSearch  searchValue={searchValue} handleSearchChange={handleSearchChange} />
+            <TableSearch
+              searchValue={searchValue}
+              handleSearchChange={handleSearchChange}
+            />
             <div className="d-flex">
               <div className="d-flex product-button__box ms-2">
                 <button
@@ -960,7 +1384,7 @@ const AllProducts = () => {
                       id="free-solo-demo"
                       freeSolo
                       size="small"
-                      options={vendorData}
+                      options={productTypeState.vendor}
                       onChange={handleVendorChange}
                       getOptionLabel={(option) => option.name}
                       renderOption={(props, option) => (
@@ -1012,7 +1436,7 @@ const AllProducts = () => {
                       freeSolo
                       size="small"
                       sx={{ width: 200 }}
-                      options={categoryData}
+                      options={productTypeState.category}
                       onChange={handleCategoryChange}
                       getOptionLabel={(option) => option.name}
                       renderOption={(props, option) => (
@@ -1059,33 +1483,24 @@ const AllProducts = () => {
                 >
                   <div className="py-2">
                     <Autocomplete
-                      multiple
-                      id="checkboxes-tags-demo"
-                      sx={{ width: 300 }}
-                      options={taggedWithData}
-                      disableCloseOnSelect
-                      getOptionLabel={(option) => option.title}
+                      id="free-solo-demo"
+                      freeSolo
                       size="small"
-                      renderOption={(props, option, { selected }) => (
+                      options={productTypeState.tags}
+                      onChange={handleTagChange}
+                      getOptionLabel={(option) => option.name}
+                      renderOption={(props, option) => (
                         <li {...props}>
-                          <Checkbox
-                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                            checkedIcon={<CheckBoxIcon fontSize="small" />}
-                            checked={selected}
-                            size="small"
-                            style={{
-                              color: "#5C6D8E",
-                              marginRight: 0,
-                            }}
-                          />
-                          <small className="text-lightBlue">
-                            {option.title}
+                          <small className="text-lightBlue my-1">
+                            {option.name}
                           </small>
                         </li>
                       )}
+                      sx={{
+                        width: 200,
+                      }}
                       renderInput={(params) => (
                         <TextField
-                          size="small"
                           {...params}
                           placeholder="Search"
                           inputRef={(input) => input?.focus()}
@@ -1131,46 +1546,27 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Product Category</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <RadioGroup
-                            aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
-                            // value={recommendedProductRadio}
-                            // onChange={handleRecommendedProductRadio}
-                          >
-                            <FormControlLabel
-                              value="1"
-                              control={<Radio size="small" />}
-                              label="Content 1"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                            <FormControlLabel
-                              value="2"
-                              control={<Radio size="small" />}
-                              label="Content 2"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                            <FormControlLabel
-                              value="3"
-                              control={<Radio size="small" />}
-                              label="Content 3"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                          </RadioGroup>
+                          <Autocomplete
+                            id="free-solo-demo"
+                            freeSolo
+                            size="small"
+                            onChange={handleCategoryChange}
+                            options={productTypeState.category}
+                            getOptionLabel={(option) => option.name}
+                            renderOption={(props, option) => (
+                              <li {...props}>
+                                <small className="text-lightBlue my-1">
+                                  {option.name}
+                                </small>
+                              </li>
+                            )}
+                            sx={{
+                              width: "100%",
+                            }}
+                            renderInput={(params) => (
+                              <TextField {...params} placeholder="Search" />
+                            )}
+                          />
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1184,46 +1580,27 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Sub Category</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <RadioGroup
-                            aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
-                            // value={recommendedProductRadio}
-                            // onChange={handleRecommendedProductRadio}
-                          >
-                            <FormControlLabel
-                              value="1"
-                              control={<Radio size="small" />}
-                              label="Content 1"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                            <FormControlLabel
-                              value="2"
-                              control={<Radio size="small" />}
-                              label="Content 2"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                            <FormControlLabel
-                              value="3"
-                              control={<Radio size="small" />}
-                              label="Content 3"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                          </RadioGroup>
+                          <Autocomplete
+                            id="free-solo-demo"
+                            freeSolo
+                            size="small"
+                            onChange={handleSubCategoryChange}
+                            options={productTypeState.subCategory}
+                            getOptionLabel={(option) => option.name}
+                            renderOption={(props, option) => (
+                              <li {...props}>
+                                <small className="text-lightBlue my-1">
+                                  {option.name}
+                                </small>
+                              </li>
+                            )}
+                            sx={{
+                              width: "100%",
+                            }}
+                            renderInput={(params) => (
+                              <TextField {...params} placeholder="Search" />
+                            )}
+                          />
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1237,46 +1614,27 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Vendor</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <RadioGroup
-                            aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
-                            // value={recommendedProductRadio}
-                            // onChange={handleRecommendedProductRadio}
-                          >
-                            <FormControlLabel
-                              value="1"
-                              control={<Radio size="small" />}
-                              label="Content 1"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                            <FormControlLabel
-                              value="2"
-                              control={<Radio size="small" />}
-                              label="Content 2"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                            <FormControlLabel
-                              value="3"
-                              control={<Radio size="small" />}
-                              label="Content 3"
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                          </RadioGroup>
+                          <Autocomplete
+                            id="free-solo-demo"
+                            freeSolo
+                            size="small"
+                            onChange={handleVendorChange}
+                            options={productTypeState.vendor}
+                            getOptionLabel={(option) => option.name}
+                            renderOption={(props, option) => (
+                              <li {...props}>
+                                <small className="text-lightBlue my-1">
+                                  {option.name}
+                                </small>
+                              </li>
+                            )}
+                            sx={{
+                              width: "100%",
+                            }}
+                            renderInput={(params) => (
+                              <TextField {...params} placeholder="Search" />
+                            )}
+                          />
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1290,44 +1648,27 @@ const AllProducts = () => {
                           <p className="text-lightBlue">Collection</p>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <FormGroup className="tags-checkbox">
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  style={{
-                                    color: "#5C6D8E",
-                                    marginRight: 0,
-                                  }}
-                                />
-                              }
-                              label="Content 1"
-                            />
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  style={{
-                                    color: "#5C6D8E",
-                                    marginRight: 0,
-                                  }}
-                                />
-                              }
-                              label="Content 2"
-                            />
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  style={{
-                                    color: "#5C6D8E",
-                                    marginRight: 0,
-                                  }}
-                                />
-                              }
-                              label="Content 3"
-                            />
-                          </FormGroup>
+                          <Autocomplete
+                            id="free-solo-demo"
+                            freeSolo
+                            size="small"
+                            onChange={handleCollectionChange}
+                            options={productTypeState.collection}
+                            getOptionLabel={(option) => option.title}
+                            renderOption={(props, option) => (
+                              <li {...props}>
+                                <small className="text-lightBlue my-1">
+                                  {option.title}
+                                </small>
+                              </li>
+                            )}
+                            sx={{
+                              width: "100%",
+                            }}
+                            renderInput={(params) => (
+                              <TextField {...params} placeholder="Search" />
+                            )}
+                          />
                         </AccordionDetails>
                       </Accordion>
                       <Accordion
@@ -1342,41 +1683,24 @@ const AllProducts = () => {
                         </AccordionSummary>
                         <AccordionDetails>
                           <Autocomplete
-                            multiple
-                            id="checkboxes-tags-demo"
-                            sx={{ width: "100%" }}
-                            options={taggedWithData}
-                            disableCloseOnSelect
-                            getOptionLabel={(option) => option.title}
+                            id="free-solo-demo"
+                            freeSolo
                             size="small"
-                            renderOption={(props, option, { selected }) => (
+                            onChange={handleTagChange}
+                            options={productTypeState.tags}
+                            getOptionLabel={(option) => option.name}
+                            renderOption={(props, option) => (
                               <li {...props}>
-                                <Checkbox
-                                  icon={
-                                    <CheckBoxOutlineBlankIcon fontSize="small" />
-                                  }
-                                  checkedIcon={
-                                    <CheckBoxIcon fontSize="small" />
-                                  }
-                                  checked={selected}
-                                  size="small"
-                                  style={{
-                                    color: "#5C6D8E",
-                                    marginRight: 0,
-                                  }}
-                                />
-                                <small className="text-lightBlue">
-                                  {option.title}
+                                <small className="text-lightBlue my-1">
+                                  {option.name}
                                 </small>
                               </li>
                             )}
+                            sx={{
+                              width: "100%",
+                            }}
                             renderInput={(params) => (
-                              <TextField
-                                size="small"
-                                {...params}
-                                placeholder="Search"
-                                inputRef={(input) => input?.focus()}
-                              />
+                              <TextField {...params} placeholder="Search" />
                             )}
                           />
                         </AccordionDetails>
@@ -1399,9 +1723,16 @@ const AllProducts = () => {
                             // onChange={handleRecommendedProductRadio}
                           >
                             <FormControlLabel
-                              value="1"
-                              control={<Radio size="small" />}
-                              label="Content 1"
+                              value="active"
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  sx={{ color: "#C8D8FF" }}
+                                />
+                              }
+                              label="Active"
+                              onChange={handleStatusChange}
+                              checked={statusFilter.includes("active")}
                               sx={{
                                 "& .MuiTypography-root": {
                                   fontSize: 13,
@@ -1410,9 +1741,16 @@ const AllProducts = () => {
                               }}
                             />
                             <FormControlLabel
-                              value="2"
-                              control={<Radio size="small" />}
-                              label="Content 2"
+                              value="in-active"
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  sx={{ color: "#C8D8FF" }}
+                                />
+                              }
+                              label="In Active"
+                              onChange={handleStatusChange}
+                              checked={statusFilter.includes("in-active")}
                               sx={{
                                 "& .MuiTypography-root": {
                                   fontSize: 13,
@@ -1421,9 +1759,16 @@ const AllProducts = () => {
                               }}
                             />
                             <FormControlLabel
-                              value="3"
-                              control={<Radio size="small" />}
-                              label="Content 3"
+                              value="scheduled"
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  sx={{ color: "#C8D8FF" }}
+                                />
+                              }
+                              label="Scheduled"
+                              onChange={handleStatusChange}
+                              checked={statusFilter.includes("scheduled")}
                               sx={{
                                 "& .MuiTypography-root": {
                                   fontSize: 13,
@@ -1543,10 +1888,16 @@ const AllProducts = () => {
                     <div className="d-flex flex-column py-3 px-4 filter-buttons">
                       <hr className="hr-grey-6 my-3 w-100" />
                       <div className="d-flex justify-content-between">
-                        <button className="button-lightBlue-outline py-2 px-3">
+                        <button
+                          onClick={clearAllFilter}
+                          className="button-lightBlue-outline py-2 px-3"
+                        >
                           <p>Clear all Filters</p>
                         </button>
-                        <button className="button-gradient py-2 px-5 w-auto ">
+                        <button
+                          onClick={toggleDrawer("right", false)}
+                          className="button-gradient py-2 px-5 w-auto "
+                        >
                           <p>Done</p>
                         </button>
                       </div>
@@ -1763,103 +2114,119 @@ const AllProducts = () => {
               </Popover>
             </div>
           </div>
-          <div className="d-flex justify-content-between mb-3 px-2">
-            <div className="d-flex">
-              <Chip
-                label="Rings"
-                onDelete={handleDelete}
-                size="small"
-                className="mt-3 me-2 px-1"
-              />
-              <Chip
-                label="Vendor is JWL"
-                onDelete={handleDelete}
-                size="small"
-                className="mt-3 me-2 px-1"
-              />
-              <Chip
-                label="Status is Active"
-                onDelete={handleDelete}
-                size="small"
-                className="mt-3 me-2 px-1"
-              />
-            </div>
-            <div className="d-flex">
-              <small className="text-blue-2 me-3 mt-3 c-pointer">
-                Clear all
-              </small>
-              <small
-                className="text-blue-2 mt-3 c-pointer"
-                aria-describedby={idSaveFilter}
-                variant="contained"
-                onClick={handleSaveFilterClick}
-              >
-                Save this filter
-              </small>
+          {chipData.length > 0 && (
+            <div className="d-flex justify-content-between mb-3 px-2">
+              <div className="d-flex">
+                {chipData.map((item) => (
+                  <Chip
+                    label={item}
+                    onDelete={() => handleDelete(item)}
+                    size="small"
+                    className="mt-3 me-2 px-1"
+                  />
+                ))}
+              </div>
+              <div className="d-flex">
+                <small
+                  onClick={clearAllFilter}
+                  className="text-blue-2 me-3 mt-3 c-pointer"
+                >
+                  Clear all
+                </small>
+                <small
+                  className="text-blue-2 mt-3 c-pointer"
+                  aria-describedby={idSaveFilter}
+                  variant="contained"
+                  onClick={handleSaveFilterClick}
+                >
+                  Save this filter
+                </small>
 
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idSaveFilter}
-                open={openSaveFilter}
-                anchorEl={anchorSaveFilterEl}
-                onClose={handleSaveFilterClose}
-              >
-                <div className="px-1 py-3">
-                  <div className="d-flex mb-1">
-                    <small className="text-lightBlue me-2">Filter Name</small>
-                    <Tooltip title="Lorem ipsum" placement="top">
-                      <img
-                        src={info}
-                        alt="info"
-                        className="c-pointer ms-2"
-                        width={13.5}
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  id={idSaveFilter}
+                  open={openSaveFilter}
+                  anchorEl={anchorSaveFilterEl}
+                  onClose={handleSaveFilterClose}
+                >
+                  <div className="px-1 py-3">
+                    <div className="d-flex mb-1">
+                      <small className="text-lightBlue me-2">Filter Name</small>
+                      <Tooltip title="Lorem ipsum" placement="top">
+                        <img
+                          src={info}
+                          alt="info"
+                          className="c-pointer ms-2"
+                          width={13.5}
+                        />
+                      </Tooltip>
+                    </div>
+                    <FormControl className="px-0">
+                      <OutlinedInput
+                        placeholder="Enter Category Name"
+                        size="small"
                       />
-                    </Tooltip>
+                    </FormControl>
+                    {/* <div className="d-flex"> */}
+                    <button className="ms-auto button-gradient py-1 px-4 mt-3">
+                      <p>Save</p>
+                    </button>
+                    {/* </div> */}
                   </div>
-                  <FormControl className="px-0">
-                    <OutlinedInput
-                      placeholder="Enter Category Name"
-                      size="small"
-                    />
-                  </FormControl>
-                  {/* <div className="d-flex"> */}
-                  <button className="ms-auto button-gradient py-1 px-4 mt-3">
-                    <p>Save</p>
-                  </button>
-                  {/* </div> */}
-                </div>
-              </Popover>
+                </Popover>
+              </div>
             </div>
-          </div>
-          <TabPanel value={value} index={0}>
+          )}
+
+          <TabPanel value={productType} index={0}>
             <AllProductsTable
-            list={productList}
-            totalCount={totalProduct}
-             />
+            editProduct={editProduct}
+              list={productList}
+              totalCount={totalProduct}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+            />
           </TabPanel>
-          <TabPanel value={value} index={1}>
+          <TabPanel value={productType} index={1}>
             <AllProductsTable
-            list={productList}
-            totalCount={totalProduct}
-             />
+              list={productList}
+              totalCount={totalProduct}
+              editProduct={editProduct}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+            />
           </TabPanel>
-          <TabPanel value={value} index={2}>
+          <TabPanel value={productType} index={2}>
             <AllProductsTable
-            list={productList}
-            totalCount={totalProduct}
-             />
+              list={productList}
+              totalCount={totalProduct}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              editProduct={editProduct}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+            />
           </TabPanel>
-          <TabPanel value={value} index={3}>
-            <AllProductsTable 
-            list={productList}
-            totalCount={totalProduct}
+          <TabPanel value={productType} index={3}>
+            <AllProductsTable
+              list={productList}
+              totalCount={totalProduct}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              editProduct={editProduct}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
             />
           </TabPanel>
         </Paper>
