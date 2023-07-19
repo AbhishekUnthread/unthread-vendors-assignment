@@ -58,6 +58,7 @@ import { useGetAllTagsQuery } from "../../../../features/parameters/tagsManager/
 import { useGetAllCollectionsQuery } from "../../../../features/parameters/collections/collectionsApiSlice";
 import { SaveFooterTertiary } from "../../../../components/SaveFooter/SaveFooter";
 import { useNavigate } from "react-router-dom";
+import UseFileUpload from "../../../../features/fileUpload/fileUploadHook";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -248,6 +249,8 @@ const ProductInfo = () => {
     productTypeReducer,
     productTypeInitialState
   );
+  const [selectimg, setSelectImg] = useState([]);
+  const [uploadFile, uploadState] = UseFileUpload();
 
   const {
     data: vendorsData, // Data received from the useGetAllVendorsQuery hook
@@ -390,6 +393,9 @@ const ProductInfo = () => {
           isViewSimilarItem: values.availableFor.isViewSimilarItem,
         },
       };
+      if(selectimg.length > 0){
+        CreateData.mediaUrl = selectimg
+      }
       let productType = {};
       if (values.productType.categoryId !== null) {
         productType = {
@@ -430,6 +436,7 @@ const ProductInfo = () => {
         .unwrap()
         .then(() => {
           productFormik.resetForm();
+          setSelectImg([])
         });
     },
   });
@@ -454,7 +461,19 @@ const ProductInfo = () => {
       accept: {
         "image/*": [".jpeg", ".jpg", ".png"],
       },
+      onDrop: (acceptedFiles) => {
+        uploadFile({ file: acceptedFiles[0] });
+      },
     });
+
+    useEffect(() => {
+      if (uploadState.data?.url) {
+        let data=[...selectimg]
+        data.push({isDefault:false,image:uploadState.data?.url})
+        setSelectImg(data);
+        
+      }
+    }, [uploadState]);
 
   const style = useMemo(
     () => ({
@@ -892,6 +911,24 @@ const ProductInfo = () => {
             </div>
           </div>
         </div>
+        <div className="slected">
+              {selectimg &&
+                selectimg.map((img, index) => {
+                  return (
+                    <div className="slectedImg">
+                      <img src={img?.image} alt="" />
+                      <button
+                        onClick={() =>
+                          setSelectImg(selectimg?.filter((sr) => sr.image !== img.image))
+                        }
+                      >
+                        {" "}
+                        X{" "}
+                      </button>
+                    </div>
+                  );
+                })}
+            </div>
       </div>
       <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
         <div className="col-12">
