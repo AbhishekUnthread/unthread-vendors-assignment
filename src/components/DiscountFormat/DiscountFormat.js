@@ -33,14 +33,16 @@ function DiscountFormat({value,field,formik,touched,error}) {
 
   const handleDiscountFormatChange = (event) => {
     formik.setFieldValue(`${field}.discountFormat`, event.target.value);
+    formik.setFieldValue(`${field}.discountCode`, "");
   };
   // ? DISCOUNT FORMAT SELECT ENDS HERE
-  useEffect(() => {
-    if (formik.isSubmitting) {
-        setTouch(true)
-    }
-  }, [formik.isSubmitting]);
-//   console.log({touch:touch})
+  // useEffect(() => {
+  //   if (formik.isSubmitting) {
+  //       setTouch(true)
+  //   }
+  // }, [formik.isSubmitting]);
+
+  // console.log({touch:touch})
 
   // useEffect(() => {
   //   formik.setFieldValue(`${field}.discountCode`, "");
@@ -188,10 +190,11 @@ function DiscountFormat({value,field,formik,touched,error}) {
             placeholder="Enter Discount Code"
             size="small"
             value={value?.discountCode}
-            onChange={(e) => {
-              const capitalizedValue = e.target.value.toUpperCase();
-              formik.setFieldValue(`${field}.discountCode`, capitalizedValue);
-            }}
+            // onChange={(e) => {
+            //   const capitalizedValue = e.target.value.toUpperCase();
+            //   formik.setFieldValue(`${field}.discountCode`, capitalizedValue);
+            // }}
+            onChange={formik.handleChange}
             onBlur={formik?.handleBlur}
             name={`${field}.discountCode`}
             endAdornment={
