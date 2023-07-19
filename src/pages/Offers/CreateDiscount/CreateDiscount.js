@@ -169,7 +169,6 @@ const discountValidationSchema = Yup.object().shape({
   .oneOf(["allowed", "notAllowed"], "Invalid")
   .required("required"),
   maximumDiscount:maximumDiscountValidationSchema,
-
 });
 
 const CreateDiscount = () => {
@@ -300,6 +299,10 @@ const CreateDiscount = () => {
         limitUsagePerCustomer:false,
         total: null,
         perCustomer:null,
+      },
+      discountCombination: {
+        allowCombineWithOthers : false,
+        allowCombineWith :[]
       }
     },
     enableReinitialize: true,
@@ -1828,7 +1831,11 @@ const CreateDiscount = () => {
           {/* <ReturnAndExchangeCondition
             sectionHeading={"Discount Combinations"}
           /> */}
-          <DiscountCombination showBuy={true} showBulk={true} />
+          <DiscountCombination 
+            value ={formik.values?.discountCombination}
+            field = "discountCombination"
+            formik={formik}
+           />
           <ScheduleDiscountCode />
         </div>
         <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
