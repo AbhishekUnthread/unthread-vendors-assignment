@@ -1,6 +1,6 @@
 import { useCallback, useReducer, useEffect } from "react";
 
-import { useGetS3UploadUrlQuery } from "./fileUploadApiSlice";
+import { useUploadUrlMutation } from "./fileUploadApiSlice";
 
 const initialUploadState = {
   data: {
@@ -12,7 +12,6 @@ const initialUploadState = {
   error: null,
   fileNames: null,
   files: null,
-  skip: true,
 };
 
 const uploadReducer = (state, action) => {
@@ -22,7 +21,6 @@ const uploadReducer = (state, action) => {
       isLoading: true,
       fileNames: action.fileNames,
       files: action.files,
-      skip: false,
     };
   }
   if (action.type === "ERROR") {
@@ -52,8 +50,12 @@ const uploadReducer = (state, action) => {
       data: { urls: [...state.data.urls, action.url] },
     };
   }
-  if (action.type === "UPLOAD_SUCCESS") {
-    return {};
+  if (action.type === "UPLOAD_SUCCESS_ALL") {
+    return {
+      ...initialUploadState,
+      data: { urls: [...state.data.urls] },
+      isSuccess: true,
+    };
   }
   return initialUploadState;
 };
@@ -63,12 +65,8 @@ const UseMultipleFileUpload = () => {
     uploadReducer,
     initialUploadState
   );
-  const {
-    data: uploadUrlData,
-    isSuccess: uploadUrlIsSuccess,
-    error: uploadUrlError,
-    refetch: uploadRefetch,
-  } = useGetS3UploadUrlQuery({}, { skip: true });
+
+  const [uploadUrl] = useUploadUrlMutation();
 
   const uploadFiles = useCallback(({ files, format }) => {
     const fileNames = files.map((file) => file.name);
@@ -81,10 +79,58 @@ const UseMultipleFileUpload = () => {
       uploadState.fileNames?.length &&
       uploadState.files.length === uploadState.fileNames.length
     ) {
-      console.log(uploadState.fileNames);
-      uploadState.fileNames.forEach(async (fileName) => {
-        await uploadRefetch({ fileName }, { skip: false });
+      const uploadPromises = uploadState.fileNames.map((fileName) => {
+        return uploadUrl({ fileName }).unwrap();
       });
+      Promise.allSettled(uploadPromises)
+        .then((data) => {
+          Promise.allSettled(
+            data.map((item, index) => {
+              const { fields, url } = item.value;
+              const fileDetails = new FormData();
+              for (const key in fields) {
+                if (Object.hasOwnProperty.call(fields, key)) {
+                  fileDetails.append(key, fields[key]);
+                }
+              }
+              fileDetails.append("file", uploadState.files[index]);
+              return new Promise((resolve, reject) => {
+                fetch(url, {
+                  method: "POST",
+                  body: fileDetails,
+                  mode: "no-cors",
+                })
+                  .then(() => {
+                    dispatchUpload({
+                      type: "UPLOAD_SUCCESS",
+                      url: `${url}/${fields.key}`,
+                    });
+                    resolve();
+                  })
+                  .catch(() => reject());
+              });
+            })
+          )
+            .then(() => {
+              dispatchUpload({
+                type: "UPLOAD_SUCCESS_ALL",
+              });
+            })
+            .catch(() => {
+              dispatchUpload({
+                type: "UPLOAD_ERROR",
+                error: "Something went wrong!, please try again",
+                isError: true,
+              });
+            });
+        })
+        .catch(() => {
+          dispatchUpload({
+            type: "GET_URL_ERROR",
+            error: "Something went wrong!, please try again",
+            isError: true,
+          });
+        });
     } else if (
       uploadState.files?.length &&
       uploadState.fileNames?.length &&
@@ -96,41 +142,7 @@ const UseMultipleFileUpload = () => {
         isError: true,
       });
     }
-  }, [uploadState.files, uploadState.fileNames, uploadRefetch]);
-
-  // useEffect(() => {
-  //   if (uploadUrlError) {
-  //     dispatchUpload({
-  //       type: "GET_URL_ERROR",
-  //       error: "Something went wrong!, please try again",
-  //       isError: true,
-  //     });
-  //   }
-  //   if (uploadUrlData && uploadUrlIsSuccess) {
-  //     const { fields, url } = uploadUrlData.data;
-  //     const fileDetails = new FormData();
-  //     for (const key in fields) {
-  //       if (Object.hasOwnProperty.call(fields, key)) {
-  //         fileDetails.append(key, fields[key]);
-  //       }
-  //     }
-  //     fileDetails.append("file", uploadState.file);
-  //     fetch(url, { method: "POST", body: fileDetails, mode: "no-cors" })
-  //       .then(() => {
-  //         dispatchUpload({
-  //           type: "UPLOAD_SUCCESS",
-  //           url: `${url}/${fields.key}`,
-  //         });
-  //       })
-  //       .catch(() => {
-  //         dispatchUpload({
-  //           type: "UPLOAD_ERROR",
-  //           error: "Something went wrong!, please try again",
-  //           isError: true,
-  //         });
-  //       });
-  //   }
-  // }, [uploadUrlData, uploadUrlIsSuccess, uploadUrlError, uploadState]);
+  }, [uploadState.files, uploadState.fileNames, uploadUrl]);
 
   return [uploadFiles, uploadState];
 };
