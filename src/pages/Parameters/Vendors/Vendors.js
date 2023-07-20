@@ -164,7 +164,6 @@ const Vendors = () => {
     queryParameters.status = "in-active"
   }
   
-  console.log(searchParams.get("status"))
 
   const vendorTypeQuery =
     vendorType === 0
