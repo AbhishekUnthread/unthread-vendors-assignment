@@ -391,6 +391,12 @@ const AddSubCategoriesProducts = ({ id }) => {
     subCategoryFormik.setFieldValue("categoryId", id);
   };
 
+  useEffect(()=>{
+    if(createSubCategoryIsSuccess){
+      dispatch(showSuccess({message:"Sub Category Created successfully"}))
+    }
+  },[createSubCategoryIsSuccess])
+
   // * TABLE STARTS HERE
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("productName");
