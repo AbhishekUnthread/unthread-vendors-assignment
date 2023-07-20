@@ -475,7 +475,7 @@ const AddSubCategoriesProducts = ({ id }) => {
   }
 
   const editSubPageHandler = (index) => {
-    const combinedObject = { filterParams: filterParameter, queryFilterState ,categorNavigateState:-1};
+    const combinedObject = { filterParams: {...filterParameter,categoryId: id}, queryFilterState ,categorNavigateState:-1};
     const encodedCombinedObject = encodeURIComponent(
       JSON.stringify(combinedObject)
     );
