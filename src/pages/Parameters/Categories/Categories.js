@@ -794,6 +794,8 @@ const Categories = () => {
                     }
                     endAdornment={
                       <InputAdornment position="end">
+                         <Tooltip title="Create Multiple Category" placement="top">
+
                         <ChevronRightIcon
                           className="c-pointer"
                           onClick={(e) =>
@@ -813,6 +815,7 @@ const Categories = () => {
                             )
                           }
                         />
+                         </Tooltip>
                       </InputAdornment>
                     }
                   />
@@ -998,6 +1001,8 @@ const Categories = () => {
                     }
                     endAdornment={
                       <InputAdornment position="end">
+                         <Tooltip title="Create Multiple Sub Category" placement="top">
+
                         <ChevronRightIcon
                           className="c-pointer"
                           onClick={(e) =>
@@ -1017,6 +1022,7 @@ const Categories = () => {
                             )
                           }
                         />
+                         </Tooltip>
                       </InputAdornment>
                     }
                   />

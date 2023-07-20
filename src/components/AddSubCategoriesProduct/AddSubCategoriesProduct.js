@@ -600,6 +600,8 @@ const AddSubCategoriesProducts = ({ id }) => {
                       }
                       endAdornment={
                         <InputAdornment position="end">
+                           <Tooltip title="Create Multiple Sub Category" placement="top">
+
                           <ChevronRightIcon
                             className="c-pointer"
                             onClick={(e) =>
@@ -621,6 +623,7 @@ const AddSubCategoriesProducts = ({ id }) => {
                               )
                             }
                           />
+                           </Tooltip>
                         </InputAdornment>
                       }
                     />
