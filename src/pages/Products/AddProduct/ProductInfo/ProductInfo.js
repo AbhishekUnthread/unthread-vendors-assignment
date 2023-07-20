@@ -251,6 +251,8 @@ const ProductInfo = () => {
   );
   const [selectimg, setSelectImg] = useState([]);
   const [uploadFile, uploadState] = UseFileUpload();
+  const [fileIndex,setFileIndex] = useState(0)
+  const [isSimilarImg,setIsSimilarImg] = useState("")
 
   const {
     data: vendorsData, // Data received from the useGetAllVendorsQuery hook
@@ -345,8 +347,8 @@ const ProductInfo = () => {
     initialValues: {
       title: "",
       status: "active",
-      description:"<p></p>",
-      categoryName:"",
+      description: "<p></p>",
+      categoryName: "",
       price: {
         priceOnRequest: false,
         dynamicPricing: false,
@@ -376,7 +378,7 @@ const ProductInfo = () => {
       let CreateData = {
         title: values.title,
         status: values.status,
-        description:values.description,
+        description: values.description,
         price: {
           priceOnRequest: values.price.priceOnRequest,
           dynamicPricing: values.price.dynamicPricing,
@@ -393,8 +395,8 @@ const ProductInfo = () => {
           isViewSimilarItem: values.availableFor.isViewSimilarItem,
         },
       };
-      if(selectimg.length > 0){
-        CreateData.mediaUrl = selectimg
+      if (selectimg.length > 0) {
+        CreateData.mediaUrl = selectimg;
       }
       let productType = {};
       if (values.productType.categoryId !== null) {
@@ -416,27 +418,27 @@ const ProductInfo = () => {
         };
       }
       if (values.productType.collectionId.length !== 0) {
-        let ids = values.productType.collectionId.map(i=> i._id)
+        let ids = values.productType.collectionId.map((i) => i._id);
         productType = {
           ...productType,
           collectionId: ids,
         };
       }
       if (values.productType.tagManagerId.length !== 0) {
-        let ids = values.productType.tagManagerId.map(i=> i._id)
+        let ids = values.productType.tagManagerId.map((i) => i._id);
         productType = {
           ...productType,
           tagManagerId: ids,
         };
       }
-      if(!isEmpty(productType)){
-         CreateData.productType =productType
+      if (!isEmpty(productType)) {
+        CreateData.productType = productType;
       }
       createProduct(CreateData)
         .unwrap()
         .then(() => {
           productFormik.resetForm();
-          setSelectImg([])
+          setSelectImg([]);
         });
     },
   });
@@ -456,24 +458,31 @@ const ProductInfo = () => {
   }, [appTextEditor]);
 
   // ? FILE UPLOAD STARTS HERE
-  const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
+  const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject,acceptedFiles } =
     useDropzone({
       accept: {
         "image/*": [".jpeg", ".jpg", ".png"],
-      },
-      onDrop: (acceptedFiles) => {
-        uploadFile({ file: acceptedFiles[0] });
-      },
+      }
     });
 
     useEffect(() => {
-      if (uploadState.data?.url) {
-        let data=[...selectimg]
-        data.push({isDefault:false,image:uploadState.data?.url})
-        setSelectImg(data);
-        
+      if (acceptedFiles.length > 0 && acceptedFiles.length - 1 >= fileIndex) {
+        uploadFile({ file: acceptedFiles[fileIndex] });
       }
-    }, [uploadState]);
+    }, [acceptedFiles, fileIndex]);
+  
+    useEffect(() => {
+      if (uploadState.data?.url && uploadState.data?.url !== isSimilarImg) {
+        let data = [...selectimg];
+        data.push({ isDefault: false, image: uploadState.data.url });
+        setSelectImg(data);
+        setIsSimilarImg(uploadState.data?.url)
+        if (acceptedFiles.length - 1 >= fileIndex) {
+            setFileIndex((prevFileIndex) => prevFileIndex + 1);
+          
+        }
+      }
+    }, [uploadState.data]);
 
   const style = useMemo(
     () => ({
@@ -486,58 +495,12 @@ const ProductInfo = () => {
   );
   // ? FILE UPLOAD ENDS HERE
 
-  function handleAvailableFor(event) {
-    const value = event.target.value;
-    if (value === "Returnable") {
-      productFormik.setFieldValue(
-        "availableFor.isReturnable",
-        !productFormik.values.availableFor.isReturnable
-      );
-    }
-    if (value === "COD Available") {
-      productFormik.setFieldValue(
-        "availableFor.isCod",
-        !productFormik.values.availableFor.isCod
-      );
-    }
-    if (value === "Lifetime Exchange") {
-      productFormik.setFieldValue(
-        "availableFor.isLifeTimeExchange",
-        !productFormik.values.availableFor.isLifeTimeExchange
-      );
-    }
-    if (value === "Lifetime Buyback") {
-      productFormik.setFieldValue(
-        "availableFor.isLifeTimeBuyBack",
-        !productFormik.values.availableFor.isLifeTimeBuyBack
-      );
-    }
-    if (value === "Next Day Shipping") {
-      productFormik.setFieldValue(
-        "availableFor.isNextDayShipping",
-        !productFormik.values.availableFor.isNextDayShipping
-      );
-    }
-    if (value === "Enable Try On") {
-      productFormik.setFieldValue(
-        "availableFor.isTryOn",
-        !productFormik.values.availableFor.isTryOn
-      );
-    }
-    if (value === "Enable to View Similar Items") {
-      productFormik.setFieldValue(
-        "availableFor.isViewSimilarItem",
-        !productFormik.values.availableFor.isViewSimilarItem
-      );
-    }
-  }
-
   const handleCategoryChange = (e, newvalue) => {
-    productFormik.setFieldValue("productType.subCategoryId", newvalue);
-    productFormik.setFieldValue("categoryName",newvalue?.name)
+    productFormik.setFieldValue("productType.categoryId", newvalue);
+    productFormik.setFieldValue("categoryName", newvalue?.name);
   };
   const handleSubCategoryChange = (e, newvalue) => {
-    productFormik.setFieldValue("productType.categoryId", newvalue);
+    productFormik.setFieldValue("productType.subCategoryId", newvalue);
   };
   const handleCollectionChange = (e, newvalue) => {
     productFormik.setFieldValue("productType.collectionId", newvalue);
@@ -912,23 +875,25 @@ const ProductInfo = () => {
           </div>
         </div>
         <div className="slected">
-              {selectimg &&
-                selectimg.map((img, index) => {
-                  return (
-                    <div className="slectedImg">
-                      <img src={img?.image} alt="" />
-                      <button
-                        onClick={() =>
-                          setSelectImg(selectimg?.filter((sr) => sr.image !== img.image))
-                        }
-                      >
-                        {" "}
-                        X{" "}
-                      </button>
-                    </div>
-                  );
-                })}
-            </div>
+          {selectimg &&
+            selectimg.map((img, index) => {
+              return (
+                <div className="slectedImg">
+                  <img src={img?.image} alt="" />
+                  <button
+                    onClick={() =>
+                      setSelectImg(
+                        selectimg?.filter((sr) => sr.image !== img.image)
+                      )
+                    }
+                  >
+                    {" "}
+                    X{" "}
+                  </button>
+                </div>
+              );
+            })}
+        </div>
       </div>
       <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
         <div className="col-12">
@@ -952,6 +917,7 @@ const ProductInfo = () => {
                 id="free-solo-demo"
                 freeSolo
                 size="small"
+                value={productFormik.values.productType.categoryId}
                 onChange={handleCategoryChange}
                 options={productTypeState.category}
                 getOptionLabel={(option) => option.name}
@@ -984,6 +950,7 @@ const ProductInfo = () => {
                 id="free-solo-demo"
                 freeSolo
                 size="small"
+                value={productFormik.values.productType.subCategoryId}
                 onChange={handleSubCategoryChange}
                 options={productTypeState.subCategory}
                 getOptionLabel={(option) => option.name}
@@ -1016,6 +983,7 @@ const ProductInfo = () => {
                 id="free-solo-demo"
                 freeSolo
                 size="small"
+                value={productFormik.values.productType.vendorId}
                 onChange={handleVendorChange}
                 options={productTypeState.vendor}
                 getOptionLabel={(option) => option.name}
@@ -1048,6 +1016,7 @@ const ProductInfo = () => {
                 multiple
                 id="checkboxes-tags-demo"
                 sx={{ width: "100%" }}
+                value={productFormik.values.productType.collectionId}
                 options={productTypeState.collection}
                 onChange={handleCollectionChange}
                 disableCloseOnSelect
@@ -1285,6 +1254,7 @@ const ProductInfo = () => {
                 multiple
                 id="checkboxes-tags-demo"
                 sx={{ width: "100%" }}
+                value={productFormik.values.productType.tagManagerId}
                 options={productTypeState.tags}
                 disableCloseOnSelect
                 onChange={handleTagChange}
@@ -2117,12 +2087,14 @@ const ProductInfo = () => {
           </div>
           <p className="text-blue-2 c-pointer col-auto ms-auto px-0">Manage</p>
         </div>
-        <FormGroup onChange={handleAvailableFor} className="tags-checkbox px-0">
+        <FormGroup className="tags-checkbox px-0">
           <FormControlLabel
             control={
               <Checkbox
                 size="small"
-                value={"Returnable"}
+                name="availableFor.isReturnable"
+                checked={productFormik.values.availableFor.isReturnable}
+                onChange={productFormik.handleChange}
                 style={{
                   color: "#5C6D8E",
                 }}
@@ -2134,7 +2106,9 @@ const ProductInfo = () => {
           <FormControlLabel
             control={
               <Checkbox
-                value="COD Available"
+                name="availableFor.isCod"
+                checked={productFormik.values.availableFor.isCod}
+                onChange={productFormik.handleChange}
                 size="small"
                 style={{
                   color: "#5C6D8E",
@@ -2148,7 +2122,9 @@ const ProductInfo = () => {
             control={
               <Checkbox
                 size="small"
-                value="Lifetime Exchange"
+                name="availableFor.isLifeTimeExchange"
+                checked={productFormik.values.availableFor.isLifeTimeExchange}
+                onChange={productFormik.handleChange}
                 style={{
                   color: "#5C6D8E",
                 }}
@@ -2161,7 +2137,9 @@ const ProductInfo = () => {
             control={
               <Checkbox
                 size="small"
-                value="Lifetime Buyback"
+                name="availableFor.isLifeTimeBuyBack"
+                checked={productFormik.values.availableFor.isLifeTimeBuyBack}
+                onChange={productFormik.handleChange}
                 style={{
                   color: "#5C6D8E",
                 }}
@@ -2174,7 +2152,9 @@ const ProductInfo = () => {
             control={
               <Checkbox
                 size="small"
-                value="Next Day Shipping"
+                name="availableFor.isNextDayShipping"
+                checked={productFormik.values.availableFor.isNextDayShipping}
+                onChange={productFormik.handleChange}
                 style={{
                   color: "#5C6D8E",
                 }}
@@ -2200,7 +2180,9 @@ const ProductInfo = () => {
             control={
               <Checkbox
                 size="small"
-                value="Enable to View Similar Items"
+                name="availableFor.isViewSimilarItem"
+                checked={productFormik.values.availableFor.isViewSimilarItem}
+                onChange={productFormik.handleChange}
                 style={{
                   color: "#5C6D8E",
                 }}
