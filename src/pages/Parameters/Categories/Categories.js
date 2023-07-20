@@ -1106,10 +1106,10 @@ const Categories = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label={`Categories`} className="tabs-head" />
-              <Tab label={`Sub Categories`} className="tabs-head" />
-              <Tab label="Archived Categories" className="tabs-head" />
-              <Tab label="Archived Sub Categories" className="tabs-head" />
+              <Tab label={`Categories ${categoryType === 0 ? `(${categoryTotalCount})`:""}`} className="tabs-head" />
+              <Tab label={`Sub Categories  ${categoryType === 1 ? `(${subCategoryTotalCount})` :""}`} className="tabs-head" />
+              <Tab label={`Archived Categories ${categoryType === 2 ? `(${categoryTotalCount})`:""}`} className="tabs-head" />
+              <Tab label={`Archived Sub Categories ${categoryType === 3 ? `(${subCategoryTotalCount})`:""}`} className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
