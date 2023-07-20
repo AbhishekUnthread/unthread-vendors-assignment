@@ -48,6 +48,7 @@ import {
   useGetAllSubCategoriesQuery,
   useSubCategoryBulkCreateTagMutation,
 } from "../../features/parameters/categories/categoriesApiSlice";
+import info from "../../assets/icons/info.svg";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -474,7 +475,7 @@ const AddSubCategoriesProducts = ({ id }) => {
   }
 
   const editSubPageHandler = (index) => {
-    const combinedObject = { filterParams: filterParameter, queryFilterState };
+    const combinedObject = { filterParams: filterParameter, queryFilterState ,categorNavigateState:-1};
     const encodedCombinedObject = encodeURIComponent(
       JSON.stringify(combinedObject)
     );
@@ -521,7 +522,17 @@ const AddSubCategoriesProducts = ({ id }) => {
 
               <div>
                 <DialogContent className="py-3 px-4">
-                  <p className="text-lightBlue mb-2">Select Category</p>
+                <div className="d-flex mb-2 mt-2">
+                <p className="text-lightBlue me-2 ">Select Category </p>
+                <Tooltip title="Select category" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
                   <FormControl
                     //   sx={{ m: 0, minWidth: 120, width: "100%" }}
                     size="small"
@@ -538,9 +549,6 @@ const AddSubCategoriesProducts = ({ id }) => {
                         onBlur={subCategoryFormik.handleBlur}
                         onChange={subCategoryFormik.handleChange}
                       >
-                        <MenuItem key={""} value={"Select Category"}>
-                          Select Category
-                        </MenuItem>
                         {categoriesData.data.data.map((option) => (
                           <MenuItem key={option._id} value={option._id}>
                             {option.name}
@@ -555,7 +563,17 @@ const AddSubCategoriesProducts = ({ id }) => {
                         </FormHelperText>
                       )}
                   </FormControl>
-                  <p className="text-lightBlue mb-2 mt-3">Sub Category</p>
+                  <div className="d-flex mb-2 mt-2">
+                <p className="text-lightBlue me-2 ">Sub Category Name </p>
+                <Tooltip title="Enter Name" placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className=" c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+                </div>
                   <FormControl className="col-md-7 px-0">
                     <OutlinedInput
                       placeholder="Enter Sub Category Name"
@@ -569,6 +587,7 @@ const AddSubCategoriesProducts = ({ id }) => {
                           e,
                           subCategoryFormik,
                           setMultipleTagsForSub,
+                          multipleTagsForSub,
                           {
                             name: subCategoryFormik.values.name,
                             description: "<p></p>",
