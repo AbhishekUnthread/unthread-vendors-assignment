@@ -86,7 +86,7 @@ const DeleteModalSecondary = (props) => {
       onConfirm={onConfirm}
       onCancel={onCancel}
       show={show}
-      title={title ? `Delete ${title}?` : "Delete?"}
+      title={title ? `Delete ${title} ?` : "Delete?"}
       primaryMessage={`This will delete ${
         message
           ? `the <span class='text-blue-1'>${message}</span>`
