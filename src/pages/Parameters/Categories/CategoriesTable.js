@@ -261,9 +261,16 @@ const CategoriesTable = ({
         bulkEdit({ updates: newState })
           .unwrap()
           .then(() =>
-            dispatch(
-              showSuccess({ message: "Categories Status updated successfully" })
+            {
+              const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Categories un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+                ? "Categories archived  successfully" : "Status updated successfully";
+              dispatch(
+              showSuccess({ message: successMessage })
             )
+          }
           );
         setSelected([]);
         setSelectedStatus(null);
@@ -271,11 +278,17 @@ const CategoriesTable = ({
         bulkSubEdit({ updates: newState })
           .unwrap()
           .then(() =>
-            dispatch(
+           {
+            const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Sub Categories un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+                ? "Sub Categories archived  successfully" : "Status updated successfully";
+             dispatch(
               showSuccess({
-                message: "Sub Categoris Status updated successfully",
+                message: successMessage,
               })
-            )
+            )}
           );
         setSelected([]);
         setToggleCategoris(true);
@@ -385,7 +398,7 @@ const CategoriesTable = ({
           status: handleStatusValue,
         },
       });
-      dispatch(showSuccess({ message: "Category Un-Archived successfully" }));
+      dispatch(showSuccess({ message: "Category Unarchived Successfully" }));
     } else {
       editSubCategory({
         id: rowData._id,
@@ -394,7 +407,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "Sub Category Un-Archived successfully" })
+        showSuccess({ message: "Sub Category Unarchived Successfully" })
       );
       setToggleCategoris(true);
     }
@@ -405,7 +418,7 @@ const CategoriesTable = ({
       const newState = selected.map((i) => i);
       bulkDeleteCategory({ deletes: newState }).then(() => {
         dispatch(
-          showSuccess({ message: "This categories Deleted successfully" })
+          showSuccess({ message: "categories Deleted successfully" })
         );
       });
       setSelectedStatus(null);
@@ -413,7 +426,7 @@ const CategoriesTable = ({
       return;
     }
     setShowDeleteModal(false);
-    deleteData(rowData);
+    deleteData(rowData)
     // dispatch(showSuccess({ message: "Deleted this category successfully" }));
   }
 

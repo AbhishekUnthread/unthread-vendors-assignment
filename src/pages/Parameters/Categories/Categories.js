@@ -510,11 +510,15 @@ const Categories = () => {
   // * STATUS POPOVERS ENDS
 
   const deleteCategoryHandler = (data) => {
-    deleteCategory(data._id);
+    deleteCategory(data._id).unwrap().then(()=>{
+      dispatch(showSuccess({ message: "Category Deleted Successfully" }))
+    })
   };
 
   const deleteSubCategoryHandler = (data) => {
-    deleteSubCategory(data._id);
+    deleteSubCategory(data._id).unwrap().then(()=>{
+      dispatch(showSuccess({ message: "Sub Category Deleted Successfully" }))
+    })
   };
 
   useEffect(() => {
@@ -563,24 +567,7 @@ const Categories = () => {
     sortFilter,
   ]);
 
-  useEffect(() => {
   
-    if (deleteCategoryIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Category deleted successfully" }));
-    }
-
-    if (deleteSubCategoryIsSuccess) {
-      setShowCreateSubModal(false);
-      dispatch(showSuccess({ message: "Sub Category deleted successfully" }));
-    }
-  }, [
-    createCategoryIsSuccess,
-    deleteCategoryIsSuccess,
-    bulkCreateTagsIsSuccess,
-    createSubCategoryIsSuccess,
-    deleteSubCategoryIsSuccess,
-  ]);
 
   useEffect(() => {
     if(+searchParams.get("status")===0)
@@ -609,6 +596,9 @@ const Categories = () => {
           Formik.setFieldTouched("name", true);
           let tagName = tags.map((item) => item.name?.trim()?.toLowerCase());
           let valueExists = tagName.includes(data.name?.trim()?.toLowerCase());
+          if (valueExists) {
+            dispatch(showError({ message: `${Formik.values.name.trim()} already exists` }));
+          }
           if (!valueExists) {
             setTags((prevValues) => [...prevValues, data]);
             if (flag) {
@@ -618,9 +608,7 @@ const Categories = () => {
             }
           }
 
-          if (valueExists) {
-            dispatch(showError({ message: "Duplicate Name  Value" }));
-          }
+         
         }
       });
     }
@@ -793,6 +781,8 @@ const Categories = () => {
                     }
                     endAdornment={
                       <InputAdornment position="end">
+                         <Tooltip title="Create Multiple Category" placement="top">
+
                         <ChevronRightIcon
                           className="c-pointer"
                           onClick={(e) =>
@@ -812,6 +802,7 @@ const Categories = () => {
                             )
                           }
                         />
+                         </Tooltip>
                       </InputAdornment>
                     }
                   />
@@ -997,6 +988,8 @@ const Categories = () => {
                     }
                     endAdornment={
                       <InputAdornment position="end">
+                         <Tooltip title="Create Multiple Sub Category" placement="top">
+
                         <ChevronRightIcon
                           className="c-pointer"
                           onClick={(e) =>
@@ -1016,6 +1009,7 @@ const Categories = () => {
                             )
                           }
                         />
+                         </Tooltip>
                       </InputAdornment>
                     }
                   />
@@ -1112,10 +1106,10 @@ const Categories = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="Categories" className="tabs-head" />
-              <Tab label="Sub Categories" className="tabs-head" />
-              <Tab label="Archived Categories" className="tabs-head" />
-              <Tab label="Archived Sub Categories" className="tabs-head" />
+              <Tab label={`Categories ${categoryType === 0 ? `(${categoryTotalCount})`:""}`} className="tabs-head" />
+              <Tab label={`Sub Categories  ${categoryType === 1 ? `(${subCategoryTotalCount})` :""}`} className="tabs-head" />
+              <Tab label={`Archived Categories ${categoryType === 2 ? `(${categoryTotalCount})`:""}`} className="tabs-head" />
+              <Tab label={`Archived Sub Categories ${categoryType === 3 ? `(${subCategoryTotalCount})`:""}`} className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
