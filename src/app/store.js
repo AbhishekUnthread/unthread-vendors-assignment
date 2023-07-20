@@ -7,7 +7,6 @@ import vendorReducer from "../features/parameters/vendors/vendorSlice";
 import tagsReducer from "../features/parameters/tagsManager/tagsManagerSlice";
 import categoryReducer from "../features/parameters/categories/categorySlice";
 import collectionReducer from "../features/parameters/collections/collectionSlice"
-import productReducer from "../features/products/product/productReducer";
 
 
 const store = configureStore({
@@ -19,7 +18,6 @@ const store = configureStore({
     tags : tagsReducer,
     category:categoryReducer,
     collection:collectionReducer,
-    product: productReducer,
     vendor: vendorReducer,
     tags: tagsReducer,
     category: categoryReducer,

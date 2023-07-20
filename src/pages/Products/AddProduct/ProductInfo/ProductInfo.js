@@ -47,7 +47,7 @@ import { useDispatch } from "react-redux";
 import { showSuccess } from "../../../../features/snackbar/snackbarAction";
 import { useFormik } from "formik";
 import StatusBox from "../../../../components/StatusBox/StatusBox";
-import { updateproduct } from "../../../../features/products/product/productReducer";
+
 import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
 import { useGetAllVendorsQuery } from "../../../../features/parameters/vendors/vendorsApiSlice";
 import {
@@ -443,9 +443,6 @@ const ProductInfo = () => {
     },
   });
 
-  useEffect(() => {
-    dispatch(updateproduct(productFormik.values));
-  }, [productFormik.values]);
 
   const handleProductStatus = (event, newProductStatus) => {
     productFormik.setFieldValue("status", newProductStatus);
@@ -462,25 +459,23 @@ const ProductInfo = () => {
     useDropzone({
       accept: {
         "image/*": [".jpeg", ".jpg", ".png"],
-      }
+      },
+      onDrop: async (acceptedFiles)=>{
+        for (let i =0; acceptedFiles.length-1 >= i; i++){
+          await uploadFile({file:acceptedFiles[i]})
+        }
+          
+      },
     });
 
-    useEffect(() => {
-      if (acceptedFiles.length > 0 && acceptedFiles.length - 1 >= fileIndex) {
-        uploadFile({ file: acceptedFiles[fileIndex] });
-      }
-    }, [acceptedFiles, fileIndex]);
+
   
     useEffect(() => {
-      if (uploadState.data?.url && uploadState.data?.url !== isSimilarImg) {
+      if (uploadState.data?.url ) {
         let data = [...selectimg];
         data.push({ isDefault: false, image: uploadState.data.url });
         setSelectImg(data);
-        setIsSimilarImg(uploadState.data?.url)
-        if (acceptedFiles.length - 1 >= fileIndex) {
-            setFileIndex((prevFileIndex) => prevFileIndex + 1);
-          
-        }
+       
       }
     }, [uploadState.data]);
 

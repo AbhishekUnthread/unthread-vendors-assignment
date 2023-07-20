@@ -31,7 +31,6 @@ import {
 } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
-import { useSelector } from "react-redux";
 
 // ? TABS STARTS HERE
 function TabPanel(props) {
@@ -63,7 +62,6 @@ TabPanel.propTypes = {
 
 const AddProduct = () => {
   const [value, setValue] = React.useState(0);
-  const productInfo = useSelector(state=> state.product.product)
 
   // ? TABS STARTS HERE
   const handleChange = (event, newValue) => {
@@ -121,11 +119,7 @@ const AddProduct = () => {
   //   }
   // };
 
-  function calculateDiscountedPrice(price, discountPercentage) {
-    let discountAmount = price * (discountPercentage / 100);
-    let discountedPrice = price - discountAmount;
-    return discountedPrice;
-  }
+ 
 
   return (
     <div className="page container-fluid position-relative">
@@ -216,19 +210,19 @@ const AddProduct = () => {
           <div className="bg-black-15 border-grey-5 rounded-8 p-3">
             <h6 className="text-grey-6 mb-3">Preview:</h6>
             <AppReactImageGallery />
-            <p className="mt-3 text-lightBlue">{productInfo?.title}</p>
+            <p className="mt-3 text-lightBlue">Gold</p>
             <small className="text-grey-6 my-2">
               SKU123456&nbsp;|&nbsp;JWLellers
             </small>
             <div>
-              <small className="text-grey-6">{productInfo?.categoryName}</small>
+              <small className="text-grey-6">Name</small>
             </div>
             <div className="d-flex my-4 flex-wrap">
-              <h6 className="text-lightBlue">₹ {calculateDiscountedPrice(productInfo?.price?.price,productInfo?.price?.discount)}</h6>
+              <h6 className="text-lightBlue">₹ 799888</h6>
               <small className="ms-2 me-3 text-grey-6 ">
-                <s>₹ {productInfo?.price?.price}</s>
+                <s>₹ 167788888</s>
               </small>
-              <small className="text-lightBlue">{productInfo?.price?.discount}%&nbsp;OFF</small>
+              <small className="text-lightBlue">10%&nbsp;OFF</small>
             </div>
             <p className="text-lightBlue mb-2">Size:</p>
             <FormControl
@@ -351,31 +345,27 @@ const AddProduct = () => {
                 <small className="c-pointer text-blue-2">Edit</small>
               </div>
               <div className="d-flex align-items-center mb-2">
-              {getIcon(productInfo?.availableFor?.isReturnable)}
                 <p className="text-lightBlue ms-2">Returnable</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-              {getIcon(productInfo?.availableFor?.isCod)}
                 <p className="text-lightBlue ms-2">COD</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-              {getIcon(productInfo?.availableFor?.isLifeTimeExchange)}
                 <p className="text-lightBlue ms-2">Lifetime Exchange</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-              {getIcon(productInfo?.availableFor?.isLifeTimeBuyBack)}
                 <p className="text-lightBlue ms-2">Lifetime Buyback</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-              {getIcon(productInfo?.availableFor?.isNextDayShipping)}
+        
                 <p className="text-lightBlue ms-2">Next Day Shipping</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-              {getIcon(productInfo?.availableFor?.isTryOn)}
+            
                 <p className="text-lightBlue ms-2">Enable Try On</p>
               </div>
               <div className="d-flex align-items-center mb-2">
-              {getIcon(productInfo?.availableFor?.isViewSimilarItem)}
+             
                 <p className="text-lightBlue ms-2">
                   Enable to View Similar Items
                 </p>
