@@ -510,11 +510,15 @@ const Categories = () => {
   // * STATUS POPOVERS ENDS
 
   const deleteCategoryHandler = (data) => {
-    deleteCategory(data._id);
+    deleteCategory(data._id).unwrap().then(()=>{
+      dispatch(showSuccess({ message: "Category Deleted Successfully" }))
+    })
   };
 
   const deleteSubCategoryHandler = (data) => {
-    deleteSubCategory(data._id);
+    deleteSubCategory(data._id).unwrap().then(()=>{
+      dispatch(showSuccess({ message: "Sub Category Deleted Successfully" }))
+    })
   };
 
   useEffect(() => {
@@ -563,24 +567,7 @@ const Categories = () => {
     sortFilter,
   ]);
 
-  useEffect(() => {
   
-    if (deleteCategoryIsSuccess) {
-      setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Category deleted successfully" }));
-    }
-
-    if (deleteSubCategoryIsSuccess) {
-      setShowCreateSubModal(false);
-      dispatch(showSuccess({ message: "Sub Category deleted successfully" }));
-    }
-  }, [
-    createCategoryIsSuccess,
-    deleteCategoryIsSuccess,
-    bulkCreateTagsIsSuccess,
-    createSubCategoryIsSuccess,
-    deleteSubCategoryIsSuccess,
-  ]);
 
   useEffect(() => {
     if(+searchParams.get("status")===0)
@@ -1119,8 +1106,8 @@ const Categories = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="Categories" className="tabs-head" />
-              <Tab label="Sub Categories" className="tabs-head" />
+              <Tab label={`Categories`} className="tabs-head" />
+              <Tab label={`Sub Categories`} className="tabs-head" />
               <Tab label="Archived Categories" className="tabs-head" />
               <Tab label="Archived Sub Categories" className="tabs-head" />
             </Tabs>

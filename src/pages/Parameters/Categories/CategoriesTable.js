@@ -418,7 +418,7 @@ const CategoriesTable = ({
       const newState = selected.map((i) => i);
       bulkDeleteCategory({ deletes: newState }).then(() => {
         dispatch(
-          showSuccess({ message: "This categories Deleted successfully" })
+          showSuccess({ message: "categories Deleted successfully" })
         );
       });
       setSelectedStatus(null);
@@ -426,7 +426,7 @@ const CategoriesTable = ({
       return;
     }
     setShowDeleteModal(false);
-    deleteData(rowData);
+    deleteData(rowData)
     // dispatch(showSuccess({ message: "Deleted this category successfully" }));
   }
 
