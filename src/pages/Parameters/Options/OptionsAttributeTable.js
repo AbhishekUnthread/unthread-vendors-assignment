@@ -21,14 +21,16 @@ import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconBut
 import DeleteIconButton from "../../../components/DeleteIconButton/DeleteIconButton";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import Attribute from "../../../components/Options/Attribute/Attribute";
+import SubAttribute from "../../../components/Options/Attribute/SubAttribute";
 
 const DragHandle = SortableHandle(() => (
-  <TableCell sx={{ padding: 0 }}>
+  <TableCell sx={{ padding: "16px 0", verticalAlign: "top" }}>
     <DragIndicatorIcon
       sx={{
         color: "#5c6d8e",
         fontSize: 26,
         cursor: "pointer",
+        marginTop: "5px",
       }}
     />
   </TableCell>
@@ -85,18 +87,27 @@ const OptionsAttributeTable = (props) => {
   return (
     <TableContainer sx={{ padding: 0 }}>
       <Table sx={{ minWidth: 750 }} size="medium">
-        <TableHeader headCells={HEAD_CELLS} />
+        <TableHeader sx={{ background: "#22213f" }} headCells={HEAD_CELLS} />
         <TableBodySortable useDragHandle>
-          <SortableRow>
-            <TableRow hover tabIndex={-1} className="table-rows">
+          <SortableRow index={1}>
+            <TableRow tabIndex={-1} className="table-rows">
               <DragHandle />
               <TableCell
                 sx={{ textTransform: "capitalize", cursor: "pointer" }}
               >
                 <Attribute />
+                <SubAttribute />
               </TableCell>
             </TableRow>
           </SortableRow>
+          <TableRow tabIndex={-1} className="table-rows">
+            <TableCell sx={{ padding: "0 16px" }}></TableCell>
+            <TableCell sx={{ padding: "0 16px" }}>
+              <button type="button" className="reset link">
+                <p>+ Add Input Field</p>
+              </button>
+            </TableCell>
+          </TableRow>
         </TableBodySortable>
       </Table>
     </TableContainer>
