@@ -54,7 +54,7 @@ import * as Yup from "yup";
 import { showError, showSuccess } from "../../features/snackbar/snackbarAction";
 import { useDispatch } from "react-redux";
 import TableEditStatusButton from "../TableEditStatusButton/TableEditStatusButton";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -200,8 +200,8 @@ const AddSubCategoriesProducts = ({ id }) => {
     categoryId: id,
     status: ["active", "in-active"],
     ...filterParameter,
-    pageSize:queryFilterState.pageSize,
-    pageNo:queryFilterState.pageNo,
+    pageSize: queryFilterState.pageSize,
+    pageNo: queryFilterState.pageNo,
     skip: queryFilterState.pageNo ? false : true,
   });
 
@@ -220,7 +220,6 @@ const AddSubCategoriesProducts = ({ id }) => {
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
   } = useGetAllCategoriesQuery({});
-  
 
   const [
     bulkCreateSubCategory,
@@ -286,7 +285,8 @@ const AddSubCategoriesProducts = ({ id }) => {
           .then(() => {
             setShowCreateSubModal(false);
             subCategoryFormik.resetForm();
-          }).catch((err) => {
+          })
+          .catch((err) => {
             dispatch(showError({ message: err?.data?.message }));
           });
       }
@@ -317,6 +317,13 @@ const AddSubCategoriesProducts = ({ id }) => {
           Formik.setFieldTouched("name", true);
           let tagName = tags.map((item) => item.name?.trim()?.toLowerCase());
           let valueExists = tagName.includes(data.name?.trim()?.toLowerCase());
+          if (valueExists) {
+            dispatch(
+              showError({
+                message: `${Formik.values.name.trim()} already exists`,
+              })
+            );
+          }
           if (!valueExists) {
             setTags((prevValues) => [...prevValues, data]);
             if (flag) {
@@ -324,10 +331,6 @@ const AddSubCategoriesProducts = ({ id }) => {
             } else {
               Formik.setFieldValue("name", "");
             }
-          }
-
-          if (valueExists) {
-            dispatch(showError({ message: "Duplicate Name Value" }));
           }
         }
       });
@@ -380,10 +383,10 @@ const AddSubCategoriesProducts = ({ id }) => {
     setMultipleTagsForSub([]);
   };
 
-  function handlesubmit(){
+  function handlesubmit() {
     setShowCreateSubModal((prevState) => !prevState);
     setMultipleTagsForSub([]);
-    subCategoryFormik.handleSubmit()
+    subCategoryFormik.handleSubmit();
   }
 
   const subModalOpenHandler = () => {
@@ -391,11 +394,11 @@ const AddSubCategoriesProducts = ({ id }) => {
     subCategoryFormik.setFieldValue("categoryId", id);
   };
 
-  useEffect(()=>{
-    if(createSubCategoryIsSuccess){
-      dispatch(showSuccess({message:"Sub Category Created successfully"}))
+  useEffect(() => {
+    if (createSubCategoryIsSuccess) {
+      dispatch(showSuccess({ message: "Sub Category Created successfully" }));
     }
-  },[createSubCategoryIsSuccess])
+  }, [createSubCategoryIsSuccess]);
 
   // * TABLE STARTS HERE
   const [order, setOrder] = React.useState("asc");
@@ -471,11 +474,15 @@ const AddSubCategoriesProducts = ({ id }) => {
   }
 
   const editSubPageHandler = (index) => {
-    const combinedObject = { filterParams:filterParameter, queryFilterState };
-    const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));
+    const combinedObject = { filterParams: filterParameter, queryFilterState };
+    const encodedCombinedObject = encodeURIComponent(
+      JSON.stringify(combinedObject)
+    );
     const currentTabNo =
-      index + (queryFilterState.pageNo  - 1) * queryFilterState.pageSize;
-    navigate(`/parameters/subCategories/edit/${currentTabNo}/${encodedCombinedObject}`);
+      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
+    navigate(
+      `/parameters/subCategories/edit/${currentTabNo}/${encodedCombinedObject}`
+    );
   };
 
   return (
@@ -586,8 +593,10 @@ const AddSubCategoriesProducts = ({ id }) => {
                                   name: subCategoryFormik.values.name,
                                   description: "<p></p>",
                                   status: "active",
-                                  categoryId: subCategoryFormik.values.categoryId,
-                                  showFilter: subCategoryFormik.values.showFilter,
+                                  categoryId:
+                                    subCategoryFormik.values.categoryId,
+                                  showFilter:
+                                    subCategoryFormik.values.showFilter,
                                 },
                                 false
                               )
@@ -656,7 +665,7 @@ const AddSubCategoriesProducts = ({ id }) => {
                     <p className="text-lightBlue">Cancel</p>
                   </button>
                   <LoadingButton
-                  type="button"
+                    type="button"
                     loading={createSubCategoryIsLoading}
                     disabled={createSubCategoryIsLoading}
                     onClick={handlesubmit}
@@ -751,10 +760,10 @@ const AddSubCategoriesProducts = ({ id }) => {
                           />
                         </TableCell>
                         <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
                         >
                           <p className="text-lightBlue">{row.name}</p>
                         </TableCell>

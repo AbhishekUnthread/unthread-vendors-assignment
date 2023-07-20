@@ -609,6 +609,9 @@ const Categories = () => {
           Formik.setFieldTouched("name", true);
           let tagName = tags.map((item) => item.name?.trim()?.toLowerCase());
           let valueExists = tagName.includes(data.name?.trim()?.toLowerCase());
+          if (valueExists) {
+            dispatch(showError({ message: `${Formik.values.name.trim()} already exists` }));
+          }
           if (!valueExists) {
             setTags((prevValues) => [...prevValues, data]);
             if (flag) {
@@ -618,9 +621,7 @@ const Categories = () => {
             }
           }
 
-          if (valueExists) {
-            dispatch(showError({ message: "Duplicate Name  Value" }));
-          }
+         
         }
       });
     }
