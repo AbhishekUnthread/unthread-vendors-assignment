@@ -47,6 +47,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import InfoHeader from "../../../components/Header/InfoHeader";
 import DiscountFormat from "../../../components/DiscountFormat/DiscountFormat";
+import MinimumRequirement from "../../../components/DiscountFormat/MinimumRequirement";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -84,6 +85,56 @@ const queryFilterReducer = (state, action) => {
   return initialQueryFilterState;
 };
 
+
+const maximumDiscountValidationSchema = Yup.object().shape({
+  limitDiscountNumber: Yup.boolean(),
+  limitUsagePerCustomer: Yup.boolean(),
+  total: Yup.number().test(
+    'is-total-numeric',
+    'required',
+    function (value) {
+      if (this.parent.limitDiscountNumber) {
+        return Yup.number().required().isValidSync(value);
+      }
+      return true;
+    }
+  ),
+  perCustomer: Yup.number().test(
+    'is-perCustomer-numeric',
+    'required',
+    function (value) {
+      if (this.parent.limitUsagePerCustomer) {
+        return Yup.number().required().isValidSync(value);
+      }
+      return true;
+    }
+  ),
+});
+
+
+const minimumRequirementValidationSchema = Yup.object().shape({
+    requirement: Yup.string()
+      .oneOf([ "none","minAmount","minQuantity"], "Invalid Requirement")
+      .required("Requirement is required"),
+
+    value: Yup.number()
+        .transform((value, originalValue) => {
+          return /^[0-9]*$/.test(originalValue) ? parseFloat(originalValue) : undefined;
+        })
+        .typeError("Value must be a number")
+        .test(
+        "is-value-required",
+        "Value is required",
+        function (value) {
+          const { requirement } = this.parent; 
+          if (requirement === "minAmount" || requirement === "minQuantity") {
+            return Yup.number().required().isValidSync(value);
+          }
+          return true;
+        }
+      ),
+});
+
 const discountFormatSchema = Yup.object().shape({
   discountType: Yup.string()
     .oneOf(
@@ -113,6 +164,11 @@ const discountValidationSchema = Yup.object().shape({
     .oneOf(["active", "in-active"], "Invalid status")
     .required("Status is required"),
   discountFormat: discountFormatSchema,
+  minimumRequirement :minimumRequirementValidationSchema,
+  returnExchange : Yup.string()
+  .oneOf(["allowed", "notAllowed"], "Invalid")
+  .required("required"),
+  maximumDiscount:maximumDiscountValidationSchema,
 });
 
 const CreateDiscount = () => {
@@ -227,11 +283,26 @@ const CreateDiscount = () => {
   const formik = useFormik({
     initialValues: {
       discountName : "",
-      status : null,
+      status : "active",
       discountFormat :{
         discountType : "",
         discountFormat : null,
         discountCode : ""
+      },
+      minimumRequirement: {
+        requirement : null,
+        value : "",
+      },
+      returnExchange : "allowed",
+      maximumDiscount : {
+        limitDiscountNumber:false,
+        limitUsagePerCustomer:false,
+        total: null,
+        perCustomer:null,
+      },
+      discountCombination: {
+        allowCombineWithOthers : false,
+        allowCombineWith :[]
       }
     },
     enableReinitialize: true,
@@ -243,17 +314,20 @@ const CreateDiscount = () => {
 
   // console.log({discountType:formik.values?.discountFormat?.discountType})
   // console.log({discountFormat:formik.values?.discountFormat?.discountFormat})
-  console.log({discountCode:formik.values?.discountFormat?.discountCode})
+  // console.log({discountCode:formik.values?.discountFormat?.discountCode})
+  // console.log({MinimumRequirement:formik.values?.minimumRequirement?.requirement})
+  // console.log({MinimumRequirementValue:formik.values?.minimumRequirement?.value})
+
+
 
 
 
   
   // console.log({discountTypeError:formik?.errors?.discountFormat?.discountType})
   // console.log({discountFormatError:formik?.errors?.discountFormat?.discountFormat})
-  console.log({discountCodeError:formik?.errors?.discountFormat?.discountCode})
-
-
-
+  // console.log({discountCodeError:formik?.errors?.discountFormat?.discountCode})
+  console.log({MinimumRequirementValueError:formik?.errors?.minimumRequirement?.value})
+  console.log({MinimumRequirementError:formik?.errors?.minimumRequirement?.requirement})
 
 
   return (
@@ -1521,20 +1595,20 @@ const CreateDiscount = () => {
               </React.Fragment>
             )}
           </div>
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
+          {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
             <div className="d-flex col-12 px-0 justify-content-between">
               <div className="d-flex align-items-center">
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
                   Minimum Requirement
                 </h6>
-                {/* <Tooltip title="Lorem ipsum" placement="top">
+                <Tooltip title="Lorem ipsum" placement="top">
                   <img
                     src={info}
                     alt="info"
                     className="ms-2 c-pointer"
                     width={13.5}
                   />
-                </Tooltip> */}
+                </Tooltip>
               </div>
             </div>
             <hr className="hr-grey-6 mt-3 mb-0" />
@@ -1623,7 +1697,18 @@ const CreateDiscount = () => {
                 </RadioGroup>
               </FormControl>
             </div>
-          </div>
+          </div> */}
+          <MinimumRequirement
+            value ={formik.values?.minimumRequirement}
+            field = "minimumRequirement"
+            formik={formik}
+            touched={
+                  formik?.touched?.minimumRequirement
+                }
+            error={
+                  formik?.errors?.minimumRequirement
+                }
+          />
           <CustomerEligibility />
 
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -1727,13 +1812,30 @@ const CreateDiscount = () => {
           </div>
           <ReturnAndExchangeCondition
             sectionHeading={"Return & Exchange Condition"}
+            value ={formik.values?.returnExchange}
+            field = "returnExchange"
+            formik={formik}
           />
-          <MaximumDiscountUsers />
+          <MaximumDiscountUsers 
+            value ={formik.values?.maximumDiscount}
+            field = "maximumDiscount"
+            formik={formik}
+            touched={
+                  formik?.touched?.maximumDiscount
+                }
+            error={
+                  formik?.errors?.maximumDiscount
+                }
+          />
 
           {/* <ReturnAndExchangeCondition
             sectionHeading={"Discount Combinations"}
           /> */}
-          <DiscountCombination showBuy={true} showBulk={true} />
+          <DiscountCombination 
+            value ={formik.values?.discountCombination}
+            field = "discountCombination"
+            formik={formik}
+           />
           <ScheduleDiscountCode />
         </div>
         <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
