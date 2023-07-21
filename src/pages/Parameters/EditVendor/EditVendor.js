@@ -234,9 +234,9 @@ const EditVendor = () => {
   const formik = useFormik({
     initialValues: {
       name: vendorsData?.data?.data[0].name || "",
-      notes: vendorsData?.data?.data[0].notes,
+      notes: vendorsData?.data?.data[0].notes ,
       status: vendorsData?.data?.data[0].status,
-      filter: vendorsData?.data?.data[0].showFilter,
+      filter: vendorsData?.data?.data[0].showFilter || false,
     },
     enableReinitialize: true,
     validationSchema: vendorValidationSchema,
