@@ -131,7 +131,6 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
           </span>
         </div>
 
-         
         <div className="d-flex ms-4 chatResponses mb-3">
           <Avatar sx={{ bgcolor: "#c8d8ff" }} sizes={33}>S</Avatar>
           <div className="responsesBox ms-3">
@@ -185,7 +184,6 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
             </span>
           </span>
         </div>
-
          
         <div className="d-flex ms-4 chatResponses mb-3">
           <Avatar sx={{ bgcolor: "#c8d8ff" }} sizes={33}>S</Avatar>

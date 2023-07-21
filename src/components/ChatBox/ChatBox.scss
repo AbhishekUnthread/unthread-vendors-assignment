@@ -1,6 +1,5 @@
 .css-1vxvp5a-MuiPaper-root-MuiDrawer-paper {
     width: 40%;
-    overflow-y: visible !important;
 }
 
 .chatBoxUser {
@@ -26,7 +25,8 @@
     right: 0;
     bottom: 240px;
     width: 100%;
-    max-height: 370px;
+    max-height: 50%;
+    overflow-y: auto;
 }
 
 .responsesBox {
