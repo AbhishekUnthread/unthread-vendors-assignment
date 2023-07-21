@@ -263,7 +263,7 @@ const router = () => {
                   element: <TagsManager />,
                 },
                 {
-                  path: "tagsManager/edit",
+                  path: "tagsManager/edit/:id/:filter",
                   element: <EditTags />,
                 },
                 {

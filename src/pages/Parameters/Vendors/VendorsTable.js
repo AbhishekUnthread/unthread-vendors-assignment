@@ -31,6 +31,7 @@ import {
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import DeleteIcon from '@mui/icons-material/Delete';
+import TableLoader from "../../../components/Loader/TableLoader";
 
 
 // ? TABLE STARTS HERE
@@ -488,7 +489,7 @@ const handleMultipleDelete=()=>{
             />
           </>
         ) : isLoading ? (
-          <span className="d-flex justify-content-center m-3">Loading...</span>
+          <span className="d-flex justify-content-center m-3"><TableLoader/></span>
         ) : (
           <span className="d-flex justify-content-center m-3">
           <NoDataFound />
