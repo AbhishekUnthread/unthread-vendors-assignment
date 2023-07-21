@@ -1,5 +1,6 @@
 .css-1vxvp5a-MuiPaper-root-MuiDrawer-paper {
-    width: 45%;
+    width: 40%;
+    overflow-y: visible !important;
 }
 
 .chatBoxUser {
@@ -23,13 +24,22 @@
 .chatMessagesContainer {
     position: absolute;
     right: 0;
-    bottom: 110px;
+    bottom: 240px;
     width: 100%;
+    max-height: 370px;
+}
+
+.responsesBox {
+    border-radius: 0px 18px 18px 18px;
+    max-width: 60%;
+    width: fit-content;
+    background: #22233F;
+    padding: 10px;
 }
 
 .chatBoxReply {
     border-radius: 18px 0px 18px 18px;
-    max-width: 70%;
+    max-width: 60%;
     display: flex;
     align-self: flex-end;
     width: fit-content;
@@ -45,10 +55,10 @@
     justify-content: center;
     width: 100%;
     position: absolute;
-    bottom: 20px;
+    bottom: 157px;
 
     div {
-        width: 90%;
+        width: 93%;
     }
 
     .chatEnquiry {
@@ -65,16 +75,23 @@
             display: flex;
             align-items: center;
         }
-
-        .enquiryId {
-            color: #c8d8ff;
-            font-size: 14px;
-        }
     }
+}
+
+.chatKeypad {
+    position: absolute;
+    width: 100% !important;
+    bottom: 0px;
+    padding: 20px;
 }
 
 .enquiry {
     color: #5C6D8E;
+    font-size: 14px;
+}
+
+.enquiryId {
+    color: #c8d8ff;
     font-size: 14px;
 }
 
@@ -86,4 +103,34 @@
     color: #202223;
     border-radius: 46px;
     padding: 5px 8px;
+}
+
+.chatProfileLeft {
+    width: 110px;
+}
+
+.enquiryIdLink {
+    color: #658DED;
+    text-decoration: underline;
+}
+
+.chatSendButton {
+    height: 45px;
+}
+
+.chatTextArea {
+    width: 75%;
+    background: rgb(21, 20, 42);
+    border: 1px solid #38395c !important;
+    border-radius: 5px;
+
+    textarea {
+        border: none !important;
+    }
+
+    div {
+        svg {
+            margin: 7px 0px 15px 15px;
+        }
+    }
 }
