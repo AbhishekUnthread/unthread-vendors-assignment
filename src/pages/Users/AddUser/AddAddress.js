@@ -26,8 +26,6 @@ const customerAddressValidation = Yup.object({
   name: Yup.string().trim().min(3).required("Required"),
   firstName: Yup.string().trim().min(3).required("Required"),
   lastName: Yup.string().trim().min(3).required("Required"),
-  gender: Yup.string().required("Required"),
-  email: Yup.string().email().required("Required"),
   countryCode: Yup.string().required("Required"),
   phone: Yup.number().required("Required"),
   country: Yup.string().required("Required"),
@@ -59,6 +57,8 @@ const AddAddress = ({ customerAddressDetails }) => {
     enableReinitialize: true,
     validationSchema: customerAddressValidation,
     onSubmit: (values) => {
+                console.log(values, 'values valuesvalues');
+
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
           delete values[key] 

@@ -21,8 +21,6 @@ export default function AppStateSelect({ getStateName, SelectStateName }) {
     error: stateError,
   } = useGetAllStateQuery({createdAt: -1});
 
-  console.log(stateData?.data?.data,"stateData")
-
   return (
     <Autocomplete
       id="country-select-demo"
