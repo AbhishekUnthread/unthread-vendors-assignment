@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { createSearchParams, useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 // ! COMPONENT IMPORTS
 import NotesBox from "../../../components/NotesBox/NotesBox";
@@ -125,6 +125,7 @@ const EditVendor = () => {
     initialVendorState
   );
   const [decodedObject, setDecodedObject] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const {
     data: vendorsData,
@@ -174,7 +175,11 @@ const EditVendor = () => {
   };
 
   const backHandler = () => {
-    navigate(`/parameters/vendors?status=${decodedObject.tab}`);
+  //  console.log("searchParams.get",searchParams.get("filter"))
+    navigate({
+      pathname: '/parameters/vendors',
+      search: `?${createSearchParams({filter :   searchParams.get("filter")})}`,
+    });
   };
 
   useEffect(() => {
@@ -183,13 +188,13 @@ const EditVendor = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    const encodedString = filter;
-    const decodedString = decodeURIComponent(encodedString);
-    const parsedObject = JSON.parse(decodedString);
+  // useEffect(() => {
+  //   const encodedString = filter;
+  //   const decodedString = decodeURIComponent(encodedString);
+  //   const parsedObject = JSON.parse(decodedString);
 
-    setDecodedObject(parsedObject);
-  }, [filter]);
+  //   setDecodedObject(parsedObject);
+  // }, [filter]);
 
   useEffect(() => {
     if (editVendorIsError) {

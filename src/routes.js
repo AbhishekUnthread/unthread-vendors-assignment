@@ -255,7 +255,7 @@ const router = () => {
                   element: <Vendors />,
                 },
                 {
-                  path: "vendors/edit/:id/:filter",
+                  path: "vendors/edit",
                   element: <EditVendor />,
                 },
                 {
