@@ -80,7 +80,6 @@ const initialProductsInfoState = {
   confirmationMessage: "",
   showDeleteModal: false,
   isEditing: false,
-  initialInfo: null,
 };
 
 const initialQueryFilterState = {
@@ -382,7 +381,7 @@ const ProductTabInfo = () => {
   }, [id]);
 
   useEffect(() => {
-    if (productsTabError) {
+    if (productsTabIsError) {
       if (productsTabError?.data?.message) {
         dispatch(showError({ message: productsTabError.data.message }));
       } else {

@@ -158,7 +158,7 @@ const CategoriesTable = ({
   const [forMassAction, setForMassAction] = React.useState(false);
   const [massActionStatus, setMassActionStatus] = React.useState("");
 
-  console.log(list)
+  console.log(list);
 
   const {
     data: subCategoriesData,
@@ -220,7 +220,6 @@ const CategoriesTable = ({
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
   };
@@ -262,9 +261,16 @@ const CategoriesTable = ({
         bulkEdit({ updates: newState })
           .unwrap()
           .then(() =>
-            dispatch(
-              showSuccess({ message: "Categories Status updated successfully" })
+            {
+              const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Categories un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+                ? "Categories archived  successfully" : "Status updated successfully";
+              dispatch(
+              showSuccess({ message: successMessage })
             )
+          }
           );
         setSelected([]);
         setSelectedStatus(null);
@@ -272,7 +278,17 @@ const CategoriesTable = ({
         bulkSubEdit({ updates: newState })
           .unwrap()
           .then(() =>
-            dispatch(showSuccess({ message: "Sub Categoris Status updated successfully" }))
+           {
+            const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Sub Categories un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+                ? "Sub Categories archived  successfully" : "Status updated successfully";
+             dispatch(
+              showSuccess({
+                message: successMessage,
+              })
+            )}
           );
         setSelected([]);
         setToggleCategoris(true);
@@ -301,32 +317,32 @@ const CategoriesTable = ({
     }
   }
 
-  useEffect(()=>{
-    if(cateoryOpenState?.open === true){
-      setFilterParameter({categoryId:cateoryOpenState.id,status:["active", "scheduled", "in-active"]});
+  useEffect(() => {
+    if (cateoryOpenState?.open === true) {
+      setFilterParameter({
+        categoryId: cateoryOpenState.id,
+        status: ["active", "scheduled", "in-active"],
+      });
       if (open.length === 0) {
         let item = [];
         item.push(cateoryOpenState.id);
         setOpen(item);
-        
       }
       if (open.length > 0 && open.includes(cateoryOpenState.id)) {
         setOpen((item) => item.filter((i) => i !== cateoryOpenState.id));
-        
       }
       if (open.length > 0 && !open.includes(cateoryOpenState.id)) {
         let item = [];
         item.push(cateoryOpenState.id);
         setOpen(item);
       }
-      let state={
-        id:"",
-        open:false
-      }
-      setCategoryOpenState(state)
-
+      let state = {
+        id: "",
+        open: false,
+      };
+      setCategoryOpenState(state);
     }
-  },[cateoryOpenState])
+  }, [cateoryOpenState]);
 
   const toggleArchiveModalHandler = (row) => {
     setShowArchivedModal((prevState) => !prevState);
@@ -364,9 +380,7 @@ const CategoriesTable = ({
           status: "archieved",
         },
       });
-      dispatch(
-        showSuccess({ message: "Sub category Archived  successfully" })
-      );
+      dispatch(showSuccess({ message: "Sub category Archived  successfully" }));
       setToggleCategoris(true);
     }
   }
@@ -384,9 +398,7 @@ const CategoriesTable = ({
           status: handleStatusValue,
         },
       });
-      dispatch(
-        showSuccess({ message: "Category Un-Archived successfully" })
-      );
+      dispatch(showSuccess({ message: "Category Unarchived Successfully" }));
     } else {
       editSubCategory({
         id: rowData._id,
@@ -395,7 +407,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "Sub Category Un-Archived successfully" })
+        showSuccess({ message: "Sub Category Unarchived Successfully" })
       );
       setToggleCategoris(true);
     }
@@ -406,7 +418,7 @@ const CategoriesTable = ({
       const newState = selected.map((i) => i);
       bulkDeleteCategory({ deletes: newState }).then(() => {
         dispatch(
-          showSuccess({ message: "This categories Deleted successfully" })
+          showSuccess({ message: "categories Deleted successfully" })
         );
       });
       setSelectedStatus(null);
@@ -414,7 +426,7 @@ const CategoriesTable = ({
       return;
     }
     setShowDeleteModal(false);
-    deleteData(rowData);
+    deleteData(rowData)
     // dispatch(showSuccess({ message: "Deleted this category successfully" }));
   }
 
@@ -543,7 +555,13 @@ const CategoriesTable = ({
                             >
                               <Link
                                 className="text-decoration-none"
-                                onClick={editPageHandler.bind(null, index + 1)}
+                                onClick={() => {
+                                  if (archived === true) {
+                                    editPageHandler(index + 1);
+                                    return;
+                                  }
+                                  return;
+                                }}
                               >
                                 <p className="text-lightBlue rounded-circle fw-600">
                                   {row.name}
@@ -711,7 +729,7 @@ const CategoriesTable = ({
                                 unmountOnExit
                               >
                                 <React.Fragment>
-                                  <TableContainer style={{ padding: '20px' }}>
+                                  <TableContainer style={{ padding: "20px" }}>
                                     <Table
                                       sx={{ minWidth: 750 }}
                                       aria-labelledby="tableTitle"
@@ -992,7 +1010,11 @@ const CategoriesTable = ({
             in this Category will be unassigned from it.
           </h6>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
-            <span className="text-blue-2"> {rowData?.totalSubCategory} {rowData?.totalSubCategory > 1 ? "SubCategories":"SubCategory"} </span>
+            <span className="text-blue-2">
+              {" "}
+              {rowData?.totalSubCategory}{" "}
+              {rowData?.totalSubCategory > 1 ? "SubCategories" : "SubCategory"}{" "}
+            </span>
             in this category will be Archive from it.
           </h6>
           <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>

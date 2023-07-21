@@ -349,7 +349,7 @@ const EditVendor = () => {
                     }}
                     className=" px-0 me-1"
                   />
-                  <button className="reset link">(manage)</button>
+                <span className="text-blue-2 c-pointer">(manage)</span>
                 </div>
               </div>
             </div>

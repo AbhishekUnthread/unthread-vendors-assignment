@@ -1,5 +1,5 @@
 import React, { forwardRef, useState, useEffect, useReducer } from "react";
-import { useNavigate, Link,useSearchParams } from "react-router-dom";
+import { useNavigate,useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 // ! COMPONENT IMPORTS
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -8,8 +8,7 @@ import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
-import TableSearch, { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
-import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import {
   showSuccess,
   showError,
@@ -44,8 +43,6 @@ import {
   Slide,
   Tab,
   Tabs,
-  Select,
-  MenuItem,
   Chip,
   FormHelperText,
   FormControlLabel,
@@ -53,7 +50,7 @@ import {
   RadioGroup,
   Radio,
   Popover,
-  Autocomplete,
+
   FormGroup,
   InputAdornment,
   Tooltip,
@@ -155,16 +152,11 @@ const Vendors = () => {
       queryParameters.status = selectedStatusOption;
     }
   }
-  // if(searchValue)
-  // {
-  //   queryParameters.name = searchValue;
-  // }
   if (!selectedSortOption && selectedStatusOption === null) {
     queryParameters.status = "active";
     queryParameters.status = "in-active"
   }
   
-  console.log(searchParams.get("status"))
 
   const vendorTypeQuery =
     vendorType === 0
@@ -185,8 +177,6 @@ const Vendors = () => {
       isSuccess: vendorsIsSuccess, 
       error: vendorsError, 
     } = useGetAllVendorsQuery({...queryParameters,...vendorTypeQuery,...queryFilterState}, { enabled: Object.keys(queryParameters).length > 0 }); 
-    // The `enabled` option determines whether the useGetAllVendorsQuery hook should be enabled or disabled based on the presence of query parameters.
-    // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
   
     const [
       createVendor,
@@ -289,7 +279,6 @@ const Vendors = () => {
 
     const editCategoryPageNavigationHandler = (data,index) => {
       setIsEditing(true);
-      // dispatch(updateVendorId(data._id)); 
       const combinedObject = { queryParameters, vendorTypeQuery, queryFilterState,tab:vendorType };
       const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));    
 
@@ -306,19 +295,6 @@ const Vendors = () => {
       setSelectedSortOption('');
       setSelectedStatusOption('')
       setSearchParams({status:tabIndex})
-// if (tabIndex === 0) {
-//   setTabPath('all');
-// } else if (tabIndex === 1) {
-//   setTabPath('active') ;
-// } else if (tabIndex === 2) {
-//   setTabPath('in-active') ;
-// } else if (tabIndex === 3) {
-//   setTabPath('archived') ;
-// } else {
-// }
-      // navigate(`/parameters/vendors`)
-      // navigate(`/parameters/vendors?status=${tabPath}`);
-
     };
 
     const handleAddMultiple = (event) => {
@@ -353,18 +329,6 @@ const Vendors = () => {
     const handleDelete = (value) => {
     setMultipleVendors((prevValues) => prevValues.filter((v) => v.name !== value));
     };
-
-  const handleDeleteVendor =(data)=>{
-    deleteVendor(data);
-    }
-
-  const handleBulkDeleteVendor =(data)=>{
-    bulkDeleteVendor(data);
-    }
-
-  // const handleSearchChange = (event) => {
-  //     setSearchValue(event.target.value);
-  //   };
 
  // * SORT POPOVERS STARTS HERE
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
@@ -434,14 +398,14 @@ const Vendors = () => {
       }
     }
 
-  }, [createVendorIsSuccess,createVendorError])
+  }, [createVendorIsSuccess,createVendorError,dispatch])
   
     useEffect(() => {
 
     if(bulkCreateVendorIsSuccess)
     {
-        setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Vendors created successfully" }));
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: `${multipleVendors.length === 1 ? "Vendor" : "Vendors"} Created Successfully` }));
     }
 
     if (bulkCreateVendorError ) {
@@ -456,7 +420,7 @@ const Vendors = () => {
         );
       }
     }
-  }, [bulkCreateVendorError,bulkCreateVendorIsSuccess])
+  }, [bulkCreateVendorError,bulkCreateVendorIsSuccess,dispatch])
 
     useEffect(() => {
     if (vendorsError) {
@@ -495,14 +459,10 @@ const Vendors = () => {
         vendorsIsSuccess,
         vendorType,
         vendorsError,
-        createVendorIsSuccess,bulkCreateVendorIsSuccess,createVendorError,bulkCreateVendorError,editVendorIsSuccess,bulkVendorEditIsSuccess,editVendorError,bulkVendorEditError
+        createVendorIsSuccess,bulkCreateVendorIsSuccess,createVendorError,bulkCreateVendorError,editVendorIsSuccess,bulkVendorEditIsSuccess,editVendorError,bulkVendorEditError,dispatch
       ]);
 
     useEffect(() => {
-      if(deleteVendorIsSuccess)
-      {
-        dispatch(showSuccess({ message: "Vendor deleted successfully" }));
-      }
       if(deleteVendorError)
       {
         if (deleteVendorError?.data?.message) {
@@ -514,14 +474,9 @@ const Vendors = () => {
           );
         }
       }
-    }, [deleteVendorIsSuccess,deleteVendorError])
+    }, [deleteVendorError,dispatch])
 
     useEffect(() => {
-
-      if(bulkDeleteVendorIsSuccess)
-      {
-        dispatch(showSuccess({ message: "Vendors deleted successfully" }));
-      }
       if(bulkDeleteVendorError)
       {
         if (bulkDeleteVendorError?.data?.message) {
@@ -533,13 +488,9 @@ const Vendors = () => {
           );
         }
       }
-    }, [bulkDeleteVendorIsSuccess,bulkDeleteVendorError])
+    }, [bulkDeleteVendorError,dispatch])
 
     useEffect(() => {
-      // if(editVendorIsSuccess)
-      // {
-      //   dispatch(showSuccess({ message: "Status updated successfully" }));
-      // }
       if(editVendorError)
       {
         if (editVendorError?.data?.message) {
@@ -551,13 +502,9 @@ const Vendors = () => {
           );
         }
       }
-    }, [editVendorIsSuccess,editVendorError])
+    }, [editVendorError,dispatch])
 
     useEffect(() => {
-      // if(bulkVendorEditIsSuccess)
-      // {
-      //   dispatch(showSuccess({ message: "Status updated successfully" }));
-      // }
       if(bulkVendorEditError)
       {
         if (bulkVendorEditError?.data?.message) {
@@ -569,7 +516,7 @@ const Vendors = () => {
           );
         }
       }
-    }, [bulkVendorEditIsSuccess,bulkVendorEditError])
+    }, [bulkVendorEditError,dispatch])
     
     useEffect(() => {
         if(+searchParams.get("status")===0)
@@ -706,7 +653,7 @@ const Vendors = () => {
                   }}
                   className=" px-0 me-1"
                 />
-                <button className="reset link">(manage)</button>
+                <span className="text-blue-2 c-pointer">(manage)</span>
                 </div>
                 <div >
                 {multipleVendors && multipleVendors.map((value, index) => (
@@ -810,7 +757,6 @@ const Vendors = () => {
                     label="Active"
                     value="active"
                     className="me-0"
-                    // checked={selectedStatusOption === "active"}
                     checked={selectedStatusOption.includes("active")}
                   />
                   <FormControlLabel
@@ -825,7 +771,6 @@ const Vendors = () => {
                     label="In-Active"
                     className="me-0"
                     value="in-active"
-                    // checked={selectedStatusOption === "archived"}
                     checked={selectedStatusOption.includes("in-active")}
                   />
                 </FormGroup>
@@ -887,137 +832,6 @@ const Vendors = () => {
                 </RadioGroup>
               </FormControl>
               </Popover>
-              {/* <button
-                className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idStatus}
-                variant="contained"
-                onClick={handleStatusClick}
-              >
-                <small className="text-lightBlue me-2">Status</small>
-              </button>
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idStatus}
-                open={openStatus}
-                anchorEl={anchorStatusEl}
-                onClose={handleStatusClose}
-                className="columns"
-              >
-                <FormControl className="px-2 py-1">
-                  <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    value={selectedStatusOption}
-                    onChange={handleStatusRadioChange}
-                  >
-                    <FormControlLabel
-                      value="active"
-                      control={<Radio size="small" />}
-                      label="Active"
-                    />
-                    <FormControlLabel
-                      value="archived"
-                      control={<Radio size="small" />}
-                      label="Archive"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Popover> */}
-
-              {/* <button
-                className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idSort}
-                variant="contained"
-                onClick={handleSortClick}
-              >
-                <small className="text-lightBlue me-2">Sort</small>
-                <img src={sort} alt="sort" className="" />
-              </button>
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idSort}
-                open={openSort}
-                anchorEl={anchorSortE1}
-                onClose={handleSortClose}
-                className="columns"
-              >
-                <FormGroup className="px-2 py-1"                   
-                  onChange={handleSortCheckboxChange}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        defaultChecked
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Alphabetical (A-Z)"
-                    value="alphabeticalAtoZ"
-                    className="me-0"
-                    checked={selectedSortOption === "alphabeticalAtoZ"}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Alphabetical (Z-A)"
-                    className="me-0"
-                    value="alphabeticalZtoA"
-                    checked={selectedSortOption === "alphabeticalZtoA"}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Oldest to Newest"
-                    className="me-0"
-                    value="oldestToNewest"
-                    checked={selectedSortOption === "oldestToNewest"}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Newest to Oldest"
-                    className="me-0"
-                    value="newestToOldest"
-                    checked={selectedSortOption === "newestToOldest"}
-                  />
-                </FormGroup>
-              </Popover> */}
-
-
           </div>
           <TabPanel value={vendorType} index={0}>
             <VendorsTable
@@ -1026,7 +840,7 @@ const Vendors = () => {
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
-              deleteData={handleDeleteVendor}
+              deleteData={deleteVendor}
               editVendor={editVendor}
               bulkEdit ={bulkEdit}
               changeRowsPerPage={handleChangeRowsPerPage}
@@ -1073,8 +887,8 @@ const Vendors = () => {
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
-              deleteData={handleDeleteVendor}
-              bulkDelete={handleBulkDeleteVendor}
+              deleteData={deleteVendor}
+              bulkDelete={bulkDeleteVendor}
               vendorType={vendorType}
               editVendor={editVendor}
               bulkEdit ={bulkEdit}

@@ -2,11 +2,11 @@ import { useId } from "react";
 import { TableCell, TableHead, TableRow } from "@mui/material";
 
 const TableHeader = (props) => {
-  const { headCells } = props;
+  const { headCells, sx } = props;
   const headCellId = useId();
 
   return (
-    <TableHead>
+    <TableHead sx={sx}>
       <TableRow>
         {headCells.map((headCell, index) => (
           <TableCell

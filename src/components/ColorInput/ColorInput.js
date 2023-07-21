@@ -1,9 +1,10 @@
+import "./ColorInput.scss";
+
 const ColorInput = () => {
   return (
     <div className="container">
-      <div className="color"></div>
-      <p className=""></p>
-      <input type="color" />
+      <input type="color" className="picker" />
+      <p className="text-lightBlue text">red</p>
     </div>
   );
 };

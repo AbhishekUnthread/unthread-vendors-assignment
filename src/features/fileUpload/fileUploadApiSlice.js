@@ -7,7 +7,14 @@ export const fileUploadApiSlice = apiSlice.injectEndpoints({
         url: `/uploads?filename=${fileName}`,
       }),
     }),
+    uploadUrl: builder.mutation({
+      query: ({ fileName }) => ({
+        url: `/uploads?filename=${fileName}`,
+      }),
+      transformResponse: (res) => res.data,
+    }),
   }),
 });
 
-export const { useGetS3UploadUrlQuery } = fileUploadApiSlice;
+export const { useGetS3UploadUrlQuery, useUploadUrlMutation } =
+  fileUploadApiSlice;

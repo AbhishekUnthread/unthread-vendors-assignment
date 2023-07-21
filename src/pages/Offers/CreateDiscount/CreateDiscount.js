@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useReducer } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import "./CreateDiscount.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
@@ -10,6 +12,7 @@ import ReturnAndExchangeCondition from "../ReturnAndExchangeCondition";
 import SearchBorder from "../../../components/SearchBorder/SearchBorder";
 import DiscountCombination from "../DiscountCombination";
 import TableSearch from "../../../components/TableSearch/TableSearch";
+import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
@@ -17,6 +20,9 @@ import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import info from "../../../assets/icons/info.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 import {
   FormControl,
   MenuItem,
@@ -33,11 +39,15 @@ import {
   Radio,
   Popover,
   TextareaAutosize,
+  Typography
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import InfoHeader from "../../../components/Header/InfoHeader";
+import DiscountFormat from "../../../components/DiscountFormat/DiscountFormat";
+import MinimumRequirement from "../../../components/DiscountFormat/MinimumRequirement";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -54,7 +64,120 @@ const taggedWithData = [
   { title: "Tag 12", value: "tag12" },
 ];
 
+const initialQueryFilterState = {
+  pageSize: 1,
+  pageNo: null,
+  totalCount: 0,
+};
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_NO") {
+    return {
+      ...state,
+      pageNo: +action.pageNo,
+    };
+  }
+  if (action.type === "SET_TOTAL_COUNT") {
+    return {
+      ...state,
+      totalCount: action.totalCount,
+    };
+  }
+  return initialQueryFilterState;
+};
+
+
+const maximumDiscountValidationSchema = Yup.object().shape({
+  limitDiscountNumber: Yup.boolean(),
+  limitUsagePerCustomer: Yup.boolean(),
+  total: Yup.number().test(
+    'is-total-numeric',
+    'required',
+    function (value) {
+      if (this.parent.limitDiscountNumber) {
+        return Yup.number().required().isValidSync(value);
+      }
+      return true;
+    }
+  ),
+  perCustomer: Yup.number().test(
+    'is-perCustomer-numeric',
+    'required',
+    function (value) {
+      if (this.parent.limitUsagePerCustomer) {
+        return Yup.number().required().isValidSync(value);
+      }
+      return true;
+    }
+  ),
+});
+
+
+const minimumRequirementValidationSchema = Yup.object().shape({
+    requirement: Yup.string()
+      .oneOf([ "none","minAmount","minQuantity"], "Invalid Requirement")
+      .required("Requirement is required"),
+
+    value: Yup.number()
+        .transform((value, originalValue) => {
+          return /^[0-9]*$/.test(originalValue) ? parseFloat(originalValue) : undefined;
+        })
+        .typeError("Value must be a number")
+        .test(
+        "is-value-required",
+        "Value is required",
+        function (value) {
+          const { requirement } = this.parent; 
+          if (requirement === "minAmount" || requirement === "minQuantity") {
+            return Yup.number().required().isValidSync(value);
+          }
+          return true;
+        }
+      ),
+});
+
+const discountFormatSchema = Yup.object().shape({
+  discountType: Yup.string()
+    .oneOf(
+      ["productDiscount", "cartDiscount", "freeShiping", "buyXGetY", "bulkDiscountPricing", ""],
+      "Invalid Discount Type"
+    )
+    .required("Discount Type is required"),
+  discountFormat: Yup.string()
+    .oneOf(
+      ["automaticDiscount", "discountCouponCode"],
+      "Invalid Discount Format"
+    )
+    .required("Discount Format is required"),
+    discountCode:  Yup.string()
+    .trim()
+    .matches(/^[a-zA-Z0-9]+$/, "Discount Code must be alphanumeric")
+    .max(6, "Discount Code cannot exceed 6 characters")
+    .required("Discount Code is required"),
+});
+
+const discountValidationSchema = Yup.object().shape({
+  discountName: Yup.string()
+    .trim()
+    .max(50, "Name cannot exceed 50 characters")
+    .required("Name is required"),
+  status: Yup.string()
+    .oneOf(["active", "in-active"], "Invalid status")
+    .required("Status is required"),
+  discountFormat: discountFormatSchema,
+  minimumRequirement :minimumRequirementValidationSchema,
+  returnExchange : Yup.string()
+  .oneOf(["allowed", "notAllowed"], "Invalid")
+  .required("required"),
+  maximumDiscount:maximumDiscountValidationSchema,
+});
+
 const CreateDiscount = () => {
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   // ? USER ROLE SELECT STARTS HERE
   const [discountType, setDiscountType] = React.useState("");
 
@@ -136,38 +259,88 @@ const CreateDiscount = () => {
   const handleDelete = () => {
     console.info("You clicked the delete icon.");
   };
+  
+  const nextPageHandler = () => {
+    const { pageNo, totalCount } = queryFilterState;
+    if (pageNo + 1 > totalCount) {
+      return;
+    }
+    navigate(`/offers/discounts/edit/${pageNo + 1}`);
+  };
+
+  const prevPageHandler = () => {
+    const { pageNo } = queryFilterState;
+    if (pageNo - 1 === 0) {
+      return;
+    }
+    navigate(`/offers/discounts/edit/${pageNo - 1}`);
+  };
+
+  const backHandler = () => {
+    navigate("/offers/discounts");
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      discountName : "",
+      status : "active",
+      discountFormat :{
+        discountType : "",
+        discountFormat : null,
+        discountCode : ""
+      },
+      minimumRequirement: {
+        requirement : null,
+        value : "",
+      },
+      returnExchange : "allowed",
+      maximumDiscount : {
+        limitDiscountNumber:false,
+        limitUsagePerCustomer:false,
+        total: null,
+        perCustomer:null,
+      },
+      discountCombination: {
+        allowCombineWithOthers : false,
+        allowCombineWith :[]
+      }
+    },
+    enableReinitialize: true,
+    validationSchema: discountValidationSchema,
+    onSubmit: (values) => {
+     
+    },
+  });
+
+  // console.log({discountType:formik.values?.discountFormat?.discountType})
+  // console.log({discountFormat:formik.values?.discountFormat?.discountFormat})
+  // console.log({discountCode:formik.values?.discountFormat?.discountCode})
+  // console.log({MinimumRequirement:formik.values?.minimumRequirement?.requirement})
+  // console.log({MinimumRequirementValue:formik.values?.minimumRequirement?.value})
+
+
+
+
+
+  
+  // console.log({discountTypeError:formik?.errors?.discountFormat?.discountType})
+  // console.log({discountFormatError:formik?.errors?.discountFormat?.discountFormat})
+  // console.log({discountCodeError:formik?.errors?.discountFormat?.discountCode})
+  console.log({MinimumRequirementValueError:formik?.errors?.minimumRequirement?.value})
+  console.log({MinimumRequirementError:formik?.errors?.minimumRequirement?.requirement})
+
 
   return (
     <div className="page container-fluid position-relative">
-      <div className="row justify-content-between">
-        <div className="d-flex align-items-center w-auto ps-0">
-          <Link to="/offers/discounts" className="d-flex">
-            <img
-              src={arrowLeft}
-              alt="arrowLeft"
-              width={9}
-              className="c-pointer"
-            />
-          </Link>
-
-          <h5 className="page-heading ms-2 ps-1">Create Discount</h5>
-        </div>
-
-        <div className="d-flex align-items-center w-auto pe-0">
-          <img
-            src={paginationLeft}
-            alt="paginationLeft"
-            className="c-pointer"
-            width={30}
-          />
-          <img
-            src={paginationRight}
-            alt="paginationRight"
-            className="c-pointer"
-            width={30}
-          />
-        </div>
-      </div>
+      <InfoHeader
+        title={formik.values.discountName || "Create Discount"}
+        onBack={backHandler}
+        onPreview={() => {}}
+        onPrev={prevPageHandler}
+        onNext={nextPageHandler}
+        isEdit={false}
+      />
+      <formik className="offers-form" noValidate onSubmit={formik.handleSubmit}>
       <div className="row">
         <div className="col-lg-9 mt-4">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -197,12 +370,22 @@ const CreateDiscount = () => {
                     <OutlinedInput
                       placeholder="Enter Discount Name"
                       size="small"
+                      name="discountName"
+                      value={formik.values?.discountName}
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                      autoFocus={true}
                     />
                   </FormControl>
-
-                  <small className="mt-1 text-grey-6 font1">
+                  {!!formik.touched.discountName && formik.errors.discountName ? (
+                  <Typography variant="caption" color="#F67476">
+                    {formik.errors.discountName}
+                  </Typography>
+                ) : <small className="mt-1 text-grey-6 font1">
                     Note: User can't see this, its for your reference
-                  </small>
+                    </small>}
+
+
                 </div>
                 <div className="col-md-4 mt-3">
                   <div className="d-flex mb-1">
@@ -217,12 +400,23 @@ const CreateDiscount = () => {
                     </Tooltip>
                   </div>
 
-                  <ProductStatusToggle />
+                  <ProductStatusToggle 
+                    value={formik.values?.status}
+                    toggleData={["active", "in-active"]}
+                    handleStatus={(_, val) =>
+                      formik.setFieldValue("status", val)}   
+                    formik={formik}                
+                  />
+                  {formik.errors.status ? (
+                  <Typography variant="caption" color="#F67476">
+                    {formik.errors.status}
+                  </Typography>
+                ) : null}
                 </div>
               </div>
             </div>
           </div>
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
+          {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
             <div className="d-flex col-12 px-0 justify-content-between">
               <div className="d-flex align-items-center">
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
@@ -377,7 +571,18 @@ const CreateDiscount = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
+          <DiscountFormat
+            value ={formik.values?.discountFormat}
+            field = "discountFormat"
+            formik={formik}
+            touched={
+                  formik?.touched?.discountFormat
+                }
+            error={
+                  formik?.errors?.discountFormat
+                }
+    />
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
             <div className="d-flex col-12 px-0 justify-content-between">
               <div className="d-flex align-items-center">
@@ -1390,20 +1595,20 @@ const CreateDiscount = () => {
               </React.Fragment>
             )}
           </div>
-          <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
+          {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
             <div className="d-flex col-12 px-0 justify-content-between">
               <div className="d-flex align-items-center">
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
                   Minimum Requirement
                 </h6>
-                {/* <Tooltip title="Lorem ipsum" placement="top">
+                <Tooltip title="Lorem ipsum" placement="top">
                   <img
                     src={info}
                     alt="info"
                     className="ms-2 c-pointer"
                     width={13.5}
                   />
-                </Tooltip> */}
+                </Tooltip>
               </div>
             </div>
             <hr className="hr-grey-6 mt-3 mb-0" />
@@ -1492,7 +1697,18 @@ const CreateDiscount = () => {
                 </RadioGroup>
               </FormControl>
             </div>
-          </div>
+          </div> */}
+          <MinimumRequirement
+            value ={formik.values?.minimumRequirement}
+            field = "minimumRequirement"
+            formik={formik}
+            touched={
+                  formik?.touched?.minimumRequirement
+                }
+            error={
+                  formik?.errors?.minimumRequirement
+                }
+          />
           <CustomerEligibility />
 
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -1596,13 +1812,30 @@ const CreateDiscount = () => {
           </div>
           <ReturnAndExchangeCondition
             sectionHeading={"Return & Exchange Condition"}
+            value ={formik.values?.returnExchange}
+            field = "returnExchange"
+            formik={formik}
           />
-          <MaximumDiscountUsers />
+          <MaximumDiscountUsers 
+            value ={formik.values?.maximumDiscount}
+            field = "maximumDiscount"
+            formik={formik}
+            touched={
+                  formik?.touched?.maximumDiscount
+                }
+            error={
+                  formik?.errors?.maximumDiscount
+                }
+          />
 
           {/* <ReturnAndExchangeCondition
             sectionHeading={"Discount Combinations"}
           /> */}
-          <DiscountCombination showBuy={true} showBulk={true} />
+          <DiscountCombination 
+            value ={formik.values?.discountCombination}
+            field = "discountCombination"
+            formik={formik}
+           />
           <ScheduleDiscountCode />
         </div>
         <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
@@ -1675,18 +1908,27 @@ const CreateDiscount = () => {
           </div>
         </div>
       </div>
-      <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
+      <SaveFooterTertiary
+          show={ true}
+          onDiscard={backHandler}
+
+        />
+
+      </formik>
+
+      
+      {/* <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
           <Link to="/offers/discounts" className="button-red-outline py-2 px-4">
             <p>Discard</p>
           </Link>
-          {/* 
+          
           <Link
             to="/offers/discounts"
             className="button-lightBlue-outline py-2 px-4 ms-3"
           >
             <p>Save as Draft</p>
-          </Link> */}
+          </Link>
         </div>
         <div className="d-flex w-auto px-0">
           <Link
@@ -1702,7 +1944,8 @@ const CreateDiscount = () => {
             <p>Save</p>
           </Link>
         </div>
-      </div>
+      </div> */}
+      
     </div>
   );
 };

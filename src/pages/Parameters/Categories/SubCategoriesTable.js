@@ -183,11 +183,17 @@ const SubCategoriesTable = ({
       bulkEdit({ updates: newState })
         .unwrap()
         .then(() =>
-          dispatch(
+        {
+          const successMessage =
+          selectedStatus === "Set as Un-Archived"
+            ? "Sub Categories un-archived  successfully"
+            : selectedStatus === "Set as Archived"
+              ? "Sub Categories archived  successfully" : "Status updated successfully";
+           dispatch(
             showSuccess({
-              message: "Sub Categories Status updated successfully",
+              message: successMessage,
             })
-          )
+          )}
         );
       setSelectedStatus(null);
       setSelected([]);
@@ -255,7 +261,7 @@ const SubCategoriesTable = ({
       },
     });
     dispatch(
-      showSuccess({ message: "Sub category Un-Archived successfully" })
+      showSuccess({ message: "Sub Category Unarchived Successfully" })
     );
   }
 
@@ -357,10 +363,13 @@ const SubCategoriesTable = ({
                           >
                             <Link
                               className="text-decoration-none"
-                              onClick={editPageHandler.bind(
-                                null,
-                                index + 1
-                              )}
+                              onClick={() => {
+                                if (archived === true) {
+                                  editPageHandler(index + 1);
+                                  return;
+                                }
+                                return;
+                              }}
                             >
                               <p className="text-lightBlue rounded-circle fw-600">
                                 {row.name}
@@ -557,7 +566,7 @@ const SubCategoriesTable = ({
               {" "}
               "{selected.length == 0 ? rowData?.name : selected.length}"{" "}
             </span>
-            {selected.length > 1 ? "Categories ?" : " Category ?"}
+            {selected.length > 1 ? "Sub Categories ?" : "Sub Category ?"}
           </h5>
           <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
             <span className="text-blue-2"> 0 products </span>
