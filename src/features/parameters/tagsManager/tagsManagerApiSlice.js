@@ -65,7 +65,7 @@ export const tagsManagerApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: updates,
       }),
-      invalidatesTags: ["TagManager"],
+      invalidatesTags: ["TagsManager"],
     })
 
 
