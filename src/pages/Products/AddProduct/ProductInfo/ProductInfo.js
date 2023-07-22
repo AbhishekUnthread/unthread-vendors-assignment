@@ -9,9 +9,12 @@ import cancel from "../../../../assets/icons/cancel.svg";
 import arrowDown from "../../../../assets/icons/arrowDown.svg";
 import productInfoMedia1 from "../../../../assets/images/products/productInfoMedia1.svg";
 import productInfoMedia2 from "../../../../assets/images/products/productInfoMedia2.svg";
+import image from "../../../../assets/images/users/userLarge.svg"
+import image2 from "../../../../assets/images/unthreadLogo.png"
 // ! MATERIAL IMPORTS
 import {
   Autocomplete,
+  Avatar,
   Checkbox,
   Dialog,
   DialogActions,
@@ -42,7 +45,11 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import SearchIcon from "@mui/icons-material/Search";
-
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import SyncAltIcon from '@mui/icons-material/SyncAlt';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import CropIcon from '@mui/icons-material/Crop';
+import deleteMedia from "../../../../assets/icons/deleteMedia.svg";
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -632,6 +639,10 @@ const ProductInfo = () => {
           </div>
           <div className="row">
             <div className="col-3 ps-0 d-flex flex-column justify-content-between">
+              <div className="d-flex justify-content-between mediaToolCheckBox" style={{color: '#5C6D8E'}}>
+                <Checkbox />
+                <DragIndicatorIcon className="mt-2 me-3" />
+              </div>
               <div {...getRootProps({ style })} className="mt-3">
                 <input
                   id="primary"
@@ -641,7 +652,13 @@ const ProductInfo = () => {
                   //   event.target.value = null;
                   // }}
                 />
-                <img src={productInfoMedia1} className="w-100" alt="" />
+                <img src={image2} className="w-100 h-100" alt="" />
+              </div>
+              <div className="d-flex justify-content-end mediaToolDot" style={{color: '#5C6D8E'}}>
+                <SyncAltIcon className="mx-2" /> 
+                <InsertLinkIcon className="mx-2" />
+                <CropIcon className="mx-2" />
+                <img width="20px" height="25px" src={deleteMedia} className="mx-3" />
               </div>
               <button className="primary-image py-2 w-100 mt-3">
                 <p>Primary Image</p>
