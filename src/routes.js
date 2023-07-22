@@ -170,7 +170,7 @@ const router = () => {
                   element: <AddUser />,
                 },
                 {
-                  path: "allUsers/details",
+                  path: "allUsers/details/:id",
                   element: <UserDetails />,
                 },
                 {

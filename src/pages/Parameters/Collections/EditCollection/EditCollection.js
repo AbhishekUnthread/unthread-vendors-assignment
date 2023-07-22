@@ -281,9 +281,8 @@ const EditCollection = () => {
   const [decodedObject, setDecodedObject] = useState(null);
   const [index, setIndex] = useState(null);
 
-
-console.log(id, "id id id")
-console.log(filter, "filter filter filter")
+  console.log(id, "id did sd")
+  console.log(filter, "filter filter filter")
 
    const clearDate = () => {
     setStartDate1(null);
@@ -312,7 +311,7 @@ console.log(filter, "filter filter filter")
   }
 
   const backHandler = () => {
-    navigate("/parameters/collections");
+    navigate(`/parameters/collections?status=${id}`);
   }
 
   const {
@@ -329,9 +328,6 @@ console.log(filter, "filter filter filter")
 
     const nextPageHandler = () => {
     const { pageNo, totalCount } = queryFilterState;
-    console.log({pageNo:pageNo});
-    console.log({totalCount:totalCount})
-
     if (pageNo+1 > totalCount) {
       return;
     }
@@ -437,7 +433,7 @@ console.log(filter, "filter filter filter")
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
-        ...(collectionSeo== null ? { seo: collectionSeo } : "")
+        seo: collectionSeo
       }
       if (startDate1 != null) {
         collectionDetails.startDate = new Date(startDate1);
@@ -1242,7 +1238,11 @@ console.log(filter, "filter filter filter")
               )}
             </div>
             <div className="mt-4">
-              <SEO seoName={collectionTitle} seoValue={collectionSeo} handleSeoChange={setCollectionSeo} />
+              <SEO 
+                seoName={collectionTitle} 
+                seoValue={collectionSeo} 
+                handleSeoChange={setCollectionSeo} 
+              />
             </div>
 
             <SwipeableDrawer

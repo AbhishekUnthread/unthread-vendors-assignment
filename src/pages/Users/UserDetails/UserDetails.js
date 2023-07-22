@@ -1,5 +1,5 @@
-import { forwardRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { forwardRef, useState, useReducer, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
   Box,
   Tab,
@@ -13,15 +13,15 @@ import {
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
-import { useGetCustomerQuery } from "../../../features/customers/customer/customerApiSlice";
-
-import "./UserDetails.scss";
+import { useGetSingleCustomerQuery } from "../../../features/customers/customer/customerApiSlice";
 
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import UserOrders from "./UserOrders/UserOrders";
 import UserInformation from "./UserInformation/UserInformation";
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import TagsBox from "../../../components/TagsBox/TagsBox";
+
+import "./UserDetails.scss";
 
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import paginationRight from "../../../assets/icons/paginationRight.svg";
@@ -39,8 +39,54 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const initialQueryFilterState = {
+  pageSize: 1,
+  pageNo: null,
+  totalCount: 0,
+};
+
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_NO") {
+    return {
+      ...state,
+      pageNo: +action.pageNo,
+    };
+  }
+  if (action.type === "SET_TOTAL_COUNT") {
+    return {
+      ...state,
+      totalCount: action.totalCount,
+    };
+  }
+  return initialQueryFilterState;
+};
+
 const UserDetails = () => {
+  let { id } = useParams();
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
   const [value, setValue] = useState(0);
+
+  const {
+    data: customerData,
+    isLoading: customerIsLoading,
+    error: customerError,
+    isError: customerIsError,
+    isSuccess: customerIsSuccess,
+    isFetching: customerDataIsFetching,
+  } = useGetSingleCustomerQuery(queryFilterState, {
+    skip: queryFilterState.pageNo ? false : true,
+  });
+
+  console.log(customerData, 'customerData');
+
+  useEffect(() => {
+    if (id) {
+      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+    }
+  }, [id]);
   
   const handleChange = (event, newValue) => {
     setValue(newValue);
