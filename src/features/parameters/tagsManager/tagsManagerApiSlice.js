@@ -18,6 +18,22 @@ export const tagsManagerApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ["TagsManager"],
     }),
+    getAllTagsStatusCount: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+        return {
+          url: `/parameters/tagManager/count${queryString}`,
+        };
+      },
+      providesTags: ["TagsManager"],
+    }),
     createTag: builder.mutation({
       query: (tagsDetails) => ({
         url: "/parameters/tagManager",
@@ -65,7 +81,7 @@ export const tagsManagerApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: updates,
       }),
-      invalidatesTags: ["TagManager"],
+      invalidatesTags: ["TagsManager"],
     })
 
 
@@ -82,4 +98,5 @@ export const {
   useBulkCreateTagMutation,
   useBulkEditTagMutation,
   useBulkDeleteTagMutation,
+  useGetAllTagsStatusCountQuery,
 } = tagsManagerApiSlice;

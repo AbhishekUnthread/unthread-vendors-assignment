@@ -240,5 +240,43 @@ function MultipleUnArchiveModal(props) {
   )
 }
 
+function UnArchiveModalSecondary(props) {
+  const { onConfirm, onCancel, show, isLoading, message, title } = props;
+return (
+  <AlertDialog
+  onConfirm={onConfirm}
+  onCancel={onCancel}
+  show={show}
+  title={title ? `Un-Archive ${title} ?` : "Un-Archive ?"}
+  primaryMessage={`Do you want to Un-Archive <span class='text-blue-1'>${message}</span> ?`}
+  confirmText="Un-Archive"
+  isLoading={isLoading}
+  icon={archiveIcon}
+/>
+)
+}
+
+function UnMultipleArchiveModalSecondary(props) {
+  const { onConfirm, onCancel, show, isLoading, message, title, pronoun } = props;
+return (
+  <AlertDialog
+  onConfirm={onConfirm}
+  onCancel={onCancel}
+  show={show}
+  title={title ? `Un-Archive ${title} ?` : "Un-Archive?"}
+  primaryMessage={`This will Un-Archive ${
+    message
+      ? ` <span class='text-blue-1'>${message}</span>`
+      : "<span class='text-blue-1'>selected</span>"
+  } from the dashboard. `}
+  secondaryMessage={`Would you like to Un-Archive ${pronoun} ?`}
+  confirmText="Un-Archive"
+  isLoading={isLoading}
+  icon={archiveIcon}
+/>
+)
+}
+
+
 export default UnArchiveModal;
-export  {MultipleUnArchiveModal};
+export  {MultipleUnArchiveModal,UnArchiveModalSecondary,UnMultipleArchiveModalSecondary};
