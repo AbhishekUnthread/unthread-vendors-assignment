@@ -1,40 +1,37 @@
-import React from "react";
-// ! COMPONENT IMPORTS
+import { useState } from "react";
+import { 
+  Chip,
+  Popover, 
+  TextField, 
+  Tooltip 
+} from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DesktopDateTimePicker } from "@mui/x-date-pickers";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
 import UserActivityTable from "./UserActivityTable/UserActivityTable";
 import UserIPTable from "./UserIPTable/UserIPTable";
 import UserWishlistTable from "./UserWishlistTable/UserWishlistTable";
+
 import AppCustomerOverviewChart from "../../../../components/AppCustomerOverviewChart/AppCustomerOverviewChart";
-// ! IMAGES IMPORTS
+import AddNotesDialog from "../../../../components/AddNotesDialog/AddNotesDialog";
+
 import archivedGrey from "../../../../assets/icons/archivedGrey.svg";
 import editGrey from "../../../../assets/icons/editGrey.svg";
 import location from "../../../../assets/icons/location.svg";
 import activity from "../../../../assets/icons/activity.svg";
 import chart from "../../../../assets/icons/chart.svg";
 import refresh from "../../../../assets/icons/refresh.svg";
-// ! MATERIAL IMPORTS
-import { Chip, Popover, TextField, Tooltip } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DesktopDateTimePicker } from "@mui/x-date-pickers";
-// ! MATERIAL ICONS IMPORTS
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import AddNotesDialog from "../../../../components/AddNotesDialog/AddNotesDialog";
 
 const UserInformation = (addresses) => {
-  console.log(addresses, 'addresses');
-  // ? DATE PICKER STARTS
-  const [activityDateValue, setActivityDateValue] = React.useState(
-    // moment()
-    new Date()
-  );
+  const [activityDateValue, setActivityDateValue] = useState(new Date());
+  const [anchorActivityEl, setAnchorActivityEl] = useState(null);
 
   const handleActivityDateChange = (newValue) => {
     setActivityDateValue(newValue);
   };
-  // ? DATE PICKER ENDS
 
-  // * ACTIVITY POPOVERS STARTS
-  const [anchorActivityEl, setAnchorActivityEl] = React.useState(null);
   const handleActivityClick = (event) => {
     setAnchorActivityEl(event.currentTarget);
   };
@@ -43,10 +40,9 @@ const UserInformation = (addresses) => {
   };
   const openActivity = Boolean(anchorActivityEl);
   const idActivity = openActivity ? "simple-popover" : undefined;
-  // * ACTIVITY POPOVERS ENDS
 
   return (
-    <React.Fragment>
+    <>
       <div className="bg-black-15 border-grey-5 rounded-8 row ">
         <div className="col-12 d-flex mt-3 justify-content-between px-3">
           <div className="d-flex align-items-center">
@@ -324,7 +320,7 @@ const UserInformation = (addresses) => {
           <UserIPTable />
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
