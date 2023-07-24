@@ -18,6 +18,22 @@ export const vendorsApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ["Vendors"],
     }),
+    getAllVendorsStatusCount: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+        return {
+          url: `/parameters/vendor/count${queryString}`,
+        };
+      },
+      providesTags: ["Vendors"],
+    }),
     createVendor: builder.mutation({
       query: (vendorDetails) => ({
         url: "/parameters/vendor",
@@ -76,5 +92,6 @@ export const {
   useEditVendorMutation,
   useBulkCreateVendorMutation,
   useBulkEditVendorMutation,
-  useBulkDeleteVendorMutation
+  useBulkDeleteVendorMutation,
+  useGetAllVendorsStatusCountQuery,
 } = vendorsApiSlice;
