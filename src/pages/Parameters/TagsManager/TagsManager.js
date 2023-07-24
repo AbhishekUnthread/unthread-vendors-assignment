@@ -81,6 +81,7 @@ import {
   useBulkCreateTagMutation,
   useBulkEditTagMutation,
   useBulkDeleteTagMutation,
+  useGetAllTagsStatusCountQuery,
 } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
@@ -282,6 +283,13 @@ const TagsManager = () => {
     { ...queryParameters, ...TagTypeQuery, ...queryFilterState },
     { enabled: Object.keys(queryParameters).length > 0 }
   );
+
+  const { 
+    data: tagsStatusCount,
+    isLoading: tagsStatusCountIsLoading,
+    isSuccess: tagsStatusCountIsSuccess,
+    error: tagsStatusCountError,
+  } = useGetAllTagsStatusCountQuery();
 
   const [
     createTag,
@@ -1182,8 +1190,8 @@ const TagsManager = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />{" "}
-              <Tab label="Archive" className="tabs-head" />
+              <Tab label={`All (${tagsStatusCount?.data[0]?.active})`}  className="tabs-head" />{" "}
+              <Tab label={`Archive (${tagsStatusCount?.data[0]?.archived})`} className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
