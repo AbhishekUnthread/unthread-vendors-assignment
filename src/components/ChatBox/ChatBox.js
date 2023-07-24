@@ -284,6 +284,7 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
               padding: 15,
             }}
             minRows={2}
+            maxRows={2}
           />
           <div className="text-lightBlue c-pointer">
             <SentimentSatisfiedAltIcon />

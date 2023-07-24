@@ -131,26 +131,30 @@ const AllUsers = () => {
     initialUsersState
   );
 
+  // console.log(index, 'index dsklj lskdjf');
+
   const queryParameters = {};
-  if(queryFilterState.name)
-{
-  queryParameters.name = queryFilterState.name;
-}
+  if(queryFilterState.name){
+    queryParameters.name = queryFilterState.name;
+  }
 
   const {
-    data: customersData, // 
+    data: customersData,  
     isLoading: customersIsLoading, 
     isSuccess: customersIsSuccess, 
     error: customersError
-  } = useGetAllCustomersQuery({createdAt:1,pageSize:queryFilterState.pageSize,pageNo:queryFilterState.pageNo+1,...queryParameters});
+  } = useGetAllCustomersQuery({
+      createdAt:1,
+      pageSize:queryFilterState.pageSize,
+      pageNo:queryFilterState.pageNo+1,
+      ...queryParameters
+    });
 
-  const editHandler = (index) => {
-    const currentTabNo = index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-          console.log(index, 'index')
+  const editHandler = (id) => {
+    let customerId = {_id: id}
+    const paramsQuery = encodeURIComponent(JSON.stringify(customerId));    
 
-      console.log(currentTabNo, 'currentTabNo')
-
-    navigate(`./edit/${currentTabNo}`);
+    navigate(`./details/${paramsQuery}`);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -166,11 +170,10 @@ const AllUsers = () => {
       type:"SET_CUSTOMER_TYPE", customerType:newValue
     })
   };
+
   const handleSearchChange = (value) => {
     dispatchQueryFilter({ type: "SEARCH", name: value });
   };
-
-  // ? POPOVERS STARTS HERE
 
   // * FLAG POPOVERS STARTS
   const [anchorFlagEl, setAnchorFlagEl] = useState(null);
@@ -321,7 +324,7 @@ const AllUsers = () => {
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
-        <h4 className="page-heading w-auto ps-0">All Users</h4>
+        <h4 className="page-heading w-auto ps-0">All Customers</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
           <ViewLogsDrawer headingName={"User Module"} icon={customers} />
@@ -771,22 +774,54 @@ const AllUsers = () => {
           </TabPanel>
           <TabPanel value={usersState.customerType} index={1}>
             <AllUsersTable 
+              isLoading={customersIsLoading}
+              error={usersState.error}
               list={usersState.data}
+              totalCount={usersState.totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+              onEdit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={2}>
             <AllUsersTable 
+              isLoading={customersIsLoading}
+              error={usersState.error}
               list={usersState.data}
+              totalCount={usersState.totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+              onEdit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={3}>
             <AllUsersTable 
+              isLoading={customersIsLoading}
+              error={usersState.error}
               list={usersState.data}
+              totalCount={usersState.totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+              onEdit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={4}>
             <AllUsersTable 
+              isLoading={customersIsLoading}
+              error={usersState.error}
               list={usersState.data}
+              totalCount={usersState.totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+              onEdit={editHandler}
             />
           </TabPanel>
         </Paper>

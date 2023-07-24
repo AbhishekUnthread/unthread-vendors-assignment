@@ -1,4 +1,5 @@
 import { forwardRef, useState, useReducer, useEffect } from "react";
+import moment from "moment";
 import { Link, useParams } from "react-router-dom";
 import {
   Box,
@@ -13,7 +14,7 @@ import {
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
-import { useGetSingleCustomerQuery } from "../../../features/customers/customer/customerApiSlice";
+import { useGetAllCustomersQuery } from "../../../features/customers/customer/customerApiSlice";
 
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import UserOrders from "./UserOrders/UserOrders";
@@ -40,6 +41,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 const initialQueryFilterState = {
+  id: null,
   pageSize: 1,
   pageNo: null,
   totalCount: 0,
@@ -58,6 +60,12 @@ const queryFilterReducer = (state, action) => {
       totalCount: action.totalCount,
     };
   }
+  if (action.type === "SET_CUSTOMER") {
+    return {
+      ...state,
+      id: action?.id,
+    };
+  }
   return initialQueryFilterState;
 };
 
@@ -68,6 +76,7 @@ const UserDetails = () => {
     initialQueryFilterState
   );
   const [value, setValue] = useState(0);
+  const [paramsData, setParamsData] = useState(null);
 
   const {
     data: customerData,
@@ -76,17 +85,27 @@ const UserDetails = () => {
     isError: customerIsError,
     isSuccess: customerIsSuccess,
     isFetching: customerDataIsFetching,
-  } = useGetSingleCustomerQuery(queryFilterState, {
-    skip: queryFilterState.pageNo ? false : true,
-  });
+  } = useGetAllCustomersQuery(queryFilterState);
 
-  console.log(customerData, 'customerData');
+  const customerDetails = customerData?.data?.data[0];
+
+    console.log(customerDetails, 'customerDetails customerDetails');
 
   useEffect(() => {
-    if (id) {
-      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+    const paramsString = id;
+    const decodedString = decodeURIComponent(paramsString);
+    const parsedObject = JSON.parse(decodedString);
+
+    setParamsData(parsedObject);
+  }, []);
+
+  const customerId = paramsData?._id;
+
+  useEffect(() => {
+    if (customerId) {
+      dispatchQueryFilter({ type: "SET_CUSTOMER", id: customerId });
     }
-  }, [id]);
+  }, [customerId]);
   
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -132,12 +151,20 @@ const UserDetails = () => {
             />
           </Link>
           <div>
-            <h5 className="page-heading ms-2 ps-1">Saniya Shaikh</h5>
+            <h5 className="page-heading ms-2 ps-1">
+              {customerDetails?.firstName} {customerDetails?.lastName}
+            </h5>
             <div className="d-flex ms-2 ps-1 mt-1">
               <small className="text-lightBlue me-2">
-                Mumbai, Maharashtra, India
+                {customerDetails?.addresses[0]?.city?.name}, 
+                {customerDetails?.addresses[0]?.state?.name}, 
+                {customerDetails?.addresses[0]?.country?.name}
               </small>
-              <img src={indiaFlag} alt="indiaFlag" width={20} />
+              <img 
+                src={customerDetails?.addresses[0]?.country?.imageUrl} 
+                className=" rounded-3" 
+                width={20} 
+              />
             </div>
           </div>
         </div>
@@ -278,7 +305,7 @@ const UserDetails = () => {
             </Box>
 
             <TabPanel value={value} index={0}>
-              <UserInformation />
+              <UserInformation addresses={customerDetails?.addresses}/>
             </TabPanel>
             <TabPanel value={value} index={1}>
               <UserOrders />
@@ -296,15 +323,25 @@ const UserDetails = () => {
         </div>
         <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3">
-            <img src={userLarge} alt="userLarge" width={100} />
+            <img 
+              src={customerDetails?.imageUrl} 
+              alt="userLarge" 
+              className="rounded-circle" 
+              width={100} 
+              height={100} 
+            />
             <div className="d-flex w-100 mt-3">
               <div className="d-flex w-100 align-items-center">
-                <h6 className="text-lightBlue me-2">Saniya Shaikh</h6>
+                <h6 className="text-lightBlue me-2">
+                  {customerDetails?.firstName} {customerDetails?.lastName}
+                </h6>
                 <img src={verified} alt="verified" width={15} />
               </div>
               <img src={indiaFlag} alt="indiaFlag" width={18} />
             </div>
-            <small className="text-grey-6 my-2 d-block">#123456 • Female</small>
+            <small className="text-grey-6 my-2 d-block">#123456 • 
+              {customerDetails?.gender == "male" ? "Male" : "Female"}
+            </small>
             <div className="d-flex align-items-baseline flex-wrap">
               <small className="rounded-pill text-black fw-400 table-status px-2 py-1 me-2">
                 Active
@@ -323,24 +360,25 @@ const UserDetails = () => {
             </div>
             <small className="text-grey-6 mt- d-block">E-mail ID</small>
             <div className="d-flex mt-1">
-              <p className="text-lightBlue me-2">saniya@mydesignar.com</p>
+              <p className="text-lightBlue me-2">{customerDetails?.email}</p>
               <img src={copy} alt="copy" />
             </div>
             <small className="text-grey-6 mt-3 d-block">Mobile Number</small>
             <div className="d-flex mt-1">
-              <p className="text-lightBlue me-2">+91 9876543210</p>
+              <p className="text-lightBlue me-2">{customerDetails?.countryCode} {customerDetails?.phone}</p>
               <img src={copy} alt="copy" />
             </div>
             <small className="text-grey-6 mt-3 d-block">Date of Birth</small>
             <div className="d-flex mt-1">
-              <p className="text-lightBlue me-2">21 Nov, 1999</p>
+              <p className="text-lightBlue me-2">{moment(customerDetails).format("DD MMM, YYYY")}</p>
             </div>
             <small className="text-grey-6 mt-3 mb-1 d-block">User Group</small>
-            <Chip label="VIP" size="small" className="px-1" />
-            <Chip label="Verified User" size="small" className="ms-2 px-1" />
+            {customerDetails?.groups?.map((item) => (
+              <Chip key={item?.id} label={item?.name} size="small" className="px-1" />
+            ))}
           </div>
-          {/* <NotesBox />
-          <TagsBox /> */}
+          <NotesBox value={customerDetails?.notes}/>
+          {/* <TagsBox /> */}
         </div>
       </div>
     </div>

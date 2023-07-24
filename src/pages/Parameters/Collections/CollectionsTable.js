@@ -214,13 +214,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     },
   ];
 
-  // const emptyRows =
-  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
-
-  // const handleChangePage = (event, newPage) => {
-  //   setPage(newPage);
-  // };
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -259,11 +252,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     }
     setSelected(newSelected);
   };
-
-  // const handleChangeRowsPerPage = (event) => {
-  //   setRowsPerPage(parseInt(event.target.value, 10));
-  //   setPage(0);
-  // };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -572,15 +560,6 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                   </TableRow>
                 );
               })}
-            {/* {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
-              >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )} */}
           </TableBody>
         </Table>
       </TableContainer>
