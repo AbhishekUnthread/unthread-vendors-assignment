@@ -17,7 +17,7 @@ const ScheduleDiscountCode = () => {
       <div className="d-flex col-12 px-0 justify-content-between">
         <div className="d-flex align-items-center">
           <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-            Schedule Discount Code
+            Active Dates
           </h6>
         </div>
       </div>

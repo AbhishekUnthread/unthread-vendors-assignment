@@ -57,13 +57,13 @@ const DiscountCombination = ({ value, field, formik }) => {
 </Tooltip> */}
         </div>
       </div>
-      {/* <hr className="hr-grey-6 mt-3 mb-0" /> */}
+      <hr className="hr-grey-6 mt-3 mb-0" />
       {value?.allowCombineWithOthers &&(
         <>
-        <p className="fw-500 px-0 py-1 fs-6" style={{
+        {/* <p className="fw-500 px-0 py-1 fs-6" style={{
         color: "#96ABDE",
         fontFamily: "SF Pro Text", 
-      }}>This discount can be combined with</p>
+      }}>This discount can be combined with</p> */}
 
           <FormControlLabel
             control={
