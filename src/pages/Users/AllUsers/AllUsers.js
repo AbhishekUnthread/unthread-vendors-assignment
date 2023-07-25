@@ -111,6 +111,7 @@ const usersReducer = (state, action) => {
     };
   }
   if (action.type === "SET_CUSTOMER_TYPE") {
+    console.log(action, 'acations');
     return {
       ...state,
       customerType: action.customerType,
@@ -131,12 +132,19 @@ const AllUsers = () => {
     initialUsersState
   );
 
-  // console.log(index, 'index dsklj lskdjf');
-
   const queryParameters = {};
-  if(queryFilterState.name){
+
+  if(queryFilterState.name) {
     queryParameters.name = queryFilterState.name;
   }
+
+  const customerStatusQuery = 
+    usersState.customerType === 0 ? {createdAt: -1}
+  : usersState.customerType === 1 ? { status: "active" }
+  : usersState.customerType === 2 ? { status: "new" }
+  : usersState.customerType === 3 ? { createdAt: -1, status: "in-active" }
+  : usersState.customerType === 4 ? { createdAt: -1, status: "archieved" }
+  : {};
 
   const {
     data: customersData,  
@@ -147,12 +155,13 @@ const AllUsers = () => {
       createdAt:1,
       pageSize:queryFilterState.pageSize,
       pageNo:queryFilterState.pageNo+1,
-      ...queryParameters
+      ...queryParameters, ...customerStatusQuery
     });
 
   const editHandler = (id) => {
     let customerId = {_id: id}
-    const paramsQuery = encodeURIComponent(JSON.stringify(customerId));    
+    let combinedObject = {customerId, customerStatusQuery}
+    const paramsQuery = encodeURIComponent(JSON.stringify(combinedObject));    
 
     navigate(`./details/${paramsQuery}`);
   };

@@ -2,6 +2,16 @@ import apiSlice from "../../../app/api/apiSlice";
 
 export const customerGroupApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+
+    createCustomerGroup: builder.mutation({
+      query: (customerGroupDetails) => ({
+        url: "/customerGroup",
+        method: "POST",
+        body: customerGroupDetails,
+      }),
+      invalidatesTags: ["CustomerGroup"],
+    }),
+
     getAllCustomerGroup: builder.query({
       query: (queries) => {
         let queryString = "";
@@ -23,5 +33,6 @@ export const customerGroupApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-    useGetAllCustomerGroupQuery
+  useCreateCustomerGroupMutation,
+  useGetAllCustomerGroupQuery
 } = customerGroupApiSlice;

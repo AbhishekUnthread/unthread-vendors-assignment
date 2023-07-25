@@ -1,16 +1,5 @@
-import React from "react";
+import { useState, forwardRef } from "react";
 import { Link } from "react-router-dom";
-// ! COMPONENT IMPORTS
-import UserGroupsTable from "./UserGroupsTable";
-import TabPanel from "../../../components/TabPanel/TabPanel";
-import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import TableSearch from "../../../components/TableSearch/TableSearch";
-import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
-// ! IMAGES IMPORTS
-import cancel from "../../../assets/icons/cancel.svg";
-import sort from "../../../assets/icons/sort.svg";
-import customers from "../../../assets/icons/sidenav/customers.svg";
-// ! MATERIAL IMPORTS
 import {
   Autocomplete,
   Box,
@@ -30,22 +19,40 @@ import {
   TextField,
 } from "@mui/material";
 
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
+import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
+
+import UserGroupsTable from "./UserGroupsTable";
+import TabPanel from "../../../components/TabPanel/TabPanel";
+import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
+import TableSearch from "../../../components/TableSearch/TableSearch";
+import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
+
+import cancel from "../../../assets/icons/cancel.svg";
+import sort from "../../../assets/icons/sort.svg";
+import customers from "../../../assets/icons/sidenav/customers.svg";
+
+const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-// ? DIALOG TRANSITION ENDS HERE
 
 const UserGroups = () => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  // ? POPOVERS STARTS HERE
+  const {
+    data: customerGroupData,
+    isLoading: customerGroupIsLoading,
+    isSuccess: customerGroupIsSuccess,
+    error: customerGroupError,
+  } = useGetAllCustomerGroupQuery({createdAt: -1});
 
-  // * SORT POPOVERS STARTS
-  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+  const customerData =  customerGroupData?.data
+
+  console.log(customerData, 'customerData');
+
+  const [anchorSortEl, setAnchorSortEl] = useState(null);
 
   const handleSortClick = (event) => {
     setAnchorSortEl(event.currentTarget);
@@ -57,9 +64,6 @@ const UserGroups = () => {
 
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
-  // * SORT POPOVERS ENDS
-
-  // ? POPOVERS ENDS HERE
 
   const groupData = [
     { title: "No Group", value: "content1" },
@@ -73,8 +77,7 @@ const UserGroups = () => {
     { title: "Guest Users", value: "content9" },
   ];
 
-  // ? FIELD SETS DIALOG STARTS HERE
-  const [openManageGroups, setOpenManageGroups] = React.useState(false);
+  const [openManageGroups, setOpenManageGroups] = useState(false);
 
   const handleOpenManageGroups = () => {
     setOpenManageGroups(true);
@@ -83,7 +86,6 @@ const UserGroups = () => {
   const handleOpenManageGroupsClose = () => {
     setOpenManageGroups(false);
   };
-  // ? FIELD SETS DIALOG ENDS HERE
 
   return (
     <div className="container-fluid page">
@@ -315,13 +317,19 @@ const UserGroups = () => {
             </div>
           </div>
           <TabPanel value={value} index={0}>
-            <UserGroupsTable />
+            <UserGroupsTable 
+              data={customerData}
+            />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <UserGroupsTable />
+            <UserGroupsTable 
+              data={customerData}
+            />
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <UserGroupsTable />
+            <UserGroupsTable 
+              data={customerData}
+            />
           </TabPanel>
         </Paper>
       </div>

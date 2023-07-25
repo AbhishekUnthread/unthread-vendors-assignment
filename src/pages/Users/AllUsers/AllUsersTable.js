@@ -318,6 +318,7 @@ const AllUsersTable = ({
                               <div className="d-flex align-items-center">
                                 <img src={row?.addresses[0]?.country?.imageUrl} alt="indiaFlag" height={16} />
                                 <p className="text-lightBlue ms-2">
+                                  {row?.addresses[0]?.state?.name}, {" "}
                                   {row?.addresses[0]?.country?.name}
                                 </p>
                                 </div>
@@ -341,9 +342,21 @@ const AllUsersTable = ({
                     </TableCell>
                     <TableCell>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1">
-                          <small className="text-black fw-400">
-                            {row.active == true ? "Active" : "In-active"}
+                        <div className="rounded-pill d-flex px-2 py-1" 
+                          style={{
+                            background: row.status == "active" ? "#A6FAAF" : 
+                            row.status == "in-active" ? "#5C6D8E" : "#F67476" 
+                          }}
+                        >
+                          <small className="fw-400"
+                            style={{
+                              color: row.status == "active" ? "#202837" : "#fff"
+                            }}
+                          >
+                            {
+                              row.status == "active" ? "Active" : 
+                              row.status == "in-active" ? "In-active" : "Archived"
+                            }
                           </small>
                         </div>
                       </div>

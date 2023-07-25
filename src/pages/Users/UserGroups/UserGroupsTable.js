@@ -63,12 +63,14 @@ const headCells = [
 
 // ? TABLE ENDS HERE
 
-const UserGroupsTable = () => {
+const UserGroupsTable = ({ data }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  console.log(data, 'data dklj');
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
