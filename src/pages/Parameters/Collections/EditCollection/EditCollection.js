@@ -281,9 +281,6 @@ const EditCollection = () => {
   const [decodedObject, setDecodedObject] = useState(null);
   const [index, setIndex] = useState(null);
 
-  console.log(id, "id did sd")
-  console.log(filter, "filter filter filter")
-
    const clearDate = () => {
     setStartDate1(null);
     setEndDate1(null);
