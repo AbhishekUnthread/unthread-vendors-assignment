@@ -57,14 +57,26 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 // ? TABLE STARTS HERE
 
-const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, collectionType, hardDeleteCollection, bulkDelete, edit, rowsPerPage, page, changeRowsPerPage, changePage }) => {
+const CollectionsTable = ({ 
+  list,
+  error, 
+  isLoading, 
+  deleteData, 
+  pageLength, 
+  collectionType, 
+  hardDeleteCollection, 
+  bulkDelete, 
+  edit, 
+  rowsPerPage, 
+  page, 
+  changeRowsPerPage, 
+  changePage 
+}) => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  // const [page, setPage] = React.useState(0);
-  // const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const [state, setState] = React.useState([]);
   const [collectionId, setCollectionId] = React.useState('')
@@ -406,13 +418,12 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                       scope="row"
                       padding="none"
                     >
-                      <Link
-                        className="text-decoration-none"
-                      >
+                      <div className={collectionType != 3 ? "c-pointer" : ""}>
                         <div className="d-flex align-items-center py-2"
-                          onClick={()=>{
-                            dispatch(updateCollectionId(row._id));
-                            navigate("/parameters/collections/edit")
+                          onClick={(e) => {
+                            if(collectionType != 3) {
+                              edit(row,index+1,collectionType);
+                            }
                           }}
                         >
                           <img
@@ -426,7 +437,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                             {row.title}
                           </p>
                         </div>
-                      </Link>
+                      </div>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.totalProduct}</p>
