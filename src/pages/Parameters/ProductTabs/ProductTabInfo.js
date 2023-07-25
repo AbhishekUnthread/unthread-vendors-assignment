@@ -466,9 +466,7 @@ const ProductTabInfo = () => {
                   <div style={{ display: "flex", flexDirection: "column" }}>
                     <UploadMediaSmall
                       fileSrc={formik.values?.mediaUrl}
-                      error={
-                        !!formik.touched.mediaUrl && formik.errors.mediaUrl
-                      }
+                      error={formik.errors.mediaUrl}
                       onUpload={IconUploadHandler}
                       onBlur={formik.handleBlur}
                       name="mediaUrl"

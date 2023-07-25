@@ -60,7 +60,8 @@ const HEAD_CELLS = [
 ];
 
 const OptionsAttributeTable = (props) => {
-  const { error, isLoading, data, onSort, onDelete } = props;
+  const { formik, onAttributeAdd, error, isLoading, data, onSort, onDelete } =
+    props;
 
   //   const sortEndHandler = ({ oldIndex, newIndex }) => {
   //     onSort(arrayMove(structuredClone(data), oldIndex, newIndex));
@@ -89,21 +90,30 @@ const OptionsAttributeTable = (props) => {
       <Table sx={{ minWidth: 750 }} size="medium">
         <TableHeader sx={{ background: "#22213f" }} headCells={HEAD_CELLS} />
         <TableBodySortable useDragHandle>
-          <SortableRow index={1}>
-            <TableRow tabIndex={-1} className="table-rows">
-              <DragHandle />
-              <TableCell
-                sx={{ textTransform: "capitalize", cursor: "pointer" }}
-              >
-                <Attribute />
-                <SubAttribute />
-              </TableCell>
-            </TableRow>
-          </SortableRow>
+          {formik.values.map((attribute, index) => {
+            return (
+              <SortableRow key={index} index={index}>
+                <TableRow tabIndex={-1} className="table-rows">
+                  <DragHandle />
+                  <TableCell
+                    sx={{ textTransform: "capitalize", cursor: "pointer" }}
+                  >
+                    <Attribute formik={formik} index={index} />
+                    {/* <SubAttribute /> */}
+                  </TableCell>
+                </TableRow>
+              </SortableRow>
+            );
+          })}
+
           <TableRow tabIndex={-1} className="table-rows">
             <TableCell sx={{ padding: "0 16px" }}></TableCell>
             <TableCell sx={{ padding: "0 16px" }}>
-              <button type="button" className="reset link">
+              <button
+                onClick={onAttributeAdd}
+                type="button"
+                className="reset link"
+              >
                 <p>+ Add Input Field</p>
               </button>
             </TableCell>
