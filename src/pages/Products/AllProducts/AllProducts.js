@@ -346,7 +346,7 @@ const AllProducts = () => {
       : productType === 2
       ? { createdAt: -1, status: "in-active" }
       : productType === 3
-      ? { createdAt: -1, status: "archieved" }
+      ? { createdAt: -1, status: "archived" }
       : {};
 
   const filterParams = { ...filterParameter, ...ProductTypeQuery };
@@ -681,11 +681,12 @@ const AllProducts = () => {
   };
 
   const handleChangeRowsPerPage = (event) => {
+    console.log(event)
     dispatchQueryFilter({ type: "SET_PAGE_SIZE", value: event.target.value });
   };
 
   const handleChangePage = (_, pageNo) => {
-    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo:pageNo+1 });
   };
 
   // ? FILTER DRAWER STARTS HERE

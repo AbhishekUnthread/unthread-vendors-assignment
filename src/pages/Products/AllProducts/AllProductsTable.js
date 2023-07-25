@@ -66,6 +66,7 @@ import ArchiveModal, {
   MultipleArchiveModal,
 } from "../../../components/ArchiveModal/ArchiveModal";
 import UnArchiveModal, { MultipleUnArchiveModal } from "../../../components/UnArchiveModal/UnArchiveModal";
+import moment from "moment";
 
 const activityData = [
   {
@@ -679,7 +680,7 @@ const AllProductsTable = ({
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.pId}
+                    key={row._id}
                     selected={isItemSelected}
                     className="table-rows"
                   >
@@ -797,33 +798,56 @@ const AllProductsTable = ({
                         <img src={teamMember2} alt="teamMember3" />
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="d-flex align-items-center">
-                        <div
-                          className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
-                          style={{
-                            background:
-                              row.status == "active"
-                                ? "#A6FAAF"
-                                : row.status == "in-active"
-                                ? "#F67476"
-                                : row.status == "archieved"
-                                ? "#C8D8FF"
-                                : "#FEE1A3",
-                          }}
-                        >
-                          <small className="text-black fw-500">
-                            {row.status == "active"
-                              ? "Active"
-                              : row.status == "in-active"
-                              ? "In-Active"
-                              : row.status == "archieved"
-                              ? "Archived"
-                              : "Scheduled"}
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell>
+                    <TableCell style={{ width: 180, padding: 0 }}>
+                              <div className="d-block">
+                                <div
+                                  className="rounded-pill d-flex px-2 py-1  statusBoxWidth"
+                                  style={{
+                                    background:
+                                      row.status == "active"
+                                        ? "#A6FAAF"
+                                        : row.status == "in-active"
+                                        ? "#F67476"
+                                        : row.status == "archived"
+                                        ? "#C8D8FF"
+                                        : "#FEE1A3",
+                                  }}
+                                >
+                                  <small className="text-black fw-500">
+                                    {row.status == "active"
+                                      ? "Active"
+                                      : row.status == "in-active"
+                                      ? "In-Active"
+                                      : row.status == "archived"
+                                      ? "Archived"
+                                      : "Scheduled"}
+                                  </small>
+                                </div>
+                                {row.status == "scheduled" && (
+                                  <div>
+                                    <small className="text-blue-2">
+                                      {row.startDate && (
+                                        <>
+                                          for{" "}
+                                          {moment(row.startDate).format(
+                                            "DD/MM/YYYY"
+                                          )}
+                                        </>
+                                      )}
+                                      {row.startDate && row.endDate && " "}
+                                      {row.endDate && (
+                                        <>
+                                          till{" "}
+                                          {moment(row.endDate).format(
+                                            "DD/MM/YYYY"
+                                          )}
+                                        </>
+                                      )}
+                                    </small>
+                                  </div>
+                                )}
+                              </div>
+                            </TableCell>
                     <TableCell style={{ width: 80, padding: 0 }}>
                       <div className="d-flex align-items-center">
                         <Tooltip title="View" placement="top">
@@ -908,7 +932,7 @@ const AllProductsTable = ({
                               }}
                               className="text-lightBlue font2 d-block"
                             >
-                              Archive Product
+                             { archived ? " Archive Product" : "Un-Archive Product"}
                             </small>
                             <img src={deleteRed} alt="delete" className="" />
                           </div>
@@ -1313,7 +1337,7 @@ const AllProductsTable = ({
         onCancel={() => setShowUnArchivedModal(false)}
         show={showUnArchivedModal}
         title={"Un-Archive Product ?"}
-        primaryMessage={`Before un-archiving <span class='text-blue-1'>${rowData?.name}</span> Product,
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${rowData?.title}</span> Product,
         `}
         secondaryMessage={"Please set its status"}
         confirmText={"Un-Archive"}
