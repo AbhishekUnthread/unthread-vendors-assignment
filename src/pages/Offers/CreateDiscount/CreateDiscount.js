@@ -50,6 +50,8 @@ import DiscountFormat from "../../../components/DiscountFormat/DiscountFormat";
 import MinimumRequirement from "../../../components/DiscountFormat/MinimumRequirement";
 import DiscountValue from "../../../components/DiscountFormat/DiscountValue";
 import Filters from "../../../components/DiscountFormat/Filters";
+import CouponCode from "../../../components/DiscountFormat/CouponCode";
+import BuyXGetY from "../../../components/DiscountFormat/BuyXGetY";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -86,6 +88,16 @@ const queryFilterReducer = (state, action) => {
   }
   return initialQueryFilterState;
 };
+
+const couponCodeSchema = Yup.object().shape({
+  title: Yup.string()
+    .required('Title is required')
+    .max(40, 'Title must not exceed 40 characters'),
+  bodyText: Yup.string()
+    .required('Body text is required')
+    .max(100, 'Body text must not exceed 100 characters'),
+});
+
 
 const maximumDiscountValidationSchema = Yup.object().shape({
   limitDiscountNumber: Yup.boolean(),
@@ -167,6 +179,7 @@ const discountValidationSchema = Yup.object().shape({
     .oneOf(["allowed", "notAllowed"], "Invalid")
     .required("required"),
   maximumDiscount: maximumDiscountValidationSchema,
+  couponCode : couponCodeSchema,
 });
 
 const CreateDiscount = () => {
@@ -283,7 +296,7 @@ const CreateDiscount = () => {
       discountName: "",
       discountType: "",
       discountFormat: {
-        discountFormat: null,
+        discountFormat: "discountCouponCode",
         discountCode: "",
       },
       minimumRequirement: {
@@ -305,7 +318,30 @@ const CreateDiscount = () => {
         field : null,
         operator : null,
         fieldValue : null,
-      }
+      },
+      couponCode : {
+        showCouponCode:false,
+        title :null,
+        bodyText : null,
+      },
+      customerEligibility :{
+        customer : "all",
+        value : [],
+      },
+      discountValue : {
+        discountValue : null,
+        type : "percentage",
+        value : null,
+        cartLabel : null
+      },
+      buyXGetY : {
+        buy :null,
+      selectBuyItem: null,
+      buyProduct : null,
+      get :null,
+      selectGetItem : "",
+      getProduct : null,
+      }    
     },
     enableReinitialize: true,
     validationSchema: discountValidationSchema,
@@ -461,206 +497,13 @@ const CreateDiscount = () => {
               touched={formik?.touched?.discountFormat}
               error={formik?.errors?.discountFormat}
             />
-            {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
-              <div className="d-flex col-12 px-0 justify-content-between">
-                <div className="d-flex align-items-center">
-                  <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                    Filters
-                  </h6>
-                  <Tooltip title="Lorem ipsum" placement="top">
-                    <img
-                      src={info}
-                      alt="info"
-                      className="ms-2 c-pointer"
-                      width={13.5}
-                    />
-                  </Tooltip>
-                </div>
-              </div>
-              <hr className="hr-grey-6 mt-3 mb-0" />
-              <div className="col-12 px-0">
-                <div className="row">
-                  <div className="col-md-3 mt-3">
-                    <div className="d-flex mb-1">
-                      <p className="text-lightBlue">Field</p>
-                      <Tooltip title="Lorem ipsum" placement="top">
-                        <img
-                          src={info}
-                          alt="info"
-                          className="ms-2 c-pointer"
-                          width={13.5}
-                        />
-                      </Tooltip>
-                    </div>
-                    <FormControl
-                      sx={{ m: 0, minWidth: 120, width: "100%" }}
-                      size="small"
-                    >
-                      <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        value={field}
-                        onChange={handleFieldChange}
-                        size="small"
-                      >
-                        <MenuItem
-                          value=""
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          None
-                        </MenuItem>
-                        <MenuItem
-                          value={10}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          All Products
-                        </MenuItem>
-                        <MenuItem
-                          value={20}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Category
-                        </MenuItem>
-                        <MenuItem
-                          value={30}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Sub Category
-                        </MenuItem>
-                        <MenuItem
-                          value={40}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Collection
-                        </MenuItem>
-                        <MenuItem
-                          value={50}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Vendor Name
-                        </MenuItem>
-                        <MenuItem
-                          value={60}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Attributes
-                        </MenuItem>
-                        <MenuItem
-                          value={70}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Tags
-                        </MenuItem>
-                        <MenuItem
-                          value={80}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          SKU's
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <div className="col-md-3 mt-3">
-                    <div className="d-flex mb-1">
-                      <p className="text-lightBlue">Operator</p>
-                      <Tooltip title="Lorem ipsum" placement="top">
-                        <img
-                          src={info}
-                          alt="info"
-                          className="ms-2 c-pointer"
-                          width={13.5}
-                        />
-                      </Tooltip>
-                    </div>
-                    <FormControl
-                      sx={{ m: 0, minWidth: 120, width: "100%" }}
-                      size="small"
-                    >
-                      <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        value={operator}
-                        onChange={handleOperatorChange}
-                        size="small"
-                      >
-                        <MenuItem
-                          value=""
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          None
-                        </MenuItem>
-                        <MenuItem
-                          value={10}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Equal to
-                        </MenuItem>
-                        <MenuItem
-                          value={20}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Not Equal to
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <div className="col-md-6 mt-3">
-                    <div className="d-flex mb-1">
-                      <p className="text-lightBlue">Value</p>
-                      <Tooltip title="Lorem ipsum" placement="top">
-                        <img
-                          src={info}
-                          alt="info"
-                          className="ms-2 c-pointer"
-                          width={13.5}
-                        />
-                      </Tooltip>
-                    </div>
-                    <Autocomplete
-                      multiple
-                      id="checkboxes-tags-demo"
-                      sx={{ width: "100%" }}
-                      options={taggedWithData}
-                      disableCloseOnSelect
-                      getOptionLabel={(option) => option.title}
-                      size="small"
-                      renderOption={(props, option, { selected }) => (
-                        <li {...props}>
-                          <Checkbox
-                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                            checkedIcon={<CheckBoxIcon fontSize="small" />}
-                            checked={selected}
-                            size="small"
-                            style={{
-                              color: "#5C6D8E",
-                              marginRight: 0,
-                            }}
-                          />
-                          <small className="text-lightBlue">
-                            {option.title}
-                          </small>
-                        </li>
-                      )}
-                      renderInput={(params) => (
-                        <TextField
-                          size="small"
-                          {...params}
-                          placeholder="Search"
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
-                <div className="row mt-3">
-                  <div className="col-12">
-                    <small className="text-blue-2 c-pointer fw-500">
-                      + Add More Filter
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </div> */}
-            <DiscountValue/>
+            <DiscountValue
+              value={formik.values?.discountValue}
+              field="discountValue"
+              formik={formik}
+              touched={formik?.touched?.discountValue}
+              error={formik?.errors?.discountValue}
+            />
 
             <Filters
               value={formik.values?.filters}
@@ -669,159 +512,7 @@ const CreateDiscount = () => {
               touched={formik?.touched?.filters}
               error={formik?.errors?.filters}
             />
-            {(discountType === 10 || discountType === 20) && (
-              <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
-                <div className="d-flex col-12 px-0 justify-content-between">
-                  <div className="d-flex align-items-center">
-                    <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                      Discount
-                    </h6>
-                    <Tooltip title="Lorem ipsum" placement="top">
-                      <img
-                        src={info}
-                        alt="info"
-                        className="ms-2 c-pointer"
-                        width={13.5}
-                      />
-                    </Tooltip>
-                  </div>
-                </div>
-                <hr className="hr-grey-6 mt-3 mb-0" />
-                <div className="col-12 px-0">
-                  <div className="row mt-3">
-                    <div className="col-12">
-                      <div className="d-flex mb-1">
-                        <p className="text-lightBlue">Discount</p>
-                        <Tooltip title="Lorem ipsum" placement="top">
-                          <img
-                            src={info}
-                            alt="info"
-                            className="ms-2 c-pointer"
-                            width={13.5}
-                          />
-                        </Tooltip>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row align-items-center">
-                    <div className="col-md-5 discount-inputs-two d-flex align-items-center">
-                      <FormControl className="px-0">
-                        <OutlinedInput
-                          placeholder="Enter Discount"
-                          size="small"
-                          endAdornment={
-                            <InputAdornment
-                              position="end"
-                              aria-describedby={idDiscountPercent}
-                              onClick={handleDiscountPercent}
-                              className="c-pointer"
-                            >
-                              <span className="d-flex align-items-center">
-                                <p className="text-lightBlue">Percentage</p>
-                                <img
-                                  src={arrowDown}
-                                  alt="arrow"
-                                  className="ms-2"
-                                />
-                              </span>
-                            </InputAdornment>
-                          }
-                        />
-                      </FormControl>
-                      <Popover
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "left",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "left",
-                        }}
-                        id={idDiscountPercent}
-                        open={openDiscountPercent}
-                        anchorEl={anchorDiscountPercentEl}
-                        onClose={handleDiscountPercentClose}
-                      >
-                        <div className="py-2 px-1">
-                          <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                            Percentage Discount
-                          </small>
-                          <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                            Fixed Amount
-                          </small>
-                        </div>
-                      </Popover>
-
-                      <div className="w-auto text-center ms-3">
-                        <p className="text-lightBlue">on</p>
-                      </div>
-                    </div>
-                    <div className="col-md-7">
-                      <FormControl
-                        sx={{ m: 0, minWidth: 120, width: "100%" }}
-                        size="small"
-                      >
-                        <Select
-                          labelId="demo-select-small"
-                          id="demo-select-small"
-                          // value={field}
-                          // onChange={handleFieldChange}
-                          size="small"
-                        >
-                          <MenuItem
-                            value=""
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            None
-                          </MenuItem>
-                          <MenuItem
-                            value={10}
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            Value 1
-                          </MenuItem>
-                          <MenuItem
-                            value={20}
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            Value 2
-                          </MenuItem>
-                          <MenuItem
-                            value={30}
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            Value 3
-                          </MenuItem>
-                        </Select>
-                      </FormControl>
-                    </div>
-                    {discountType === 20 && (
-                      <div className="col-md-12 mt-3">
-                        <div className="d-flex mb-1">
-                          <p className="text-lightBlue">Cart Label</p>
-                          {/* <Tooltip title="Lorem ipsum" placement="top">
-                        <img
-                          src={info}
-                          alt="info"
-                          className="ms-2 c-pointer"
-                          width={13.5}
-                        />
-                      </Tooltip> */}
-                        </div>
-                        <FormControl className="px-0 w-100">
-                          <OutlinedInput
-                            placeholder="Enter Label"
-                            size="small"
-                          />
-                        </FormControl>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-            {discountType === 40 && (
-              <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
+              {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
                 <div className="bg-black-21 border-grey-5 rounded-8 p-3 col-12">
                   <div className="row">
                     <div className="d-flex col-12 justify-content-between">
@@ -1205,14 +896,14 @@ const CreateDiscount = () => {
                         <div className="col-md-12 mt-3">
                           <div className="d-flex mb-1">
                             <p className="text-lightBlue">Cart Label</p>
-                            {/* <Tooltip title="Lorem ipsum" placement="top">
+                            <Tooltip title="Lorem ipsum" placement="top">
                         <img
                           src={info}
                           alt="info"
                           className="ms-2 c-pointer"
                           width={13.5}
                         />
-                      </Tooltip> */}
+                      </Tooltip>
                           </div>
                           <FormControl className="px-0 w-100">
                             <OutlinedInput
@@ -1225,9 +916,16 @@ const CreateDiscount = () => {
                     </div>
                   </div>
                 )}
-              </div>
-            )}
-            {discountType === 50 && (
+              </div> */}
+
+              <BuyXGetY
+              value={formik.values?.buyXGetY}
+              field="buyXGetY"
+              formik={formik}
+              touched={formik?.touched?.buyXGetY}
+              error={formik?.errors?.buyXGetY}
+              />
+
               <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
                 <div className="d-flex col-12 px-0 justify-content-between">
                   <div className="d-flex align-items-center">
@@ -1415,183 +1113,14 @@ const CreateDiscount = () => {
                   </small>
                 </div>
               </div>
-            )}
 
-            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={checkedDiscount}
-                    onChange={handleDiscountCheckboxChange}
-                    inputProps={{ "aria-label": "controlled" }}
-                    size="small"
-                    style={{
-                      color: "#5C6D8E",
-                      marginRight: 0,
-                      width: "auto",
-                    }}
-                  />
-                }
-                label="Show Coupon Code on Cart Page"
-                sx={{
-                  "& .MuiTypography-root": {
-                    fontSize: "0.875rem",
-                    color: "#c8d8ff",
-                    // color: "#5c6d8e",
-                  },
-                }}
-                className="px-0"
-              />
-
-              {checkedDiscount && (
-                <React.Fragment>
-                  <hr className="hr-grey-6 my-3" />
-                  <div className="d-flex flex-column px-0">
-                    <div className="d-flex mb-1">
-                      <p className="text-lightBlue">Title</p>
-                      <Tooltip title="Lorem ipsum" placement="top">
-                        <img
-                          src={info}
-                          alt="info"
-                          className="ms-2 c-pointer"
-                          width={13.5}
-                        />
-                      </Tooltip>
-                    </div>
-                    <FormControl className="px-0">
-                      <OutlinedInput
-                        placeholder="Enter Discount Name"
-                        size="small"
-                      />
-                    </FormControl>
-                    <div className="d-flex mb-1 mt-3">
-                      <p className="text-lightBlue">Body Text</p>
-                      <Tooltip title="Lorem ipsum" placement="top">
-                        <img
-                          src={info}
-                          alt="info"
-                          className="ms-2 c-pointer"
-                          width={13.5}
-                        />
-                      </Tooltip>
-                    </div>
-                    <TextareaAutosize
-                      aria-label="meta description"
-                      placeholder="Type Something"
-                      style={{
-                        background: "#15142A",
-                        color: "#c8d8ff",
-                        borderRadius: 5,
-                      }}
-                      minRows={3}
-                    />
-                  </div>
-                </React.Fragment>
-              )}
-            </div>
-            {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
-            <div className="d-flex col-12 px-0 justify-content-between">
-              <div className="d-flex align-items-center">
-                <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                  Minimum Requirement
-                </h6>
-                <Tooltip title="Lorem ipsum" placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className="ms-2 c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip>
-              </div>
-            </div>
-            <hr className="hr-grey-6 mt-3 mb-0" />
-            <div className="col-12 d-flex flex-column px-0 mt-2">
-              <FormControl>
-                <RadioGroup
-                  aria-labelledby="demo-controlled-radio-buttons-group"
-                  name="controlled-radio-buttons-group"
-                  value={minimumRequirement}
-                  onChange={handleMinimumRequirementChange}
-                >
-                  <FormControlLabel
-                    value="none"
-                    control={<Radio size="small" />}
-                    label="None"
-                    sx={{
-                      "& .MuiTypography-root": {
-                        fontSize: 13,
-                        color: "#c8d8ff",
-                        // color: "#5C6D8E",
-                      },
-                    }}
-                  />
-                  <FormControlLabel
-                    value="minAmount"
-                    control={<Radio size="small" />}
-                    label="Minimum Amount Purchased"
-                    sx={{
-                      "& .MuiTypography-root": {
-                        fontSize: 13,
-                        color: "#c8d8ff",
-                        // color: "#5C6D8E",
-                      },
-                    }}
-                  />
-
-                  {minimumRequirement === "minAmount" && (
-                    <div className="discount-inputs ps-4 ms-1 mb-3">
-                      <div className="d-flex mb-1">
-                        <p className="text-lightBlue">Value</p>
-                        <Tooltip title="Lorem ipsum" placement="top">
-                          <img
-                            src={info}
-                            alt="info"
-                            className="ms-2 c-pointer"
-                            width={13.5}
-                          />
-                        </Tooltip>
-                      </div>
-                      <FormControl className="px-0">
-                        <OutlinedInput placeholder="Enter Value" size="small" />
-                      </FormControl>
-                    </div>
-                  )}
-                  <FormControlLabel
-                    value="minQuantity"
-                    control={<Radio size="small" />}
-                    label="Minimum Quantity of Items"
-                    sx={{
-                      "& .MuiTypography-root": {
-                        fontSize: 13,
-                        color: "#c8d8ff",
-                        // color: "#5C6D8E",
-                      },
-                    }}
-                  />
-
-                  {minimumRequirement === "minQuantity" && (
-                    <div className="discount-inputs ps-4 ms-1">
-                      <div className="d-flex mb-1">
-                        <p className="text-lightBlue">Value</p>
-                        <Tooltip title="Lorem ipsum" placement="top">
-                          <img
-                            src={info}
-                            alt="info"
-                            className="ms-2 c-pointer"
-                            width={13.5}
-                          />
-                        </Tooltip>
-                      </div>
-                      <FormControl className="px-0">
-                        <OutlinedInput placeholder="Enter Value" size="small" />
-                      </FormControl>
-                    </div>
-                  )}
-                </RadioGroup>
-              </FormControl>
-            </div>
-          </div> */}
+            <CouponCode
+              value={formik.values?.couponCode}
+              field="couponCode"
+              formik={formik}
+              touched={formik?.touched?.couponCode}
+              error={formik?.errors?.couponCode}
+            />
             <MinimumRequirement
               value={formik.values?.minimumRequirement}
               field="minimumRequirement"
@@ -1599,7 +1128,13 @@ const CreateDiscount = () => {
               touched={formik?.touched?.minimumRequirement}
               error={formik?.errors?.minimumRequirement}
             />
-            <CustomerEligibility />
+            <CustomerEligibility
+              value={formik.values?.customerEligibility}
+              field="customerEligibility"
+              formik={formik}
+              touched={formik?.touched?.customerEligibility}
+              error={formik?.errors?.customerEligibility}
+             />
 
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
               <div className="d-flex col-12 px-0 justify-content-between">
@@ -1713,10 +1248,6 @@ const CreateDiscount = () => {
               touched={formik?.touched?.maximumDiscount}
               error={formik?.errors?.maximumDiscount}
             />
-
-            {/* <ReturnAndExchangeCondition
-            sectionHeading={"Discount Combinations"}
-          /> */}
             <DiscountCombination
               value={formik.values?.discountCombination}
               field="discountCombination"
@@ -1799,35 +1330,6 @@ const CreateDiscount = () => {
         </div>
         <SaveFooterTertiary show={true} onDiscard={backHandler} />
       </formik>
-
-      {/* <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
-        <div className="d-flex w-auto px-0">
-          <Link to="/offers/discounts" className="button-red-outline py-2 px-4">
-            <p>Discard</p>
-          </Link>
-          
-          <Link
-            to="/offers/discounts"
-            className="button-lightBlue-outline py-2 px-4 ms-3"
-          >
-            <p>Save as Draft</p>
-          </Link>
-        </div>
-        <div className="d-flex w-auto px-0">
-          <Link
-            to="/offers/discounts"
-            className="button-lightBlue-outline py-2 px-4 ms-3"
-          >
-            <p>Save & Add Another</p>
-          </Link>
-          <Link
-            to="/offers/discounts"
-            className="button-gradient py-2 px-4 w-auto ms-3"
-          >
-            <p>Save</p>
-          </Link>
-        </div>
-      </div> */}
     </div>
   );
 };

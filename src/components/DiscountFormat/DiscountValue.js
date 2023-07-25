@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FormControl,
   MenuItem,
@@ -12,8 +12,7 @@ import info from "../../assets/icons/info.svg";
 import arrowDown from "../../assets/icons/arrowDown.svg";
 
 
-function DiscountValue() {
-
+function DiscountValue({ value, field, formik, touched, error }) {
   // * DISCOUNT PERCENT POPOVERS STARTS
   const [anchorDiscountPercentEl, setAnchorDiscountPercentEl] =
     React.useState(null);
@@ -27,6 +26,10 @@ function DiscountValue() {
   const idDiscountPercent = openDiscountPercent ? "simple-popover" : undefined;
   // * DICOUNT PERCENT POPOVERS ENDS
 
+  const handleChange = (newValue)=>{
+    formik.setFieldValue(`${field}.type`, newValue);
+    setAnchorDiscountPercentEl(null);
+  }
   return ( 
    <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
       <div className="d-flex col-12 px-0 justify-content-between">
@@ -65,6 +68,10 @@ function DiscountValue() {
           <div className="col-md-5 discount-inputs-two d-flex align-items-center">
             <FormControl className="px-0">
               <OutlinedInput
+                value={value?.discountValue}
+                onChange={formik?.handleChange}
+                onBlur={formik?.handleBlur}
+                name={`${field}.discountValue`}    
                 placeholder="Enter Discount"
                 size="small"
                 endAdornment={
@@ -75,7 +82,7 @@ function DiscountValue() {
                     className="c-pointer"
                   >
                     <span className="d-flex align-items-center">
-                      <p className="text-lightBlue">Percentage</p>
+                      <p className="text-lightBlue"> {value?.type==="percentage"?`Percentage`:`Fixed Amount`} </p>
                       <img src={arrowDown} alt="arrow" className="ms-2" />
                     </span>
                   </InputAdornment>
@@ -95,12 +102,13 @@ function DiscountValue() {
               open={openDiscountPercent}
               anchorEl={anchorDiscountPercentEl}
               onClose={handleDiscountPercentClose}
+
             >
-              <div className="py-2 px-1">
-                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+              <div className="py-2 px-1 c-pointer">
+                <small className="text-lightBlue rounded-3 p-2 hover-back d-block" onClick={() => handleChange("percentage")}>
                   Percentage Discount
                 </small>
-                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                <small className="text-lightBlue rounded-3 p-2 hover-back d-block" onClick={() => handleChange("fixed")}>
                   Fixed Amount
                 </small>
               </div>
@@ -118,9 +126,11 @@ function DiscountValue() {
               <Select
                 labelId="demo-select-small"
                 id="demo-select-small"
-                // value={field}
-                // onChange={handleFieldChange}
+                name={`${field}.value`}
+                value={value?.value}
+                onChange={formik?.handleChange}
                 size="small"
+                placeholder="Enter Value"
               >
                 <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
                   None
@@ -151,7 +161,13 @@ function DiscountValue() {
                 </Tooltip> */}
               </div>
               <FormControl className="px-0 w-100">
-                <OutlinedInput placeholder="Enter Label" size="small" />
+                <OutlinedInput
+                value={value?.cartLabel}
+                onChange={formik?.handleChange}
+                onBlur={formik?.handleBlur}
+                name={`${field}.cartLabel`}    
+                 placeholder="Enter Label" 
+                 size="small" />
               </FormControl>
             </div>
           }

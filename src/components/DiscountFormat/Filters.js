@@ -21,6 +21,7 @@ import info from "../../assets/icons/info.svg";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { useGetAllProductTabsQuery } from '../../features/parameters/productTabs/productTabsApiSlice';
+import { useGetAllVendorsQuery } from '../../features/parameters/vendors/vendorsApiSlice';
 
 function Filters({ value, field, formik, touched, error }) {
   const {
@@ -30,9 +31,22 @@ function Filters({ value, field, formik, touched, error }) {
     isError: productsTabIsError,
     isSuccess: productsTabIsSuccess,
     isFetching: productsTabDataIsFetching,
-  } = useGetAllProductTabsQuery(undefined, {
-    skip: true,
-  });
+  } = useGetAllProductTabsQuery(
+    {createdAt : -1},
+    // undefined, 
+    // {
+    // skip: value?.field !==10 ,
+    // }
+  );
+
+  const {
+    data: vendorsData,
+    isLoading: vendorsIsLoading,
+    isSuccess: vendorsIsSuccess,
+    error: vendorsError,
+  } = useGetAllVendorsQuery(
+    { createdAt : -1 },
+  );
   
     // ? FIELD SELECT STARTS HERE
   // const [field, setField] = React.useState("");
@@ -50,6 +64,7 @@ function Filters({ value, field, formik, touched, error }) {
   };
   // ? OPERATOR SELECT ENDS HERE
   console.log("discountFilter", value?.field)
+  console.log("dataaaaa", vendorsData?.data?.data)
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -207,11 +222,11 @@ function Filters({ value, field, formik, touched, error }) {
               />
             </Tooltip>
           </div>
-          {/* <Autocomplete
+{vendorsData && (<Autocomplete
             multiple
             id="checkboxes-tags-demo"
             sx={{ width: "100%" }}
-            // options={taggedWithData}
+            options={vendorsData?.data?.data.map(item=>({title : item.name}))}
             disableCloseOnSelect
             getOptionLabel={(option) => option.title}
             size="small"
@@ -239,7 +254,7 @@ function Filters({ value, field, formik, touched, error }) {
                 placeholder="Search"
               />
             )}
-          /> */}
+          />)}
         </div>
       </div>
       <div className="row mt-3">

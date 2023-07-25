@@ -270,6 +270,9 @@ console.log("first",discountsData?.data[0])
     }
 }, [searchParams])
 
+const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk/Tiered Discount', 'Free Shipping'];
+
+
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -325,7 +328,7 @@ console.log("first",discountsData?.data[0])
             <hr className="hr-grey-6 my-0" />
             <DialogContent className="py-3 px-4">
               <div className="row">
-                {[...Array(5)].map((elementInArray, index) => (
+                {discountType.map((type, index) => (
                   <div className="col-6 my-3">
                     <Link
                       to="/offers/discounts/create"
@@ -337,7 +340,7 @@ console.log("first",discountsData?.data[0])
                         width={100}
                       />
                       <div className="d-flex ms-3 flex-column">
-                        <p className="text-lightBlue">Product Discount</p>
+                        <p className="text-lightBlue">{type}</p>
                         <small className="d-block mt-2 text-grey-6">
                           Lorem ipsum dolor, sit amet consectetur adipisicing
                           elit. Esse odio amet
