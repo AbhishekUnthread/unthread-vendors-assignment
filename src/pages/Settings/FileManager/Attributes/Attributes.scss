@@ -1,0 +1,10 @@
+@import "../../../../styles/variables";
+
+.attributes {
+  .MuiInputAdornment-outlined {
+    p {
+      font-size: 13px;
+      color: $grey6 !important;
+    }
+  }
+}
