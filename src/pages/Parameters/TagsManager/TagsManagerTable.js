@@ -1,5 +1,5 @@
-import React, { forwardRef, useEffect } from "react";
-import { Link ,useNavigate} from "react-router-dom";
+import React, { forwardRef, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 // ! MATERIAL IMPORTS
 import {
   Box,
@@ -18,8 +18,8 @@ import {
   Typography,
 } from "@mui/material";
 // ! COMPONENT IMPORTS
-import unArchived from "../../../assets/images/Components/Archived.png"
-import closeModal from "../../../assets/icons/closeModal.svg"
+import unArchived from "../../../assets/images/Components/Archived.png";
+import closeModal from "../../../assets/icons/closeModal.svg";
 import {
   EnhancedTableHead,
   stableSort,
@@ -30,19 +30,31 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
-import { useBulkEditTagMutation, useEditTagMutation } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
+import {
+  useBulkEditTagMutation,
+  useEditTagMutation,
+} from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { useDispatch } from "react-redux";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { LoadingButton } from "@mui/lab";
-import question from "../../../assets/icons/question.svg"
+import question from "../../../assets/icons/question.svg";
 // import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
-import DeleteModal from "../../../components/DeleteModal/DeleteModal"
+import DeleteModal, {
+  DeleteModalSecondary,
+} from "../../../components/DeleteModal/DeleteModal";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
-
-
+import TableLoader from "../../../components/Loader/TableLoader";
+import UnArchiveModal, {
+  MultipleUnArchiveModal,
+  UnArchiveModalSecondary,
+  UnMultipleArchiveModalSecondary,
+} from "../../../components/UnArchiveModal/UnArchiveModal";
+import ArchiveModal, {
+  MultipleArchiveModal,
+} from "../../../components/ArchiveModal/ArchiveModal";
 
 // ? TABLE STARTS HERE
 function createData(tId, tagName, noOfProducts) {
@@ -55,35 +67,37 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 // ? DIALOG TRANSITION ENDS HERE
 
-const 
-TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,tagsType,bulkDelete,rowsPerPage,changeRowsPerPage,changePage,page}) => {
+const TagsManagerTable = ({
+  list,
+  edit,
+  deleteData,
+  isLoading,
+  error,
+  bulkEdit,
+  totalCount,
+  tagsType,
+  bulkDelete,
+  rowsPerPage,
+  changeRowsPerPage,
+  changePage,
+  page,
+  editTag,
+}) => {
+  const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  // const [page, setPage] = React.useState(0);
-  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [selectedStatus, setSelectedStatus] = React.useState(null);
-  const [state, setState] = React.useState([]);
-  const [showCreateModal, setShowCreateModal] = React.useState(false);
-  const [archive, setArchive] = React.useState(false);
-  const [name, setName] = React.useState(false);
   const [tag, setTag] = React.useState(false);
-  const [tagName, setTagName] = React.useState("")
-  const [tagStatus, setTagStatus] = React.useState("in-active")
-  const navigate = useNavigate();
-
-
-
-  const dispatch = useDispatch();
-
-  const[editTag,{
-    data: editData,
-    isLoading: editTagIsLoading,
-    isSuccess: editTagIsSuccess,
-    error: editTagError, 
-  }]=useEditTagMutation();
-
-
+  const [tagName, setTagName] = React.useState("");
+  const [showArchivedModal, setShowArchivedModal] = React.useState(false);
+  const [showMultipleArchivedModal, setShowMultipleArchivedModal] =
+    useState(false);
+  const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
+  const [showMultipleUnArhcivedModal, setShowMultipleUnArhcivedModal] =
+    useState(false);
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+  const [showMultipleDeleteModal, setShowMultipleDeleteModal] =
+    React.useState(false);
 
   const headCells = [
     {
@@ -104,7 +118,7 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,ta
     //   disablePadding: true,
     //   label: "Status",
     // },
-   
+
     {
       id: "actions",
       numeric: false,
@@ -113,94 +127,33 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,ta
     },
   ];
 
-  // const emptyRows =
-  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
-
-  // const handleChangePage = (event, newPage) => {
-  //   setPage(newPage);
-  // };
-
+  const handleMassAction = (status) => {
+    if (status === "Set as Un-Archived") {
+      setShowMultipleUnArhcivedModal(true);
+    }
+    if (status === "Archive") {
+      setShowMultipleArchivedModal(true);
+    }
+    if (status === "Delete") {
+      setShowMultipleDeleteModal(true);
+    }
+  };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
-  // const handleSelectAllClick = (event) => {
-  //   if (event.target.checked) {
-  //     const newSelected = list.map((n) => n._id);
-  //     setSelected(newSelected);
-  //     return;
-  //   }
-  //   setSelected([]);
-  // };
   const handleSelectAllClick = (event) => {
-    if(selected.length>0)
-    {
-    setSelected([]);
-    }
-    else if (event.target.checked) {
+    if (selected.length > 0) {
+      setSelected([]);
+    } else if (event.target.checked) {
       const newSelected = list.slice(0, rowsPerPage).map((n) => n._id);
       setSelected(newSelected);
-    }
-    else
-    {
+    } else {
       setSelected([]);
     }
   };
-
-  const handleStatusSelect = (status) => {
-    setSelectedStatus(status);
-  };
-  const handleMassAction  = (status) => {
-    if(status ==="Set as Un-Archived")
-    {
-      setShowUnArhcivedModal(true);
-    }
-    if(status ==="Archive")
-    {
-      setArchivedModal(true);
-    }
-    if(status ==="Delete")
-    {
-      setShowDeleteModal(true);
-    }
-    setSelectedStatus(status);
-  };
-  // useEffect(() => {
-  //   // Update the state only if the selectedStatus state has a value
-  //   if (selectedStatus !== null) {
-  //     const newState = selected.map((id) => {
-  //       if (selectedStatus === "Set as Active") {
-  //         return {
-  //           id,
-  //           status: "active",
-  //         };
-  //       } else if (selectedStatus === "Set as Draft") {
-  //         return {
-  //           id,
-  //           status: "draft",
-  //         };
-  //       }
-  //       else if(selectedStatus==="Archive"){
-  //         return{
-  //           id,
-  //           status:"archieved"
-  //         }
-  //       }
-  //        else {
-  //         return {
-  //           id,
-  //           status: "", // Set a default value here if needed
-  //         };
-  //       }
-  //     });
-  //     setState(newState);
-  //     bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
-  //     setSelectedStatus(null);
-  //   }
-  // }, [selected, selectedStatus]);
-  
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -222,122 +175,139 @@ TagsManagerTable = ({list,edit,deleteData,isLoading,error,bulkEdit,totalCount,ta
     setSelected(newSelected);
   };
 
-  // const handleChangeRowsPerPage = (event) => {
-  //   setRowsPerPage(parseInt(event.target.value, 10));
-  //   setPage(0);
-  // };
-
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const toggleArchiveModalHandler = (row) => {
-    setShowCreateModal((prevState) => !prevState);
-    setArchive(row);
-    setName(row?.name);
-  };
-
-  // const handleArchive =()=>{
-  //   deleteData(archive);
-  //   toggleArchiveModalHandler();
-  // }
-
   // Archive Starts Here
-  const [archivedModal,setArchivedModal] = React.useState(false)
 
   const handleArchive = (row) => {
-    setArchivedModal(true);
-    setTagName(row?.name)
+    setShowArchivedModal(true);
+    setTagName(row?.name);
     setTag(row);
-  }
-  const handleModalClose = () => {
-    setArchivedModal(false);
+  };
+  const handleArchiveModalClose = () => {
+    setShowArchivedModal(false);
+    setShowMultipleArchivedModal(false);
   };
   const handleArchivedModalOnSave = () => {
-    setArchivedModal(false);
-    if(selected.length>0)
-    {
-      const newState = selected.map((id) => {
-        return {
-          id,
-          status: "archieved",
-        };
-    });
-    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Tag Archived successfully" })));
-    setSelected([]);
-    }
-    else
-    {
-      editTag({
-        id: tag?._id,
-        details : {
-          status: "archieved",
-          showFilter:false
-        }
-    }).unwrap().then(()=>dispatch(showSuccess({ message: " Tag Archived successfully" })));
-    }
-  }
-// Archive ends here
-
-//unArchive Starts here
-const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
-
-const handleUnArchive = (row) => {
-  setShowUnArhcivedModal(true)
-  setTagName(row?.name)
-  setTag(row)
-}
-const closeUnArchivedModal = () => {
-  setShowUnArhcivedModal(false)
-}
-const handleValue = (value) => {
-  setTagStatus(value)
-}
-const handleUnArchived = () => {
-  if(selected.length>0)
-    {
-      const newState = selected.map((id) => {
-        return {
-          id,
-          status: "active",
-        };
-    });
-    bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
-    setSelected([]);
-    }
-  else{
     editTag({
       id: tag?._id,
-      details : {
-        status: "active",
-        showFilter:true
-      }
-  })
-  }
- setShowUnArhcivedModal(false)
- dispatch(showSuccess({ message: "Tag Un-Archived Successfully" }));
-}
-//unarchive ends here
-const [showDeleteModal, setShowDeleteModal] = React.useState(false);
-
-const handleDeleteOnClick = (row) => {
-  setShowDeleteModal((prevState) => !prevState);
-  setTag(row)
-  setTagName(row?.name);
-};
-const handleDelete =()=>{
-  if(selected.length >1)
-  {
-    bulkDelete({deletes :selected})
-    handleDeleteOnClick();
+      details: {
+        status: "archieved",
+        showFilter: false,
+      },
+    })
+      .unwrap()
+      .then(() =>
+        dispatch(showSuccess({ message: " Tag Archived Successfully" }))
+      );
+    setShowArchivedModal(false);
+    setTagName("");
+  };
+  const handleMultipleArchivedModalOnSave = () => {
+    const newState = selected.map((id) => {
+      return {
+        id,
+        status: "archieved",
+      };
+    });
+    bulkEdit({ updates: newState })
+      .unwrap()
+      .then(() =>
+        dispatch(
+          showSuccess({
+            message: `${
+              selected.length === 1 ? "Tag" : "Tags"
+            } Archived Successfully`,
+          })
+        )
+      );
     setSelected([]);
-  }
-  else{
-    deleteData(tag?._id);
-    handleDeleteOnClick();
-    // dispatch(showSuccess({ message: "Deleted this collection successfully" }));
-  }
+    setShowMultipleArchivedModal(false);
+  };
 
-}
+  // Archive ends here
 
+  //unArchive Starts here
+
+  const handleUnArchive = (row) => {
+    setShowUnArhcivedModal(true);
+    setTagName(row?.name);
+    setTag(row);
+  };
+  const closeUnArchivedModal = () => {
+    setShowUnArhcivedModal(false);
+    setShowMultipleUnArhcivedModal(false);
+  };
+  const handleUnArchived = () => {
+    editTag({
+      id: tag?._id,
+      details: {
+        status: "active",
+        showFilter: true,
+      },
+    })
+      .unwrap()
+      .then(() =>
+        dispatch(showSuccess({ message: "Tag Un-Archived successfully" }))
+      );
+    setShowUnArhcivedModal(false);
+  };
+  const handleMultipleUnArchived = () => {
+    const newState = selected.map((id) => {
+      return {
+        id,
+        status: "active",
+      };
+    });
+    bulkEdit({ updates: newState })
+      .unwrap()
+      .then(() =>
+        dispatch(
+          showSuccess({
+            message: `${
+              selected.length === 1 ? "Tag" : "Tags"
+            } Un-Archived Successfully`,
+          })
+        )
+      );
+    setShowMultipleUnArhcivedModal(false);
+    setSelected([]);
+  };
+  //unarchive ends here
+  //Delete Starts Here
+  const handleDeleteOnClick = (row) => {
+    setShowDeleteModal(true);
+    setTag(row);
+    setTagName(row?.name);
+  };
+  const handleDeleteModalClose = () => {
+    setShowDeleteModal(false);
+    setShowMultipleDeleteModal(false);
+  };
+  const handleDelete = () => {
+    deleteData(tag?._id)
+      .unwrap()
+      .then(() =>
+        dispatch(showSuccess({ message: "Tag Deleted successfully" }))
+      );
+    setShowDeleteModal(false);
+  };
+  const handleMultipleDelete = () => {
+    bulkDelete({ deletes: selected })
+      .unwrap()
+      .then(() =>
+        dispatch(
+          showSuccess({
+            message: `${
+              selected.length === 1 ? "Tag" : "Tags"
+            } Deleted Successfully`,
+          })
+        )
+      );
+    setShowMultipleDeleteModal(false);
+    setSelected([]);
+  };
+  //delete ends here
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -353,138 +323,114 @@ const handleDelete =()=>{
               </span>
             </small>
           </button>
-          {/* <button className="button-grey py-2 px-3 ms-2">
-            <small className="text-lightBlue">
-              Select all {totalCount} tags &nbsp;
-              <span
-                className="text-blue-2 c-pointer"
-                onClick={() => setSelected([])}
-              >
-                (Clear Selection)
-              </span>
-            </small>
-          </button> */}
-          {/* <TableEditStatusButton onSelect={handleStatusSelect} defaultValue={['Set as Active','Set as Draft']} headingName="Edit Status"/> */}
-          <TableMassActionButton headingName="Mass Action" onSelect={handleMassAction} defaultValue={tagsType!==1?['Edit','Archive']:['Delete','Set as Un-Archived']}/>
+          <TableMassActionButton
+            headingName="Mass Action"
+            onSelect={handleMassAction}
+            defaultValue={
+              tagsType !== 1
+                ? ["Edit", "Archive"]
+                : ["Delete", "Set as Un-Archived"]
+            }
+          />
         </div>
       )}
       {!error ? (
         list.length ? (
-        <>
-      <TableContainer>
-        <Table
-          sx={{ minWidth: 750 }}
-          aria-labelledby="tableTitle"
-          size="medium"
-        >
-          <EnhancedTableHead
-            numSelected={selected.length}
-            order={order}
-            orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
-            rowCount={list.length}
-            headCells={headCells}
-          />
-          <TableBody>
-            {stableSort(list, getComparator(order, orderBy))
-              .map((row, index) => {
-                const isItemSelected = isSelected(row?._id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+          <>
+            <TableContainer>
+              <Table
+                sx={{ minWidth: 750 }}
+                aria-labelledby="tableTitle"
+                size="medium"
+              >
+                <EnhancedTableHead
+                  numSelected={selected.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={handleSelectAllClick}
+                  onRequestSort={handleRequestSort}
+                  rowCount={list.length}
+                  headCells={headCells}
+                />
+                <TableBody>
+                  {stableSort(list, getComparator(order, orderBy)).map(
+                    (row, index) => {
+                      const isItemSelected = isSelected(row?._id);
+                      const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={index}
-                    selected={isItemSelected}
-                    className="table-rows"
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                        onClick={(event) => handleClick(event, row?._id)}
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      <Link
-                        className="text-decoration-none"
-                      >
-                      <div className="d-flex align-items-center py-2"
-                              onClick={()=>{
-                                dispatch(updateTagId(row?._id));
-                                navigate("/parameters/tagsManager/edit")
+                      return (
+                        <TableRow
+                          hover
+                          role="checkbox"
+                          aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          key={index}
+                          selected={isItemSelected}
+                          className="table-rows"
+                        >
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              checked={isItemSelected}
+                              inputProps={{
+                                "aria-labelledby": labelId,
+                              }}
+                              onClick={(event) => handleClick(event, row?._id)}
+                              size="small"
+                              style={{
+                                color: "#5C6D8E",
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell
+                            component="th"
+                            id={labelId}
+                            scope="row"
+                            padding="none"
+                          >
+                            <Link className="text-decoration-none">
+                              <div
+                                className="d-flex align-items-center py-2"
+                                onClick={() => {
+                                  dispatch(updateTagId(row?._id));
+                                  edit(row, index + 1, tagsType);
                                 }}
-                      >
-                        <p className="text-lightBlue rounded-circle fw-600">
-                        {row.name}
-                        </p>
-                      </div>
-                      </Link>
-                    </TableCell>
-
-                    <TableCell style={{ width: 180 }}>
-                    <p className="text-lightBlue">{row?.totalProduct}</p>
-                    </TableCell>
-
-                    {/* <TableCell style={{ width: 140, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <div className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.status}`}>
-
-                          <small className="text-lightBlue fw-400">
-                          {row.status}
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell> */}
-                    {/* <TableCell style={{ width: 140, padding: 0 }}>
-                            <div className="d-flex align-items-center">
-                              <div className="rounded-pill d-flex px-2 py-1 c-pointer" style={{background: row.status == "active" ? "#A6FAAF" : row.status == "in-active" ? "#F67476" : row.status == "draft" ? "#C8D8FF" : "#FEE1A3"}}>
-                                <small className="text-black fw-400">
-                                  {row.status == "active" ? "Active" :  row.status == "in-active" ? "In-Active" : row.status == "draft" ? "Archived" : "Scheduled"}
-                                </small>
+                              >
+                                <p className="text-lightBlue rounded-circle fw-600">
+                                  {row.name}
+                                </p>
                               </div>
-                            </div>
-                    </TableCell> */}
-                   
-                    {row.status ==="archieved"?
-                        <TableCell style={{ width: 140, padding: 0 }}>
-                         <div className="d-flex align-items-center">
-                          <Tooltip title="Delete" placement="top">
-                            <div className="table-edit-icon rounded-4 p-2" 
-                                onClick={(e) => {
-                                  handleDeleteOnClick(row)
-                                }}
-                            >
-                              <DeleteIcon
-                                sx={{
-                                  color: "#5c6d8e",
-                                  fontSize: 18,
-                                  cursor: "pointer",
-                                }}
-                              />
-                            </div>
-                          </Tooltip>
+                            </Link>
+                          </TableCell>
 
-                          <Tooltip
-                              onClick={() => {
-                                handleUnArchive(row)
-                                }
-                              }
+                          <TableCell style={{ width: 180 }}>
+                            <p className="text-lightBlue">
+                              {row?.totalProduct}
+                            </p>
+                          </TableCell>
+                          {row.status === "archieved" ? (
+                            <TableCell style={{ width: 140, padding: 0 }}>
+                              <div className="d-flex align-items-center">
+                                <Tooltip title="Delete" placement="top">
+                                  <div
+                                    className="table-edit-icon rounded-4 p-2"
+                                    onClick={(e) => {
+                                      handleDeleteOnClick(row);
+                                    }}
+                                  >
+                                    <DeleteIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 18,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </div>
+                                </Tooltip>
+
+                                <Tooltip
+                                  onClick={() => {
+                                    handleUnArchive(row);
+                                  }}
                                   title="Un-Archive"
                                   placement="top"
                                 >
@@ -497,18 +443,16 @@ const handleDelete =()=>{
                                       }}
                                     />
                                   </div>
-                          </Tooltip>
-                        </div>
-                      </TableCell>
-
-                          :
-                          <TableCell style={{ width: 120, padding: 0 }}>
-                            <div className="d-flex align-items-center">
-
+                                </Tooltip>
+                              </div>
+                            </TableCell>
+                          ) : (
+                            <TableCell style={{ width: 120, padding: 0 }}>
+                              <div className="d-flex align-items-center">
                                 <Tooltip title="Edit" placement="top">
                                   <Link
                                     onClick={(e) => {
-                                      edit(row);
+                                      edit(row, index + 1, tagsType);
                                     }}
                                     className="table-edit-icon rounded-4 p-2"
                                   >
@@ -523,9 +467,9 @@ const handleDelete =()=>{
                                 </Tooltip>
 
                                 <Tooltip
-                                onClick={() => {
-                                handleArchive(row)
-                                }}
+                                  onClick={() => {
+                                    handleArchive(row);
+                                  }}
                                   title="Archive"
                                   placement="top"
                                 >
@@ -539,77 +483,99 @@ const handleDelete =()=>{
                                     />
                                   </div>
                                 </Tooltip>
-                            </div>
-                          </TableCell>}
-                  </TableRow>
-                );
-              })}
-            {/* {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
-              >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )} */}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={rowsPerPage}
-        page={page-1}
-        onPageChange={changePage}
-        onRowsPerPageChange={changeRowsPerPage}
-        className="table-pagination"
-      />
-      </>): isLoading ? (
-          <span className="d-flex justify-content-center m-3">Loading...</span>
+                              </div>
+                            </TableCell>
+                          )}
+                        </TableRow>
+                      );
+                    }
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={totalCount}
+              rowsPerPage={rowsPerPage}
+              page={page - 1}
+              onPageChange={changePage}
+              onRowsPerPageChange={changeRowsPerPage}
+              className="table-pagination"
+            />
+          </>
+        ) : isLoading ? (
+          <span className="d-flex justify-content-center m-3">
+            <TableLoader />
+          </span>
         ) : (
           <span className="d-flex justify-content-center m-3">
-          <NoDataFound />
+            <NoDataFound />
           </span>
         )
       ) : (
         <></>
       )}
-      {/* <Dialog
-          open={archivedModal}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={handleModalClose}
-          aria-describedby="alert-dialog-slide-description"
-          maxWidth="sm"
-        >
-          <DialogContent className="py-2 px-4 text-center">
-            <img src={question} alt="question" width={200} />
-            <div className="row"></div>
-            <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive <span className="text-blue-2">{tagName}</span> ?
-            </h6>
-            <div className="d-flex justify-content-center mt-4">
-              <hr className="hr-grey-6 w-100" />
-            </div>
-          </DialogContent>
-          <DialogActions className="d-flex justify-content-between px-4 pb-4">
-            <button
-              className="button-red-outline py-2 px-3 me-5"
-              onClick={handleModalClose}
-            >
-              <p>No</p>
-            </button>
-            <button
-              className="button-gradient py-2 px-3 ms-5"
-              onClick={handleArchivedModalOnSave}
-            >
-              <p>Yes</p>
-            </button>
-          </DialogActions>
-      </Dialog> */}
-      <DeleteModal 
+
+      <ArchiveModal
+        onConfirm={handleArchivedModalOnSave}
+        onCancel={handleArchiveModalClose}
+        show={showArchivedModal}
+        title={"tag"}
+        message={tagName}
+        products={"25 products"}
+      />
+      <MultipleArchiveModal
+        onConfirm={handleMultipleArchivedModalOnSave}
+        onCancel={handleArchiveModalClose}
+        show={showMultipleArchivedModal}
+        title={"tags"}
+        message={`${
+          selected.length === 1
+            ? `${selected.length} tag`
+            : `${selected.length} tags`
+        }`}
+        pronoun={`${selected.length === 1 ? "this" : `these`}`}
+      />
+      <UnArchiveModalSecondary
+        onConfirm={handleUnArchived}
+        onCancel={closeUnArchivedModal}
+        show={showUnArchivedModal}
+        title={"tag"}
+        message={tagName}
+      />
+      <UnMultipleArchiveModalSecondary
+        onConfirm={handleMultipleUnArchived}
+        onCancel={closeUnArchivedModal}
+        show={showMultipleUnArhcivedModal}
+        title={"tags"}
+        message={`${
+          selected.length === 1
+            ? `${selected.length} tag`
+            : `${selected.length} tags`
+        }`}
+        pronoun={`${selected.length === 1 ? "this" : `these`}`}
+      />
+      <DeleteModalSecondary
+        onConfirm={handleDelete}
+        onCancel={handleDeleteModalClose}
+        show={showDeleteModal}
+        title={"tag"}
+        message={tagName}
+      />
+      <DeleteModalSecondary
+        onConfirm={handleMultipleDelete}
+        onCancel={handleDeleteModalClose}
+        show={showMultipleDeleteModal}
+        title={"multiple tag"}
+        message={`${
+          selected.length === 1
+            ? `${selected.length} tag`
+            : `${selected.length} tags`
+        }`}
+      />
+
+      {/* <DeleteModal 
       showCreateModal={showDeleteModal} 
       toggleArchiveModalHandler={handleDeleteOnClick} 
       handleArchive={handleDelete} 
@@ -617,47 +583,6 @@ const handleDelete =()=>{
       deleteType={"Tag"}
        />
 
-      {/* <UnArchivedModal 
-          handleStatusValue={handleValue}
-          showUnArchivedModal={showUnArchivedModal}
-          closeUnArchivedModal={closeUnArchivedModal}
-          handleUnArchived={handleUnArchived}
-          name={selected.length >= 1 ? selected.length : tagName}
-          nameType={"Tag"}
-        /> */}
-      {/* <Dialog
-          open={showUnArchivedModal}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={closeUnArchivedModal}
-          aria-describedby="alert-dialog-slide-description"
-          maxWidth="sm"
-        >
-          <DialogContent className="py-2 px-4 text-center">
-            <img src={question} alt="question" width={200} />
-            <div className="row"></div>
-            <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Un-Archive {tagName} ?
-            </h6>
-            <div className="d-flex justify-content-center mt-4">
-              <hr className="hr-grey-6 w-100" />
-            </div>
-          </DialogContent>
-          <DialogActions className="d-flex justify-content-between px-4 pb-4">
-            <button
-              className="button-red-outline py-2 px-3 me-5"
-              onClick={closeUnArchivedModal}
-            >
-              <p>Cancel</p>
-            </button>
-            <button
-              className="button-gradient py-2 px-3 ms-5"
-              onClick={handleUnArchived}
-            >
-              <p>Activate</p>
-            </button>
-          </DialogActions>
-      </Dialog> */}
       <Dialog
           open={showUnArchivedModal}
           TransitionComponent={Transition}
@@ -698,14 +623,9 @@ const handleDelete =()=>{
               <p>Un-Archive</p>
             </button>
           </DialogActions>
-      </Dialog>
+      </Dialog> */}
 
-
-
-
-
-
-      <Dialog
+      {/* <Dialog
           open={archivedModal}
           TransitionComponent={Transition}
           keepMounted
@@ -746,10 +666,8 @@ const handleDelete =()=>{
               <p>Archive</p>
             </button>
           </DialogActions>
-      </Dialog>
-
+      </Dialog> */}
     </React.Fragment>
-
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { forwardRef, useState, useEffect, useReducer } from "react";
-import { useNavigate, Link,useSearchParams } from "react-router-dom";
+import { useNavigate,useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 // ! COMPONENT IMPORTS
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -8,8 +8,7 @@ import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
-import TableSearch, { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
-import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import {
   showSuccess,
   showError,
@@ -22,6 +21,7 @@ import {
   useEditVendorMutation,
   useBulkDeleteVendorMutation,
   useBulkEditVendorMutation,
+  useGetAllVendorsStatusCountQuery,
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import "../../Products/AllProducts/AllProducts.scss";
 // ! ASSETS IMPORTS
@@ -44,8 +44,6 @@ import {
   Slide,
   Tab,
   Tabs,
-  Select,
-  MenuItem,
   Chip,
   FormHelperText,
   FormControlLabel,
@@ -53,7 +51,7 @@ import {
   RadioGroup,
   Radio,
   Popover,
-  Autocomplete,
+
   FormGroup,
   InputAdornment,
   Tooltip,
@@ -123,52 +121,54 @@ const Vendors = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedSortOption, setSelectedSortOption] = React.useState("newestToOldest");
+  const [selectedSortOption, setSelectedSortOption] =
+    React.useState("newestToOldest");
   const [selectedStatusOption, setSelectedStatusOption] = React.useState([]);
-  const [multipleVendors,setMultipleVendors] = React.useState([]);
-  const [totalCount,setTotalCount] = React.useState([]);
+  const [multipleVendors, setMultipleVendors] = React.useState([]);
+  const [totalCount, setTotalCount] = React.useState([]);
 
   const vendorValidationSchema = Yup.object({
     name: Yup.string().trim().min(3).required("Required"),
-});
+  });
   const multipleVendorsSchema = Yup.object({
-  name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
+    name: Yup.string().trim().min(3, "Name must be at least 3 characters long"),
   });
 
-  const queryParameters = {
-  };
+  const queryParameters = {};
   if (selectedSortOption) {
     // Check alphabetical sort options
-    if (selectedSortOption === "alphabeticalAtoZ" || selectedSortOption === "alphabeticalZtoA") {
-      queryParameters.alphabetical = selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
+    if (
+      selectedSortOption === "alphabeticalAtoZ" ||
+      selectedSortOption === "alphabeticalZtoA"
+    ) {
+      queryParameters.alphabetical =
+        selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
     }
     // Check createdAt sort options
-    else if (selectedSortOption === "oldestToNewest" || selectedSortOption === "newestToOldest") {
-      queryParameters.createdAt = selectedSortOption === "oldestToNewest" ? "1" : "-1";
+    else if (
+      selectedSortOption === "oldestToNewest" ||
+      selectedSortOption === "newestToOldest"
+    ) {
+      queryParameters.createdAt =
+        selectedSortOption === "oldestToNewest" ? "1" : "-1";
     }
   }
-  
+
   if (selectedStatusOption !== null) {
     if (Array.isArray(selectedStatusOption)) {
-      queryParameters.status = selectedStatusOption.join(',');
+      queryParameters.status = selectedStatusOption.join(",");
     } else {
       queryParameters.status = selectedStatusOption;
     }
   }
-  // if(searchValue)
-  // {
-  //   queryParameters.name = searchValue;
-  // }
   if (!selectedSortOption && selectedStatusOption === null) {
     queryParameters.status = "active";
-    queryParameters.status = "in-active"
+    queryParameters.status = "in-active";
   }
-  
-  console.log(searchParams.get("status"))
 
   const vendorTypeQuery =
     vendorType === 0
-      ? selectedStatusOption.length>0
+      ? selectedStatusOption.length > 0
         ? { status: selectedStatusOption }
         : { status: "[active,in-active]" }
       : vendorType === 1
@@ -178,195 +178,195 @@ const Vendors = () => {
       : vendorType === 3
       ? { status: "archieved" }
       : {};
-  
-    const {
-      data: vendorsData, 
-      isLoading: vendorsIsLoading, 
-      isSuccess: vendorsIsSuccess, 
-      error: vendorsError, 
-    } = useGetAllVendorsQuery({...queryParameters,...vendorTypeQuery,...queryFilterState}, { enabled: Object.keys(queryParameters).length > 0 }); 
-    // The `enabled` option determines whether the useGetAllVendorsQuery hook should be enabled or disabled based on the presence of query parameters.
-    // Invoking the useGetAllVendorsQuery hook with the provided parameters to get latest created first
-  
-    const [
-      createVendor,
-      {
-        isLoading: createVendorIsLoading,
-        isSuccess: createVendorIsSuccess,
-        error: createVendorError,
-      },
-    ] = useCreateVendorMutation();
-  
-    const [
-      bulkCreateVendor,
-      {
-        isLoading: bulkCreateVendorIsLoading,
-        isSuccess: bulkCreateVendorIsSuccess,
-        error: bulkCreateVendorError,
-      },
-    ] =useBulkCreateVendorMutation();
-  
-    const [
-      deleteVendor,
-      {
-        isLoading: deleteVendorIsLoading,
-        isSuccess: deleteVendorIsSuccess,
-        error: deleteVendorError,
-      },
-    ] = useDeleteVendorMutation();
-  
-    const [
-      bulkDeleteVendor,
-      {
-        isLoading: bulkDeleteVendorIsLoading,
-        isSuccess: bulkDeleteVendorIsSuccess,
-        error: bulkDeleteVendorError,
-      },
-    ] = useBulkDeleteVendorMutation();
 
-    const [
-      editVendor,
-      { data: editData,
-        isLoading: editVendorIsLoading,
-        isSuccess: editVendorIsSuccess,
-        error: editVendorError },
-    ] = useEditVendorMutation();
-  
-    const[bulkEdit,
+  const {
+    data: vendorsData,
+    isLoading: vendorsIsLoading,
+    isSuccess: vendorsIsSuccess,
+    error: vendorsError,
+  } = useGetAllVendorsQuery(
+    { ...queryParameters, ...vendorTypeQuery, ...queryFilterState },
+    { enabled: Object.keys(queryParameters).length > 0 }
+  );
+
+  const {
+    data: vendorsStatusCount,
+    isLoading: vendorsStatusCountIsLoading,
+    isSuccess: vendorsStatusCountIsSuccess,
+    error: vendorsStatusCountError,
+  } = useGetAllVendorsStatusCountQuery();
+
+  console.log("status Count", vendorsStatusCount)
+  const [
+    createVendor,
+    {
+      isLoading: createVendorIsLoading,
+      isSuccess: createVendorIsSuccess,
+      error: createVendorError,
+    },
+  ] = useCreateVendorMutation();
+
+  const [
+    bulkCreateVendor,
+    {
+      isLoading: bulkCreateVendorIsLoading,
+      isSuccess: bulkCreateVendorIsSuccess,
+      error: bulkCreateVendorError,
+    },
+  ] = useBulkCreateVendorMutation();
+
+  const [
+    deleteVendor,
+    {
+      isLoading: deleteVendorIsLoading,
+      isSuccess: deleteVendorIsSuccess,
+      error: deleteVendorError,
+    },
+  ] = useDeleteVendorMutation();
+
+  const [
+    bulkDeleteVendor,
+    {
+      isLoading: bulkDeleteVendorIsLoading,
+      isSuccess: bulkDeleteVendorIsSuccess,
+      error: bulkDeleteVendorError,
+    },
+  ] = useBulkDeleteVendorMutation();
+
+  const [
+    editVendor,
+    {
+      data: editData,
+      isLoading: editVendorIsLoading,
+      isSuccess: editVendorIsSuccess,
+      error: editVendorError,
+    },
+  ] = useEditVendorMutation();
+
+  const [
+    bulkEdit,
     {
       data: bulkEditVendor,
       isLoading: bulkVendorEditLoading,
       isSuccess: bulkVendorEditIsSuccess,
       error: bulkVendorEditError,
-    }]=useBulkEditVendorMutation();
+    },
+  ] = useBulkEditVendorMutation();
 
-
-    const vendorFormik = useFormik({
-      initialValues: {
-        name: "",
-        status: "active",
-        showFilter: false,
-      },
-      enableReinitialize: true,
-      validationSchema: multipleVendors.length > 0 ? multipleVendorsSchema : vendorValidationSchema,
-      onSubmit: (values) => {  
-        if(multipleVendors.length>0)
-        {
-          bulkCreateVendor(multipleVendors)
-        }
-        else
-        {
-          createVendor(values)
-        }
-      },
-    });
-
-    const handleChangeRowsPerPage = (event) => {
-      dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
-    };
-  
-    const handleChangePage = (_, pageNo) => {
-      dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
-    };
-
-    const handleSearchChange = (value) => {
-      dispatchQueryFilter({ type: "SEARCH", name: value });
-    };
-
-    const handleSearchValue =(value)=>{
-      dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
-    }
-
-    const toggleCreateModalHandler = () => {
-      setShowCreateModal((prevState) => !prevState);
-      vendorFormik.resetForm();
-      setIsEditing(false);
-      setMultipleVendors([]);
-      vendorFormik.setFieldTouched('name', false);
-      vendorFormik.setFieldError('name', '');
-  
-    };
-
-    const editCategoryPageNavigationHandler = (data,index) => {
-      setIsEditing(true);
-      // dispatch(updateVendorId(data._id)); 
-      const combinedObject = { queryParameters, vendorTypeQuery, queryFilterState,tab:vendorType };
-      const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));    
-
-      const currentTabNo =
-      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-      navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
-    };
-
-    const changeVendorTypeHandler = (_event, tabIndex) => {
-      setVendorType(tabIndex);
-      dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
-      dispatchQueryFilter({ type: "SEARCH", name: "" });
-
-      setSelectedSortOption('');
-      setSelectedStatusOption('')
-      setSearchParams({status:tabIndex})
-// if (tabIndex === 0) {
-//   setTabPath('all');
-// } else if (tabIndex === 1) {
-//   setTabPath('active') ;
-// } else if (tabIndex === 2) {
-//   setTabPath('in-active') ;
-// } else if (tabIndex === 3) {
-//   setTabPath('archived') ;
-// } else {
-// }
-      // navigate(`/parameters/vendors`)
-      // navigate(`/parameters/vendors?status=${tabPath}`);
-
-    };
-
-    const handleAddMultiple = (event) => {
-      if (event.key === 'Enter'||event.type === 'click') {
-        event.preventDefault();
-        vendorFormik.validateForm().then(() => {
-          if (vendorFormik.isValid && vendorFormik.values.name.trim() !== '') {
-            vendorFormik.setFieldTouched('name', true);
-  
-            const vendorExists = multipleVendors.some(
-              (vendor) => vendor.name.toLowerCase().trim() === vendorFormik.values.name.toLowerCase().trim()
-            );
-  
-            if (!vendorExists) {
-              setMultipleVendors((prevValues) => [
-                ...prevValues,
-                { name: vendorFormik.values.name.trim(), status: 'active', showFilter: vendorFormik.values.showFilter },
-              ]);
-              vendorFormik.resetForm();
-            }
-            else{
-              dispatch(
-                showError({ message: `${vendorFormik.values.name.trim()} already exists` })
-              );
-            }
-          }
-          
-        });
+  const vendorFormik = useFormik({
+    initialValues: {
+      name: "",
+      status: "active",
+      showFilter: false,
+    },
+    enableReinitialize: true,
+    validationSchema:
+      multipleVendors.length > 0
+        ? multipleVendorsSchema
+        : vendorValidationSchema,
+    onSubmit: (values) => {
+      if (multipleVendors.length > 0) {
+        bulkCreateVendor(multipleVendors);
+      } else {
+        createVendor(values);
       }
+    },
+  });
+
+  const handleChangeRowsPerPage = (event) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value: event.target.value });
+  };
+
+  const handleChangePage = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+  };
+
+  const handleSearchChange = (value) => {
+    dispatchQueryFilter({ type: "SEARCH", name: value });
+  };
+
+  const handleSearchValue = (value) => {
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
+  };
+
+  const toggleCreateModalHandler = () => {
+    setShowCreateModal((prevState) => !prevState);
+    vendorFormik.resetForm();
+    setIsEditing(false);
+    setMultipleVendors([]);
+    vendorFormik.setFieldTouched("name", false);
+    vendorFormik.setFieldError("name", "");
+  };
+
+  const editCategoryPageNavigationHandler = (data, index) => {
+    setIsEditing(true);
+    const combinedObject = {
+      queryParameters,
+      vendorTypeQuery,
+      queryFilterState,
+      tab: vendorType,
     };
+    const encodedCombinedObject = encodeURIComponent(
+      JSON.stringify(combinedObject)
+    );
 
-    const handleDelete = (value) => {
-    setMultipleVendors((prevValues) => prevValues.filter((v) => v.name !== value));
-    };
+    const currentTabNo =
+      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
+    navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
+  };
 
-  const handleDeleteVendor =(data)=>{
-    deleteVendor(data);
+  const changeVendorTypeHandler = (_event, tabIndex) => {
+    setVendorType(tabIndex);
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
+
+    setSelectedSortOption("");
+    setSelectedStatusOption("");
+    setSearchParams({ status: tabIndex });
+  };
+
+  const handleAddMultiple = (event) => {
+    if (event.key === "Enter" || event.type === "click") {
+      event.preventDefault();
+      vendorFormik.validateForm().then(() => {
+        if (vendorFormik.isValid && vendorFormik.values.name.trim() !== "") {
+          vendorFormik.setFieldTouched("name", true);
+
+          const vendorExists = multipleVendors.some(
+            (vendor) =>
+              vendor.name.toLowerCase().trim() ===
+              vendorFormik.values.name.toLowerCase().trim()
+          );
+
+          if (!vendorExists) {
+            setMultipleVendors((prevValues) => [
+              ...prevValues,
+              {
+                name: vendorFormik.values.name.trim(),
+                status: "active",
+                showFilter: vendorFormik.values.showFilter,
+              },
+            ]);
+            vendorFormik.resetForm();
+          } else {
+            dispatch(
+              showError({
+                message: `${vendorFormik.values.name.trim()} already exists`,
+              })
+            );
+          }
+        }
+      });
     }
+  };
 
-  const handleBulkDeleteVendor =(data)=>{
-    bulkDeleteVendor(data);
-    }
+  const handleDelete = (value) => {
+    setMultipleVendors((prevValues) =>
+      prevValues.filter((v) => v.name !== value)
+    );
+  };
 
-  // const handleSearchChange = (event) => {
-  //     setSearchValue(event.target.value);
-  //   };
-
- // * SORT POPOVERS STARTS HERE
+  // * SORT POPOVERS STARTS HERE
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
   const handleSortClick = (event) => {
@@ -385,9 +385,9 @@ const Vendors = () => {
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
 
- // * SORT POPOVERS ENDS
+  // * SORT POPOVERS ENDS
 
- // * STATUS POPOVERS STARTS HERE
+  // * STATUS POPOVERS STARTS HERE
   const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
   const handleStatusClick = (event) => {
     setAnchorStatusEl(event.currentTarget);
@@ -399,7 +399,7 @@ const Vendors = () => {
 
   const handleStatusCheckboxChange = (event) => {
     const { value } = event.target;
-  
+
     setSelectedStatusOption((prevSelected) => {
       if (prevSelected.includes(value)) {
         return prevSelected.filter((option) => option !== value);
@@ -407,58 +407,55 @@ const Vendors = () => {
         return [...prevSelected, value];
       }
     });
-    setAnchorStatusEl(null); 
+    setAnchorStatusEl(null);
   };
-  
+
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
- // * STATUS POPOVERS ENDS
+  // * STATUS POPOVERS ENDS
 
-
-    useEffect(() => {
-    if(createVendorIsSuccess)
-    {
+  useEffect(() => {
+    if (createVendorIsSuccess) {
       setShowCreateModal(false);
       dispatch(showSuccess({ message: "Vendor created successfully" }));
     }
-    if(createVendorError)
-    {
+    if (createVendorError) {
       setError(true);
       if (createVendorError?.data?.message) {
         dispatch(showError({ message: createVendorError?.data?.message }));
-      }
-      else {
+      } else {
         dispatch(
           showError({ message: "Something went wrong, please try again" })
         );
       }
     }
+  }, [createVendorIsSuccess, createVendorError, dispatch]);
 
-  }, [createVendorIsSuccess,createVendorError])
-  
-    useEffect(() => {
-
-    if(bulkCreateVendorIsSuccess)
-    {
-        setShowCreateModal(false);
-      dispatch(showSuccess({ message: "Vendors created successfully" }));
+  useEffect(() => {
+    if (bulkCreateVendorIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(
+        showSuccess({
+          message: `${
+            multipleVendors.length === 1 ? "Vendor" : "Vendors"
+          } Created Successfully`,
+        })
+      );
     }
 
-    if (bulkCreateVendorError ) {
+    if (bulkCreateVendorError) {
       setError(true);
-      if(bulkCreateVendorError?.data?.message)
-      {
+      if (bulkCreateVendorError?.data?.message) {
         dispatch(showError({ message: bulkCreateVendorError.data.message }));
-      }
-      else {
+      } else {
         dispatch(
           showError({ message: "Something went wrong, please try again" })
         );
       }
     }
-  }, [bulkCreateVendorError,bulkCreateVendorIsSuccess])
+  }, [bulkCreateVendorError, bulkCreateVendorIsSuccess, dispatch]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (vendorsError) {
       setError(true);
       if (vendorsError?.data?.message) {
@@ -473,125 +470,99 @@ const Vendors = () => {
       setError(false);
       if (vendorType === 0) {
         setVendorList(vendorsData.data.data);
-        setTotalCount(vendorsData.data.totalCount)
+        setTotalCount(vendorsData.data.totalCount);
       }
       if (vendorType === 1) {
         setVendorList(vendorsData.data.data);
-        setTotalCount(vendorsData.data.totalCount)
+        setTotalCount(vendorsData.data.totalCount);
       }
-      if(vendorType === 2)
-      {
+      if (vendorType === 2) {
         setVendorList(vendorsData.data.data);
-        setTotalCount(vendorsData.data.totalCount)
+        setTotalCount(vendorsData.data.totalCount);
       }
-      if(vendorType === 3)
-      {
+      if (vendorType === 3) {
         setVendorList(vendorsData.data.data);
-        setTotalCount(vendorsData.data.totalCount)
+        setTotalCount(vendorsData.data.totalCount);
       }
     }
-      }, [
-        vendorsData,
-        vendorsIsSuccess,
-        vendorType,
-        vendorsError,
-        createVendorIsSuccess,bulkCreateVendorIsSuccess,createVendorError,bulkCreateVendorError,editVendorIsSuccess,bulkVendorEditIsSuccess,editVendorError,bulkVendorEditError
-      ]);
+  }, [
+    vendorsData,
+    vendorsIsSuccess,
+    vendorType,
+    vendorsError,
+    createVendorIsSuccess,
+    bulkCreateVendorIsSuccess,
+    createVendorError,
+    bulkCreateVendorError,
+    editVendorIsSuccess,
+    bulkVendorEditIsSuccess,
+    editVendorError,
+    bulkVendorEditError,
+    dispatch,
+  ]);
 
-    useEffect(() => {
-      if(deleteVendorIsSuccess)
-      {
-        dispatch(showSuccess({ message: "Vendor deleted successfully" }));
+  useEffect(() => {
+    if (deleteVendorError) {
+      if (deleteVendorError?.data?.message) {
+        dispatch(showError({ message: deleteVendorError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
       }
-      if(deleteVendorError)
-      {
-        if (deleteVendorError?.data?.message) {
-          dispatch(showError({ message: deleteVendorError?.data?.message }));
-        }
-        else {
-          dispatch(
-            showError({ message: "Something went wrong, please try again" })
-          );
-        }
-      }
-    }, [deleteVendorIsSuccess,deleteVendorError])
+    }
+  }, [deleteVendorError, dispatch]);
 
-    useEffect(() => {
+  useEffect(() => {
+    if (bulkDeleteVendorError) {
+      if (bulkDeleteVendorError?.data?.message) {
+        dispatch(showError({ message: bulkDeleteVendorError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [bulkDeleteVendorError, dispatch]);
 
-      if(bulkDeleteVendorIsSuccess)
-      {
-        dispatch(showSuccess({ message: "Vendors deleted successfully" }));
+  useEffect(() => {
+    if (editVendorError) {
+      if (editVendorError?.data?.message) {
+        dispatch(showError({ message: editVendorError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
       }
-      if(bulkDeleteVendorError)
-      {
-        if (bulkDeleteVendorError?.data?.message) {
-          dispatch(showError({ message: bulkDeleteVendorError?.data?.message }));
-        }
-        else {
-          dispatch(
-            showError({ message: "Something went wrong, please try again" })
-          );
-        }
-      }
-    }, [bulkDeleteVendorIsSuccess,bulkDeleteVendorError])
+    }
+  }, [editVendorError, dispatch]);
 
-    useEffect(() => {
-      // if(editVendorIsSuccess)
-      // {
-      //   dispatch(showSuccess({ message: "Status updated successfully" }));
-      // }
-      if(editVendorError)
-      {
-        if (editVendorError?.data?.message) {
-          dispatch(showError({ message: editVendorError?.data?.message }));
-        }
-        else {
-          dispatch(
-            showError({ message: "Something went wrong, please try again" })
-          );
-        }
+  useEffect(() => {
+    if (bulkVendorEditError) {
+      if (bulkVendorEditError?.data?.message) {
+        dispatch(showError({ message: bulkVendorEditError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
       }
-    }, [editVendorIsSuccess,editVendorError])
+    }
+  }, [bulkVendorEditError, dispatch]);
 
-    useEffect(() => {
-      // if(bulkVendorEditIsSuccess)
-      // {
-      //   dispatch(showSuccess({ message: "Status updated successfully" }));
-      // }
-      if(bulkVendorEditError)
-      {
-        if (bulkVendorEditError?.data?.message) {
-          dispatch(showError({ message: bulkVendorEditError?.data?.message }));
-        }
-        else {
-          dispatch(
-            showError({ message: "Something went wrong, please try again" })
-          );
-        }
-      }
-    }, [bulkVendorEditIsSuccess,bulkVendorEditError])
-    
-    useEffect(() => {
-        if(+searchParams.get("status")===0)
-        {
-          setVendorType(0);
-        }
-        else if(+searchParams.get("status")===1)
-        {
-          setVendorType(1);
-        }
-        else if(+searchParams.get("status")===2)
-        {
-          console.log("check")
-          setVendorType(2);
-        }
-        else if(+searchParams.get("status")===3)
-        {
-          setVendorType(3);
-        }
-    }, [searchParams])
-    
-    console.log({vendorType})
+  useEffect(() => {
+    if (+searchParams.get("status") === 0) {
+      setVendorType(0);
+    } else if (+searchParams.get("status") === 1) {
+      setVendorType(1);
+    } else if (+searchParams.get("status") === 2) {
+      console.log("check");
+      setVendorType(2);
+    } else if (+searchParams.get("status") === 3) {
+      setVendorType(3);
+    }
+  }, [searchParams]);
+
+  console.log({ vendorType });
 
   return (
     <div className="container-fluid page">
@@ -644,20 +615,20 @@ const Vendors = () => {
 
             <form noValidate onSubmit={vendorFormik.handleSubmit}>
               <DialogContent className="py-3 px-4">
-              <div className="d-flex mb-2">
-                <p className="text-lightBlue me-2 ">Vendor Name </p>
-                <Tooltip title="Enter Name" placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className=" c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip>
+                <div className="d-flex mb-2">
+                  <p className="text-lightBlue me-2 ">Vendor Name </p>
+                  <Tooltip title="Enter Name" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className=" c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
-                    sx={{pr:1}}
+                    sx={{ pr: 1 }}
                     placeholder="Enter Vendor Name"
                     size="small"
                     name="name"
@@ -666,58 +637,61 @@ const Vendors = () => {
                     onChange={vendorFormik.handleChange}
                     onKeyDown={handleAddMultiple}
                     endAdornment={
-                    <InputAdornment position="end">
-                    <Tooltip title="Create Multiple Vendor" placement="top">
-                    <ChevronRightIcon className="c-pointer" onClick={handleAddMultiple}/>
-                    </Tooltip>                        
-                    </InputAdornment>
+                      <InputAdornment position="end">
+                        <Tooltip title="Create Multiple Vendor" placement="top">
+                          <ChevronRightIcon
+                            className="c-pointer"
+                            onClick={handleAddMultiple}
+                          />
+                        </Tooltip>
+                      </InputAdornment>
                     }
                   />
                   {!!vendorFormik.touched.name && vendorFormik.errors.name && (
                     <FormHelperText error color="#F67476">
-                    {vendorFormik.errors.name}
-                  </FormHelperText>
-
+                      {vendorFormik.errors.name}
+                    </FormHelperText>
                   )}
                 </FormControl>
                 <br />
                 <div className="small">
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="showFilter"
-                      checked={vendorFormik.values.showFilter}
-                      onChange={vendorFormik.handleChange}
-                      inputProps={{ "aria-label": "controlled" }}
-                      size="small"
-                      style={{
-                        color: "#5C6D8E",
-                        marginRight: 0,
-                        width: "auto",
-                      }}
-                    />
-                  }
-                  label="Include in Filters"
-                  sx={{
-                    "& .MuiTypography-root": {
-                      fontSize: "0.875rem",
-                      color: "#c8d8ff",
-                    },
-                  }}
-                  className=" px-0 me-1"
-                />
-                <button className="reset link">(manage)</button>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        name="showFilter"
+                        checked={vendorFormik.values.showFilter}
+                        onChange={vendorFormik.handleChange}
+                        inputProps={{ "aria-label": "controlled" }}
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                          marginRight: 0,
+                          width: "auto",
+                        }}
+                      />
+                    }
+                    label="Include in Filters"
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontSize: "0.875rem",
+                        color: "#c8d8ff",
+                      },
+                    }}
+                    className=" px-0 me-1"
+                  />
+                  <span className="text-blue-2 c-pointer">(manage)</span>
                 </div>
-                <div >
-                {multipleVendors && multipleVendors.map((value, index) => (
-                <Chip
-                  key={index}
-                  label={value.name}
-                  onDelete={() => handleDelete(value.name)}
-                  size="small"
-                  className="mt-3 me-2 px-1"
-                />
-              ))}
+                <div>
+                  {multipleVendors &&
+                    multipleVendors.map((value, index) => (
+                      <Chip
+                        key={index}
+                        label={value.name}
+                        onDelete={() => handleDelete(value.name)}
+                        size="small"
+                        className="mt-3 me-2 px-1"
+                      />
+                    ))}
                 </div>
               </DialogContent>
 
@@ -763,98 +737,102 @@ const Vendors = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Active" className="tabs-head" />
-              <Tab label="In-Active" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab label={`All (${vendorsStatusCount?.data[0]?.active+vendorsStatusCount?.data[0]?.inActive})`} className="tabs-head" />
+              <Tab label={`Active (${vendorsStatusCount?.data[0]?.active})`} className="tabs-head" />
+              <Tab label={`In-Active (${vendorsStatusCount?.data[0]?.inActive})`} className="tabs-head" />
+              <Tab label={`Archived (${vendorsStatusCount?.data[0]?.archived})`} className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearchSecondary onSearchValueChange={handleSearchValue} value={queryFilterState.searchValue} onChange={handleSearchChange} />
+            <TableSearchSecondary
+              onSearchValueChange={handleSearchValue}
+              value={queryFilterState.searchValue}
+              onChange={handleSearchChange}
+            />
             <button
-                className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idStatus}
-                variant="contained"
-                onClick={handleStatusClick}
+              className="button-grey py-2 px-3 ms-2"
+              aria-describedby={idStatus}
+              variant="contained"
+              onClick={handleStatusClick}
+            >
+              <small className="text-lightBlue me-2">Status</small>
+              <img src={arrowDown} alt="status" className="" />
+            </button>
+            <Popover
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+              id={idStatus}
+              open={openStatus}
+              anchorEl={anchorStatusEl}
+              onClose={handleStatusClose}
+              className="columns"
+            >
+              <FormGroup
+                className="px-2 py-1"
+                onChange={handleStatusCheckboxChange}
               >
-                <small className="text-lightBlue me-2">Status</small>
-                <img src={arrowDown} alt="status" className="" />
-              </button>
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idStatus}
-                open={openStatus}
-                anchorEl={anchorStatusEl}
-                onClose={handleStatusClose}
-                className="columns"
-              >
-                <FormGroup className="px-2 py-1"                   
-                  onChange={handleStatusCheckboxChange}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        defaultChecked
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Active"
-                    value="active"
-                    className="me-0"
-                    // checked={selectedStatusOption === "active"}
-                    checked={selectedStatusOption.includes("active")}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="In-Active"
-                    className="me-0"
-                    value="in-active"
-                    // checked={selectedStatusOption === "archived"}
-                    checked={selectedStatusOption.includes("in-active")}
-                  />
-                </FormGroup>
-              </Popover>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      defaultChecked
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                      }}
+                    />
+                  }
+                  label="Active"
+                  value="active"
+                  className="me-0"
+                  checked={selectedStatusOption.includes("active")}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                      }}
+                    />
+                  }
+                  label="In-Active"
+                  className="me-0"
+                  value="in-active"
+                  checked={selectedStatusOption.includes("in-active")}
+                />
+              </FormGroup>
+            </Popover>
 
-              <button
-                className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idSort}
-                variant="contained"
-                onClick={handleSortClick}
-              >
-                <small className="text-lightBlue me-2">Sort</small>
-                <img src={sort} alt="sort" className="" />
-              </button>
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idSort}
-                open={openSort}
-                anchorEl={anchorSortEl}
-                onClose={handleSortClose}
-                className="columns"
-              >
+            <button
+              className="button-grey py-2 px-3 ms-2"
+              aria-describedby={idSort}
+              variant="contained"
+              onClick={handleSortClick}
+            >
+              <small className="text-lightBlue me-2">Sort</small>
+              <img src={sort} alt="sort" className="" />
+            </button>
+            <Popover
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+              id={idSort}
+              open={openSort}
+              anchorEl={anchorSortEl}
+              onClose={handleSortClose}
+              className="columns"
+            >
               <FormControl className="px-2 py-1">
                 <RadioGroup
                   aria-labelledby="demo-controlled-radio-buttons-group"
@@ -883,141 +861,9 @@ const Vendors = () => {
                     control={<Radio size="small" />}
                     label="Alphabetical (Z-A)"
                   />
-
                 </RadioGroup>
               </FormControl>
-              </Popover>
-              {/* <button
-                className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idStatus}
-                variant="contained"
-                onClick={handleStatusClick}
-              >
-                <small className="text-lightBlue me-2">Status</small>
-              </button>
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idStatus}
-                open={openStatus}
-                anchorEl={anchorStatusEl}
-                onClose={handleStatusClose}
-                className="columns"
-              >
-                <FormControl className="px-2 py-1">
-                  <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    value={selectedStatusOption}
-                    onChange={handleStatusRadioChange}
-                  >
-                    <FormControlLabel
-                      value="active"
-                      control={<Radio size="small" />}
-                      label="Active"
-                    />
-                    <FormControlLabel
-                      value="archived"
-                      control={<Radio size="small" />}
-                      label="Archive"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Popover> */}
-
-              {/* <button
-                className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idSort}
-                variant="contained"
-                onClick={handleSortClick}
-              >
-                <small className="text-lightBlue me-2">Sort</small>
-                <img src={sort} alt="sort" className="" />
-              </button>
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idSort}
-                open={openSort}
-                anchorEl={anchorSortE1}
-                onClose={handleSortClose}
-                className="columns"
-              >
-                <FormGroup className="px-2 py-1"                   
-                  onChange={handleSortCheckboxChange}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        defaultChecked
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Alphabetical (A-Z)"
-                    value="alphabeticalAtoZ"
-                    className="me-0"
-                    checked={selectedSortOption === "alphabeticalAtoZ"}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Alphabetical (Z-A)"
-                    className="me-0"
-                    value="alphabeticalZtoA"
-                    checked={selectedSortOption === "alphabeticalZtoA"}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Oldest to Newest"
-                    className="me-0"
-                    value="oldestToNewest"
-                    checked={selectedSortOption === "oldestToNewest"}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    }
-                    label="Newest to Oldest"
-                    className="me-0"
-                    value="newestToOldest"
-                    checked={selectedSortOption === "newestToOldest"}
-                  />
-                </FormGroup>
-              </Popover> */}
-
-
+            </Popover>
           </div>
           <TabPanel value={vendorType} index={0}>
             <VendorsTable
@@ -1026,9 +872,9 @@ const Vendors = () => {
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
-              deleteData={handleDeleteVendor}
+              deleteData={deleteVendor}
               editVendor={editVendor}
-              bulkEdit ={bulkEdit}
+              bulkEdit={bulkEdit}
               changeRowsPerPage={handleChangeRowsPerPage}
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
@@ -1043,12 +889,11 @@ const Vendors = () => {
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
               editVendor={editVendor}
-              bulkEdit ={bulkEdit}
+              bulkEdit={bulkEdit}
               changeRowsPerPage={handleChangeRowsPerPage}
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-
             />
           </TabPanel>
           <TabPanel value={vendorType} index={2}>
@@ -1059,7 +904,7 @@ const Vendors = () => {
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
               editVendor={editVendor}
-              bulkEdit ={bulkEdit}
+              bulkEdit={bulkEdit}
               changeRowsPerPage={handleChangeRowsPerPage}
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
@@ -1073,11 +918,11 @@ const Vendors = () => {
               list={vendorList}
               edit={editCategoryPageNavigationHandler}
               totalCount={totalCount}
-              deleteData={handleDeleteVendor}
-              bulkDelete={handleBulkDeleteVendor}
+              deleteData={deleteVendor}
+              bulkDelete={bulkDeleteVendor}
               vendorType={vendorType}
               editVendor={editVendor}
-              bulkEdit ={bulkEdit}
+              bulkEdit={bulkEdit}
               changeRowsPerPage={handleChangeRowsPerPage}
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}

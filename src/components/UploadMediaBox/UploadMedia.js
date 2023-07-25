@@ -19,7 +19,7 @@ import { ReactComponent as UploadIcon } from "../../assets/icons/upload.svg";
 import { ReactComponent as ImagePlaceHolder } from "../../assets/icons/imagePlaceHolder.svg";
 
 const UploadMediaSmall = (props) => {
-  const { fileSrc, error, onUpload, onBlur, name } = props;
+  const { fileSrc, error, onUpload, onBlur, name, disableLabel } = props;
   const [uploadFile, { data, isSuccess, isError }] = UseFileUpload();
   const dispatch = useDispatch();
 
@@ -49,14 +49,16 @@ const UploadMediaSmall = (props) => {
 
   return (
     <>
-      <div className="d-flex mb-1">
-        <label htmlFor="file" className="small text-lightBlue me-2">
-          Icon
-        </label>
-        <Tooltip title="Lorem ipsum" placement="top">
-          <img src={info} alt="info" className=" c-pointer" width={13.5} />
-        </Tooltip>
-      </div>
+      {!disableLabel && (
+        <div className="d-flex mb-1">
+          <label htmlFor="file" className="small text-lightBlue me-2">
+            Icon
+          </label>
+          <Tooltip title="Lorem ipsum" placement="top">
+            <img src={info} alt="info" className=" c-pointer" width={13.5} />
+          </Tooltip>
+        </div>
+      )}
       <div
         {...getRootProps({})}
         className={

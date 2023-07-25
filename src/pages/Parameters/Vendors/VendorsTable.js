@@ -1,6 +1,6 @@
-import React, { forwardRef, useEffect, useState } from "react";
-import { Link,useNavigate } from "react-router-dom";
-
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 // ! COMPONENT IMPORTS
 import {
   EnhancedTableHead,
@@ -9,17 +9,16 @@ import {
 } from "../../../components/TableDependencies/TableDependencies";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal"
+import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
+import unArchived from "../../../assets/images/Components/Archived.png"
+import ArchiveModal, { MultipleArchiveModal } from "../../../components/ArchiveModal/ArchiveModal";
+import UnArchiveModal, { MultipleUnArchiveModal } from "../../../components/UnArchiveModal/UnArchiveModal";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
 // ! MATERIAL IMPORTS
 import {
-  Box,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  OutlinedInput,
-  Slide,
   Table,
   TableBody,
   TableCell,
@@ -27,35 +26,18 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
-  Typography,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import { useBulkEditVendorMutation, useEditVendorMutation } from "../../../features/parameters/vendors/vendorsApiSlice";
-import { useDispatch } from "react-redux";
-import { showSuccess } from "../../../features/snackbar/snackbarAction";
-import { LoadingButton } from "@mui/lab";
-import question from "../../../assets/icons/question.svg"
-// import DeleteModal from "../../../components/DeleteDailogueModal/DeleteModal";
-import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 import DeleteIcon from '@mui/icons-material/Delete';
-import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
-import { updateVendorId } from "../../../features/parameters/vendors/vendorSlice";
-import NoDataFound from "../../../components/NoDataFound/NoDataFound";
-import unArchived from "../../../assets/images/Components/Archived.png"
-import closeModal from "../../../assets/icons/closeModal.svg"
+import TableLoader from "../../../components/Loader/TableLoader";
+
 
 // ? TABLE STARTS HERE
 function createData(vId, vendorsName, noOfProducts, status) {
   return { vId, vendorsName, noOfProducts, status };
 }
-
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-// ? DIALOG TRANSITION ENDS HERE
 const headCells = [
   {
     id: "vendorsName",
@@ -83,53 +65,26 @@ const headCells = [
     label: "Actions",
   },
 ];
-
 // ? TABLE ENDS HERE
 
 const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, vendorType, bulkDelete,editVendor,bulkEdit,rowsPerPage,changeRowsPerPage,changePage,page }) => {
+
+  const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
-  // const [page, setPage] = React.useState(0);
-  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
-  const [selectedMassStatus, setSelectedMassStatus] = React.useState(null);
-  const [showCreateModal, setShowCreateModal] = React.useState(false);
-  const [archive, setArchive] = React.useState(false);
-  const [name, setName] = React.useState(false);
   const [vendor, setVendor] = React.useState(false);
   const [vendorName, setVendorName] = React.useState("")
   const [vendorStatus, setVendorStatus] = React.useState("in-active")
-  const [vendorMassStatus, setVendorMassStatus] = React.useState("in-active")
-  const [openUnArchivePopUp,setOpenUnArchivePopUp] = React.useState(false)
-  const navigate = useNavigate();
+  const [showArchivedModal,setShowArchivedModal] = useState(false)
+  const [showMultipleArchivedModal,setShowMultipleArchivedModal] = useState(false)
+  const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
+  const [showMultipleUnArhcivedModal,setShowMultipleUnArhcivedModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+  const [showMultipleDeleteModal, setShowMultipleDeleteModal] = React.useState(false);
 
 
-
-  const [state, setState] = React.useState([]);
-  const dispatch = useDispatch();
-
-  const toggleArchiveModalHandler = (row) => {
-    setShowCreateModal((prevState) => !prevState);
-    setArchive(row);
-    setName(row?.name);
-  };
-
-  // const [
-  //   editVendor,
-  //   { data: editData,
-  //     isLoading: editVendorIsLoading,
-  //     isSuccess: editVendorIsSuccess,
-  //     error: editVendorError },
-  // ] = useEditVendorMutation();
-
-  // const[bulkEdit,
-  // {
-  //   data: bulkEditVendor,
-  //   isLoading: bulkVendorEditLoading,
-  //   isSuccess: bulkVendorEditIsSuccess,
-  //   error: bulkVendorEditError,
-  // }]=useBulkEditVendorMutation();
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -156,60 +111,29 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
           };
         }
       });
-      setState(newState);
       bulkEdit({ updates: newState })
       .unwrap().then(()=>dispatch(showSuccess({ message: " Status updated successfully" })));
       setSelectedStatus(null);
       setSelected([]);
     }
-  }, [selectedStatus])
+  }, [selectedStatus,dispatch])
   
 
   const handleMassAction  = (status) => {
     if(status ==="Set as Un-Archived")
     {
-      setOpenUnArchivePopUp(true);
+      setShowMultipleUnArhcivedModal(true);
     }
     if(status ==="Archive")
     {
-      setArchivedModal(true);
+      setShowMultipleArchivedModal(true);
     }
     if(status ==="Delete")
     {
-      setShowDeleteModal(true);
+      setShowMultipleDeleteModal(true);
     }
-    setSelectedMassStatus(status);
   };
 
-
-  const handleMassValue = (value) => {
-    setVendorMassStatus(value)
-  }
-  const handleMassUnArchived = () => {
-    const newState = selected.map((id) => {
-      if (selectedMassStatus === "Set as Un-Archived") {
-        return {
-          id,
-          status: vendorMassStatus,
-        };
-      }
-    });
-    bulkEdit({ updates: newState })
-    .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Un-Archived Successfully" })));
-    setOpenUnArchivePopUp(false);
-    setSelected([]);
-  };
-
-  const closeMassUnArchivedModal = () => {
-    setOpenUnArchivePopUp(false)
-  }
-  
-  // const emptyRows =
-  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
-
-  // const handleChangePage = (event, newPage) => {
-  //   setPage(newPage);
-  // };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -217,14 +141,6 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     setOrderBy(property);
   };
 
-  // const handleSelectAllClick = (event) => {
-  //   if (event.target.checked) {
-  //     const newSelected = list.map((n) => n._id);
-  //     setSelected(newSelected);
-  //     return;
-  //   }
-  //   setSelected([]);
-  // };
   const handleSelectAllClick = (event) => {
     if(selected.length>0)
     {
@@ -260,38 +176,21 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
     setSelected(newSelected);
   };
 
-  // const handleChangeRowsPerPage = (event) => {
-  //   setRowsPerPage(parseInt(event.target.value, 10));
-  //   setPage(0);
-  // };
-  
-
   const isSelected = (name) => selected.indexOf(name) !== -1;
-// Archive Starts Here
-  const [archivedModal,setArchivedModal] = useState(false)
 
+
+// Archive Starts Here
   const handleArchive = (row) => {
-    setArchivedModal(true);
+
+    setShowArchivedModal(true);
     setVendorName(row?.name)
     setVendor(row);
   }
-  const handleModalClose = () => {
-    setArchivedModal(false);
+  const handleArchiveModalClose = () => {
+    setShowArchivedModal(false);
+    setShowMultipleArchivedModal(false);
   };
   const handleArchivedModalOnSave = () => {
-    if(selected.length>0)
-    {
-      const newState = selected.map((id) => {
-        return {
-          id,
-          status: "archieved",
-        };
-    });
-    bulkEdit({ updates: newState })
-    .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Archived Successfully" })));
-    setSelected([]);
-    }
-    else{
       editVendor({
         id: vendor?._id,
         details : {
@@ -300,23 +199,35 @@ const VendorsTable = ({ list, edit, deleteData, error, isLoading,totalCount, ven
         }
     })
     .unwrap().then(()=>dispatch(showSuccess({ message: " Vendor Archived Successfully" })));
-
-    }
-    setArchivedModal(false);
+    setShowArchivedModal(false);
     setVendorName("");
-  }
+    }
+
+const handleMultipleArchivedModalOnSave = () => {
+  const newState = selected.map((id) => {
+    return {
+      id,
+      status: "archieved",
+    };
+  });
+  bulkEdit({ updates: newState })
+    .unwrap()
+    .then(() => dispatch(showSuccess({ message: `${selected.length === 1 ? "Vendor" : "Vendors"} Archived Successfully` }
+    )));
+  setSelected([]);
+  setShowMultipleArchivedModal(false);
+};
 // Archive ends here
 
 //unArchive Starts here
-const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
-
 const handleUnArchive = (row) => {
   setShowUnArhcivedModal(true)
   setVendorName(row?.name)
   setVendor(row)
 }
 const closeUnArchivedModal = () => {
-  setShowUnArhcivedModal(false)
+  setShowUnArhcivedModal(false);
+  setShowMultipleUnArhcivedModal(false);
 }
 const handleValue = (value) => {
   setVendorStatus(value)
@@ -331,27 +242,41 @@ const handleUnArchived = () => {
  }).unwrap().then(()=>dispatch(showSuccess({ message: "Vendor Un-Archived successfully" })))
     setShowUnArhcivedModal(false)
 }
+const handleMultipleUnArchived = () => {
+  const newState = selected.map((id) => {
+      return {
+        id,
+        status: vendorStatus,
+      };
+  });
+  bulkEdit({ updates: newState }).unwrap().then(()=>dispatch(showSuccess({ message: `${selected.length === 1 ? "Vendor" : "Vendors"} Un-Archived Successfully` })));
+  setShowMultipleUnArhcivedModal(false);
+  setSelected([]);
+};
 //unarchive ends here
-const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
+//Delete Starts Here
 const handleDeleteOnClick = (row) => {
-  setShowDeleteModal((prevState) => !prevState);
+  setShowDeleteModal(true);
   setVendor(row)
   setVendorName(row?.name);
 };
+const handleDeleteModalClose =()=>{
+  setShowDeleteModal(false);
+  setShowMultipleDeleteModal(false);
+}
 const handleDelete =()=>{
-  if(selected.length>1)
-  {
+    deleteData(vendor?._id)
+    .unwrap().then(()=>dispatch(showSuccess({ message: "Vendor Deleted successfully" })));
+    setShowDeleteModal(false);
+  }
+const handleMultipleDelete=()=>{
   bulkDelete({deletes :selected})
-  handleDeleteOnClick();
+  .unwrap().then(()=>dispatch(showSuccess({ message: `${selected.length === 1 ? "Vendor" : "Vendors"} Deleted Successfully` })));
+  setShowMultipleDeleteModal(false);
   setSelected([]);
-  }
-  else{
-    deleteData(vendor?._id);
-    handleDeleteOnClick();
-    // dispatch(showSuccess({ message: "Deleted this collection successfully" }));
-  }
-  }
+}
+//delete ends here
 
   return (
     <React.Fragment>
@@ -368,17 +293,6 @@ const handleDelete =()=>{
               </span>
             </small>
           </button>
-          {/* <button className="button-grey py-2 px-3 ms-2">
-            <small className="text-lightBlue">
-              Select all {totalCount} tags &nbsp;
-              <span
-                className="text-blue-2 c-pointer"
-                onClick={() => setSelected([])}
-              >
-                (Clear Selection)
-              </span>
-            </small>
-          </button> */}
           {vendorType!==3 &&<TableEditStatusButton
             onSelect={handleStatusSelect}
             defaultValue={["Set as Active", "Set as In-Active"]}
@@ -460,17 +374,6 @@ const handleDelete =()=>{
                             <p className="text-lightBlue">{row.totalProduct}</p>
                           </TableCell>
 
-                          {/* <TableCell style={{ width: 140, padding: 0 }}>
-                            <div className="d-flex align-items-center">
-                              <div
-                                className={`rounded-pill d-flex  px-2 py-1 c-pointer table-${row.status}`}
-                              >
-                                <small className="text-black fw-400">
-                                  {row.status == "active" ? "Acitve" : row.status == "in-active" ? "In-Active" : "Archived" }
-                                </small>
-                              </div>
-                            </div>
-                          </TableCell> */}
                           <TableCell style={{ width: 140, padding: 0 }}>
                             <div className="d-flex align-items-center">
                               <div className="rounded-pill d-flex px-2 py-1 statusBoxWidth"
@@ -571,15 +474,6 @@ const handleDelete =()=>{
                         </TableRow>
                       );
                     })}
-                  {/* {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: 53 * emptyRows,
-                      }}
-                    >
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )} */}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -595,7 +489,7 @@ const handleDelete =()=>{
             />
           </>
         ) : isLoading ? (
-          <span className="d-flex justify-content-center m-3">Loading...</span>
+          <span className="d-flex justify-content-center m-3"><TableLoader/></span>
         ) : (
           <span className="d-flex justify-content-center m-3">
           <NoDataFound />
@@ -605,110 +499,60 @@ const handleDelete =()=>{
         <></>
       )}
 
-      {/* <Dialog
-          open={archivedModal}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={handleModalClose}
-          aria-describedby="alert-dialog-slide-description"
-          maxWidth="sm"
-        >
-          <DialogContent className="py-2 px-4 text-center">
-            <img src={question} alt="question" width={200} />
-            <div className="row"></div>
-            <h6 className="text-lightBlue mt-2 mb-2">
-              Are you sure you want to Archive <span className="text-blue-2">{`${selected.length > 1 ? `${selected.length} vendors` : ""}${vendorName}`}?</span>
-            </h6>
-            <div className="d-flex justify-content-center mt-4">
-              <hr className="hr-grey-6 w-100" />
-            </div>
-          </DialogContent>
-          <DialogActions className="d-flex justify-content-between px-4 pb-4">
-            <button
-              className="button-red-outline py-2 px-3 me-5"
-              onClick={handleModalClose}
-            >
-              <p>No</p>
-            </button>
-            <button
-              className="button-gradient py-2 px-3 ms-5"
-              onClick={handleArchivedModalOnSave}
-            >
-              <p>Yes</p>
-            </button>
-          </DialogActions>
-      </Dialog> */}
-
-      <Dialog
-          open={archivedModal}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={handleModalClose}
-          aria-describedby="alert-dialog-slide-description"
-          maxWidth="sm"
-        >
-          <DialogContent className="py-2 px-4 text-center">
-            <img src={closeModal} alt="question" width={40} 
-              className="closeModal c-pointer" 
-              onClick={handleModalClose}
-            />
-            <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
-            <div className="row"></div>
-            <h5 className="text-lightBlue mt-2 mb-3">
-              Archive   
-              <span className="text-blue-2"> {selected.length >= 1 ? `${selected.length} vendors` : vendorName}? </span>
-            </h5>
-            <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
-              <span className="text-blue-2"> 0 products </span> 
-              in this collection will be unassigned from it.
-            </h6>
-            <h6 className="mt-2 mb-4" style={{color: "#5C6D8E"}}>
-              Would you like to Archive this Vendor ?
-            </h6>
-          </DialogContent>
-          <DialogActions className="d-flex justify-content-center px-4 pb-4">
-            <button
-              className="button-lightBlue-outline py-2 px-3 me-4"
-              onClick={handleModalClose}
-            >
-              <p>Cancel</p>
-            </button>
-            <button
-              className="button-red-outline py-2 px-3"
-              onClick={handleArchivedModalOnSave}
-            >
-              <p>Archive</p>
-            </button>
-          </DialogActions>
-        </Dialog>
-
-
-      <DeleteModal
-        showCreateModal={showDeleteModal}
-        toggleArchiveModalHandler={handleDeleteOnClick}
-        handleArchive={handleDelete}
-        name={selected.length >= 1 ? selected.length : vendorName}
-        deleteType={"Vendor"}
-      />
-
-      <UnArchivedModal 
-          handleStatusValue={handleValue}
-          showUnArchivedModal={showUnArchivedModal}
-          closeUnArchivedModal={closeUnArchivedModal}
-          handleUnArchived={handleUnArchived}
-          name={vendorName}
-          nameType={"Vendor"}
+        <ArchiveModal
+          onConfirm ={handleArchivedModalOnSave}
+          onCancel={handleArchiveModalClose}
+          show={showArchivedModal}
+          title={"vendor"}
+          message={vendorName}
+          products={"25 products"}
         />
-        
-          <UnArchivedModal 
-          handleStatusValue={handleMassValue}
-          showUnArchivedModal={openUnArchivePopUp}
-          closeUnArchivedModal={closeMassUnArchivedModal}
-          handleUnArchived={handleMassUnArchived}
-          nameType={"Vendor"}
-          name={selected.length}
+        <MultipleArchiveModal
+          onConfirm ={handleMultipleArchivedModalOnSave}
+          onCancel={handleArchiveModalClose}
+          show={showMultipleArchivedModal}
+          title={"vendors"}
+          message={`${selected.length === 1 ? `${selected.length} vendor` : `${selected.length} vendors`}`}
+          pronoun ={`${selected.length === 1 ? "this" : `these`}`}
         />
-        
+        <UnArchiveModal 
+        onConfirm={handleUnArchived}
+        onCancel={closeUnArchivedModal}
+        show={showUnArchivedModal}
+        title={"Un-Archive Vendor ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${vendorName}</span> vendor,
+        `}
+        secondaryMessage={"Please set its status"}
+        confirmText={"Un-Archive"}
+        handleStatusValue={handleValue}
+        icon={unArchived}
+        />
+        <MultipleUnArchiveModal
+        onConfirm={handleMultipleUnArchived}
+        onCancel={closeUnArchivedModal}
+        show={showMultipleUnArhcivedModal}
+        title={"Un-Archive Vendors ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${selected.length}</span> ${selected.length===1?"Vendor":"Vendors"},
+        `}
+        secondaryMessage={"Please set its status"}
+        confirmText={"Un-Archive"}
+        handleStatusValue={handleValue}
+        icon={unArchived}
+        />
+        <DeleteModalSecondary
+          onConfirm ={handleDelete}
+          onCancel={handleDeleteModalClose}
+          show={showDeleteModal}
+          title={"vendor"}
+          message={vendorName}
+        />
+          <DeleteModalSecondary
+          onConfirm ={handleMultipleDelete}
+          onCancel={handleDeleteModalClose}
+          show={showMultipleDeleteModal}
+          title={"multiple vendor"}
+          message={`${selected.length === 1 ? `${selected.length} vendor` : `${selected.length} vendors`}`}
+        />      
 
     </React.Fragment>
   );

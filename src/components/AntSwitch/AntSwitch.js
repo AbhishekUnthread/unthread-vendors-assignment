@@ -1,8 +1,8 @@
 import { styled, Switch } from "@mui/material";
 
 export const AntSwitch = styled(Switch)(({ theme }) => ({
-  width: 38,
-  height: 22,
+  width: 42,
+  height: 20,
   padding: 0,
   display: "flex",
   "&:active": {
@@ -15,8 +15,9 @@ export const AntSwitch = styled(Switch)(({ theme }) => ({
   },
   "& .MuiSwitch-switchBase": {
     padding: 2,
+    top: "0.4px",
     "&.Mui-checked": {
-      transform: "translateX(12px)",
+      transform: "translateX(18px)",
       color: "#fff",
       "& + .MuiSwitch-track": {
         opacity: 1,
@@ -27,13 +28,13 @@ export const AntSwitch = styled(Switch)(({ theme }) => ({
   },
   "& .MuiSwitch-thumb": {
     boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
-    width: 18,
-    height: 18,
+    width: 15,
+    height: 15,
     borderRadius: 12,
     transition: theme.transitions.create(["width"], {
       duration: 200,
     }),
-    marginLeft: "3px",
+    marginLeft: "2px",
   },
   "& .MuiSwitch-track": {
     borderRadius: 24 / 2,

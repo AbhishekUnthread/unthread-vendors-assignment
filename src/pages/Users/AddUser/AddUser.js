@@ -47,7 +47,7 @@ const customerValidationSchema = Yup.object({
   dob: Yup.date().required("Required"),
   gender: Yup.string().required("Required"),
   email: Yup.string().email().required("Required"),
-  countryCode: Yup.number().required("Required"),
+  countryCode: Yup.string().required("Required"),
   phone: Yup.number().required("Required"),
   password:  Yup
     .string()
@@ -112,7 +112,7 @@ const AddUser = () => {
     customerFormik.setFieldValue("userGroup", value.map(option => option._id))
   }
 
-  const customerAddressDetails = (event) => {
+  const customerAddressDetails = (event, value) => {
     customerFormik.setFieldValue("address", [event])
   }
 
@@ -126,6 +126,7 @@ const AddUser = () => {
       phone: "",
       email: "",
       password: "",
+      address: "",
       isSendEmail: false,
       isTemporaryPassword: false
     },
@@ -411,8 +412,6 @@ const AddUser = () => {
                       disableCloseOnSelect
                       getOptionLabel={(option) => option?.name}
                       size="small"
-                      value={customerFormik.values.email}
-                      name="email" 
                       onChange={handleGroupName}
                       renderOption={(props, option, { selected }) => (
                         <li {...props}>
@@ -426,7 +425,7 @@ const AddUser = () => {
                               marginRight: 0,
                             }}
                           />
-                          <small className="text-lightBlue">{option?.name}</small>
+                          <small className="text-lightBlue">{option.name}</small>
                         </li>
                       )}
                       renderInput={(params) => (

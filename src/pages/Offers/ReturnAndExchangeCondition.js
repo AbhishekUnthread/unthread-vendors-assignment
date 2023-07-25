@@ -7,12 +7,12 @@ import {
   Radio,
 } from "@mui/material";
 
-const ReturnAndExchangeCondition = ({ sectionHeading }) => {
+const ReturnAndExchangeCondition = ({ sectionHeading,formik,field,value }) => {
   // ? RADIO STARTS HERE
-  const [returnAndExchangeCondition, setReturnAndExchangeCondition] =
-    React.useState(0);
+
+
   const handleReturnAndExchangeConditionChange = (event, newValue) => {
-    setReturnAndExchangeCondition(newValue);
+    formik.setFieldValue(field, newValue);
   };
   // ? RADIO ENDS HERE
 
@@ -39,7 +39,7 @@ const ReturnAndExchangeCondition = ({ sectionHeading }) => {
           <RadioGroup
             aria-labelledby="demo-controlled-radio-buttons-group"
             name="controlled-radio-buttons-group"
-            value={returnAndExchangeCondition}
+            value={value}
             onChange={handleReturnAndExchangeConditionChange}
           >
             <FormControlLabel

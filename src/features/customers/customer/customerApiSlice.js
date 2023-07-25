@@ -2,6 +2,7 @@ import apiSlice from "../../../app/api/apiSlice";
 
 export const customerApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+
     createCustomer: builder.mutation({
       query: (customerDetails) => ({
         url: "/customer",
@@ -28,7 +29,7 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       providesTags: ["Customers"],
     }),
 
-    getCustomer: builder.query({
+    getSingleCustomer: builder.query({
       query: (queries) => {
         let queryString = "";
         for (const key in queries) {
@@ -39,7 +40,7 @@ export const customerApiSlice = apiSlice.injectEndpoints({
           }
         }
         return {
-          url: `/customer${queryString}`,
+          url: `/customer/getSingle/${queryString}`,
         };
       },
       providesTags: ["Customers"],
@@ -51,5 +52,5 @@ export const customerApiSlice = apiSlice.injectEndpoints({
 export const {
   useCreateCustomerMutation,
   useGetAllCustomersQuery,
-  useGetCustomerQuery
+  useGetSingleCustomerQuery
 } = customerApiSlice;

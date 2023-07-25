@@ -7,7 +7,7 @@ import AlertDialog from "../AlertDialog/AlertDialog";
 
 import noData from "../../assets/icons/noData.svg";
 import closeModal from "../../assets/icons/closeModal.svg";
-import { ReactComponent as ConfirmIcon } from "../../assets/icons/confirm.svg";
+import confirmIcon from "../../assets/icons/confirm.svg";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -71,10 +71,12 @@ const DiscardModalSecondary = ({ when = false, message }) => {
             onCancel={onCancel}
             show={isActive}
             title="Exit without saving?"
-            primaryMessage={`This ${message || "screen"} can't be saved.`}
+            primaryMessage={`This <span class='text-blue-1'>${
+              message || "screen"
+            }</span> can't be saved.`}
             secondaryMessage="Would you like to exit without saving?"
             confirmText="Exit Without Saving"
-            icon={<ConfirmIcon width={80} height={80} />}
+            icon={confirmIcon}
           />
         )
       }

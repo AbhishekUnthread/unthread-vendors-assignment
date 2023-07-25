@@ -118,7 +118,17 @@ const headCells = [
 ];
 // ? TABLE ENDS HERE
 
-const AllUsersTable = ({isLoading,error,list,totalCount,rowsPerPage,changeRowsPerPage,changePage,page}) => {
+const AllUsersTable = ({
+  isLoading,
+  error,
+  list,
+  totalCount,
+  rowsPerPage,
+  changeRowsPerPage,
+  changePage,
+  page,
+  onEdit
+}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("userName");
   const [selected, setSelected] = React.useState([]);
@@ -331,14 +341,15 @@ const AllUsersTable = ({isLoading,error,list,totalCount,rowsPerPage,changeRowsPe
                         />
 
                         <div>
-                          <Link
-                            to="/users/allUsers/details"
-                            className=" text-decoration-none"
+                          <div
+                            // to="/users/allUsers/details"
+                            className=" text-decoration-none c-pointer"
+                            onClick={onEdit.bind(null, index + 1)}
                           >
                             <p className="text-lightBlue rounded-circle fw-600">
                               {row?.firstName} {row?.lastName}
                             </p>
-                          </Link>
+                          </div>
                           <small className="mt-2 text-grey-6">
                             {row?.email}
                             <Tooltip title="Copy" placement="top">

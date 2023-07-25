@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
+import * as Yup from "yup";
 import {
   FormControl,
+  FormHelperText,
   InputAdornment,
   OutlinedInput,
   Checkbox,
@@ -20,7 +22,22 @@ import editGrey from "../../../assets/icons/editGrey.svg";
 
 import "./AddUser.scss";
 
+const customerAddressValidation = Yup.object({
+  name: Yup.string().trim().min(3).required("Required"),
+  firstName: Yup.string().trim().min(3).required("Required"),
+  lastName: Yup.string().trim().min(3).required("Required"),
+  countryCode: Yup.string().required("Required"),
+  phone: Yup.number().required("Required"),
+  country: Yup.string().required("Required"),
+  line1: Yup.string().required("Required"),
+  city: Yup.string().required("Required"),
+  pinCode: Yup.number().required("Required"),
+  state: Yup.string().required("Required"),
+});
+
 const AddAddress = ({ customerAddressDetails }) => {
+  const [address, setAddress] = useState(false);
+  const [savedAddress, setSavedAddress] = useState(false);
 
   const customerAddressFormik = useFormik({
     initialValues: {
@@ -28,12 +45,20 @@ const AddAddress = ({ customerAddressDetails }) => {
       firstName: "",
       lastName: "",
       companyName: "",
+      countryCode: "",
+      country: "",
       phone: "",
       line1: "",
+      city: "",
+      pinCode: "",
+      state: "",
       isDefaultAddress: false,
     },
     enableReinitialize: true,
+    validationSchema: customerAddressValidation,
     onSubmit: (values) => {
+                console.log(values, 'values valuesvalues');
+
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
           delete values[key] 
@@ -42,6 +67,10 @@ const AddAddress = ({ customerAddressDetails }) => {
       customerAddressDetails(values)
     },
   });
+
+  const handleAddressChange = () => {
+    setAddress(prevState => !prevState)
+  };
 
   const GetCountryCode = (value) => {
     customerAddressFormik.setFieldValue("countryCode", value)
@@ -75,29 +104,17 @@ const AddAddress = ({ customerAddressDetails }) => {
     customerAddressFormik.setFieldValue("city", event)
   }
 
-  // ? ADDRESS STARTS HERE
-  const [address, setAddress] = useState(false);
-
-  const handleAddressChange = () => {
-    setAddress(prevState => !prevState)
-  };
-  // ? ADDRESS ENDS HERE
-  // ? ADDRESS STARTS HERE
-  const [savedAddress, setSavedAddress] = useState(false);
-
-  // ? ADDRESS ENDS HERE
-
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
         <div className="d-flex col-12 px-0 justify-content-between">
             <div className="d-flex align-items-center">
-            <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                Addresses
-            </h6>
+                <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
+                    Adresses
+                </h6>
             </div>
 
             <p className="button-gradient py-2 px-3" onClick={handleAddressChange}>
-                <p className="">+ Add Address</p>
+                <p className="">+ Add Adress</p>
             </p>
         </div>
         {savedAddress && (
@@ -155,6 +172,12 @@ const AddAddress = ({ customerAddressDetails }) => {
                                 onChange={customerAddressFormik.handleChange}
                             />
                         </FormControl>
+                        {!!customerAddressFormik.touched.name && 
+                        customerAddressFormik.errors.name && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.name}
+                            </FormHelperText>
+                        )}
                         <small className="text-grey-6">
                             Name this address Ex. Office Address, Home Address
                         </small>
@@ -162,23 +185,23 @@ const AddAddress = ({ customerAddressDetails }) => {
                     <div className="col-12">
                         <FormControlLabel
                             control={
-                            <Checkbox
-                                name="isDefaultAddress"
-                                value={customerAddressFormik.values.isDefaultAddress}
-                                onChange={customerAddressFormik.handleChange}
-                                inputProps={{ "aria-label": "controlled" }}
-                                size="small"
-                                style={{
-                                color: "#5C6D8E",
-                                }}
-                            />
+                                <Checkbox
+                                    name="isDefaultAddress"
+                                    value={customerAddressFormik.values.isDefaultAddress}
+                                    onChange={customerAddressFormik.handleChange}
+                                    inputProps={{ "aria-label": "controlled" }}
+                                    size="small"
+                                    style={{
+                                        color: "#5C6D8E",
+                                    }}
+                                />
                             }
                             label="Set as Default Address"
                             sx={{
-                            "& .MuiTypography-root": {
-                                fontSize: 13,
-                                color: "#c8d8ff",
-                            },
+                                "& .MuiTypography-root": {
+                                    fontSize: 13,
+                                    color: "#c8d8ff",
+                                },
                             }}
                         />
                     </div>
@@ -186,25 +209,37 @@ const AddAddress = ({ customerAddressDetails }) => {
                         <p className="text-lightBlue mb-1">First Name</p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
-                            placeholder="Enter First Name"
-                            size="small"
-                            name="firstName"
-                            value={customerAddressFormik.values.firstName}
-                            onChange={customerAddressFormik.handleChange}
+                                placeholder="Enter First Name"
+                                size="small"
+                                name="firstName"
+                                value={customerAddressFormik.values.firstName}
+                                onChange={customerAddressFormik.handleChange}
                             />
                         </FormControl>
+                        {!!customerAddressFormik.touched.firstName && 
+                        customerAddressFormik.errors.firstName && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.firstName}
+                            </FormHelperText>
+                        )}
                     </div>
                     <div className="col-md-6 mt-3">
                         <p className="text-lightBlue mb-1">Last Name</p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
-                            placeholder="Enter Last Name"
-                            size="small"
-                            name="lastName"
-                            value={customerAddressFormik.values.lastName}
-                            onChange={customerAddressFormik.handleChange}
+                                placeholder="Enter Last Name"
+                                size="small"
+                                name="lastName"
+                                value={customerAddressFormik.values.lastName}
+                                onChange={customerAddressFormik.handleChange}
                             />
                         </FormControl>
+                        {!!customerAddressFormik.touched.lastName && 
+                        customerAddressFormik.errors.lastName && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.lastName}
+                            </FormHelperText>
+                        )}
                     </div>
                     <div className="col-md-12 mt-3">
                         <p className="text-lightBlue mb-1">Company Name</p>
@@ -240,6 +275,18 @@ const AddAddress = ({ customerAddressDetails }) => {
                             }
                             />
                         </FormControl>
+                        {!!customerAddressFormik.touched.countryCode && 
+                        customerAddressFormik.errors.countryCode && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.countryCode}
+                            </FormHelperText>
+                        )}
+                        {!!customerAddressFormik.touched.phone && 
+                        customerAddressFormik.errors.phone && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.phone}
+                            </FormHelperText>
+                        )}
                     </div>
                     <div className="col-md-12 mt-3 add-user-country">
                         <p className="text-lightBlue mb-1">Country</p>
@@ -249,6 +296,12 @@ const AddAddress = ({ customerAddressDetails }) => {
                             SelectCountryName={SelectCountryName}
                             name="country" 
                         />
+                        {!!customerAddressFormik.touched.country && 
+                        customerAddressFormik.errors.country && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.country}
+                            </FormHelperText>
+                        )}
                     </div>
                     <div className="col-md-6 mt-3">
                         <p className="text-lightBlue mb-1">Address Line 1</p>
@@ -261,6 +314,12 @@ const AddAddress = ({ customerAddressDetails }) => {
                                 onChange={customerAddressFormik.handleChange}
                             />
                         </FormControl>
+                        {!!customerAddressFormik.touched.line1 && 
+                        customerAddressFormik.errors.line1 && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.line1}
+                            </FormHelperText>
+                        )}
                     </div>
                     <div className="col-md-6 mt-3">
                         <p className="text-lightBlue mb-1">Address Line 2</p>
@@ -282,6 +341,12 @@ const AddAddress = ({ customerAddressDetails }) => {
                             SelectCityName={SelectCityName}
                             name="city" 
                         />
+                        {!!customerAddressFormik.touched.city && 
+                        customerAddressFormik.errors.city && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.city}
+                            </FormHelperText>
+                        )}
                     </div>
                     <div className="col-md-6 mt-3">
                         <p className="text-lightBlue mb-1">Zipcode/Postalcode</p>
@@ -294,18 +359,30 @@ const AddAddress = ({ customerAddressDetails }) => {
                                 onChange={customerAddressFormik.handleChange}
                             />
                         </FormControl>
+                        {!!customerAddressFormik.touched.city && 
+                        customerAddressFormik.errors.city && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.city}
+                            </FormHelperText>
+                        )}
                     </div>
                     <div className="col-md-12 mt-3  add-user-country">
-                    <div className="d-flex align-items-center justify-content-between">
-                        <p className="text-lightBlue mb-1">State or Region</p>
-                        <small className="text-grey-6 mb-1">(Optional)</small>
-                    </div>
-                    <AppStateSelect 
-                        value={customerAddressFormik.values.state}
-                        getStateName={getStateName}
-                        SelectStateName={SelectStateName}
-                        name="state" 
-                    />
+                        <div className="d-flex align-items-center justify-content-between">
+                            <p className="text-lightBlue mb-1">State or Region</p>
+                            <small className="text-grey-6 mb-1">(Optional)</small>
+                        </div>
+                        <AppStateSelect 
+                            value={customerAddressFormik.values.state}
+                            getStateName={getStateName}
+                            SelectStateName={SelectStateName}
+                            name="state" 
+                        />
+                        {!!customerAddressFormik.touched.state && 
+                        customerAddressFormik.errors.state && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.state}
+                            </FormHelperText>
+                        )}
                     </div>
                     <div className="col-12 mt-4 d-flex justify-content-between">
                     <Link

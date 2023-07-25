@@ -143,7 +143,7 @@ export const SidebarData = [
     image: customers,
     subNav: [
       {
-        title: "All Users",
+        title: "All Customers",
         path: "/users/allUsers",
         image: customers,
       },

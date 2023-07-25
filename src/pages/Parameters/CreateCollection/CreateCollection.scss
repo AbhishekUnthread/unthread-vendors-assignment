@@ -9,10 +9,16 @@
 
   width: 100%;
 }
+
 .user-group {
   min-height: calc(100vh - 102px);
 }
 
 .add-product-padding {
   margin-left: 30rem;
+}
+
+.checkboxText {
+  margin-left: -13px;
+  font-size: 15px;
 }

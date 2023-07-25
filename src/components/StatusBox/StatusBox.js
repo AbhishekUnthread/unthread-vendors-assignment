@@ -1,9 +1,5 @@
 import React from "react";
-// ! MATERIAL IMPORTS
-// ! IMAGES IMPORTS
-import info from "../../assets/icons/info.svg";
-import clock from "../../assets/icons/clock.svg";
-import cancel from "../../assets/icons/cancel.svg";
+import dayjs from 'dayjs';
 import {
   Dialog,
   DialogActions,
@@ -19,12 +15,29 @@ import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import moment from "moment";
+
+import info from "../../assets/icons/info.svg";
+import clock from "../../assets/icons/clock.svg";
+import cancel from "../../assets/icons/cancel.svg";
+
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 // ? DIALOG TRANSITION ENDS HERE
-const StatusBox = ({ headingName, titleName, showSchedule,value,handleProductStatus, toggleData=['active','in-active'], startDate, endDate, handleStartDate, handleEndDate, clearDate}) => {
+const StatusBox = ({ 
+  headingName,
+  titleName, 
+  showSchedule,
+  value,
+  handleProductStatus, 
+  toggleData=['active','in-active'], 
+  startDate, 
+  endDate, 
+  handleStartDate, 
+  handleEndDate, 
+  clearDate
+}) => {
 
   const showScheduleData = showSchedule === undefined ? false : true;
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);

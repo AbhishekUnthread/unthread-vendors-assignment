@@ -9,7 +9,9 @@ import "../../Products/AllProducts/AllProducts.scss";
 // ! COMPONENT IMPORTS
 import TagsManagerTable from "./TagsManagerTable";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import TableSearch, { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
+import TableSearch, {
+  TableSearchSecondary,
+} from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
@@ -79,11 +81,12 @@ import {
   useBulkCreateTagMutation,
   useBulkEditTagMutation,
   useBulkDeleteTagMutation,
+  useGetAllTagsStatusCountQuery,
 } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { updateTagId } from "../../../features/parameters/tagsManager/tagsManagerSlice";
 import sort from "../../../assets/icons/sort.svg";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import info from "../../../assets/icons/info.svg";
 
 // ? DIALOG TRANSITION STARTS HERE
@@ -180,11 +183,11 @@ const likeHeadCells = [
 
 // ? TABLE ENDS HERE
 
-
 const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 1,
-  name:"",
+  name: "",
+  searchValue: "",
 };
 const queryFilterReducer = (state, action) => {
   if (action.type === "SET_PAGE_SIZE") {
@@ -197,7 +200,7 @@ const queryFilterReducer = (state, action) => {
   if (action.type === "CHANGE_PAGE") {
     return {
       ...state,
-      pageNo: action.pageNo +1,
+      pageNo: action.pageNo + 1,
     };
   }
   if (action.type === "SEARCH") {
@@ -207,186 +210,164 @@ const queryFilterReducer = (state, action) => {
       name: action.name,
     };
   }
+  if (action.type === "SET_SEARCH_VALUE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      searchValue: action.searchValue,
+    };
+  }
   return initialQueryFilterState;
 };
 
 const TagsManager = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [tagsType, setTagsType] = useState(0);
   const [tagsList, setTagsList] = useState([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [error, setError] = useState(false);
-  const [multipleTags,setMultipleTags] = useState([]);
-  const [selectedSortOption, setSelectedSortOption] = React.useState("newestToOldest");
-  const [searchValue, setSearchValue] = useState("");
-  const [totalCount,setTotalCount] = React.useState([]);
+  const [selectedSortOption, setSelectedSortOption] =
+    useState("newestToOldest");
+  const [multipleTags, setMultipleTags] = useState([]);
+  const [totalCount, setTotalCount] = React.useState([]);
 
-
-  
   const tagsValidationSchema = Yup.object({
     name: Yup.string().trim().min(3).required("Required"),
-    // name: Yup.string().min(3, 'Name must be at least 3 characters long').required('Name is required'),
-    // description: Yup.string().trim().min(3).required(),
-    // status: Yup.mixed().oneOf(["active", "inactive"]).optional(),
-    // name: Yup.string()
-    // .when('multipleTags', {
-    //   is: (multipleTags) => !multipleTags || multipleTags.length === 0,
-    //   then: Yup.string()
-    //     .trim()
-    //     .min(3, 'Name must be at least 3 characters long')
-    //     .required('Name is required when tags are empty'),
-    //   otherwise: Yup.string()
-    //     .trim()
-    //     .min(3, 'Name must be at least 3 characters long'),
-    // }),
   });
 
   const multipleTagsSchema = Yup.object({
-    name: Yup.string().trim().min(3,"Name must be at least 3 characters long"),
+    name: Yup.string().trim().min(3, "Name must be at least 3 characters long"),
   });
 
   const queryParameters = {};
   if (selectedSortOption) {
     // Check alphabetical sort options
-    if (selectedSortOption === "alphabeticalAtoZ" || selectedSortOption === "alphabeticalZtoA") {
-      queryParameters.alphabetical = selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
+    if (
+      selectedSortOption === "alphabeticalAtoZ" ||
+      selectedSortOption === "alphabeticalZtoA"
+    ) {
+      queryParameters.alphabetical =
+        selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
     }
     // Check createdAt sort options
-    else if (selectedSortOption === "oldestToNewest" || selectedSortOption === "newestToOldest") {
-      queryParameters.createdAt = selectedSortOption === "oldestToNewest" ? "1" : "-1";
+    else if (
+      selectedSortOption === "oldestToNewest" ||
+      selectedSortOption === "newestToOldest"
+    ) {
+      queryParameters.createdAt =
+        selectedSortOption === "oldestToNewest" ? "1" : "-1";
     }
   }
-  // if(searchValue)
-  // {
-  // queryParameters.name = searchValue;
-  // }
   if (!selectedSortOption) {
-    queryParameters.createdAt = "-1"; // Set default createdAt value
+    queryParameters.createdAt = "-1";
   }
-  const TagTypeQuery =tagsType === 0 ? { status: "active" }: tagsType === 1 ? { status: "archieved" }
-  : {};
-  
-  const[editTag,{
-    data: editData,
-    isLoading: editTagIsLoading,
-    isSuccess: editTagIsSuccess,
-    error: editTagError, 
-  }]=useEditTagMutation();
+  const TagTypeQuery =
+    tagsType === 0
+      ? { status: "active" }
+      : tagsType === 1
+      ? { status: "archieved" }
+      : {};
 
-  const changeTagsTypeHandler
-   = (_event, tabIndex) => {
-    setTagsType(tabIndex);
-  };
-  const[deleteTags,
-  {
-    isLoading: deleteTagsIsLoading, 
-    isSuccess: deleteTagsIsSuccess, 
-    error: deleteTagsError, 
-  }]= useDeleteTagMutation();
+  const {
+    data: tagsData,
+    isLoading: tagsIsLoading,
+    isSuccess: tagsIsSuccess,
+    error: tagsError,
+  } = useGetAllTagsQuery(
+    { ...queryParameters, ...TagTypeQuery, ...queryFilterState },
+    { enabled: Object.keys(queryParameters).length > 0 }
+  );
 
-const[createTag,
-{
-  isLoading: createTagsIsLoading, 
-  isSuccess: createTagsIsSuccess, 
-  error:createTagsError, 
-}]= useCreateTagMutation();
+  const { 
+    data: tagsStatusCount,
+    isLoading: tagsStatusCountIsLoading,
+    isSuccess: tagsStatusCountIsSuccess,
+    error: tagsStatusCountError,
+  } = useGetAllTagsStatusCountQuery();
 
-const[bulkCreateTag,{
-  isLoading: bulkCreateTagsIsLoading, 
-  isSuccess: bulkCreateTagsIsSuccess, 
-  error:bulkCreateTagsError, 
-  
-}]=useBulkCreateTagMutation();
+  const [
+    createTag,
+    {
+      isLoading: createTagsIsLoading,
+      isSuccess: createTagsIsSuccess,
+      error: createTagsError,
+    },
+  ] = useCreateTagMutation();
 
-const[bulkEdit,
-  {
-    data: bulkEditTag,
-    isLoading: bulkTagEditLoading,
-    isSuccess: bulkTagEditIsSuccess,
-    error: bulkTagEditError,
-  }]=useBulkEditTagMutation();
+  const [
+    bulkCreateTag,
+    {
+      isLoading: bulkCreateTagsIsLoading,
+      isSuccess: bulkCreateTagsIsSuccess,
+      error: bulkCreateTagsError,
+    },
+  ] = useBulkCreateTagMutation();
 
-// const queryOptions =
-//   tagsType === 0
-//     ? { createdAt: -1 }
-//     : tagsType === 1
-//     ? { status: "draft" }
-//     : tagsType === 2
-//     ? { status: "active" }
-//     : {};
+  const [
+    deleteTags,
+    {
+      isLoading: deleteTagsIsLoading,
+      isSuccess: deleteTagsIsSuccess,
+      error: deleteTagsError,
+    },
+  ] = useDeleteTagMutation();
 
-const {
-  data: tagsData,
-  isLoading: tagsIsLoading,
-  isSuccess: tagsIsSuccess,
-  error: tagsError,
-} = useGetAllTagsQuery({...queryParameters,...TagTypeQuery,...queryFilterState}, { enabled: Object.keys(queryParameters).length > 0 });
+  const [
+    bulkDeleteTag,
+    {
+      isLoading: bulkDeleteTagIsLoading,
+      isSuccess: bulkDeleteTagIsSuccess,
+      error: bulkDeleteTagError,
+    },
+  ] = useBulkDeleteTagMutation();
 
-const [
-  bulkDeleteTag,
-  {
-    isLoading: bulkDeleteTagIsLoading,
-    isSuccess: bulkDeleteTagIsSuccess,
-    error: bulkDeleteTagError,
-  },
-] = useBulkDeleteTagMutation();
-    
-    const editTagsPageNavigationHandler = (data) => {
-      dispatch(updateTagId(data._id)); 
-      navigate('edit');
-    };
+  const [
+    editTag,
+    {
+      data: editData,
+      isLoading: editTagIsLoading,
+      isSuccess: editTagIsSuccess,
+      error: editTagError,
+    },
+  ] = useEditTagMutation();
 
-    // const ArchiveTagsHandler = (data) => {
-    //   const newStatus = data?.status === "archieved" ? "active" : "archieved";
-    //   editTag({
-    //     id: data?._id,
-    //     details: {
-    //       status: newStatus,
-    //     },
-    //   });
-    // };
+  const [
+    bulkEdit,
+    {
+      data: bulkEditTag,
+      isLoading: bulkTagEditLoading,
+      isSuccess: bulkTagEditIsSuccess,
+      error: bulkTagEditError,
+    },
+  ] = useBulkEditTagMutation();
 
-  const handleTagDelete = (data)=>
-  {
-    deleteTags(data);
-  }
-    
-  
-  const toggleCreateModalHandler = () => {
-    setShowCreateModal((prevState) => !prevState);
-    TagFormik.resetForm();
-    setMultipleTags([]);
-    TagFormik.setFieldTouched('name', false);
-    TagFormik.setFieldError('name', '');
-  };
-  
   const TagFormik = useFormik({
     initialValues: {
-      name : "",
-      status:"active",
-      showFilter:false,
+      name: "",
+      status: "active",
+      showFilter: false,
     },
     enableReinitialize: true,
-    validationSchema: multipleTags.length > 0 ? multipleTagsSchema : tagsValidationSchema,
-    
+    validationSchema:
+      multipleTags.length > 0 ? multipleTagsSchema : tagsValidationSchema,
+
     onSubmit: (values) => {
-      if(multipleTags.length>0)
-      {
-        bulkCreateTag(multipleTags)
-      }
-      else{
+      if (multipleTags.length > 0) {
+        bulkCreateTag(multipleTags);
+      } else {
         createTag(values);
       }
     },
   });
 
   const handleChangeRowsPerPage = (event) => {
-    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value: event.target.value });
   };
 
   const handleChangePage = (_, pageNo) => {
@@ -397,193 +378,243 @@ const [
     dispatchQueryFilter({ type: "SEARCH", name: value });
   };
 
+  const handleSearchValue = (value) => {
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
+  };
+
+  const toggleCreateModalHandler = () => {
+    setShowCreateModal((prevState) => !prevState);
+    TagFormik.resetForm();
+    setMultipleTags([]);
+    TagFormik.setFieldTouched("name", false);
+    TagFormik.setFieldError("name", "");
+  };
+
+  const editTagsPageNavigationHandler = (data, index) => {
+    const combinedObject = {
+      queryParameters,
+      TagTypeQuery,
+      queryFilterState,
+      tab: tagsType,
+    };
+    const encodedCombinedObject = encodeURIComponent(
+      JSON.stringify(combinedObject)
+    );
+
+    const currentTabNo =
+      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
+    navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
+  };
+
+  const changeTagsTypeHandler = (_event, tabIndex) => {
+    setTagsType(tabIndex);
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
+
+    setSelectedSortOption("");
+    setSearchParams({ status: tabIndex });
+  };
+
   const handleAddMultiple = (event) => {
-    if (event.key === 'Enter'||event.type === 'click') {
+    if (event.key === "Enter" || event.type === "click") {
       event.preventDefault();
       TagFormik.validateForm().then(() => {
-        if (TagFormik.isValid && TagFormik.values.name.trim() !== '') {
-          TagFormik.setFieldTouched('name', true);
+        if (TagFormik.isValid && TagFormik.values.name.trim() !== "") {
+          TagFormik.setFieldTouched("name", true);
 
-        // Check if the entered tag already exists in the array
-        const tagExists = multipleTags.some(
-          (tag) => tag.name.toLowerCase().trim() === TagFormik.values.name.toLowerCase().trim()
-        );
-        if (!tagExists) {
-          setMultipleTags((prevValues) => [
-            ...prevValues,
-            { name: TagFormik.values.name.trim(), status: 'active', filter: TagFormik.values.showFilter },
-          ]);
-        }
-        else{
-          dispatch(
-            showError({ message: `${TagFormik.values.name.trim()} already exists` })
+          // Check if the entered tag already exists in the array
+          const tagExists = multipleTags.some(
+            (tag) =>
+              tag.name.toLowerCase().trim() ===
+              TagFormik.values.name.toLowerCase().trim()
           );
+          if (!tagExists) {
+            setMultipleTags((prevValues) => [
+              ...prevValues,
+              {
+                name: TagFormik.values.name.trim(),
+                status: "active",
+                filter: TagFormik.values.showFilter,
+              },
+            ]);
+            TagFormik.resetForm();
+          } else {
+            dispatch(
+              showError({
+                message: `${TagFormik.values.name.trim()} already exists`,
+              })
+            );
+          }
         }
-        }
-        TagFormik.resetForm();
       });
     }
   };
-  
+
   const handleDelete = (value) => {
     setMultipleTags((prevValues) => prevValues.filter((v) => v.name !== value));
   };
-  
-  const handleBulkDeleteTag =(data)=>{
-    bulkDeleteTag(data);
-    }
 
-  // const handleSearchChange = (event) => {
-  //   setSearchValue(event.target.value);
-  // };
+  // * SORT POPOVERS STARTS HERE
 
-   // * SORT POPOVERS STARTS HERE
-   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
-   const handleSortClick = (event) => {
-     setAnchorSortEl(event.currentTarget);
-   };
- 
-   const handleSortClose = () => {
-     setAnchorSortEl(null);
-   };
- 
-   const handleSortRadioChange = (event) => {
-     setSelectedSortOption(event.target.value);
-     setAnchorSortEl(null); // Close the popover after selecting a value
-   };
- 
-   
-   const openSort = Boolean(anchorSortEl);
-   const idSort = openSort ? "simple-popover" : undefined;
- 
+  const handleSortClick = (event) => {
+    setAnchorSortEl(event.currentTarget);
+  };
+
+  const handleSortClose = () => {
+    setAnchorSortEl(null);
+  };
+
+  const handleSortRadioChange = (event) => {
+    setSelectedSortOption(event.target.value);
+    setAnchorSortEl(null); // Close the popover after selecting a value
+  };
+
+  const openSort = Boolean(anchorSortEl);
+  const idSort = openSort ? "simple-popover" : undefined;
+
   // * SORT POPOVERS ENDS
 
+  useEffect(() => {
+    if (createTagsIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(showSuccess({ message: "Tag created successfully" }));
+    }
+    if (createTagsError) {
+      setError(true);
+      if (createTagsError?.data?.message) {
+        dispatch(showError({ message: createTagsError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [createTagsIsSuccess, createTagsError, dispatch]);
 
-     // * SORT POPOVERS STARTS HERE
-    //  const [anchorSortE1, setAnchorSortE1] = React.useState(null);
-    //  const openSort = Boolean(anchorSortE1);
-    //  const idSort = openSort ? "simple-popover" : undefined;
-   
-    //  const handleSortClose = () => {
-    //    setAnchorSortE1(null);
-    //  };
-     
-    //  const handleSortClick = (event) => {
-    //    setAnchorSortE1(event.currentTarget);
-    //  };
-    //  const handleSortCheckboxChange = (event) => {
-    //    const { value, checked } = event.target;
-    //    setSelectedSortOption(checked ? value : null);
-    //    setAnchorSortE1(null);
-    //  };
-      // * SORT POPOVERS ENDS
-      useEffect(() => {
-        if (createTagsIsSuccess) {
-          setShowCreateModal(false);
-          dispatch(showSuccess({ message: "Tag created successfully" }));
-        }
-        if(createTagsError)
-        {
-          setError(true);
-          if (createTagsError?.data?.message) {
-            dispatch(showError({ message: createTagsError?.data?.message }));
-          }
-          else {
-            dispatch(
-              showError({ message: "Something went wrong, please try again" })
-            );
-          }
-        }
+  useEffect(() => {
+    if (bulkCreateTagsIsSuccess) {
+      setShowCreateModal(false);
+      dispatch(
+        showSuccess({
+          message: `${
+            multipleTags.length === 1 ? "Tag" : "Tags"
+          } Created Successfully`,
+        })
+      );
+    }
+    if (bulkCreateTagsError) {
+      setError(true);
+      if (bulkCreateTagsError?.data?.message) {
+        dispatch(showError({ message: bulkCreateTagsError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [
+    bulkCreateTagsIsSuccess,
+    bulkCreateTagsError,
+    dispatch,
+  ]);
 
-      }, [createTagsIsSuccess,createTagsError])
-      
+  useEffect(() => {
+    if (tagsError) {
+      setError(true);
+      if (tagsError?.data?.message) {
+        dispatch(showError({ message: tagsError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+    if (tagsIsSuccess) {
+      setError(false);
+      if (tagsType === 0) {
+        setTagsList(tagsData.data.data);
+        setTotalCount(tagsData.data.totalCount);
+      }
+      if (tagsType === 1) {
+        setTagsList(tagsData.data.data);
+        setTotalCount(tagsData.data.totalCount);
+      }
+    }
+  }, [
+    tagsData,
+    tagsIsSuccess,
+    tagsType,
+    tagsError,
+    createTagsIsSuccess,
+    bulkCreateTagsIsSuccess,
+    createTagsError,
+    bulkCreateTagsError,
+    editTagIsSuccess,
+    bulkTagEditIsSuccess,
+    editTagError,
+    bulkTagEditError,
+    tagsList,
+    dispatch,
+  ]);
 
-      useEffect(() => {
-
-        if(bulkCreateTagsIsSuccess)
-        {
-          setShowCreateModal(false);
-          dispatch(showSuccess({ message: "Tags created successfully" }));
-        }
-        if (bulkCreateTagsError ) {
-          setError(true);
-          if(bulkCreateTagsError?.data?.message)
-          {
-            dispatch(showError({ message: bulkCreateTagsError.data.message }));
-          }
-          else {
-            dispatch(
-              showError({ message: "Something went wrong, please try again" })
-            );
-          }
-        }
   
-      }, [bulkCreateTagsIsSuccess,bulkCreateTagsError])
-      
-      useEffect(() => {
-  
-        if (tagsError) {
-          setError(true);
-          if (tagsError?.data?.message) {
-            dispatch(showError({ message: tagsError.data.message }));
-          } else {
-            dispatch(
-              showError({ message: "Something went wrong, please try again" })
-            );
-          }
-        }
-        if (tagsIsSuccess) {
-          setError(false);
-          if (tagsType === 0) {
-            setTagsList(tagsData.data.data);
-            setTotalCount(tagsData.data.totalCount);
-          }
-          if (tagsType === 1) {
-            setTagsList(tagsData.data.data);
-            setTotalCount(tagsData.data.totalCount);
-          }
-        }
-        
-      }, [tagsType,tagsIsSuccess,tagsError,tagsData,bulkTagEditIsSuccess,createTagsIsSuccess,createTagsError,bulkCreateTagsIsSuccess,bulkCreateTagsError])
+  useEffect(() => {
+    if (deleteTagsError) {
+      if (deleteTagsError?.data?.message) {
+        dispatch(showError({ message: deleteTagsError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [deleteTagsError, dispatch]);
 
-      useEffect(() => {
-        if(deleteTagsIsSuccess)
-        {
-          dispatch(showSuccess({ message: "Tag deleted successfully" }));
-        }
-        if(deleteTagsError)
-        {
-          if (deleteTagsError?.data?.message) {
-            dispatch(showError({ message: deleteTagsError?.data?.message }));
-          }
-          else {
-            dispatch(
-              showError({ message: "Something went wrong, please try again" })
-            );
-          }
-        }
-      }, [deleteTagsIsSuccess,deleteTagsError])
-  
-      useEffect(() => {
-  
-        if(bulkDeleteTagIsSuccess)
-        {
-          dispatch(showSuccess({ message: "Tags deleted successfully" }));
-        }
-        if(bulkCreateTagsError)
-        {
-          if (bulkCreateTagsError?.data?.message) {
-            dispatch(showError({ message: bulkCreateTagsError?.data?.message }));
-          }
-          else {
-            dispatch(
-              showError({ message: "Something went wrong, please try again" })
-            );
-          }
-        }
-      }, [bulkDeleteTagIsSuccess,bulkCreateTagsError])
+  useEffect(() => {
+    if (bulkDeleteTagError) {
+      if (bulkDeleteTagError?.data?.message) {
+        dispatch(showError({ message: bulkDeleteTagError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [bulkDeleteTagError, dispatch]);
 
+  useEffect(() => {
+    if (editTagError) {
+      if (editTagError?.data?.message) {
+        dispatch(showError({ message: editTagError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [editTagError, dispatch]);
+
+  useEffect(() => {
+    if (bulkTagEditError) {
+      if (bulkTagEditError?.data?.message) {
+        dispatch(showError({ message: bulkTagEditError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [bulkTagEditError, dispatch]);
+
+  useEffect(() => {
+    if (+searchParams.get("status") === 0) {
+      setTagsType(0);
+    } else if (+searchParams.get("status") === 1) {
+      setTagsType(1);
+    }
+  }, [searchParams]);
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -600,9 +631,9 @@ const [
             <p>Bulk Add Tags</p>
           </button>
           <button
-           className="button-gradient py-2 px-4 ms-3" 
-           onClick={toggleCreateModalHandler}
-           >
+            className="button-gradient py-2 px-4 ms-3"
+            onClick={toggleCreateModalHandler}
+          >
             <p>+ Create Tag</p>
           </button>
 
@@ -636,88 +667,90 @@ const [
             </DialogTitle>
             <hr className="hr-grey-6 my-0" />
             <form noValidate onSubmit={TagFormik.handleSubmit}>
-            <DialogContent className="py-3 px-4">
-            <div className="d-flex mb-2">
-              <p className="text-lightBlue me-2">Create Tags</p>
-              <Tooltip title="Enter Tag Name" placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className=" c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip>
+              <DialogContent className="py-3 px-4">
+                <div className="d-flex mb-2">
+                  <p className="text-lightBlue me-2">Create Tags</p>
+                  <Tooltip title="Enter Tag Name" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className=" c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
-              <FormControl className="col-7 px-0">
-                <OutlinedInput
-                 sx={{pr:1}}
-                 placeholder="Enter Tag Name" 
-                 size="small"
-                 name="name"
-                 value={TagFormik.values.name}
-                 onChange={TagFormik.handleChange}
-                 onBlur={TagFormik.handleBlur}
-                 onKeyDown={handleAddMultiple}
-                 endAdornment={
-                    <InputAdornment position="end">
-                    <Tooltip title="Create Multiple Tags" placement="top">
-                        <ChevronRightIcon className="c-pointer" onClick={handleAddMultiple}/>
-                    </Tooltip>
-                    </InputAdornment>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    sx={{ pr: 1 }}
+                    placeholder="Enter Tag Name"
+                    size="small"
+                    name="name"
+                    value={TagFormik.values.name}
+                    onChange={TagFormik.handleChange}
+                    onBlur={TagFormik.handleBlur}
+                    onKeyDown={handleAddMultiple}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <Tooltip title="Create Multiple Tags" placement="top">
+                          <ChevronRightIcon
+                            className="c-pointer"
+                            onClick={handleAddMultiple}
+                          />
+                        </Tooltip>
+                      </InputAdornment>
                     }
                   />
-                {!!TagFormik.touched.name && TagFormik.errors.name && (
+                  {!!TagFormik.touched.name && TagFormik.errors.name && (
                     <FormHelperText error>
-                        {TagFormik.errors.name}
+                      {TagFormik.errors.name}
                     </FormHelperText>
                   )}
-              </FormControl>
-              <br />
-              <div className="small">
-              <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="showFilter"
-                      checked={TagFormik.values.showFilter}
-                      onChange={TagFormik.handleChange}
-                      inputProps={{ "aria-label": "controlled" }}
-                      size="small"
-                      style={{
-                        color: "#5C6D8E",
-                        marginRight: 0,
-                        width: "auto",
-                      }}
-                    />
-                  }
-                  label="Include in Filters"
-                  sx={{
-                    "& .MuiTypography-root": {
-                      fontSize: "0.875rem",
-                      color: "#c8d8ff",
-                    },
-                  }}
-                  className=" px-0 me-1"
-                />
-                <button className="reset link">(manage)</button>
-              </div>
-              <div className="d-flex">
-                {multipleTags && multipleTags.map((data, index) => {
-                  return (
-                    <Chip
-                      label={data.name}
-                      onDelete={() => handleDelete(data.name)}
-                      onClick={() => {}}
-                      size="small"
-                      className="mt-3 me-2"
-                    ></Chip>
-                  );
-                })}
-              </div>
-
-            </DialogContent>
-            <hr className="hr-grey-6 my-0" />
-            <DialogActions className="d-flex justify-content-between px-4 py-3">
-            
+                </FormControl>
+                <br />
+                <div className="small">
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        name="showFilter"
+                        checked={TagFormik.values.showFilter}
+                        onChange={TagFormik.handleChange}
+                        inputProps={{ "aria-label": "controlled" }}
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                          marginRight: 0,
+                          width: "auto",
+                        }}
+                      />
+                    }
+                    label="Include in Filters"
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontSize: "0.875rem",
+                        color: "#c8d8ff",
+                      },
+                    }}
+                    className=" px-0 me-1"
+                  />
+                  <span className="text-blue-2 c-pointer">(manage)</span>
+                </div>
+                <div className="d-flex">
+                  {multipleTags &&
+                    multipleTags.map((data, index) => {
+                      return (
+                        <Chip
+                          label={data.name}
+                          onDelete={() => handleDelete(data.name)}
+                          onClick={() => {}}
+                          size="small"
+                          className="mt-3 me-2"
+                        ></Chip>
+                      );
+                    })}
+                </div>
+              </DialogContent>
+              <hr className="hr-grey-6 my-0" />
+              <DialogActions className="d-flex justify-content-between px-4 py-3">
                 <button
                   className="button-grey py-2 px-5"
                   onClick={toggleCreateModalHandler}
@@ -725,15 +758,15 @@ const [
                 >
                   <p className="text-lightBlue">Cancel</p>
                 </button>
-              <LoadingButton 
-              className="button-gradient py-2 px-5"
-              // loading={createTagsIsLoading}
-              // disabled={createTagsIsLoading}
-              type="submit"
-              >
-                <p>Create</p>
-              </LoadingButton>
-            </DialogActions>
+                <LoadingButton
+                  className="button-gradient py-2 px-5"
+                  // loading={createTagsIsLoading}
+                  // disabled={createTagsIsLoading}
+                  type="submit"
+                >
+                  <p>Create</p>
+                </LoadingButton>
+              </DialogActions>
             </form>
           </Dialog>
 
@@ -1151,41 +1184,45 @@ const [
             {/* variant="scrollable"
               scrollButtons
               allowScrollButtonsMobile */}
-            <Tabs 
-            value={tagsType}
-            onChange={changeTagsTypeHandler}
-            aria-label="scrollable force tabs example" 
-            className="tabs">
-              <Tab label="All" className="tabs-head" />{" "}
-              <Tab label="Archive" className="tabs-head" />
+            <Tabs
+              value={tagsType}
+              onChange={changeTagsTypeHandler}
+              aria-label="scrollable force tabs example"
+              className="tabs"
+            >
+              <Tab label={`All (${tagsStatusCount?.data[0]?.active})`}  className="tabs-head" />{" "}
+              <Tab label={`Archive (${tagsStatusCount?.data[0]?.archived})`} className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearchSecondary onChange={handleSearchChange}/>
+            <TableSearchSecondary
+             onSearchValueChange={handleSearchValue}
+              value={queryFilterState.searchValue}
+             onChange={handleSearchChange} />
             <button
-                className="button-grey py-2 px-3 ms-2"
-                aria-describedby={idSort}
-                variant="contained"
-                onClick={handleSortClick}
-              >
-                <small className="text-lightBlue me-2">Sort</small>
-                <img src={sort} alt="sort" className="" />
-              </button>
-              <Popover
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                id={idSort}
-                open={openSort}
-                anchorEl={anchorSortEl}
-                onClose={handleSortClose}
-                className="columns"
-              >
+              className="button-grey py-2 px-3 ms-2"
+              aria-describedby={idSort}
+              variant="contained"
+              onClick={handleSortClick}
+            >
+              <small className="text-lightBlue me-2">Sort</small>
+              <img src={sort} alt="sort" className="" />
+            </button>
+            <Popover
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+              id={idSort}
+              open={openSort}
+              anchorEl={anchorSortEl}
+              onClose={handleSortClose}
+              className="columns"
+            >
               <FormControl className="px-2 py-1">
                 <RadioGroup
                   aria-labelledby="demo-controlled-radio-buttons-group"
@@ -1193,7 +1230,6 @@ const [
                   value={selectedSortOption}
                   onChange={handleSortRadioChange}
                   defaultValue="newestToOldest"
-
                 >
                   <FormControlLabel
                     value="newestToOldest"
@@ -1215,11 +1251,10 @@ const [
                     control={<Radio size="small" />}
                     label="Alphabetical (Z-A)"
                   />
-
                 </RadioGroup>
               </FormControl>
-              </Popover>
-            
+            </Popover>
+
             {/* <button
                 className="button-grey py-2 px-3 ms-2"
                 aria-describedby={idSort}
@@ -1307,9 +1342,9 @@ const [
               </Popover> */}
           </div>
           <TabPanel value={tagsType} index={0}>
-            <TagsManagerTable 
+            <TagsManagerTable
               isLoading={tagsIsLoading}
-              deleteData={handleTagDelete}
+              deleteData={deleteTags}
               error={error}
               list={tagsList}
               edit={editTagsPageNavigationHandler}
@@ -1319,24 +1354,26 @@ const [
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
+              editTag={editTag}
             />
           </TabPanel>
           <TabPanel value={tagsType} index={1}>
             <TagsManagerTable
               isLoading={tagsIsLoading}
-              deleteData={handleTagDelete}
+              deleteData={deleteTags}
               error={error}
               list={tagsList}
               edit={editTagsPageNavigationHandler}
               totalCount={totalCount}
               tagsType={tagsType}
+              editTag={editTag}
               bulkEdit={bulkEdit}
-              bulkDelete={handleBulkDeleteTag}
+              bulkDelete={bulkDeleteTag}
               changeRowsPerPage={handleChangeRowsPerPage}
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-             />
+            />
           </TabPanel>
         </Paper>
       </div>

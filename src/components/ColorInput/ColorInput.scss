@@ -1,0 +1,32 @@
+@import "../../styles/global";
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #38395c;
+  padding: 8.5px 14px;
+  border-radius: 5px;
+
+  .picker {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .picker::-webkit-color-swatch {
+    border-radius: 2px;
+    border: none;
+  }
+  .picker::-moz-color-swatch {
+    border-radius: 2px;
+    border: none;
+  }
+  .text {
+  }
+}

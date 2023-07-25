@@ -170,7 +170,7 @@ const router = () => {
                   element: <AddUser />,
                 },
                 {
-                  path: "allUsers/details",
+                  path: "allUsers/details/:id",
                   element: <UserDetails />,
                 },
                 {
@@ -263,7 +263,7 @@ const router = () => {
                   element: <TagsManager />,
                 },
                 {
-                  path: "tagsManager/edit",
+                  path: "tagsManager/edit/:id/:filter",
                   element: <EditTags />,
                 },
                 {
@@ -331,12 +331,11 @@ const router = () => {
                 {
                   path: "discounts",
                   element: <Discounts />,
-                  children: [
-                    {
-                      path: "create",
-                      element: <CreateDiscount />,
-                    },
-                  ],
+                },
+                {
+                  path: "discounts/create",
+                  element: <CreateDiscount />,
+
                 },
                 {
                   path: "bundleDiscount",

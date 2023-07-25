@@ -78,8 +78,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
   const [forMassAction, setForMassAction] = React.useState(false);
   const [collectionTitle, setCollectionTitle] = useState("");
   const [duplicateModal, setDuplicateModal] = useState(false);
-
-  console.log(forMassAction,'forMassAction')
+  const [ singleTitle, setSingleTitle] = useState("");
 
   const handleStatusValue = (value) => {
     setStatusValue(value);
@@ -241,7 +240,8 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
     }
   };  
 
-  const handleClick = (event, name) => {
+  const handleClick = (event, name, title) => {
+    setSingleTitle(title)
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
 
@@ -405,7 +405,7 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row._id)}
+                        onClick={(event) => handleClick(event, row._id, row.title)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -625,16 +625,21 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
             <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
             <div className="row"></div>
             <h5 className="text-lightBlue mt-2 mb-3">
-              Archive   
-              <span className="text-blue-2"> "{forMassAction == true ? selected.length : collectionTitle }" </span>
-              collection ?
+              Archive    
+              <span className="text-blue-2">  
+                {" "}"{forMassAction == true ? 
+                selected.length == 1 ? 
+                singleTitle : selected.length : 
+                collectionTitle }" 
+              </span>
+              { forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" } ?
             </h5>
             <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
               <span className="text-blue-2"> 0 products </span> 
-              in this collection will be unassigned from it.
+              in  { forMassAction == true ? selected.length == 1 ? " this collection" : " these collections": " this collection" } will be unassigned from it.
             </h6>
             <h6 className="mt-2 mb-4" style={{color: "#5C6D8E"}}>
-              Would you like to Archive this Collection ?
+              Would you like to Archive { forMassAction == true ? selected.length == 1 ? " this collection" : " these collections": " this collection" } ?
             </h6>
           </DialogContent>
           <DialogActions className="d-flex justify-content-center px-4 pb-4">
@@ -656,16 +661,16 @@ const CollectionsTable = ({ list, error, isLoading, deleteData, pageLength, coll
           showCreateModal={showDeleteModal}
           toggleArchiveModalHandler={toggleArchiveModalHandler}
           handleArchive={handleArchiveModal} 
-          name={forMassAction == false ? name : selected.length} 
-          deleteType={"Collection"}
+          name={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length} 
+          deleteType={ forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" }
         />
         <UnArchivedModal 
           handleStatusValue={handleStatusValue}
           showUnArchivedModal={showUnArchivedModal}
           closeUnArchivedModal={closeUnArchivedModal}
           handleUnArchived={handleUnArchived}
-          name={forMassAction == false ? name : selected.length}
-          nameType={"Collection"}
+          name={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length} 
+          nameType={ forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" }
         />
 
         <DuplicateCollection 
