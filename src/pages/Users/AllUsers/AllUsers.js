@@ -60,7 +60,7 @@ const locationData = [
 
 const initialQueryFilterState = {
   pageSize: 10,
-  pageNo: 1,
+  pageNo: 0,
   name:"",
   searchValue: ""
 };

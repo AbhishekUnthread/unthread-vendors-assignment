@@ -23,16 +23,19 @@ import read from "../../assets/images/users/Read.svg";
 import send from "../../assets/icons/send.svg";
 
 const ChatBox = ({ handleCloseDrawer, handleOpenDrawer, stateOpen }) => {
+  const [anchorFlagEl, setAnchorFlagEl] = useState(null);
 
-const [anchorFlagEl, setAnchorFlagEl] = useState(null);
   const handleFlagClick = (event) => {
     setAnchorFlagEl(event.currentTarget);
   };
+
   const handleFlagClose = () => {
     setAnchorFlagEl(null);
   };
+
   const openFlag = Boolean(anchorFlagEl);
   const idFlag = openFlag ? "simple-popover" : undefined;
+
   return (
     <SwipeableDrawer
       anchor="right"
@@ -70,13 +73,10 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
           <MoreVertIcon />
         </h6>
       </div>
-
       <div className="d-flex flex-column px-4">
         <hr className="hr-grey-6 my-3 w-100" />
       </div>
-
       <div className="chatMessagesContainer">
-        
         <div className="d-flex ms-4 chatResponses mb-3">
           <Avatar sx={{ bgcolor: "#c8d8ff" }} sizes={33}>S</Avatar>
           <div className="responsesBox ms-3">
@@ -96,7 +96,6 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
             </div>
           </div>
         </div>
-
         <div>
           <span className="d-flex align-items-center justify-content-end me-4">
             <span className="py-3 px-4 mb-2 chatBoxReply">
@@ -130,7 +129,6 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
             </span>
           </span>
         </div>
-
         <div className="d-flex ms-4 chatResponses mb-3">
           <Avatar sx={{ bgcolor: "#c8d8ff" }} sizes={33}>S</Avatar>
           <div className="responsesBox ms-3">
@@ -150,7 +148,6 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
             </div>
           </div>
         </div>
-        
         <div>
           <span className="d-flex align-items-center justify-content-end me-4">
             <span className="py-3 px-4 mb-2 chatBoxReply">
@@ -184,7 +181,6 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
             </span>
           </span>
         </div>
-         
         <div className="d-flex ms-4 chatResponses mb-3">
           <Avatar sx={{ bgcolor: "#c8d8ff" }} sizes={33}>S</Avatar>
           <div className="responsesBox ms-3">
@@ -204,9 +200,7 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
             </div>
           </div>
         </div>
-        
       </div>
-
       <div className="chatSend">
         <div>
           <hr className="hr-grey-6 my-3 w-100" />
@@ -224,7 +218,6 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
                 <p>Escalate</p>
               </button>
             </div>
-
             <div className="rightEnquiryBox">
               <span className="enquiry">
                 Enquiry status :
@@ -270,7 +263,6 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
           </div>
         </div>
       </div>
-
       <div className="chatKeypad d-flex">
         <div className="chatTextArea">
           <TextareaAutosize
@@ -293,14 +285,11 @@ const [anchorFlagEl, setAnchorFlagEl] = useState(null);
             <LinkIcon />
           </div>
         </div>
-
         <button className="button-gradient py-2 px-4 chatSendButton ms-4">
           <img src={send} className="me-2"/>
           <p> Send </p>
         </button>
       </div>
-      
-
     </SwipeableDrawer>
   );
 };
