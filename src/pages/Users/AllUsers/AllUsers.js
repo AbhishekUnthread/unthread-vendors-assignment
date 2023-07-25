@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   Autocomplete,
@@ -28,8 +28,8 @@ import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
-import TableSearch from "../../../components/TableSearch/TableSearch";
 import FilterUsers from "../../../components/FilterUsers/FilterUsers";
+import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 
 import "./AllUsers.scss";
 
@@ -93,6 +93,13 @@ const queryFilterReducer = (state, action) => {
       name: action.name,
     };
   }
+  if (action.type === "SET_SEARCH_VALUE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      searchValue: action.searchValue,
+    };
+  }
   return initialQueryFilterState;
 };
 
@@ -123,6 +130,7 @@ const usersReducer = (state, action) => {
 const AllUsers = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const[searchParams, setSearchParams] = useSearchParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -178,11 +186,28 @@ const AllUsers = () => {
     dispatchUsers({
       type:"SET_CUSTOMER_TYPE", customerType:newValue
     })
+    setSearchParams(newValue)
   };
+
+  useEffect(() => {
+    if( +searchParams.get("status") == 0 ) {
+      usersState.customerType = 0;
+    } else if(+searchParams.get("status")==1) {
+      usersState.customerType = 1;
+    } else if(+searchParams.get("status")===2) {
+      usersState.customerType = 2;
+    } else if(+searchParams.get("status")===3) {
+      usersState.customerType = 3;
+    }
+  }, [searchParams])
 
   const handleSearchChange = (value) => {
     dispatchQueryFilter({ type: "SEARCH", name: value });
   };
+
+  const handleSearchValue =(value)=>{
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
+  }
 
   // * FLAG POPOVERS STARTS
   const [anchorFlagEl, setAnchorFlagEl] = useState(null);
@@ -515,7 +540,11 @@ const AllUsers = () => {
             </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch onChange={handleSearchChange} />
+            <TableSearchSecondary 
+              onSearchValueChange={handleSearchValue} 
+              value={queryFilterState.searchValue} 
+              onChange={handleSearchChange} 
+            />
             <div className="d-flex ms-2">
               <div className="d-flex product-button__box">
                 <button
