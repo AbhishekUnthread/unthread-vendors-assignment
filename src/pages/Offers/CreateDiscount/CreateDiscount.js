@@ -49,6 +49,7 @@ import InfoHeader from "../../../components/Header/InfoHeader";
 import DiscountFormat from "../../../components/DiscountFormat/DiscountFormat";
 import MinimumRequirement from "../../../components/DiscountFormat/MinimumRequirement";
 import DiscountValue from "../../../components/DiscountFormat/DiscountValue";
+import Filters from "../../../components/DiscountFormat/Filters";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -300,13 +301,18 @@ const CreateDiscount = () => {
         allowCombineWithOthers: false,
         allowCombineWith: [],
       },
+      filters : {
+        field : null,
+        operator : null,
+        fieldValue : null,
+      }
     },
     enableReinitialize: true,
     validationSchema: discountValidationSchema,
     onSubmit: (values) => {},
   });
 
-  console.log({discountType:formik.values?.discountType})
+  // console.log({discountType:formik.values?.filters.field})
   // console.log({discountFormat:formik.values?.discountFormat?.discountFormat})
   // console.log({discountCode:formik.values?.discountFormat?.discountCode})
   // console.log({MinimumRequirement:formik.values?.minimumRequirement?.requirement})
@@ -321,7 +327,6 @@ const CreateDiscount = () => {
   // console.log({
   //   MinimumRequirementError: formik?.errors?.minimumRequirement?.requirement,
   // });
-
 
 
   return (
@@ -456,7 +461,7 @@ const CreateDiscount = () => {
               touched={formik?.touched?.discountFormat}
               error={formik?.errors?.discountFormat}
             />
-            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
+            {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
               <div className="d-flex col-12 px-0 justify-content-between">
                 <div className="d-flex align-items-center">
                   <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
@@ -654,9 +659,16 @@ const CreateDiscount = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             <DiscountValue/>
 
+            <Filters
+              value={formik.values?.filters}
+              field="filters"
+              formik={formik}
+              touched={formik?.touched?.filters}
+              error={formik?.errors?.filters}
+            />
             {(discountType === 10 || discountType === 20) && (
               <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
                 <div className="d-flex col-12 px-0 justify-content-between">
