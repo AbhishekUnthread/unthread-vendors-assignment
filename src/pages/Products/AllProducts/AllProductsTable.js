@@ -665,12 +665,13 @@ const AllProductsTable = ({
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={rows.length}
+            rowCount={list.length}
             headCells={headCells}
           />
           <TableBody>
             {stableSort(list, getComparator(order, orderBy))?.map(
               (row, index) => {
+                console.log(row)
                 const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -680,7 +681,7 @@ const AllProductsTable = ({
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row._id}
+                    key={index}
                     selected={isItemSelected}
                     className="table-rows"
                   >

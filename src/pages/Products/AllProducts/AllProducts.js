@@ -681,7 +681,6 @@ const AllProducts = () => {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    console.log(event)
     dispatchQueryFilter({ type: "SET_PAGE_SIZE", value: event.target.value });
   };
 
