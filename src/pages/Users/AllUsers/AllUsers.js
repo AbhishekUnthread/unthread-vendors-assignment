@@ -1,29 +1,6 @@
-import React, { useEffect, useReducer } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useReducer, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { showError } from "../../../features/snackbar/snackbarAction";
-import "./AllUsers.scss";
-// ! COMPONENT IMPORTS
-import AllUsersTable from "./AllUsersTable";
-import TabPanel from "../../../components/TabPanel/TabPanel";
-import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
-import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
-import ExportDialog from "../../../components/ExportDialog/ExportDialog";
-import TableSearch from "../../../components/TableSearch/TableSearch";
-import FilterUsers from "../../../components/FilterUsers/FilterUsers";
-import { useGetAllCustomersQuery } from "../../../features/customers/customer/customerApiSlice";
-// ! IMAGES IMPORTS
-import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
-import allFlag from "../../../assets/images/products/allFlag.svg";
-import usaFlag from "../../../assets/images/products/usaFlag.svg";
-import ukFlag from "../../../assets/images/products/ukFlag.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg";
-import sort from "../../../assets/icons/sort.svg";
-import analyticsUp from "../../../assets/icons/analyticsUp.svg";
-import analyticsDown from "../../../assets/icons/analyticsDown.svg";
-import customers from "../../../assets/icons/sidenav/customers.svg";
-// ! MATERIAL IMPORTS
 import {
   Autocomplete,
   Box,
@@ -41,8 +18,30 @@ import {
   TextField,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-// ! MATERIAL ICON IMPORTS
 
+import { showError } from "../../../features/snackbar/snackbarAction";
+import { useGetAllCustomersQuery } from "../../../features/customers/customer/customerApiSlice";
+
+import AllUsersTable from "./AllUsersTable";
+import TabPanel from "../../../components/TabPanel/TabPanel";
+import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
+import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
+import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
+import ExportDialog from "../../../components/ExportDialog/ExportDialog";
+import TableSearch from "../../../components/TableSearch/TableSearch";
+import FilterUsers from "../../../components/FilterUsers/FilterUsers";
+
+import "./AllUsers.scss";
+
+import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
+import allFlag from "../../../assets/images/products/allFlag.svg";
+import usaFlag from "../../../assets/images/products/usaFlag.svg";
+import ukFlag from "../../../assets/images/products/ukFlag.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
+import sort from "../../../assets/icons/sort.svg";
+import analyticsUp from "../../../assets/icons/analyticsUp.svg";
+import analyticsDown from "../../../assets/icons/analyticsDown.svg";
+import customers from "../../../assets/icons/sidenav/customers.svg";
 
 const locationData = [
   { title: "Content 1", value: "content1" },
@@ -60,16 +59,19 @@ const locationData = [
 ];
 
 const initialQueryFilterState = {
-  pageSize: 5,
-  pageNo: 0,
+  pageSize: 10,
+  pageNo: 1,
   name:"",
+  searchValue: ""
 };
+
 const initialUsersState = {
   data: [],
   totalCount: 0,
   error: false,
   customerType:0,
 };
+
 const queryFilterReducer = (state, action) => {
   if (action.type === "SET_PAGE_SIZE") {
     return {
@@ -93,6 +95,7 @@ const queryFilterReducer = (state, action) => {
   }
   return initialQueryFilterState;
 };
+
 const usersReducer = (state, action) => {
   if (action.type === "SET_DATA") {
     return {
@@ -115,8 +118,10 @@ const usersReducer = (state, action) => {
   }
   return initialUsersState;
 };
+
 const AllUsers = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -125,7 +130,6 @@ const AllUsers = () => {
     usersReducer,
     initialUsersState
   );
-
 
   const queryParameters = {};
   if(queryFilterState.name)
@@ -138,7 +142,16 @@ const AllUsers = () => {
     isLoading: customersIsLoading, 
     isSuccess: customersIsSuccess, 
     error: customersError
-  } = useGetAllCustomersQuery({createdAt:1,pageSize:queryFilterState.pageSize,pageNo:queryFilterState.pageNo+1,...queryParameters}); 
+  } = useGetAllCustomersQuery({createdAt:1,pageSize:queryFilterState.pageSize,pageNo:queryFilterState.pageNo+1,...queryParameters});
+
+  const editHandler = (index) => {
+    const currentTabNo = index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
+          console.log(index, 'index')
+
+      console.log(currentTabNo, 'currentTabNo')
+
+    navigate(`./edit/${currentTabNo}`);
+  };
 
   const handleChangeRowsPerPage = (event) => {
     dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
@@ -160,7 +173,7 @@ const AllUsers = () => {
   // ? POPOVERS STARTS HERE
 
   // * FLAG POPOVERS STARTS
-  const [anchorFlagEl, setAnchorFlagEl] = React.useState(null);
+  const [anchorFlagEl, setAnchorFlagEl] = useState(null);
   const handleFlagClick = (event) => {
     setAnchorFlagEl(event.currentTarget);
   };
@@ -172,7 +185,7 @@ const AllUsers = () => {
   // * FLAG POPOVERS ENDS
 
   // * SORT POPOVERS STARTS
-  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+  const [anchorSortEl, setAnchorSortEl] = useState(null);
 
   const handleSortClick = (event) => {
     setAnchorSortEl(event.currentTarget);
@@ -187,7 +200,7 @@ const AllUsers = () => {
   // * SORT POPOVERS ENDS
 
   // * LOCATION POPOVERS STARTS
-  const [anchorLocationEl, setAnchorLocationEl] = React.useState(null);
+  const [anchorLocationEl, setAnchorLocationEl] = useState(null);
 
   const handleLocationClick = (event) => {
     setAnchorLocationEl(event.currentTarget);
@@ -202,7 +215,7 @@ const AllUsers = () => {
   // * LOCATION POPOVERS ENDS
 
   // * NO OF ORDERS POPOVERS STARTS
-  const [anchorOrdersEl, setAnchorOrdersEl] = React.useState(null);
+  const [anchorOrdersEl, setAnchorOrdersEl] = useState(null);
 
   const handleOrdersClick = (event) => {
     setAnchorOrdersEl(event.currentTarget);
@@ -217,7 +230,7 @@ const AllUsers = () => {
   // * NO OF ORDERS POPOVERS ENDS
 
   // * STATUS POPOVERS STARTS
-  const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
+  const [anchorStatusEl, setAnchorStatusEl] = useState(null);
 
   const handleStatusClick = (event) => {
     setAnchorStatusEl(event.currentTarget);
@@ -232,7 +245,7 @@ const AllUsers = () => {
   // * STATUS POPOVERS ENDS
 
   // * DAYS POPOVERS STARTS
-  const [anchorDaysEl, setDaysEl] = React.useState(null);
+  const [anchorDaysEl, setDaysEl] = useState(null);
 
   const handleDaysClick = (event) => {
     setDaysEl(event.currentTarget);
@@ -245,8 +258,6 @@ const AllUsers = () => {
   const openDays = Boolean(anchorDaysEl);
   const idDays = openDays ? "simple-popover" : undefined;
   // * DAYS POPOVERS ENDS
-
-  // ? POPOVERS ENDS HERE
 
   useEffect(() => {
     if (customersIsSuccess) {
@@ -439,9 +450,6 @@ const AllUsers = () => {
             sx={{ width: "100%" }}
             className="d-flex justify-content-between tabs-header-box"
           >
-            {/* variant="scrollable"
-              scrollButtons
-              allowScrollButtonsMobile */}
             <Tabs
               value={usersState.customerType}
               onChange={changeCustomerTypeHandler}
@@ -758,6 +766,7 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
+              onEdit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={1}>

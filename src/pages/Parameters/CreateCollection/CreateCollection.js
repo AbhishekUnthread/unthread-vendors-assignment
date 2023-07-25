@@ -224,7 +224,7 @@ const likeProductRows = [
 // ? LIKE PRODUCTS TABLE ENDS HERE
 
 const collectionValidationSchema = Yup.object({
-  title: Yup.string().trim().min(3).required("Required")
+  title: Yup.string().trim().min(3).max(50).required("Required")
 });
 
 const CreateCollection = () => {
@@ -569,12 +569,13 @@ const CreateCollection = () => {
                 </div>
                 <FormControl className="w-100 px-0">
                   <OutlinedInput
-                    placeholder="Mirosa Collection"
+                    placeholder="Enter collection title"
                     size="small"
                     value={collectionFormik.values.title}
                     onBlur={collectionFormik.handleBlur}
                     onChange={collectionFormik.handleChange}
                     name="title"
+                    autoFocus
                   />
                 </FormControl>
                 {!!collectionFormik.touched.title && collectionFormik.errors.title && (
@@ -606,7 +607,7 @@ const CreateCollection = () => {
                         },
                       }}
                     />
-                    <span className="text-blue-2 c-pointer">(manage)</span>
+                    <span className="text-blue-2 c-pointer checkboxText">(manage)</span>
                   </div>
                 </FormGroup>
               </div>
@@ -1083,6 +1084,7 @@ const CreateCollection = () => {
                 seoName={collectionFormik.values.title} 
                 seoValue={categorySeo} 
                 handleSeoChange={setCategorySeo} 
+                refrenceId={""}
               />
             </div>
 

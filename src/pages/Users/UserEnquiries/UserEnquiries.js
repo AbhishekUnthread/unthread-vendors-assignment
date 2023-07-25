@@ -1,22 +1,4 @@
-import React, { useEffect, useState } from "react";
-import "../../Products/AllProducts/AllProducts.scss";
-// ! COMPONENT IMPORTS
-import TabPanel from "../../../components/TabPanel/TabPanel";
-import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
-import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import ExportDialog from "../../../components/ExportDialog/ExportDialog";
-import TableSearch from "../../../components/TableSearch/TableSearch";
-import FilterUsers from "../../../components/FilterUsers/FilterUsers";
-import UserEnquiriesTable from "./UserEnquiriesTable";
-// ! IMAGES IMPORTS
-import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
-import allFlag from "../../../assets/images/products/allFlag.svg";
-import usaFlag from "../../../assets/images/products/usaFlag.svg";
-import ukFlag from "../../../assets/images/products/ukFlag.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg";
-import sort from "../../../assets/icons/sort.svg";
-import customers from "../../../assets/icons/sidenav/customers.svg";
-// ! MATERIAL IMPORTS
+import { useEffect, useState } from "react";
 import {
   Box,
   FormControl,
@@ -28,8 +10,28 @@ import {
   Tab,
   Tabs,
 } from "@mui/material";
-import { useGetAllEnquiriesQuery } from "../../../features/user/customer/enquiries/enquiriesApiSlice";
 import { useDispatch } from "react-redux";
+
+import TabPanel from "../../../components/TabPanel/TabPanel";
+import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
+import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
+import ExportDialog from "../../../components/ExportDialog/ExportDialog";
+import TableSearch from "../../../components/TableSearch/TableSearch";
+import FilterUsers from "../../../components/FilterUsers/FilterUsers";
+import UserEnquiriesTable from "./UserEnquiriesTable";
+import ChatBox from "../../../components/ChatBox/ChatBox";
+
+import "../../Products/AllProducts/AllProducts.scss";
+
+import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
+import allFlag from "../../../assets/images/products/allFlag.svg";
+import usaFlag from "../../../assets/images/products/usaFlag.svg";
+import ukFlag from "../../../assets/images/products/ukFlag.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
+import sort from "../../../assets/icons/sort.svg";
+import customers from "../../../assets/icons/sidenav/customers.svg";
+
+import { useGetAllEnquiriesQuery } from "../../../features/user/customer/enquiries/enquiriesApiSlice";
 import { showError } from "../../../features/snackbar/snackbarAction";
 
 const UserEnquiries = () => {
@@ -41,6 +43,12 @@ const UserEnquiries = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchValue, setSearchValue] = useState("");
+  const [state, setState] = useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
 
   const queryParameters = {};
   if(searchValue)
@@ -96,7 +104,7 @@ const UserEnquiries = () => {
   // ? POPOVERS STARTS HERE
 
   // * FLAG POPOVERS STARTS
-  const [anchorFlagEl, setAnchorFlagEl] = React.useState(null);
+  const [anchorFlagEl, setAnchorFlagEl] = useState(null);
   const handleFlagClick = (event) => {
     setAnchorFlagEl(event.currentTarget);
   };
@@ -108,7 +116,7 @@ const UserEnquiries = () => {
   // * FLAG POPOVERS ENDS
 
   // * SORT POPOVERS STARTS
-  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
+  const [anchorSortEl, setAnchorSortEl] = useState(null);
 
   const handleSortClick = (event) => {
     setAnchorSortEl(event.currentTarget);
@@ -120,9 +128,14 @@ const UserEnquiries = () => {
 
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
-  // * SORT POPOVERS ENDS
 
-  // ? POPOVERS ENDS HERE
+  const handleOpenDrawer = () => {
+    setState({ ...state, right: true });
+  };
+
+  const handleCloseDrawer = () => {
+    setState({ ...state, right: false });
+  }
 
   return (
     <div className="container-fluid page">
@@ -132,7 +145,7 @@ const UserEnquiries = () => {
           <ViewTutorial />
           <ViewLogsDrawer headingName={"User Enquiries"} icon={customers} />
           <ExportDialog dialogName={"Users"} />
-          <button className="button-gradient py-2 px-4">
+          <button className="button-gradient py-2 px-4" onClick={handleOpenDrawer}>
             <p>Form Settings</p>
           </button>
         </div>
@@ -314,6 +327,12 @@ const UserEnquiries = () => {
           </TabPanel>
         </Paper>
       </div>
+
+      <ChatBox 
+        handleOpenDrawer={handleOpenDrawer}
+        handleCloseDrawer={handleCloseDrawer}  
+        stateOpen={state["right"]}
+      />
     </div>
   );
 };

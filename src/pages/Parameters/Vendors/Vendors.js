@@ -26,6 +26,7 @@ import {
   useEditVendorMutation,
   useBulkDeleteVendorMutation,
   useBulkEditVendorMutation,
+  useGetAllVendorsStatusCountQuery,
 } from "../../../features/parameters/vendors/vendorsApiSlice";
 import "../../Products/AllProducts/AllProducts.scss";
 // ! ASSETS IMPORTS
@@ -190,6 +191,14 @@ const Vendors = () => {
     error: vendorsError,
   } = useGetAllVendorsQuery({ ...queryFilterState });
 
+  const {
+    data: vendorsStatusCount,
+    isLoading: vendorsStatusCountIsLoading,
+    isSuccess: vendorsStatusCountIsSuccess,
+    error: vendorsStatusCountError,
+  } = useGetAllVendorsStatusCountQuery();
+
+  console.log("status Count", vendorsStatusCount)
   const [
     createVendor,
     {
@@ -820,10 +829,10 @@ const Vendors = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Active" className="tabs-head" />
-              <Tab label="In-Active" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab label={`All (${vendorsStatusCount?.data[0]?.active+vendorsStatusCount?.data[0]?.inActive})`} className="tabs-head" />
+              <Tab label={`Active (${vendorsStatusCount?.data[0]?.active})`} className="tabs-head" />
+              <Tab label={`In-Active (${vendorsStatusCount?.data[0]?.inActive})`} className="tabs-head" />
+              <Tab label={`Archived (${vendorsStatusCount?.data[0]?.archived})`} className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">

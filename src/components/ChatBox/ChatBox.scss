@@ -1,0 +1,136 @@
+.css-1vxvp5a-MuiPaper-root-MuiDrawer-paper {
+    width: 40%;
+}
+
+.chatBoxUser {
+    border: 2px solid #7EDB76;
+}
+
+.MuiBadge-dot {
+    border: 2px solid white;
+    position: absolute !important;
+    right: 6px !important;
+    bottom: 9px !important;
+}
+
+.online {
+    color: #5C6D8E;
+    position: absolute;
+    top: 50px;
+    left: 105px;
+}
+
+.chatMessagesContainer {
+    position: absolute;
+    right: 0;
+    bottom: 240px;
+    width: 100%;
+    max-height: 50%;
+    overflow-y: auto;
+}
+
+.responsesBox {
+    border-radius: 0px 18px 18px 18px;
+    max-width: 60%;
+    width: fit-content;
+    background: #22233F;
+    padding: 10px;
+}
+
+.chatBoxReply {
+    border-radius: 18px 0px 18px 18px;
+    max-width: 60%;
+    display: flex;
+    align-self: flex-end;
+    width: fit-content;
+    background: linear-gradient(165.69deg, rgba(104, 108, 248, 0.7) 4.49%, rgba(236, 171, 241, 0.7) 113.71%);
+}
+
+.chatTime {
+    color: #5C6D8E;
+}
+
+.chatSend {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: absolute;
+    bottom: 157px;
+
+    div {
+        width: 93%;
+    }
+
+    .chatEnquiry {
+        background-color: #1C1D36;
+        height: 60px;
+        padding: 10px;
+        border-radius: 8px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        div {
+            display: flex;
+            align-items: center;
+        }
+    }
+}
+
+.chatKeypad {
+    position: absolute;
+    width: 100% !important;
+    bottom: 0px;
+    padding: 20px;
+}
+
+.enquiry {
+    color: #5C6D8E;
+    font-size: 14px;
+}
+
+.enquiryId {
+    color: #c8d8ff;
+    font-size: 14px;
+}
+
+.rightEnquiryBox {
+    justify-content: end;
+}
+
+.optionColor {
+    color: #202223;
+    border-radius: 46px;
+    padding: 5px 8px;
+}
+
+.chatProfileLeft {
+    width: 110px;
+}
+
+.enquiryIdLink {
+    color: #658DED;
+    text-decoration: underline;
+}
+
+.chatSendButton {
+    height: 45px;
+}
+
+.chatTextArea {
+    width: 75%;
+    background: rgb(21, 20, 42);
+    border: 1px solid #38395c !important;
+    border-radius: 5px;
+
+    textarea {
+        border: none !important;
+    }
+
+    div {
+        svg {
+            margin: 7px 0px 15px 15px;
+        }
+    }
+}

@@ -43,11 +43,14 @@ import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
-import DeleteModal from "../../../components/DeleteModal/DeleteModal";
+
 import unArchived from "../../../assets/images/Components/Archived.png";
 import closeModal from "../../../assets/icons/closeModal.svg";
 import moment from "moment";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
+import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
+import UnArchiveModal, { MultipleUnArchiveModal } from "../../../components/UnArchiveModal/UnArchiveModal";
+import ArchiveModal, { MultipleArchiveModal } from "../../../components/ArchiveModal/ArchiveModal";
 // ? TABLE STARTS HERE
 
 const mainHeadCells = [
@@ -155,6 +158,9 @@ const CategoriesTable = ({
   const [handleStatusValue, setHandleStatusValue] = useState("in-active");
   const [toggleCategoris, setToggleCategoris] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showMultipleDeleteModal,setShowMultipleDeleteModal] = useState(false)
+  const [showMultipleArchivedModal,setShowMultipleArchivedModal] = useState(false)
+  const [showMultipleUnArhcivedModal,setShowMultipleUnArhcivedModal] = useState(false)
   const [forMassAction, setForMassAction] = React.useState(false);
   const [massActionStatus, setMassActionStatus] = React.useState("");
 
@@ -261,9 +267,16 @@ const CategoriesTable = ({
         bulkEdit({ updates: newState })
           .unwrap()
           .then(() =>
-            dispatch(
-              showSuccess({ message: "Categories Status updated successfully" })
+            {
+              const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Categories un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+                ? "Categories archived  successfully" : "Status updated successfully";
+              dispatch(
+              showSuccess({ message: successMessage })
             )
+          }
           );
         setSelected([]);
         setSelectedStatus(null);
@@ -271,11 +284,17 @@ const CategoriesTable = ({
         bulkSubEdit({ updates: newState })
           .unwrap()
           .then(() =>
-            dispatch(
+           {
+            const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Sub Categories un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+                ? "Sub Categories archived  successfully" : "Status updated successfully";
+             dispatch(
               showSuccess({
-                message: "Sub Categoris Status updated successfully",
+                message: successMessage,
               })
-            )
+            )}
           );
         setSelected([]);
         setToggleCategoris(true);
@@ -332,22 +351,39 @@ const CategoriesTable = ({
   }, [cateoryOpenState]);
 
   const toggleArchiveModalHandler = (row) => {
-    setShowArchivedModal((prevState) => !prevState);
     setRowData(row);
+    if(selected.length === 0){
+    setShowArchivedModal((prevState) => !prevState);
+    }else{
+      setShowMultipleArchivedModal((prevState) => !prevState)
+    }
   };
 
   const toggleDeleteModalHandler = (row) => {
-    setShowDeleteModal((prevState) => !prevState);
-    setRowData(row);
+    setRowData(row)
+    if(selected.length === 0){
+
+      setShowDeleteModal((prevState) => !prevState);
+    }else{
+      setShowMultipleDeleteModal((prevState) => !prevState)
+     
+    }
   };
 
   const toggleUnArchiveModalHandler = (row) => {
-    setShowUnArchivedModal((prevState) => !prevState);
     setRowData(row);
+    if(selected.length === 0){
+
+      setShowUnArchivedModal((prevState) => !prevState);
+    }else{
+      setShowMultipleUnArhcivedModal((prevState) => !prevState)
+    }
+    
   };
 
   function handleArchived() {
     setShowArchivedModal(false);
+    setShowMultipleArchivedModal(false)
     if (forMassAction === true) {
       setSelectedStatus(massActionStatus);
       return;
@@ -374,6 +410,7 @@ const CategoriesTable = ({
 
   function handleUnArchived() {
     setShowUnArchivedModal(false);
+    setShowMultipleUnArhcivedModal(false)
     if (forMassAction === true) {
       setSelectedStatus(massActionStatus);
       return;
@@ -385,7 +422,7 @@ const CategoriesTable = ({
           status: handleStatusValue,
         },
       });
-      dispatch(showSuccess({ message: "Category Un-Archived successfully" }));
+      dispatch(showSuccess({ message: "Category Unarchived Successfully" }));
     } else {
       editSubCategory({
         id: rowData._id,
@@ -394,7 +431,7 @@ const CategoriesTable = ({
         },
       });
       dispatch(
-        showSuccess({ message: "Sub Category Un-Archived successfully" })
+        showSuccess({ message: "Sub Category Unarchived Successfully" })
       );
       setToggleCategoris(true);
     }
@@ -405,7 +442,7 @@ const CategoriesTable = ({
       const newState = selected.map((i) => i);
       bulkDeleteCategory({ deletes: newState }).then(() => {
         dispatch(
-          showSuccess({ message: "This categories Deleted successfully" })
+          showSuccess({ message: "categories Deleted successfully" })
         );
       });
       setSelectedStatus(null);
@@ -413,7 +450,8 @@ const CategoriesTable = ({
       return;
     }
     setShowDeleteModal(false);
-    deleteData(rowData);
+    setShowMultipleDeleteModal(false)
+    deleteData(rowData)
     // dispatch(showSuccess({ message: "Deleted this category successfully" }));
   }
 
@@ -421,11 +459,11 @@ const CategoriesTable = ({
     setMassActionStatus(status);
     setForMassAction(true);
     if (status === "Set as Archived") {
-      setShowArchivedModal(true);
+      setShowMultipleArchivedModal(true);
     } else if (status === "Set as Un-Archived") {
-      setShowUnArchivedModal(true);
+      setShowMultipleUnArhcivedModal(true);
     } else if (status === "Delete") {
-      setShowDeleteModal(true);
+      setShowMultipleDeleteModal(true);
     }
   };
 
@@ -962,85 +1000,61 @@ const CategoriesTable = ({
         <></>
       )}
 
-      <Dialog
-        open={showArchivedModal}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={toggleArchiveModalHandler}
-        aria-describedby="alert-dialog-slide-description"
-        maxWidth="sm"
-      >
-        <DialogContent className="py-2 px-4 text-center">
-          <img
-            src={closeModal}
-            alt="question"
-            width={40}
-            className="closeModal"
-            onClick={toggleArchiveModalHandler}
-          />
-          <img
-            src={unArchived}
-            alt="question"
-            width={160}
-            className="mb-4 mt-4"
-          />
-          <div className="row"></div>
-          <h5 className="text-lightBlue mt-2 mb-3">
-            Archive
-            <span className="text-blue-2">
-              "{selected.length == 0 ? rowData?.name : selected.length}
-            </span>
-            {selected.length > 1 ? "Categories ?" : " Category ?"}
-          </h5>
-          <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
-            <span className="text-blue-2"> 0 products </span>
-            in this Category will be unassigned from it.
-          </h6>
-          <h6 className="mt-3 mb-2" style={{ color: "#5C6D8E" }}>
-            <span className="text-blue-2">
-              {" "}
-              {rowData?.totalSubCategory}{" "}
-              {rowData?.totalSubCategory > 1 ? "SubCategories" : "SubCategory"}{" "}
-            </span>
-            in this category will be Archive from it.
-          </h6>
-          <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>
-            Would you like to Archive this Category ?
-          </h6>
-        </DialogContent>
-        <DialogActions className="d-flex justify-content-center px-4 pb-4">
-          <button
-            className="button-lightBlue-outline py-2 px-3 me-4"
-            onClick={toggleArchiveModalHandler}
-          >
-            <p>Cancel</p>
-          </button>
-          <button
-            className="button-red-outline py-2 px-3"
-            onClick={handleArchived}
-          >
-            <p>Archive</p>
-          </button>
-        </DialogActions>
-      </Dialog>
-      <UnArchivedModal
-        showUnArchivedModal={showUnArchivedModal}
-        closeUnArchivedModal={() => setShowUnArchivedModal(false)}
-        handleUnArchived={handleUnArchived}
-        handleStatusValue={setHandleStatusValue}
-        name={selected.length == 0 ? rowData?.name : selected.length}
-        nameType={selected.length == 0 ? "Category" : "Categories"}
-      />
-      <DeleteModal
-        name={
-          selected.length == 0
-            ? `${rowData?.name} Category `
-            : `${selected.length} Categories `
-        }
-        showCreateModal={showDeleteModal}
-        toggleArchiveModalHandler={toggleDeleteModalHandler}
-        handleArchive={deleteDatas}
-      />
+      <ArchiveModal
+          onConfirm ={handleArchived}
+          onCancel={toggleArchiveModalHandler}
+          show={showArchivedModal}
+          title={"Category"}
+          message={rowData?.name}
+          products={"25 products"}
+        />
+        <MultipleArchiveModal
+          onConfirm ={handleArchived}
+          onCancel={toggleArchiveModalHandler}
+          show={showMultipleArchivedModal}
+          title={"Categories"}
+          message={`${selected.length === 1 ? `${selected.length} Category` : `${selected.length} Categories`}`}
+          pronoun ={`${selected.length === 1 ? "this" : `these`}`}
+        />
+     
+      <UnArchiveModal 
+        onConfirm={handleUnArchived}
+        onCancel={() => setShowUnArchivedModal(false)}
+        show={showUnArchivedModal}
+        title={"Un-Archive Category ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${rowData?.name}</span> Category,
+        `}
+        secondaryMessage={"Please set its status"}
+        confirmText={"Un-Archive"}
+        handleStatusValue={(val)=> setHandleStatusValue(val)}
+        icon={unArchived}
+        />
+        <MultipleUnArchiveModal
+        onConfirm={handleUnArchived}
+        onCancel={() => setShowMultipleUnArhcivedModal(false)}
+        show={showMultipleUnArhcivedModal}
+        title={"Un-Archive Categories ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${selected.length}</span> ${selected.length===1?"Category":"Categories"},
+        `}
+        secondaryMessage={"Please set its status"}
+        confirmText={"Un-Archive"}
+        handleStatusValue={(val)=> setHandleStatusValue(val)}
+        icon={unArchived}
+        />
+         <DeleteModalSecondary
+          onConfirm ={deleteDatas}
+          onCancel={toggleDeleteModalHandler}
+          show={showDeleteModal}
+          title={"Category"}
+          message={rowData?.name}
+        />
+          <DeleteModalSecondary
+          onConfirm ={deleteDatas}
+          onCancel={toggleDeleteModalHandler}
+          show={showMultipleDeleteModal}
+          title={"multiple Categories"}
+          message={`${selected.length === 1 ? `${selected.length} Category` : `${selected.length} Categories`}`}
+        /> 
     </React.Fragment>
   );
 };
