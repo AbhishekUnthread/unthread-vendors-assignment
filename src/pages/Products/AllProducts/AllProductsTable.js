@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 // ! COMPONENT IMPORTS
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import ProductDrawerTable from "../ProductDrawerTable";
@@ -54,9 +54,18 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import { useDispatch } from "react-redux";
-import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
+import {
+  showError,
+  showSuccess,
+} from "../../../features/snackbar/snackbarAction";
 import unArchived from "../../../assets/images/Components/Archived.png";
 import closeModal from "../../../assets/icons/closeModal.svg";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import ArchiveModal, {
+  MultipleArchiveModal,
+} from "../../../components/ArchiveModal/ArchiveModal";
+import UnArchiveModal, { MultipleUnArchiveModal } from "../../../components/UnArchiveModal/UnArchiveModal";
 
 const activityData = [
   {
@@ -272,62 +281,154 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changePage,page,editProduct}) => {
+const AllProductsTable = ({
+  list,
+  totalCount,
+  rowsPerPage,
+  changeRowsPerPage,
+  changePage,
+  page,
+  editProduct,
+  bulkEdit,
+  archived=true,
+}) => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("productName");
   const [selected, setSelected] = React.useState([]);
-  const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
   const [showArchivedModal, setShowArchivedModal] = useState(false);
   const [rowData, setRowData] = useState({});
   const [handleStatusValue, setHandleStatusValue] = useState("in-active");
- 
-  
+  const [showUnArchivedModal, setShowUnArchivedModal] = useState(false);
+  const [showMultipleDeleteModal, setShowMultipleDeleteModal] = useState(false);
+  const [showMultipleArchivedModal, setShowMultipleArchivedModal] =
+    useState(false);
+  const [showMultipleUnArhcivedModal, setShowMultipleUnArhcivedModal] =
+    useState(false);
+  const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [forMassAction, setForMassAction] = React.useState(false);
+  const [massActionStatus, setMassActionStatus] = React.useState("");
 
-  
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
 
-  
+  useEffect(() => {
+    // Update the state only if the selectedStatus state has a value
+    if (selectedStatus !== null) {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as Archived") {
+          return {
+            id,
+            status: "archived",
+          };
+        } else if (selectedStatus === "Set as in-Active") {
+          return {
+            id,
+            status: "in-active",
+          };
+        } else if (selectedStatus === "Set as Un-Archived") {
+          return {
+            id,
+            status: handleStatusValue,
+          };
+        } else {
+          return {
+            id,
+            status: "", // Set a default value here if needed
+          };
+        }
+      });
+      bulkEdit({ updates: newState })
+        .unwrap()
+        .then(() => {
+          const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Products un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+              ? "Products archived  successfully"
+              : "Status updated successfully";
+          dispatch(
+            showSuccess({
+              message: successMessage,
+            })
+          );
+        });
+      setSelectedStatus(null);
+      setSelected([]);
+    }
+  }, [selected, selectedStatus]);
+
   const toggleArchiveModalHandler = (row) => {
-    setShowArchivedModal((prevState) => !prevState);
     setRowData(row);
+    if (selected.length === 0) {
+      setShowArchivedModal((prevState) => !prevState);
+    } else {
+      setShowMultipleArchivedModal((prevState) => !prevState);
+    }
+  };
+
+  const toggleDeleteModalHandler = (row) => {
+    setRowData(row);
+    if (selected.length === 0) {
+      setShowDeleteModal((prevState) => !prevState);
+    } else {
+      setShowMultipleDeleteModal((prevState) => !prevState);
+    }
   };
 
   const toggleUnArchiveModalHandler = (row) => {
-    setShowUnArchivedModal((prevState) => !prevState);
     setRowData(row);
+    if (selected.length === 0) {
+      setShowUnArchivedModal((prevState) => !prevState);
+    } else {
+      setShowMultipleUnArhcivedModal((prevState) => !prevState);
+    }
   };
 
   function handleArchive() {
     setShowArchivedModal(false);
-   
+    setShowMultipleArchivedModal(false);
+    if (forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      return;
+    }
+
     editProduct({
       id: rowData._id,
       details: {
         status: "archived",
       },
-    }).then(()=>{
-
-      dispatch(
-        showSuccess({ message: "Product Archived successfully" })
-      );
-    }).catch((err) => {
-      dispatch(showError({ message: err?.data?.message }));
-    });
+    })
+      .unwrap()
+      .then(() => {
+        dispatch(showSuccess({ message: "Product Archived successfully" }));
+      })
+      .catch((err) => {
+        dispatch(showError({ message: err?.data?.message }));
+      });
   }
-
 
   function handleUnArchived() {
     setShowUnArchivedModal(false);
-   
+    setShowMultipleUnArhcivedModal(false);
+    if (forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      return;
+    }
     editProduct({
       id: rowData._id,
       details: {
         status: handleStatusValue,
       },
     });
-    dispatch(
-      showSuccess({ message: "Product Un-Archived successfully" })
-    );
+    dispatch(showSuccess({ message: "Product un-archived Successfully" }));
   }
 
   const handleRequestSort = (event, property) => {
@@ -364,8 +465,6 @@ const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changeP
 
     setSelected(newSelected);
   };
-
-  
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -504,6 +603,18 @@ const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changeP
   const idMetalFilter = openMetalFilter ? "simple-popover" : undefined;
   // * METAL FILTER POPOVERS ENDS
 
+  const handleMassAction = (status) => {
+    setMassActionStatus(status);
+    setForMassAction(true);
+    if (status === "Set as Archived") {
+      setShowMultipleArchivedModal(true);
+    } else if (status === "Set as Un-Archived") {
+      setShowMultipleUnArhcivedModal(true);
+    } else if (status === "Delete") {
+      setShowMultipleDeleteModal(true);
+    }
+  };
+
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -524,95 +635,20 @@ const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changeP
             <button className="button-grey py-2 px-3 ms-2">
               <small className="text-lightBlue">Edit Products</small>
             </button>
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idEditStatus}
-              variant="contained"
-              onClick={handleEditStatusClick}
-            >
-              <small className="text-lightBlue">Edit Status</small>
-              <img src={arrowDown} alt="arrowDown" className="ms-2" />
-            </button>
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idMassAction}
-              variant="contained"
-              onClick={handleMassActionClick}
-            >
-              <small className="text-lightBlue">Mass Action</small>
-              <img src={arrowDown} alt="arrowDown" className="ms-2" />
-            </button>
-
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              id={idEditStatus}
-              open={openEditStatus}
-              anchorEl={anchorEditStatusEl}
-              onClose={handleEditStatusClose}
-            >
-              <div className="py-2 px-1">
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Set as Active
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Set as Draft
-                </small>
-              </div>
-            </Popover>
-
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              id={idMassAction}
-              open={openMassAction}
-              anchorEl={anchorMassActionEl}
-              onClose={handleMassActionClose}
-            >
-              <div className="py-2 px-2">
-                <small className="text-grey-7 px-2">ACTIONS</small>
-                <hr className="hr-grey-6 my-2" />
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Make it Active
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Make it Draft
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit SKU
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit Quantity
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Schedule Product
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add or Remove Tags
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add or Remove Collections
-                </small>
-                <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                  <small className="text-lightBlue font2 d-block">
-                    Archive Product
-                  </small>
-                  <img src={deleteRed} alt="delete" className="" />
-                </div>
-              </div>
-            </Popover>
+            <TableEditStatusButton
+              onSelect={handleStatusSelect}
+              defaultValue={["Set as Active", "Set as in-Active"]}
+              headingName="Edit Status"
+            />
+            <TableMassActionButton
+              headingName="Mass Action"
+              onSelect={handleMassAction}
+              defaultValue={
+                archived
+                  ? ["Edit", "Set as Archived"]
+                  : ["Delete", "Set as Un-Archived"]
+              }
+            />
           </div>
         </div>
       )}
@@ -632,8 +668,8 @@ const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changeP
             headCells={headCells}
           />
           <TableBody>
-            {stableSort(list, getComparator(order, orderBy))
-              ?.map((row, index) => {
+            {stableSort(list, getComparator(order, orderBy))?.map(
+              (row, index) => {
                 const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -675,9 +711,7 @@ const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changeP
                           width={45}
                         />
                         <div>
-                          <p className="text-lightBlue fw-600">
-                            {row?.title}
-                          </p>
+                          <p className="text-lightBlue fw-600">{row?.title}</p>
                           <small className="mt-2 text-grey-6">
                             SKU: TFDR012345
                           </small>
@@ -685,7 +719,9 @@ const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changeP
                       </div>
                     </TableCell>
                     <TableCell>
-                      <p className="text-lightBlue">{row?.productType?.category?.name}</p>
+                      <p className="text-lightBlue">
+                        {row?.productType?.category?.name}
+                      </p>
                     </TableCell>
                     <TableCell>
                       <div className="d-flex align-items-center">
@@ -763,18 +799,27 @@ const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changeP
                     </TableCell>
                     <TableCell>
                       <div className="d-flex align-items-center">
-                      <div className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth" 
-                          style={{background: 
-                            row.status == "active" ? "#A6FAAF" : 
-                            row.status == "in-active" ? "#F67476" : 
-                            row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
-                          }}>
+                        <div
+                          className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
+                          style={{
+                            background:
+                              row.status == "active"
+                                ? "#A6FAAF"
+                                : row.status == "in-active"
+                                ? "#F67476"
+                                : row.status == "archieved"
+                                ? "#C8D8FF"
+                                : "#FEE1A3",
+                          }}
+                        >
                           <small className="text-black fw-500">
-                            {
-                              row.status == "active" ? "Active" :  
-                              row.status == "in-active" ? "In-Active" : 
-                              row.status == "archieved" ? "Archived" : "Scheduled"
-                            }
+                            {row.status == "active"
+                              ? "Active"
+                              : row.status == "in-active"
+                              ? "In-Active"
+                              : row.status == "archieved"
+                              ? "Archived"
+                              : "Scheduled"}
                           </small>
                         </div>
                       </div>
@@ -852,7 +897,17 @@ const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changeP
                             Add or Remove Collections
                           </small>
                           <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                            <small  onClick={()=>toggleArchiveModalHandler(row)} className="text-lightBlue font2 d-block">
+                            <small
+                              onClick={() => {
+                                if(archived){
+
+                                  toggleArchiveModalHandler(row)
+                                }else{
+                                  toggleUnArchiveModalHandler(row)
+                                }
+                              }}
+                              className="text-lightBlue font2 d-block"
+                            >
                               Archive Product
                             </small>
                             <img src={deleteRed} alt="delete" className="" />
@@ -862,16 +917,17 @@ const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changeP
                     </TableCell>
                   </TableRow>
                 );
-              })}
+              }
+            )}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[ 10, 25]}
+        rowsPerPageOptions={[10, 25]}
         component="div"
         count={totalCount}
         rowsPerPage={rowsPerPage}
-        page={page-1}
+        page={page - 1}
         onPageChange={changePage}
         onRowsPerPageChange={changeRowsPerPage}
         className="table-pagination"
@@ -1231,65 +1287,51 @@ const AllProductsTable = ({list,totalCount,rowsPerPage,changeRowsPerPage,changeP
           </div>
         </div>
       </SwipeableDrawer>
-      <Dialog
-        open={showArchivedModal}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={toggleArchiveModalHandler}
-        aria-describedby="alert-dialog-slide-description"
-        maxWidth="sm"
-      >
-        <DialogContent className="py-2 px-4 text-center">
-          <img
-            src={closeModal}
-            alt="question"
-            width={40}
-            className="closeModal"
-            onClick={toggleArchiveModalHandler}
-          />
-          <img
-            src={unArchived}
-            alt="question"
-            width={160}
-            className="mb-4 mt-4"
-          />
-          <div className="row"></div>
-          <h5 className="text-lightBlue mt-2 mb-3">
-            Archive
-            <span className="text-blue-2">
-              {" "}
-              "{selected.length == 0 ? rowData?.title: selected.length}"{" "}
-            </span>
-            {selected.length > 1 ? "Products ?" : " Product ?"}
-          </h5>
-          
-          <h6 className="mt-2 mb-4" style={{ color: "#5C6D8E" }}>
-            Would you like to Archive this Product ?
-          </h6>
-        </DialogContent>
-        <DialogActions className="d-flex justify-content-center px-4 pb-4">
-          <button
-            className="button-lightBlue-outline py-2 px-3 me-4"
-            onClick={toggleArchiveModalHandler}
-          >
-            <p>Cancel</p>
-          </button>
-          <button
-            className="button-red-outline py-2 px-3"
-            onClick={handleArchive}
-          >
-            <p>Archive</p>
-          </button>
-        </DialogActions>
-      </Dialog>
-      <UnArchivedModal
-        showUnArchivedModal={showUnArchivedModal}
-        closeUnArchivedModal={() => setShowUnArchivedModal(false)}
-        handleUnArchived={handleUnArchived}
-        handleStatusValue={setHandleStatusValue}
-        name={selected.length == 0 ? rowData?.name : selected.length}
-        nameType={selected.length == 0 ? "Sub category" : "Sub categories"}
+      <ArchiveModal
+        onConfirm={handleArchive}
+        onCancel={toggleArchiveModalHandler}
+        show={showArchivedModal}
+        title={"Product"}
+        message={rowData?.title}
+        products={""}
       />
+
+      <MultipleArchiveModal
+        onConfirm={handleArchive}
+        onCancel={toggleArchiveModalHandler}
+        show={showMultipleArchivedModal}
+        title={"Product"}
+        message={`${
+          selected.length === 1
+            ? `${selected.length} Product`
+            : `${selected.length} Products`
+        }`}
+        pronoun={`${selected.length === 1 ? "this" : `these`}`}
+      />
+      <UnArchiveModal
+        onConfirm={handleUnArchived}
+        onCancel={() => setShowUnArchivedModal(false)}
+        show={showUnArchivedModal}
+        title={"Un-Archive Product ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${rowData?.name}</span> Product,
+        `}
+        secondaryMessage={"Please set its status"}
+        confirmText={"Un-Archive"}
+        handleStatusValue={(val)=> setHandleStatusValue(val)}
+        icon={unArchived}
+        />
+         <MultipleUnArchiveModal
+        onConfirm={handleUnArchived}
+        onCancel={() => setShowMultipleUnArhcivedModal(false)}
+        show={showMultipleUnArhcivedModal}
+        title={"Un-Archive Products ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${selected.length}</span> ${selected.length===1?" Product":"Products"},
+        `}
+        secondaryMessage={"Please set its status"}
+        confirmText={"Un-Archive"}
+        handleStatusValue={(val)=> setHandleStatusValue(val)}
+        icon={unArchived}
+        />
     </React.Fragment>
   );
 };

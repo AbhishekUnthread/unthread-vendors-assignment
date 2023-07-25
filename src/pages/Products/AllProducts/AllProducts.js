@@ -56,7 +56,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import { useEditProductMutation, useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
+import { useBulkEditProductMutation, useEditProductMutation, useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
 import { useGetAllVendorsQuery } from "../../../features/parameters/vendors/vendorsApiSlice";
 import {
   useGetAllCategoriesQuery,
@@ -401,6 +401,15 @@ const AllProducts = () => {
       error: editProductError,
     },
   ] = useEditProductMutation();
+
+  const [
+    bulkUpdateProduct,
+    {
+      isLoading: bulkCreateTagsIsLoading,
+      isSuccess: bulkCreateTagsIsSuccess,
+      error: bulkCreateTagsError,
+    },
+  ] = useBulkEditProductMutation();
 
   useEffect(() => {
     if (productsIsSuccess && productsData?.data?.data) {
@@ -2194,6 +2203,7 @@ const AllProducts = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
+              bulkEdit={bulkUpdateProduct}
             />
           </TabPanel>
           <TabPanel value={productType} index={1}>
@@ -2205,6 +2215,7 @@ const AllProducts = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
+              bulkEdit={bulkUpdateProduct}
             />
           </TabPanel>
           <TabPanel value={productType} index={2}>
@@ -2216,6 +2227,7 @@ const AllProducts = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
+              bulkEdit={bulkUpdateProduct}
             />
           </TabPanel>
           <TabPanel value={productType} index={3}>
@@ -2227,6 +2239,8 @@ const AllProducts = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
+              bulkEdit={bulkUpdateProduct}
+              archived={false}
             />
           </TabPanel>
         </Paper>
