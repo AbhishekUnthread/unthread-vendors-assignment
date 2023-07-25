@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useState } from "react";
 // ! IMAGES IMPORTS
 import arrowDown from "../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
@@ -11,8 +11,18 @@ import {
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import TableSearch from "../../components/TableSearch/TableSearch";
+import AddCustomerModal from "./AddCustomers";
 
 const CustomerEligibility = () => {
+  const [addCustomer, setAddCustomer] = useState(false);
+
+  const openCustomerModal = () => {
+    setAddCustomer(true);
+  } 
+
+  const closeAddCustomerModal = () => {
+    setAddCustomer(false);
+  }
   // ? RADIO STARTS HERE
   const [customerEligibility, setCustomerEligibility] = React.useState(0);
   const handleCustomerEligibilityChange = (event, newValue) => {
@@ -90,7 +100,7 @@ const CustomerEligibility = () => {
         </FormControl>
         <div className="d-flex mt-3">
           <TableSearch />
-          <button className="button-grey py-2 px-3 ms-2">
+          <button className="button-grey py-2 px-3 ms-2" onClick={openCustomerModal}>
             <small className="text-lightBlue me-2">Browse</small>
             <img src={arrowDown} alt="arrow" className="" />
           </button>
@@ -110,6 +120,10 @@ const CustomerEligibility = () => {
           />
         </div>
       </div>
+      <AddCustomerModal 
+        openAddCustomerModal={addCustomer}
+        closeAddCustomerModal={closeAddCustomerModal}
+      />
     </div>
   );
 };
