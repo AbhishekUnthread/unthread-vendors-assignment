@@ -1,5 +1,9 @@
 import React, { forwardRef, useState, useEffect, useReducer } from "react";
-import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useDispatch } from "react-redux";
 import _ from "lodash";
 // ! COMPONENT IMPORTS
@@ -130,7 +134,7 @@ const queryFilterReducer = (state, action) => {
   if (action.type === "SET_ALL_FILTERS") {
     return {
       ...initialQueryFilterState,
-      ...action.filters
+      ...action.filters,
     };
   }
 
@@ -141,25 +145,6 @@ const initialVendorState = {
   status: "all",
 };
 
-// const vendorsFilterReducer = (state, action) => {
-//   if (action.type === "SET_SORT_FILTER") {
-//     return {
-//       ...state,
-//       sorting: action.sorting,
-//       createdAt: action.sorting === 'newestToOldest' ? -1 : action.sorting === 'oldestToNewest' ? 1 : state.createdAt,
-//       alphabetical: action.sorting === 'alphabeticalAtoZ' ? 1 : action.sorting === 'alphabeticalZtoA' ? -1 : state.alphabetical,
-//     };
-//   }
-//   if (action.type === "SET_STATUS_FILTER") {
-//       return {
-//         ...state,
-//         status : action.status,
-//       };
-
-//   }
-
-//   return state;
-// }
 const vendorReducer = (state, action) => {
   if (action.type === "SET_STATUS") {
     return {
@@ -169,8 +154,6 @@ const vendorReducer = (state, action) => {
 
   return initialVendorState;
 };
-
-// let firstRender = true
 
 const Vendors = () => {
   const dispatch = useDispatch();
@@ -189,9 +172,6 @@ const Vendors = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedSortOption, setSelectedSortOption] =
-    React.useState("newestToOldest");
-  const [selectedStatusOption, setSelectedStatusOption] = React.useState([]);
   const [multipleVendors, setMultipleVendors] = React.useState([]);
   const [totalCount, setTotalCount] = React.useState([]);
   const [firstRender, setFirstRender] = useState(true);
@@ -203,77 +183,12 @@ const Vendors = () => {
     name: Yup.string().trim().min(3, "Name must be at least 3 characters long"),
   });
 
-  const queryParameters = {};
-  if (selectedSortOption) {
-    // Check alphabetical sort options
-    if (
-      selectedSortOption === "alphabeticalAtoZ" ||
-      selectedSortOption === "alphabeticalZtoA"
-    ) {
-      queryParameters.alphabetical =
-        selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
-    }
-    // Check createdAt sort options
-    else if (
-      selectedSortOption === "oldestToNewest" ||
-      selectedSortOption === "newestToOldest"
-    ) {
-      queryParameters.createdAt =
-        selectedSortOption === "oldestToNewest" ? "1" : "-1";
-    }
-  }
-
-  if (selectedStatusOption !== null) {
-    if (Array.isArray(selectedStatusOption)) {
-      queryParameters.status = selectedStatusOption.join(",");
-    } else {
-      queryParameters.status = selectedStatusOption;
-    }
-  }
-  if (!selectedSortOption && selectedStatusOption === null) {
-    queryParameters.status = "active";
-    queryParameters.status = "in-active";
-  }
-
-  // const vendorTypeQuery =
-  //   vendorType === 0
-  //     ? selectedStatusOption.length > 0
-  //       ? { status: selectedStatusOption }
-  //       : { status: "[active,in-active]" }
-  //     : vendorType === 1
-  //     ? { status: "active" }
-  //     : vendorType === 2
-  //     ? { status: "in-active" }
-  //     : vendorType === 3
-  //     ? { status: "archieved" }
-  //     : {};
-
-  const vendorTypeQuery = () => {
-    const status =
-      vendorState.status === 1
-        ? "active"
-        : vendorType === 2
-        ? "in-active"
-        : vendorType === 3
-        ? "archived"
-        : vendorType === 0
-        ? "[active,in-active]"
-        : null;
-
-    // dispatchVendorsFilter({
-    //   type: "SET_STATUS_FILTER",
-    //   status: status,
-    // });
-  };
-
   const {
     data: vendorsData,
     isLoading: vendorsIsLoading,
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
-  } = useGetAllVendorsQuery(
-    { ...queryFilterState },
-  );
+  } = useGetAllVendorsQuery({ ...queryFilterState });
 
   const [
     createVendor,
@@ -378,32 +293,16 @@ const Vendors = () => {
 
   const editCategoryPageNavigationHandler = (data, index) => {
     setIsEditing(true);
-    const combinedObject = {
-      queryParameters,
-      vendorTypeQuery,
-      queryFilterState,
-      tab: vendorType,
-    };
-    const encodedCombinedObject = encodeURIComponent(
-      JSON.stringify(combinedObject)
-    );
-
-    const currentTabNo =
-      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-      
-      // navigate({
-      //   pathname: './edit',
-      //   search: `?filter=${JSON.stringify({...queryFilterState,vendorType})}`,
-      // });
-      navigate({
-        pathname: './edit',
-        search: `?${createSearchParams({filter :JSON.stringify({...queryFilterState,vendorType}) })}`,
-      });
+    navigate({
+      pathname: `./edit/${data ? data._id : ""}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, vendorType }),
+      })}`,
+    });
   };
 
   const changeVendorTypeHandler = (_event, tabIndex) => {
     setVendorType(tabIndex);
-    // console.log("vendorState", tabIndex);
     if (tabIndex === 0) {
       dispatchVendorState({
         type: "SET_STATUS",
@@ -443,18 +342,6 @@ const Vendors = () => {
     }
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
     dispatchQueryFilter({ type: "SEARCH", name: "" });
-
-    // setSelectedSortOption("");
-    // setSelectedStatusOption("");
-    // dispatchVendorsFilter({
-    //   type: "SET_STATUS_FILTER",
-    //   status: "",
-    // });
-    // dispatchVendorsFilter({
-    //   type: "SET_SORT_FILTER",
-    //   sorting: "",
-    // });
-    // setSearchParams({ status: tabIndex });
   };
 
   const handleAddMultiple = (event) => {
@@ -540,18 +427,6 @@ const Vendors = () => {
     setAnchorStatusEl(null);
   };
 
-  // const handleStatusCheckboxChange = (event) => {
-  //   const { value } = event.target;
-
-  //   setSelectedStatusOption((prevSelected) => {
-  //     if (prevSelected.includes(value)) {
-  //       return prevSelected.filter((option) => option !== value);
-  //     } else {
-  //       return [...prevSelected, value];
-  //     }
-  //   });
-  //   setAnchorStatusEl(null);
-  // };
   const handleStatusCheckboxChange = (event) => {
     if (event.target.checked) {
       if (vendorState.status === "all") {
@@ -588,15 +463,6 @@ const Vendors = () => {
         });
       }
     }
-
-    // const isChecked = event.target.checked;
-
-    // dispatchVendorsFilter({
-    //   type: 'SET_STATUS_FILTER',
-    //   status: isChecked
-    //     ? [...vendorsFilterState.status, selectedStatusOptions] // Add to array
-    //     : vendorsFilterState.status.filter((status) => status !== selectedStatusOptions), // Remove from array
-    // });
   };
 
   const openStatus = Boolean(anchorStatusEl);
@@ -739,72 +605,48 @@ const Vendors = () => {
   }, [bulkVendorEditError, dispatch]);
 
   useEffect(() => {
-    const filterParams = JSON.parse(searchParams.get("filter")) || {vendorType}
-    // console.log("Object.keys(filterParams).length",Object.keys(filterParams).length)
-    if(firstRender && Object.keys(filterParams).length)
-    {
-      console.log("1")
+    const filterParams = JSON.parse(searchParams.get("filter")) || {
+      vendorType,
+    };
+    if (firstRender && Object.keys(filterParams).length) {
       let filters = {};
-      // console.log("filterParams", filterParams)
-      for(let key in filterParams) {
-        // const [key, value] = entry;
-        if(key!=="vendorType")
-        {
-          console.log("2")
-          if(filterParams[key]!==(null ||""))
-          {
-            console.log("3")
-            if(key==="status" && filterParams[key].length <2)
-            {
-              console.log("4")
+      for (let key in filterParams) {
+        if (key !== "vendorType") {
+          if (filterParams[key] !== (null || "")) {
+            if (key === "status" && filterParams[key].length < 2) {
               dispatchVendorState({
-                type :"SET_STATUS",
-                status : ""
-              })
+                type: "SET_STATUS",
+                status: "",
+              });
             }
-            filters ={
+            filters = {
               ...filters,
-              [key] : filterParams[key]
-            }
+              [key]: filterParams[key],
+            };
           }
-        }
-        else{
-          console.log("5")
+        } else {
           setVendorType(+filterParams[key]);
         }
-       }
-       if(filterParams.vendorType===(null||""))
-       {
-        console.log("6")
+      }
+      if (filterParams.vendorType === (null || "")) {
         setVendorType(0);
-       }
-       dispatchQueryFilter({
-        type : "SET_ALL_FILTERS",
-        filters
-
-       })
-       console.log("filetrs",filters)
-      
-       setFirstRender(false);
-    }  
+      }
+      dispatchQueryFilter({
+        type: "SET_ALL_FILTERS",
+        filters,
+      });
+      setFirstRender(false);
+    }
   }, [searchParams]);
 
   useEffect(() => {
-    if(!firstRender)
-    {
-      console.log("7")
-      setSearchParams({filter : JSON.stringify({...queryFilterState,vendorType})});
-    }   
-  }, [queryFilterState, setSearchParams,vendorType,firstRender]);
+    if (!firstRender) {
+      setSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, vendorType }),
+      });
+    }
+  }, [queryFilterState, setSearchParams, vendorType, firstRender]);
 
-  
-  
-  // console.log("searchParams.entries().length",searchParams.entries().length)
-  // console.log("first Render", firstRender)
-  // console.log("queryFilterState", queryFilterState)
-
-
-  
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -1083,9 +925,6 @@ const Vendors = () => {
                 <RadioGroup
                   aria-labelledby="demo-controlled-radio-buttons-group"
                   name="controlled-radio-buttons-group"
-                  // value={vendorsFilterState.sorting}
-                  // onChange={handleSortRadioChange}
-                  // defaultValue="newestToOldest"
                 >
                   <FormControlLabel
                     value="-1"
