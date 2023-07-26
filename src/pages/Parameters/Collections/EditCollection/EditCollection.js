@@ -1,7 +1,6 @@
-import React, { forwardRef, useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, forwardRef } from "react";
 import "../../CreateCollection/CreateCollection.scss";
-import { Link, useNavigate, useParams } from "react-router-dom";
-// ! COMPONENT IMPORTS
+import { useNavigate, useParams, useSearchParams, createSearchParams } from "react-router-dom";
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import SEO from "../../../Products/AddProduct/SEO/SEO";
 import NotesBox from "../../../../components/NotesBox/NotesBox";
@@ -9,8 +8,6 @@ import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox
 import UploadBanner from "../../../../components/UploadBanner/UploadBanner";
 import StatusBox from "../../../../components/StatusBox/StatusBox";
 import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
-import SaveFooter from "../../../../components/SaveFooter/SaveFooter";
-import AddHeader from "../../../../components/AddHeader/AddHeader";
 import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
 import { SaveFooterSecondary } from "../../../../components/SaveFooter/SaveFooter";
 import {
@@ -18,7 +15,6 @@ import {
   stableSort,
   getComparator,
 } from "../../../../components/TableDependencies/TableDependencies";
-// ! IMAGES IMPORTS
 import info from "../../../../assets/icons/info.svg";
 import cancel from "../../../../assets/icons/cancel.svg";
 import arrowDown from "../../../../assets/icons/arrowDown.svg";
@@ -28,7 +24,6 @@ import deleteWhite from "../../../../assets/icons/deleteWhite.svg";
 import editWhite from "../../../../assets/icons/editWhite.svg";
 import deleteButton from "../../../../assets/icons/deleteButton.svg";
 import addMedia from "../../../../assets/icons/addMedia.svg";
-// ! MATERIAL IMPORTS
 import {
   Dialog,
   DialogActions,
@@ -57,12 +52,8 @@ import {
   Radio,
   Tooltip,
 } from "@mui/material";
-// ! MATERIAL ICONS IMPORTS
 import SearchIcon from "@mui/icons-material/Search";
-import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import { LoadingButton } from "@mui/lab";
-import moment from "moment";
+import { useDispatch } from "react-redux";
 
 import {
   showSuccess,
@@ -72,7 +63,6 @@ import {
 import {
   useGetAllCollectionsQuery,
   useCreateCollectionMutation,
-  useDeleteCollectionMutation,
   useEditCollectionMutation,
 } from "../../../../features/parameters/collections/collectionsApiSlice";
 import { updateCollectionId } from "../../../../features/parameters/collections/collectionSlice";
@@ -80,13 +70,10 @@ import paginationRight from "../../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../../assets/icons/paginationLeft.svg";
 import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
 
-// ? DIALOG TRANSITION STARTS HERE
-const Transition = React.forwardRef(function Transition(props, ref) {
+const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-// ? DIALOG TRANSITION ENDS HERE
 
-// ? SEARCH INPUT STARTS HERE
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -120,9 +107,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     borderRadius: "5px",
   },
 }));
-// ? SEARCH INPUT ENDS HERE
 
-// ? TABLE STARTS HERE
 function createData(pId, productName, category, price) {
   return { pId, productName, category, price };
 }
@@ -259,11 +244,10 @@ const EditCollection = () => {
   const navigate = useNavigate();
   const [collectionTitle, setCollectionTitle] = useState("");
   const [collectionNote, setCollectionNote] = useState("");
-  const [collectionStatus, setCollectionStatus] = React.useState("active");
+  const [collectionStatus, setCollectionStatus] = useState("active");
   const [collectionDescription, setCollectionDescription] = useState("");
   const [collectionVisibility, setCollectionVisibility] = useState(false);
   const [collectionFilter, setCollectionFilter] = useState(false);
-  const [collectionDuplicateTitle, setCollectionDuplicateTitle] = useState("");
   const [duplicateDescription, setDuplicateDescription] = useState(false);
   const [startDate1, setStartDate1] = useState(null)
   const [endDate1, setEndDate1] = useState(null)
@@ -271,7 +255,7 @@ const EditCollection = () => {
   const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
   const [duplicateTitleNew, setDuplicateTitleNew] = useState("")
-  let { id,filter } = useParams();
+  let { id } = useParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -279,6 +263,7 @@ const EditCollection = () => {
   const [collectionId, setCollectionId] = useState();
   const [decodedObject, setDecodedObject] = useState(null);
   const [index, setIndex] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
    const clearDate = () => {
     setStartDate1(null);
@@ -305,29 +290,33 @@ const EditCollection = () => {
       setHideFooter(true)
     }
   }
+  console.log(searchParams, 'searchParams collecio');
 
   const backHandler = () => {
-    navigate(`/parameters/collections?status=${id}`);
-  }
+    navigate({
+      pathname: "/parameters/collections",
+      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
+    });
+  };
 
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({
-      ...queryFilterState,
-      ...(decodedObject?.filterParameter || {}),
-      ...(decodedObject?.collectionTypeQuery || {}),
-      name: decodedObject?.queryFilterState?.name||"",
-    });
+  } = useGetAllCollectionsQuery({ id: id });
 
     const nextPageHandler = () => {
     const { pageNo, totalCount } = queryFilterState;
     if (pageNo+1 > totalCount) {
       return;
     }
-    navigate(`/parameters/collections/edit/${pageNo + 1}/${filter}`);
+    navigate({
+      pathname: `./edit/${pageNo + 1}`,
+      search: `?${createSearchParams({
+        filter: searchParams.get("filter"),
+      })}`,
+    });
   };
 
   const prevPageHandler = () => {
@@ -335,7 +324,12 @@ const EditCollection = () => {
     if (pageNo - 1 === 0) {
       return;
     }
-    navigate(`/parameters/collections/edit/${pageNo - 1}/${filter}`);
+    navigate({
+      pathname: `./edit/${pageNo - 1}`,
+      search: `?${createSearchParams({
+        filter: searchParams.get("filter"),
+      })}`,
+    });
   };  
 
   useEffect(() => {
@@ -345,10 +339,8 @@ const EditCollection = () => {
     }, [id]);
 
     useEffect(() => {
-      const encodedString = filter;
-  
-      const decodedString = decodeURIComponent(encodedString);
-      const parsedObject = JSON.parse(decodedString);
+      const encodedString = searchParams.get("filter")
+      const parsedObject = JSON.parse(encodedString);
   
       setDecodedObject(parsedObject);
     }, []);
@@ -404,7 +396,6 @@ const EditCollection = () => {
       });
       setCollectionId(newCollectionData?._id)
       setCollectionTitle(newCollectionData?.title);
-      setCollectionDescription(newCollectionData?.description);
       setCollectionStatus(newCollectionData?.status);
       setCollectionVisibility(newCollectionData?.isVisibleFrontend)
       setCollectionNote(newCollectionData?.notes)
@@ -413,11 +404,8 @@ const EditCollection = () => {
       setEndDate1(newCollectionData?.endDate)
       setCollectionMediaUrl(newCollectionData?.mediaUrl)
       setCollectionSeo(newCollectionData?.seos || {})
-
-      const duplicateTitle = `${newCollectionData?.title} Copy`;
-      setCollectionDuplicateTitle(duplicateTitle);
     }
-  }, [collectionIsSuccess, collectionId, index, editCollectionIsSuccess, editCollectionError, id, filter, collectionData ]);
+  }, [collectionIsSuccess, collectionId, index, editCollectionIsSuccess, editCollectionError, id, collectionData ]);
 
   const handleSubmit = () => {
     if (collectionId !== "") {
@@ -479,17 +467,17 @@ const EditCollection = () => {
     }
   }, [createCollectionError, dispatch]);
 
-  const [likeProductRadio, setLikeProductRadio] = React.useState("automated");
+  const [likeProductRadio, setLikeProductRadio] = useState("automated");
   const handleLikeProductRadio = (event) => {
     setLikeProductRadio(event.target.value);
   };
 
-  const [likeMatchRadio, setLikeMatchRadio] = React.useState("allCondition");
+  const [likeMatchRadio, setLikeMatchRadio] = useState("allCondition");
   const handleLikeMatchRadio = (event) => {
     setLikeMatchRadio(event.target.value);
   };
 
-  const [addProductDrawer, setAddProductDrawer] = React.useState({
+  const [addProductDrawer, setAddProductDrawer] = useState({
     top: false,
     left: false,
     bottom: false,
@@ -507,7 +495,7 @@ const EditCollection = () => {
     setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
   };
 
-  const [anchorPriceEl, setAnchorPriceEl] = React.useState(null);
+  const [anchorPriceEl, setAnchorPriceEl] = useState(null);
   const handlePriceClick = (event) => {
     setAnchorPriceEl(event.currentTarget);
   };
@@ -519,11 +507,11 @@ const EditCollection = () => {
   const openPrice = Boolean(anchorPriceEl);
   const idPrice = openPrice ? "simple-popover" : undefined;
 
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("productName");
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("productName");
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   
 
   const handleRequestSort = (event, property) => {
@@ -566,7 +554,6 @@ const EditCollection = () => {
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
   };
 
@@ -583,34 +570,26 @@ const EditCollection = () => {
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  // * TABLE ENDS HERE
 
-  // ? SIZE SELECT STARTS HERE
-  const [field, setField] = React.useState("price");
+  const [field, setField] = useState("price");
 
   const handleFieldChange = (event) => {
     setField(event.target.value);
   };
-  // ? SIZE SELECT ENDS HERE
 
-  // ? OPERATOR SELECT STARTS HERE
-  const [operator, setOperator] = React.useState("equals");
+  const [operator, setOperator] = useState("equals");
 
   const handleOperatorChange = (event) => {
     setOperator(event.target.value);
   };
-  // ? OPERATOR SELECT ENDS HERE
 
-  // ? CHECKBOX STARTS HERE
-  const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = useState(false);
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
   };
-  // ? CHECKBOX ENDS HERE
 
-  // ? LIKE ADD CONDITION STARTS HERE
-  const [likeAddCondition, setLikeAddCondition] = React.useState(false);
+  const [likeAddCondition, setLikeAddCondition] = useState(false);
   const handleLikeAddCondition = () => {
     if (!likeAddCondition) {
       setLikeAddCondition(true);
@@ -619,10 +598,8 @@ const EditCollection = () => {
       setLikeApplyCondition(false);
     }
   };
-  // ? LIKE ADD CONDITION ENDS HERE
 
-  // ? LIKE APPLY CONDITION STARTS HERE
-  const [likeApplyCondition, setLikeApplyCondition] = React.useState(false);
+  const [likeApplyCondition, setLikeApplyCondition] = useState(false);
   const handleLikeApplyCondition = () => {
     if (likeApplyCondition) {
       setLikeApplyCondition(false);
@@ -631,14 +608,12 @@ const EditCollection = () => {
       setLikeAddCondition(false);
     }
   };
-  // ? LIKE APPLY CONDITION ENDS HERE
 
   const handleTitleChange = (event) => {
     setCollectionTitle(event.target.value);
   };
 
-   // ? DUPLICATE COLLECTION DIALOG STARTS HERE
-  const [openDuplicateCollection, setOpenDuplicateCollection] = React.useState(false);
+  const [openDuplicateCollection, setOpenDuplicateCollection] = useState(false);
 
   const handleDuplicate = () => {
     setOpenDuplicateCollection(true);
@@ -670,7 +645,6 @@ const EditCollection = () => {
         navigate("/parameters/collections/edit")
       });
   };
-  // ? DUPLICATE COLLECTION DIALOG ENDS HERE
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -828,7 +802,7 @@ const EditCollection = () => {
               {likeProductRadio !== "manual" && (
                 <div className="bg-black-11 rounded-8 p-3 shadow-sm">
                   {likeProductRadio === "automated" && (
-                    <React.Fragment>
+                    <>
                       <div className="d-flex justify-content-between">
                         <div className="d-flex align-items-center">
                           <p className="text-lightBlue me-4">Should Match:</p>
@@ -1059,12 +1033,12 @@ const EditCollection = () => {
                           </div>
                         </div>
                       )}
-                    </React.Fragment>
+                    </>
                   )}
                 </div>
               )}
               {likeProductRadio === "automated" && likeApplyCondition && (
-                <React.Fragment>
+                <>
                   <div className="col-12 mt-3">
                     <div className="row align-items-center">
                       <div className="col-md-9 px-md-0 py-2">
@@ -1215,17 +1189,17 @@ const EditCollection = () => {
                       className="table-pagination"
                     />
                   </div>
-                </React.Fragment>
+                </>
               )}
               {likeProductRadio === "manual" && (
-                <React.Fragment>
+                <>
                   <img
                     src={featureUpload}
                     className="w-100 c-pointer px-0"
                     alt=""
                     onClick={toggleAddProductDrawer("right", true)}
                   />
-                </React.Fragment>
+                </>
               )}
             </div>
             <div className="mt-4">
@@ -1242,7 +1216,6 @@ const EditCollection = () => {
               onClose={toggleAddProductDrawer("right", false)}
               onOpen={toggleAddProductDrawer("right", true)}
             >
-              {/* {list()} */}
               <div className="d-flex justify-content-between py-3 ps-3 pe-2 me-1 align-items-center">
                 <h6 className="text-lightBlue">Select Products</h6>
                 <img
@@ -1620,7 +1593,6 @@ const EditCollection = () => {
           </div>
         </DialogActions>
       </Dialog>
-
       <DiscardModalSecondary           
         when={hideFooter}
         message="collection tab"
