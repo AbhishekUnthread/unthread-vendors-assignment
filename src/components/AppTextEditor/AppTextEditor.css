@@ -1,0 +1,17 @@
+.ck {
+  background-color: #15142a !important;
+  color: white !important;
+  border-width: 0.1px !important;
+}
+
+.ck:focus {
+  border-width: 0.1px !important;
+}
+
+.ck-content {
+  border-radius: 0px 0px 8px 8px !important;
+}
+
+.ck-toolbar {
+  border-radius: 8px 8px 0px 0px !important;
+}

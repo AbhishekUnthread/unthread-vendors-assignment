@@ -398,7 +398,7 @@ const AllUsersTable = ({
                               Add or Remove Tags
                             </small>
                             <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                              <small className="text-lightBlue font2 d-block">
+                              <small className="font2 d-block" style={{color: "#F67E80"}}>
                                 Archive Customer
                               </small>
                               <img src={deleteRed} alt="delete" className="" />
