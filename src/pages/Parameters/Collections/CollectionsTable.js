@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useEffect, useState, forwardRef } from "react";
 import { useDispatch } from "react-redux";
 import moment from "moment";
 import {
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Slide,
   Table,
   TableBody,
   TableCell,
@@ -46,11 +41,6 @@ import './Collections.scss';
 
 import unthreadLogo from "../../../assets/images/unthreadLogo.png"
 import unArchived from "../../../assets/images/Components/Archived.png"
-import closeModal from "../../../assets/icons/closeModal.svg"
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 const CollectionsTable = ({ 
   list,
@@ -68,20 +58,20 @@ const CollectionsTable = ({
   changePage 
 }) => {
   const dispatch = useDispatch();
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("groupName");
-  const [selected, setSelected] = React.useState([]);
-  const [selectedStatus, setSelectedStatus] = React.useState(null);
-  const [state, setState] = React.useState([]);
-  const [collectionId, setCollectionId] = React.useState('')
-  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
-  const [archiveID, setArchiveID] = React.useState(false);
-  const [name, setName] = React.useState(false);
-  const [showUnArchivedModal, setShowUnArhcivedModal] = React.useState(false);
-  const [unArchiveID, setUnArchiveID] = React.useState(false);
-  const [statusValue, setStatusValue] = React.useState("in-active");
-  const [massActionStatus, setMassActionStatus] = React.useState("");
-  const [forMassAction, setForMassAction] = React.useState(false);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("groupName");
+  const [selected, setSelected] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [state, setState] = useState([]);
+  const [collectionId, setCollectionId] = useState('')
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [archiveID, setArchiveID] = useState(false);
+  const [name, setName] = useState(false);
+  const [showUnArchivedModal, setShowUnArhcivedModal] = useState(false);
+  const [unArchiveID, setUnArchiveID] = useState(false);
+  const [statusValue, setStatusValue] = useState("in-active");
+  const [massActionStatus, setMassActionStatus] = useState("");
+  const [forMassAction, setForMassAction] = useState(false);
   const [collectionTitle, setCollectionTitle] = useState("");
   const [duplicateModal, setDuplicateModal] = useState(false);
   const [ singleTitle, setSingleTitle] = useState("");
@@ -207,18 +197,21 @@ const CollectionsTable = ({
       label: "No. of Products",
     },
     {
-      id: "status",
-      numeric: false,
-      disablePadding: true,
-      label: "Status",
-    },
-    {
       id: "actions",
       numeric: false,
       disablePadding: true,
       label: "Actions",
     },
   ];
+
+  if (collectionType === 0 || collectionType === 3) {
+    headCells.push({
+      id: "status",
+      numeric: false,
+      disablePadding: true,
+      label: "Status",
+    });
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -261,7 +254,7 @@ const CollectionsTable = ({
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const [openArchivedModal, setArchivedModal] = React.useState(false);
+  const [openArchivedModal, setArchivedModal] = useState(false);
 
   const handleArchivedModalClose = () => {
     if(forMassAction === true) {
@@ -328,7 +321,7 @@ const CollectionsTable = ({
   }
 
   return (
-    <React.Fragment>
+    <>
       {selected.length > 0 && (
         <div className="d-flex align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
@@ -378,7 +371,6 @@ const CollectionsTable = ({
           />
           <TableBody>
             {stableSort(list, getComparator(order, orderBy))
-              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -436,6 +428,7 @@ const CollectionsTable = ({
                     <TableCell style={{ width: 180 }}>
                       <p className="text-lightBlue">{row.totalProduct}</p>
                     </TableCell>
+                    { (collectionType == 0 || collectionType == 3) &&
                     <TableCell style={{ width: 180, padding: 10 }}>
                       <div className="d-block">
                         <div className="rounded-pill d-flex px-2 py-1 statusBoxWidth" 
@@ -470,7 +463,7 @@ const CollectionsTable = ({
                           </div>
                         }
                       </div>
-                    </TableCell>
+                    </TableCell> }
                     {row.status == "archieved" ?
                       <TableCell style={{ width: 140, padding: 0 }}>
                          <div className="d-flex align-items-center">
@@ -626,12 +619,11 @@ const CollectionsTable = ({
           name={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length} 
           nameType={ forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" }
         />
-
         <DuplicateCollection 
           openDuplicateCollection={duplicateModal}
           handleDuplicateCollectionClose={handleDuplicateCollectionClose}
         />
-    </React.Fragment>
+    </>
   );
 };
 

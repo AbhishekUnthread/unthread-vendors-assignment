@@ -226,8 +226,6 @@ const Collections = () => {
     setSearchParams({status:tabIndex})
   };
 
-
-   // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
   const handleSortClick = (event) => {
@@ -245,9 +243,7 @@ const Collections = () => {
 
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
-  // * SORT POPOVERS ENDS
 
-  // * STATUS POPOVERS STARTS
   const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
   const handleStatusClick = (event) => {
     setAnchorStatusEl(event.currentTarget);
@@ -259,7 +255,6 @@ const Collections = () => {
 
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
-  // * STATUS POPOVERS ENDS
 
   const deleteCollectionHandler = (data) => {
     if (collectionType === 0) {
@@ -315,26 +310,17 @@ const Collections = () => {
   ]);
 
   useEffect(() => {
-        if(+searchParams.get("status")===0)
-        {
-          setCollectionType(0);
-        }
-        else if(+searchParams.get("status")===1)
-        {
-          setCollectionType(1);
-        }
-        else if(+searchParams.get("status")===2)
-        {
-          console.log("check")
-          setCollectionType(2);
-        }
-        else if(+searchParams.get("status")===3)
-        {
-          setCollectionType(3);
-        }
-    }, [searchParams])
+    if(+searchParams.get("status")===0) {
+      setCollectionType(0);
+    } else if(+searchParams.get("status")===1) {
+      setCollectionType(1);
+    } else if(+searchParams.get("status")===2) {
+      setCollectionType(2);
+    } else if(+searchParams.get("status")===3) {
+      setCollectionType(3);
+    }
+  }, [searchParams])
     
-
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -504,6 +490,7 @@ const Collections = () => {
               page={queryFilterState.pageNo}
               changeRowsPerPage={handleChangeRowsPerPage}
               changePage={handleChangePage}
+              collectionType={collectionType}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={1}>
@@ -518,6 +505,7 @@ const Collections = () => {
               page={queryFilterState.pageNo}
               changeRowsPerPage={handleChangeRowsPerPage}
               changePage={handleChangePage}
+              collectionType={collectionType}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={2}>
@@ -532,6 +520,7 @@ const Collections = () => {
               page={queryFilterState.pageNo}
               changeRowsPerPage={handleChangeRowsPerPage}
               changePage={handleChangePage}
+              collectionType={collectionType}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={3}>
