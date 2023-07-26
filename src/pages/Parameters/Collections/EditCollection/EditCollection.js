@@ -777,7 +777,10 @@ const EditCollection = () => {
                     />
                   </Tooltip>
                 </div>
-                <AppTextEditor value={collectionDescription} setFieldValue={(value)=>setCollectionDescription(value)} />
+                <AppTextEditor 
+                  value={collectionDescription} 
+                  setFieldValue={(value)=>setCollectionDescription(value)} 
+                />
               </div>
             </div>
 

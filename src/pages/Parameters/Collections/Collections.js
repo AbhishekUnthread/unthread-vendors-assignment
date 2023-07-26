@@ -109,7 +109,7 @@ const Collections = () => {
       filterParameter.alphabetical = sortFilter == "alphabeticalAtoZ" ? "1" : "-1";
     }
     else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
-      filterParameter.createdAt = sortFilter == "oldestToNewest" ? "1" : "-1";
+      filterParameter.updatedAt = sortFilter == "oldestToNewest" ? "1" : "-1";
     }
   }
 
