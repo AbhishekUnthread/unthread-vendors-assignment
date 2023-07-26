@@ -55,7 +55,7 @@ import * as Yup from "yup";
 import { showError, showSuccess } from "../../features/snackbar/snackbarAction";
 import { useDispatch } from "react-redux";
 import TableEditStatusButton from "../TableEditStatusButton/TableEditStatusButton";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,createSearchParams } from "react-router-dom";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -474,17 +474,13 @@ const AddSubCategoriesProducts = ({ id }) => {
     );
   }
 
-  const editSubPageHandler = (index) => {
-    const combinedObject = { filterParams: {...filterParameter,categoryId: id}, queryFilterState ,categorNavigateState:-1};
-    const encodedCombinedObject = encodeURIComponent(
-      JSON.stringify(combinedObject)
-    );
-    const currentTabNo =
-      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-    navigate(
-      `/parameters/subCategories/edit/${currentTabNo}/${encodedCombinedObject}`
-    );
-  };
+  const editSubPageHandler = (data,index) => {
+    navigate({
+      pathname: `/parameters/subCategories/edit/${data ? data._id : ""}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, goBack:-1 }),
+      })}`,
+    });  };
 
   return (
     <React.Fragment>
@@ -821,10 +817,7 @@ const AddSubCategoriesProducts = ({ id }) => {
                             <Tooltip title="Edit" placement="top">
                               <Link
                                 className="text-decoration-none"
-                                onClick={editSubPageHandler.bind(
-                                  null,
-                                  index + 1
-                                )}
+                                onClick={()=>editSubPageHandler(row,index)}
                               >
                                 <div className="table-edit-icon rounded-4 p-2">
                                   <EditOutlinedIcon

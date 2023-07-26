@@ -1,6 +1,9 @@
 import React, { useEffect, useReducer, useState } from "react";
 import "../../EditVendor/EditVendor.scss";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link,createSearchParams,
+  useNavigate,
+  useParams,
+  useSearchParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import NotesBox from "../../../../components/NotesBox/NotesBox";
@@ -128,8 +131,7 @@ const EditCategories = () => {
     initialQueryFilterState
   );
   const [categoryDescription, setCategoryDescription] = useState("");
-  const [decodedObject, setDecodedObject] = useState(null);
- 
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const {
     data: categoriesData,
@@ -137,13 +139,7 @@ const EditCategories = () => {
     isError: categoriesIsError,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({
-    ...queryFilterState,
-    ...(decodedObject?.filterParams || {}),
-    skip: queryFilterState.pageNo ? false : true,
-    name:decodedObject?.filterParams?.name || "",
-
-  });
+  } = useGetAllCategoriesQuery({id:id});
 
   const [
     editCategory,
@@ -228,7 +224,10 @@ const EditCategories = () => {
   };
 
   const backHandler = () => {
-    navigate("/parameters/categories");
+    navigate({
+      pathname: "/parameters/categories",
+      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
+    });
     
   };
 
@@ -280,14 +279,7 @@ const EditCategories = () => {
 
   
 
-  useEffect(() => {
-    const encodedString = filter; // The encoded string from the URL or any source
 
-    const decodedString = decodeURIComponent(encodedString);
-    const parsedObject = JSON.parse(decodedString);
-
-    setDecodedObject(parsedObject);
-  }, [categoriesData,categoriesIsSuccess,id]);
 
   useEffect(() => {
     if (

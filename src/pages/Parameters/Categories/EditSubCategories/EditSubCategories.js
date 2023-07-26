@@ -168,10 +168,7 @@ const EditSubCategories = () => {
     isError: subCategoriesIsError,
     error: subCategoriesError,
   } = useGetAllSubCategoriesQuery({
-    ...queryFilterState,
-    ...(decodedObject?.filterParams || {}),
-    skip: queryFilterState.pageNo ? false : true,
-    name:decodedObject?.filterParams?.name || "",
+    id:id
   });
 
   const [
@@ -249,7 +246,11 @@ const EditSubCategories = () => {
   };
 
   const backHandler = () => {
-    navigate(decodedObject?.categorNavigateState || "/parameters/categories?status=1")
+    const encodedString = filter; // The encoded string from the URL or any source
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+    navigate(parsedObject.goBack || `/parameters/categories?${filter}`)
     
   };
 
@@ -307,15 +308,6 @@ const EditSubCategories = () => {
     subCategoriesIsSuccess,
     dispatch,
   ]);
-
-  useEffect(() => {
-    const encodedString = filter; // The encoded string from the URL or any source
-
-    const decodedString = decodeURIComponent(encodedString);
-    const parsedObject = JSON.parse(decodedString);
-
-    setDecodedObject(parsedObject);
-  }, [subCategoriesData,subCategoriesIsSuccess,id]);
 
   useEffect(() => {
     if (
