@@ -82,7 +82,7 @@ const DeleteModalSecondary = (props) => {
         message
           ? `the <span class='text-blue-1'>${message}</span>`
           : "<span class='text-blue-1'>selected</span>"
-      } from the dashboard and it can't be undone.`}
+      }${title} from the dashboard and it can't be undone.`}
       confirmText="Delete Permanently"
       isLoading={isLoading}
       icon={deleteIcon}

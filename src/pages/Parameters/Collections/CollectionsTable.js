@@ -33,14 +33,14 @@ import {
 } from "../../../features/parameters/collections/collectionsApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 
-import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import DuplicateCollection from "./DuplicateCollection/DuplicateCollection";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import TableLoader from "../../../components/Loader/TableLoader";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
-import UnArchiveModal from "../../../components/UnArchiveModal/UnArchiveModal";
+import { UnArchivedModal } from "../../../components/UnArchiveModal/UnArchiveModal";
+import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
 
 import './Collections.scss';
 
@@ -605,14 +605,14 @@ const CollectionsTable = ({
           }
           products={"25 products"}
         />       
-        <DeleteModal 
-          showCreateModal={showDeleteModal}
-          toggleArchiveModalHandler={toggleArchiveModalHandler}
-          handleArchive={handleArchiveModal} 
-          name={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length} 
-          deleteType={ forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" }
+        <DeleteModalSecondary 
+          message={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length} 
+          title={ forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" }
+          onConfirm ={handleArchiveModal}
+          onCancel={toggleArchiveModalHandler}
+          show={showDeleteModal}
         />
-        <UnArchiveModal 
+        <UnArchivedModal 
           onConfirm={handleUnArchived}
           onCancel={closeUnArchivedModal}
           show={showUnArchivedModal}
