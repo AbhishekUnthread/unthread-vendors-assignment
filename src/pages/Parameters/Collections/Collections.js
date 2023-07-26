@@ -14,9 +14,21 @@ import {
   Tooltip
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { useDispatch } from "react-redux";
+
+import {
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import {
+  useGetAllCollectionsQuery,
+  useGetCollectionsCountQuery,
+  useDeleteCollectionMutation,
+  useHardDeleteCollectionMutation,
+  useHardBulkDeleteCollectionMutation
+} from "../../../features/parameters/collections/collectionsApiSlice";
 
 import CollectionsTable from "./CollectionsTable";
-import TableSearch, { TableSearchSecondary} from "../../../components/TableSearch/TableSearch";
+import { TableSearchSecondary} from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
@@ -24,20 +36,6 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 
 import sort from "../../../assets/icons/sort.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
-
-import { useDispatch } from "react-redux";
-
-import {
-  showSuccess,
-  showError,
-} from "../../../features/snackbar/snackbarAction";
-
-import {
-  useGetAllCollectionsQuery,
-  useDeleteCollectionMutation,
-  useHardDeleteCollectionMutation,
-  useHardBulkDeleteCollectionMutation
-} from "../../../features/parameters/collections/collectionsApiSlice";
 
 const initialQueryFilterState = {
   pageSize: 10,
@@ -144,6 +142,15 @@ const Collections = () => {
     isSuccess: collectionIsSuccess,
     error: collectionError,
   } = useGetAllCollectionsQuery({ ...filterParameter, ...collectionTypeQuery, ...queryFilterState});
+
+  const {
+    data: collectionCountData,
+    isLoading: collectionCountIsLoading,
+    isSuccess: collectionCountIsSuccess,
+    error: collectionCountError,
+  } = useGetCollectionsCountQuery();
+
+  const collectionCount = collectionCountData?.data[0]
 
   const [
     hardDeleteCollection,
@@ -363,10 +370,18 @@ const Collections = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Active" className="tabs-head" />
-              <Tab label="In-Active" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab 
+                label={`All (${collectionCount?.active + collectionCount?.inActive + collectionCount?.scheduled})`} className="tabs-head" 
+              />
+              <Tab 
+                label={`Active (${collectionCount?.active})`} 
+                className="tabs-head" />
+              <Tab 
+                label={`In-Active (${collectionCount?.inActive})`} 
+                className="tabs-head" />
+              <Tab 
+                label={`Archived (${collectionCount?.archived})`} 
+                className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">

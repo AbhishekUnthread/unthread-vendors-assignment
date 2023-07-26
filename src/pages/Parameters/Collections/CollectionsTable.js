@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import './Collections.scss';
-
-// ! MATERIAL IMPORTS
+import moment from "moment";
 import {
   Checkbox,
   Dialog,
@@ -18,44 +16,41 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
-// ! COMPONENT IMPORTS
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import {
   EnhancedTableHead,
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
+import { updateCollectionId } from "../../../features/parameters/collections/collectionSlice";
+import { 
+  useBulkEditCollectionMutation,
+  useEditCollectionMutation
+} from "../../../features/parameters/collections/collectionsApiSlice";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
+
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
-import UnArchivedModal from "../../../components/UnArchivedModal/UnArchivedModal";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import DuplicateCollection from "./DuplicateCollection/DuplicateCollection";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import TableLoader from "../../../components/Loader/TableLoader";
-import PageLoader from "../../../components/Loader/PageLoader";
-// !IMAGES IMPORTS
-import unthreadLogo from "../../../assets/images/unthreadLogo.png"
-
-// ! MATERIAL ICONS IMPORTS
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
+import UnArchiveModal from "../../../components/UnArchiveModal/UnArchiveModal";
 
-import { updateCollectionId } from "../../../features/parameters/collections/collectionSlice";
-import { useBulkEditCollectionMutation, useEditCollectionMutation } from "../../../features/parameters/collections/collectionsApiSlice";
-import { showSuccess } from "../../../features/snackbar/snackbarAction";
-import question from '../../../assets/images/products/question.svg'
+import './Collections.scss';
+
+import unthreadLogo from "../../../assets/images/unthreadLogo.png"
 import unArchived from "../../../assets/images/Components/Archived.png"
 import closeModal from "../../../assets/icons/closeModal.svg"
-import DeleteIcon from '@mui/icons-material/Delete';
-import moment from "moment";
 
-// ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-// ? DIALOG TRANSITION ENDS HERE
-
-// ? TABLE STARTS HERE
 
 const CollectionsTable = ({ 
   list,
@@ -73,7 +68,6 @@ const CollectionsTable = ({
   changePage 
 }) => {
   const dispatch = useDispatch();
-  let navigate = useNavigate();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
@@ -598,55 +592,19 @@ const CollectionsTable = ({
         ) : (
           <></>
         )}
-
-        <Dialog
-          open={openArchivedModal}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={handleModalClose}
-          aria-describedby="alert-dialog-slide-description"
-          maxWidth="sm"
-        >
-          <DialogContent className="py-2 px-4 text-center">
-            <img src={closeModal} alt="question" width={40} 
-              className="closeModal c-pointer" 
-              onClick={handleModalClose}
-            />
-            <img src={unArchived} alt="question" width={160} className="mb-4 mt-4"/>
-            <div className="row"></div>
-            <h5 className="text-lightBlue mt-2 mb-3">
-              Archive    
-              <span className="text-blue-2">  
-                {" "}"{forMassAction == true ? 
-                selected.length == 1 ? 
-                singleTitle : selected.length : 
-                collectionTitle }" 
-              </span>
-              { forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" } ?
-            </h5>
-            <h6 className="mt-3 mb-2" style={{color: "#5C6D8E"}}>
-              <span className="text-blue-2"> 0 products </span> 
-              in  { forMassAction == true ? selected.length == 1 ? " this collection" : " these collections": " this collection" } will be unassigned from it.
-            </h6>
-            <h6 className="mt-2 mb-4" style={{color: "#5C6D8E"}}>
-              Would you like to Archive { forMassAction == true ? selected.length == 1 ? " this collection" : " these collections": " this collection" } ?
-            </h6>
-          </DialogContent>
-          <DialogActions className="d-flex justify-content-center px-4 pb-4">
-            <button
-              className="button-lightBlue-outline py-2 px-3 me-4"
-              onClick={handleModalClose}
-            >
-              <p>Cancel</p>
-            </button>
-            <button
-              className="button-red-outline py-2 px-3"
-              onClick={handleArchivedModalClose}
-            >
-              <p>Archive</p>
-            </button>
-          </DialogActions>
-        </Dialog>
+        <ArchiveModal
+          onConfirm ={handleArchivedModalClose}
+          onCancel={handleModalClose}
+          show={openArchivedModal}
+          title={"Collection"}
+          message={forMassAction == true ? selected.length == 1 ? 
+            singleTitle : selected.length : collectionTitle 
+          }
+          archiveType={ forMassAction == true ? selected.length == 1 ?
+            " collection" : " collections": " collection" 
+          }
+          products={"25 products"}
+        />       
         <DeleteModal 
           showCreateModal={showDeleteModal}
           toggleArchiveModalHandler={toggleArchiveModalHandler}
@@ -654,11 +612,17 @@ const CollectionsTable = ({
           name={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length} 
           deleteType={ forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" }
         />
-        <UnArchivedModal 
+        <UnArchiveModal 
+          onConfirm={handleUnArchived}
+          onCancel={closeUnArchivedModal}
+          show={showUnArchivedModal}
+          title={"Un-Archive Collection ?"}
+          primaryMessage={`Before un-archiving <span class='text-blue-1'>${collectionTitle}</span> vendor,
+          `}
+          secondaryMessage={"Please set its status"}
+          confirmText={"Un-Archive"}
           handleStatusValue={handleStatusValue}
-          showUnArchivedModal={showUnArchivedModal}
-          closeUnArchivedModal={closeUnArchivedModal}
-          handleUnArchived={handleUnArchived}
+          icon={unArchived}
           name={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length} 
           nameType={ forMassAction == true ? selected.length == 1 ? " collection" : " collections": " collection" }
         />
