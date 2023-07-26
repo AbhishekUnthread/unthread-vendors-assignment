@@ -267,7 +267,6 @@ const EditCollection = () => {
   const [duplicateDescription, setDuplicateDescription] = useState(false);
   const [startDate1, setStartDate1] = useState(null)
   const [endDate1, setEndDate1] = useState(null)
-  // const collectionId = useSelector((state)=>state.collection.collectionId)
   const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
   const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
@@ -430,13 +429,15 @@ const EditCollection = () => {
         isVisibleFrontend: collectionVisibility,
         notes: collectionNote,
         mediaUrl: collectionMediaUrl,
-        seo: collectionSeo
       }
       if (startDate1 != null) {
         collectionDetails.startDate = new Date(startDate1);
       }
       if (endDate1 != null) {
         collectionDetails.endDate = new Date(endDate1);
+      }
+      if (collectionSeo != null) {
+        collectionDetails.seo = collectionSeo;
       }
 
       editCollection({
@@ -478,7 +479,6 @@ const EditCollection = () => {
     }
   }, [createCollectionError, dispatch]);
 
-  // ? RADIO BUTTON STARTS HERE
   const [likeProductRadio, setLikeProductRadio] = React.useState("automated");
   const handleLikeProductRadio = (event) => {
     setLikeProductRadio(event.target.value);
@@ -488,10 +488,6 @@ const EditCollection = () => {
   const handleLikeMatchRadio = (event) => {
     setLikeMatchRadio(event.target.value);
   };
-
-  // ? RADIO BUTTON ENDS HERE
-
-  // ? ADD PRODUCT DRAWER STARTS HERE
 
   const [addProductDrawer, setAddProductDrawer] = React.useState({
     top: false,
@@ -508,12 +504,9 @@ const EditCollection = () => {
     ) {
       return;
     }
-
     setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
   };
-  // ? ADD PRODUCT DRAWER ENDS HERE
 
-  // * PRICE POPOVERS STARTS
   const [anchorPriceEl, setAnchorPriceEl] = React.useState(null);
   const handlePriceClick = (event) => {
     setAnchorPriceEl(event.currentTarget);
@@ -525,9 +518,7 @@ const EditCollection = () => {
 
   const openPrice = Boolean(anchorPriceEl);
   const idPrice = openPrice ? "simple-popover" : undefined;
-  // * PRICE POPOVERS ENDS
 
-  // * TABLE STARTS HERE
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("productName");
   const [selected, setSelected] = React.useState([]);
@@ -786,7 +777,10 @@ const EditCollection = () => {
                     />
                   </Tooltip>
                 </div>
-                <AppTextEditor value={collectionDescription} setFieldValue={(value)=>setCollectionDescription(value)} />
+                <AppTextEditor 
+                  value={collectionDescription} 
+                  setFieldValue={(value)=>setCollectionDescription(value)} 
+                />
               </div>
             </div>
 

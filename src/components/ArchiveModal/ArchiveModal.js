@@ -6,7 +6,7 @@ import archiveIcon from "../../assets/images/Components/Archived.png"
 
 
 function ArchiveModal(props) {
-    const { onConfirm, onCancel, show, isLoading, message, title,products } = props;
+    const { onConfirm, onCancel, show, isLoading, message, title,products, archiveType } = props;
   return (
     <AlertDialog
     onConfirm={onConfirm}
@@ -15,7 +15,7 @@ function ArchiveModal(props) {
     title={title ? `Archive ${title} ?` : "Archive ?"}
     primaryMessage={`${products} ${
       message
-        ? `in <span class='text-blue-1'>${message}</span>`
+        ? `in <span class='text-blue-1'>${message} ${archiveType}</span>`
         : "<span class='text-blue-1'>selected</span>"
     } will be unassigned from it. Would you like to Archive this ${title} ?`}
     confirmText="Archive"

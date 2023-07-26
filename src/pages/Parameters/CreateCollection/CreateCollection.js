@@ -319,7 +319,6 @@ const CreateCollection = () => {
           obj.seo.metaKeywords = categorySeo?.metaKeywords
         }
       }
-      
       createCollection(obj)
         .unwrap()
         .then(() => { 
@@ -357,7 +356,6 @@ const CreateCollection = () => {
     }
   }, [createCollectionError, dispatch]);
 
-  // ? RADIO BUTTON STARTS HERE
   const [likeProductRadio, setLikeProductRadio] = React.useState("automated");
   const handleLikeProductRadio = (event) => {
     setLikeProductRadio(event.target.value);
@@ -367,10 +365,6 @@ const CreateCollection = () => {
   const handleLikeMatchRadio = (event) => {
     setLikeMatchRadio(event.target.value);
   };
-
-  // ? RADIO BUTTON ENDS HERE
-
-  // ? ADD PRODUCT DRAWER STARTS HERE
 
   const [addProductDrawer, setAddProductDrawer] = React.useState({
     top: false,
@@ -387,26 +381,20 @@ const CreateCollection = () => {
     ) {
       return;
     }
-
     setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
   };
-  // ? ADD PRODUCT DRAWER ENDS HERE
 
-  // * PRICE POPOVERS STARTS
   const [anchorPriceEl, setAnchorPriceEl] = React.useState(null);
   const handlePriceClick = (event) => {
     setAnchorPriceEl(event.currentTarget);
   };
-
   const handlePriceClose = () => {
     setAnchorPriceEl(null);
   };
 
   const openPrice = Boolean(anchorPriceEl);
   const idPrice = openPrice ? "simple-popover" : undefined;
-  // * PRICE POPOVERS ENDS
 
-  // * TABLE STARTS HERE
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("productName");
   const [selected, setSelected] = React.useState([]);
@@ -440,7 +428,6 @@ const CreateCollection = () => {
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
-
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
     } else if (selectedIndex === 0) {
@@ -453,7 +440,6 @@ const CreateCollection = () => {
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
   };
 
@@ -470,9 +456,7 @@ const CreateCollection = () => {
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  // * TABLE ENDS HERE
 
-  // ? SIZE SELECT STARTS HERE
   const [field, setField] = React.useState("price");
 
   const handleFieldChange = (event) => {
