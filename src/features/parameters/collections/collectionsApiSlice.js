@@ -2,6 +2,7 @@ import apiSlice from "../../../app/api/apiSlice";
 
 export const collectionApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+
     getAllCollections: builder.query({
       query: (queries) => {
         let queryString = "";
@@ -19,6 +20,25 @@ export const collectionApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ["Collections"],
     }),
+
+    getCollectionsCount: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+
+        return {
+          url: `/parameters/collection/count${queryString}`,
+        };
+      },
+      providesTags: ["Collections"],
+    }),
+
     createCollection: builder.mutation({
       query: (collectionDetails) => ({
         url: "/parameters/collection",
@@ -27,6 +47,7 @@ export const collectionApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Collections"],
     }),
+
     deleteCollection: builder.mutation({
       query: (collectionId) => ({
         url: `/parameters/collection/${collectionId}`,
@@ -35,6 +56,7 @@ export const collectionApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Collections"],
     }),
+
     hardDeleteCollection: builder.mutation({
       query: (collectionId) => ({
         url: `/parameters/collection/hardDelete/${collectionId}`,
@@ -43,6 +65,7 @@ export const collectionApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Collections"],
     }),
+
     hardBulkDeleteCollection: builder.mutation({
       query: (collectionDelete) => ({
         url: `/parameters/collection/bulkDelete`,
@@ -51,6 +74,7 @@ export const collectionApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Collections"],
     }),
+
     editCollection: builder.mutation({
       query: ({ id, details }) => ({
         url: `/parameters/collection/${id}`,
@@ -59,6 +83,7 @@ export const collectionApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Collections"],
     }),
+
     bulkEditCollection: builder.mutation({
       query: (updates) => ({
         url: `/parameters/collection/bulkUpdate`,
@@ -67,11 +92,13 @@ export const collectionApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Collections"],
     })
+
   }),
 });
 
 export const {
   useGetAllCollectionsQuery,
+  useGetCollectionsCountQuery,
   useCreateCollectionMutation,
   useDeleteCollectionMutation,
   useEditCollectionMutation,

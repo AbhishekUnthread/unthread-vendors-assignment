@@ -14,9 +14,21 @@ import {
   Tooltip
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { useDispatch } from "react-redux";
+
+import {
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import {
+  useGetAllCollectionsQuery,
+  useGetCollectionsCountQuery,
+  useDeleteCollectionMutation,
+  useHardDeleteCollectionMutation,
+  useHardBulkDeleteCollectionMutation
+} from "../../../features/parameters/collections/collectionsApiSlice";
 
 import CollectionsTable from "./CollectionsTable";
-import TableSearch, { TableSearchSecondary} from "../../../components/TableSearch/TableSearch";
+import { TableSearchSecondary} from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
@@ -24,20 +36,6 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 
 import sort from "../../../assets/icons/sort.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
-
-import { useDispatch } from "react-redux";
-
-import {
-  showSuccess,
-  showError,
-} from "../../../features/snackbar/snackbarAction";
-
-import {
-  useGetAllCollectionsQuery,
-  useDeleteCollectionMutation,
-  useHardDeleteCollectionMutation,
-  useHardBulkDeleteCollectionMutation
-} from "../../../features/parameters/collections/collectionsApiSlice";
 
 const initialQueryFilterState = {
   pageSize: 10,
@@ -111,7 +109,7 @@ const Collections = () => {
       filterParameter.alphabetical = sortFilter == "alphabeticalAtoZ" ? "1" : "-1";
     }
     else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
-      filterParameter.createdAt = sortFilter == "oldestToNewest" ? "1" : "-1";
+      filterParameter.updatedAt = sortFilter == "oldestToNewest" ? "1" : "-1";
     }
   }
 
@@ -144,6 +142,15 @@ const Collections = () => {
     isSuccess: collectionIsSuccess,
     error: collectionError,
   } = useGetAllCollectionsQuery({ ...filterParameter, ...collectionTypeQuery, ...queryFilterState});
+
+  const {
+    data: collectionCountData,
+    isLoading: collectionCountIsLoading,
+    isSuccess: collectionCountIsSuccess,
+    error: collectionCountError,
+  } = useGetCollectionsCountQuery();
+
+  const collectionCount = collectionCountData?.data[0]
 
   const [
     hardDeleteCollection,
@@ -219,8 +226,6 @@ const Collections = () => {
     setSearchParams({status:tabIndex})
   };
 
-
-   // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
   const handleSortClick = (event) => {
@@ -238,9 +243,7 @@ const Collections = () => {
 
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
-  // * SORT POPOVERS ENDS
 
-  // * STATUS POPOVERS STARTS
   const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
   const handleStatusClick = (event) => {
     setAnchorStatusEl(event.currentTarget);
@@ -252,7 +255,6 @@ const Collections = () => {
 
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
-  // * STATUS POPOVERS ENDS
 
   const deleteCollectionHandler = (data) => {
     if (collectionType === 0) {
@@ -308,26 +310,17 @@ const Collections = () => {
   ]);
 
   useEffect(() => {
-        if(+searchParams.get("status")===0)
-        {
-          setCollectionType(0);
-        }
-        else if(+searchParams.get("status")===1)
-        {
-          setCollectionType(1);
-        }
-        else if(+searchParams.get("status")===2)
-        {
-          console.log("check")
-          setCollectionType(2);
-        }
-        else if(+searchParams.get("status")===3)
-        {
-          setCollectionType(3);
-        }
-    }, [searchParams])
+    if(+searchParams.get("status")===0) {
+      setCollectionType(0);
+    } else if(+searchParams.get("status")===1) {
+      setCollectionType(1);
+    } else if(+searchParams.get("status")===2) {
+      setCollectionType(2);
+    } else if(+searchParams.get("status")===3) {
+      setCollectionType(3);
+    }
+  }, [searchParams])
     
-
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -363,10 +356,18 @@ const Collections = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Active" className="tabs-head" />
-              <Tab label="In-Active" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab 
+                label={`All (${collectionCount?.active + collectionCount?.inActive + collectionCount?.scheduled})`} className="tabs-head" 
+              />
+              <Tab 
+                label={`Active (${collectionCount?.active})`} 
+                className="tabs-head" />
+              <Tab 
+                label={`In-Active (${collectionCount?.inActive})`} 
+                className="tabs-head" />
+              <Tab 
+                label={`Archived (${collectionCount?.archived})`} 
+                className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -489,6 +490,7 @@ const Collections = () => {
               page={queryFilterState.pageNo}
               changeRowsPerPage={handleChangeRowsPerPage}
               changePage={handleChangePage}
+              collectionType={collectionType}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={1}>
@@ -503,6 +505,7 @@ const Collections = () => {
               page={queryFilterState.pageNo}
               changeRowsPerPage={handleChangeRowsPerPage}
               changePage={handleChangePage}
+              collectionType={collectionType}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={2}>
@@ -517,6 +520,7 @@ const Collections = () => {
               page={queryFilterState.pageNo}
               changeRowsPerPage={handleChangeRowsPerPage}
               changePage={handleChangePage}
+              collectionType={collectionType}
             />
           </TabPanel>
           <TabPanel value={collectionType} index={3}>
