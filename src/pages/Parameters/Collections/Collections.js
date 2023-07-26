@@ -45,6 +45,7 @@ const initialQueryFilterState = {
   title:"",
   searchValue:""
 };
+
 const queryFilterReducer = (state, action) => {
   if (action.type === "SET_PAGE_SIZE") {
     return {
@@ -369,7 +370,11 @@ const Collections = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearchSecondary onSearchValueChange={handleSearchValue} value={queryFilterState.searchValue} onChange={handleSearchChange} />
+            <TableSearchSecondary 
+              onSearchValueChange={handleSearchValue} 
+              value={queryFilterState.searchValue} 
+              onChange={handleSearchChange} 
+            />
              <div className="d-flex">
               <button
                 className="button-grey py-2 px-3 ms-2"

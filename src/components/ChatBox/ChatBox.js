@@ -230,7 +230,7 @@ const ChatBox = ({ handleCloseDrawer, handleOpenDrawer, stateOpen }) => {
                 style={{width: "100px"}}
               >
                 <p className="mx-2 optionColor"
-                  style={{background: anchorFlagEl == "Open" ? "#C8D8FF" : "#FFD79D"}}
+                  style={{background: "#C8D8FF" }}
                 >Open</p>
                 <KeyboardArrowDownIcon />
               </span>
