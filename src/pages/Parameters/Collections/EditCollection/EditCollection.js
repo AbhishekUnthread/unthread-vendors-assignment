@@ -255,13 +255,12 @@ const EditCollection = () => {
   const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
   const [duplicateTitleNew, setDuplicateTitleNew] = useState("")
-  let { id } = useParams();
+  let { id, filter } = useParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
   const [collectionId, setCollectionId] = useState();
-  const [decodedObject, setDecodedObject] = useState(null);
   const [index, setIndex] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -290,7 +289,6 @@ const EditCollection = () => {
       setHideFooter(true)
     }
   }
-  console.log(searchParams, 'searchParams collecio');
 
   const backHandler = () => {
     navigate({
@@ -306,17 +304,12 @@ const EditCollection = () => {
     error: collectionError,
   } = useGetAllCollectionsQuery({ id: id });
 
-    const nextPageHandler = () => {
+  const nextPageHandler = () => {
     const { pageNo, totalCount } = queryFilterState;
     if (pageNo+1 > totalCount) {
       return;
     }
-    navigate({
-      pathname: `./edit/${pageNo + 1}`,
-      search: `?${createSearchParams({
-        filter: searchParams.get("filter"),
-      })}`,
-    });
+    navigate(`/parameters/collections/edit/${pageNo + 1}/${filter}`);
   };
 
   const prevPageHandler = () => {
@@ -324,12 +317,7 @@ const EditCollection = () => {
     if (pageNo - 1 === 0) {
       return;
     }
-    navigate({
-      pathname: `./edit/${pageNo - 1}`,
-      search: `?${createSearchParams({
-        filter: searchParams.get("filter"),
-      })}`,
-    });
+    navigate(`/parameters/collections/edit/${pageNo - 1}/${filter}`);
   };  
 
   useEffect(() => {
@@ -337,13 +325,6 @@ const EditCollection = () => {
         dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
       }
     }, [id]);
-
-    useEffect(() => {
-      const encodedString = searchParams.get("filter")
-      const parsedObject = JSON.parse(encodedString);
-  
-      setDecodedObject(parsedObject);
-    }, []);
 
   const newCollectionData = collectionData?.data?.data[0];
 
@@ -1207,6 +1188,7 @@ const EditCollection = () => {
                 seoName={collectionTitle} 
                 seoValue={collectionSeo} 
                 handleSeoChange={setCollectionSeo} 
+                refrenceId={id ? collectionId : ""}
               />
             </div>
 
