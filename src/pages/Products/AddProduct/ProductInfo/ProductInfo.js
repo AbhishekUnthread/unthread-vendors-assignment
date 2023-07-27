@@ -12,7 +12,9 @@ import productInfoMedia2 from "../../../../assets/images/products/productInfoMed
 import image from "../../../../assets/images/users/userLarge.svg"
 import image2 from "../../../../assets/images/unthreadLogo.png"
 import product2 from "../../../../assets/images/products/product2.jpg";
-
+import upload from "../../../../assets/icons/upload.svg";
+import image3 from "../../../../assets/icons/image-03.svg";
+import eye from "../../../../assets/icons/eyeClosed.svg"
 // ! MATERIAL IMPORTS
 import {
   Autocomplete,
@@ -1168,7 +1170,97 @@ const ProductInfo = () => {
                 </ToggleButton>
               </ToggleButtonGroup>
             </div>
-            <div style={{background: "#15142A", height: "100px"}}>
+            <div style={{background: "#15142A"}}>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Featured image
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Upload Image"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <img src={image3} className="me-1"/>
+                        <img src={upload} />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Featured Text
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <div  className="col-5">
+                  <p className="text-lightBlue">
+                    Product Code
+                  </p>
+                  <small className="text-grey-6 mt-2">
+                    <img src={eye} className="me-1"/>
+                    Customer wont see this
+                  </small>
+                </div>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <div  className="col-5">
+                  <p className="text-lightBlue">
+                    Product Name
+                  </p>
+                  <small className="text-grey-6 mt-2">
+                    <InsertLinkIcon className="me-1"/>
+                    Linked to Product Title
+                  </small>
+                </div>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <div  className="col-5">
+                  <p className="text-lightBlue">
+                    Product Code
+                  </p>
+                  <small className="text-grey-6 mt-2">
+                    <InsertLinkIcon className="me-1"/>
+                    Customer wont see this
+                  </small>
+                </div>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                  />
+                </FormControl>
+              </div>
             </div>            
           </div>
         </div>
