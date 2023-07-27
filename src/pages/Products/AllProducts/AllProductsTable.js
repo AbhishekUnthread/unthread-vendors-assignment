@@ -65,7 +65,9 @@ import TableMassActionButton from "../../../components/TableMassActionButton/Tab
 import ArchiveModal, {
   MultipleArchiveModal,
 } from "../../../components/ArchiveModal/ArchiveModal";
-import UnArchiveModal, { MultipleUnArchiveModal } from "../../../components/UnArchiveModal/UnArchiveModal";
+import UnArchiveModal, {
+  MultipleUnArchiveModal,
+} from "../../../components/UnArchiveModal/UnArchiveModal";
 import moment from "moment";
 
 const activityData = [
@@ -291,7 +293,7 @@ const AllProductsTable = ({
   page,
   editProduct,
   bulkEdit,
-  archived=true,
+  archived = true,
 }) => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
@@ -671,7 +673,7 @@ const AllProductsTable = ({
           <TableBody>
             {stableSort(list, getComparator(order, orderBy))?.map(
               (row, index) => {
-                console.log(row)
+                // console.log(row)
                 const isItemSelected = isSelected(row._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -800,55 +802,51 @@ const AllProductsTable = ({
                       </div>
                     </TableCell>
                     <TableCell style={{ width: 180, padding: 0 }}>
-                              <div className="d-block">
-                                <div
-                                  className="rounded-pill d-flex px-2 py-1  statusBoxWidth"
-                                  style={{
-                                    background:
-                                      row.status == "active"
-                                        ? "#A6FAAF"
-                                        : row.status == "in-active"
-                                        ? "#F67476"
-                                        : row.status == "archived"
-                                        ? "#C8D8FF"
-                                        : "#FEE1A3",
-                                  }}
-                                >
-                                  <small className="text-black fw-500">
-                                    {row.status == "active"
-                                      ? "Active"
-                                      : row.status == "in-active"
-                                      ? "In-Active"
-                                      : row.status == "archived"
-                                      ? "Archived"
-                                      : "Scheduled"}
-                                  </small>
-                                </div>
-                                {row.status == "scheduled" && (
-                                  <div>
-                                    <small className="text-blue-2">
-                                      {row.startDate && (
-                                        <>
-                                          for{" "}
-                                          {moment(row.startDate).format(
-                                            "DD/MM/YYYY"
-                                          )}
-                                        </>
-                                      )}
-                                      {row.startDate && row.endDate && " "}
-                                      {row.endDate && (
-                                        <>
-                                          till{" "}
-                                          {moment(row.endDate).format(
-                                            "DD/MM/YYYY"
-                                          )}
-                                        </>
-                                      )}
-                                    </small>
-                                  </div>
-                                )}
-                              </div>
-                            </TableCell>
+                      <div className="d-block">
+                        <div
+                          className="rounded-pill d-flex px-2 py-1  statusBoxWidth"
+                          style={{
+                            background:
+                              row.status == "active"
+                                ? "#A6FAAF"
+                                : row.status == "in-active"
+                                ? "#F67476"
+                                : row.status == "archived"
+                                ? "#C8D8FF"
+                                : "#FEE1A3",
+                          }}
+                        >
+                          <small className="text-black fw-500">
+                            {row.status == "active"
+                              ? "Active"
+                              : row.status == "in-active"
+                              ? "In-Active"
+                              : row.status == "archived"
+                              ? "Archived"
+                              : "Scheduled"}
+                          </small>
+                        </div>
+                        {row.status == "scheduled" && (
+                          <div>
+                            <small className="text-blue-2">
+                              {row.startDate && (
+                                <>
+                                  for{" "}
+                                  {moment(row.startDate).format("DD/MM/YYYY")}
+                                </>
+                              )}
+                              {row.startDate && row.endDate && " "}
+                              {row.endDate && (
+                                <>
+                                  till{" "}
+                                  {moment(row.endDate).format("DD/MM/YYYY")}
+                                </>
+                              )}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell style={{ width: 80, padding: 0 }}>
                       <div className="d-flex align-items-center">
                         <Tooltip title="View" placement="top">
@@ -924,16 +922,17 @@ const AllProductsTable = ({
                           <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
                             <small
                               onClick={() => {
-                                if(archived){
-
-                                  toggleArchiveModalHandler(row)
-                                }else{
-                                  toggleUnArchiveModalHandler(row)
+                                if (archived) {
+                                  toggleArchiveModalHandler(row);
+                                } else {
+                                  toggleUnArchiveModalHandler(row);
                                 }
                               }}
                               className="text-lightBlue font2 d-block"
                             >
-                             { archived ? " Archive Product" : "Un-Archive Product"}
+                              {archived
+                                ? " Archive Product"
+                                : "Un-Archive Product"}
                             </small>
                             <img src={deleteRed} alt="delete" className="" />
                           </div>
@@ -1342,21 +1341,23 @@ const AllProductsTable = ({
         `}
         secondaryMessage={"Please set its status"}
         confirmText={"Un-Archive"}
-        handleStatusValue={(val)=> setHandleStatusValue(val)}
+        handleStatusValue={(val) => setHandleStatusValue(val)}
         icon={unArchived}
-        />
-         <MultipleUnArchiveModal
+      />
+      <MultipleUnArchiveModal
         onConfirm={handleUnArchived}
         onCancel={() => setShowMultipleUnArhcivedModal(false)}
         show={showMultipleUnArhcivedModal}
         title={"Un-Archive Products ?"}
-        primaryMessage={`Before un-archiving <span class='text-blue-1'>${selected.length}</span> ${selected.length===1?" Product":"Products"},
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${
+          selected.length
+        }</span> ${selected.length === 1 ? " Product" : "Products"},
         `}
         secondaryMessage={"Please set its status"}
         confirmText={"Un-Archive"}
-        handleStatusValue={(val)=> setHandleStatusValue(val)}
+        handleStatusValue={(val) => setHandleStatusValue(val)}
         icon={unArchived}
-        />
+      />
     </React.Fragment>
   );
 };
