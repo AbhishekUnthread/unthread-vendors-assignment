@@ -43,7 +43,7 @@ const initialQueryFilterState = {
   title:"",
   searchValue:"",
   status: ["active", "in-active", "scheduled"],
-  updatedAt: "-1",
+  createdAt: "-1",
   alphabetical: null
 };
 
@@ -130,6 +130,7 @@ const Collections = () => {
   const [collectionType, setCollectionType] = useState(null);
   const [pageLength, setPageLegnth] = useState();
   const [firstRender, setFirstRender] = useState(true);
+  const [anchorSortEl, setAnchorSortEl] = useState(null);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -340,6 +341,14 @@ const Collections = () => {
     dispatchQueryFilter({ type: "SEARCH", name: "" });
   };
 
+  const handleSortClick = (event) => {
+    setAnchorSortEl(event.currentTarget);
+  };
+
+  const handleSortClose = () => {
+    setAnchorSortEl(null);
+  };
+
   const handleAlphabeticalSorting = (event) => {
     dispatchQueryFilter({
       type: "SET_ALPHABETICAL_SORTING",
@@ -353,16 +362,6 @@ const Collections = () => {
       type: "SET_CRONOLOGICAL_SORTING",
       createdAt: event.target.value,
     });
-    setAnchorSortEl(null);
-  };
-
-  const [anchorSortEl, setAnchorSortEl] = useState(null);
-
-  const handleSortClick = (event) => {
-    setAnchorSortEl(event.currentTarget);
-  };
-
-  const handleSortClose = () => {
     setAnchorSortEl(null);
   };
 
