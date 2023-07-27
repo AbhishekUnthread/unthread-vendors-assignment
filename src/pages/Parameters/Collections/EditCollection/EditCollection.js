@@ -519,6 +519,7 @@ const EditCollection = () => {
       mediaUrl: collectionData?.data?.data[0]?.mediaUrl || "",
       startDate: collectionData?.data?.data?.[0]?.startDate || null,
       endDate: collectionData?.data?.data?.[0]?.endDate || null,
+      mediaUrl: collectionData?.data?.data?.[0]?.mediaUrl || "",
     },
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -1406,7 +1407,7 @@ const EditCollection = () => {
         <SaveFooterTertiary
           show={id ? collectionInfoState.isEditing : true}
           onDiscard={backHandler} 
-          isLoading={createCollectionIsLoading || editCollectionIsLoading}
+          isLoading={editCollectionIsLoading}
         />  
         <DiscardModalSecondary           
           when={hideFooter}
