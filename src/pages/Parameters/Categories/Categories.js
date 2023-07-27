@@ -68,6 +68,8 @@ import {
   useBulkEditTagSubCategoryMutation,
   useBulkDeleteSubCategoryMutation,
   useBulkDeleteCategoryMutation,
+  useGetAllCategorieStatusCountQuery,
+  useGetAllSubCategorieStatusCountQuery,
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
@@ -271,6 +273,14 @@ const Categories = () => {
     isSuccess: subCategoriesIsSuccess,
     error: subCategoriesError,
   } = useGetAllSubCategoriesQuery({ ...queryFilterState });
+  const {
+    data: CategoriesStatusCount,
+    isSuccess: CategoriesStatusCountIsSuccess,
+  } = useGetAllCategorieStatusCountQuery();
+  const {
+    data: SubCategoriesStatusCount,
+    isSuccess: SubCategoriesStatusCountIsSuccess,
+  } = useGetAllSubCategorieStatusCountQuery();
   const [
     createCategory,
     {
@@ -1231,10 +1241,10 @@ const Categories = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label={`Categories ${categoryType === 0 ? `(${categoryTotalCount})`:""}`} className="tabs-head" />
-              <Tab label={`Sub Categories  ${categoryType === 1 ? `(${subCategoryTotalCount})` :""}`} className="tabs-head" />
-              <Tab label={`Archived Categories ${categoryType === 2 ? `(${categoryTotalCount})`:""}`} className="tabs-head" />
-              <Tab label={`Archived Sub Categories ${categoryType === 3 ? `(${subCategoryTotalCount})`:""}`} className="tabs-head" />
+              <Tab label={`Categories (${CategoriesStatusCount?.data?.[0]?.active+CategoriesStatusCount?.data?.[0]?.inActive+CategoriesStatusCount?.data?.[0]?.scheduled})`} className="tabs-head" />
+              <Tab label={`Sub Categories  (${SubCategoriesStatusCount?.data?.[0]?.active+SubCategoriesStatusCount?.data?.[0]?.inActive+SubCategoriesStatusCount?.data?.[0]?.scheduled})`} className="tabs-head" />
+              <Tab label={`Archived Categories (${CategoriesStatusCount?.data?.[0]?.archived})`} className="tabs-head" />
+              <Tab label={`Archived Sub Categories (${SubCategoriesStatusCount?.data?.[0]?.archived})`} className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">

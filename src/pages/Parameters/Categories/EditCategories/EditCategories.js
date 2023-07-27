@@ -248,7 +248,7 @@ const EditCategories = () => {
 
   const nextPageHandler = () => {
     const { pageNo, totalCount } = queryFilterState;
-    if (pageNo  > totalCount) {
+    if (pageNo === totalCount) {
       return;
     }
     
