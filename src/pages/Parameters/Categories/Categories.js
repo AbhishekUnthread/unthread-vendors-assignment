@@ -194,10 +194,8 @@ const Categories = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState([]);
   const [multipleTags, setMultipleTags] = useState([]);
   const [multipleTagsForSub, setMultipleTagsForSub] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
   const [categoryTotalCount, setCategoryTotalCount] = React.useState([]);
   const [subCategoryTotalCount, setSubCategoryTotalCount] = React.useState([]);
   const [cateoryOpenState,setCategoryOpenState]=useState({
@@ -206,61 +204,15 @@ const Categories = () => {
   })
   const [firstRender, setFirstRender] = useState(true);
    
-  const filterParameter = {};
 
   const handleSearchChange = (event) => {
     dispatchQueryFilter({ type: "SEARCH", name: event.target.value });
   };
 
-  const categoryTypeQuery =
-    categoryType === 0
-      ? {
-          createdAt: -1,
-          status:
-            statusFilter.length > 0
-              ? statusFilter
-              : "active,in-active,scheduled",
-        }
-      : categoryType === 1
-      ? {
-          createdAt: -1,
-          status:
-            statusFilter.length > 0
-              ? statusFilter
-              : "active,in-active,scheduled",
-        }
-      : categoryType === 2
-      ? { createdAt: -1, status: ["archieved"] }
-      : categoryType === 3
-      ? { createdAt: -1, status: ["archieved"] }
-      : {};
+  
 
-  const filterParams = { ...filterParameter, ...categoryTypeQuery };
-  if (searchValue) {
-    filterParams.name = searchValue;
-  }
 
-  // Check SortOption
-  if (sortFilter) {
-    // Check alphabetical sort options
-    if (
-      sortFilter === "alphabeticalAtoZ" ||
-      sortFilter === "alphabeticalZtoA"
-    ) {
-      filterParams.alphabetical =
-        sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
-    }
-    // Check createdAt sort options
-    else if (
-      sortFilter === "oldestToNewest" ||
-      sortFilter === "newestToOldest"
-    ) {
-      filterParams.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
-    }
-  }
-
-  console.log(filterParams)
-
+  
   const {
     data: categoriesData,
     isLoading: categoriesIsLoading,

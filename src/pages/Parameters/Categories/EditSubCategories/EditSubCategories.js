@@ -1,6 +1,12 @@
 import React, { forwardRef, useEffect, useReducer, useState } from "react";
 import "../../EditVendor/EditVendor.scss";
-import { Link, useNavigate, useParams,createSearchParams,useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  createSearchParams,
+  useSearchParams,
+} from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import NotesBox from "../../../../components/NotesBox/NotesBox";
@@ -67,7 +73,7 @@ const initialState = {
   confirmationMessage: "",
   isEditing: false,
   initialInfo: null,
-  isSeoEditDone:false,
+  isSeoEditDone: false,
 };
 
 const initialQueryFilterState = {
@@ -138,7 +144,7 @@ const EditSubCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let { id,filter } = useParams();
+  let { id, filter } = useParams();
   const [categoryState, dispatchCategory] = useReducer(
     categoryReducer,
     initialState
@@ -147,7 +153,6 @@ const EditSubCategories = () => {
     queryFilterReducer,
     initialQueryFilterState
   );
-  const [subCategoryDescription, setSubCategoryDescription] = useState("");
   const [categoryName, setCategoryName] = useState("");
 
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
@@ -169,7 +174,8 @@ const EditSubCategories = () => {
     isError: subCategoriesIsError,
     error: subCategoriesError,
   } = useGetAllSubCategoriesQuery({
-    srNo:id,...decodedObject
+    srNo: id,
+    ...decodedObject,
   });
 
   const [
@@ -209,8 +215,12 @@ const EditSubCategories = () => {
       }
       if (!isEmpty(values.seo)) {
         for (const key in values.seo) {
-          if(values.seo[key] === "" || values.seo[key] === null || values.seo[key] === []){
-            delete values.seo[key] 
+          if (
+            values.seo[key] === "" ||
+            values.seo[key] === null ||
+            values.seo[key] === []
+          ) {
+            delete values.seo[key];
           }
         }
         editItems.seo = values.seo;
@@ -230,7 +240,7 @@ const EditSubCategories = () => {
           dispatch(
             showSuccess({ message: "Sub Category Updated Successfully" })
           );
-          dispatchCategory({ type: "DISABLE_SEO" })
+          dispatchCategory({ type: "DISABLE_SEO" });
         });
     },
   });
@@ -239,58 +249,51 @@ const EditSubCategories = () => {
     categoryEditFormik.setFieldValue("endDate", null);
   };
 
-  useEffect(() => {
-    if (subCategoryDescription === "<p></p>") {
-      setSubCategoryDescription(categoryEditFormik.values.description);
-    }
-    categoryEditFormik.setFieldValue("description", subCategoryDescription);
-  }, [subCategoryDescription]);
-
   const submitHandler = (e) => {
     e.preventDefault();
     categoryEditFormik.handleSubmit();
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const encodedString = searchParams.get("filter"); // The encoded string from the URL or any source
 
     const decodedString = decodeURIComponent(encodedString);
     const parsedObject = JSON.parse(decodedString);
-    setDecodedObject(parsedObject)
-  },[searchParams])
+    setDecodedObject(parsedObject);
+  }, [searchParams]);
 
   const backHandler = () => {
     navigate({
       pathname: decodedObject?.goBack || "/parameters/categories",
       search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
     });
-    
   };
 
- 
   const nextPageHandler = () => {
-    setSubCategoryDescription("");
     const { pageNo, totalCount } = queryFilterState;
-    if (pageNo  > totalCount) {
+    if (pageNo > totalCount) {
       return;
     }
-    decodedObject.order = subCategoriesData?.data?.data?.[0]?.order
+    decodedObject.order = subCategoriesData?.data?.data?.[0]?.order;
     navigate({
       pathname: `/parameters/subCategories/edit/${pageNo + 1}`,
-      search: `?${createSearchParams({ filter: JSON.stringify(decodedObject) })}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify(decodedObject),
+      })}`,
     });
   };
 
   const prevPageHandler = () => {
-    setSubCategoryDescription("");
     const { pageNo } = queryFilterState;
     if (pageNo === 1) {
       return;
     }
-    decodedObject.order = subCategoriesData?.data?.data?.[0]?.order
+    decodedObject.order = subCategoriesData?.data?.data?.[0]?.order;
     navigate({
       pathname: `/parameters/subCategories/edit/${pageNo - 1}`,
-      search: `?${createSearchParams({ filter: JSON.stringify(decodedObject) })}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify(decodedObject),
+      })}`,
     });
   };
 
@@ -355,12 +358,11 @@ const EditSubCategories = () => {
     );
   };
 
-  const handleParentCategoryChange = ()=>{
-   
+  const handleParentCategoryChange = () => {
     editSubCategory({
       id: subCategoriesData?.data?.data?.[0]?._id, // ID of the category
       details: {
-        categoryId:subCategoryPatentId
+        categoryId: subCategoryPatentId,
       },
     })
       .unwrap()
@@ -368,9 +370,9 @@ const EditSubCategories = () => {
         dispatch(
           showSuccess({ message: "Sub Category Parent Updated Successfully" })
         );
-        dispatchCategory({ type: "DISABLE_SEO" })
+        dispatchCategory({ type: "DISABLE_SEO" });
       });
-  }
+  };
 
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryType(tabIndex);
@@ -379,7 +381,6 @@ const EditSubCategories = () => {
     if (tabIndex === 1) {
     }
   };
-
 
   return (
     <div className="page container-fluid position-relative user-group">
@@ -462,8 +463,8 @@ const EditSubCategories = () => {
             </button>
             <LoadingButton
               onClick={() => {
-                toggleCreateSubModalHandler(true)
-                handleParentCategoryChange()
+                toggleCreateSubModalHandler(true);
+                handleParentCategoryChange();
               }}
               className="button-gradient py-2 px-5"
             >
@@ -478,7 +479,10 @@ const EditSubCategories = () => {
         handleSubClick={toggleCreateSubModalHandler}
         subHeading={`Parent Category: ${categoryName}`}
         subHighlightstext={"(Change)"}
-        navigateLink={decodedObject?.goBack || `/parameters/categories?filter=${JSON.stringify(decodedObject)}`}
+        navigateLink={
+          decodedObject?.goBack ||
+          `/parameters/categories?filter=${JSON.stringify(decodedObject)}`
+        }
         previewButton={true}
         handleNext={nextPageHandler}
         handlePrev={prevPageHandler}
@@ -550,8 +554,14 @@ const EditSubCategories = () => {
                 </Tooltip>
               </div>
               <AppTextEditor
-                value={subCategoryDescription}
-                setFieldValue={(val) => setSubCategoryDescription(val)}
+                value={categoryEditFormik.values.description}
+                setFieldValue={(val) => {
+                  if (val === "") {
+                    categoryEditFormik.setFieldValue("description", "<p></p>");
+                    return;
+                  }
+                  categoryEditFormik.setFieldValue("description", val);
+                }}
               />
             </div>
           </div>
@@ -633,7 +643,12 @@ const EditSubCategories = () => {
         />
       </form>
       <DiscardModalSecondary
-        when={!_.isEqual(categoryEditFormik.values, categoryEditFormik.initialValues)}
+        when={
+          !_.isEqual(
+            categoryEditFormik.values,
+            categoryEditFormik.initialValues
+          )
+        }
         message="Category"
       />
     </div>

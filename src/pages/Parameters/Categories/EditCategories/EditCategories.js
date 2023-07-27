@@ -1,9 +1,12 @@
 import React, { useEffect, useReducer, useState } from "react";
 import "../../EditVendor/EditVendor.scss";
-import { Link,createSearchParams,
+import {
+  Link,
+  createSearchParams,
   useNavigate,
   useParams,
-  useSearchParams } from "react-router-dom";
+  useSearchParams,
+} from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import NotesBox from "../../../../components/NotesBox/NotesBox";
@@ -54,7 +57,7 @@ const initialState = {
   confirmationMessage: "",
   isEditing: false,
   initialInfo: null,
-  isSeoEditDone:false,
+  isSeoEditDone: false,
 };
 
 const initialQueryFilterState = {
@@ -121,7 +124,7 @@ const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let { id,filter } = useParams();
+  let { id, filter } = useParams();
   const [categoryState, dispatchCategory] = useReducer(
     categoryReducer,
     initialState
@@ -130,7 +133,6 @@ const EditCategories = () => {
     queryFilterReducer,
     initialQueryFilterState
   );
-  const [categoryDescription, setCategoryDescription] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const [decodedObject, setDecodedObject] = useState(null);
 
@@ -140,7 +142,7 @@ const EditCategories = () => {
     isError: categoriesIsError,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({srNo:id,...decodedObject});
+  } = useGetAllCategoriesQuery({ srNo: id, ...decodedObject });
 
   const [
     editCategory,
@@ -185,8 +187,12 @@ const EditCategories = () => {
       // }
       if (!isEmpty(values.seo)) {
         for (const key in values.seo) {
-          if(values.seo[key] === "" || values.seo[key] === null || values.seo[key] === []){
-            delete values.seo[key] 
+          if (
+            values.seo[key] === "" ||
+            values.seo[key] === null ||
+            values.seo[key] === []
+          ) {
+            delete values.seo[key];
           }
         }
         editItems.seo = values.seo;
@@ -204,34 +210,23 @@ const EditCategories = () => {
         .unwrap()
         .then(() => {
           dispatch(showSuccess({ message: "Category Updated Successfully" }));
-          dispatchCategory({ type: "DISABLE_SEO" })
+          dispatchCategory({ type: "DISABLE_SEO" });
         });
     },
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     const encodedString = searchParams.get("filter"); // The encoded string from the URL or any source
 
     const decodedString = decodeURIComponent(encodedString);
     const parsedObject = JSON.parse(decodedString);
-    console.log(parsedObject)
-    setDecodedObject(parsedObject)
-  },[searchParams])
+    setDecodedObject(parsedObject);
+  }, [searchParams]);
 
   const clearDate = () => {
     categoryEditFormik.setFieldValue("startDate", null);
     categoryEditFormik.setFieldValue("endDate", null);
   };
-
-  useEffect(() => {
-    if (categoryDescription === "<p></p>") {
-      categoryEditFormik.setFieldValue(
-        "description",
-        categoryEditFormik.values.description
-      );
-    }
-    categoryEditFormik.setFieldValue("description", categoryDescription);
-  }, [categoryDescription]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -240,34 +235,38 @@ const EditCategories = () => {
 
   const backHandler = () => {
     navigate({
-      pathname: "/parameters/categories",//categoriesData?.data?.data?.[0]?
+      pathname: "/parameters/categories", //categoriesData?.data?.data?.[0]?
       search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
     });
-    
   };
+  console.log(categoryEditFormik.initialValues, categoryEditFormik.values);
 
   const nextPageHandler = () => {
     const { pageNo, totalCount } = queryFilterState;
     if (pageNo === totalCount) {
       return;
     }
-    
-    decodedObject.order = categoriesData?.data?.data?.[0]?.order
+
+    decodedObject.order = categoriesData?.data?.data?.[0]?.order;
     navigate({
       pathname: `/parameters/categories/edit/${pageNo + 1}`,
-      search: `?${createSearchParams({ filter: JSON.stringify(decodedObject) })}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify(decodedObject),
+      })}`,
     });
   };
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
-    if (pageNo  === 1) {
+    if (pageNo === 1) {
       return;
     }
-    decodedObject.order = categoriesData?.data?.data?.[0]?.order
+    decodedObject.order = categoriesData?.data?.data?.[0]?.order;
     navigate({
       pathname: `/parameters/categories/edit/${pageNo - 1}`,
-      search: `?${createSearchParams({ filter: JSON.stringify(decodedObject) })}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify(decodedObject),
+      })}`,
     });
   };
 
@@ -300,10 +299,6 @@ const EditCategories = () => {
     categoriesIsSuccess,
     dispatch,
   ]);
-
-  
-
-
 
   useEffect(() => {
     if (
@@ -402,9 +397,13 @@ const EditCategories = () => {
                 </Tooltip>
               </div>
               <AppTextEditor
-                value={categoryDescription}
+                value={categoryEditFormik.values.description}
                 setFieldValue={(val) => {
-                  setCategoryDescription(val);
+                  if (val === "") {
+                    categoryEditFormik.setFieldValue("description", "<p></p>");
+                    return;
+                  }
+                  categoryEditFormik.setFieldValue("description", val);
                 }}
               />
             </div>
@@ -497,10 +496,14 @@ const EditCategories = () => {
         />
       </form>
       <DiscardModalSecondary
-        when={!_.isEqual(categoryEditFormik.values, categoryEditFormik.initialValues)}
+        when={
+          !_.isEqual(
+            categoryEditFormik.values,
+            categoryEditFormik.initialValues
+          )
+        }
         message="Category"
       />
-      
     </div>
   );
 };
