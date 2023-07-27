@@ -725,7 +725,7 @@ const Categories = () => {
     navigate({
       pathname: `/parameters/categories/edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
-        filter: JSON.stringify({ ...queryFilterState, categoryType,order:data.order }),
+        filter: JSON.stringify({ ...queryFilterState,pageNo:queryFilterState.pageNo ===0 ? 1: queryFilterState.pageNo, categoryType,order:data.order }),
       })}`,
     });
   };
@@ -734,7 +734,7 @@ const Categories = () => {
     navigate({
       pathname: `/parameters/subCategories/edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
-        filter: JSON.stringify({ ...queryFilterState, categoryType,order:data.order  }),
+        filter: JSON.stringify({ ...queryFilterState,pageNo:queryFilterState.pageNo ===0 ? 1: queryFilterState.pageNo, categoryType,order:data.order  }),
       })}`,
     }); 
    };
