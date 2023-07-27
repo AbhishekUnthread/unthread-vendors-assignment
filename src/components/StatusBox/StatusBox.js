@@ -33,7 +33,7 @@ const StatusBox = ({
   handleProductStatus, 
   toggleData=['active','in-active'], 
   startDate, 
-  endDate, 
+  endDate,
   handleStartDate, 
   handleEndDate, 
   clearDate

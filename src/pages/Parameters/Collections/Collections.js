@@ -139,8 +139,6 @@ const Collections = () => {
     initialCollectionState
   );
 
-  console.log(queryFilterState, 'queryFilterState');
-
   const handleStatusChange = (event) => {
     if (event.target.checked) {
       if (collectionState.status === "all") {

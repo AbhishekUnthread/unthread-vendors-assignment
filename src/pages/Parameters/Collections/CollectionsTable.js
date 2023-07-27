@@ -416,7 +416,7 @@ const CollectionsTable = ({
                           <img
                             src={row.mediaUrl ? row.mediaUrl : unthreadLogo}
                             alt="ringSmall"
-                            className="me-2"
+                            className="me-2 rounded-8"
                             height={45}
                             width={45}
                           />

@@ -1,34 +1,10 @@
 import { useState, useEffect, useReducer, forwardRef } from "react";
-import "../../CreateCollection/CreateCollection.scss";
+import { useFormik } from "formik";
 import { useNavigate, useParams, useSearchParams, createSearchParams } from "react-router-dom";
-import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
-import SEO from "../../../Products/AddProduct/SEO/SEO";
-import NotesBox from "../../../../components/NotesBox/NotesBox";
-import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox";
-import UploadBanner from "../../../../components/UploadBanner/UploadBanner";
-import StatusBox from "../../../../components/StatusBox/StatusBox";
-import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
-import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
-import { SaveFooterSecondary } from "../../../../components/SaveFooter/SaveFooter";
+import { useDispatch } from "react-redux";
+import _ from "lodash";
+import SearchIcon from "@mui/icons-material/Search";
 import {
-  EnhancedTableHead,
-  stableSort,
-  getComparator,
-} from "../../../../components/TableDependencies/TableDependencies";
-import info from "../../../../assets/icons/info.svg";
-import cancel from "../../../../assets/icons/cancel.svg";
-import arrowDown from "../../../../assets/icons/arrowDown.svg";
-import featureUpload from "../../../../assets/images/products/featureUpload.svg";
-import ringSmall from "../../../../assets/images/ringSmall.svg";
-import deleteWhite from "../../../../assets/icons/deleteWhite.svg";
-import editWhite from "../../../../assets/icons/editWhite.svg";
-import deleteButton from "../../../../assets/icons/deleteButton.svg";
-import addMedia from "../../../../assets/icons/addMedia.svg";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControl,
   MenuItem,
   Select,
@@ -38,7 +14,6 @@ import {
   FormControlLabel,
   FormGroup,
   styled,
-  Slide,
   InputBase,
   Popover,
   TableContainer,
@@ -52,27 +27,48 @@ import {
   Radio,
   Tooltip,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { useDispatch } from "react-redux";
 
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../../components/TableDependencies/TableDependencies";
 import {
   showSuccess,
   showError,
 } from "../../../../features/snackbar/snackbarAction";
-
 import {
   useGetAllCollectionsQuery,
   useCreateCollectionMutation,
   useEditCollectionMutation,
 } from "../../../../features/parameters/collections/collectionsApiSlice";
 import { updateCollectionId } from "../../../../features/parameters/collections/collectionSlice";
+
+import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
+import SEO from "../../../Products/AddProduct/SEO/SEO";
+import NotesBox from "../../../../components/NotesBox/NotesBox";
+import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox";
+import UploadBanner from "../../../../components/UploadBanner/UploadBanner";
+import StatusBox from "../../../../components/StatusBox/StatusBox";
+import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
+import DuplicateCollection from "../DuplicateCollection/DuplicateCollectionModal";
+import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
+import { SaveFooterTertiary } from "../../../../components/SaveFooter/SaveFooter";
+
+import "../../CreateCollection/CreateCollection.scss";
+
+import info from "../../../../assets/icons/info.svg";
+import cancel from "../../../../assets/icons/cancel.svg";
+import arrowDown from "../../../../assets/icons/arrowDown.svg";
+import featureUpload from "../../../../assets/images/products/featureUpload.svg";
+import ringSmall from "../../../../assets/images/ringSmall.svg";
+import deleteWhite from "../../../../assets/icons/deleteWhite.svg";
+import editWhite from "../../../../assets/icons/editWhite.svg";
+import deleteButton from "../../../../assets/icons/deleteButton.svg";
+import addMedia from "../../../../assets/icons/addMedia.svg";
 import paginationRight from "../../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../../assets/icons/paginationLeft.svg";
 import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
-
-const Transition = forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -172,9 +168,6 @@ const drawerHeadCells = [
   },
 ];
 
-// ? TABLE ENDS HERE
-
-// ? LIKE PRODUCTS TABLE STARTS HERE
 function createLikeProductData(pId, productName, category, price) {
   return { pId, productName, category, price };
 }
@@ -215,80 +208,92 @@ const likeProductRows = [
     "₹ 25,000"
   ),
 ];
-// ? LIKE PRODUCTS TABLE ENDS HERE
 
 const initialQueryFilterState = {
-      pageSize: 1,
-      pageNo: null,
-      totalCount: 0,
-    };
+  pageSize: 1,
+  pageNo: null,
+  totalCount: 0,
+};
 
-  const queryFilterReducer = (state, action) => {
-    if (action.type === "SET_PAGE_NO") {
-      return {
-        ...state,
-        pageNo: +action.pageNo,
-      };
-    }
-    if (action.type === "SET_TOTAL_COUNT") {
-      return {
-        ...state,
-        totalCount: action.totalCount,
-      };
-    }
-    return initialQueryFilterState;
-  };
+const initialCollectionInfoState = {
+  confirmationMessage: "",
+  isEditing: false,
+  initialInfo: null,
+};
+
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_NO") {
+    return {
+      ...state,
+      pageNo: +action.pageNo,
+    };
+  }
+  if (action.type === "SET_TOTAL_COUNT") {
+    return {
+      ...state,
+      totalCount: action.totalCount,
+    };
+  }
+  return initialQueryFilterState;
+};
+
+const collectionTabReducer = (state, action) => {  
+  if (action.type === "ENABLE_EDIT") {
+    return {
+      ...initialCollectionInfoState,
+      isEditing: true,
+    };
+  }
+  if (action.type === "DISABLE_EDIT") {
+    return {
+      ...initialCollectionInfoState,
+      isEditing: false,
+    };
+  }
+  return initialCollectionInfoState;
+};
 
 const EditCollection = () => {
+  let { id, filter } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [collectionTitle, setCollectionTitle] = useState("");
-  const [collectionNote, setCollectionNote] = useState("");
-  const [collectionStatus, setCollectionStatus] = useState("active");
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("productName");
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [field, setField] = useState("price");
+  const [operator, setOperator] = useState("equals");
+  const [anchorPriceEl, setAnchorPriceEl] = useState(null);
+  const [checked, setChecked] = useState(false);
+  const [likeMatchRadio, setLikeMatchRadio] = useState("allCondition");
+  const [likeProductRadio, setLikeProductRadio] = useState("automated");
+  const [likeAddCondition, setLikeAddCondition] = useState(false);
+  const [likeApplyCondition, setLikeApplyCondition] = useState(false);
   const [collectionDescription, setCollectionDescription] = useState("");
-  const [collectionVisibility, setCollectionVisibility] = useState(false);
-  const [collectionFilter, setCollectionFilter] = useState(false);
-  const [duplicateDescription, setDuplicateDescription] = useState(false);
-  const [startDate1, setStartDate1] = useState(null)
-  const [endDate1, setEndDate1] = useState(null)
-  const [collectionMediaUrl, setCollectionMediaUrl] = useState('')
-  const [collectionSeo,setCollectionSeo] = useState({})
   const [hideFooter, setHideFooter] = useState(false);
-  const [duplicateTitleNew, setDuplicateTitleNew] = useState("")
-  let { id, filter } = useParams();
+  const [duplicateModal, setDuplicateModal] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [duplicateData, setDuplicateData] = useState("");
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
-  const [collectionId, setCollectionId] = useState();
-  const [index, setIndex] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [collectionInfoState, dispatchCollectionInfo] = useReducer(
+    collectionTabReducer,
+    initialCollectionInfoState
+  );
+  const [addProductDrawer, setAddProductDrawer] = useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
 
-   const clearDate = () => {
-    setStartDate1(null);
-    setEndDate1(null);
-  }  
-
-  const handleStartDate = (event) => {
-    setStartDate1(event)
-    setHideFooter(true)
-  }
-
-  const handleEndDate = (event) => {
-    setEndDate1(event)
-    setHideFooter(true)
-  }
-
-  const handleIncludeFilter = (event) => {
-    setCollectionFilter(event.target.checked)
-    setHideFooter(true)
-  }
-
-  const isUploaded = (event) => {
-    if(event == true) {
-      setHideFooter(true)
-    }
-  }
+  const clearDate = () => {
+    formik.setFieldValue("startDate", null);
+    formik.setFieldValue("endDate", null);
+  }; 
 
   const backHandler = () => {
     navigate({
@@ -296,6 +301,15 @@ const EditCollection = () => {
       search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
     });
   };
+
+  const handleDuplicateCollectionClose = () => {
+    setDuplicateModal(false)
+  }
+
+  const handleDuplicateCollection = (row) => {
+    setDuplicateModal(true)
+    setDuplicateData(row)
+  }
 
   const {
     data: collectionData,
@@ -347,95 +361,6 @@ const EditCollection = () => {
     }
   ] = useEditCollectionMutation();
 
-  const handleDuplicateTitle = (e) => {
-    const value = e.target.value;
-    setDuplicateTitleNew(value)
-  };
-
-  useEffect(() => {
-    if(duplicateTitleNew == "" && collectionTitle) {
-      setDuplicateTitleNew(`${collectionTitle} copy`);
-    }
-  }, [collectionTitle]);
-
-  useEffect(() => {
-      if(editCollectionError)
-      {
-        if (editCollectionError?.data?.message) {
-          dispatch(showError({ message: editCollectionError?.data?.message }));
-        } else {
-          dispatch(
-            showError({ message: "Something went wrong, please try again" })
-          );
-        }
-      }
-
-    if (collectionIsSuccess) {
-      dispatchQueryFilter({
-        type: "SET_TOTAL_COUNT",
-        totalCount: collectionData?.data?.totalCount,
-      });
-      setCollectionId(newCollectionData?._id)
-      setCollectionTitle(newCollectionData?.title);
-      setCollectionStatus(newCollectionData?.status);
-      setCollectionVisibility(newCollectionData?.isVisibleFrontend)
-      setCollectionNote(newCollectionData?.notes)
-      setCollectionFilter(newCollectionData?.filter)
-      setStartDate1(newCollectionData?.startDate);
-      setEndDate1(newCollectionData?.endDate)
-      setCollectionMediaUrl(newCollectionData?.mediaUrl)
-      setCollectionSeo(newCollectionData?.seos || {})
-    }
-  }, [collectionIsSuccess, collectionId, index, editCollectionIsSuccess, editCollectionError, id, collectionData ]);
-
-  const handleSubmit = () => {
-    if (collectionId !== "") {
-      const collectionDetails = {
-        title: collectionTitle, 
-        filter: collectionFilter, 
-        description: collectionDescription, 
-        status: startDate1 == null ? collectionStatus : "scheduled",
-        isVisibleFrontend: collectionVisibility,
-        notes: collectionNote,
-        mediaUrl: collectionMediaUrl,
-      }
-      if (startDate1 != null) {
-        collectionDetails.startDate = new Date(startDate1);
-      }
-      if (endDate1 != null) {
-        collectionDetails.endDate = new Date(endDate1);
-      }
-      if (collectionSeo != null) {
-        collectionDetails.seo = collectionSeo;
-      }
-
-      editCollection({
-        id: collectionId,
-        details: collectionDetails
-      })
-        .unwrap()
-        .then(() => { 
-          dispatch(showSuccess({ message: "Collection updated successfully" }));
-          setHideFooter(false)
-        })
-    }else {
-      createCollection({
-        title: collectionTitle, 
-        filter: collectionFilter, 
-        description: collectionDescription, 
-        status: collectionStatus ? collectionStatus : "active", 
-        isVisibleFrontend: collectionVisibility,
-        notes: collectionNote,
-        mediaUrl: collectionMediaUrl,
-        ...(collectionSeo ? { seo: collectionSeo } : "")
-      })
-        .unwrap()
-        .then(() => { 
-          dispatch(showSuccess({ message: "Collection updated successfully!" }));
-        });
-    }
-  }
-
   useEffect(() => {
     if (createCollectionError) {
       if (createCollectionError?.data?.message) {
@@ -448,22 +373,13 @@ const EditCollection = () => {
     }
   }, [createCollectionError, dispatch]);
 
-  const [likeProductRadio, setLikeProductRadio] = useState("automated");
   const handleLikeProductRadio = (event) => {
     setLikeProductRadio(event.target.value);
   };
 
-  const [likeMatchRadio, setLikeMatchRadio] = useState("allCondition");
   const handleLikeMatchRadio = (event) => {
     setLikeMatchRadio(event.target.value);
   };
-
-  const [addProductDrawer, setAddProductDrawer] = useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
 
   const toggleAddProductDrawer = (anchor, open) => (event) => {
     if (
@@ -476,7 +392,6 @@ const EditCollection = () => {
     setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
   };
 
-  const [anchorPriceEl, setAnchorPriceEl] = useState(null);
   const handlePriceClick = (event) => {
     setAnchorPriceEl(event.currentTarget);
   };
@@ -487,13 +402,6 @@ const EditCollection = () => {
 
   const openPrice = Boolean(anchorPriceEl);
   const idPrice = openPrice ? "simple-popover" : undefined;
-
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("productName");
-  const [selected, setSelected] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -548,29 +456,20 @@ const EditCollection = () => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-  const [field, setField] = useState("price");
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const handleFieldChange = (event) => {
     setField(event.target.value);
   };
 
-  const [operator, setOperator] = useState("equals");
-
   const handleOperatorChange = (event) => {
     setOperator(event.target.value);
   };
-
-  const [checked, setChecked] = useState(false);
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
   };
 
-  const [likeAddCondition, setLikeAddCondition] = useState(false);
   const handleLikeAddCondition = () => {
     if (!likeAddCondition) {
       setLikeAddCondition(true);
@@ -580,7 +479,6 @@ const EditCollection = () => {
     }
   };
 
-  const [likeApplyCondition, setLikeApplyCondition] = useState(false);
   const handleLikeApplyCondition = () => {
     if (likeApplyCondition) {
       setLikeApplyCondition(false);
@@ -588,43 +486,6 @@ const EditCollection = () => {
       setLikeApplyCondition(true);
       setLikeAddCondition(false);
     }
-  };
-
-  const handleTitleChange = (event) => {
-    setCollectionTitle(event.target.value);
-  };
-
-  const [openDuplicateCollection, setOpenDuplicateCollection] = useState(false);
-
-  const handleDuplicate = () => {
-    setOpenDuplicateCollection(true);
-  };
-
-  const handelDuplicateCollectionClose = () => {
-    setOpenDuplicateCollection(false);
-  };
-
-  const scheduleDuplicateCollection = () => {
-    const collectionData = {
-      title: duplicateTitleNew,
-      filter: collectionFilter,
-      status: collectionStatus,
-      isVisibleFrontend: collectionVisibility,
-      notes: collectionNote,
-    };
-
-    if (duplicateDescription === true) {
-      collectionData.description = collectionDescription;
-    }
-
-    createCollection(collectionData)
-      .unwrap()
-      .then((res) => {
-        setOpenDuplicateCollection(false);
-        dispatch(showSuccess({ message: "Duplicate Created of this collection successfully" }));
-        dispatch(updateCollectionId(res?.data?._id));
-        navigate("/parameters/collections/edit")
-      });
   };
 
   useEffect(() => {
@@ -637,9 +498,97 @@ const EditCollection = () => {
     };
   }, []); 
 
+  useEffect(() => {
+    if (collectionDescription === "<p></p>") {
+      formik.setFieldValue(
+        "description",
+        formik.values.description
+      );
+    }
+    formik.setFieldValue("description", collectionDescription);
+  }, [collectionDescription]);
+
+  const formik = useFormik({
+    initialValues: {
+      title: collectionData?.data?.data[0]?.title || "",
+      notes: collectionData?.data?.data[0]?.notes || "",
+      status: collectionData?.data?.data[0]?.status,
+      filter: collectionData?.data?.data[0]?.showFilter || false,
+      description: collectionData?.data?.data[0]?.description || "",
+      seo: collectionData?.data?.data?.[0]?.seos || {},
+      mediaUrl: collectionData?.data?.data[0]?.mediaUrl || "",
+      startDate: collectionData?.data?.data?.[0]?.startDate || null,
+      endDate: collectionData?.data?.data?.[0]?.endDate || null,
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      let editItems = {
+        showFilter: values.showFilter,
+        title: values.title,
+        description: values.description,
+        status: values.startDate === null ? values.status : "scheduled",
+        notes: values.notes,
+      };
+      if (!isEmpty(values.seo)) {
+        for (const key in values.seo) {
+          if(values.seo[key] === "" || values.seo[key] === null || values.seo[key] === []){
+            delete values.seo[key] 
+          }
+        }
+        editItems.seo = values.seo;
+      }
+      if (values.mediaUrl) {
+        editItems.mediaUrl = values.mediaUrl;
+      }
+      if (values.startDate) {
+        editItems.startDate = new Date(values.startDate);
+      }
+      if (values.endDate) {
+        editItems.endDate = new Date(values.endDate);
+      }
+
+      if (id) {
+        for (const key in editItems) {
+          if(editItems[key] === "" || editItems[key] === null){
+            delete editItems[key] 
+          }
+        }
+        let obj={
+          ...editItems,
+        };
+
+        editCollection({
+          id: collectionData?.data?.data[0]?._id,
+          details: obj,
+        })
+          .unwrap()
+          .then(() => {
+            dispatch(showSuccess({ message: "Collection edited successfully" }));
+          });
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (id && !_.isEqual(formik.values, formik.initialValues)) {
+      dispatchCollectionInfo({ type: "ENABLE_EDIT" });
+    } else if (id && _.isEqual(formik.values, formik.initialValues)) {
+      dispatchCollectionInfo({ type: "DISABLE_EDIT" });
+    }
+  }, [formik.initialValues, formik.values, id]);
+
+  function isEmpty(obj) {
+    for (var prop in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   return (
-      <div className="page container-fluid position-relative user-group">
-        <div className="row justify-content-between">
+    <div className="page container-fluid position-relative user-group">
+      <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
             <img
               src={arrowLeft}
@@ -648,10 +597,19 @@ const EditCollection = () => {
               className="c-pointer"
               onClick={backHandler}
             />
-          <h5 className="page-heading ms-2 ps-1">{collectionTitle}</h5>
+          <h5 className="page-heading ms-2 ps-1">{formik.values.title}</h5>
         </div>
 
         <div className="d-flex align-items-center w-auto pe-0">
+          <button
+            className="button-transparent me-1 py-2 px-3"
+            onClick={() => {
+              dispatch(updateCollectionId(collectionData?.data?.data[0]?._id));
+              handleDuplicateCollection(newCollectionData)
+            }}
+          >
+            <p className="text-lightBlue">Duplicate</p>
+          </button>
           <img
             src={paginationLeft}
             alt="paginationLeft"
@@ -668,6 +626,7 @@ const EditCollection = () => {
           />
         </div>
       </div>
+      <form onSubmit={formik.handleSubmit}>
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -687,9 +646,9 @@ const EditCollection = () => {
                   <OutlinedInput
                     placeholder="Mirosa Collection"
                     size="small"
-                    value={collectionTitle}
-                    onChange={handleTitleChange}
                     name="title"
+                    value={formik.values.title}
+                    onChange={formik.handleChange}
                   />
                 </FormControl>
                 <FormGroup>
@@ -698,9 +657,9 @@ const EditCollection = () => {
                       control={
                         <Checkbox
                           name="filter"
+                          checked={formik.values.filter}
+                          onChange={formik.handleChange}
                           inputProps={{ "aria-label": "controlled" }}
-                          checked={collectionFilter}
-                          onChange={handleIncludeFilter}
                           size="small"
                           style={{
                             color: "#5C6D8E",
@@ -1185,10 +1144,12 @@ const EditCollection = () => {
             </div>
             <div className="mt-4">
               <SEO 
-                seoName={collectionTitle} 
-                seoValue={collectionSeo} 
-                handleSeoChange={setCollectionSeo} 
-                refrenceId={id ? collectionId : ""}
+                seoName={formik.values.title || ""} 
+                seoValue={formik.values.seo} 
+                handleSeoChange={(val) => {
+                  formik.setFieldValue("seo", val)
+                }} 
+                refrenceId={id ? collectionData?.data?.data[0]?._id : ""}
               />
             </div>
 
@@ -1396,17 +1357,22 @@ const EditCollection = () => {
             </SwipeableDrawer>
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
-            <StatusBox headingName={"Collection Status"} 
-              value={collectionStatus} 
-               handleProductStatus={(event, newStatus) => {
-                setCollectionStatus(newStatus)
-                setHideFooter(true)
-              }}
-              startDate={startDate1}
-              endDate={endDate1}
+            <StatusBox
+              headingName={"Collection Status"}
+              value={formik.values.status}
+              handleProductStatus={(_, val) =>
+                formik.setFieldValue("status", val)
+              }
+              toggleData={["active", "in-active"]}
               showSchedule={true}
-              handleStartDate={handleStartDate}
-              handleEndDate={handleEndDate}
+              startDate={formik.values.startDate}
+              endDate={formik.values.endDate}
+              handleStartDate={(val) =>
+                formik.setFieldValue("startDate", val)
+              }
+              handleEndDate={(val) =>
+                formik.setFieldValue("endDate", val)
+              }
               clearDate={clearDate}
             />
             {/* <VisibilityBox 
@@ -1414,172 +1380,45 @@ const EditCollection = () => {
               onChange={(_,val)=>setCollectionVisibility(val)}
             /> */}
             <div className="mt-4">
-              <UploadMediaBox 
-                imageName={addMedia} 
-                headingName={"Media"} 
-                UploadChange={setCollectionMediaUrl} 
-                previousImage={collectionMediaUrl}
-                isUploaded={isUploaded}
+              <UploadMediaBox
+                imageName={addMedia}
+                headingName={"Media"}
+                UploadChange={(url) =>
+                  formik.setFieldValue("mediaUrl", url)
+                }
+                previousImage={formik.values.mediaUrl}
+                isUploaded={() => {}}
               />
             </div>
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <UploadBanner 
                 imageName={addMedia} 
                 headingName={"Up Selling Banners"} 
               />
-            </div>
-            <NotesBox 
+            </div> */}
+            <NotesBox
               name={"notes"}
-              value={collectionNote} onChange={(e)=> setCollectionNote(e.target.value)}
+              value={formik.values.notes}
+              onChange={formik.handleChange}
             />
           </div>
         </div>
-
-        <SaveFooterSecondary
-          handleSubmit={handleSubmit} 
-          show={hideFooter} 
+        <SaveFooterTertiary
+          show={id ? collectionInfoState.isEditing : true}
           onDiscard={backHandler} 
           isLoading={createCollectionIsLoading || editCollectionIsLoading}
         />  
-
-      <Dialog
-        open={openDuplicateCollection}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handelDuplicateCollectionClose}
-        aria-describedby="alert-dialog-slide-description"
-        maxWidth="sm"
-        fullWidth={true}
-      >
-        <DialogTitle>
-          <div className="d-flex justify-content-between align-items-center">
-            <h5 className="text-lightBlue fw-500">Duplicate Collection</h5>
-            <img
-              src={cancel}
-              alt="cancel"
-              width={30}
-              onClick={handelDuplicateCollectionClose}
-              className="c-pointer"
-            />
-          </div>
-          <Tooltip title="Lorem ipsum" placement="top">
-            <img
-                src={info}
-                alt="info"
-                className=" c-pointer"
-                width={13.5}
-            />
-          </Tooltip>
-          <small className="mt-1 text-grey-6 font1">
-            These banner will be see no PLP page as promotional banner
-          </small>
-        </DialogTitle>
-        <hr className="hr-grey-6 my-0" />
-        <DialogContent className="py-3 px-4 schedule-product">
-          <div className="d-flex mb-1">
-            <p className="text-lightBlue me-2">Collection Title</p>
-          </div>
-          <FormControl className="w-100 px-0">
-            <OutlinedInput
-              placeholder="Mirosa Collection_copy"
-              size="small"
-              name="title"
-              value={duplicateTitleNew}
-              onChange={handleDuplicateTitle}
-            />
-          </FormControl>
-          <hr className="hr-grey-6 my-0" />
-          <div className="d-flex mb-1 mt-3">
-            <p className="text-lightBlue me-2">What to Include in this Duplicate</p>
-          </div>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="filter"
-                  checked={duplicateDescription}
-                  onChange={(e)=>setDuplicateDescription(e.target.checked)}
-                  inputProps={{ "aria-label": "controlled" }}
-                  size="small"
-                  style={{
-                    color: "#5C6D8E",
-                    marginRight: 0,
-                  }}
-                />
-              }
-              label="Description"
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 13,
-                  color: "#99a6c0",
-                },
-              }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="filter"
-                  inputProps={{ "aria-label": "controlled" }}
-                  size="small"
-                  style={{
-                    color: "#5C6D8E",
-                    marginRight: 0,
-                  }}
-                />
-              }
-              label="Products"
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 13,
-                  color: "#99a6c0",
-                },
-              }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="filter"
-                  inputProps={{ "aria-label": "controlled" }}
-                  size="small"
-                  style={{
-                    color: "#5C6D8E",
-                    marginRight: 0,
-                  }}
-                />
-              }
-              label="Up Selling Banners"
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 13,
-                  color: "#99a6c0",
-                },
-              }}
-            />
-          </FormGroup>
-        </DialogContent>
-        <hr className="hr-grey-6 my-0" />
-        <DialogActions className="d-flex flex-column justify-content-start px-4 py-3">
-          <div className="d-flex justify-content-between w-100">
-            <button
-              className="button-grey py-2 px-5"
-              onClick={handelDuplicateCollectionClose}
-            >
-              <p className="text-lightBlue">Cancel</p>
-            </button>
-            <button
-              className="button-gradient py-2 px-5"
-              onClick={scheduleDuplicateCollection}
-            >
-              <p>Save</p>
-            </button>
-          </div>
-        </DialogActions>
-      </Dialog>
-      <DiscardModalSecondary           
-        when={hideFooter}
-        message="collection tab"
+        <DiscardModalSecondary           
+          when={hideFooter}
+          message="collection tab"
+        />
+      </form>
+      <DuplicateCollection 
+        duplicateData={duplicateData}
+        openDuplicateCollection={duplicateModal}
+        handleDuplicateCollectionClose={handleDuplicateCollectionClose}
       />
-      </div>
+    </div>
   );
 };
 
