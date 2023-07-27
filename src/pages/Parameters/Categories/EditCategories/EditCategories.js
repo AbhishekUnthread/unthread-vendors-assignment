@@ -157,7 +157,7 @@ const EditCategories = () => {
   const categoryEditFormik = useFormik({
     initialValues: {
       name: categoriesData?.data?.data?.[0]?.name || "",
-      description: categoriesData?.data?.data?.[0]?.description,
+      description: categoriesData?.data?.data?.[0]?.description || "<p></p>",
       status: categoriesData?.data?.data?.[0]?.status,
       notes: categoriesData?.data?.data?.[0]?.notes,
       showFilter: categoriesData?.data?.data?.[0]?.showFilter,
