@@ -130,7 +130,38 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["SubCategories"],
     }),
-
+    getAllCategorieStatusCount: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+        return {
+          url: `/parameters/category/count${queryString}`,
+        };
+      },
+      providesTags: ["Categories"],
+    }),
+    getAllSubCategorieStatusCount: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+        return {
+          url: `/parameters/subCategory/count${queryString}`,
+        };
+      },
+      providesTags: ["SubCategories"],
+    }),
   }),
 });
 
@@ -149,4 +180,6 @@ export const {
   useBulkEditTagSubCategoryMutation,
   useBulkDeleteCategoryMutation,
   useBulkDeleteSubCategoryMutation,
+  useGetAllCategorieStatusCountQuery,
+  useGetAllSubCategorieStatusCountQuery,
 } = categoriesApiSlice;
