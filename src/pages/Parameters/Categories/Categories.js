@@ -68,15 +68,23 @@ import {
   useBulkEditTagSubCategoryMutation,
   useBulkDeleteSubCategoryMutation,
   useBulkDeleteCategoryMutation,
+  useGetAllCategorieStatusCountQuery,
+  useGetAllSubCategorieStatusCountQuery,
 } from "../../../features/parameters/categories/categoriesApiSlice";
 
 import "../../Products/AllProducts/AllProducts.scss";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams,createSearchParams } from "react-router-dom";
 
 const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 0,
   totalCount: 0,
+  name: "",
+  searchValue: "",
+  status: ["active", "in-active","scheduled"],
+  firstStatus:"all",
+  createdAt: "-1",
+  alphabetical: null,
 };
 
 const queryFilterReducer = (state, action) => {
@@ -93,6 +101,50 @@ const queryFilterReducer = (state, action) => {
       pageNo: action.pageNo,
     };
   }
+  if (action.type === "SEARCH") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      name: action.name,
+    };
+  }
+  if (action.type === "SET_STATUS") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      status: action.status ? action.status : initialQueryFilterState.status,
+    };
+  }
+  if (action.type === "SET_STATUS_FIRST") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      firstStatus: action.value,
+    };
+  }
+  if (action.type === "SET_ALPHABETICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      alphabetical: action.alphabetical,
+      createdAt: null,
+    };
+  }
+  if (action.type === "SET_CRONOLOGICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      createdAt: action.createdAt,
+      alphabetical: null,
+    };
+  }
+  if (action.type === "SET_ALL_FILTERS") {
+    return {
+      ...initialQueryFilterState,
+      ...action.filters,
+    };
+  }
+
   return initialQueryFilterState;
 };
 
@@ -142,92 +194,45 @@ const Categories = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [anchorStatusEl, setAnchorStatusEl] = React.useState("");
   const [sortFilter, setSortFilter] = React.useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = React.useState([]);
   const [multipleTags, setMultipleTags] = useState([]);
   const [multipleTagsForSub, setMultipleTagsForSub] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
   const [categoryTotalCount, setCategoryTotalCount] = React.useState([]);
   const [subCategoryTotalCount, setSubCategoryTotalCount] = React.useState([]);
   const [cateoryOpenState,setCategoryOpenState]=useState({
     id:"",
     open:false,
   })
+  const [firstRender, setFirstRender] = useState(true);
    
-  const filterParameter = {};
 
   const handleSearchChange = (event) => {
-    setSearchValue(event.target.value);
+    dispatchQueryFilter({ type: "SEARCH", name: event.target.value });
   };
 
-  const categoryTypeQuery =
-    categoryType === 0
-      ? {
-          createdAt: -1,
-          status:
-            statusFilter.length > 0
-              ? statusFilter
-              : "active,in-active,scheduled",
-        }
-      : categoryType === 1
-      ? {
-          createdAt: -1,
-          status:
-            statusFilter.length > 0
-              ? statusFilter
-              : "active,in-active,scheduled",
-        }
-      : categoryType === 2
-      ? { createdAt: -1, status: ["archieved"] }
-      : categoryType === 3
-      ? { createdAt: -1, status: ["archieved"] }
-      : {};
+  
 
-  const filterParams = { ...filterParameter, ...categoryTypeQuery };
-  if (searchValue) {
-    filterParams.name = searchValue;
-  }
 
-  // Check SortOption
-  if (sortFilter) {
-    // Check alphabetical sort options
-    if (
-      sortFilter === "alphabeticalAtoZ" ||
-      sortFilter === "alphabeticalZtoA"
-    ) {
-      filterParams.alphabetical =
-        sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
-    }
-    // Check createdAt sort options
-    else if (
-      sortFilter === "oldestToNewest" ||
-      sortFilter === "newestToOldest"
-    ) {
-      filterParams.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
-    }
-  }
-
-  console.log(filterParams)
-
+  
   const {
     data: categoriesData,
     isLoading: categoriesIsLoading,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({
-    ...filterParams,
-    pageSize: queryFilterState.pageSize,
-    pageNo: queryFilterState.pageNo + 1,
-  });
+  } = useGetAllCategoriesQuery({ ...queryFilterState });
   const {
     data: subCategoriesData,
     isLoading: subCategoriesIsLoading,
     isSuccess: subCategoriesIsSuccess,
     error: subCategoriesError,
-  } = useGetAllSubCategoriesQuery({
-    ...filterParams,
-    pageSize: queryFilterState.pageSize,
-    pageNo: queryFilterState.pageNo + 1,
-  });
+  } = useGetAllSubCategoriesQuery({ ...queryFilterState });
+  const {
+    data: CategoriesStatusCount,
+    isSuccess: CategoriesStatusCountIsSuccess,
+  } = useGetAllCategorieStatusCountQuery();
+  const {
+    data: SubCategoriesStatusCount,
+    isSuccess: SubCategoriesStatusCountIsSuccess,
+  } = useGetAllSubCategorieStatusCountQuery();
   const [
     createCategory,
     {
@@ -432,10 +437,48 @@ const Categories = () => {
   const changeCategoryTypeHandler = (event, tabIndex) => {
     setCategoryList([]);
     setSubCategoryList([]);
-    setSearchValue("");
-    setSearchParams({status:tabIndex})
     setCategoryType(tabIndex);
+    if (tabIndex === 0) {
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active", "in-active","scheduled"],
+      });
+    } else if (tabIndex === 1) {
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active", "in-active","scheduled"],
+      });
+    } else if (tabIndex === 2) {
+     
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["archieved"],
+      });
+    } else if (tabIndex === 3) {
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["archieved"],
+      });
+    }
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
   };
+
+  const handleAlphabeticalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_ALPHABETICAL_SORTING",
+      alphabetical: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
+
+  const handleChronologicalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_CRONOLOGICAL_SORTING",
+      createdAt: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
+
 
   const toggleCreateModalHandler = () => {
     setShowCreateModal((prevState) => !prevState);
@@ -487,20 +530,39 @@ const Categories = () => {
   };
 
   const handleStatusChange = (event) => {
-    const selectedStatus = event.target.value;
-    if (event.target.value) {
-      if (statusFilter.length === 0) {
-        let item = [];
-        item.push(selectedStatus);
-        setStatusFilter(item);
+    if (event.target.checked) {
+      if (queryFilterState.firstStatus === "all") {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [event.target.value],
+        });
+        dispatchQueryFilter({
+          type: "SET_STATUS_FIRST",
+          value: "",
+        });
+      } else {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [...queryFilterState.status, event.target.value],
+        });
       }
-      if (statusFilter.length > 0 && statusFilter.includes(selectedStatus)) {
-        setStatusFilter((item) => item.filter((i) => i !== selectedStatus));
-      }
-      if (statusFilter.length > 0 && !statusFilter.includes(selectedStatus)) {
-        let item = [...statusFilter];
-        item.push(selectedStatus);
-        setStatusFilter(item);
+    } else {
+      if (queryFilterState.status.length > 1) {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: queryFilterState.status.filter(
+            (status) => status !== event.target.value
+          ),
+        });
+      } else {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: ["active", "in-active","scheduled"],
+        });
+        dispatchQueryFilter({
+          type: "SET_STATUS_FIRST",
+          value: "all",
+        });
       }
     }
   };
@@ -567,26 +629,6 @@ const Categories = () => {
     sortFilter,
   ]);
 
-  
-
-  useEffect(() => {
-    if(+searchParams.get("status")===0)
-    {
-      setCategoryType(0);
-    }
-    else if(+searchParams.get("status")===1)
-    {
-      setCategoryType(1);
-    }
-    else if(+searchParams.get("status")===2)
-    {
-      setCategoryType(2);
-    }
-    else if(+searchParams.get("status")===3)
-    {
-      setCategoryType(3);
-    }
-}, [searchParams])
 
   const handleAddMultiple = (event, Formik, setTags, tags, data, flag) => {
     if (event.key === "Enter" || event.type === "click") {
@@ -636,21 +678,66 @@ const Categories = () => {
     dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
   };
 
-  const editPageHandler = (index) => {
-    const combinedObject = { filterParams, queryFilterState };
-      const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));
-    const currentTabNo =
-      index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
-    navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
+  useEffect(() => {
+    const filterParams = JSON.parse(searchParams.get("filter")) || {
+      categoryType,
+    };
+    if (firstRender && Object.keys(filterParams).length) {
+      let filters = {};
+      for (let key in filterParams) {
+        if (key !== "categoryType") {
+          if (filterParams[key] !== (null || "")) {
+            if (key === "status" && filterParams[key].length < 2) {
+              dispatchQueryFilter({
+                type: "SET_STATUS",
+                status: ["active", "in-active","scheduled"],
+              });
+            }
+            filters = {
+              ...filters,
+              [key]: filterParams[key],
+            };
+          }
+        } else {
+          setCategoryType(+filterParams[key]);
+        }
+      }
+      if (filterParams.categoryType === (null || ""|| 0)) {
+        setCategoryType(0);
+      }
+      dispatchQueryFilter({
+        type: "SET_ALL_FILTERS",
+        filters,
+      });
+      setFirstRender(false);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      setSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, categoryType }),
+      });
+    }
+  }, [queryFilterState, setSearchParams, categoryType, firstRender]);
+
+  const editPageHandler = (data,index) => {
+    navigate({
+      pathname: `/parameters/categories/edit/${data ? data.srNo : ""}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ ...queryFilterState,pageNo:queryFilterState.pageNo ===0 ? 1: queryFilterState.pageNo, categoryType,order:data.order }),
+      })}`,
+    });
   };
 
-  const editSubPageHandler = (index) => {
-    const combinedObject = { filterParams, queryFilterState };
-    const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));
-    const currentTabNo =
-      index + (queryFilterState.pageNo + 1 - 1) * queryFilterState.pageSize;
-    navigate(`/parameters/subCategories/edit/${currentTabNo}/${encodedCombinedObject}`);
-  };
+  const editSubPageHandler = (data,index) => {
+    navigate({
+      pathname: `/parameters/subCategories/edit/${data ? data.srNo : ""}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ ...queryFilterState,pageNo:queryFilterState.pageNo ===0 ? 1: queryFilterState.pageNo, categoryType,order:data.order  }),
+      })}`,
+    }); 
+   };
 
   return (
     <div className="container-fluid page">
@@ -1106,15 +1193,15 @@ const Categories = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label={`Categories ${categoryType === 0 ? `(${categoryTotalCount})`:""}`} className="tabs-head" />
-              <Tab label={`Sub Categories  ${categoryType === 1 ? `(${subCategoryTotalCount})` :""}`} className="tabs-head" />
-              <Tab label={`Archived Categories ${categoryType === 2 ? `(${categoryTotalCount})`:""}`} className="tabs-head" />
-              <Tab label={`Archived Sub Categories ${categoryType === 3 ? `(${subCategoryTotalCount})`:""}`} className="tabs-head" />
+              <Tab label={`Categories (${CategoriesStatusCount?.data?.[0]?.active+CategoriesStatusCount?.data?.[0]?.inActive+CategoriesStatusCount?.data?.[0]?.scheduled})`} className="tabs-head" />
+              <Tab label={`Sub Categories  (${SubCategoriesStatusCount?.data?.[0]?.active+SubCategoriesStatusCount?.data?.[0]?.inActive+SubCategoriesStatusCount?.data?.[0]?.scheduled})`} className="tabs-head" />
+              <Tab label={`Archived Categories (${CategoriesStatusCount?.data?.[0]?.archived})`} className="tabs-head" />
+              <Tab label={`Archived Sub Categories (${SubCategoriesStatusCount?.data?.[0]?.archived})`} className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
             <TableSearch
-              searchValue={searchValue}
+              searchValue={queryFilterState.name}
               handleSearchChange={handleSearchChange}
             />
             <div className="d-flex">
@@ -1150,7 +1237,7 @@ const Categories = () => {
                     }
                     label="Active"
                     onChange={handleStatusChange}
-                    checked={statusFilter.includes("active")}
+                    checked={queryFilterState.firstStatus ==="" && queryFilterState.status.includes("active")}
                   />
                   <FormControlLabel
                     value="in-active"
@@ -1159,7 +1246,7 @@ const Categories = () => {
                     }
                     label="In-Active"
                     onChange={handleStatusChange}
-                    checked={statusFilter.includes("in-active")}
+                    checked={queryFilterState.firstStatus ==="" && queryFilterState.status.includes("in-active")}
                   />
                   <FormControlLabel
                     value="scheduled"
@@ -1168,7 +1255,7 @@ const Categories = () => {
                     }
                     label="Scheduled"
                     onChange={handleStatusChange}
-                    checked={statusFilter.includes("scheduled")}
+                    checked={queryFilterState.firstStatus ==="" && queryFilterState.status.includes("scheduled")}
                   />
                 </FormControl>
               </Popover>
@@ -1197,33 +1284,55 @@ const Categories = () => {
                 className="columns"
               >
                 <FormControl className="px-2 py-1">
-                  <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    value={sortFilter}
-                    onChange={handleSortRadio}
-                  >
-                    <FormControlLabel
-                      value="newestToOldest"
-                      control={<Radio size="small" />}
-                      label="Newest to Oldest"
-                    />
-                    <FormControlLabel
-                      value="oldestToNewest"
-                      control={<Radio size="small" />}
-                      label="Oldest to Newest"
-                    />
-                    <FormControlLabel
-                      value="alphabeticalAtoZ"
-                      control={<Radio size="small" />}
-                      label="Alphabetical (A-Z)"
-                    />
-                    <FormControlLabel
-                      value="alphabeticalZtoA"
-                      control={<Radio size="small" />}
-                      label="Alphabetical (Z-A)"
-                    />
-                  </RadioGroup>
+                <RadioGroup
+                  aria-labelledby="demo-controlled-radio-buttons-group"
+                  name="controlled-radio-buttons-group"
+                >
+                  <FormControlLabel
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "-1"}
+                      />
+                    }
+                    label="Newest to Oldest"
+                    onChange={handleChronologicalSorting}
+                  />
+                  <FormControlLabel
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "1"}
+                      />
+                    }
+                    label="Oldest to Newest"
+                    onChange={handleChronologicalSorting}
+                  />
+                  <FormControlLabel
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "1"}
+                      />
+                    }
+                    label="Alphabetical (A-Z)"
+                    onChange={handleAlphabeticalSorting}
+                  />
+                  <FormControlLabel
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "-1"}
+                      />
+                    }
+                    label="Alphabetical (Z-A)"
+                    onChange={handleAlphabeticalSorting}
+                  />
+                </RadioGroup>
                 </FormControl>
               </Popover>
             </div>

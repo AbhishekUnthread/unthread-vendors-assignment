@@ -1,6 +1,12 @@
 import React, { useEffect, useReducer, useState } from "react";
 import "../../EditVendor/EditVendor.scss";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  createSearchParams,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import NotesBox from "../../../../components/NotesBox/NotesBox";
@@ -51,7 +57,7 @@ const initialState = {
   confirmationMessage: "",
   isEditing: false,
   initialInfo: null,
-  isSeoEditDone:false,
+  isSeoEditDone: false,
 };
 
 const initialQueryFilterState = {
@@ -118,7 +124,7 @@ const EditCategories = () => {
   const [categoryType, setCategoryType] = React.useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let { id,filter } = useParams();
+  let { id, filter } = useParams();
   const [categoryState, dispatchCategory] = useReducer(
     categoryReducer,
     initialState
@@ -127,9 +133,8 @@ const EditCategories = () => {
     queryFilterReducer,
     initialQueryFilterState
   );
-  const [categoryDescription, setCategoryDescription] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [decodedObject, setDecodedObject] = useState(null);
- 
 
   const {
     data: categoriesData,
@@ -137,13 +142,7 @@ const EditCategories = () => {
     isError: categoriesIsError,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({
-    ...queryFilterState,
-    ...(decodedObject?.filterParams || {}),
-    skip: queryFilterState.pageNo ? false : true,
-    name:decodedObject?.filterParams?.name || "",
-
-  });
+  } = useGetAllCategoriesQuery({ srNo: id, ...decodedObject });
 
   const [
     editCategory,
@@ -187,6 +186,15 @@ const EditCategories = () => {
       //   };
       // }
       if (!isEmpty(values.seo)) {
+        for (const key in values.seo) {
+          if (
+            values.seo[key] === "" ||
+            values.seo[key] === null ||
+            values.seo[key] === []
+          ) {
+            delete values.seo[key];
+          }
+        }
         editItems.seo = values.seo;
       }
       if (values.startDate) {
@@ -202,25 +210,23 @@ const EditCategories = () => {
         .unwrap()
         .then(() => {
           dispatch(showSuccess({ message: "Category Updated Successfully" }));
-          dispatchCategory({ type: "DISABLE_SEO" })
+          dispatchCategory({ type: "DISABLE_SEO" });
         });
     },
   });
+
+  useEffect(() => {
+    const encodedString = searchParams.get("filter"); // The encoded string from the URL or any source
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+    setDecodedObject(parsedObject);
+  }, [searchParams]);
 
   const clearDate = () => {
     categoryEditFormik.setFieldValue("startDate", null);
     categoryEditFormik.setFieldValue("endDate", null);
   };
-
-  useEffect(() => {
-    if (categoryDescription === "<p></p>") {
-      categoryEditFormik.setFieldValue(
-        "description",
-        categoryEditFormik.values.description
-      );
-    }
-    categoryEditFormik.setFieldValue("description", categoryDescription);
-  }, [categoryDescription]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -228,24 +234,40 @@ const EditCategories = () => {
   };
 
   const backHandler = () => {
-    navigate("/parameters/categories");
-    
+    navigate({
+      pathname: "/parameters/categories", //categoriesData?.data?.data?.[0]?
+      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
+    });
   };
+  console.log(categoryEditFormik.initialValues, categoryEditFormik.values);
 
   const nextPageHandler = () => {
     const { pageNo, totalCount } = queryFilterState;
-    if (pageNo + 1 > totalCount) {
+    if (pageNo === totalCount) {
       return;
     }
-    navigate(`/parameters/categories/edit/${pageNo + 1}/${filter}`);
+
+    decodedObject.order = categoriesData?.data?.data?.[0]?.order;
+    navigate({
+      pathname: `/parameters/categories/edit/${pageNo + 1}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify(decodedObject),
+      })}`,
+    });
   };
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
-    if (pageNo - 1 === 0) {
+    if (pageNo === 1) {
       return;
     }
-    navigate(`/parameters/categories/edit/${pageNo - 1}/${filter}`);
+    decodedObject.order = categoriesData?.data?.data?.[0]?.order;
+    navigate({
+      pathname: `/parameters/categories/edit/${pageNo - 1}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify(decodedObject),
+      })}`,
+    });
   };
 
   useEffect(() => {
@@ -277,17 +299,6 @@ const EditCategories = () => {
     categoriesIsSuccess,
     dispatch,
   ]);
-
-  
-
-  useEffect(() => {
-    const encodedString = filter; // The encoded string from the URL or any source
-
-    const decodedString = decodeURIComponent(encodedString);
-    const parsedObject = JSON.parse(decodedString);
-
-    setDecodedObject(parsedObject);
-  }, [categoriesData,categoriesIsSuccess,id]);
 
   useEffect(() => {
     if (
@@ -386,9 +397,13 @@ const EditCategories = () => {
                 </Tooltip>
               </div>
               <AppTextEditor
-                value={categoryDescription}
+                value={categoryEditFormik.values.description}
                 setFieldValue={(val) => {
-                  setCategoryDescription(val);
+                  if (val === "") {
+                    categoryEditFormik.setFieldValue("description", "<p></p>");
+                    return;
+                  }
+                  categoryEditFormik.setFieldValue("description", val);
                 }}
               />
             </div>
@@ -481,10 +496,14 @@ const EditCategories = () => {
         />
       </form>
       <DiscardModalSecondary
-        when={!_.isEqual(categoryEditFormik.values, categoryEditFormik.initialValues)}
+        when={
+          !_.isEqual(
+            categoryEditFormik.values,
+            categoryEditFormik.initialValues
+          )
+        }
         message="Category"
       />
-      
     </div>
   );
 };
