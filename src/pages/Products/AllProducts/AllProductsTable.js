@@ -368,8 +368,7 @@ const AllProductsTable = ({
     }
   }, [selected, selectedStatus]);
 
-  const toggleArchiveModalHandler = (row) => {
-    setRowData(row);
+  const toggleArchiveModalHandler = () => {
     if (selected.length === 0) {
       setShowArchivedModal((prevState) => !prevState);
     } else {
@@ -386,8 +385,7 @@ const AllProductsTable = ({
     }
   };
 
-  const toggleUnArchiveModalHandler = (row) => {
-    setRowData(row);
+  const toggleUnArchiveModalHandler = () => {
     if (selected.length === 0) {
       setShowUnArchivedModal((prevState) => !prevState);
     } else {
@@ -512,8 +510,9 @@ const AllProductsTable = ({
   // * ACTION POPOVERS STARTS
   const [anchorActionEl, setAnchorActionEl] = React.useState(null);
 
-  const handleActionClick = (event) => {
+  const handleActionClick = (event,row) => {
     setAnchorActionEl(event.currentTarget);
+    setRowData(row)
   };
 
   const handleActionClose = () => {
@@ -867,9 +866,14 @@ const AllProductsTable = ({
                           className="c-pointer"
                           aria-describedby={idActions}
                           variant="contained"
-                          onClick={handleActionClick}
+                          onClick={(e)=>handleActionClick(e,row)}
                         />
                       </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              }
+            )}
                       <Popover
                         anchorOrigin={{
                           vertical: "bottom",
@@ -923,9 +927,9 @@ const AllProductsTable = ({
                             <small
                               onClick={() => {
                                 if (archived) {
-                                  toggleArchiveModalHandler(row);
+                                  toggleArchiveModalHandler();
                                 } else {
-                                  toggleUnArchiveModalHandler(row);
+                                  toggleUnArchiveModalHandler();
                                 }
                               }}
                               className="text-lightBlue font2 d-block"
@@ -938,11 +942,6 @@ const AllProductsTable = ({
                           </div>
                         </div>
                       </Popover>
-                    </TableCell>
-                  </TableRow>
-                );
-              }
-            )}
           </TableBody>
         </Table>
       </TableContainer>
