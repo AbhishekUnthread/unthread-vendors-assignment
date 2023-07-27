@@ -142,7 +142,7 @@ const EditCategories = () => {
     isError: categoriesIsError,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({ srNo: id, ...decodedObject });
+  } = useGetAllCategoriesQuery({ srNo: id, ...decodedObject,pageNo:0 });
 
   const [
     editCategory,
@@ -235,8 +235,7 @@ const EditCategories = () => {
 
   const backHandler = () => {
     navigate({
-      pathname: "/parameters/categories", //categoriesData?.data?.data?.[0]?
-      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
+      pathname: "/parameters/categories"
     });
   };
   console.log(categoryEditFormik.initialValues, categoryEditFormik.values);

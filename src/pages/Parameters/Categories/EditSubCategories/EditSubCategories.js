@@ -265,7 +265,6 @@ const EditSubCategories = () => {
   const backHandler = () => {
     navigate({
       pathname: decodedObject?.goBack || "/parameters/categories",
-      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
     });
   };
 
