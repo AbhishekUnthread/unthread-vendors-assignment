@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useReducer, useState } from "react";
 import "../../EditVendor/EditVendor.scss";
-import { Link, useNavigate, useParams,createSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams,createSearchParams,useSearchParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppTextEditor from "../../../../components/AppTextEditor/AppTextEditor";
 import NotesBox from "../../../../components/NotesBox/NotesBox";
@@ -153,6 +153,7 @@ const EditSubCategories = () => {
   const [showCreateSubModal, setShowCreateSubModal] = useState(false);
   const [subCategoryPatentId, setSubCategoryParentId] = useState("");
   const [decodedObject, setDecodedObject] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const {
     data: categoriesData,
@@ -168,7 +169,7 @@ const EditSubCategories = () => {
     isError: subCategoriesIsError,
     error: subCategoriesError,
   } = useGetAllSubCategoriesQuery({
-    srNo:id
+    srNo:id,...decodedObject
   });
 
   const [
@@ -207,6 +208,11 @@ const EditSubCategories = () => {
         editItems.mediaUrl = values.mediaUrl;
       }
       if (!isEmpty(values.seo)) {
+        for (const key in values.seo) {
+          if(values.seo[key] === "" || values.seo[key] === null || values.seo[key] === []){
+            delete values.seo[key] 
+          }
+        }
         editItems.seo = values.seo;
       }
       if (values.startDate) {
@@ -245,12 +251,19 @@ const EditSubCategories = () => {
     categoryEditFormik.handleSubmit();
   };
 
-  const backHandler = () => {
-    const encodedString = filter; // The encoded string from the URL or any source
+  useEffect(()=>{
+    const encodedString = searchParams.get("filter"); // The encoded string from the URL or any source
 
     const decodedString = decodeURIComponent(encodedString);
     const parsedObject = JSON.parse(decodedString);
-    navigate(parsedObject.goBack || `/parameters/categories?${filter}`)
+    setDecodedObject(parsedObject)
+  },[searchParams])
+
+  const backHandler = () => {
+    navigate({
+      pathname: decodedObject?.goBack || "/parameters/categories",
+      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
+    });
     
   };
 
@@ -258,24 +271,26 @@ const EditSubCategories = () => {
   const nextPageHandler = () => {
     setSubCategoryDescription("");
     const { pageNo, totalCount } = queryFilterState;
-    if (pageNo + 1 > totalCount) {
+    if (pageNo  > totalCount) {
       return;
     }
-    navigate(`/parameters/subCategories/edit/${pageNo + 1}/${filter}`);
+    decodedObject.order = subCategoriesData?.data?.data?.[0]?.order
+    navigate({
+      pathname: `/parameters/subCategories/edit/${pageNo + 1}`,
+      search: `?${createSearchParams({ filter: JSON.stringify(decodedObject) })}`,
+    });
   };
 
   const prevPageHandler = () => {
     setSubCategoryDescription("");
     const { pageNo } = queryFilterState;
-    if (pageNo - 1 === 0) {
+    if (pageNo === 1) {
       return;
     }
-
+    decodedObject.order = subCategoriesData?.data?.data?.[0]?.order
     navigate({
       pathname: `/parameters/subCategories/edit/${pageNo - 1}`,
-      search: `?${createSearchParams({
-        filter: JSON.stringify({ filter }),
-      })}`,
+      search: `?${createSearchParams({ filter: JSON.stringify(decodedObject) })}`,
     });
   };
 
@@ -463,7 +478,7 @@ const EditSubCategories = () => {
         handleSubClick={toggleCreateSubModalHandler}
         subHeading={`Parent Category: ${categoryName}`}
         subHighlightstext={"(Change)"}
-        navigateLink={decodedObject?.categorNavigateState || "/parameters/categories?status=1"}
+        navigateLink={decodedObject?.goBack || `/parameters/categories?filter=${JSON.stringify(decodedObject)}`}
         previewButton={true}
         handleNext={nextPageHandler}
         handlePrev={prevPageHandler}

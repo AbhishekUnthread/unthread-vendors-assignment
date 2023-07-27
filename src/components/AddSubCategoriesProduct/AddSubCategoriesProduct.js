@@ -476,9 +476,9 @@ const AddSubCategoriesProducts = ({ id }) => {
 
   const editSubPageHandler = (data,index) => {
     navigate({
-      pathname: `/parameters/subCategories/edit/${data ? data._id : ""}`,
+      pathname: `/parameters/subCategories/edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
-        filter: JSON.stringify({ ...queryFilterState, goBack:-1 }),
+        filter: JSON.stringify({ ...queryFilterState, goBack:-1,order:data.order }),
       })}`,
     });  };
 

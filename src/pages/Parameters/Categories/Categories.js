@@ -763,7 +763,7 @@ const Categories = () => {
     navigate({
       pathname: `/parameters/categories/edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
-        filter: JSON.stringify({ ...queryFilterState, categoryType }),
+        filter: JSON.stringify({ ...queryFilterState, categoryType,order:data.order }),
       })}`,
     });
   };
@@ -772,7 +772,7 @@ const Categories = () => {
     navigate({
       pathname: `/parameters/subCategories/edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
-        filter: JSON.stringify({ ...queryFilterState, categoryType }),
+        filter: JSON.stringify({ ...queryFilterState, categoryType,order:data.order  }),
       })}`,
     }); 
    };

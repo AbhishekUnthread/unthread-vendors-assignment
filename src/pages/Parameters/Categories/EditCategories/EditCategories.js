@@ -132,6 +132,7 @@ const EditCategories = () => {
   );
   const [categoryDescription, setCategoryDescription] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
+  const [decodedObject, setDecodedObject] = useState(null);
 
   const {
     data: categoriesData,
@@ -139,7 +140,7 @@ const EditCategories = () => {
     isError: categoriesIsError,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({srNo:id});
+  } = useGetAllCategoriesQuery({srNo:id,...decodedObject});
 
   const [
     editCategory,
@@ -183,6 +184,11 @@ const EditCategories = () => {
       //   };
       // }
       if (!isEmpty(values.seo)) {
+        for (const key in values.seo) {
+          if(values.seo[key] === "" || values.seo[key] === null || values.seo[key] === []){
+            delete values.seo[key] 
+          }
+        }
         editItems.seo = values.seo;
       }
       if (values.startDate) {
@@ -202,6 +208,15 @@ const EditCategories = () => {
         });
     },
   });
+
+  useEffect(()=>{
+    const encodedString = searchParams.get("filter"); // The encoded string from the URL or any source
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+    console.log(parsedObject)
+    setDecodedObject(parsedObject)
+  },[searchParams])
 
   const clearDate = () => {
     categoryEditFormik.setFieldValue("startDate", null);
@@ -225,7 +240,7 @@ const EditCategories = () => {
 
   const backHandler = () => {
     navigate({
-      pathname: "/parameters/categories",
+      pathname: "/parameters/categories",//categoriesData?.data?.data?.[0]?
       search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
     });
     
@@ -233,18 +248,27 @@ const EditCategories = () => {
 
   const nextPageHandler = () => {
     const { pageNo, totalCount } = queryFilterState;
-    if (pageNo + 1 > totalCount) {
+    if (pageNo  > totalCount) {
       return;
     }
-    navigate(`/parameters/categories/edit/${pageNo + 1}/${filter}`);
+    
+    decodedObject.order = categoriesData?.data?.data?.[0]?.order
+    navigate({
+      pathname: `/parameters/categories/edit/${pageNo + 1}`,
+      search: `?${createSearchParams({ filter: JSON.stringify(decodedObject) })}`,
+    });
   };
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
-    if (pageNo - 1 === 0) {
+    if (pageNo  === 1) {
       return;
     }
-    navigate(`/parameters/categories/edit/${pageNo - 1}/${filter}`);
+    decodedObject.order = categoriesData?.data?.data?.[0]?.order
+    navigate({
+      pathname: `/parameters/categories/edit/${pageNo - 1}`,
+      search: `?${createSearchParams({ filter: JSON.stringify(decodedObject) })}`,
+    });
   };
 
   useEffect(() => {
