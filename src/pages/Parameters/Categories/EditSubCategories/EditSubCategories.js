@@ -168,7 +168,7 @@ const EditSubCategories = () => {
     isError: subCategoriesIsError,
     error: subCategoriesError,
   } = useGetAllSubCategoriesQuery({
-    id:id
+    srNo:id
   });
 
   const [
@@ -270,7 +270,13 @@ const EditSubCategories = () => {
     if (pageNo - 1 === 0) {
       return;
     }
-    navigate(`/parameters/subCategories/edit/${pageNo - 1}/${filter}`);
+
+    navigate({
+      pathname: `/parameters/subCategories/edit/${pageNo - 1}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ filter }),
+      })}`,
+    });
   };
 
   useEffect(() => {

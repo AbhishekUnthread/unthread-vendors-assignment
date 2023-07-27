@@ -139,7 +139,7 @@ const EditCategories = () => {
     isError: categoriesIsError,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({id:id});
+  } = useGetAllCategoriesQuery({srNo:id});
 
   const [
     editCategory,

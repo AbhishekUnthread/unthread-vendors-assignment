@@ -761,7 +761,7 @@ const Categories = () => {
 
   const editPageHandler = (data,index) => {
     navigate({
-      pathname: `/parameters/categories/edit/${data ? data._id : ""}`,
+      pathname: `/parameters/categories/edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
         filter: JSON.stringify({ ...queryFilterState, categoryType }),
       })}`,
@@ -770,11 +770,12 @@ const Categories = () => {
 
   const editSubPageHandler = (data,index) => {
     navigate({
-      pathname: `/parameters/subCategories/edit/${data ? data._id : ""}`,
+      pathname: `/parameters/subCategories/edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
         filter: JSON.stringify({ ...queryFilterState, categoryType }),
       })}`,
-    });  };
+    }); 
+   };
 
   return (
     <div className="container-fluid page">
