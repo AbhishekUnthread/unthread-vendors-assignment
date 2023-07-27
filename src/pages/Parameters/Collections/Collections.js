@@ -236,7 +236,6 @@ const Collections = () => {
   } = useGetCollectionsCountQuery();
 
   const collectionCount = collectionCountData?.data[0]
-  console.log(collectionCount,'collectionCount');
 
   const [
     hardDeleteCollection,
