@@ -225,7 +225,7 @@ const router = () => {
                   element: <CreateCollection />,
                 },
                 {
-                  path: "collections/edit/:id/:filter",
+                  path: "collections/edit/:id",
                   element: <EditCollection />,
                 },
                 {
