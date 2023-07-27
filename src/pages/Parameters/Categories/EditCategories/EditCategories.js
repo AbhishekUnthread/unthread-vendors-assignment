@@ -238,14 +238,9 @@ const EditCategories = () => {
       pathname: "/parameters/categories"
     });
   };
-  console.log(categoryEditFormik.initialValues, categoryEditFormik.values);
 
   const nextPageHandler = () => {
-    const { pageNo, totalCount } = queryFilterState;
-    if (pageNo === totalCount) {
-      return;
-    }
-
+    const { pageNo } = queryFilterState;
     decodedObject.order = categoriesData?.data?.data?.[0]?.order;
     navigate({
       pathname: `/parameters/categories/edit/${pageNo + 1}`,

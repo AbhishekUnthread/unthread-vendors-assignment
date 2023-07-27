@@ -269,11 +269,9 @@ const EditSubCategories = () => {
   };
 
   const nextPageHandler = () => {
-    const { pageNo, totalCount } = queryFilterState;
-    if (pageNo > totalCount) {
-      return;
-    }
-    decodedObject.order = subCategoriesData?.data?.data?.[0]?.order;
+    const { pageNo } = queryFilterState;
+   
+   decodedObject.order = subCategoriesData?.data?.data?.[0]?.order;
     navigate({
       pathname: `/parameters/subCategories/edit/${pageNo + 1}`,
       search: `?${createSearchParams({
@@ -318,7 +316,7 @@ const EditSubCategories = () => {
         totalCount: subCategoriesData?.data?.totalCount,
       });
       setCategoryName(
-        subCategoriesData?.data?.data?.[0].category?.[0]?.name || ""
+        subCategoriesData?.data?.data?.[0]?.category?.[0]?.name || ""
       );
       setSubCategoryParentId(
         subCategoriesData?.data?.data?.[0]?.category?.[0]?._id || ""
@@ -480,7 +478,7 @@ const EditSubCategories = () => {
         subHighlightstext={"(Change)"}
         navigateLink={
           decodedObject?.goBack ||
-          `/parameters/categories?filter=${JSON.stringify(decodedObject)}`
+          `/parameters/categories?filter=${JSON.stringify({categoryType:1})}`
         }
         previewButton={true}
         handleNext={nextPageHandler}
