@@ -51,6 +51,7 @@ const InfoHeader = (props) => {
         {isEdit && onPrev && (
           <button onClick={backHandler} className="reset">
             <img
+              style={{ opacity: props?.hasPrev > 0 ? 1 : 0.5 }}
               src={paginationLeft}
               alt="paginationLeft"
               className="c-pointer"
@@ -61,6 +62,7 @@ const InfoHeader = (props) => {
         {isEdit && onNext && (
           <button onClick={nextHandler} className="reset">
             <img
+              style={{ opacity: props?.hasNext > 0 ? 1 : 0.5 }}
               src={paginationRight}
               alt="paginationRight"
               className="c-pointer"

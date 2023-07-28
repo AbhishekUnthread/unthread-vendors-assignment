@@ -197,7 +197,7 @@ const EditSubCategories = () => {
       showFilter: subCategoriesData?.data?.data?.[0]?.showFilter,
       startDate: subCategoriesData?.data?.data?.[0]?.startDate || null,
       endDate: subCategoriesData?.data?.data?.[0]?.endDate || null,
-      mediaUrl: subCategoriesData?.data?.data?.[0]?.mediaUrl,
+      mediaUrl: subCategoriesData?.data?.data?.[0]?.mediaUrl || "",
       seo: subCategoriesData?.data?.data?.[0]?.seos || {},
     },
     enableReinitialize: true,
@@ -264,13 +264,15 @@ const EditSubCategories = () => {
 
   const backHandler = () => {
     navigate({
-      pathname: decodedObject?.goBack || "/parameters/categories",
+      pathname: decodedObject?.goBack || `/parameters/categories?filter=${JSON.stringify({categoryType:1,status:decodedObject?.status})}`,
     });
   };
 
   const nextPageHandler = () => {
     const { pageNo } = queryFilterState;
-   
+    if( subCategoriesData?.data?.nextCount === 0){
+      return
+    }
    decodedObject.order = 1;
     navigate({
       pathname: `/parameters/subCategories/edit/${pageNo}`,
@@ -282,6 +284,9 @@ const EditSubCategories = () => {
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
+    if( subCategoriesData?.data?.prevCount === 0){
+      return
+    }
     decodedObject.order = -1;
     navigate({
       pathname: `/parameters/subCategories/edit/${pageNo}`,
@@ -475,8 +480,10 @@ const EditSubCategories = () => {
         subHighlightstext={"(Change)"}
         navigateLink={
           decodedObject?.goBack ||
-          `/parameters/categories?filter=${JSON.stringify({categoryType:1})}`
+          `/parameters/categories?filter=${JSON.stringify({categoryType:1,status:decodedObject?.status})}`
         }
+        hasNext={subCategoriesData?.data?.nextCount}
+        hasPrev={ subCategoriesData?.data?.prevCount}
         previewButton={true}
         handleNext={nextPageHandler}
         handlePrev={prevPageHandler}

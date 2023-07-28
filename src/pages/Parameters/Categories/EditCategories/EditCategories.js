@@ -234,13 +234,14 @@ const EditCategories = () => {
   };
 
   const backHandler = () => {
-    navigate({
-      pathname: "/parameters/categories"
-    });
+    navigate(`/parameters/categories?filter=${JSON.stringify({categoryType:0,status:decodedObject?.status})}`);
   };
 
   const nextPageHandler = () => {
     const { pageNo } = queryFilterState;
+    if( categoriesData?.data?.nextCount === 0){
+      return
+    }
     decodedObject.order = 1;
     navigate({
       pathname: `/parameters/categories/edit/${pageNo}`,
@@ -252,6 +253,9 @@ const EditCategories = () => {
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
+    if( categoriesData?.data?.prevCount === 0){
+      return
+    }
     decodedObject.order = -1;
     navigate({
       pathname: `/parameters/categories/edit/${pageNo}`,
@@ -320,6 +324,8 @@ const EditCategories = () => {
         onBack={backHandler}
         onPreview={() => {}}
         onPrev={prevPageHandler}
+        hasNext={categoriesData?.data?.nextCount}
+        hasPrev={ categoriesData?.data?.prevCount}
         onNext={nextPageHandler}
         isEdit={!!id}
       />

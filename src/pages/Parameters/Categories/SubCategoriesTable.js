@@ -530,7 +530,7 @@ const SubCategoriesTable = ({
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[10, 15]}
+              rowsPerPageOptions={[5,10, 15]}
               component="div"
               count={totalCount}
               rowsPerPage={rowsPerPage}

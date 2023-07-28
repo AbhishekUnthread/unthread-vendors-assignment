@@ -278,13 +278,15 @@ const AddSubCategoriesProducts = ({ id }) => {
           .then(() => {
             subCategoryFormik.resetForm();
             setMultipleTagsForSub([]);
-            setShowCreateSubModal(false);
+            dispatch(showSuccess({ message: "Sub Categories Created successfully" }));
+            return
+          }).catch((err) => {
+            dispatch(showError({ message: err?.data?.message }));
           });
       } else {
         createSubCategory(values)
           .unwrap()
           .then(() => {
-            setShowCreateSubModal(false);
             subCategoryFormik.resetForm();
           })
           .catch((err) => {
@@ -386,7 +388,6 @@ const AddSubCategoriesProducts = ({ id }) => {
 
   function handlesubmit() {
     setShowCreateSubModal((prevState) => !prevState);
-    setMultipleTagsForSub([]);
     subCategoryFormik.handleSubmit();
   }
 
@@ -399,6 +400,7 @@ const AddSubCategoriesProducts = ({ id }) => {
     if (createSubCategoryIsSuccess) {
       dispatch(showSuccess({ message: "Sub Category Created successfully" }));
     }
+
   }, [createSubCategoryIsSuccess]);
 
   // * TABLE STARTS HERE
@@ -478,7 +480,7 @@ const AddSubCategoriesProducts = ({ id }) => {
     navigate({
       pathname: `/parameters/subCategories/edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
-        filter: JSON.stringify({ ...queryFilterState, goBack:-1,order:data.order }),
+        filter: JSON.stringify({ ...queryFilterState, goBack:-1}),
       })}`,
     });  };
 
