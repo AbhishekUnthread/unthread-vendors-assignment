@@ -8,6 +8,15 @@ const AppTextEditor = ({ value, setFieldValue = (_) => {} }) => {
     <CKEditor
       editor={ClassicEditor}
       data={value}
+      onReady={(editor) => {
+        editor.editing.view.change((writer) => {
+          writer.setStyle(
+            "height",
+            "15rem",
+            editor.editing.view.document.getRoot()
+          );
+        });
+      }}
       onChange={(_, editor) => {
         const data = editor.getData();
         setFieldValue(data);

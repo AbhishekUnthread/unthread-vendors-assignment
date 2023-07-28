@@ -77,7 +77,7 @@ import { useNavigate, useSearchParams,createSearchParams } from "react-router-do
 
 const initialQueryFilterState = {
   pageSize: 10,
-  pageNo: 0,
+  pageNo: 1,
   totalCount: 0,
   name: "",
   searchValue: "",
@@ -675,7 +675,7 @@ const Categories = () => {
   };
 
   const handleChangePage = (_, pageNo) => {
-    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo:pageNo+1 });
   };
 
   useEffect(() => {
@@ -725,7 +725,7 @@ const Categories = () => {
     navigate({
       pathname: `/parameters/categories/edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
-        filter: JSON.stringify({ ...queryFilterState,pageNo:queryFilterState.pageNo ===0 ? 1: queryFilterState.pageNo, categoryType,order:data.order }),
+        filter: JSON.stringify({ ...queryFilterState, pageSize:1, categoryType }),
       })}`,
     });
   };
@@ -734,7 +734,7 @@ const Categories = () => {
     navigate({
       pathname: `/parameters/subCategories/edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
-        filter: JSON.stringify({ ...queryFilterState,pageNo:queryFilterState.pageNo ===0 ? 1: queryFilterState.pageNo, categoryType,order:data.order  }),
+        filter: JSON.stringify({ ...queryFilterState,pageSize:1, categoryType }),
       })}`,
     }); 
    };
@@ -779,7 +779,7 @@ const Categories = () => {
                 >
                   Create Category
                 </small>
-                {categoriesData?.data?.data.length && (
+                {categoriesData?.data?.data?.length !==0 && (
                   <small
                     onClick={toggleCreateSubModalHandler}
                     className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"

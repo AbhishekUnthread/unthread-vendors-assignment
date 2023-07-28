@@ -17,6 +17,8 @@ const AddHeader = ({
   handleNext = () => {},
   handlePrev = () => {},
   handleSubClick = () => {},
+  hasNext,
+  hasPrev,
 }) => {
   return (
     <div className="row justify-content-between">
@@ -33,12 +35,14 @@ const AddHeader = ({
           <div className="d-flex flex-column ">
             <h5 className="page-heading ms-2 ps-1">{headerName}</h5>
             <small
-            onClick={handleSubClick}
+              onClick={handleSubClick}
               className="text-grey-6 mt-1 d-block"
               style={{ marginLeft: "10px" }}
             >
               {subHeading}
-              <small className="text-blue-2 c-pointer">{subHighlightstext}</small>
+              <small className="text-blue-2 c-pointer">
+                {subHighlightstext}
+              </small>
             </small>
           </div>
         </div>
@@ -51,12 +55,13 @@ const AddHeader = ({
         >
           <p className="text-lightBlue">{duplicateButton}</p>
         </button>
-        { previewButton && 
+        {previewButton && (
           <>
             <button className="button-transparent me-1 py-2 px-3">
               <p className="text-lightBlue">{previewButton}</p>
             </button>
             <img
+              style={{ opacity: hasPrev > 0 ? 1 : 0.5 }}
               onClick={handlePrev}
               src={paginationLeft}
               alt="paginationLeft"
@@ -64,14 +69,15 @@ const AddHeader = ({
               width={30}
             />
             <img
+              style={{ opacity: hasNext > 0 ? 1 : 0.5 }}
               onClick={handleNext}
               src={paginationRight}
               alt="paginationRight"
               className="c-pointer"
               width={30}
             />
-          </> 
-        }
+          </>
+        )}
       </div>
     </div>
   );
