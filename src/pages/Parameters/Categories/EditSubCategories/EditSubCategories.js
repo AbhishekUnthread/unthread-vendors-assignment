@@ -197,7 +197,7 @@ const EditSubCategories = () => {
       showFilter: subCategoriesData?.data?.data?.[0]?.showFilter,
       startDate: subCategoriesData?.data?.data?.[0]?.startDate || null,
       endDate: subCategoriesData?.data?.data?.[0]?.endDate || null,
-      mediaUrl: subCategoriesData?.data?.data?.[0]?.mediaUrl,
+      mediaUrl: subCategoriesData?.data?.data?.[0]?.mediaUrl || "",
       seo: subCategoriesData?.data?.data?.[0]?.seos || {},
     },
     enableReinitialize: true,
