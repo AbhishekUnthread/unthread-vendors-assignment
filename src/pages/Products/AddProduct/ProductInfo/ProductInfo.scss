@@ -83,3 +83,38 @@
   position: relative !important;
   bottom: 35px;
 }
+
+.mediaToolCheckBox2 {
+  position: relative !important;
+  // top: 20px;
+}
+
+.mediaToolDot2 {
+  position: relative !important;
+  bottom: 27px;
+}
+
+.icon-fontSize {
+  font-size: 16px !important;
+}
+
+.upload-image-radius {
+  border-style: dashed;
+  border-radius: 10px;
+  border-color: rgb(56, 57, 92);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+}
+
+.grid-item {
+  padding: 5px;
+  font-size: 30px;
+  text-align: center;
+}
+
+.uploadImageheight {
+  height: 340px !important;
+}
