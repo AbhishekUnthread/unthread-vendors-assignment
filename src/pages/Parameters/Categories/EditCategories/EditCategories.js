@@ -241,9 +241,9 @@ const EditCategories = () => {
 
   const nextPageHandler = () => {
     const { pageNo } = queryFilterState;
-    decodedObject.order = categoriesData?.data?.data?.[0]?.order;
+    decodedObject.order = 1;
     navigate({
-      pathname: `/parameters/categories/edit/${pageNo + 1}`,
+      pathname: `/parameters/categories/edit/${pageNo}`,
       search: `?${createSearchParams({
         filter: JSON.stringify(decodedObject),
       })}`,
@@ -252,12 +252,9 @@ const EditCategories = () => {
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
-    if (pageNo === 1) {
-      return;
-    }
-    decodedObject.order = categoriesData?.data?.data?.[0]?.order;
+    decodedObject.order = -1;
     navigate({
-      pathname: `/parameters/categories/edit/${pageNo - 1}`,
+      pathname: `/parameters/categories/edit/${pageNo}`,
       search: `?${createSearchParams({
         filter: JSON.stringify(decodedObject),
       })}`,
@@ -265,10 +262,10 @@ const EditCategories = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+    if (categoriesData?.data?.data?.[0]?.srNo) {
+      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: categoriesData?.data?.data?.[0]?.srNo });
     }
-  }, [id]);
+  }, [categoriesData]);
 
   useEffect(() => {
     if (categoriesError) {
