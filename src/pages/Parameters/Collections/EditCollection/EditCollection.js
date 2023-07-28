@@ -218,6 +218,7 @@ const initialQueryFilterState = {
 const initialCollectionInfoState = {
   confirmationMessage: "",
   isEditing: false,
+  discard: false,
   initialInfo: null,
 };
 
@@ -248,6 +249,18 @@ const collectionTabReducer = (state, action) => {
     return {
       ...initialCollectionInfoState,
       isEditing: false,
+    };
+  }
+  if (action.type === "ENABLE_DISCARD") {
+    return {
+      ...state,
+      discard: true,
+    };
+  }
+  if (action.type === "DISABLE_DISCARD") {
+    return {
+      ...state,
+      discard: false,
     };
   }
   return initialCollectionInfoState;
@@ -564,6 +577,7 @@ const EditCollection = () => {
         })
           .unwrap()
           .then(() => {
+            dispatchCollectionInfo({ type: "DISABLE_EDIT" });
             dispatch(showSuccess({ message: "Collection edited successfully" }));
           });
       }
@@ -573,8 +587,10 @@ const EditCollection = () => {
   useEffect(() => {
     if (id && !_.isEqual(formik.values, formik.initialValues)) {
       dispatchCollectionInfo({ type: "ENABLE_EDIT" });
+      dispatchCollectionInfo({ type: "ENABLE_DISCARD" });
     } else if (id && _.isEqual(formik.values, formik.initialValues)) {
       dispatchCollectionInfo({ type: "DISABLE_EDIT" });
+      dispatchCollectionInfo({ type: "DISABLE_DISCARD" });
     }
   }, [formik.initialValues, formik.values, id]);
 
@@ -1415,10 +1431,7 @@ const EditCollection = () => {
           onDiscard={backHandler} 
           isLoading={editCollectionIsLoading}
         />  
-        <DiscardModalSecondary           
-          when={hideFooter}
-          message="collection tab"
-        />
+        <DiscardModalSecondary when={collectionInfoState.discard} message="collection tab" />
       </form>
       <DuplicateCollection 
         duplicateData={duplicateData}
