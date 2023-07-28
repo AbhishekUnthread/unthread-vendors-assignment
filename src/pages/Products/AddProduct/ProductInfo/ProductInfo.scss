@@ -86,22 +86,10 @@
 
 .mediaToolCheckBox2 {
   position: relative !important;
-  // top: 20px;
-}
-
-.mediaToolDot2 {
-  position: relative !important;
-  bottom: 27px;
 }
 
 .icon-fontSize {
   font-size: 16px !important;
-}
-
-.upload-image-radius {
-  border-style: dashed;
-  border-radius: 10px;
-  border-color: rgb(56, 57, 92);
 }
 
 .grid-container {
@@ -111,10 +99,20 @@
 
 .grid-item {
   padding: 5px;
-  font-size: 30px;
   text-align: center;
+  margin-top: -60px !important;
+  margin-bottom: -30px !important;
 }
 
 .uploadImageheight {
+  margin-top: -40px !important;
   height: 340px !important;
+}
+
+.mr-2 {
+  margin-right: 0.8rem !important;
+}
+
+.mr-3 {
+  margin-right: 1.2rem !important;
 }
