@@ -657,12 +657,12 @@ const ProductInfo = () => {
             </small>
           </div>
           <div className="row">
-            <div className="col-3 ps-0 d-flex flex-column justify-content-between uploadImageheight">
+            <div className="col-3 ps-0 d-flex flex-column justify-content-between">
               <div className="d-flex justify-content-between mediaToolCheckBox" style={{color: '#5C6D8E'}}>
-                <Checkbox />
+                <Checkbox sx={{color: "#5C6D8E"}}/>
                 <DragIndicatorIcon className="mt-2 me-3" />
               </div>
-              <div {...getRootProps({ style })} className="mt-3">
+              <div {...getRootProps({ style })}>
                 <input
                   id="primary"
                   {...getInputProps()}
@@ -671,25 +671,59 @@ const ProductInfo = () => {
                   //   event.target.value = null;
                   // }}
                 />
-                <img src={image2} className="w-100 h-100 rounded-8"/>
+                <img src={product2} className="w-100 h-100 rounded-8"/>
               </div>
               <div className="d-flex justify-content-end mediaToolDot" style={{color: '#5C6D8E'}}>
-                <SyncAltIcon className="mx-2" /> 
-                <InsertLinkIcon className="mx-2" />
-                <CropIcon className="mx-2" />
-                <img width="20px" height="25px" src={deleteMedia} className="mx-3" />
+                <Tooltip title="Replace" placement="top">
+                  <div className="table-edit-icon rounded-4 mx-1 p-1">
+                    <SyncAltIcon
+                      sx={{
+                        color: "#5c6d8e",
+                        fontSize: 18,
+                        cursor: "pointer",
+                      }}
+                    />
+                  </div>
+                </Tooltip>
+                <Tooltip title="Copy link" placement="top">
+                  <div className="table-edit-icon rounded-4 mx-1 p-1">
+                    <InsertLinkIcon
+                      sx={{
+                        color: "#5c6d8e",
+                        fontSize: 18,
+                        cursor: "pointer",
+                      }}
+                    />
+                  </div>
+                </Tooltip>
+                <Tooltip title="Edit Image" placement="top">
+                  <div className="table-edit-icon rounded-4 mx-1 p-1">
+                    <CropIcon
+                      sx={{
+                        color: "#5c6d8e",
+                        fontSize: 18,
+                        cursor: "pointer",
+                      }}
+                    />
+                  </div>
+                </Tooltip>
+                <Tooltip title="Delete" placement="top">
+                  <div className="table-edit-icon rounded-4 mr-3 p-1 c-pointer">
+                    <img width="20px" height="25px" src={deleteMedia} />
+                  </div>
+                </Tooltip>
               </div>
               <button className="primary-image py-2 w-100">
                 <p>Primary Image</p>
-              </button>
+              </button>              
             </div>
 
-            <div className="col-9 pe-0">
-              <div {...getRootProps({ style })} className="mt-3">
-                <input
+            <div className="col-9 pe-0 mt-4">
+              <div {...getInputProps({ style })} className="mt-3">
+                {/* <input
                   id="primary"
                   {...getInputProps()}
-                />
+                /> */}
                 <div className="grid-container">
                   { imageUpload?.map((item) =>(
                   <div className="grid-item">
@@ -700,20 +734,54 @@ const ProductInfo = () => {
                     <div>
                       <img src={item?.image} className="w-100 h-100 rounded-8" alt="" />
                     </div>
-                    <div className="d-flex justify-content-end mediaToolDot2" style={{color: '#5C6D8E'}}>
-                      <SyncAltIcon className="mx-1 icon-fontSize" /> 
-                      <InsertLinkIcon className="mx-1 icon-fontSize" />
-                      <CropIcon className="mx-1 icon-fontSize" />
-                      <img src={deleteMedia} className="mx-2 icon-fontSize" />
+                    <div className="d-flex justify-content-end mediaToolDot" style={{color: '#5C6D8E'}}>
+                      <Tooltip title="Replace" placement="top">
+                        <div className="table-edit-icon rounded-4 p-1">
+                          <SyncAltIcon 
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                            }}
+                          /> 
+                        </div>
+                      </Tooltip>
+                      <Tooltip title="Copy link" placement="top">
+                        <div className="table-edit-icon rounded-4 p-1">
+                          <InsertLinkIcon 
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                            }}
+                          /> 
+                        </div>
+                      </Tooltip>
+                      <Tooltip title="Edit Image" placement="top">
+                        <div className="table-edit-icon rounded-4 p-1">
+                          <CropIcon 
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                            }}
+                          /> 
+                        </div>
+                      </Tooltip>
+                      <Tooltip title="Delete" placement="top">
+                        <div className="table-edit-icon rounded-4 p-1 mr-2">
+                          <img src={deleteMedia} className="icon-fontSize" />
+                        </div>
+                      </Tooltip>
                     </div>
                   </div>
                   ))}
-                  <div className="grid-item">
+                  <div {...getRootProps({style})} className="mx-1 my-1">
                     <input
                       id="primary"
                       {...getInputProps()}
                     />
-                    <img src={productInfoMedia1} className="w-100 h-100 upload-image-radius" alt="" />
+                    <img src={productInfoMedia1} className="w-100" alt="" />
                   </div>
                 </div>
                 
