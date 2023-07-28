@@ -1329,6 +1329,69 @@ const ProductInfo = () => {
                   />
                 </FormControl>
               </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Height
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                    endAdornment={
+                      <InputAdornment position="start" sx={{color: "#5C6D8E"}}>
+                        <span className="mr-4">
+                          |
+                        </span>
+                        mm
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Width
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                    endAdornment={
+                      <InputAdornment position="start" sx={{color: "#5C6D8E"}}>
+                        <span className="mr-4">
+                          |
+                        </span>
+                        mm
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Bandwidth
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                    endAdornment={
+                      <InputAdornment position="start" sx={{color: "#5C6D8E"}}>
+                        <span className="mr-4">
+                          |
+                        </span>
+                        mm
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
             </div>            
           </div>
         </div>
