@@ -234,9 +234,7 @@ const EditCategories = () => {
   };
 
   const backHandler = () => {
-    navigate({
-      pathname: "/parameters/categories"
-    });
+    navigate(`/parameters/categories?filter=${JSON.stringify({categoryType:0,status:decodedObject?.status})}`);
   };
 
   const nextPageHandler = () => {

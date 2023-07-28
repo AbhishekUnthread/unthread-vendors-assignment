@@ -264,7 +264,7 @@ const EditSubCategories = () => {
 
   const backHandler = () => {
     navigate({
-      pathname: decodedObject?.goBack || "/parameters/categories",
+      pathname: decodedObject?.goBack || `/parameters/categories?filter=${JSON.stringify({categoryType:1,status:decodedObject?.status})}`,
     });
   };
 
@@ -482,7 +482,7 @@ const EditSubCategories = () => {
         subHighlightstext={"(Change)"}
         navigateLink={
           decodedObject?.goBack ||
-          `/parameters/categories?filter=${JSON.stringify({categoryType:1})}`
+          `/parameters/categories?filter=${JSON.stringify({categoryType:1,status:decodedObject?.status})}`
         }
         previewButton={true}
         handleNext={nextPageHandler}
