@@ -514,7 +514,7 @@ const EditCollection = () => {
       notes: collectionData?.data?.data[0]?.notes || "",
       status: collectionData?.data?.data[0]?.status,
       filter: collectionData?.data?.data[0]?.showFilter || false,
-      description: collectionData?.data?.data[0]?.description || "",
+      description: collectionData?.data?.data?.[0]?.description || "<p></p>",
       seo: collectionData?.data?.data?.[0]?.seos || {},
       mediaUrl: collectionData?.data?.data[0]?.mediaUrl || "",
       startDate: collectionData?.data?.data?.[0]?.startDate || null,
@@ -692,9 +692,15 @@ const EditCollection = () => {
                     />
                   </Tooltip>
                 </div>
-                <AppTextEditor 
-                  value={collectionDescription} 
-                  setFieldValue={(value)=>setCollectionDescription(value)} 
+                <AppTextEditor
+                  value={formik.values.description}
+                  setFieldValue={(val) => {
+                    if (val == "") {
+                      formik.setFieldValue("description", "<p></p>");
+                      return;
+                    }
+                    formik.setFieldValue("description", val);
+                  }}
                 />
               </div>
             </div>
