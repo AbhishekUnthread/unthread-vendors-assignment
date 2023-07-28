@@ -241,6 +241,10 @@ const EditCategories = () => {
 
   const nextPageHandler = () => {
     const { pageNo } = queryFilterState;
+    if( categoriesData?.data?.nextCount === 0){
+      dispatch(showError({message:"There is no Next Data"}))
+      return
+    }
     decodedObject.order = 1;
     navigate({
       pathname: `/parameters/categories/edit/${pageNo}`,
@@ -252,6 +256,10 @@ const EditCategories = () => {
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
+    if( categoriesData?.data?.prevCount === 0){
+      dispatch(showError({message:"There is no Previous Data"}))
+      return
+    }
     decodedObject.order = -1;
     navigate({
       pathname: `/parameters/categories/edit/${pageNo}`,

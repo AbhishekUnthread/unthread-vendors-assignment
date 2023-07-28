@@ -270,7 +270,10 @@ const EditSubCategories = () => {
 
   const nextPageHandler = () => {
     const { pageNo } = queryFilterState;
-   
+    if( subCategoriesData?.data?.nextCount === 0){
+      dispatch(showError({message:"There is no Next Data"}))
+      return
+    }
    decodedObject.order = 1;
     navigate({
       pathname: `/parameters/subCategories/edit/${pageNo}`,
@@ -282,6 +285,10 @@ const EditSubCategories = () => {
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
+    if( subCategoriesData?.data?.prevCount === 0){
+      dispatch(showError({message:"There is no Previous Data"}))
+      return
+    }
     decodedObject.order = -1;
     navigate({
       pathname: `/parameters/subCategories/edit/${pageNo}`,

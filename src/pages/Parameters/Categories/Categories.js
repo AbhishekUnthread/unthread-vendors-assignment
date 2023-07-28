@@ -779,7 +779,7 @@ const Categories = () => {
                 >
                   Create Category
                 </small>
-                {categoriesData?.data?.data.length && (
+                {categoriesData?.data?.data?.length !==0 && (
                   <small
                     onClick={toggleCreateSubModalHandler}
                     className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
