@@ -142,7 +142,7 @@ const EditCategories = () => {
     isError: categoriesIsError,
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
-  } = useGetAllCategoriesQuery({ srNo: id, ...decodedObject });
+  } = useGetAllCategoriesQuery({ srNo: id, ...decodedObject,pageNo:0 });
 
   const [
     editCategory,
@@ -157,7 +157,7 @@ const EditCategories = () => {
   const categoryEditFormik = useFormik({
     initialValues: {
       name: categoriesData?.data?.data?.[0]?.name || "",
-      description: categoriesData?.data?.data?.[0]?.description,
+      description: categoriesData?.data?.data?.[0]?.description || "<p></p>",
       status: categoriesData?.data?.data?.[0]?.status,
       notes: categoriesData?.data?.data?.[0]?.notes,
       showFilter: categoriesData?.data?.data?.[0]?.showFilter,
@@ -235,21 +235,15 @@ const EditCategories = () => {
 
   const backHandler = () => {
     navigate({
-      pathname: "/parameters/categories", //categoriesData?.data?.data?.[0]?
-      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
+      pathname: "/parameters/categories"
     });
   };
-  console.log(categoryEditFormik.initialValues, categoryEditFormik.values);
 
   const nextPageHandler = () => {
-    const { pageNo, totalCount } = queryFilterState;
-    if (pageNo === totalCount) {
-      return;
-    }
-
-    decodedObject.order = categoriesData?.data?.data?.[0]?.order;
+    const { pageNo } = queryFilterState;
+    decodedObject.order = 1;
     navigate({
-      pathname: `/parameters/categories/edit/${pageNo + 1}`,
+      pathname: `/parameters/categories/edit/${pageNo}`,
       search: `?${createSearchParams({
         filter: JSON.stringify(decodedObject),
       })}`,
@@ -258,12 +252,9 @@ const EditCategories = () => {
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
-    if (pageNo === 1) {
-      return;
-    }
-    decodedObject.order = categoriesData?.data?.data?.[0]?.order;
+    decodedObject.order = -1;
     navigate({
-      pathname: `/parameters/categories/edit/${pageNo - 1}`,
+      pathname: `/parameters/categories/edit/${pageNo}`,
       search: `?${createSearchParams({
         filter: JSON.stringify(decodedObject),
       })}`,
@@ -271,10 +262,10 @@ const EditCategories = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+    if (categoriesData?.data?.data?.[0]?.srNo) {
+      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: categoriesData?.data?.data?.[0]?.srNo });
     }
-  }, [id]);
+  }, [categoriesData]);
 
   useEffect(() => {
     if (categoriesError) {

@@ -265,18 +265,15 @@ const EditSubCategories = () => {
   const backHandler = () => {
     navigate({
       pathname: decodedObject?.goBack || "/parameters/categories",
-      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
     });
   };
 
   const nextPageHandler = () => {
-    const { pageNo, totalCount } = queryFilterState;
-    if (pageNo > totalCount) {
-      return;
-    }
-    decodedObject.order = subCategoriesData?.data?.data?.[0]?.order;
+    const { pageNo } = queryFilterState;
+   
+   decodedObject.order = 1;
     navigate({
-      pathname: `/parameters/subCategories/edit/${pageNo + 1}`,
+      pathname: `/parameters/subCategories/edit/${pageNo}`,
       search: `?${createSearchParams({
         filter: JSON.stringify(decodedObject),
       })}`,
@@ -285,12 +282,9 @@ const EditSubCategories = () => {
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
-    if (pageNo === 1) {
-      return;
-    }
-    decodedObject.order = subCategoriesData?.data?.data?.[0]?.order;
+    decodedObject.order = -1;
     navigate({
-      pathname: `/parameters/subCategories/edit/${pageNo - 1}`,
+      pathname: `/parameters/subCategories/edit/${pageNo}`,
       search: `?${createSearchParams({
         filter: JSON.stringify(decodedObject),
       })}`,
@@ -298,10 +292,10 @@ const EditSubCategories = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+    if (subCategoriesData?.data?.data?.[0]?.srNo) {
+      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: subCategoriesData?.data?.data?.[0]?.srNo });
     }
-  }, [id]);
+  }, [subCategoriesData]);
 
   useEffect(() => {
     if (subCategoriesError) {
@@ -319,7 +313,7 @@ const EditSubCategories = () => {
         totalCount: subCategoriesData?.data?.totalCount,
       });
       setCategoryName(
-        subCategoriesData?.data?.data?.[0].category?.[0]?.name || ""
+        subCategoriesData?.data?.data?.[0]?.category?.[0]?.name || ""
       );
       setSubCategoryParentId(
         subCategoriesData?.data?.data?.[0]?.category?.[0]?._id || ""
@@ -481,7 +475,7 @@ const EditSubCategories = () => {
         subHighlightstext={"(Change)"}
         navigateLink={
           decodedObject?.goBack ||
-          `/parameters/categories?filter=${JSON.stringify(decodedObject)}`
+          `/parameters/categories?filter=${JSON.stringify({categoryType:1})}`
         }
         previewButton={true}
         handleNext={nextPageHandler}
