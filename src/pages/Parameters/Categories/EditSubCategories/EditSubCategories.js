@@ -271,7 +271,6 @@ const EditSubCategories = () => {
   const nextPageHandler = () => {
     const { pageNo } = queryFilterState;
     if( subCategoriesData?.data?.nextCount === 0){
-      dispatch(showError({message:"There is no Next Data"}))
       return
     }
    decodedObject.order = 1;
@@ -286,7 +285,6 @@ const EditSubCategories = () => {
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
     if( subCategoriesData?.data?.prevCount === 0){
-      dispatch(showError({message:"There is no Previous Data"}))
       return
     }
     decodedObject.order = -1;
@@ -484,6 +482,8 @@ const EditSubCategories = () => {
           decodedObject?.goBack ||
           `/parameters/categories?filter=${JSON.stringify({categoryType:1,status:decodedObject?.status})}`
         }
+        hasNext={subCategoriesData?.data?.nextCount}
+        hasPrev={ subCategoriesData?.data?.prevCount}
         previewButton={true}
         handleNext={nextPageHandler}
         handlePrev={prevPageHandler}
