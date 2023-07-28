@@ -1,38 +1,10 @@
-import React, { forwardRef, useState, useEffect, useReducer } from "react";
-import "./CreateCollection.scss";
-import { Link, useNavigate } from "react-router-dom";
-
-import UseFileUpload from "../../../features/fileUpload/fileUploadHook";
-// ! COMPONENT IMPORTS
-import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
-import SEO from "../../Products/AddProduct/SEO/SEO";
-import TagsBox from "../../../components/TagsBox/TagsBox";
-import NotesBox from "../../../components/NotesBox/NotesBox";
-import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
-import UploadBanner from "../../../components/UploadBanner/UploadBanner";
-import StatusBox from "../../../components/StatusBox/StatusBox";
-import VisibilityBox from '../../../components/VisibilityBox/VisibilityBox'
-import AddHeader from "../../../components/AddHeader/AddHeader"
-import DiscardModal from "../../../components/Discard/DiscardModal";
-import {
-  EnhancedTableHead,
-  stableSort,
-  getComparator,
-} from "../../../components/TableDependencies/TableDependencies";
-// ! IMAGES IMPORTS
-import arrowLeft from "../../../assets/icons/arrowLeft.svg";
-import info from "../../../assets/icons/info.svg";
-import cancel from "../../../assets/icons/cancel.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg";
-import featureUpload from "../../../assets/images/products/featureUpload.svg";
-import ringSmall from "../../../assets/images/ringSmall.svg";
-import deleteWhite from "../../../assets/icons/deleteWhite.svg";
-import editWhite from "../../../assets/icons/editWhite.svg";
-import deleteButton from "../../../assets/icons/deleteButton.svg";
-import paginationRight from "../../../assets/icons/paginationRight.svg";
-import paginationLeft from "../../../assets/icons/paginationLeft.svg";
-import addMedia from "../../../assets/icons/addMedia.svg";
-// ! MATERIAL IMPORTS
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
+import { LoadingButton } from "@mui/lab";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   FormControl,
   FormHelperText,
@@ -57,27 +29,45 @@ import {
   Radio,
   Tooltip,
 } from "@mui/material";
-// ! MATERIAL ICONS IMPORTS
-import SearchIcon from "@mui/icons-material/Search";
-import { updateCollectionId } from '../../../features/parameters/collections/collectionSlice'
-import * as Yup from "yup";
-import { useFormik } from "formik";
-import { useDispatch, useSelector } from "react-redux";
-import { LoadingButton } from "@mui/lab";
 
+import UseFileUpload from "../../../features/fileUpload/fileUploadHook";
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../components/TableDependencies/TableDependencies";
 import {
   showSuccess,
   showError,
 } from "../../../features/snackbar/snackbarAction";
-
 import {
   useGetAllCollectionsQuery,
-  useCreateCollectionMutation,
-  useDeleteCollectionMutation,
-  useEditCollectionMutation,
+  useCreateCollectionMutation
 } from "../../../features/parameters/collections/collectionsApiSlice";
 
-// ? SEARCH INPUT STARTS HERE
+import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
+import SEO from "../../Products/AddProduct/SEO/SEO";
+import TagsBox from "../../../components/TagsBox/TagsBox";
+import NotesBox from "../../../components/NotesBox/NotesBox";
+import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
+import UploadBanner from "../../../components/UploadBanner/UploadBanner";
+import StatusBox from "../../../components/StatusBox/StatusBox";
+import VisibilityBox from '../../../components/VisibilityBox/VisibilityBox'
+import AddHeader from "../../../components/AddHeader/AddHeader"
+import DiscardModal from "../../../components/Discard/DiscardModal";
+
+import "./CreateCollection.scss";
+
+import info from "../../../assets/icons/info.svg";
+import cancel from "../../../assets/icons/cancel.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
+import featureUpload from "../../../assets/images/products/featureUpload.svg";
+import ringSmall from "../../../assets/images/ringSmall.svg";
+import deleteWhite from "../../../assets/icons/deleteWhite.svg";
+import editWhite from "../../../assets/icons/editWhite.svg";
+import deleteButton from "../../../assets/icons/deleteButton.svg";
+import addMedia from "../../../assets/icons/addMedia.svg";
+
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -111,9 +101,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     borderRadius: "5px",
   },
 }));
-// ? SEARCH INPUT ENDS HERE
 
-// ? TABLE STARTS HERE
 function createData(pId, productName, category, price) {
   return { pId, productName, category, price };
 }
@@ -178,9 +166,6 @@ const drawerHeadCells = [
   },
 ];
 
-// ? TABLE ENDS HERE
-
-// ? LIKE PRODUCTS TABLE STARTS HERE
 function createLikeProductData(pId, productName, category, price) {
   return { pId, productName, category, price };
 }
@@ -221,7 +206,6 @@ const likeProductRows = [
     "₹ 25,000"
   ),
 ];
-// ? LIKE PRODUCTS TABLE ENDS HERE
 
 const collectionValidationSchema = Yup.object({
   title: Yup.string().trim().min(3).max(50).required("Required")
@@ -236,8 +220,26 @@ const CreateCollection = () => {
   const collectionId = useSelector((state) => state.collection.collectionId);
   const [categorySeo,setCategorySeo] = useState({});
   const [appTextEditor, setAppTextEditor] = useState()
-  const [showDiscardModal, setShowDiscardModal] = React.useState(false);
-
+  const [showDiscardModal, setShowDiscardModal] = useState(false);
+  const [likeProductRadio, setLikeProductRadio] = useState("automated");
+  const [likeMatchRadio, setLikeMatchRadio] = useState("allCondition");
+  const [anchorPriceEl, setAnchorPriceEl] = useState(null);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("productName");
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [field, setField] = useState("price");
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [operator, setOperator] = useState("equals");
+  const [checked, setChecked] = useState(false);
+  const [likeApplyCondition, setLikeApplyCondition] = useState(false);
+  const [likeAddCondition, setLikeAddCondition] = useState(false);
+  const [addProductDrawer, setAddProductDrawer] = useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
   const clearDate = () => {
     setStartDate(null);
     setEndDate(null);
@@ -300,19 +302,19 @@ const CreateCollection = () => {
         ...values,
       };
 
-      if (categorySeo?.title || categorySeo?.slug || categorySeo?.urlHandle) {
+      if (categorySeo?.title || categorySeo?.slug || categorySeo?.description) {
         obj.seo = {};
 
         if (categorySeo?.title) {
           obj.seo.title = categorySeo.title;
         }
 
-        if (categorySeo?.slug) {
-          obj.seo.slug = categorySeo.slug;
+        if (categorySeo?.description) {
+          obj.seo.description = categorySeo.description;
         }
 
-        if (categorySeo?.urlHandle) {
-          obj.seo.urlHandle = categorySeo.urlHandle;
+        if (categorySeo?.slug) {
+          obj.seo.slug = categorySeo.slug;
         }
 
         if(categorySeo?.metaKeywords) {
@@ -356,22 +358,13 @@ const CreateCollection = () => {
     }
   }, [createCollectionError, dispatch]);
 
-  const [likeProductRadio, setLikeProductRadio] = React.useState("automated");
   const handleLikeProductRadio = (event) => {
     setLikeProductRadio(event.target.value);
   };
 
-  const [likeMatchRadio, setLikeMatchRadio] = React.useState("allCondition");
   const handleLikeMatchRadio = (event) => {
     setLikeMatchRadio(event.target.value);
   };
-
-  const [addProductDrawer, setAddProductDrawer] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
 
   const toggleAddProductDrawer = (anchor, open) => (event) => {
     if (
@@ -384,22 +377,16 @@ const CreateCollection = () => {
     setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
   };
 
-  const [anchorPriceEl, setAnchorPriceEl] = React.useState(null);
   const handlePriceClick = (event) => {
     setAnchorPriceEl(event.currentTarget);
   };
+
   const handlePriceClose = () => {
     setAnchorPriceEl(null);
   };
 
   const openPrice = Boolean(anchorPriceEl);
   const idPrice = openPrice ? "simple-popover" : undefined;
-
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("productName");
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -454,34 +441,20 @@ const CreateCollection = () => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-  const [field, setField] = React.useState("price");
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const handleFieldChange = (event) => {
     setField(event.target.value);
   };
-  // ? SIZE SELECT ENDS HERE
-
-  // ? OPERATOR SELECT STARTS HERE
-  const [operator, setOperator] = React.useState("equals");
 
   const handleOperatorChange = (event) => {
     setOperator(event.target.value);
   };
-  // ? OPERATOR SELECT ENDS HERE
-
-  // ? CHECKBOX STARTS HERE
-  const [checked, setChecked] = React.useState(false);
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
   };
-  // ? CHECKBOX ENDS HERE
 
-  // ? LIKE ADD CONDITION STARTS HERE
-  const [likeAddCondition, setLikeAddCondition] = React.useState(false);
   const handleLikeAddCondition = () => {
     if (!likeAddCondition) {
       setLikeAddCondition(true);
@@ -490,10 +463,7 @@ const CreateCollection = () => {
       setLikeApplyCondition(false);
     }
   };
-  // ? LIKE ADD CONDITION ENDS HERE
 
-  // ? LIKE APPLY CONDITION STARTS HERE
-  const [likeApplyCondition, setLikeApplyCondition] = React.useState(false);
   const handleLikeApplyCondition = () => {
     if (likeApplyCondition) {
       setLikeApplyCondition(false);
@@ -502,9 +472,8 @@ const CreateCollection = () => {
       setLikeAddCondition(false);
     }
   };
-  // ? LIKE APPLY CONDITION ENDS HERE
 
-   useEffect(() => {
+  useEffect(() => {
     if (collectionError) {
       if (collectionError?.data?.message) {
         dispatch(showError({ message: collectionError.data.message }));
@@ -531,14 +500,6 @@ const CreateCollection = () => {
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-              {/* <div className="d-flex col-12 px-0 justify-content-between">
-                <div className="d-flex align-items-center">
-                  <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                    Collection Information
-                  </h6>
-                </div>
-              </div> */}
-
               <div className="col-md-12 px-0 mt-1">
                 <div className="d-flex mb-1">
                   <p className="text-lightBlue me-2">Collection Title *</p>
@@ -612,11 +573,6 @@ const CreateCollection = () => {
                   value={appTextEditor}
                  />
               </div>
-              {/* {!!collectionFormik.touched.description && collectionFormik.errors.description && (
-                <FormHelperText error>
-                  {collectionFormik.errors.description}
-                </FormHelperText>
-              )} */}
             </div>
 
             <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-4">
@@ -663,7 +619,7 @@ const CreateCollection = () => {
               {likeProductRadio !== "manual" && (
                 <div className="bg-black-11 rounded-8 p-3 shadow-sm">
                   {likeProductRadio === "automated" && (
-                    <React.Fragment>
+                    <>
                       <div className="d-flex justify-content-between">
                         <div className="d-flex align-items-center">
                           <p className="text-lightBlue me-4">Should Match:</p>
@@ -894,12 +850,12 @@ const CreateCollection = () => {
                           </div>
                         </div>
                       )}
-                    </React.Fragment>
+                    </>
                   )}
                 </div>
               )}
               {likeProductRadio === "automated" && likeApplyCondition && (
-                <React.Fragment>
+                <>
                   <div className="col-12 mt-3">
                     <div className="row align-items-center">
                       <div className="col-md-9 px-md-0 py-2">
@@ -1050,17 +1006,17 @@ const CreateCollection = () => {
                       className="table-pagination"
                     />
                   </div>
-                </React.Fragment>
+                </>
               )}
               {likeProductRadio === "manual" && (
-                <React.Fragment>
+                <>
                   <img
                     src={featureUpload}
                     className="w-100 c-pointer px-0"
                     alt=""
                     onClick={toggleAddProductDrawer("right", true)}
                   />
-                </React.Fragment>
+                </>
               )}
             </div>
             <div className="mt-4">

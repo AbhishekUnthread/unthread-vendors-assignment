@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useReducer } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect, useReducer } from "react";
+import { Link, useNavigate, useSearchParams, createSearchParams } from "react-router-dom";
 import { 
   Box,
   Checkbox,
@@ -41,7 +41,14 @@ const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 1,
   title:"",
-  searchValue:""
+  searchValue:"",
+  status: ["active", "in-active", "scheduled"],
+  createdAt: "-1",
+  alphabetical: null
+};
+
+const initialCollectionState = {
+  status: "all",
 };
 
 const queryFilterReducer = (state, action) => {
@@ -72,7 +79,46 @@ const queryFilterReducer = (state, action) => {
       searchValue: action.searchValue,
     };
   }
+  if (action.type === "SET_STATUS") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      status: action.status ? action.status : initialQueryFilterState.status,
+    };
+  }
+  if (action.type === "SET_ALPHABETICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      alphabetical: action.alphabetical,
+      createdAt: null,
+    };
+  }
+  if (action.type === "SET_CRONOLOGICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      createdAt: action.createdAt,
+      alphabetical: null,
+    };
+  }
+  if (action.type === "SET_ALL_FILTERS") {
+    return {
+      ...initialQueryFilterState,
+      ...action.filters,
+    };
+  }
   return initialQueryFilterState;
+};
+
+const collectionReducer = (state, action) => {
+  if (action.type === "SET_STATUS") {
+    return {
+      status: action.status,
+    };
+  }
+
+  return initialCollectionState;
 };
 
 const Collections = () => {
@@ -81,67 +127,107 @@ const Collections = () => {
   const[searchParams, setSearchParams] = useSearchParams();
   const [error, setError] = useState(false);
   const [collectionList, setCollectionList] = useState([]);
-  const [collectionType, setCollectionType] = useState(0);
+  const [collectionType, setCollectionType] = useState(null);
   const [pageLength, setPageLegnth] = useState();
-  const [sortFilter, setSortFilter] = useState("newestToOldest");
-  const [statusFilter, setStatusFilter] = useState([]);
+  const [firstRender, setFirstRender] = useState(true);
+  const [anchorSortEl, setAnchorSortEl] = useState(null);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
-
-  const filterParameter = {};
+  const [collectionState, dispatchCollectionState] = useReducer(
+    collectionReducer,
+    initialCollectionState
+  );
 
   const handleStatusChange = (event) => {
-    const { value } = event.target;
-  
-    setStatusFilter((prevSelected) => {
-      if (prevSelected.includes(value)) {
-        return prevSelected.filter((option) => option !== value);
+    if (event.target.checked) {
+      if (collectionState.status === "all") {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [event.target.value],
+        });
+        dispatchCollectionState({
+          type: "SET_STATUS",
+          status: "",
+        });
       } else {
-        return [...prevSelected, value];
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [...queryFilterState.status, event.target.value],
+        });
       }
-    });
-  };
-  
-  if (sortFilter) {
-    if (sortFilter === "alphabeticalAtoZ" || sortFilter === "alphabeticalZtoA") {
-      filterParameter.alphabetical = sortFilter == "alphabeticalAtoZ" ? "1" : "-1";
-    }
-    else if (sortFilter === "oldestToNewest" || sortFilter === "newestToOldest") {
-      filterParameter.updatedAt = sortFilter == "oldestToNewest" ? "1" : "-1";
-    }
-  }
-
-  if (statusFilter !== null) {
-    if (Array.isArray(statusFilter)) {
-      filterParameter.status = statusFilter.join(',');
     } else {
-      filterParameter.status = statusFilter;
+      if (queryFilterState.status.length > 1) {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: queryFilterState.status.filter(
+            (status) => status !== event.target.value
+          ),
+        });
+      } else {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: ["active", "in-active", "scheduled"],
+        });
+        dispatchCollectionState({
+          type: "SET_STATUS",
+          status: "all",
+        });
+      }
     }
-  }
+  };
 
-  if (statusFilter == null) {
-    filterParameter.status = "active";
-    filterParameter.status = "in-active";
-    filterParameter.status = "active"
-  }
+  useEffect(() => {
+    const filterParams = JSON.parse(searchParams.get("filter")) || {
+      collectionType,
+    };
+    if (firstRender && Object.keys(filterParams).length) {
+      let filters = {};
+      for (let key in filterParams) {
+        if (key !== "collectionType") {
+          if (filterParams[key] !== (null || "")) {
+            if (key === "status" && filterParams[key].length < 2) {
+              dispatchCollectionState({
+                type: "SET_STATUS",
+                status: "",
+              });
+            }
+            filters = {
+              ...filters,
+              [key]: filterParams[key],
+            };
+          }
+        } else {
+          setCollectionType(+filterParams[key]);
+        }
+      }
+      if (filterParams.collectionType === (null || "")) {
+        setCollectionType(0);
+      }
+      dispatchQueryFilter({
+        type: "SET_ALL_FILTERS",
+        filters,
+      });
+      setFirstRender(false);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      setSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, collectionType }),
+      });
+    }
+  }, [queryFilterState, setSearchParams, collectionType, firstRender]);
   
-  const collectionTypeQuery = 
-      collectionType === 0 ? statusFilter.length > 0 ? { status: statusFilter } : { status: ["active","in-active","scheduled"] }
-    : collectionType === 1 ? { status: "active" }
-    : collectionType === 2 ? { createdAt: -1, status: "in-active" }
-    : collectionType === 3 ? { createdAt: -1, status: "archieved" }
-    : {};
-
-  const filterParams = { ...filterParameter, ...collectionTypeQuery };
 
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
     error: collectionError,
-  } = useGetAllCollectionsQuery({ ...filterParameter, ...collectionTypeQuery, ...queryFilterState});
+  } = useGetAllCollectionsQuery({ ...queryFilterState });
 
   const {
     data: collectionCountData,
@@ -187,10 +273,6 @@ const Collections = () => {
     bulkDeleteCollection({deletes: data})
   }
 
-  const handleTabChange = (event, tabIndex) => {
-    setCollectionType(tabIndex);
-  };
-
   const handleChangeRowsPerPage = (event) => {
     dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
   };
@@ -207,26 +289,57 @@ const Collections = () => {
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
   }
 
-  const editCategoryPageNavigationHandler = (data,index) => {
-    const combinedObject = { filterParameter, collectionTypeQuery, queryFilterState };
-    const encodedCombinedObject = encodeURIComponent(JSON.stringify(combinedObject));    
-
-    const currentTabNo =
-    index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-
-    navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
+  const editCategoryPageNavigationHandler = (data, index) => {
+    navigate({
+      pathname: `./edit/${data ? data._id : ""}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, collectionType }),
+      })}`,
+    });
   };
 
-  const changeVendorTypeHandler = (_event, tabIndex) => {
+  const changeCollectionTypeHandler = (_event, tabIndex) => {
     setCollectionType(tabIndex);
+    if (tabIndex === 0) {
+      dispatchCollectionState({
+        type: "SET_STATUS",
+        status: "all",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active", "in-active", "scheduled"],
+      });
+    } else if (tabIndex === 1) {
+      dispatchCollectionState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active"],
+      });
+    } else if (tabIndex === 2) {
+      dispatchCollectionState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["in-active"],
+      });
+    } else if (tabIndex === 3) {
+      dispatchCollectionState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["archieved"],
+      });
+    }
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
     dispatchQueryFilter({ type: "SEARCH", name: "" });
-    setSortFilter('');
-    setStatusFilter('')
-    setSearchParams({status:tabIndex})
   };
-
-  const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
   const handleSortClick = (event) => {
     setAnchorSortEl(event.currentTarget);
@@ -236,15 +349,26 @@ const Collections = () => {
     setAnchorSortEl(null);
   };
 
-  const handleSortRadio = (event) => {
-    setSortFilter(event.target.value);
+  const handleAlphabeticalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_ALPHABETICAL_SORTING",
+      alphabetical: event.target.value,
+    });
     setAnchorSortEl(null);
-  }
+  };
+
+  const handleChronologicalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_CRONOLOGICAL_SORTING",
+      createdAt: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
 
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
 
-  const [anchorStatusEl, setAnchorStatusEl] = React.useState(null);
+  const [anchorStatusEl, setAnchorStatusEl] = useState(null);
   const handleStatusClick = (event) => {
     setAnchorStatusEl(event.currentTarget);
   };
@@ -308,19 +432,7 @@ const Collections = () => {
     collectionType,
     dispatch,
   ]);
-
-  useEffect(() => {
-    if(+searchParams.get("status")===0) {
-      setCollectionType(0);
-    } else if(+searchParams.get("status")===1) {
-      setCollectionType(1);
-    } else if(+searchParams.get("status")===2) {
-      setCollectionType(2);
-    } else if(+searchParams.get("status")===3) {
-      setCollectionType(3);
-    }
-  }, [searchParams])
-    
+  
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
@@ -352,7 +464,7 @@ const Collections = () => {
           >
             <Tabs
               value={collectionType}
-              onChange={changeVendorTypeHandler}
+              onChange={changeCollectionTypeHandler}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
@@ -406,19 +518,28 @@ const Collections = () => {
                     value="active"
                     control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="Active"
-                    checked={statusFilter.includes('active')}
+                    checked={
+                      collectionState.status === "" &&
+                      queryFilterState.status.includes("active")
+                    }
                   />
                   <FormControlLabel
                     value="in-active"
                     control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="In-Active"
-                    checked={statusFilter.includes('in-active')}
+                    checked={
+                      collectionState.status === "" &&
+                      queryFilterState.status.includes("in-active")
+                    }
                   />
                   <FormControlLabel
                     value="scheduled"
                     control={<Checkbox size="small" sx={{ color: "#c8d8ff" }}/>}
                     label="Scheduled"
-                    checked={statusFilter.includes('scheduled')}
+                    checked={
+                      collectionState.status === "" &&
+                      queryFilterState.status.includes("scheduled")
+                    }
                   />
                 </FormControl>
               </Popover>
@@ -450,28 +571,42 @@ const Collections = () => {
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
-                    value={sortFilter}
-                    onChange={handleSortRadio}
                   >
                     <FormControlLabel
-                      value="newestToOldest"
-                      control={<Radio size="small" />}
+                      value="-1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.createdAt === "-1"}
+                      />}
                       label="Newest to Oldest"
+                      onChange={handleChronologicalSorting}
                     />
                     <FormControlLabel
-                      value="oldestToNewest"
-                      control={<Radio size="small" />}
+                      value="1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.createdAt === "1"}
+                      />}
                       label="Oldest to Newest"
+                      onChange={handleChronologicalSorting}
                     />
                     <FormControlLabel
-                      value="alphabeticalAtoZ"
-                      control={<Radio size="small" />}
+                      value="1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.alphabetical === "1"}
+                      />}
                       label="Alphabetical (A-Z)"
+                      onChange={handleAlphabeticalSorting}
                     />
                     <FormControlLabel
-                      value="alphabeticalZtoA"
-                      control={<Radio size="small" />}
+                      value="-1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.alphabetical === "-1"}
+                      />}
                       label="Alphabetical (Z-A)"
+                      onChange={handleAlphabeticalSorting}
                     />
                   </RadioGroup>
                 </FormControl>

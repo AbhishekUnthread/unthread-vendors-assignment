@@ -41,6 +41,7 @@ import './Collections.scss';
 
 import unthreadLogo from "../../../assets/images/unthreadLogo.png"
 import unArchived from "../../../assets/images/Components/Archived.png"
+import { Link } from "react-router-dom";
 
 const CollectionsTable = ({ 
   list,
@@ -415,7 +416,7 @@ const CollectionsTable = ({
                           <img
                             src={row.mediaUrl ? row.mediaUrl : unthreadLogo}
                             alt="ringSmall"
-                            className="me-2"
+                            className="me-2 rounded-8"
                             height={45}
                             width={45}
                           />
@@ -506,10 +507,10 @@ const CollectionsTable = ({
                       <TableCell style={{ width: 140, padding: 0 }}>
                         <div className="d-flex align-items-center">
                           <Tooltip title="Edit" placement="top">
-                            <div className="table-edit-icon rounded-4 p-2" 
-                                onClick={(e) => {
-                                      edit(row,index+1,collectionType);
-                                    }}
+                            <Link className="table-edit-icon rounded-4 p-2" 
+                              onClick={(e) => {
+                                edit(row,index+1,collectionType);
+                              }}
                             >
                               <EditOutlinedIcon
                                 sx={{
@@ -518,7 +519,7 @@ const CollectionsTable = ({
                                   cursor: "pointer",
                                 }}
                               />
-                            </div>
+                            </Link>
                           </Tooltip>
                           <Tooltip title="Duplicate" placement="top">
                             <div className="table-edit-icon rounded-4 p-2"

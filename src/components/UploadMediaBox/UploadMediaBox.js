@@ -42,7 +42,6 @@ const UploadMediaBox = ({
   const [inputUrl, setInputUrl] = useState("");
   const [uploadFile, uploadState] = UseFileUpload();
 
-  console.log(previousImage,'previousImage');
   // ? FILE UPLOAD STARTS HERE
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
