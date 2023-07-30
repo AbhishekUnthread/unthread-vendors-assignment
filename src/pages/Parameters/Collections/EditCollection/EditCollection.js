@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer, forwardRef } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { useFormik } from "formik";
 import { useNavigate, useParams, useSearchParams, createSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -35,12 +35,10 @@ import {
 } from "../../../../components/TableDependencies/TableDependencies";
 import {
   showSuccess,
-  showError,
 } from "../../../../features/snackbar/snackbarAction";
 import {
   useGetAllCollectionsQuery,
-  useCreateCollectionMutation,
-  useEditCollectionMutation,
+  useEditCollectionMutation
 } from "../../../../features/parameters/collections/collectionsApiSlice";
 import { updateCollectionId } from "../../../../features/parameters/collections/collectionSlice";
 
@@ -218,6 +216,7 @@ const initialQueryFilterState = {
 const initialCollectionInfoState = {
   confirmationMessage: "",
   isEditing: false,
+  discard: false,
   initialInfo: null,
 };
 
@@ -250,6 +249,18 @@ const collectionTabReducer = (state, action) => {
       isEditing: false,
     };
   }
+  if (action.type === "ENABLE_DISCARD") {
+    return {
+      ...state,
+      discard: true,
+    };
+  }
+  if (action.type === "DISABLE_DISCARD") {
+    return {
+      ...state,
+      discard: false,
+    };
+  }
   return initialCollectionInfoState;
 };
 
@@ -271,7 +282,6 @@ const EditCollection = () => {
   const [likeAddCondition, setLikeAddCondition] = useState(false);
   const [likeApplyCondition, setLikeApplyCondition] = useState(false);
   const [collectionDescription, setCollectionDescription] = useState("");
-  const [hideFooter, setHideFooter] = useState(false);
   const [duplicateModal, setDuplicateModal] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [duplicateData, setDuplicateData] = useState("");
@@ -335,21 +345,12 @@ const EditCollection = () => {
   };  
 
   useEffect(() => {
-      if (id) {
-        dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
-      }
-    }, [id]);
+    if (id) {
+      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+    }
+  }, [id]);
 
   const newCollectionData = collectionData?.data?.data[0];
-
-  const [
-    createCollection,
-    {
-      isLoading: createCollectionIsLoading,
-      isSuccess: createCollectionIsSuccess,
-      error: createCollectionError,
-    },
-  ] = useCreateCollectionMutation();
 
   const [
     editCollection,
@@ -360,18 +361,6 @@ const EditCollection = () => {
       error: editCollectionError,
     }
   ] = useEditCollectionMutation();
-
-  useEffect(() => {
-    if (createCollectionError) {
-      if (createCollectionError?.data?.message) {
-        dispatch(showError({ message: createCollectionError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Failed to update Collection. Please try again." })
-        );
-      }
-    }
-  }, [createCollectionError, dispatch]);
 
   const handleLikeProductRadio = (event) => {
     setLikeProductRadio(event.target.value);
@@ -489,16 +478,6 @@ const EditCollection = () => {
   };
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
-      setHideFooter(true);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []); 
-
-  useEffect(() => {
     if (collectionDescription === "<p></p>") {
       formik.setFieldValue(
         "description",
@@ -564,6 +543,7 @@ const EditCollection = () => {
         })
           .unwrap()
           .then(() => {
+            dispatchCollectionInfo({ type: "DISABLE_EDIT" });
             dispatch(showSuccess({ message: "Collection edited successfully" }));
           });
       }
@@ -573,8 +553,10 @@ const EditCollection = () => {
   useEffect(() => {
     if (id && !_.isEqual(formik.values, formik.initialValues)) {
       dispatchCollectionInfo({ type: "ENABLE_EDIT" });
+      dispatchCollectionInfo({ type: "ENABLE_DISCARD" });
     } else if (id && _.isEqual(formik.values, formik.initialValues)) {
       dispatchCollectionInfo({ type: "DISABLE_EDIT" });
+      dispatchCollectionInfo({ type: "DISABLE_DISCARD" });
     }
   }, [formik.initialValues, formik.values, id]);
 
@@ -1415,10 +1397,7 @@ const EditCollection = () => {
           onDiscard={backHandler} 
           isLoading={editCollectionIsLoading}
         />  
-        <DiscardModalSecondary           
-          when={hideFooter}
-          message="collection tab"
-        />
+        <DiscardModalSecondary when={collectionInfoState.discard} message="collection tab" />
       </form>
       <DuplicateCollection 
         duplicateData={duplicateData}

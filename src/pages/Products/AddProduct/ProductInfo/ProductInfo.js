@@ -1245,19 +1245,18 @@ const ProductInfo = () => {
                 </p>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
-                    placeholder="Upload Image"
                     size="small"
                     disabled={checkedDynamic}
                     className="py-1"
                     startAdornment={
-                      <InputAdornment position="start">
-                        <img src={image3} className="me-1"/>
-                        <img src={upload} />
+                      <InputAdornment position="start" sx={{color: "#658DED", fontSize: "16px"}}>
+                        <img src={image3} className="me-2" {...getRootProps({ style })}/>
+                        <img src={upload} className="mr-3" />
+                        <span >Upload Image</span>
                       </InputAdornment>
                     }
                   />
                 </FormControl>
-
               </div>
               <div className="d-flex col-12 mt-3">
                 <p className="text-lightBlue col-5">
@@ -1301,31 +1300,104 @@ const ProductInfo = () => {
                     Linked to Product Title
                   </small>
                 </div>
-                <FormControl className="col-7 px-0">
+                <FormControl className="col-7 px-0 backgroundDisable">
                   <OutlinedInput
-                    placeholder="Enter content"
                     size="small"
-                    disabled={checkedDynamic}
+                    disabled
                     className="py-1"
+                    startAdornment={
+                      <InputAdornment position="start" sx={{color: "#96ABDE", fontSize: "16px"}}>
+                        <span className="me-1">Product Title:</span>
+                        <span style={{color: "#658DED"}}>The Fringe Diamond Ring</span>
+                      </InputAdornment>
+                    }
                   />
                 </FormControl>
               </div>
               <div className="d-flex col-12 mt-3">
                 <div  className="col-5">
                   <p className="text-lightBlue">
-                    Product Code
+                    Brand
                   </p>
                   <small className="text-grey-6 mt-2">
                     <InsertLinkIcon className="me-1"/>
-                    Customer wont see this
+                    Linked to Vendor
                   </small>
                 </div>
+                <FormControl className="col-7 px-0 backgroundDisable">
+                  <OutlinedInput
+                    size="small"
+                    disabled
+                    className="py-1"
+                    startAdornment={
+                      <InputAdornment position="start" sx={{color: "#96ABDE", fontSize: "16px"}}>
+                        <span className="me-1">Vendor:</span>
+                        <span style={{color: "#658DED"}}>PCJ Jewellers</span>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Height
+                </p>
                 <FormControl className="col-7 px-0">
                   <OutlinedInput
-                    placeholder="Enter content"
+                    placeholder="Enter Content"
                     size="small"
                     disabled={checkedDynamic}
                     className="py-1"
+                    endAdornment={
+                      <InputAdornment position="start" sx={{color: "#5C6D8E"}}>
+                        <span className="mr-4">
+                          |
+                        </span>
+                        mm
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Width
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                    endAdornment={
+                      <InputAdornment position="start" sx={{color: "#5C6D8E"}}>
+                        <span className="mr-4">
+                          |
+                        </span>
+                        mm
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Bandwidth
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                    endAdornment={
+                      <InputAdornment position="start" sx={{color: "#5C6D8E"}}>
+                        <span className="mr-4">
+                          |
+                        </span>
+                        mm
+                      </InputAdornment>
+                    }
                   />
                 </FormControl>
               </div>

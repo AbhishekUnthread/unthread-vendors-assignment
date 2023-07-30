@@ -39,7 +39,8 @@ import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModa
 
 import './Collections.scss';
 
-import unthreadLogo from "../../../assets/images/unthreadLogo.png"
+import unthreadLogo from "../../../assets/images/unthreadLogo.png";
+import defaultLogo from "../../../assets/images/users/collection_defaultdp 01.svg";
 import unArchived from "../../../assets/images/Components/Archived.png"
 import { Link } from "react-router-dom";
 
@@ -274,6 +275,7 @@ const CollectionsTable = ({
   }
 
   const handleUnArchive = (id, title) => {
+    console.log(selected, 'selected');
     setForMassAction(false)
     setShowUnArhcivedModal(true)
     setUnArchiveID(id)
@@ -414,9 +416,9 @@ const CollectionsTable = ({
                           }}
                         >
                           <img
-                            src={row.mediaUrl ? row.mediaUrl : unthreadLogo}
+                            src={row.mediaUrl ? row.mediaUrl : defaultLogo}
                             alt="ringSmall"
-                            className="me-2 rounded-8"
+                            className="me-2 rounded-4"
                             height={45}
                             width={45}
                           />
@@ -430,41 +432,42 @@ const CollectionsTable = ({
                       <p className="text-lightBlue">{row.totalProduct}</p>
                     </TableCell>
                     { (collectionType == 0 || collectionType == 3) &&
-                    <TableCell style={{ width: 180, padding: 10 }}>
-                      <div className="d-block">
-                        <div className="rounded-pill d-flex px-2 py-1 statusBoxWidth" 
-                          style={{background: 
-                            row.status == "active" ? "#A6FAAF" : 
-                            row.status == "in-active" ? "#F67476" : 
-                            row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
-                          }}>
-                          <small className="text-black fw-500">
-                            {
-                              row.status == "active" ? "Active" :  
-                              row.status == "in-active" ? "In-Active" : 
-                              row.status == "archieved" ? "Archived" : "Scheduled"
-                            }
-                          </small>
-                        </div>
-                        { row.status == "scheduled" && 
-                          <div>
-                            <small className="text-blue-2">
-                              {row.startDate && (
-                                <>
-                                  for {moment(row.startDate).format("DD/MM/YYYY")}
-                                </>
-                              )}
-                              {row.startDate && row.endDate && ' '}
-                              {row.endDate && (
-                                <>
-                                  till {moment(row.endDate).format("DD/MM/YYYY")}
-                                </>
-                              )}
+                      <TableCell style={{ width: 180, padding: 0 }}>
+                        <div className="d-block">
+                          <div className="rounded-pill d-flex px-2 py-1 statusBoxWidth" 
+                            style={{background: 
+                              row.status == "active" ? "#A6FAAF" : 
+                              row.status == "in-active" ? "#F67476" : 
+                              row.status == "archieved" ? "#C8D8FF" : "#FEE1A3"
+                            }}>
+                            <small className="text-black fw-500">
+                              {
+                                row.status == "active" ? "Active" :  
+                                row.status == "in-active" ? "In-Active" : 
+                                row.status == "archieved" ? "Archived" : "Scheduled"
+                              }
                             </small>
                           </div>
-                        }
-                      </div>
-                    </TableCell> }
+                          { row.status == "scheduled" && 
+                            <div>
+                              <small className="text-blue-2">
+                                {row.startDate && (
+                                  <>
+                                    for {moment(row.startDate).format("DD/MM/YYYY")}
+                                  </>
+                                )}
+                                {row.startDate && row.endDate && ' '}
+                                {row.endDate && (
+                                  <>
+                                    till {moment(row.endDate).format("DD/MM/YYYY")}
+                                  </>
+                                )}
+                              </small>
+                            </div>
+                          }
+                        </div>
+                      </TableCell> 
+                    }
                     {row.status == "archieved" ?
                       <TableCell style={{ width: 140, padding: 0 }}>
                          <div className="d-flex align-items-center">
