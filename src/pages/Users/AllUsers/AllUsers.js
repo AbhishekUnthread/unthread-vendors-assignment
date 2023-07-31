@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   Autocomplete,
@@ -28,8 +28,8 @@ import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
-import TableSearch from "../../../components/TableSearch/TableSearch";
 import FilterUsers from "../../../components/FilterUsers/FilterUsers";
+import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 
 import "./AllUsers.scss";
 
@@ -60,7 +60,7 @@ const locationData = [
 
 const initialQueryFilterState = {
   pageSize: 10,
-  pageNo: 1,
+  pageNo: 0,
   name:"",
   searchValue: ""
 };
@@ -93,6 +93,13 @@ const queryFilterReducer = (state, action) => {
       name: action.name,
     };
   }
+  if (action.type === "SET_SEARCH_VALUE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      searchValue: action.searchValue,
+    };
+  }
   return initialQueryFilterState;
 };
 
@@ -111,6 +118,7 @@ const usersReducer = (state, action) => {
     };
   }
   if (action.type === "SET_CUSTOMER_TYPE") {
+    console.log(action, 'acations');
     return {
       ...state,
       customerType: action.customerType,
@@ -122,6 +130,7 @@ const usersReducer = (state, action) => {
 const AllUsers = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const[searchParams, setSearchParams] = useSearchParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -132,25 +141,37 @@ const AllUsers = () => {
   );
 
   const queryParameters = {};
-  if(queryFilterState.name)
-{
-  queryParameters.name = queryFilterState.name;
-}
+
+  if(queryFilterState.name) {
+    queryParameters.name = queryFilterState.name;
+  }
+
+  const customerStatusQuery = 
+    usersState.customerType === 0 ? {createdAt: -1}
+  : usersState.customerType === 1 ? { status: "active" }
+  : usersState.customerType === 2 ? { status: "new" }
+  : usersState.customerType === 3 ? { createdAt: -1, status: "in-active" }
+  : usersState.customerType === 4 ? { createdAt: -1, status: "archieved" }
+  : {};
 
   const {
-    data: customersData, // 
+    data: customersData,  
     isLoading: customersIsLoading, 
     isSuccess: customersIsSuccess, 
     error: customersError
-  } = useGetAllCustomersQuery({createdAt:1,pageSize:queryFilterState.pageSize,pageNo:queryFilterState.pageNo+1,...queryParameters});
+  } = useGetAllCustomersQuery({
+      createdAt:1,
+      pageSize:queryFilterState.pageSize,
+      pageNo:queryFilterState.pageNo+1,
+      ...queryParameters, ...customerStatusQuery
+    });
 
-  const editHandler = (index) => {
-    const currentTabNo = index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-          console.log(index, 'index')
+  const editHandler = (id) => {
+    let customerId = {_id: id}
+    let combinedObject = {customerId, customerStatusQuery}
+    const paramsQuery = encodeURIComponent(JSON.stringify(combinedObject));    
 
-      console.log(currentTabNo, 'currentTabNo')
-
-    navigate(`./edit/${currentTabNo}`);
+    navigate(`./details/${paramsQuery}`);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -165,12 +186,28 @@ const AllUsers = () => {
     dispatchUsers({
       type:"SET_CUSTOMER_TYPE", customerType:newValue
     })
+    setSearchParams(newValue)
   };
+
+  useEffect(() => {
+    if( +searchParams.get("status") == 0 ) {
+      usersState.customerType = 0;
+    } else if(+searchParams.get("status")==1) {
+      usersState.customerType = 1;
+    } else if(+searchParams.get("status")===2) {
+      usersState.customerType = 2;
+    } else if(+searchParams.get("status")===3) {
+      usersState.customerType = 3;
+    }
+  }, [searchParams])
+
   const handleSearchChange = (value) => {
     dispatchQueryFilter({ type: "SEARCH", name: value });
   };
 
-  // ? POPOVERS STARTS HERE
+  const handleSearchValue =(value)=>{
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
+  }
 
   // * FLAG POPOVERS STARTS
   const [anchorFlagEl, setAnchorFlagEl] = useState(null);
@@ -321,7 +358,7 @@ const AllUsers = () => {
   return (
     <div className="container-fluid page">
       <div className="row justify-content-between align-items-center">
-        <h4 className="page-heading w-auto ps-0">All Users</h4>
+        <h4 className="page-heading w-auto ps-0">All Customers</h4>
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
           <ViewLogsDrawer headingName={"User Module"} icon={customers} />
@@ -503,7 +540,11 @@ const AllUsers = () => {
             </Popover>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch onChange={handleSearchChange} />
+            <TableSearchSecondary 
+              onSearchValueChange={handleSearchValue} 
+              value={queryFilterState.searchValue} 
+              onChange={handleSearchChange} 
+            />
             <div className="d-flex ms-2">
               <div className="d-flex product-button__box">
                 <button
@@ -771,22 +812,54 @@ const AllUsers = () => {
           </TabPanel>
           <TabPanel value={usersState.customerType} index={1}>
             <AllUsersTable 
+              isLoading={customersIsLoading}
+              error={usersState.error}
               list={usersState.data}
+              totalCount={usersState.totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+              onEdit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={2}>
             <AllUsersTable 
+              isLoading={customersIsLoading}
+              error={usersState.error}
               list={usersState.data}
+              totalCount={usersState.totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+              onEdit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={3}>
             <AllUsersTable 
+              isLoading={customersIsLoading}
+              error={usersState.error}
               list={usersState.data}
+              totalCount={usersState.totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+              onEdit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={4}>
             <AllUsersTable 
+              isLoading={customersIsLoading}
+              error={usersState.error}
               list={usersState.data}
+              totalCount={usersState.totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+              onEdit={editHandler}
             />
           </TabPanel>
         </Paper>

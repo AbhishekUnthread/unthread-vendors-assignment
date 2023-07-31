@@ -1,6 +1,11 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 
 // ! COMPONENT IMPORTS
 import NotesBox from "../../../components/NotesBox/NotesBox";
@@ -124,7 +129,7 @@ const EditVendor = () => {
     vendorsReducer,
     initialVendorState
   );
-  const [decodedObject, setDecodedObject] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const {
     data: vendorsData,
@@ -132,19 +137,7 @@ const EditVendor = () => {
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
     isError: vendorsIsError,
-  } = useGetAllVendorsQuery(
-    {
-      ...queryFilterState,
-      ...(decodedObject?.queryParameters || {}),
-      ...(decodedObject?.vendorTypeQuery || {}),
-      name: decodedObject?.queryFilterState?.name || "",
-    }
-    // ,
-    // queryFilterState,
-    // {
-    //   skip: queryFilterState.pageNo ? false : true,
-    // }
-  );
+  } = useGetAllVendorsQuery({ id: id });
 
   const [
     editVendor,
@@ -174,22 +167,11 @@ const EditVendor = () => {
   };
 
   const backHandler = () => {
-    navigate(`/parameters/vendors?status=${decodedObject.tab}`);
+    navigate({
+      pathname: "/parameters/vendors",
+      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
+    });
   };
-
-  useEffect(() => {
-    if (id) {
-      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
-    }
-  }, [id]);
-
-  useEffect(() => {
-    const encodedString = filter;
-    const decodedString = decodeURIComponent(encodedString);
-    const parsedObject = JSON.parse(decodedString);
-
-    setDecodedObject(parsedObject);
-  }, [filter]);
 
   useEffect(() => {
     if (editVendorIsError) {
@@ -234,7 +216,7 @@ const EditVendor = () => {
   const formik = useFormik({
     initialValues: {
       name: vendorsData?.data?.data[0].name || "",
-      notes: vendorsData?.data?.data[0].notes ,
+      notes: vendorsData?.data?.data[0].notes,
       status: vendorsData?.data?.data[0].status,
       filter: vendorsData?.data?.data[0].showFilter || false,
     },
@@ -256,7 +238,7 @@ const EditVendor = () => {
           .then(() => {
             dispatchVendor({ type: "DISABLE_EDIT" });
             dispatch(showSuccess({ message: "Vendor edited successfully" }));
-            navigate(`/parameters/vendors?status=${decodedObject.tab}`);
+            // navigate(`/parameters/vendors?status=${decodedObject.tab}`);
           });
       }
     },
@@ -349,7 +331,7 @@ const EditVendor = () => {
                     }}
                     className=" px-0 me-1"
                   />
-                <span className="text-blue-2 c-pointer">(manage)</span>
+                  <span className="text-blue-2 c-pointer">(manage)</span>
                 </div>
               </div>
             </div>

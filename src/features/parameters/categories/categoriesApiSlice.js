@@ -6,10 +6,8 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
       query: (queries) => {
         let queryString = "";
         for (const key in queries) {
-          if (queries[key]) {
-            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
-              queries[key]
-            }`;
+          if (queries[key] !== undefined && queries[key] !== null && queries[key] !== "") {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${queries[key]}`;
           }
         }
         return {
@@ -22,10 +20,8 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
       query: (queries) => {
         let queryString = "";
         for (const key in queries) {
-          if (queries[key]) {
-            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
-              queries[key]
-            }`;
+          if (queries[key] !== undefined && queries[key] !== null && queries[key] !== "") {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${queries[key]}`;
           }
         }
         return {
@@ -112,7 +108,7 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: details,
       }),
-      invalidatesTags: ["SubCategories"],
+      invalidatesTags: ["SubCategories","Categories"],
     }),
     bulkEditTagCategory:builder.mutation({
       query: (updates) => ({
@@ -130,7 +126,38 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["SubCategories"],
     }),
-
+    getAllCategorieStatusCount: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+        return {
+          url: `/parameters/category/count${queryString}`,
+        };
+      },
+      providesTags: ["Categories"],
+    }),
+    getAllSubCategorieStatusCount: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+        return {
+          url: `/parameters/subCategory/count${queryString}`,
+        };
+      },
+      providesTags: ["SubCategories"],
+    }),
   }),
 });
 
@@ -149,4 +176,6 @@ export const {
   useBulkEditTagSubCategoryMutation,
   useBulkDeleteCategoryMutation,
   useBulkDeleteSubCategoryMutation,
+  useGetAllCategorieStatusCountQuery,
+  useGetAllSubCategorieStatusCountQuery,
 } = categoriesApiSlice;

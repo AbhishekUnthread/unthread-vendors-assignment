@@ -1,0 +1,32 @@
+.ck,
+*[role="textbox"] {
+  background-color: #15142a !important;
+  color: #c8d8ff !important;
+  border-color: #38395c !important;
+}
+
+.ck-on,
+.ck-on svg,
+.ck-button_with-text[aria-checked="true"] span {
+  background-color: #38395c !important;
+}
+
+div [type="button"]:not(.ck-insert-table-dropdown-grid-box) {
+  border: none !important;
+}
+
+.ck:focus:not(.ck-insert-table-dropdown-grid-box) {
+  border-color: 1px solid #38395c !important;
+}
+
+.ck-powered-by-balloon {
+  display: none !important;
+}
+
+.ck-content {
+  border-radius: 0px 0px 8px 8px !important;
+}
+
+.ck-toolbar {
+  border-radius: 8px 8px 0px 0px !important;
+}

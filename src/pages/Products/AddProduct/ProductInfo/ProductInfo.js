@@ -11,6 +11,10 @@ import productInfoMedia1 from "../../../../assets/images/products/productInfoMed
 import productInfoMedia2 from "../../../../assets/images/products/productInfoMedia2.svg";
 import image from "../../../../assets/images/users/userLarge.svg"
 import image2 from "../../../../assets/images/unthreadLogo.png"
+import product2 from "../../../../assets/images/products/product2.jpg";
+import upload from "../../../../assets/icons/upload.svg";
+import image3 from "../../../../assets/icons/image-03.svg";
+import eye from "../../../../assets/icons/eyeClosed.svg"
 // ! MATERIAL IMPORTS
 import {
   Autocomplete,
@@ -183,6 +187,16 @@ const taggedWithData = [
   { title: "Tag 11", value: "tag11" },
   { title: "Tag 12", value: "tag12" },
 ];
+
+const imageUpload = [
+  {id: 1, image: product2},
+  {id: 2, image: product2},
+  {id: 3, image: product2},
+  {id: 4, image: product2},
+  {id: 5, image: product2},
+  {id: 6, image: product2},
+  {id: 7, image: product2}
+]
 // ? COLLECTIONS AUTOCOMPLETE ENDS HERE
 
 const ProductInfo = () => {
@@ -220,6 +234,11 @@ const ProductInfo = () => {
     if (checkedDynamic) {
       setCheckedDynamic(false);
     }
+  };
+
+  const [productType, setProductType] = React.useState("physical");
+  const handleProductType = (event, newProductType) => {
+    setProductType(newProductType);
   };
 
   const [checkedDynamic, setCheckedDynamic] = React.useState(false);
@@ -640,10 +659,10 @@ const ProductInfo = () => {
           <div className="row">
             <div className="col-3 ps-0 d-flex flex-column justify-content-between">
               <div className="d-flex justify-content-between mediaToolCheckBox" style={{color: '#5C6D8E'}}>
-                <Checkbox />
+                <Checkbox sx={{color: "#5C6D8E"}}/>
                 <DragIndicatorIcon className="mt-2 me-3" />
               </div>
-              <div {...getRootProps({ style })} className="mt-3">
+              <div {...getRootProps({ style })}>
                 <input
                   id="primary"
                   {...getInputProps()}
@@ -652,29 +671,121 @@ const ProductInfo = () => {
                   //   event.target.value = null;
                   // }}
                 />
-                <img src={image2} className="w-100 h-100" alt="" />
+                <img src={product2} className="w-100 h-100 rounded-8"/>
               </div>
               <div className="d-flex justify-content-end mediaToolDot" style={{color: '#5C6D8E'}}>
-                <SyncAltIcon className="mx-2" /> 
-                <InsertLinkIcon className="mx-2" />
-                <CropIcon className="mx-2" />
-                <img width="20px" height="25px" src={deleteMedia} className="mx-3" />
+                <Tooltip title="Replace" placement="top">
+                  <div className="table-edit-icon rounded-4 mx-1 p-1">
+                    <SyncAltIcon
+                      sx={{
+                        color: "#5c6d8e",
+                        fontSize: 18,
+                        cursor: "pointer",
+                      }}
+                    />
+                  </div>
+                </Tooltip>
+                <Tooltip title="Copy link" placement="top">
+                  <div className="table-edit-icon rounded-4 mx-1 p-1">
+                    <InsertLinkIcon
+                      sx={{
+                        color: "#5c6d8e",
+                        fontSize: 18,
+                        cursor: "pointer",
+                      }}
+                    />
+                  </div>
+                </Tooltip>
+                <Tooltip title="Edit Image" placement="top">
+                  <div className="table-edit-icon rounded-4 mx-1 p-1">
+                    <CropIcon
+                      sx={{
+                        color: "#5c6d8e",
+                        fontSize: 18,
+                        cursor: "pointer",
+                      }}
+                    />
+                  </div>
+                </Tooltip>
+                <Tooltip title="Delete" placement="top">
+                  <div className="table-edit-icon rounded-4 mr-3 p-1 c-pointer">
+                    <img width="20px" height="25px" src={deleteMedia} />
+                  </div>
+                </Tooltip>
               </div>
-              <button className="primary-image py-2 w-100 mt-3">
+              <button className="primary-image py-2 w-100">
                 <p>Primary Image</p>
-              </button>
+              </button>              
             </div>
-            <div className="col-9 pe-0">
-              <div {...getRootProps({ style })} className="mt-3">
-                <input
+
+            <div className="col-9 pe-0 mt-4">
+              <div {...getInputProps({ style })} className="mt-3">
+                {/* <input
                   id="primary"
                   {...getInputProps()}
-                  // onChange={(event) => {
-                  //   uploadFileToCloud(event, "primary");
-                  //   event.target.value = null;
-                  // }}
-                />
-                <img src={productInfoMedia2} className="w-100" alt="" />
+                /> */}
+                <div className="grid-container">
+                  { imageUpload?.map((item) =>(
+                  <div className="grid-item">
+                    <div className="d-flex justify-content-between mediaToolCheckBox" style={{color: '#5C6D8E'}}>
+                      <Checkbox style={{color: "#5C6D8E"}} className="mb-3" />
+                      <DragIndicatorIcon className="mt-2" />
+                    </div>
+                    <div>
+                      <img src={item?.image} className="w-100 h-100 rounded-8" alt="" />
+                    </div>
+                    <div className="d-flex justify-content-end mediaToolDot" style={{color: '#5C6D8E'}}>
+                      <Tooltip title="Replace" placement="top">
+                        <div className="table-edit-icon rounded-4 p-1">
+                          <SyncAltIcon 
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                            }}
+                          /> 
+                        </div>
+                      </Tooltip>
+                      <Tooltip title="Copy link" placement="top">
+                        <div className="table-edit-icon rounded-4 p-1">
+                          <InsertLinkIcon 
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                            }}
+                          /> 
+                        </div>
+                      </Tooltip>
+                      <Tooltip title="Edit Image" placement="top">
+                        <div className="table-edit-icon rounded-4 p-1">
+                          <CropIcon 
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 18,
+                              cursor: "pointer",
+                            }}
+                          /> 
+                        </div>
+                      </Tooltip>
+                      <Tooltip title="Delete" placement="top">
+                        <div className="table-edit-icon rounded-4 p-1 mr-2">
+                          <img src={deleteMedia} className="icon-fontSize" />
+                        </div>
+                      </Tooltip>
+                    </div>
+                  </div>
+                  ))}
+                  <div {...getRootProps({style})} className="mx-1 my-1">
+                    <input
+                      id="primary"
+                      {...getInputProps()}
+                    />
+                    <img src={productInfoMedia1} className="w-100" alt="" />
+                  </div>
+                </div>
+                
+                {/* <img src={productInfoMedia2} className="w-100" alt="" /> */}
               </div>
             </div>
           </div>
@@ -1063,6 +1174,234 @@ const ProductInfo = () => {
                 )}
               />
             </div>
+          </div>
+        </div>
+      </div>
+      <div className="bg-black-15 border-grey-5 rounded-8 p-3 row productInfo mt-4">
+        <div className="col-12">
+          <div className="row mb-3">
+            <h6 className="text-lightBlue col-12 px-0 fw-500">
+              Product Tab
+              <Tooltip title="Lorem ipsum" placement="top">
+                <img
+                  src={info}
+                  alt="info"
+                  className="c-pointer ms-2"
+                  width={13.5}
+                />
+              </Tooltip>
+            </h6>
+          </div>
+          <div className="row">
+            <div className="col-4 ps-0 mt-2">
+              <div className="d-flex mb-1">
+                <small className="text-grey-6 mt-2">
+                  Note : Customer can see this
+                </small>
+              </div>
+            </div>
+            <div className="col-12">
+              <ToggleButtonGroup
+                value={productType}
+                onChange={handleProductType}
+                aria-label="text formatting"
+                className="row d-flex mt-1 toggle"
+                size="small"
+                exclusive
+              >
+                <ToggleButton
+                  value="physical"
+                  aria-label="physical"
+                  style={{ width: 200 }}
+                >
+                  <div className="d-flex">
+                    <p className="text-grey-6">Product Information</p>
+                  </div>
+                </ToggleButton>
+                <ToggleButton
+                  value="Metal"
+                  aria-label="digital"
+                  style={{ width: 200 }}
+                >
+                  <div className="d-flex">
+                    <p className="text-grey-6">Metal Info</p>
+                  </div>
+                </ToggleButton>
+                <ToggleButton
+                  value="diamond"
+                  aria-label="digital"
+                  style={{ width: 200 }}
+                >
+                  <div className="d-flex">
+                    <p className="text-grey-6">Diamond Info</p>
+                  </div>
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </div>
+            <div style={{background: "#15142A"}}>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Featured image
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                    startAdornment={
+                      <InputAdornment position="start" sx={{color: "#658DED", fontSize: "16px"}}>
+                        <img src={image3} className="me-2" {...getRootProps({ style })}/>
+                        <img src={upload} className="mr-3" />
+                        <span >Upload Image</span>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Featured Text
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <div  className="col-5">
+                  <p className="text-lightBlue">
+                    Product Code
+                  </p>
+                  <small className="text-grey-6 mt-2">
+                    <img src={eye} className="me-1"/>
+                    Customer wont see this
+                  </small>
+                </div>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <div  className="col-5">
+                  <p className="text-lightBlue">
+                    Product Name
+                  </p>
+                  <small className="text-grey-6 mt-2">
+                    <InsertLinkIcon className="me-1"/>
+                    Linked to Product Title
+                  </small>
+                </div>
+                <FormControl className="col-7 px-0 backgroundDisable">
+                  <OutlinedInput
+                    size="small"
+                    disabled
+                    className="py-1"
+                    startAdornment={
+                      <InputAdornment position="start" sx={{color: "#96ABDE", fontSize: "16px"}}>
+                        <span className="me-1">Product Title:</span>
+                        <span style={{color: "#658DED"}}>The Fringe Diamond Ring</span>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <div  className="col-5">
+                  <p className="text-lightBlue">
+                    Brand
+                  </p>
+                  <small className="text-grey-6 mt-2">
+                    <InsertLinkIcon className="me-1"/>
+                    Linked to Vendor
+                  </small>
+                </div>
+                <FormControl className="col-7 px-0 backgroundDisable">
+                  <OutlinedInput
+                    size="small"
+                    disabled
+                    className="py-1"
+                    startAdornment={
+                      <InputAdornment position="start" sx={{color: "#96ABDE", fontSize: "16px"}}>
+                        <span className="me-1">Vendor:</span>
+                        <span style={{color: "#658DED"}}>PCJ Jewellers</span>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Height
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                    endAdornment={
+                      <InputAdornment position="start" sx={{color: "#5C6D8E"}}>
+                        <span className="mr-4">
+                          |
+                        </span>
+                        mm
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Width
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                    endAdornment={
+                      <InputAdornment position="start" sx={{color: "#5C6D8E"}}>
+                        <span className="mr-4">
+                          |
+                        </span>
+                        mm
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+              <div className="d-flex col-12 mt-3">
+                <p className="text-lightBlue col-5">
+                  Bandwidth
+                </p>
+                <FormControl className="col-7 px-0">
+                  <OutlinedInput
+                    placeholder="Enter Content"
+                    size="small"
+                    disabled={checkedDynamic}
+                    className="py-1"
+                    endAdornment={
+                      <InputAdornment position="start" sx={{color: "#5C6D8E"}}>
+                        <span className="mr-4">
+                          |
+                        </span>
+                        mm
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </div>
+            </div>            
           </div>
         </div>
       </div>

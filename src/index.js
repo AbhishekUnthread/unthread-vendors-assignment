@@ -41,6 +41,9 @@ const projectTheme = createTheme({
     allVariants: {
       fontFamily: "Inter",
     },
+    button: {
+      textTransform: "none",
+    },
   },
   components: {
     MuiTooltip: {
@@ -49,6 +52,16 @@ const projectTheme = createTheme({
           backgroundColor: "#433e73",
           color: "",
           border: "1px solid #433e73",
+        },
+      },
+    },
+    MuiFab: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#181732",
+          "&:hover": {
+            backgroundColor: "#181732",
+          },
         },
       },
     },

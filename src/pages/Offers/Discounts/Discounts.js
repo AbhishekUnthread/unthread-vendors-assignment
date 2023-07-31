@@ -116,7 +116,7 @@ const Discounts = () => {
   );
 
   const{
-    data: discountsData, // 
+    data: discountsData, 
     isLoading: discountsIsLoading, 
     isSuccess: discountsIsSuccess, 
     error: discountsError,
@@ -149,7 +149,7 @@ const Discounts = () => {
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
   }
 
-console.log("first",discountsData?.data[0])
+console.log("first",discountsData?.data?.data)
   // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
@@ -183,39 +183,39 @@ console.log("first",discountsData?.data[0])
       if (discountsState.discountType === 0) {
         dispatchDiscounts({
           type: "SET_DATA",
-          data: discountsData?.data,
-          totalCount: discountsData?.totalCount,
+          data: discountsData?.data?.data,
+          totalCount: discountsData?.data?.totalCount,
         })
       }
       if (discountsState.discountType === 1) {
         dispatchDiscounts({
           type: "SET_DATA",
-          data: discountsData?.data,
-          totalCount: discountsData?.totalCount,
+          data: discountsData?.data?.data,
+          totalCount: discountsData?.data?.totalCount,
         })
       }
       if(discountsState.discountType === 2)
       {
         dispatchDiscounts({
           type: "SET_DATA",
-          data: discountsData?.data,
-          totalCount: discountsData?.totalCount,
+          data: discountsData?.data?.data,
+          totalCount: discountsData?.data?.totalCount,
         })
       }
       if(discountsState.discountType === 3)
       {
         dispatchDiscounts({
           type: "SET_DATA",
-          data: discountsData?.data,
-          totalCount: discountsData?.totalCount,
+          data: discountsData?.data?.data,
+          totalCount: discountsData?.data?.totalCount,
         })
       }
       if(discountsState.discountType === 4)
       {
         dispatchDiscounts({
           type: "SET_DATA",
-          data: discountsData?.data,
-          totalCount: discountsData?.totalCount,
+          data: discountsData?.data?.data,
+          totalCount: discountsData?.data?.totalCount,
         })
       }
     }

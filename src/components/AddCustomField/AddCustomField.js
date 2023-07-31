@@ -351,7 +351,11 @@ const AddCustomField = (props) => {
         ) && (
           <div className="mt-2">
             <FieldType
-              error={!!touched?.productValue && error?.productValue}
+              error={
+                values?.fieldType === "image"
+                  ? error?.productValue
+                  : !!touched?.productValue && error?.productValue
+              }
               value={values?.productValue}
               onChange={changeProductValueHandler}
               name={`${field}.productValue`}

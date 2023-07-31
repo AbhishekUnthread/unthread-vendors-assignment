@@ -1,6 +1,11 @@
 import React, { forwardRef, useState, useEffect, useReducer } from "react";
-import { useNavigate,useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useDispatch } from "react-redux";
+import _ from "lodash";
 // ! COMPONENT IMPORTS
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import VendorsTable from "./VendorsTable";
@@ -28,7 +33,7 @@ import "../../Products/AllProducts/AllProducts.scss";
 import cancel from "../../../assets/icons/cancel.svg";
 import parameters from "../../../assets/icons/sidenav/parameters.svg";
 import sort from "../../../assets/icons/sort.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg"
+import arrowDown from "../../../assets/icons/arrowDown.svg";
 import info from "../../../assets/icons/info.svg";
 
 // ! MATERIAL IMPORTS
@@ -51,7 +56,6 @@ import {
   RadioGroup,
   Radio,
   Popover,
-
   FormGroup,
   InputAdornment,
   Tooltip,
@@ -60,7 +64,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 // ! MATERIAL ICONS IMPORTS
 import { LoadingButton } from "@mui/lab";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = forwardRef(function Transition(props, ref) {
@@ -71,8 +75,11 @@ const Transition = forwardRef(function Transition(props, ref) {
 const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 1,
-  name:"",
-  searchValue:""
+  name: "",
+  searchValue: "",
+  status: ["active", "in-active"],
+  createdAt: "-1",
+  alphabetical: null,
 };
 const queryFilterReducer = (state, action) => {
   if (action.type === "SET_PAGE_SIZE") {
@@ -85,7 +92,7 @@ const queryFilterReducer = (state, action) => {
   if (action.type === "CHANGE_PAGE") {
     return {
       ...state,
-      pageNo: action.pageNo +1,
+      pageNo: action.pageNo + 1,
     };
   }
   if (action.type === "SEARCH") {
@@ -94,7 +101,6 @@ const queryFilterReducer = (state, action) => {
       pageNo: initialQueryFilterState.pageNo,
       name: action.name,
     };
-    
   }
   if (action.type === "SET_SEARCH_VALUE") {
     return {
@@ -102,30 +108,74 @@ const queryFilterReducer = (state, action) => {
       pageNo: initialQueryFilterState.pageNo,
       searchValue: action.searchValue,
     };
-    
+  }
+  if (action.type === "SET_STATUS") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      status: action.status ? action.status : initialQueryFilterState.status,
+    };
+  }
+  if (action.type === "SET_ALPHABETICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      alphabetical: action.alphabetical,
+      createdAt: null,
+    };
+  }
+  if (action.type === "SET_CRONOLOGICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      createdAt: action.createdAt,
+      alphabetical: null,
+    };
+  }
+  if (action.type === "SET_ALL_FILTERS") {
+    return {
+      ...initialQueryFilterState,
+      ...action.filters,
+    };
   }
 
   return initialQueryFilterState;
 };
 
+const initialVendorState = {
+  status: "all",
+};
+
+const vendorReducer = (state, action) => {
+  if (action.type === "SET_STATUS") {
+    return {
+      status: action.status,
+    };
+  }
+
+  return initialVendorState;
+};
+
 const Vendors = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const[searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
+  );
+  const [vendorState, dispatchVendorState] = useReducer(
+    vendorReducer,
+    initialVendorState
   );
   const [vendorType, setVendorType] = useState(null);
   const [vendorList, setVendorList] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedSortOption, setSelectedSortOption] =
-    React.useState("newestToOldest");
-  const [selectedStatusOption, setSelectedStatusOption] = React.useState([]);
   const [multipleVendors, setMultipleVendors] = React.useState([]);
   const [totalCount, setTotalCount] = React.useState([]);
+  const [firstRender, setFirstRender] = useState(true);
 
   const vendorValidationSchema = Yup.object({
     name: Yup.string().trim().min(3).required("Required"),
@@ -134,60 +184,12 @@ const Vendors = () => {
     name: Yup.string().trim().min(3, "Name must be at least 3 characters long"),
   });
 
-  const queryParameters = {};
-  if (selectedSortOption) {
-    // Check alphabetical sort options
-    if (
-      selectedSortOption === "alphabeticalAtoZ" ||
-      selectedSortOption === "alphabeticalZtoA"
-    ) {
-      queryParameters.alphabetical =
-        selectedSortOption === "alphabeticalAtoZ" ? "1" : "-1";
-    }
-    // Check createdAt sort options
-    else if (
-      selectedSortOption === "oldestToNewest" ||
-      selectedSortOption === "newestToOldest"
-    ) {
-      queryParameters.createdAt =
-        selectedSortOption === "oldestToNewest" ? "1" : "-1";
-    }
-  }
-
-  if (selectedStatusOption !== null) {
-    if (Array.isArray(selectedStatusOption)) {
-      queryParameters.status = selectedStatusOption.join(",");
-    } else {
-      queryParameters.status = selectedStatusOption;
-    }
-  }
-  if (!selectedSortOption && selectedStatusOption === null) {
-    queryParameters.status = "active";
-    queryParameters.status = "in-active";
-  }
-
-  const vendorTypeQuery =
-    vendorType === 0
-      ? selectedStatusOption.length > 0
-        ? { status: selectedStatusOption }
-        : { status: "[active,in-active]" }
-      : vendorType === 1
-      ? { status: "active" }
-      : vendorType === 2
-      ? { status: "in-active" }
-      : vendorType === 3
-      ? { status: "archieved" }
-      : {};
-
   const {
     data: vendorsData,
     isLoading: vendorsIsLoading,
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
-  } = useGetAllVendorsQuery(
-    { ...queryParameters, ...vendorTypeQuery, ...queryFilterState },
-    { enabled: Object.keys(queryParameters).length > 0 }
-  );
+  } = useGetAllVendorsQuery({ ...queryFilterState });
 
   const {
     data: vendorsStatusCount,
@@ -300,29 +302,55 @@ const Vendors = () => {
 
   const editCategoryPageNavigationHandler = (data, index) => {
     setIsEditing(true);
-    const combinedObject = {
-      queryParameters,
-      vendorTypeQuery,
-      queryFilterState,
-      tab: vendorType,
-    };
-    const encodedCombinedObject = encodeURIComponent(
-      JSON.stringify(combinedObject)
-    );
-
-    const currentTabNo =
-      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-    navigate(`./edit/${currentTabNo}/${encodedCombinedObject}`);
+    navigate({
+      pathname: `./edit/${data ? data._id : ""}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, vendorType }),
+      })}`,
+    });
   };
 
   const changeVendorTypeHandler = (_event, tabIndex) => {
     setVendorType(tabIndex);
+    if (tabIndex === 0) {
+      dispatchVendorState({
+        type: "SET_STATUS",
+        status: "all",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active", "in-active"],
+      });
+    } else if (tabIndex === 1) {
+      dispatchVendorState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active"],
+      });
+    } else if (tabIndex === 2) {
+      dispatchVendorState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["in-active"],
+      });
+    } else if (tabIndex === 3) {
+      dispatchVendorState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["archieved"],
+      });
+    }
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
     dispatchQueryFilter({ type: "SEARCH", name: "" });
-
-    setSelectedSortOption("");
-    setSelectedStatusOption("");
-    setSearchParams({ status: tabIndex });
   };
 
   const handleAddMultiple = (event) => {
@@ -377,9 +405,20 @@ const Vendors = () => {
     setAnchorSortEl(null);
   };
 
-  const handleSortRadioChange = (event) => {
-    setSelectedSortOption(event.target.value);
-    setAnchorSortEl(null); // Close the popover after selecting a value
+  const handleAlphabeticalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_ALPHABETICAL_SORTING",
+      alphabetical: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
+
+  const handleChronologicalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_CRONOLOGICAL_SORTING",
+      createdAt: event.target.value,
+    });
+    setAnchorSortEl(null);
   };
 
   const openSort = Boolean(anchorSortEl);
@@ -398,16 +437,41 @@ const Vendors = () => {
   };
 
   const handleStatusCheckboxChange = (event) => {
-    const { value } = event.target;
-
-    setSelectedStatusOption((prevSelected) => {
-      if (prevSelected.includes(value)) {
-        return prevSelected.filter((option) => option !== value);
+    if (event.target.checked) {
+      if (vendorState.status === "all") {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [event.target.value],
+        });
+        dispatchVendorState({
+          type: "SET_STATUS",
+          status: "",
+        });
       } else {
-        return [...prevSelected, value];
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [...queryFilterState.status, event.target.value],
+        });
       }
-    });
-    setAnchorStatusEl(null);
+    } else {
+      if (queryFilterState.status.length > 1) {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: queryFilterState.status.filter(
+            (status) => status !== event.target.value
+          ),
+        });
+      } else {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: ["active", "in-active"],
+        });
+        dispatchVendorState({
+          type: "SET_STATUS",
+          status: "all",
+        });
+      }
+    }
   };
 
   const openStatus = Boolean(anchorStatusEl);
@@ -550,19 +614,47 @@ const Vendors = () => {
   }, [bulkVendorEditError, dispatch]);
 
   useEffect(() => {
-    if (+searchParams.get("status") === 0) {
-      setVendorType(0);
-    } else if (+searchParams.get("status") === 1) {
-      setVendorType(1);
-    } else if (+searchParams.get("status") === 2) {
-      console.log("check");
-      setVendorType(2);
-    } else if (+searchParams.get("status") === 3) {
-      setVendorType(3);
+    const filterParams = JSON.parse(searchParams.get("filter")) || {
+      vendorType,
+    };
+    if (firstRender && Object.keys(filterParams).length) {
+      let filters = {};
+      for (let key in filterParams) {
+        if (key !== "vendorType") {
+          if (filterParams[key] !== (null || "")) {
+            if (key === "status" && filterParams[key].length < 2) {
+              dispatchVendorState({
+                type: "SET_STATUS",
+                status: "",
+              });
+            }
+            filters = {
+              ...filters,
+              [key]: filterParams[key],
+            };
+          }
+        } else {
+          setVendorType(+filterParams[key]);
+        }
+      }
+      if (filterParams.vendorType === (null || "")) {
+        setVendorType(0);
+      }
+      dispatchQueryFilter({
+        type: "SET_ALL_FILTERS",
+        filters,
+      });
+      setFirstRender(false);
     }
   }, [searchParams]);
 
-  console.log({ vendorType });
+  useEffect(() => {
+    if (!firstRender) {
+      setSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, vendorType }),
+      });
+    }
+  }, [queryFilterState, setSearchParams, vendorType, firstRender]);
 
   return (
     <div className="container-fluid page">
@@ -780,7 +872,6 @@ const Vendors = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      defaultChecked
                       size="small"
                       style={{
                         color: "#5C6D8E",
@@ -790,7 +881,10 @@ const Vendors = () => {
                   label="Active"
                   value="active"
                   className="me-0"
-                  checked={selectedStatusOption.includes("active")}
+                  checked={
+                    vendorState.status === "" &&
+                    queryFilterState.status.includes("active")
+                  }
                 />
                 <FormControlLabel
                   control={
@@ -804,7 +898,10 @@ const Vendors = () => {
                   label="In-Active"
                   className="me-0"
                   value="in-active"
-                  checked={selectedStatusOption.includes("in-active")}
+                  checked={
+                    vendorState.status === "" &&
+                    queryFilterState.status.includes("in-active")
+                  }
                 />
               </FormGroup>
             </Popover>
@@ -837,29 +934,50 @@ const Vendors = () => {
                 <RadioGroup
                   aria-labelledby="demo-controlled-radio-buttons-group"
                   name="controlled-radio-buttons-group"
-                  value={selectedSortOption}
-                  onChange={handleSortRadioChange}
-                  defaultValue="newestToOldest"
                 >
                   <FormControlLabel
-                    value="newestToOldest"
-                    control={<Radio size="small" />}
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "-1"}
+                      />
+                    }
                     label="Newest to Oldest"
+                    onChange={handleChronologicalSorting}
                   />
                   <FormControlLabel
-                    value="oldestToNewest"
-                    control={<Radio size="small" />}
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "1"}
+                      />
+                    }
                     label="Oldest to Newest"
+                    onChange={handleChronologicalSorting}
                   />
                   <FormControlLabel
-                    value="alphabeticalAtoZ"
-                    control={<Radio size="small" />}
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "1"}
+                      />
+                    }
                     label="Alphabetical (A-Z)"
+                    onChange={handleAlphabeticalSorting}
                   />
                   <FormControlLabel
-                    value="alphabeticalZtoA"
-                    control={<Radio size="small" />}
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "-1"}
+                      />
+                    }
                     label="Alphabetical (Z-A)"
+                    onChange={handleAlphabeticalSorting}
                   />
                 </RadioGroup>
               </FormControl>

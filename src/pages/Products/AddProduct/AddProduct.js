@@ -10,6 +10,7 @@ import Shipping from "./Shipping/Shipping";
 import Variants from "./Variants/Variants";
 import Options from "./Options/Options";
 import Attributes from "./Attributes/Attributes";
+import PriceMaster from "./PriceMaster/PriceMaster";
 import AppReactImageGallery from "../../../components/AppReactImageGallery/AppReactImageGallery";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
@@ -163,6 +164,7 @@ const AddProduct = () => {
                 className="tabs"
               >
                 <Tab label="Product Info" className="tabs-head" />
+                <Tab label="Price Master" className="tabs-head" />
                 <Tab label="Attributes" className="tabs-head" />
                 <Tab label="Options" className="tabs-head" />
                 <Tab label="Variants" className="tabs-head" />
@@ -176,21 +178,24 @@ const AddProduct = () => {
               <ProductInfo />
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <Attributes />
+              <PriceMaster />
             </TabPanel>
             <TabPanel value={value} index={2}>
-              <Options />
+              <Attributes />
             </TabPanel>
             <TabPanel value={value} index={3}>
-              <Variants />
+              <Options />
             </TabPanel>
             <TabPanel value={value} index={4}>
-              <Shipping />
+              <Variants />
             </TabPanel>
             <TabPanel value={value} index={5}>
-              <SEO />
+              <Shipping />
             </TabPanel>
             <TabPanel value={value} index={6}>
+              <SEO />
+            </TabPanel>
+            <TabPanel value={value} index={7}>
               <MoreFeatures />
             </TabPanel>
           </div>

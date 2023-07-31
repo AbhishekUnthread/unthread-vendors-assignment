@@ -582,7 +582,7 @@ const CategoriesTable = ({
                                 className="text-decoration-none"
                                 onClick={() => {
                                   if (archived === true) {
-                                    editPageHandler(index + 1);
+                                    editPageHandler(row,index + 1);
                                     return;
                                   }
                                   return;
@@ -678,10 +678,7 @@ const CategoriesTable = ({
                                   <Tooltip title="Edit" placement="top">
                                     <Link
                                       className="text-decoration-none"
-                                      onClick={editPageHandler.bind(
-                                        null,
-                                        index + 1
-                                      )}
+                                      onClick={()=>editPageHandler(row,index+ 1)}
                                     >
                                       <div className="table-edit-icon rounded-4 p-2">
                                         <EditOutlinedIcon
@@ -979,7 +976,7 @@ const CategoriesTable = ({
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[10, 15]}
+              rowsPerPageOptions={[5,10, 15]}
               component="div"
               count={totalCount}
               rowsPerPage={rowsPerPage}

@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useState } from "react";
 // ! IMAGES IMPORTS
 import arrowDown from "../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
@@ -114,7 +114,7 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
 
         {/* <div className="d-flex mt-3">
           <TableSearch />
-          <button className="button-grey py-2 px-3 ms-2">
+          <button className="button-grey py-2 px-3 ms-2" onClick={openCustomerModal}>
             <small className="text-lightBlue me-2">Browse</small>
             <img src={arrowDown} alt="arrow" className="" />
           </button>
@@ -172,6 +172,10 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
             />
           )}
       </div>
+      {/* <AddCustomerModal 
+        openAddCustomerModal={addCustomer}
+        closeAddCustomerModal={closeAddCustomerModal}
+      /> */}
     </div>
   );
 };

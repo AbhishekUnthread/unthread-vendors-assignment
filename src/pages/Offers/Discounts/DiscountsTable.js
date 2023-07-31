@@ -149,7 +149,7 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = list.map((n) => n.dId);
+      const newSelected = list?.map((n) => n.dId);
       setSelected(newSelected);
       return;
     }
@@ -209,7 +209,7 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={list.length}
+            rowCount={list?.length}
             headCells={headCells}
           />
           <TableBody>

@@ -1,5 +1,5 @@
 import React from "react";
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 import {
   Dialog,
   DialogActions,
@@ -33,7 +33,7 @@ const StatusBox = ({
   handleProductStatus, 
   toggleData=['active','in-active'], 
   startDate, 
-  endDate, 
+  endDate,
   handleStartDate, 
   handleEndDate, 
   clearDate

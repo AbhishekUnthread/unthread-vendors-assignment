@@ -3,6 +3,7 @@ import store from "./app/store";
 
 import Dashboard from "./pages/Dashboard/Dashboard";
 import AllProducts from "./pages/Products/AllProducts/AllProducts";
+import FileManager from "./pages/Settings/FileManager/FileManager";
 import AddProduct from "./pages/Products/AddProduct/AddProduct";
 import AllUsers from "./pages/Users/AllUsers/AllUsers";
 import AddUser from "./pages/Users/AddUser/AddUser";
@@ -71,6 +72,8 @@ import EditCollection from "./pages/Parameters/Collections/EditCollection/EditCo
 import ProductTabs from "./pages/Parameters/ProductTabs/ProductTabs";
 import ProductTabInfo from "./pages/Parameters/ProductTabs/ProductTabInfo";
 import OptionsInfo from "./pages/Parameters/Options/OptionsInfo";
+import Settings from "./pages/Settings/Settings";
+import TaxManager from "./pages/Settings/TaxManager/TaxManager";
 
 const router = () => {
   const loginStatus = store.getState().auth.isLoggedIn;
@@ -127,6 +130,7 @@ const router = () => {
                   path: "allProducts/addProduct",
                   element: <AddProduct />,
                 },
+
                 {
                   path: "bulkEditor",
                   element: <ProductsBulkEditor />,
@@ -151,6 +155,24 @@ const router = () => {
                 {
                   path: "inventory/details",
                   element: <ProductInventoryDetails />,
+                },
+              ],
+            },
+            {
+              path: "settings",
+              element: <Settings />,
+              children: [
+                {
+                  index: true,
+                  element: <Navigate to="filemanager" replace={true} />,
+                },
+                {
+                  path: "filemanager",
+                  element: <FileManager />,
+                },
+                {
+                  path: "taxmanager",
+                  element: <TaxManager />,
                 },
               ],
             },
@@ -203,7 +225,7 @@ const router = () => {
                   element: <CreateCollection />,
                 },
                 {
-                  path: "collections/edit/:id/:filter",
+                  path: "collections/edit/:id",
                   element: <EditCollection />,
                 },
                 {
@@ -231,11 +253,11 @@ const router = () => {
                   element: <Categories />,
                 },
                 {
-                  path: "categories/edit/:id/:filter",
+                  path: "categories/edit/:id",
                   element: <EditCategories />,
                 },
                 {
-                  path: "subCategories/edit/:id/:filter",
+                  path: "subCategories/edit/:id",
                   element: <EditSubCategories />,
                 },
                 {
@@ -255,7 +277,7 @@ const router = () => {
                   element: <Vendors />,
                 },
                 {
-                  path: "vendors/edit/:id/:filter",
+                  path: "vendors/edit/:id",
                   element: <EditVendor />,
                 },
                 {
@@ -335,7 +357,6 @@ const router = () => {
                 {
                   path: "discounts/create",
                   element: <CreateDiscount />,
-
                 },
                 {
                   path: "bundleDiscount",
