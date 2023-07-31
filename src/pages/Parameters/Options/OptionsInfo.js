@@ -14,11 +14,13 @@ import {
 } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import _ from "lodash";
 
 import InfoHeader from "../../../components/Header/InfoHeader";
 import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
 import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
 import OptionsAttributeTable from "./OptionsAttributeTable";
+import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
 
 import info from "../../../assets/icons/info.svg";
@@ -46,6 +48,7 @@ import {
 } from "../../../features/parameters/options/optionsApiSlice";
 
 import { colorReg, urlReg } from "../../../utils/regex";
+import { AssignmentReturn } from "@mui/icons-material";
 
 const FRONTEND_APPEARANCE = [
   {
@@ -237,6 +240,7 @@ const initialOptionState = {
   showDeleteModal: false,
   deleteTitle: "",
   deleteType: "",
+  isLoading: false,
 };
 
 const initialDeletedOptionState = {
@@ -289,6 +293,30 @@ const optionReducer = (state, action) => {
     return {
       ...state,
       totalCount: action.totalCount,
+    };
+  }
+  if (action.type === "ENABLE_EDIT") {
+    return {
+      ...state,
+      isEditing: true,
+    };
+  }
+  if (action.type === "DISABLE_EDIT") {
+    return {
+      ...state,
+      isEditing: false,
+    };
+  }
+  if (action.type === "ENABLE_LOADING") {
+    return {
+      ...state,
+      isLoading: true,
+    };
+  }
+  if (action.type === "DISABLE_LOADING") {
+    return {
+      ...state,
+      isLoading: false,
     };
   }
 
@@ -382,14 +410,48 @@ const OptionsInfo = () => {
       optionQueryFilterState.pageNo || optionQueryFilterState.id ? false : true,
   });
 
-  // const {
-  //   data: attributesData,
-  //   isLoading: attributesIsLoading,
-  //   error: attributesError,
-  //   isError: attributesIsError,
-  //   isSuccess: attributesIsSuccess,
-  //   isFetching: attributesDataIsFetching,
-  // } = useGetAllAttributesQuery();
+  const {
+    data: attributesData,
+    isLoading: attributesIsLoading,
+    error: attributesError,
+    isError: attributesIsError,
+    isSuccess: attributesIsSuccess,
+    isFetching: attributesDataIsFetching,
+  } = useGetAllAttributesQuery(
+    { attribute: optionsData?.data?.length && optionsData?.data[0]?._id },
+    {
+      skip:
+        optionsData?.data?.length && optionsData?.data[0]?._id ? false : true,
+    }
+  );
+  const {
+    data: subOptionsData,
+    isLoading: subOptionsIsLoading,
+    error: subOptionsError,
+    isError: subOptionsIsError,
+    isSuccess: subOptionsIsSuccess,
+    isFetching: subOptionsDataIsFetching,
+  } = useGetAllSubOptionsQuery(
+    { attribute: optionsData?.data?.length && optionsData?.data[0]?._id },
+    {
+      skip:
+        optionsData?.data?.length && optionsData?.data[0]?._id ? false : true,
+    }
+  );
+  const {
+    data: subAttributesData,
+    isLoading: subAttributesIsLoading,
+    error: subAttributesError,
+    isError: subAttributesIsError,
+    isSuccess: subAttributesIsSuccess,
+    isFetching: subAttributesDataIsFetching,
+  } = useGetAllSubAttributesQuery(
+    { attribute: optionsData?.data?.length && optionsData?.data[0]?._id },
+    {
+      skip:
+        optionsData?.data?.length && optionsData?.data[0]?._id ? false : true,
+    }
+  );
 
   const [
     createOption,
@@ -527,6 +589,7 @@ const OptionsInfo = () => {
       const subAttributes = values.subAttributes;
 
       try {
+        dispatchOption({ type: "ENABLE_LOADING" });
         if (!option.saved) {
           const { _id } = await createOption(option).unwrap();
           option._id = _id;
@@ -735,8 +798,10 @@ const OptionsInfo = () => {
           }
         });
         optionFormik.resetForm();
+        dispatchOption({ type: "DISABLE_LOADING" });
         dispatch(showSuccess({ message: "Option created successfully" }));
       } catch (error) {
+        dispatchOption({ type: "DISABLE_LOADING" });
         if (error?.data?.message) {
           dispatch(showError({ message: error.data.message }));
         } else {
@@ -748,10 +813,8 @@ const OptionsInfo = () => {
     },
   });
 
-  console.log(optionFormik.errors);
-
   const backHandler = () => {
-    navigate("/parameters/productTabs");
+    navigate("/parameters/options");
   };
 
   const nextPageHandler = () => {
@@ -1038,13 +1101,89 @@ const OptionsInfo = () => {
     }
   }, [optionsData, optionsError, optionsIsError, optionsIsSuccess, dispatch]);
 
-  // useEffect(() => {
-  //   if (id && !_.isEqual(formik.values, formik.initialValues)) {
-  //     dispatchProductsInfo({ type: "ENABLE_EDIT" });
-  //   } else if (id && _.isEqual(formik.values, formik.initialValues)) {
-  //     dispatchProductsInfo({ type: "DISABLE_EDIT" });
-  //   }
-  // }, [formik.initialValues, formik.values, id]);
+  useEffect(() => {
+    if (id && !_.isEqual(optionFormik.values, optionFormik.initialValues)) {
+      dispatchOption({ type: "ENABLE_EDIT" });
+    } else if (
+      id &&
+      _.isEqual(optionFormik.values, optionFormik.initialValues)
+    ) {
+      dispatchOption({ type: "DISABLE_EDIT" });
+    }
+  }, [optionFormik.initialValues, optionFormik.values, id]);
+
+  useEffect(() => {
+    if (optionsIsSuccess && optionsData.data.length) {
+      optionFormik.setFieldValue("option", {
+        _id: optionsData?.data[0]?._id,
+        title: optionsData?.data[0]?.title,
+        apperance: optionsData?.data[0]?.apperance,
+        type: optionsData?.data[0]?.type,
+        frontEndTitle: optionsData?.data[0]?.frontEndTitle,
+        isFilter: optionsData?.data[0]?.isFilter,
+        isPriceMaster: optionsData?.data[0]?.isPriceMaster,
+        saved: true,
+      });
+    }
+    if (attributesIsSuccess && attributesData.data.length) {
+      const attributesMappedData = attributesData.data.map((item) => {
+        const value = item.colour ? "colour" : "imageUrl";
+        return {
+          _id: item._id,
+          title: item.title,
+          colour: item.colour,
+          imageUrl: item.imageUrl,
+          type: item.type,
+          value,
+          apperance: item.apperance,
+          saved: true,
+        };
+      });
+      optionFormik.setFieldValue("attributes", attributesMappedData);
+    }
+    if (subOptionsIsSuccess && subOptionsData.data.length) {
+      const subOptionsMappedData = subOptionsData.data.map((item) => {
+        return {
+          _id: item._id,
+          metaAttribute: item.mmetaAttribute,
+          title: item.title,
+          apperance: item.apperance,
+          saved: true,
+          isOption: item.isOption,
+        };
+      });
+
+      optionFormik.setFieldValue("subOptions", subOptionsMappedData);
+    }
+    if (subAttributesIsSuccess && subAttributesData.data.length) {
+      const subAttributeMappedData = subAttributesData.data.map((item) => {
+        const value = item.colour ? "colour" : "imageUrl";
+        return {
+          _id: item._id,
+          metaAttribute: item.metaAttribute,
+          metaSubAttribute: item.metaSubAttribute,
+          title: item.title,
+          colour: item.colour,
+          imageUrl: item.imageUrl,
+          type: item.type,
+          value,
+          apperance: item.apperance,
+          saved: true,
+          isOption: item.isOption,
+        };
+      });
+      optionFormik.setFieldValue("subAttributes", subAttributeMappedData);
+    }
+  }, [
+    optionsData,
+    optionsIsSuccess,
+    attributesData,
+    attributesIsSuccess,
+    subOptionsData,
+    subOptionsIsSuccess,
+    subAttributesData,
+    subAttributesIsSuccess,
+  ]);
 
   return (
     <div className="page container-fluid position-relative user-group product-tab-page">
@@ -1249,9 +1388,9 @@ const OptionsInfo = () => {
         </div>
 
         <SaveFooterTertiary
-          show={true}
-          onDiscard={() => {}}
-          isLoading={false}
+          show={id ? optionState.isEditing : true}
+          onDiscard={backHandler}
+          isLoading={optionState.isLoading}
         />
       </form>
       <DeleteModalSecondary
@@ -1260,6 +1399,10 @@ const OptionsInfo = () => {
         show={optionState.showDeleteModal}
         message={optionState.confirmationMessage}
         title={optionState.deleteTitle}
+      />
+      <DiscardModalSecondary
+        when={!_.isEqual(optionFormik.values, optionFormik.initialValues)}
+        message="option"
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
   Grid,
   FormControl,
@@ -28,6 +28,10 @@ const CUSTOM_FIELD_DISPLAY = [
 
 const SubAttribute = (props) => {
   const { formik, index, onSubAttributeDelete } = props;
+  const [isDuplicate, setIsDuplicate] = useState({
+    status: false,
+    value: "",
+  });
 
   const imageUploadHandler = useCallback((url) => {
     formik.setFieldValue(`subAttributes[${index}].imageUrl`, url);
@@ -42,6 +46,25 @@ const SubAttribute = (props) => {
     }
   };
 
+  const changeTitleHandler = (e) => {
+    const isDuplicate = formik.values?.subAttributes.find((subAttr) => {
+      return subAttr.title.toLowerCase() === e.target.value.toLowerCase();
+    });
+    formik.handleChange(e);
+    if (isDuplicate && isDuplicate.title) {
+      setIsDuplicate({
+        status: true,
+        value: isDuplicate.title,
+      });
+      return;
+    }
+
+    setIsDuplicate({
+      status: false,
+      value: "",
+    });
+  };
+
   return (
     <Grid container>
       <Grid item sm={10.5} sx={{ display: "grid", alignItems: "center" }}>
@@ -53,14 +76,19 @@ const SubAttribute = (props) => {
                 name={`subAttributes[${index}].title`}
                 value={formik.values?.subAttributes[index]?.title}
                 onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
+                onChange={changeTitleHandler}
               />
-              {formik.touched?.subAttributes?.length &&
-              formik.errors?.subAttributes?.length &&
-              !!formik.touched?.subAttributes[index]?.title &&
-              formik.errors?.subAttributes[index]?.title ? (
+              {(formik.touched?.subAttributes?.length &&
+                formik.errors?.subAttributes?.length &&
+                !!formik.touched?.subAttributes[index]?.title &&
+                formik.errors?.subAttributes[index]?.title) ||
+              (formik.touched?.subAttributes?.length &&
+                !!formik.touched?.subAttributes[index]?.title &&
+                isDuplicate.status) ? (
                 <FormHelperText error>
-                  {formik?.errors?.subAttributes[index]?.title}
+                  {isDuplicate.status
+                    ? `${isDuplicate.value} already exists`
+                    : formik?.errors?.subAttributes[index]?.title}
                 </FormHelperText>
               ) : null}
             </FormControl>

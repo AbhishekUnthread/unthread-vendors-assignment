@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   FormControl,
   OutlinedInput,
@@ -111,6 +112,10 @@ const SubOption = (props) => {
     onSubAttributeAdd,
     onSubAttributeDelete,
   } = props;
+  const [isDuplicate, setIsDuplicate] = useState({
+    status: false,
+    value: "",
+  });
 
   const subOptionAppearanceHandler = (e) => {
     formik.setFieldValue(`subOptions[${index}].apperance`, e.target.value);
@@ -123,6 +128,25 @@ const SubOption = (props) => {
 
     subAttributeIndexes.forEach((index) => {
       formik.setFieldValue(`subAttributes[${index}].apperance`, e.target.value);
+    });
+  };
+
+  const changeTitleHandler = (e) => {
+    const isDuplicate = formik.values?.subOptions.find((subOp) => {
+      return subOp.title.toLowerCase() === e.target.value.toLowerCase();
+    });
+    formik.handleChange(e);
+    if (isDuplicate && isDuplicate.title) {
+      setIsDuplicate({
+        status: true,
+        value: isDuplicate.title,
+      });
+      return;
+    }
+
+    setIsDuplicate({
+      status: false,
+      value: "",
     });
   };
 
@@ -150,14 +174,19 @@ const SubOption = (props) => {
               name={`subOptions[${index}].title`}
               value={formik.values.subOptions[index]?.title}
               onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
+              onChange={changeTitleHandler}
             />
-            {formik.touched?.subOptions?.length &&
-            formik.errors?.subOptions?.length &&
-            !!formik.touched?.subOptions[index]?.title &&
-            formik.errors?.subOptions[index]?.title ? (
+            {(formik.touched?.subOptions?.length &&
+              formik.errors?.subOptions?.length &&
+              !!formik.touched?.subOptions[index]?.title &&
+              formik.errors?.subOptions[index]?.title) ||
+            (formik.touched?.subOptions?.length &&
+              !!formik.touched?.subOptions[index]?.title &&
+              isDuplicate.status) ? (
               <FormHelperText error>
-                {formik?.errors?.subOptions[index]?.title}
+                {isDuplicate.status
+                  ? `${isDuplicate.value} already exists`
+                  : formik?.errors?.subOptions[index]?.title}
               </FormHelperText>
             ) : null}
           </FormControl>

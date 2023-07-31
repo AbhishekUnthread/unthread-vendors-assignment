@@ -4,21 +4,25 @@ import { Box, Paper, Tab, Tabs } from "@mui/material";
 import { useDispatch } from "react-redux";
 
 import TabPanel from "../../../components/TabPanel/TabPanel";
-import ProductTabsTable from "./ProductTabsTable";
+import OptionsTable from "./OptionsTable";
 import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import PageTitleBar from "../../../components/PageTitleBar/PageTitleBar";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
 
 import {
-  useGetAllProductTabsQuery,
-  useDeleteProductTabMutation,
-} from "../../../features/parameters/productTabs/productTabsApiSlice";
+  useGetAllOptionsQuery,
+  useGetAllAttributesQuery,
+  useDeleteOptionMutation,
+} from "../../../features/parameters/options/optionsApiSlice";
 import {
   showSuccess,
   showError,
 } from "../../../features/snackbar/snackbarAction";
 
-const TAB_LIST = [{ id: 1, label: "all" }];
+const TAB_LIST = [
+  { id: 1, label: "all" },
+  //   { id: 2, label: "archived" },
+];
 
 const initialQueryFilterState = {
   pageSize: 10,
@@ -26,7 +30,7 @@ const initialQueryFilterState = {
   title: "",
 };
 
-const initialProductsTabState = {
+const initialOptionsState = {
   data: null,
   totalCount: 0,
   deleteId: null,
@@ -59,27 +63,18 @@ const queryFilterReducer = (state, action) => {
   return initialQueryFilterState;
 };
 
-const productsTabReducer = (state, action) => {
+const optionReducer = (state, action) => {
   if (action.type === "SET_DATA") {
     return {
-      ...initialProductsTabState,
+      ...initialOptionsState,
       search: state.search,
       data: action.data,
       totalCount: action.totalCount,
     };
   }
-  if (action.type === "SORT_DATA") {
-    return {
-      ...initialProductsTabState,
-      search: state.search,
-      totalCount: state.totalCount,
-      data: action.data,
-    };
-  }
   if (action.type === "SET_DELETE") {
     return {
       ...state,
-      search: state.search,
       deleteId: action.id,
       confirmationMessage: action.message || "",
       showDeleteModal: true,
@@ -87,7 +82,7 @@ const productsTabReducer = (state, action) => {
   }
   if (action.type === "REMOVE_DELETE") {
     return {
-      ...initialProductsTabState,
+      ...initialOptionsState,
       search: state.search,
       totalCount: state.totalCount,
       data: state.data,
@@ -99,38 +94,38 @@ const productsTabReducer = (state, action) => {
       search: action.search,
     };
   }
-  return initialProductsTabState;
+  return initialOptionsState;
 };
 
-const ProductTabs = () => {
+const Options = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
-  const [productsTabState, dispatchProductsTab] = useReducer(
-    productsTabReducer,
-    initialProductsTabState
+  const [optionsState, dispatchOptions] = useReducer(
+    optionReducer,
+    initialOptionsState
   );
 
   const {
-    data: productsTabData,
-    isLoading: productsTabIsLoading,
-    error: productsTabError,
-    isError: productsTabIsError,
-    isSuccess: productsTabIsSuccess,
-    isFetching: productsTabDataIsFetching,
-  } = useGetAllProductTabsQuery(queryFilterState);
+    data: optionsData,
+    isLoading: optionsIsLoading,
+    error: optionsError,
+    isError: optionsIsError,
+    isSuccess: optionsIsSuccess,
+    isFetching: optionsDataIsFetching,
+  } = useGetAllOptionsQuery(queryFilterState);
 
   const [
-    deleteProductTab,
+    deleteOption,
     {
-      isLoading: deleteProductTabIsLoading,
-      error: deleteProductTabError,
-      isSuccess: deleteProductTabIsSuccess,
+      isLoading: deleteOptionIsLoading,
+      error: deleteOptionError,
+      isSuccess: deleteOptionIsSuccess,
     },
-  ] = useDeleteProductTabMutation();
+  ] = useDeleteOptionMutation();
 
   const pageChangeHandler = (_, pageNo) => {
     dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
@@ -145,84 +140,77 @@ const ProductTabs = () => {
   };
 
   const searchValueHandler = (value) => {
-    dispatchProductsTab({ type: "SEARCH_VALUE", search: value });
-  };
-
-  const sortHandler = (sortedData) => {
-    dispatchProductsTab({
-      type: "SORT_DATA",
-      data: sortedData,
-    });
+    dispatchOptions({ type: "SEARCH_VALUE", search: value });
   };
 
   const editHandler = (index) => {
-    const currentProductTab =
+    const currentOption =
       index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-
-    navigate(`./edit/${currentProductTab}`);
+    navigate(`./edit/${currentOption}`);
   };
 
-  const createHandler = () => {
+  const createOptionHandler = () => {
     navigate("./create");
   };
 
   const deleteHandler = ({ id, message }) => {
-    dispatchProductsTab({ type: "SET_DELETE", id, message });
+    dispatchOptions({ type: "SET_DELETE", id, message });
   };
 
   const CancelDeleteHandler = () => {
-    dispatchProductsTab({ type: "REMOVE_DELETE" });
+    dispatchOptions({ type: "REMOVE_DELETE" });
   };
 
   const deleteConfirmationHandler = () => {
-    deleteProductTab(productsTabState.deleteId);
+    deleteOption(optionsState.deleteId)
+      .unwrap()
+      .then(() => {
+        dispatchOptions({
+          type: "REMOVE_DELETE",
+        });
+        dispatch(showSuccess({ message: "Option Deleted" }));
+      })
+      .catch((error) => {
+        if (error?.data?.message) {
+          dispatch(showError({ message: error.data.message }));
+        } else {
+          dispatch(
+            showError({ message: "Something went wrong!, please try again" })
+          );
+        }
+      });
   };
 
   useEffect(() => {
-    if (productsTabError) {
-      if (productsTabError?.data?.message) {
-        dispatch(showError({ message: productsTabError.data.message }));
+    if (optionsError) {
+      if (optionsError?.data?.message) {
+        dispatch(showError({ message: optionsError.data.message }));
       } else {
         dispatch(
           showError({ message: "Something went wrong!, please try again" })
         );
       }
     }
-    if (productsTabIsSuccess) {
-      dispatchProductsTab({
+    if (optionsIsSuccess) {
+      dispatchOptions({
         type: "SET_DATA",
-        data: productsTabData.data,
-        totalCount: productsTabData.totalCount,
+        data: optionsData.data,
+        totalCount: optionsData.totalCount,
       });
     }
-  }, [productsTabError, productsTabIsSuccess, productsTabData, dispatch]);
-
-  useEffect(() => {
-    if (deleteProductTabError) {
-      if (deleteProductTabError?.data?.message) {
-        dispatch(showError({ message: deleteProductTabError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-    if (deleteProductTabIsSuccess) {
-      dispatchProductsTab({
-        type: "REMOVE_DELETE",
-      });
-      dispatch(showSuccess({ message: "Product Tab Deleted" }));
-    }
-  }, [deleteProductTabError, deleteProductTabIsSuccess, dispatch]);
+  }, [optionsError, optionsIsSuccess, optionsData, dispatch]);
 
   return (
     <div className="container-fluid page">
       <PageTitleBar
-        title="Product Tabs"
+        title="Options"
         onTutorial={() => {}}
-        onSettings={() => {}}
-        onCreate={createHandler}
-        createBtnText="+ Create New Tab"
+        onExport={() => {}}
+        onImport={() => {}}
+        onCreate={createOptionHandler}
+        onSecondaryCreate={createOptionHandler}
+        createBtnText="+ Create Options"
+        createSecondaryBtnText="+ Options Sets"
       />
 
       <div className="row mt-4">
@@ -250,20 +238,19 @@ const ProductTabs = () => {
             <TableSearchSecondary
               onChange={searchHandler}
               onSearchValueChange={searchValueHandler}
-              value={productsTabState.search}
+              value={optionsState.search}
             />
           </div>
           <TabPanel value={0} index={0}>
-            <ProductTabsTable
-              error={productsTabIsError}
-              isLoading={productsTabIsLoading || productsTabDataIsFetching}
-              data={productsTabState?.data}
-              totalCount={productsTabState?.totalCount}
+            <OptionsTable
+              error={optionsIsError}
+              isLoading={optionsIsLoading || optionsDataIsFetching}
+              data={optionsState?.data}
+              totalCount={optionsState?.totalCount}
               onPageChange={pageChangeHandler}
               onPageSize={pageSizeHandler}
               pageSize={queryFilterState.pageSize}
               page={queryFilterState.pageNo}
-              onSort={sortHandler}
               onEdit={editHandler}
               onDelete={deleteHandler}
             />
@@ -273,13 +260,13 @@ const ProductTabs = () => {
       <DeleteModalSecondary
         onConfirm={deleteConfirmationHandler}
         onCancel={CancelDeleteHandler}
-        show={productsTabState.showDeleteModal}
-        isLoading={deleteProductTabIsLoading}
-        message={productsTabState.confirmationMessage}
-        title="product tab"
+        show={optionsState.showDeleteModal}
+        isLoading={deleteOptionIsLoading}
+        message={optionsState.confirmationMessage}
+        title="Option"
       />
     </div>
   );
 };
 
-export default ProductTabs;
+export default Options;
