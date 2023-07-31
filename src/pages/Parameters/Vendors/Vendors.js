@@ -303,7 +303,7 @@ const Vendors = () => {
   const editCategoryPageNavigationHandler = (data, index) => {
     setIsEditing(true);
     navigate({
-      pathname: `./edit/${data ? data._id : ""}`,
+      pathname: `./edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
         filter: JSON.stringify({ ...queryFilterState, vendorType }),
       })}`,
