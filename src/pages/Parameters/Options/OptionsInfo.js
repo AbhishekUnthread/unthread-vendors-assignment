@@ -555,30 +555,95 @@ const OptionsInfo = () => {
 
   const optionFormik = useFormik({
     initialValues: {
-      option: {
-        _id: "option-0",
-        title: "",
-        apperance: "dropDownList",
-        type: "optionset",
-        frontEndTitle: "",
-        isFilter: false,
-        isPriceMaster: false,
-        saved: false,
-      },
-      attributes: [
-        {
-          _id: "attribute-0",
-          title: "",
-          colour: "#000000",
-          imageUrl: "",
-          type: "optionset",
-          value: "colour",
-          apperance: "dropDownList",
-          saved: false,
-        },
-      ],
-      subOptions: [],
-      subAttributes: [],
+      option: optionsData?.data?.length
+        ? {
+            _id: optionsData?.data[0]?._id,
+            title: optionsData?.data[0]?.title,
+            apperance: optionsData?.data[0]?.apperance,
+            type: optionsData?.data[0]?.type,
+            frontEndTitle: optionsData?.data[0]?.frontEndTitle,
+            isFilter: optionsData?.data[0]?.isFilter,
+            isPriceMaster: optionsData?.data[0]?.isPriceMaster,
+            saved: true,
+          }
+        : {
+            _id: "option-0",
+            title: "",
+            apperance: "dropDownList",
+            type: "optionset",
+            frontEndTitle: "",
+            isFilter: false,
+            isPriceMaster: false,
+            saved: false,
+          },
+      attributes: attributesData?.data?.length
+        ? attributesData.data.map((item) => {
+            let value = "";
+            if (item.imageUrl) {
+              value = "imageUrl";
+            }
+            if (item.colour) {
+              value = "colour";
+            }
+            return {
+              _id: item._id,
+              title: item.title,
+              colour: item.colour,
+              imageUrl: item.imageUrl,
+              type: item.type || "optionset",
+              value,
+              apperance: optionsData?.data[0]?.apperance,
+              saved: true,
+            };
+          })
+        : [
+            {
+              _id: "attribute-0",
+              title: "",
+              colour: "#000000",
+              imageUrl: "",
+              type: "optionset",
+              value: "colour",
+              apperance: "dropDownList",
+              saved: false,
+            },
+          ],
+      subOptions: subOptionsData?.data?.length
+        ? subOptionsData.data.map((item) => {
+            return {
+              _id: item._id,
+              metaAttribute: item.metaAttribute,
+              title: item.title,
+              apperance: item.apperance,
+              saved: true,
+              isOption: item.isOption,
+            };
+          })
+        : [],
+      subAttributes: subAttributesData?.data?.length
+        ? subAttributesData.data.map((item) => {
+            let value = "";
+            if (item.imageUrl) {
+              value = "imageUrl";
+            }
+            if (item.colour) {
+              value = "colour";
+            }
+            return {
+              _id: item._id,
+              metaAttribute: item.metaAttribute._id,
+              metaSubAttribute: item.metaSubAttribute._id,
+              title: item.title,
+              colour: item.colour,
+              imageUrl: item.imageUrl,
+              type: item.type || "optionset",
+              value,
+              apperance: item.metaSubAttribute.apperance,
+              saved: true,
+              isOption: true,
+            };
+          })
+        : [],
     },
     enableReinitialize: true,
     validationSchema: optionValidationSchema,
@@ -799,7 +864,13 @@ const OptionsInfo = () => {
         });
         optionFormik.resetForm();
         dispatchOption({ type: "DISABLE_LOADING" });
-        dispatch(showSuccess({ message: "Option created successfully" }));
+        dispatch(
+          showSuccess({
+            message: id
+              ? "Option edited successfully"
+              : "Option created successfully",
+          })
+        );
       } catch (error) {
         dispatchOption({ type: "DISABLE_LOADING" });
         if (error?.data?.message) {
@@ -1111,79 +1182,6 @@ const OptionsInfo = () => {
       dispatchOption({ type: "DISABLE_EDIT" });
     }
   }, [optionFormik.initialValues, optionFormik.values, id]);
-
-  useEffect(() => {
-    if (optionsIsSuccess && optionsData.data.length) {
-      optionFormik.setFieldValue("option", {
-        _id: optionsData?.data[0]?._id,
-        title: optionsData?.data[0]?.title,
-        apperance: optionsData?.data[0]?.apperance,
-        type: optionsData?.data[0]?.type,
-        frontEndTitle: optionsData?.data[0]?.frontEndTitle,
-        isFilter: optionsData?.data[0]?.isFilter,
-        isPriceMaster: optionsData?.data[0]?.isPriceMaster,
-        saved: true,
-      });
-    }
-    if (attributesIsSuccess && attributesData.data.length) {
-      const attributesMappedData = attributesData.data.map((item) => {
-        const value = item.colour ? "colour" : "imageUrl";
-        return {
-          _id: item._id,
-          title: item.title,
-          colour: item.colour,
-          imageUrl: item.imageUrl,
-          type: item.type,
-          value,
-          apperance: item.apperance,
-          saved: true,
-        };
-      });
-      optionFormik.setFieldValue("attributes", attributesMappedData);
-    }
-    if (subOptionsIsSuccess && subOptionsData.data.length) {
-      const subOptionsMappedData = subOptionsData.data.map((item) => {
-        return {
-          _id: item._id,
-          metaAttribute: item.mmetaAttribute,
-          title: item.title,
-          apperance: item.apperance,
-          saved: true,
-          isOption: item.isOption,
-        };
-      });
-
-      optionFormik.setFieldValue("subOptions", subOptionsMappedData);
-    }
-    if (subAttributesIsSuccess && subAttributesData.data.length) {
-      const subAttributeMappedData = subAttributesData.data.map((item) => {
-        const value = item.colour ? "colour" : "imageUrl";
-        return {
-          _id: item._id,
-          metaAttribute: item.metaAttribute,
-          metaSubAttribute: item.metaSubAttribute,
-          title: item.title,
-          colour: item.colour,
-          imageUrl: item.imageUrl,
-          type: item.type,
-          value,
-          apperance: item.apperance,
-          saved: true,
-          isOption: item.isOption,
-        };
-      });
-      optionFormik.setFieldValue("subAttributes", subAttributeMappedData);
-    }
-  }, [
-    optionsData,
-    optionsIsSuccess,
-    attributesData,
-    attributesIsSuccess,
-    subOptionsData,
-    subOptionsIsSuccess,
-    subAttributesData,
-    subAttributesIsSuccess,
-  ]);
 
   return (
     <div className="page container-fluid position-relative user-group product-tab-page">
