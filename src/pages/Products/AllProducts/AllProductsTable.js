@@ -393,6 +393,23 @@ const AllProductsTable = ({
     }
   };
 
+  function handleActive(){
+    editProduct({
+      id: rowData._id,
+      details: {
+        status: "active",
+      },
+    })
+      .unwrap()
+      .then(() => {
+        dispatch(showSuccess({ message: "Product Active successfully" }));
+      })
+      .catch((err) => {
+        dispatch(showError({ message: err?.data?.message }));
+      });
+
+  }
+
   function handleArchive() {
     setShowArchivedModal(false);
     setShowMultipleArchivedModal(false);
@@ -905,7 +922,7 @@ const AllProductsTable = ({
                               className="c-pointer"
                             />
                           </div>
-                          <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                          <small onClick={handleActive} className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                             Make it Active
                           </small>
                           <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">

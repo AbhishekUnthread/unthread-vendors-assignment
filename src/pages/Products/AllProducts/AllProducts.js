@@ -155,11 +155,15 @@ const initialQueryFilterState = {
   pageNo: 1,
   totalCount: 0,
   title: "",
+  status: ["active", "in-active","scheduled"],
+  firstStatus:"all",
   category: null,
   subCategory: null,
   vendor: null,
   collection: null,
   tagManager: null,
+  alphabetical:null,
+  createdAt:-1,
 };
 const productTypeInitialState = {
   category: [],
@@ -232,6 +236,13 @@ const queryFilterReducer = (state, action) => {
       pageNo: action.pageNo,
     };
   }
+  if (action.type === "SET_STATUS_FIRST") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      firstStatus: action.value,
+    };
+  }
   if (action.type === "SEARCH") {
     return {
       ...state,
@@ -274,6 +285,37 @@ const queryFilterReducer = (state, action) => {
       vendor: action.data,
     };
   }
+
+  if (action.type === "SET_ALPHABETICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      alphabetical: action.alphabetical,
+      createdAt: null,
+    };
+  }
+  if (action.type === "SET_CRONOLOGICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      createdAt: action.createdAt,
+      alphabetical: null,
+    };
+  }
+  if (action.type === "SET_STATUS") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      status: action.status ? action.status : initialQueryFilterState.status,
+    };
+  }
+
+  if (action.type === "SET_ALL_FILTERS") {
+    return {
+      ...initialQueryFilterState,
+      ...action.filters,
+    };
+  }
   return initialQueryFilterState;
 };
 
@@ -298,65 +340,20 @@ const AllProducts = () => {
   const [totalProduct, setTotalProduct] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const [chipData, setChipData] = useState([]);
-
-  const filterParameter = {};
+  const [firstRender, setFirstRender] = useState(true);
 
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
     dispatchQueryFilter({ type: "SEARCH", name: event.target.value });
-    setChipData((data) => {
-      // Filter out any chip that starts with "title"
-      const filteredData = data.filter((item) => !item.startsWith("title"));
-
-      // If event.target.value is not empty, add the new title chip
-      if (event.target.value.trim() !== "") {
-        filteredData.push(`title is ${event.target.value}`);
-      }
-
-      return filteredData;
-    });
   };
 
-  if (sortFilter) {
-    if (
-      sortFilter === "alphabeticalAtoZ" ||
-      sortFilter === "alphabeticalZtoA"
-    ) {
-      filterParameter.alphabetical =
-        sortFilter === "alphabeticalAtoZ" ? "1" : "-1";
-    } else if (
-      sortFilter === "oldestToNewest" ||
-      sortFilter === "newestToOldest"
-    ) {
-      filterParameter.createdAt = sortFilter === "oldestToNewest" ? "1" : "-1";
-    }
-  }
-
-  const ProductTypeQuery =
-    productType === 0
-      ? {
-          createdAt: -1,
-          status:
-            statusFilter.length > 0
-              ? statusFilter
-              : "active,in-active,scheduled",
-        }
-      : productType === 1
-      ? { createdAt: -1, status: "active" }
-      : productType === 2
-      ? { createdAt: -1, status: "in-active" }
-      : productType === 3
-      ? { createdAt: -1, status: "archived" }
-      : {};
-
-  const filterParams = { ...filterParameter, ...ProductTypeQuery };
 
   const {
     data: productsData,
     isLoading: productsIsLoading,
     isSuccess: productsIsSuccess,
     error: productsError,
-  } = useGetAllProductsQuery({ ...filterParams, ...queryFilterState });
+  } = useGetAllProductsQuery(queryFilterState );
 
   const {
     data: vendorsData, // Data received from the useGetAllVendorsQuery hook
@@ -653,26 +650,66 @@ const AllProducts = () => {
 
   const handleChange = (event, tabIndex) => {
     setProductType(tabIndex);
+    if (tabIndex === 0) {
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active", "in-active","scheduled"],
+      });
+    } else if (tabIndex === 1) {
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active"],
+      });
+    } else if (tabIndex === 2) {
+     
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["in-active"],
+      });
+    } else if (tabIndex === 3) {
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["archived"],
+      });
+    }
     dispatchQueryFilter({ type: "SEARCH", name: "" });
-    setSearchParams({ status: tabIndex });
     setSearchValue("");
   };
 
   const handleStatusChange = (event) => {
-    const selectedStatus = event.target.value;
-    if (event.target.value) {
-      if (statusFilter.length === 0) {
-        let item = [];
-        item.push(selectedStatus);
-        setStatusFilter(item);
+    if (event.target.checked) {
+      if (queryFilterState.firstStatus === "all") {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [event.target.value],
+        });
+        dispatchQueryFilter({
+          type: "SET_STATUS_FIRST",
+          value: "",
+        });
+      } else {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [...queryFilterState.status, event.target.value],
+        });
       }
-      if (statusFilter.length > 0 && statusFilter.includes(selectedStatus)) {
-        setStatusFilter((item) => item.filter((i) => i !== selectedStatus));
-      }
-      if (statusFilter.length > 0 && !statusFilter.includes(selectedStatus)) {
-        let item = [...statusFilter];
-        item.push(selectedStatus);
-        setStatusFilter(item);
+    } else {
+      if (queryFilterState.status.length > 1) {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: queryFilterState.status.filter(
+            (status) => status !== event.target.value
+          ),
+        });
+      } else {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: ["active", "in-active","scheduled"],
+        });
+        dispatchQueryFilter({
+          type: "SET_STATUS_FIRST",
+          value: "all",
+        });
       }
     }
   };
@@ -881,17 +918,64 @@ const AllProducts = () => {
   );
   // ? FILE UPLOAD ENDS HERE
 
+const handleAlphabeticalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_ALPHABETICAL_SORTING",
+      alphabetical: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
+
+  const handleChronologicalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_CRONOLOGICAL_SORTING",
+      createdAt: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
+
   useEffect(() => {
-    if (+searchParams.get("status") === 0) {
-      setProductType(0);
-    } else if (+searchParams.get("status") === 1) {
-      setProductType(1);
-    } else if (+searchParams.get("status") === 2) {
-      setProductType(2);
-    } else if (+searchParams.get("status") === 3) {
-      setProductType(3);
+    const filterParams = JSON.parse(searchParams.get("filter")) || {
+      productType,
+    };
+    if (firstRender && Object.keys(filterParams).length) {
+      let filters = {};
+      for (let key in filterParams) {
+        if (key !== "productType") {
+          if (filterParams[key] !== (null || "")) {
+            if (key === "status" && filterParams[key].length < 2) {
+              dispatchQueryFilter({
+                type: "SET_STATUS",
+                status: ["active", "in-active","scheduled"],
+              });
+            }
+            filters = {
+              ...filters,
+              [key]: filterParams[key],
+            };
+          }
+        } else {
+          setProductType(+filterParams[key]);
+        }
+      }
+      if (filterParams.productType === (null || ""|| 0)) {
+        setProductType(0);
+      }
+      dispatchQueryFilter({
+        type: "SET_ALL_FILTERS",
+        filters,
+      });
+      setFirstRender(false);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      setSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, productType }),
+      });
+    }
+  }, [queryFilterState, setSearchParams, productType, firstRender]);
 
   return (
     <div className="container-fluid page">
@@ -1982,26 +2066,50 @@ const AllProducts = () => {
                       control={<Radio size="small" />}
                       label="Upload Date"
                     />
+                     <FormControlLabel
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "1"}
+                      />
+                    }
+                    label="Alphabetical (A-Z)"
+                    onChange={handleAlphabeticalSorting}
+                  />
+                  <FormControlLabel
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "-1"}
+                      />
+                    }
+                    label="Alphabetical (Z-A)"
+                    onChange={handleAlphabeticalSorting}
+                  />
                     <FormControlLabel
-                      value="alphabeticalAtoZ"
-                      control={<Radio size="small" />}
-                      label="Alphabetical (A-Z)"
-                    />
-                    <FormControlLabel
-                      value="alphabeticalZtoA"
-                      control={<Radio size="small" />}
-                      label="Alphabetical (Z-A)"
-                    />
-                    <FormControlLabel
-                      value="oldestToNewest"
-                      control={<Radio size="small" />}
-                      label="Oldest to Newest"
-                    />
-                    <FormControlLabel
-                      value="newestToOldest"
-                      control={<Radio size="small" />}
-                      label="Newest to Oldest"
-                    />
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "-1"}
+                      />
+                    }
+                    label="Newest to Oldest"
+                    onChange={handleChronologicalSorting}
+                  />
+                  <FormControlLabel
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "1"}
+                      />
+                    }
+                    label="Oldest to Newest"
+                    onChange={handleChronologicalSorting}
+                  />
                   </RadioGroup>
                 </FormControl>
               </Popover>
