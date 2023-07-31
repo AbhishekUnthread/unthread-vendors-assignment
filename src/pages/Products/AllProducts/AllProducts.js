@@ -56,7 +56,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import TableSearch from "../../../components/TableSearch/TableSearch";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import { useBulkEditProductMutation, useEditProductMutation, useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
+import { useBulkEditProductMutation, useEditProductMutation, useGetAllProductStatusCountQuery, useGetAllProductsQuery } from "../../../features/products/product/productApiSlice";
 import { useGetAllVendorsQuery } from "../../../features/parameters/vendors/vendorsApiSlice";
 import {
   useGetAllCategoriesQuery,
@@ -407,6 +407,10 @@ const AllProducts = () => {
       error: bulkCreateTagsError,
     },
   ] = useBulkEditProductMutation();
+
+  const {
+    data: ProductStatusCount,
+  } = useGetAllProductStatusCountQuery();
 
   useEffect(() => {
     if (productsIsSuccess && productsData?.data?.data) {
@@ -1397,10 +1401,10 @@ const handleAlphabeticalSorting = (event) => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Active" className="tabs-head" />
-              <Tab label="In Active" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab label={`All (${ProductStatusCount?.data?.[0]?.active+ProductStatusCount?.data?.[0]?.inActive+ProductStatusCount?.data?.[0]?.scheduled})`} className="tabs-head" />
+              <Tab label={`Active (${ProductStatusCount?.data?.[0]?.active})`} className="tabs-head" />
+              <Tab label={`In Active (${ProductStatusCount?.data?.[0]?.inActive})`} className="tabs-head" />
+              <Tab label={`Archived (${ProductStatusCount?.data?.[0]?.archived})`} className="tabs-head" />
             </Tabs>
             <div
               className="tabs-country c-pointer"

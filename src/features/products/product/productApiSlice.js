@@ -42,6 +42,23 @@ export const productApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Products"],
     }),
+    getAllProductStatusCount: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+        return {
+          url: `/products/count${queryString}`,
+        };
+      },
+      providesTags: ["Products"],
+    })
+    
   }),
 });
 
@@ -50,4 +67,5 @@ export const {
   useCreateProductMutation,
   useEditProductMutation,
   useBulkEditProductMutation,
+  useGetAllProductStatusCountQuery
 } = productApiSlice;
