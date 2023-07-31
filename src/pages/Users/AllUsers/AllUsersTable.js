@@ -1,19 +1,4 @@
-import React from "react";
-import { Link } from "react-router-dom";
-// ! COMPONENT IMPORTS
-import {
-  EnhancedTableHead,
-  stableSort,
-  getComparator,
-} from "../../../components/TableDependencies/TableDependencies";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-// ! IMAGES IMPORTS
-import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
-import verticalDots from "../../../assets/icons/verticalDots.svg";
-import user from "../../../assets/images/users/user.svg";
-import arrowDown from "../../../assets/icons/arrowDown.svg";
-import deleteRed from "../../../assets/icons/delete.svg";
-// ! MATERIAL IMPORTS
+import { useState } from "react";
 import {
   Checkbox,
   Popover,
@@ -25,59 +10,28 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
-// ! MATERIAL ICON IMPORTS
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
-// ? TABLE STARTS HERE
-function createData(
-  cId,
-  userName,
-  groups,
-  location,
-  orders,
-  totalSpent,
-  status
-) {
-  return { cId, userName, groups, location, orders, totalSpent, status };
-}
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../components/TableDependencies/TableDependencies";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import Loader from "../../../components/Loader/TableLoader";
+import NoData from "../../../components/NoDataFound/NoDataFound";
 
-const rows = [
-  createData(
-    1,
-    "Saniya Shaikh",
-    "VIP",
-    "Delhi, India",
-    "24",
-    "₹ 50,000",
-    "Active"
-  ),
-  createData(
-    2,
-    "Saniya Shaikh",
-    "VIP",
-    "Delhi, India",
-    "24",
-    "₹ 50,000",
-    "Active"
-  ),
-  createData(
-    3,
-    "Saniya Shaikh",
-    "VIP",
-    "Delhi, India",
-    "24",
-    "₹ 50,000",
-    "Active"
-  ),
-];
+import verticalDots from "../../../assets/icons/verticalDots.svg";
+import arrowDown from "../../../assets/icons/arrowDown.svg";
+import deleteRed from "../../../assets/icons/delete.svg";
+import defaultUser from "../../../assets/images/unthreadLogo.png"
 
 const headCells = [
   {
     id: "userName",
     numeric: false,
     disablePadding: true,
-    label: "User Name",
+    label: "Customer Name",
   },
   {
     id: "groups",
@@ -116,7 +70,6 @@ const headCells = [
     label: "",
   },
 ];
-// ? TABLE ENDS HERE
 
 const AllUsersTable = ({
   isLoading,
@@ -129,19 +82,11 @@ const AllUsersTable = ({
   page,
   onEdit
 }) => {
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("userName");
-  const [selected, setSelected] = React.useState([]);
-  // const [page, setPage] = React.useState(0);
-  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("userName");
+  const [selected, setSelected] = useState([]);
 
-  
-  // const emptyRows =
-  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
-
-  // const handleChangePage = (event, newPage) => {
-  //   setPage(newPage);
-  // };
+  console.log(list, 'list');
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -174,19 +119,13 @@ const AllUsersTable = ({
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
   };
-
-  // const handleChangeRowsPerPage = (event) => {
-  //   setRowsPerPage(parseInt(event.target.value, 10));
-  //   setPage(0);
-  // };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   // * MASS ACTION POPOVERS STARTS
-  const [anchorMassActionEl, setAnchorMassActionEl] = React.useState(null);
+  const [anchorMassActionEl, setAnchorMassActionEl] = useState(null);
   const handleMassActionClick = (event) => {
     setAnchorMassActionEl(event.currentTarget);
   };
@@ -198,7 +137,7 @@ const AllUsersTable = ({
   // * MASS ACTION POPOVERS ENDS
 
   // * ACTION POPOVERS STARTS
-  const [anchorActionEl, setAnchorActionEl] = React.useState(null);
+  const [anchorActionEl, setAnchorActionEl] = useState(null);
 
   const handleActionClick = (event) => {
     setAnchorActionEl(event.currentTarget);
@@ -213,7 +152,7 @@ const AllUsersTable = ({
   // * ACTION POPOVERS ENDS
 
   return (
-    <React.Fragment>
+    <>
       {selected.length > 0 && (
         <div className="d-flex justify-content-between align-items-center px-2 mb-3">
           <div className="d-flex">
@@ -333,7 +272,7 @@ const AllUsersTable = ({
                     >
                       <div className="d-flex align-items-center py-3">
                         <img
-                          src={row?.imageUrl}
+                          src={row?.imageUrl ? row?.imageUrl : defaultUser}
                           alt="user"
                           className="me-2 rounded-circle"
                           height={45}
@@ -342,9 +281,8 @@ const AllUsersTable = ({
 
                         <div>
                           <div
-                            // to="/users/allUsers/details"
                             className=" text-decoration-none c-pointer"
-                            onClick={onEdit.bind(null, index + 1)}
+                            onClick={() => onEdit(row?._id)}
                           >
                             <p className="text-lightBlue rounded-circle fw-600">
                               {row?.firstName} {row?.lastName}
@@ -363,7 +301,7 @@ const AllUsersTable = ({
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="d-flex align-items-center c-pointer">
+                      <div className="d-flex align-items-center">
                         <p className="text-lightBlue">
                         {row.groups.length>0?(
                           row?.groups?.map((group,index) => (
@@ -376,16 +314,16 @@ const AllUsersTable = ({
                         {row?.addresses?.map((address, index) => {
                           if (address.isDefaultAddress === true) {
                             return (
-                              <React.Fragment key={index}>
+                              <div key={index}>
                               <div className="d-flex align-items-center">
-                                <img src={address.country.imageUrl} alt="indiaFlag" height={16} />
+                                <img src={row?.addresses[0]?.country?.imageUrl} alt="indiaFlag" height={16} />
                                 <p className="text-lightBlue ms-2">
-                                  {address.city},{" "}
-                                  {address.country.name}
+                                  {row?.addresses[0]?.state?.name}, {" "}
+                                  {row?.addresses[0]?.country?.name}
                                 </p>
                                 </div>
                                 <br />
-                              </React.Fragment>
+                              </div>
                             );
                           } else {
                             return null;
@@ -395,35 +333,36 @@ const AllUsersTable = ({
                   </TableCell>
 
                     <TableCell>
-                      <p className="text-lightBlue">{row.orders}</p>
+                      <p className="text-lightBlue">24</p>
                     </TableCell>
-                    {/* <TableCell>
-                      <div className="d-flex c-pointer">
-                        <p className="text-lightBlue">{row.totalSpent}</p>
+                    <TableCell>
+                      <div className="d-flex">
+                        <p className="text-lightBlue">₹ 52,000</p>
                       </div>
-                    </TableCell> */}
-                    {/* <TableCell>
+                    </TableCell>
+                    <TableCell>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.status}
+                        <div className="rounded-pill d-flex px-2 py-1" 
+                          style={{
+                            background: row.status == "active" ? "#A6FAAF" : 
+                            row.status == "in-active" ? "#5C6D8E" : "#F67476" 
+                          }}
+                        >
+                          <small className="fw-400"
+                            style={{
+                              color: row.status == "active" ? "#202837" : "#fff"
+                            }}
+                          >
+                            {
+                              row.status == "active" ? "Active" : 
+                              row.status == "in-active" ? "In-active" : "Archived"
+                            }
                           </small>
                         </div>
                       </div>
-                    </TableCell> */}
-                    {/* <TableCell style={{ width: 80, padding: 0 }}>
+                    </TableCell>
+                    <TableCell>
                       <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <EditOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
                         <img
                           src={verticalDots}
                           alt="verticalDots"
@@ -432,7 +371,6 @@ const AllUsersTable = ({
                           variant="contained"
                           onClick={handleActionClick}
                         />
-
                         <Popover
                           anchorOrigin={{
                             vertical: "bottom",
@@ -451,36 +389,27 @@ const AllUsersTable = ({
                             <small className="text-grey-7 px-2">ACTIONS</small>
                             <hr className="hr-grey-6 my-2" />
                             <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit User
+                              Edit Customer
                             </small>
                             <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit User Group
+                              Edit Customer Group
                             </small>
                             <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                               Add or Remove Tags
                             </small>
                             <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                              <small className="text-lightBlue font2 d-block">
-                                Archive User
+                              <small className="font2 d-block" style={{color: "#F67E80"}}>
+                                Archive Customer
                               </small>
                               <img src={deleteRed} alt="delete" className="" />
                             </div>
                           </div>
                         </Popover>
                       </div>
-                    </TableCell> */}
+                    </TableCell>
                   </TableRow>
                 );
               })}
-            {/* {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
-              >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )} */}
           </TableBody>
         </Table>
       </TableContainer>
@@ -495,15 +424,17 @@ const AllUsersTable = ({
         className="table-pagination"
       />
       </>):isLoading ? (
-          <span className="d-flex justify-content-center m-3">Loading...</span>
+          <span className="d-flex justify-content-center m-3">
+            <Loader />
+          </span>
         ): (
           <span className="d-flex justify-content-center m-3">
-            No data found
+            <NoData />
           </span>
         )): (
         <></>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

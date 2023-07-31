@@ -4,6 +4,7 @@ import {
   OutlinedInput,
   Select,
   MenuItem,
+  FormHelperText,
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 
@@ -25,18 +26,54 @@ const CUSTOM_FIELD_DISPLAY = [
   },
 ];
 
-const Attribute = () => {
+const Attribute = (props) => {
+  const { formik, index } = props;
+
+  const imageUploadHandler = (url) => {
+    console.log(url);
+  };
+
+  // title: "",
+  // attribute: optionsData?.data[0]._id,
+  // colour: "",
+  // imageUrl: "",
+  // type: "optionset",
+  // value: "",
+  // apperance: optionFormik.values.apperance,
+
+  // console.log(formik.touched, formik.errors);
+
   return (
     <Grid container>
       <Grid item sm={10.5} sx={{ display: "grid", alignItems: "center" }}>
         <Grid container columnSpacing={2}>
           <Grid item sm={4} sx={{ display: "grid", alignItems: "center" }}>
             <FormControl className="w-100 px-0">
-              <OutlinedInput size="small" name="" />
+              <OutlinedInput
+                size="small"
+                name={`[${index}].title`}
+                value={formik.values[index]?.title}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+              />
+              {!!formik.touched[index]?.title &&
+                formik.errors[index]?.title && (
+                  <FormHelperText error>
+                    {formik.errors[index]?.title}
+                  </FormHelperText>
+                )}
             </FormControl>
           </Grid>
           <Grid item sx={{ display: "grid", alignItems: "center" }}>
-            <UploadMediaSmall disableLabel={true} />
+            <UploadMediaSmall
+              fileSrc={formik.values[index]?.imageUrl}
+              error={formik.errors[index]?.imageUrl}
+              onUpload={imageUploadHandler}
+              onBlur={formik.handleBlur}
+              name={`[${index}].imageUrl`}
+              disableLabel={true}
+              style={{ alignSelf: "start" }}
+            />
           </Grid>
           {/* <Grid item sx={{ display: "grid", alignItems: "center" }}>
             <Grid container columnSpacing={2}>

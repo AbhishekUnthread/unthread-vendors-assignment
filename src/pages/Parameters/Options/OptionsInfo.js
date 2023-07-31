@@ -235,36 +235,45 @@ const OptionsInfo = () => {
     onSubmit: (values) => {},
   });
   const attributeFormik = useFormik({
-    initialValues: {
-      attributes: (attributesData?.data.length &&
-        attributesData?.data.map((attribute) => ({
-          title: attribute.title,
-          attribute: attribute.attribute,
-          colour: attribute.colour,
-          imageUrl: attribute.imageUrl,
-          type: attribute.type,
-          value:
-            optionFormik.values.apperance === "colorAndImageSwatches"
-              ? (attribute.imageUrl && "imageUrl") ||
-                (attribute.colour && "colour")
-              : "",
-          apperance: optionFormik.values.apperance,
-        }))) || [
-        {
-          title: "",
-          attribute: optionsData?.data[0]._id,
-          colour: "",
-          imageUrl: "",
-          type: "optionset",
-          value: "",
-          apperance: optionFormik.values.apperance,
-        },
-      ],
-    },
+    initialValues: [
+      {
+        title: "",
+        attribute: optionsData?.data[0]._id,
+        colour: "",
+        imageUrl: "",
+        type: "optionset",
+        value: "",
+        apperance: optionFormik.values.apperance,
+      },
+    ],
+
+    // (attributesData?.data.length &&
+    // attributesData?.data.map((attribute) => ({
+    //   title: attribute.title,
+    //   attribute: attribute.attribute,
+    //   colour: attribute.colour,
+    //   imageUrl: attribute.imageUrl,
+    //   type: attribute.type,
+    //   value:
+    //     optionFormik.values.apperance === "colorAndImageSwatches"
+    //       ? (attribute.imageUrl && "imageUrl") ||
+    //         (attribute.colour && "colour")
+    //       : "",
+    //   apperance: optionFormik.values.apperance,
+    // }))) ||
+    // [
+    //   {
+    //     title: "",
+    //     attribute: optionsData?.data[0]._id,
+    //     colour: "",
+    //     imageUrl: "",
+    //     type: "optionset",
+    //     value: "",
+    //     apperance: optionFormik.values.apperance,
+    //   },
+    // ],
     enableReinitialize: true,
-    validationSchema: Yup.object({
-      attributes: Yup.array().min(1).of(createAttributeValidationSchema),
-    }),
+    validationSchema: Yup.array().min(1).of(createAttributeValidationSchema),
     onSubmit: (values) => {},
   });
 
@@ -285,6 +294,25 @@ const OptionsInfo = () => {
     if (pageNo - 1 === 0) {
       return;
     }
+  };
+
+  const addAttributeFieldHandler = () => {
+    const newAttributeFields = attributeFormik?.values?.concat({
+      title: "",
+      attribute: optionsData?.data[0]._id,
+      colour: "",
+      imageUrl: "",
+      type: "optionset",
+      value: "",
+      apperance: optionFormik.values.apperance,
+    });
+    attributeFormik.setValues(newAttributeFields);
+  };
+
+  const submitOptionHandler = (e) => {
+    e.preventDefault();
+    console.log(optionFormik.values);
+    console.log(attributeFormik.values);
   };
 
   useEffect(() => {
@@ -330,7 +358,7 @@ const OptionsInfo = () => {
   //     dispatchProductsInfo({ type: "DISABLE_EDIT" });
   //   }
   // }, [formik.initialValues, formik.values, id]);
-  console.log(optionFormik.values);
+
   return (
     <div className="page container-fluid position-relative user-group product-tab-page">
       <InfoHeader
@@ -340,11 +368,7 @@ const OptionsInfo = () => {
         onNext={nextPageHandler}
         isEdit={!!id}
       />
-      <form
-        className="product-form"
-        noValidate
-        onSubmit={optionFormik.handleSubmit}
-      >
+      <form className="product-form" noValidate onSubmit={submitOptionHandler}>
         <div className="row mt-3">
           <div className="col-lg-9 mt-3">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -520,7 +544,10 @@ const OptionsInfo = () => {
                   </Grid>
                 </Grid>
               </div>
-              <OptionsAttributeTable />
+              <OptionsAttributeTable
+                onAttributeAdd={addAttributeFieldHandler}
+                formik={attributeFormik}
+              />
             </div>
           </div>
         </div>

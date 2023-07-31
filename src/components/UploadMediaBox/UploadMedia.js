@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Tooltip, FormControl, FormHelperText } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
@@ -19,18 +19,21 @@ import { ReactComponent as UploadIcon } from "../../assets/icons/upload.svg";
 import { ReactComponent as ImagePlaceHolder } from "../../assets/icons/imagePlaceHolder.svg";
 
 const UploadMediaSmall = (props) => {
-  const { fileSrc, error, onUpload, onBlur, name, disableLabel } = props;
+  const { fileSrc, error, onUpload, onBlur, name, disableLabel, style } = props;
+  const [blurred, setBlurred] = useState(false);
   const [uploadFile, { data, isSuccess, isError }] = UseFileUpload();
+  const errorRef = useRef(null);
   const dispatch = useDispatch();
 
-  const { getRootProps, getInputProps, isFocused } = useDropzone({
-    accept: {
-      "image/*": [".jpeg", ".jpg", ".png", ".svg"],
-    },
-    onDrop: (acceptedFiles) => {
-      uploadFile({ file: acceptedFiles[0] });
-    },
-  });
+  const { getRootProps, getInputProps, isFocused, isFileDialogActive } =
+    useDropzone({
+      accept: {
+        "image/*": [".jpeg", ".jpg", ".png", ".svg"],
+      },
+      onDrop: (acceptedFiles) => {
+        uploadFile({ file: acceptedFiles[0] });
+      },
+    });
 
   const cancelHandler = (e) => {
     e.stopPropagation();
@@ -46,6 +49,21 @@ const UploadMediaSmall = (props) => {
       onUpload(data?.url);
     }
   }, [isError, isSuccess, data, dispatch, onUpload]);
+
+  useEffect(() => {
+    if (isFocused) {
+      setBlurred(true);
+    }
+    if (
+      !isFocused &&
+      !isFileDialogActive &&
+      blurred &&
+      errorRef.current &&
+      error
+    ) {
+      errorRef.current.textContent = error;
+    }
+  }, [errorRef, error, blurred, isFocused, isFileDialogActive]);
 
   return (
     <>
@@ -64,6 +82,7 @@ const UploadMediaSmall = (props) => {
         className={
           isFocused ? "small-upload-container focus" : "small-upload-container"
         }
+        style={style}
       >
         {isHttpValid(fileSrc) && (
           <div className="cancel-button-container">
@@ -88,7 +107,7 @@ const UploadMediaSmall = (props) => {
           {...getInputProps()}
           size="small"
         />
-        {error && <FormHelperText error>{error}</FormHelperText>}
+        <FormHelperText ref={errorRef} error></FormHelperText>
       </FormControl>
     </>
   );
@@ -97,17 +116,25 @@ const UploadMediaSmall = (props) => {
 const UploadMediaLarge = (props) => {
   const { fileSrc, error, onUpload, onBlur, name } = props;
   const [uploadFile, { data, isSuccess, isError }] = UseFileUpload();
+  const [blurred, setBlurred] = useState(false);
+  const errorRef = useRef(null);
   const dispatch = useDispatch();
 
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: {
-      "image/*": [".jpeg", ".jpg", ".png", ".svg"],
-      "video/*": [".mp4", ".avi", ".mkv"],
-    },
-    onDrop: (acceptedFiles) => {
-      uploadFile({ file: acceptedFiles[0] });
-    },
-  });
+  const { getRootProps, getInputProps, isFocused, isFileDialogActive } =
+    useDropzone({
+      accept: {
+        "image/*": [".jpeg", ".jpg", ".png", ".svg"],
+        "video/*": [".mp4", ".avi", ".mkv"],
+      },
+      onDrop: (acceptedFiles) => {
+        uploadFile({ file: acceptedFiles[0] });
+      },
+    });
+
+  const cancelHandler = (e) => {
+    e.stopPropagation();
+    onUpload("");
+  };
 
   useEffect(() => {
     if (isError) {
@@ -119,10 +146,20 @@ const UploadMediaLarge = (props) => {
     }
   }, [isError, isSuccess, data, dispatch, onUpload]);
 
-  const cancelHandler = (e) => {
-    e.stopPropagation();
-    onUpload("");
-  };
+  useEffect(() => {
+    if (isFocused) {
+      setBlurred(true);
+    }
+    if (
+      !isFocused &&
+      !isFileDialogActive &&
+      blurred &&
+      errorRef.current &&
+      error
+    ) {
+      errorRef.current.textContent = error;
+    }
+  }, [errorRef, error, blurred, isFocused, isFileDialogActive]);
 
   return (
     <>
@@ -152,7 +189,7 @@ const UploadMediaLarge = (props) => {
           {...getInputProps()}
           size="small"
         />
-        {error && <FormHelperText error>{error}</FormHelperText>}
+        <FormHelperText ref={errorRef} error></FormHelperText>
       </FormControl>
     </>
   );
