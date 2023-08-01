@@ -909,10 +909,8 @@ const OptionsInfo = () => {
   const deleteConfirmationHandler = () => {
     if (optionState.deleteType === "attribute") {
       const updatedAttributes = optionFormik.values.attributes?.filter(
-        (attr, index) => {
-          if (attr._id === optionState.deleteId && attr.saved === true) {
-            if (attr.saved === true) {
-            }
+        (attr, attrIndex) => {
+          if (attr._id === optionState.deleteId && attr.saved) {
             dispatchDeleteOption({
               type: "SET_DELETED_ATTRIBUTES",
               attribute: attr,
@@ -922,13 +920,14 @@ const OptionsInfo = () => {
           return attr._id !== optionState.deleteId;
         }
       );
+
       optionFormik.setFieldValue("attributes", updatedAttributes);
 
       const updatedSubOptions = optionFormik.values.subOptions?.filter(
         (subOption) => {
           if (
             subOption.metaAttribute === optionState.deleteId &&
-            subOption.saved === true
+            subOption.saved
           ) {
             dispatchDeleteOption({
               type: "SET_DELETED_SUB_OPTIONS",
@@ -944,7 +943,7 @@ const OptionsInfo = () => {
         (subAttribute) => {
           if (
             subAttribute.metaAttribute === optionState.deleteId &&
-            subAttribute.saved === true
+            subAttribute.saved
           ) {
             dispatchDeleteOption({
               type: "SET_DELETED_SUB_ATTRIBUTES",
@@ -959,10 +958,7 @@ const OptionsInfo = () => {
     if (optionState.deleteType === "subOption") {
       const updatedSubOptions = optionFormik.values.subOptions?.filter(
         (subOption) => {
-          if (
-            subOption._id === optionState.deleteId &&
-            subOption.saved === true
-          ) {
+          if (subOption._id === optionState.deleteId && subOption.saved) {
             dispatchDeleteOption({
               type: "SET_DELETED_SUB_OPTIONS",
               subOption,
@@ -977,7 +973,7 @@ const OptionsInfo = () => {
         (subAttribute) => {
           if (
             subAttribute.metaSubAttribute === optionState.deleteId &&
-            subAttribute.saved === true
+            subAttribute.saved
           ) {
             dispatchDeleteOption({
               type: "SET_DELETED_SUB_ATTRIBUTES",
@@ -992,10 +988,7 @@ const OptionsInfo = () => {
     if (optionState.deleteType === "subAttribute") {
       const updatedSubAttributes = optionFormik.values.subAttributes?.filter(
         (subAttribute) => {
-          if (
-            subAttribute._id === optionState.deleteId &&
-            subAttribute.saved === true
-          ) {
+          if (subAttribute._id === optionState.deleteId && subAttribute.saved) {
             dispatchDeleteOption({
               type: "SET_DELETED_SUB_ATTRIBUTES",
               subAttribute,
@@ -1021,6 +1014,7 @@ const OptionsInfo = () => {
     } else {
       attributeId = "attribute-0";
     }
+
     const newAttributeFields = optionFormik.values.attributes?.concat({
       _id: attributeId,
       title: "",
