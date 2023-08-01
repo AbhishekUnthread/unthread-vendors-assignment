@@ -52,6 +52,7 @@ import DiscountValue from "../../../components/DiscountFormat/DiscountValue";
 import Filters from "../../../components/DiscountFormat/Filters";
 import CouponCode from "../../../components/DiscountFormat/CouponCode";
 import BuyXGetY from "../../../components/DiscountFormat/BuyXGetY";
+import { showError } from "../../../features/snackbar/snackbarAction";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -91,13 +92,12 @@ const queryFilterReducer = (state, action) => {
 
 const couponCodeSchema = Yup.object().shape({
   title: Yup.string()
-    .required('Title is required')
-    .max(40, 'Title must not exceed 40 characters'),
+    .required("Title is required")
+    .max(40, "Title must not exceed 40 characters"),
   bodyText: Yup.string()
-    .required('Body text is required')
-    .max(100, 'Body text must not exceed 100 characters'),
+    .required("Body text is required")
+    .max(100, "Body text must not exceed 100 characters"),
 });
-
 
 const maximumDiscountValidationSchema = Yup.object().shape({
   limitDiscountNumber: Yup.boolean(),
@@ -179,7 +179,7 @@ const discountValidationSchema = Yup.object().shape({
     .oneOf(["allowed", "notAllowed"], "Invalid")
     .required("required"),
   maximumDiscount: maximumDiscountValidationSchema,
-  couponCode : couponCodeSchema,
+  couponCode: couponCodeSchema,
 });
 
 const CreateDiscount = () => {
@@ -314,43 +314,65 @@ const CreateDiscount = () => {
         allowCombineWithOthers: false,
         allowCombineWith: [],
       },
-      filters : {
-        field : null,
-        operator : null,
-        fieldValue : null,
+      filters: [
+        {
+          field: null,
+          operator: null,
+          fieldValue: null,
+        },
+      ],
+      couponCode: {
+        showCouponCode: false,
+        title: null,
+        bodyText: null,
       },
-      couponCode : {
-        showCouponCode:false,
-        title :null,
-        bodyText : null,
+      customerEligibility: {
+        customer: "all",
+        value: [],
       },
-      customerEligibility :{
-        customer : "all",
-        value : [],
+      discountValue: {
+        discountValue: null,
+        type: "percentage",
+        value: null,
+        cartLabel: null,
       },
-      discountValue : {
-        discountValue : null,
-        type : "percentage",
-        value : null,
-        cartLabel : null
+      buyXGetY: {
+        buy: null,
+        selectBuyItem: "",
+        buyProduct: [],
+        get: null,
+        selectGetItem: "",
+        getProduct: [],
+        discountMode: "giveDiscount",
+        discountValue: null,
+        type: "percentage",
+        value: null,
       },
-      buyXGetY : {
-      buy :null,
-      selectBuyItem: "",
-      buyProduct : [],
-      get :null,
-      selectGetItem : "",
-      getProduct : [],
-      discountMode : "giveDiscount",
-      discountValue : null,
-      type : "percentage",
-      value : null,
-      }    
     },
     enableReinitialize: true,
     validationSchema: discountValidationSchema,
     onSubmit: (values) => {},
   });
+
+  const addFilterHandler = () => {
+    const newFilter = formik?.values?.filters.concat({
+      field: null,
+      operator: null,
+      fieldValue: null,
+    });
+    formik.setFieldValue("filters", newFilter);
+  };
+
+  const deleteFilterHandler = ({deleteIndex}) => {
+    if (formik.values?.filters?.length === 1) {
+      dispatch(showError({ message: "At least one filter is required" }));
+      return;
+    }
+    const updatedFilter = formik?.values?.filters.filter(
+      (_, index) => index !== deleteIndex
+    );
+    formik.setFieldValue("filters", updatedFilter);
+  };
 
   // console.log({discountType:formik.values?.filters.field})
   // console.log({discountFormat:formik.values?.discountFormat?.discountFormat})
@@ -367,7 +389,6 @@ const CreateDiscount = () => {
   // console.log({
   //   MinimumRequirementError: formik?.errors?.minimumRequirement?.requirement,
   // });
-
 
   return (
     <div className="page container-fluid position-relative">
@@ -447,7 +468,12 @@ const CreateDiscount = () => {
                         labelId="demo-select-small"
                         id="demo-select-small"
                         value={formik.values?.discountType}
-                        onChange={(event)=>{formik.setFieldValue('discountType',event.target.value)}}
+                        onChange={(event) => {
+                          formik.setFieldValue(
+                            "discountType",
+                            event.target.value
+                          );
+                        }}
                         onBlur={formik.handleBlur}
                         name={"discountType"}
                         size="small"
@@ -515,8 +541,12 @@ const CreateDiscount = () => {
               formik={formik}
               touched={formik?.touched?.filters}
               error={formik?.errors?.filters}
+              data={formik.values?.filters}
+              onSort={() => {}}
+              onDeleteField={deleteFilterHandler}
+              onAdd={addFilterHandler}
             />
-              {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
+            {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
                 <div className="bg-black-21 border-grey-5 rounded-8 p-3 col-12">
                   <div className="row">
                     <div className="d-flex col-12 justify-content-between">
@@ -922,177 +952,177 @@ const CreateDiscount = () => {
                 )}
               </div> */}
 
-              <BuyXGetY
+            <BuyXGetY
               value={formik.values?.buyXGetY}
               field="buyXGetY"
               formik={formik}
               touched={formik?.touched?.buyXGetY}
               error={formik?.errors?.buyXGetY}
-              />
+            />
 
-              <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
-                <div className="d-flex col-12 px-0 justify-content-between">
-                  <div className="d-flex align-items-center">
-                    <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                      Discount
-                    </h6>
-                    <Tooltip title="Lorem ipsum" placement="top">
-                      <img
-                        src={info}
-                        alt="info"
-                        className="ms-2 c-pointer"
-                        width={13.5}
-                      />
-                    </Tooltip>
-                  </div>
+            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
+              <div className="d-flex col-12 px-0 justify-content-between">
+                <div className="d-flex align-items-center">
+                  <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
+                    Discount
+                  </h6>
+                  <Tooltip title="Lorem ipsum" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className="ms-2 c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
-                <hr className="hr-grey-6 mt-3 mb-0" />
-                <div className="col-md-2 col-6 mt-3 ps-0">
-                  <div className="d-flex mb-1">
-                    <p className="text-lightBlue">Min Qty.</p>
-                    <Tooltip title="Lorem ipsum" placement="top">
-                      <img
-                        src={info}
-                        alt="info"
-                        className="ms-2 c-pointer"
-                        width={13.5}
-                      />
-                    </Tooltip>
-                  </div>
-                  <FormControl className="px-0">
-                    <OutlinedInput placeholder="Enter Min Qty" size="small" />
-                  </FormControl>
+              </div>
+              <hr className="hr-grey-6 mt-3 mb-0" />
+              <div className="col-md-2 col-6 mt-3 ps-0">
+                <div className="d-flex mb-1">
+                  <p className="text-lightBlue">Min Qty.</p>
+                  <Tooltip title="Lorem ipsum" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className="ms-2 c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
-                <div className="col-md-2 col-6 mt-3 ">
-                  <div className="d-flex mb-1">
-                    <p className="text-lightBlue">Max Qty.</p>
-                    <Tooltip title="Lorem ipsum" placement="top">
-                      <img
-                        src={info}
-                        alt="info"
-                        className="ms-2 c-pointer"
-                        width={13.5}
-                      />
-                    </Tooltip>
-                  </div>
-                  <FormControl className="px-0">
-                    <OutlinedInput placeholder="Enter Max Qty" size="small" />
-                  </FormControl>
+                <FormControl className="px-0">
+                  <OutlinedInput placeholder="Enter Min Qty" size="small" />
+                </FormControl>
+              </div>
+              <div className="col-md-2 col-6 mt-3 ">
+                <div className="d-flex mb-1">
+                  <p className="text-lightBlue">Max Qty.</p>
+                  <Tooltip title="Lorem ipsum" placement="top">
+                    <img
+                      src={info}
+                      alt="info"
+                      className="ms-2 c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
-                <div className="col-md-8 pe-0 ps-0 ps-md-3">
-                  <div className="row mt-3">
-                    <div className="col-12">
-                      <div className="d-flex mb-1">
-                        <p className="text-lightBlue">Discount</p>
-                        <Tooltip title="Lorem ipsum" placement="top">
-                          <img
-                            src={info}
-                            alt="info"
-                            className="ms-2 c-pointer"
-                            width={13.5}
-                          />
-                        </Tooltip>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="row align-items-center">
-                    <div className="col-md-6 discount-inputs-two d-flex align-items-center">
-                      <FormControl className="px-0">
-                        <OutlinedInput
-                          placeholder="Enter Discount"
-                          size="small"
-                          endAdornment={
-                            <InputAdornment
-                              position="end"
-                              aria-describedby={idDiscountPercent}
-                              onClick={handleDiscountPercent}
-                              className="c-pointer"
-                            >
-                              <span className="d-flex align-items-center">
-                                <p className="text-lightBlue">Percentage</p>
-                                <img
-                                  src={arrowDown}
-                                  alt="arrow"
-                                  className="ms-2"
-                                />
-                              </span>
-                            </InputAdornment>
-                          }
+                <FormControl className="px-0">
+                  <OutlinedInput placeholder="Enter Max Qty" size="small" />
+                </FormControl>
+              </div>
+              <div className="col-md-8 pe-0 ps-0 ps-md-3">
+                <div className="row mt-3">
+                  <div className="col-12">
+                    <div className="d-flex mb-1">
+                      <p className="text-lightBlue">Discount</p>
+                      <Tooltip title="Lorem ipsum" placement="top">
+                        <img
+                          src={info}
+                          alt="info"
+                          className="ms-2 c-pointer"
+                          width={13.5}
                         />
-                      </FormControl>
-                      <Popover
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "left",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "left",
-                        }}
-                        id={idDiscountPercent}
-                        open={openDiscountPercent}
-                        anchorEl={anchorDiscountPercentEl}
-                        onClose={handleDiscountPercentClose}
-                      >
-                        <div className="py-2 px-1">
-                          <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                            Percentage Discount
-                          </small>
-                          <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                            Fixed Amount
-                          </small>
-                        </div>
-                      </Popover>
-
-                      <div className="w-auto text-center ms-3">
-                        <p className="text-lightBlue">on</p>
-                      </div>
+                      </Tooltip>
                     </div>
-                    <div className="col-md-6">
-                      <FormControl
-                        sx={{ m: 0, minWidth: 120, width: "100%" }}
+                  </div>
+                </div>
+
+                <div className="row align-items-center">
+                  <div className="col-md-6 discount-inputs-two d-flex align-items-center">
+                    <FormControl className="px-0">
+                      <OutlinedInput
+                        placeholder="Enter Discount"
+                        size="small"
+                        endAdornment={
+                          <InputAdornment
+                            position="end"
+                            aria-describedby={idDiscountPercent}
+                            onClick={handleDiscountPercent}
+                            className="c-pointer"
+                          >
+                            <span className="d-flex align-items-center">
+                              <p className="text-lightBlue">Percentage</p>
+                              <img
+                                src={arrowDown}
+                                alt="arrow"
+                                className="ms-2"
+                              />
+                            </span>
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                    <Popover
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "left",
+                      }}
+                      id={idDiscountPercent}
+                      open={openDiscountPercent}
+                      anchorEl={anchorDiscountPercentEl}
+                      onClose={handleDiscountPercentClose}
+                    >
+                      <div className="py-2 px-1">
+                        <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                          Percentage Discount
+                        </small>
+                        <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                          Fixed Amount
+                        </small>
+                      </div>
+                    </Popover>
+
+                    <div className="w-auto text-center ms-3">
+                      <p className="text-lightBlue">on</p>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <FormControl
+                      sx={{ m: 0, minWidth: 120, width: "100%" }}
+                      size="small"
+                    >
+                      <Select
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        // value={field}
+                        // onChange={handleFieldChange}
                         size="small"
                       >
-                        <Select
-                          labelId="demo-select-small"
-                          id="demo-select-small"
-                          // value={field}
-                          // onChange={handleFieldChange}
-                          size="small"
+                        <MenuItem
+                          value=""
+                          sx={{ fontSize: 13, color: "#5c6d8e" }}
                         >
-                          <MenuItem
-                            value=""
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            None
-                          </MenuItem>
-                          <MenuItem
-                            value={10}
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            Value 1
-                          </MenuItem>
-                          <MenuItem
-                            value={20}
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            Value 2
-                          </MenuItem>
-                          <MenuItem
-                            value={30}
-                            sx={{ fontSize: 13, color: "#5c6d8e" }}
-                          >
-                            Value 3
-                          </MenuItem>
-                        </Select>
-                      </FormControl>
-                    </div>
-                    {discountType === 20 && (
-                      <div className="col-md-12 mt-3">
-                        <div className="d-flex mb-1">
-                          <p className="text-lightBlue">Cart Label</p>
-                          {/* <Tooltip title="Lorem ipsum" placement="top">
+                          None
+                        </MenuItem>
+                        <MenuItem
+                          value={10}
+                          sx={{ fontSize: 13, color: "#5c6d8e" }}
+                        >
+                          Value 1
+                        </MenuItem>
+                        <MenuItem
+                          value={20}
+                          sx={{ fontSize: 13, color: "#5c6d8e" }}
+                        >
+                          Value 2
+                        </MenuItem>
+                        <MenuItem
+                          value={30}
+                          sx={{ fontSize: 13, color: "#5c6d8e" }}
+                        >
+                          Value 3
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                  {discountType === 20 && (
+                    <div className="col-md-12 mt-3">
+                      <div className="d-flex mb-1">
+                        <p className="text-lightBlue">Cart Label</p>
+                        {/* <Tooltip title="Lorem ipsum" placement="top">
                         <img
                           src={info}
                           alt="info"
@@ -1100,23 +1130,20 @@ const CreateDiscount = () => {
                           width={13.5}
                         />
                       </Tooltip> */}
-                        </div>
-                        <FormControl className="px-0 w-100">
-                          <OutlinedInput
-                            placeholder="Enter Label"
-                            size="small"
-                          />
-                        </FormControl>
                       </div>
-                    )}
-                  </div>
-                </div>
-                <div className="col-12 px-0 mt-3">
-                  <small className="text-blue-2 fw-500 c-pointer">
-                    + Add More Range
-                  </small>
+                      <FormControl className="px-0 w-100">
+                        <OutlinedInput placeholder="Enter Label" size="small" />
+                      </FormControl>
+                    </div>
+                  )}
                 </div>
               </div>
+              <div className="col-12 px-0 mt-3">
+                <small className="text-blue-2 fw-500 c-pointer">
+                  + Add More Range
+                </small>
+              </div>
+            </div>
 
             <CouponCode
               value={formik.values?.couponCode}
@@ -1138,7 +1165,7 @@ const CreateDiscount = () => {
               formik={formik}
               touched={formik?.touched?.customerEligibility}
               error={formik?.errors?.customerEligibility}
-             />
+            />
 
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
               <div className="d-flex col-12 px-0 justify-content-between">
@@ -1147,13 +1174,13 @@ const CreateDiscount = () => {
                     Limit By Location
                   </h6>
                   <Tooltip title="Lorem ipsum" placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className="ms-2 c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip>
+                    <img
+                      src={info}
+                      alt="info"
+                      className="ms-2 c-pointer"
+                      width={13.5}
+                    />
+                  </Tooltip>
                 </div>
               </div>
               <hr className="hr-grey-6 mt-3 mb-0" />
@@ -1263,7 +1290,9 @@ const CreateDiscount = () => {
             <div className="bg-black-15 border-grey-5 rounded-8 p-3">
               <small className="text-grey-6">Summary</small>
               <div className="d-flex align-items-center mt-1">
-                <h6 className="text-lightBlue fw-500">{formik.values?.discountName}</h6>
+                <h6 className="text-lightBlue fw-500">
+                  {formik.values?.discountName}
+                </h6>
                 {/* <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer ms-3">
                   <small className="text-black fw-400">Active</small>
                 </div> */}
@@ -1275,7 +1304,9 @@ const CreateDiscount = () => {
                 <small className="text-blue-1 fw-500">
                   • Code&nbsp;&nbsp;|
                 </small>
-                <h6 className="fw-500 ms-2 me-2 text-lightBlue">{formik.values?.discountFormat?.discountCode}</h6>
+                <h6 className="fw-500 ms-2 me-2 text-lightBlue">
+                  {formik.values?.discountFormat?.discountCode}
+                </h6>
 
                 <Tooltip title="Copy" placement="top">
                   <ContentCopyIcon
