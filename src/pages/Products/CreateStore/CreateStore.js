@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./CreateStore.scss";
 import { Link, useNavigate } from "react-router-dom";
 // ! COMPONENT IMPORTS
@@ -7,111 +7,136 @@ import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
 import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
 import NotesBox from "../../../components/NotesBox/NotesBox";
-import TagsBox from "../../../components/TagsBox/TagsBox";
-import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
 import StatusBox from "../../../components/StatusBox/StatusBox";
 // ! IMAGES IMPORTS
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import addMedia from "../../../assets/icons/addMedia.svg";
 import info from "../../../assets/icons/info.svg";
 // ! MATERIAL IMPORTS
-import { Checkbox, FormControl, FormControlLabel, InputAdornment, OutlinedInput, Tooltip } from "@mui/material";
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputAdornment,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useCreateStoreMutation } from "../../../features/products/inventory/inventoryApiSlice";
+import { TimePicker } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import moment from "moment";
 
-const createStoreValidationSchema = Yup.object({
+const dayObj = {
+  status: Yup.string().oneOf(["closed", "open"]),
+  to: Yup.string().when("status", (status, schema) =>
+    status === "open" ? schema.required("Required") : schema.nullable(true)
+  ),
+  from: Yup.string().when("status", (status, schema) =>
+    status === "open" ? schema.required("Required") : schema.nullable(true)
+  ),
+  visible: Yup.boolean(),
+};
+
+const storeValidationSchema = Yup.object({
   name: Yup.string().trim().required("required"),
   phone: Yup.string().trim().required("required"),
   email: Yup.string().trim().lowercase().email("email is not valid").required("required"),
   countryCode: Yup.string().trim().required("required"),
+  storeHours: Yup.object({
+    monday: Yup.object(dayObj),
+    tuesday: Yup.object(dayObj),
+    wednesday: Yup.object(dayObj),
+    thursday: Yup.object(dayObj),
+    friday: Yup.object(dayObj),
+    saturday: Yup.object(dayObj),
+    sunday: Yup.object(dayObj),
+  }),
 });
 
+const storeInitialValue = {
+  name: "",
+  countryCode: "",
+  phone: "",
+  email: "",
+  status: "active",
+  managerDetails: {
+    fullName: "",
+    countryCode: "",
+    phone: "",
+    email: "",
+  },
+  address: {
+    country: "",
+    line1: "",
+    line2: "",
+    city: "",
+    pincode: "",
+    state: "",
+    lattitude: "",
+    longitude: "",
+  },
+  storeHours: {
+    monday: {
+      status: "open",
+      to: "",
+      from: "",
+    },
+    tuesday: {
+      status: "open",
+      to: "",
+      from: "",
+    },
+    wednesday: {
+      status: "open",
+      to: "",
+      from: "",
+    },
+    thursday: {
+      status: "open",
+      to: "",
+      from: "",
+    },
+    friday: {
+      status: "open",
+      to: "",
+      from: "",
+    },
+    saturday: {
+      status: "open",
+      to: "",
+      from: "",
+    },
+    sunday: {
+      status: "closed",
+      to: "",
+      from: "",
+    },
+  },
+  mediaUrl: "",
+  notes: "",
+  settings: {
+    fullfillOnlineOrder: true,
+    enableStorePickup: true,
+  },
+};
+
 const CreateStore = () => {
-  // ? SWITCH STARTS HERE
-  const [checkedSwitch, setCheckedSwitch] = React.useState(true);
-  const handleSwitchChange = (event) => {
-    setCheckedSwitch(event.target.checked);
-  };
-  // ? SWITCH ENDS HERE
-
   const navigate = useNavigate();
-
-  const [
-    createStore,
-    { data: createStoreData, isSuccess: createStoreIsSuccess, isLoading: createStoreIsLoading, error: createStoreError },
-  ] = useCreateStoreMutation();
+  const [createStore] = useCreateStoreMutation();
 
   const formik = useFormik({
-    initialValues: {
-      name: "",
-      phone: "",
-      email: "",
-      status: "active",
-      managerDetails: {
-        fullName: "",
-        // countryCode: "",
-        phone: "",
-        email: "",
-      },
-      address: {
-        country: "",
-        line1: "",
-        line2: "",
-        city: "",
-        pincode: "",
-        state: "",
-        lattitude: "",
-        longitude: "",
-      },
-      mediaUrl: "",
-      notes: "",
-      settings: {
-        fullfillOnlineOrder: true,
-        enableStorePickup: true,
-      },
-    },
+    initialValues: storeInitialValue,
+    validationSchema: storeValidationSchema,
     onSubmit: (values) => {
-      console.log(JSON.stringify(values, null, 1));
-      values.countryCode = values.managerDetails.countryCode = values.address.country;
-      values.storeHours = {
-        monday: {
-          status: "open",
-          to: "10:00",
-          from: "18:30",
-        },
-        tuesday: {
-          status: "open",
-          to: "10:00",
-          from: "18:30",
-        },
-        wednesday: {
-          status: "open",
-          to: "10:00",
-          from: "18:30",
-        },
-        thursday: {
-          status: "open",
-          to: "10:00",
-          from: "18:30",
-        },
-        friday: {
-          status: "open",
-          to: "10:00",
-          from: "18:30",
-        },
-        sataurday: {
-          status: "open",
-          to: "10:00",
-          from: "18:30",
-        },
-        sunday: {
-          status: "closed",
-        },
-      };
-      createStore(values)
-        .unwrap()
-        .then(() => navigate("/products/inventory"));
+      console.log(values);
+      // values.countryCode = values.managerDetails.countryCode = values.address.country;
+      createStore(values).then(() => navigate("/products/inventory"));
     },
   });
 
@@ -119,6 +144,19 @@ const CreateStore = () => {
   const updateCountryValue = (value) => formik.setFieldValue("address.country", value);
   const updateStoreStatus = (value, status) => formik.setFieldValue("status", status);
   const updateMediaUrl = (value) => formik.setFieldValue("mediaUrl", value ?? "");
+  const updateCountryCodeValue = (value) => formik.setFieldValue("countryCode", value ?? "");
+  const updateManagerDetailsCountryCodeValue = (value) =>
+    formik.setFieldValue("managerDetails.countryCode", value ?? "");
+
+  const resetDayTimings = (dayName = "") => {
+    formik.setFieldValue(`storeHours.${dayName}.to`, "10:00");
+    formik.setFieldValue(`storeHours.${dayName}.from`, "18:30");
+  };
+
+  const setDayFromTimings = (dayName = "", timeValue = "") =>
+    formik.setFieldValue(`storeHours.${dayName}.from`, timeValue);
+
+  const setDayToTimings = (dayName = "", timeValue = "") => formik.setFieldValue(`storeHours.${dayName}.to`, timeValue);
 
   return (
     <form
@@ -189,10 +227,9 @@ const CreateStore = () => {
                       startAdornment={
                         <InputAdornment position="start">
                           <AppMobileCodeSelect
-                          // GetCountryCode={updateCountryCodeValue}
-                          // SelectCountryCode={updateCountryCodeValue}
+                            GetCountryCode={updateCountryCodeValue}
+                            SelectCountryCode={updateCountryCodeValue}
                           />
-                          {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
                         </InputAdornment>
                       }
                     />
@@ -245,7 +282,6 @@ const CreateStore = () => {
             <div className="col-md-6 pe-0 mt-3">
               <div className="d-flex align-items-center justify-content-between">
                 <p className="text-lightBlue mb-1">Address Line 2</p>
-                {/* <p className="text-lightBlue mb-1">State or Region</p> */}
                 <small className="text-grey-6 mb-1">(Optional)</small>
               </div>
               <FormControl className="w-100 px-0">
@@ -339,6 +375,87 @@ const CreateStore = () => {
             </div>
           </div>
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4 row attributes">
+            <div className="d-flex col-12 px-0 mb-4  justify-content-between">
+              <div className="d-flex align-items-center">
+                <h6 className="text-lightBlue me-auto text-lightBlue fw-500">Store Hours</h6>
+                <Tooltip
+                  title="Lorem ipsum"
+                  placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="ms-2 c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+            <StoreHoursWeekDay
+              dayName="monday"
+              dayValues={formik.values.storeHours.monday}
+              formikHandleChange={formik.handleChange}
+              onFromTimeChange={setDayFromTimings}
+              onToTimeChange={setDayToTimings}
+              resetDayTimings={resetDayTimings}
+            />
+
+            <StoreHoursWeekDay
+              dayName="tuesday"
+              dayValues={formik.values.storeHours.tuesday}
+              formikHandleChange={formik.handleChange}
+              onFromTimeChange={setDayFromTimings}
+              onToTimeChange={setDayToTimings}
+              resetDayTimings={resetDayTimings}
+            />
+
+            <StoreHoursWeekDay
+              dayName="wednesday"
+              dayValues={formik.values.storeHours.wednesday}
+              formikHandleChange={formik.handleChange}
+              onFromTimeChange={setDayFromTimings}
+              onToTimeChange={setDayToTimings}
+              resetDayTimings={resetDayTimings}
+            />
+
+            <StoreHoursWeekDay
+              dayName="thursday"
+              dayValues={formik.values.storeHours.thursday}
+              formikHandleChange={formik.handleChange}
+              onFromTimeChange={setDayFromTimings}
+              onToTimeChange={setDayToTimings}
+              resetDayTimings={resetDayTimings}
+            />
+
+            <StoreHoursWeekDay
+              dayName="friday"
+              dayValues={formik.values.storeHours.friday}
+              formikHandleChange={formik.handleChange}
+              onFromTimeChange={setDayFromTimings}
+              onToTimeChange={setDayToTimings}
+              resetDayTimings={resetDayTimings}
+            />
+
+            <StoreHoursWeekDay
+              dayName="saturday"
+              dayValues={formik.values.storeHours.saturday}
+              formikHandleChange={formik.handleChange}
+              onFromTimeChange={setDayFromTimings}
+              onToTimeChange={setDayToTimings}
+              resetDayTimings={resetDayTimings}
+            />
+
+            <StoreHoursWeekDay
+              dayName="sunday"
+              dayValues={formik.values.storeHours.sunday}
+              formikHandleChange={formik.handleChange}
+              onFromTimeChange={setDayFromTimings}
+              onToTimeChange={setDayToTimings}
+              resetDayTimings={resetDayTimings}
+            />
+
+            {/*  */}
+          </div>
+          <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4 row attributes">
             <div className="d-flex col-12 px-0 justify-content-between">
               <div className="d-flex align-items-center">
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">Manager Info</h6>
@@ -383,7 +500,10 @@ const CreateStore = () => {
                       sx={{ paddingLeft: 0 }}
                       startAdornment={
                         <InputAdornment position="start">
-                          <AppMobileCodeSelect />
+                          <AppMobileCodeSelect
+                            GetCountryCode={updateManagerDetailsCountryCodeValue}
+                            SelectCountryCode={updateManagerDetailsCountryCodeValue}
+                          />
                           {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
                         </InputAdornment>
                       }
@@ -549,3 +669,82 @@ const CreateStore = () => {
 };
 
 export default CreateStore;
+
+function StoreHoursWeekDay({
+  dayName = "",
+  dayValues = {},
+  formikHandleChange = () => {},
+  onFromTimeChange = () => {},
+  onToTimeChange = () => {},
+  resetDayTimings = () => {},
+}) {
+  const handleStatusChange = (e) => {
+    console.log(e.target.value);
+    if (e.target.value) resetDayTimings(dayName);
+    formikHandleChange(e);
+  };
+
+  const [from, setFrom] = useState(moment(dayValues.from, "HH:mm"));
+  const handleFromChange = (newValue) => {
+    setFrom(newValue);
+    onFromTimeChange(dayName, newValue.format("HH:mm"));
+    console.log(newValue.format("HH:mm"));
+  };
+
+  const [to, setTo] = useState(moment(dayValues.to, "HH:mm"));
+  const handleToChange = (newValue) => {
+    setTo(newValue);
+    onToTimeChange(dayName, newValue.format("HH:mm"));
+    console.log(newValue.format("HH:mm"));
+  };
+
+  return (
+    <div className="col-12">
+      <div className="row align-items-center">
+        <div className="col-2">
+          <span className="text-lightBlue text-capitalize">{dayName}</span>
+        </div>
+        <div className="col-3">
+          <FormControl
+            size="small"
+            className="w-100">
+            <Select
+              size="small"
+              variant="outlined"
+              name={`storeHours.${dayName}.status`}
+              onChange={handleStatusChange}
+              value={dayValues.status}>
+              <MenuItem value="closed">Closed</MenuItem>
+              <MenuItem value="open">Open</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
+        {dayValues.status === "open" && (
+          <>
+            <div className="col-3">
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <TimePicker
+                  label="From"
+                  value={from}
+                  onChange={handleFromChange}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+            </div>
+            <div className="col-auto">-</div>
+            <div className="col-3">
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <TimePicker
+                  label="To"
+                  value={to}
+                  onChange={handleToChange}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

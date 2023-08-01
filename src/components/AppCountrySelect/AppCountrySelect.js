@@ -1,12 +1,10 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { countries } from "../../assets/DefaultValues/Countries";
 
 import { useGetAllCountryQuery } from "../../features/master/country/countryApiSlice";
 
-export default function AppCountrySelect({ GetCountryName, SelectCountryName }) {
+export default function AppCountrySelect({ GetCountryName = () => {}, SelectCountryName = () => {} }) {
   const handleCountryName = (event) => {
     if (event) {
       GetCountryName(event.target.value);
@@ -14,14 +12,14 @@ export default function AppCountrySelect({ GetCountryName, SelectCountryName }) 
   };
 
   const selectCountryName = (event, value) => {
-    SelectCountryName(value?._id);
+    SelectCountryName(value?._id ?? "");
   };
 
   const {
     data: countryData,
-    isLoading: countryIsLoading,
-    isSuccess: countryIsSuccess,
-    error: countryError,
+    // isLoading: countryIsLoading,
+    // isSuccess: countryIsSuccess,
+    // error: countryError,
   } = useGetAllCountryQuery({ createdAt: -1 });
 
   return (

@@ -1,9 +1,9 @@
 import { useEffect, useReducer, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
-import ProductInventoryTable from "./ProductInventoryTable";
+import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import TableSearch, { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
+import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import ExportDialog from "../../../components/ExportDialog/ExportDialog";
 import ImportSecondDialog from "../../../components/ImportSecondDialog/ImportSecondDialog";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
@@ -11,10 +11,6 @@ import TabPanel from "../../../components/TabPanel/TabPanel";
 // ! IMAGES IMPORTS
 import sort from "../../../assets/icons/sort.svg";
 import products from "../../../assets/icons/sidenav/products.svg";
-import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
-import allFlag from "../../../assets/images/products/allFlag.svg";
-import usaFlag from "../../../assets/images/products/usaFlag.svg";
-import ukFlag from "../../../assets/images/products/ukFlag.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
 import {
@@ -36,13 +32,15 @@ import { useGetAllStoresQuery } from "../../../features/products/inventory/inven
 
 const initialQueryFilterState = {
   name: "",
+  country: "",
+  status: ["active", "in-active"],
+  createdAt: "1",
+  // updatedAt: "1",
+  alphabetical: "",
   pageNo: 1,
   tabIndex: 0,
   pageSize: 10,
   searchValue: "",
-  createdAt: "1",
-  alphabetical: "",
-  status: ["active", "in-active"],
 };
 
 const queryFilterReducer = (state, action) => {
@@ -74,6 +72,14 @@ const queryFilterReducer = (state, action) => {
         searchValue: action.searchValue,
       };
 
+    case "SET_COUNTRY_VALUE": {
+      return {
+        ...state,
+        pageNo: initialQueryFilterState.pageNo,
+        country: action.country,
+      };
+    }
+
     case "SET_STATUS":
       const { value, checked } = action;
       return {
@@ -88,6 +94,7 @@ const queryFilterReducer = (state, action) => {
         pageNo: initialQueryFilterState.pageNo,
         alphabetical: action.alphabetical,
         createdAt: "",
+        // updatedAt: "",
       };
 
     case "SET_CRONOLOGICAL_SORTING":
@@ -95,6 +102,7 @@ const queryFilterReducer = (state, action) => {
         ...state,
         pageNo: initialQueryFilterState.pageNo,
         createdAt: action.createdAt,
+        // updatedAt: action.updatedAt,
         alphabetical: "",
       };
 
@@ -118,9 +126,6 @@ const queryFilterReducer = (state, action) => {
 const ProductInventory = () => {
   const [firstRender, setFirstRender] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
-
-  // const [queryFilterState.tabIndex, setTabIndex] = useState(0);
-  // const handleTabIndexChange = (event, index) => setTabIndex(index);
   const handleTabIndexChange = (event, tab) => dispatchQueryFilter({ type: "SET_TAB_INDEX", tab });
 
   const [queryFilterState, dispatchQueryFilter] = useReducer(queryFilterReducer, initialQueryFilterState);
@@ -128,13 +133,15 @@ const ProductInventory = () => {
   const {
     data: storeData,
     isLoading: storeIsLoading,
-    isSuccess: storeIsSuccess,
+    // isSuccess: storeIsSuccess,
     error: storeError,
   } = useGetAllStoresQuery({ ...queryFilterState });
 
   const handleSearchValueChange = (searchValue) => dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue });
 
   const handleSearchChange = (name) => dispatchQueryFilter({ type: "SEARCH", name });
+
+  const handleCountryValueChange = (id) => dispatchQueryFilter({ type: "SET_COUNTRY_VALUE", country: id });
 
   const handleStatusCheckboxChange = (event) => {
     const { value, checked } = event.target;
@@ -145,6 +152,7 @@ const ProductInventory = () => {
     dispatchQueryFilter({
       type: "SET_CRONOLOGICAL_SORTING",
       createdAt: event.target.value,
+      // updatedAt: event.target.value,
     });
     setAnchorSortEl(null);
   };
@@ -173,14 +181,12 @@ const ProductInventory = () => {
     if (firstRender)
       dispatchQueryFilter({
         type: "SET_ALL_FILTERS",
-        filters: Object.fromEntries(searchParams.entries()),
+        filters: JSON.parse(searchParams.get("filter")),
       });
     setFirstRender(false);
   }, [searchParams, firstRender]);
 
-  useEffect(() => {
-    setSearchParams({ ...queryFilterState });
-  }, [queryFilterState]);
+  useEffect(() => setSearchParams({ filter: JSON.stringify(queryFilterState) }), [queryFilterState, setSearchParams]);
 
   return (
     <div className="container-fluid page">
@@ -233,6 +239,11 @@ const ProductInventory = () => {
               value={queryFilterState.searchValue}
               onSearchValueChange={handleSearchValueChange}
             />
+
+            <div className="ps-3">
+              <AppCountrySelect SelectCountryName={handleCountryValueChange} />
+            </div>
+
             <button
               className="button-grey py-2 px-3 ms-2"
               aria-describedby={idStatus}
@@ -329,6 +340,7 @@ const ProductInventory = () => {
                       <Radio
                         size="small"
                         checked={queryFilterState.createdAt === "-1"}
+                        // checked={queryFilterState.updatedAt === "-1"}
                       />
                     }
                     label="Newest to Oldest"
@@ -340,6 +352,7 @@ const ProductInventory = () => {
                       <Radio
                         size="small"
                         checked={queryFilterState.createdAt === "1"}
+                        // checked={queryFilterState.updatedAt === "1"}
                       />
                     }
                     label="Oldest to Newest"

@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from "@mui/material";
 // ! COMPONENT IMPORTS
-import { EnhancedTableHead, stableSort, getComparator } from "../../../components/TableDependencies/TableDependencies";
+import { EnhancedTableHead } from "../../../components/TableDependencies/TableDependencies";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // !IMAGES IMPORTS
@@ -153,7 +153,8 @@ const AllInventory = ({
                   headCells={headCells}
                 />
                 <TableBody>
-                  {stableSort(list, getComparator(order, orderBy)).map((row, index) => {
+                  {/* {stableSort(list, getComparator(order, orderBy)).map((row, index) => { */}
+                  {list.map((row, index) => {
                     const isItemSelected = isSelected(row._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
