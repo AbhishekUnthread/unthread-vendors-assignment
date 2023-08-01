@@ -116,7 +116,7 @@ const Discounts = () => {
   );
 
   const{
-    data: discountsData, // 
+    data: discountsData, 
     isLoading: discountsIsLoading, 
     isSuccess: discountsIsSuccess, 
     error: discountsError,
@@ -149,7 +149,7 @@ const Discounts = () => {
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
   }
 
-console.log("first",discountsData?.data[0])
+console.log("first",discountsData?.data?.data)
   // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
@@ -183,39 +183,39 @@ console.log("first",discountsData?.data[0])
       if (discountsState.discountType === 0) {
         dispatchDiscounts({
           type: "SET_DATA",
-          data: discountsData?.data,
-          totalCount: discountsData?.totalCount,
+          data: discountsData?.data?.data,
+          totalCount: discountsData?.data?.totalCount,
         })
       }
       if (discountsState.discountType === 1) {
         dispatchDiscounts({
           type: "SET_DATA",
-          data: discountsData?.data,
-          totalCount: discountsData?.totalCount,
+          data: discountsData?.data?.data,
+          totalCount: discountsData?.data?.totalCount,
         })
       }
       if(discountsState.discountType === 2)
       {
         dispatchDiscounts({
           type: "SET_DATA",
-          data: discountsData?.data,
-          totalCount: discountsData?.totalCount,
+          data: discountsData?.data?.data,
+          totalCount: discountsData?.data?.totalCount,
         })
       }
       if(discountsState.discountType === 3)
       {
         dispatchDiscounts({
           type: "SET_DATA",
-          data: discountsData?.data,
-          totalCount: discountsData?.totalCount,
+          data: discountsData?.data?.data,
+          totalCount: discountsData?.data?.totalCount,
         })
       }
       if(discountsState.discountType === 4)
       {
         dispatchDiscounts({
           type: "SET_DATA",
-          data: discountsData?.data,
-          totalCount: discountsData?.totalCount,
+          data: discountsData?.data?.data,
+          totalCount: discountsData?.data?.totalCount,
         })
       }
     }
@@ -269,6 +269,9 @@ console.log("first",discountsData?.data[0])
       })
     }
 }, [searchParams])
+
+const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk/Tiered Discount', 'Free Shipping'];
+
 
   return (
     <div className="container-fluid page">
@@ -325,7 +328,7 @@ console.log("first",discountsData?.data[0])
             <hr className="hr-grey-6 my-0" />
             <DialogContent className="py-3 px-4">
               <div className="row">
-                {[...Array(5)].map((elementInArray, index) => (
+                {discountType.map((type, index) => (
                   <div className="col-6 my-3">
                     <Link
                       to="/offers/discounts/create"
@@ -337,7 +340,7 @@ console.log("first",discountsData?.data[0])
                         width={100}
                       />
                       <div className="d-flex ms-3 flex-column">
-                        <p className="text-lightBlue">Product Discount</p>
+                        <p className="text-lightBlue">{type}</p>
                         <small className="d-block mt-2 text-grey-6">
                           Lorem ipsum dolor, sit amet consectetur adipisicing
                           elit. Esse odio amet

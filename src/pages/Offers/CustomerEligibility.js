@@ -8,21 +8,29 @@ import {
   Chip,
   RadioGroup,
   Radio,
+  Autocomplete,
+  Checkbox,
+  TextField,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import TableSearch from "../../components/TableSearch/TableSearch";
-import AddCustomerModal from "./AddCustomers";
+import info from "../../assets/icons/info.svg";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import { useGetAllCustomersQuery } from "../../features/customers/customer/customerApiSlice";
+import { useGetAllCustomerGroupQuery } from "../../features/customers/customerGroup/customerGroupApiSlice";
 
-const CustomerEligibility = () => {
-  const [addCustomer, setAddCustomer] = useState(false);
+const CustomerEligibility = ({ value, field, formik, touched, error }) => {
+  const { data: customersData, isSuccess: customersIsSuccess } =
+    useGetAllCustomersQuery(undefined, {
+      skip: value?.customer !== "specificCustomer",
+    });
 
-  const openCustomerModal = () => {
-    setAddCustomer(true);
-  } 
+  const { data: customersGroupData, isSuccess: customersGroupIsSuccess } =
+    useGetAllCustomerGroupQuery(undefined, {
+      skip: value?.customer !== "specificCustomerGroups",
+    });
 
-  const closeAddCustomerModal = () => {
-    setAddCustomer(false);
-  }
   // ? RADIO STARTS HERE
   const [customerEligibility, setCustomerEligibility] = React.useState(0);
   const handleCustomerEligibilityChange = (event, newValue) => {
@@ -33,6 +41,8 @@ const CustomerEligibility = () => {
   const handleDelete = () => {
     console.info("You clicked the delete icon.");
   };
+
+  console.log("valueeeeee",value?.value)
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -57,11 +67,14 @@ const CustomerEligibility = () => {
           <RadioGroup
             aria-labelledby="demo-controlled-radio-buttons-group"
             name="controlled-radio-buttons-group"
-            value={customerEligibility}
-            onChange={handleCustomerEligibilityChange}
+            value={value?.customer}
+            onChange={(_, newValue) => {
+              formik.setFieldValue(`${field}.customer`, newValue);
+              formik.setFieldValue(`${field}.value`, []);
+            }}
           >
             <FormControlLabel
-              value="allCustomers"
+              value="all"
               control={<Radio size="small" />}
               label="All Customers"
               sx={{
@@ -75,7 +88,7 @@ const CustomerEligibility = () => {
             <FormControlLabel
               value="specificCustomerGroups"
               control={<Radio size="small" />}
-              label="Speceific Customer Groups"
+              label="Specific Customer Groups"
               sx={{
                 "& .MuiTypography-root": {
                   fontSize: 13,
@@ -87,7 +100,7 @@ const CustomerEligibility = () => {
             <FormControlLabel
               value="specificCustomer"
               control={<Radio size="small" />}
-              label="Speceific Customer"
+              label="Specific Customer"
               sx={{
                 "& .MuiTypography-root": {
                   fontSize: 13,
@@ -98,7 +111,8 @@ const CustomerEligibility = () => {
             />
           </RadioGroup>
         </FormControl>
-        <div className="d-flex mt-3">
+
+        {/* <div className="d-flex mt-3">
           <TableSearch />
           <button className="button-grey py-2 px-3 ms-2" onClick={openCustomerModal}>
             <small className="text-lightBlue me-2">Browse</small>
@@ -118,12 +132,50 @@ const CustomerEligibility = () => {
             className="me-2 mt-3"
             size="small"
           />
-        </div>
+        </div> */}
+        {value?.customer !== "all" &&
+          (customersIsSuccess || customersGroupIsSuccess) && (
+            <Autocomplete
+              multiple
+              id="checkboxes-tags-demo"
+              className="mt-3"
+              sx={{ width: "100%" }}
+              options={
+                customersData?.data?.data || customersGroupData?.data?.data
+              }
+              value={value?.value||[]}
+              getOptionLabel={(option) => option?.firstName || option?.name}
+              size="small"
+              onChange={(_, newValue) => {
+                formik.setFieldValue( `${field}.value`, newValue);
+              }}
+              renderOption={(props, option, { selected }) => (
+                <li {...props}>
+                  <Checkbox
+                    icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                    checkedIcon={<CheckBoxIcon fontSize="small" />}
+                    checked={selected}
+                    size="small"
+                    style={{
+                      color: "#5C6D8E",
+                      marginRight: 0,
+                    }}
+                  />
+                  <small className="text-lightBlue">
+                    {option.firstName || option?.name}
+                  </small>
+                </li>
+              )}
+              renderInput={(params) => (
+                <TextField size="small" {...params} placeholder="Search ..." />
+              )}
+            />
+          )}
       </div>
-      <AddCustomerModal 
+      {/* <AddCustomerModal 
         openAddCustomerModal={addCustomer}
         closeAddCustomerModal={closeAddCustomerModal}
-      />
+      /> */}
     </div>
   );
 };
