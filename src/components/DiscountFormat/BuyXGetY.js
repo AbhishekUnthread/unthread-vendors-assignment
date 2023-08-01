@@ -112,6 +112,23 @@ function BuyXGetY({ value, field, formik, touched, error }) {
     setAnchorDiscountPercentEl(null);
   };
 
+  //Number Formatting starts here
+  const formattedNumber = (number) => {
+    const numericValue = parseFloat(number);
+    if (!isNaN(numericValue)) {
+      const formattedValue = numericValue.toLocaleString('en-IN');
+      return formattedValue;
+    }
+    return '';
+  }
+  const removeCommas = (formattedValue) => {
+    return formattedValue.replace(/,/g, '');
+  }
+  const handleInputChange = (event) => {
+    const inputNumber = removeCommas(event.target.value);
+    formik.setFieldValue(`${field}.discountValue`, inputNumber);
+  };
+  //Number Formatting ends here
   useEffect(() => {
     if (collectionIsSuccess) {
       if (value?.selectBuyItem === 10) {
@@ -585,8 +602,8 @@ function BuyXGetY({ value, field, formik, touched, error }) {
             <div className="col-md-5 discount-inputs-two d-flex align-items-center">
               <FormControl className="px-0">
                 <OutlinedInput
-                  value={value?.discountValue}
-                  onChange={formik?.handleChange}
+                  value={formattedNumber(value?.discountValue)}
+                  onChange={handleInputChange }
                   onBlur={formik?.handleBlur}
                   name={`${field}.discountValue`}
                   placeholder="Enter Discount"
