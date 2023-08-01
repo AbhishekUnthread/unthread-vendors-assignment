@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -6,6 +7,7 @@ import {
   TablePagination,
   TableRow,
   Chip,
+  Collapse,
 } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
@@ -23,6 +25,8 @@ import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import Attribute from "../../../components/Options/Attribute/Attribute";
 import SubOption from "../../../components/Options/SubOption";
 import SubOptionCollapse from "../../../components/Options/SubOptionCollapse";
+
+import arrowDown from "../../../assets/icons/arrowDown.svg";
 
 const DragHandle = SortableHandle(() => (
   <TableCell sx={{ padding: "16px 0", verticalAlign: "top" }}>
@@ -50,18 +54,25 @@ const HEAD_CELLS = [
     align: "left",
     disablePadding: true,
     label: "",
-    width: "1%",
+    width: "0.25%",
+  },
+  {
+    align: "left",
+    disablePadding: true,
+    label: "",
+    width: "0.25%",
   },
   {
     align: "left",
     disablePadding: false,
     label: "Values",
-    width: "99%",
+    width: "99.5%",
   },
 ];
 
 const OptionsAttributeTable = (props) => {
   const {
+    isEditing,
     formik,
     onAttributeAdd,
     onAttributeDelete,
@@ -70,6 +81,26 @@ const OptionsAttributeTable = (props) => {
     onSubAttributeAdd,
     onSubAttributeDelete,
   } = props;
+  const [collapseStatus, setCollapseStatus] = useState({});
+
+  const toggleSubOption = (id) => {
+    setCollapseStatus((prevState) => {
+      return {
+        ...prevState,
+        [id]: !prevState[id],
+      };
+    });
+  };
+
+  useEffect(() => {
+    const attrObj = {};
+    if (formik.values?.attributes?.length) {
+      for (const attr of formik.values?.attributes) {
+        attrObj[attr._id] = !isEditing;
+      }
+    }
+    setCollapseStatus(attrObj);
+  }, [formik.values?.attributes, isEditing]);
 
   return (
     <TableContainer sx={{ padding: 0 }}>
@@ -81,6 +112,19 @@ const OptionsAttributeTable = (props) => {
               <SortableRow key={index} index={index}>
                 <TableRow tabIndex={-1} className="table-rows">
                   <DragHandle />
+                  <TableCell sx={{ padding: "16px 0", verticalAlign: "top" }}>
+                    <button
+                      onClick={toggleSubOption.bind(null, attribute._id)}
+                      type="button"
+                      style={{
+                        cursor: "pointer",
+                        marginTop: "5px",
+                      }}
+                      className="reset"
+                    >
+                      <img src={arrowDown} alt="sort" className="" />
+                    </button>
+                  </TableCell>
                   <TableCell
                     sx={{ textTransform: "capitalize", cursor: "pointer" }}
                   >
@@ -90,23 +134,29 @@ const OptionsAttributeTable = (props) => {
                       onAttributeDelete={onAttributeDelete}
                       onSubOptionAdd={onSubOptionAdd}
                     />
-                    {formik.values.subOptions.map((subOption, index) => {
-                      if (subOption.metaAttribute === attribute._id) {
-                        return (
-                          <SubOption
-                            key={subOption._id}
-                            id={subOption._id}
-                            attributeId={attribute._id}
-                            formik={formik}
-                            index={index}
-                            onSubOptionDelete={onSubOptionDelete}
-                            onSubAttributeAdd={onSubAttributeAdd}
-                            onSubAttributeDelete={onSubAttributeDelete}
-                          />
-                        );
-                      }
-                      return null;
-                    })}
+                    <Collapse
+                      in={collapseStatus[attribute._id]}
+                      timeout="auto"
+                      unmountOnExit
+                    >
+                      {formik.values.subOptions.map((subOption, index) => {
+                        if (subOption.metaAttribute === attribute._id) {
+                          return (
+                            <SubOption
+                              key={subOption._id}
+                              id={subOption._id}
+                              attributeId={attribute._id}
+                              formik={formik}
+                              index={index}
+                              onSubOptionDelete={onSubOptionDelete}
+                              onSubAttributeAdd={onSubAttributeAdd}
+                              onSubAttributeDelete={onSubAttributeDelete}
+                            />
+                          );
+                        }
+                        return null;
+                      })}
+                    </Collapse>
                   </TableCell>
                 </TableRow>
               </SortableRow>
@@ -114,6 +164,7 @@ const OptionsAttributeTable = (props) => {
           })}
 
           <TableRow tabIndex={-1} className="table-rows">
+            <TableCell sx={{ padding: "0 16px" }}></TableCell>
             <TableCell sx={{ padding: "0 16px" }}></TableCell>
             <TableCell sx={{ padding: "0 16px" }}>
               <button

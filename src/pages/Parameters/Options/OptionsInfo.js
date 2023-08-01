@@ -794,7 +794,6 @@ const OptionsInfo = () => {
               if (subAttrCopy[key] === (null || undefined || ""))
                 delete subAttrCopy[key];
             });
-
             await updateSubAttribute({
               details: subAttrCopy,
               id: subAttr._id,
@@ -920,7 +919,6 @@ const OptionsInfo = () => {
           return attr._id !== optionState.deleteId;
         }
       );
-
       optionFormik.setFieldValue("attributes", updatedAttributes);
 
       const updatedSubOptions = optionFormik.values.subOptions?.filter(
@@ -1014,7 +1012,6 @@ const OptionsInfo = () => {
     } else {
       attributeId = "attribute-0";
     }
-
     const newAttributeFields = optionFormik.values.attributes?.concat({
       _id: attributeId,
       title: "",
@@ -1361,6 +1358,7 @@ const OptionsInfo = () => {
                 </Grid>
               </div>
               <OptionsAttributeTable
+                isEditing={id}
                 onAttributeAdd={addAttributeFieldHandler}
                 formik={optionFormik}
                 onAttributeDelete={deleteAttributeHandler}
