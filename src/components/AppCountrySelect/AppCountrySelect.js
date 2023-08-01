@@ -15,14 +15,14 @@ export default function AppCountrySelect({ GetCountryName, SelectCountryName }) 
 
   const selectCountryName = (event, value) => {
     SelectCountryName(value?._id);
-  }
+  };
 
-   const {
+  const {
     data: countryData,
     isLoading: countryIsLoading,
     isSuccess: countryIsSuccess,
     error: countryError,
-  } = useGetAllCountryQuery({createdAt: -1});
+  } = useGetAllCountryQuery({ createdAt: -1 });
 
   return (
     <Autocomplete
@@ -47,8 +47,7 @@ export default function AppCountrySelect({ GetCountryName, SelectCountryName }) 
         <Box
           component="li"
           sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-          {...props}
-        >
+          {...props}>
           {/* <img
             loading="lazy"
             width="20"
@@ -56,9 +55,7 @@ export default function AppCountrySelect({ GetCountryName, SelectCountryName }) 
             srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
             alt=""
           /> */}
-          <small className="text-lightBlue my-1">
-            {option?.name}
-          </small>
+          <small className="text-lightBlue my-1">{option?.name}</small>
         </Box>
       )}
       renderInput={(params) => (
