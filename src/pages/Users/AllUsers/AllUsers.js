@@ -20,7 +20,10 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 import { showError } from "../../../features/snackbar/snackbarAction";
-import { useGetAllCustomersQuery } from "../../../features/customers/customer/customerApiSlice";
+import { 
+  useGetAllCustomersQuery,
+  useGetCustomersCountQuery 
+} from "../../../features/customers/customer/customerApiSlice";
 
 import AllUsersTable from "./AllUsersTable";
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -130,6 +133,12 @@ const usersReducer = (state, action) => {
 const AllUsers = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [anchorFlagEl, setAnchorFlagEl] = useState(null);
+  const [anchorOrdersEl, setAnchorOrdersEl] = useState(null);
+  const [anchorSortEl, setAnchorSortEl] = useState(null);
+  const [anchorLocationEl, setAnchorLocationEl] = useState(null);
+  const [anchorStatusEl, setAnchorStatusEl] = useState(null);
+  const [anchorDaysEl, setDaysEl] = useState(null);
   const[searchParams, setSearchParams] = useSearchParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
@@ -165,6 +174,15 @@ const AllUsers = () => {
       pageNo:queryFilterState.pageNo+1,
       ...queryParameters, ...customerStatusQuery
     });
+
+  const {
+    data: customersCountData,  
+    isLoading: customersCountIsLoading, 
+    isSuccess: customersCountIsSuccess, 
+    error: customersCountError
+  } = useGetCustomersCountQuery();
+
+  const customerCount = customersCountData?.data[0];
 
   const editHandler = (id) => {
     let combinedObject = {id, customerStatusQuery}
@@ -208,8 +226,6 @@ const AllUsers = () => {
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
   }
 
-  // * FLAG POPOVERS STARTS
-  const [anchorFlagEl, setAnchorFlagEl] = useState(null);
   const handleFlagClick = (event) => {
     setAnchorFlagEl(event.currentTarget);
   };
@@ -218,10 +234,6 @@ const AllUsers = () => {
   };
   const openFlag = Boolean(anchorFlagEl);
   const idFlag = openFlag ? "simple-popover" : undefined;
-  // * FLAG POPOVERS ENDS
-
-  // * SORT POPOVERS STARTS
-  const [anchorSortEl, setAnchorSortEl] = useState(null);
 
   const handleSortClick = (event) => {
     setAnchorSortEl(event.currentTarget);
@@ -233,10 +245,6 @@ const AllUsers = () => {
 
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
-  // * SORT POPOVERS ENDS
-
-  // * LOCATION POPOVERS STARTS
-  const [anchorLocationEl, setAnchorLocationEl] = useState(null);
 
   const handleLocationClick = (event) => {
     setAnchorLocationEl(event.currentTarget);
@@ -248,10 +256,6 @@ const AllUsers = () => {
 
   const openLocation = Boolean(anchorLocationEl);
   const idLocation = openLocation ? "simple-popover" : undefined;
-  // * LOCATION POPOVERS ENDS
-
-  // * NO OF ORDERS POPOVERS STARTS
-  const [anchorOrdersEl, setAnchorOrdersEl] = useState(null);
 
   const handleOrdersClick = (event) => {
     setAnchorOrdersEl(event.currentTarget);
@@ -263,10 +267,6 @@ const AllUsers = () => {
 
   const openOrders = Boolean(anchorOrdersEl);
   const idOrders = openOrders ? "simple-popover" : undefined;
-  // * NO OF ORDERS POPOVERS ENDS
-
-  // * STATUS POPOVERS STARTS
-  const [anchorStatusEl, setAnchorStatusEl] = useState(null);
 
   const handleStatusClick = (event) => {
     setAnchorStatusEl(event.currentTarget);
@@ -278,10 +278,6 @@ const AllUsers = () => {
 
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
-  // * STATUS POPOVERS ENDS
-
-  // * DAYS POPOVERS STARTS
-  const [anchorDaysEl, setDaysEl] = useState(null);
 
   const handleDaysClick = (event) => {
     setDaysEl(event.currentTarget);
@@ -293,7 +289,6 @@ const AllUsers = () => {
 
   const openDays = Boolean(anchorDaysEl);
   const idDays = openDays ? "simple-popover" : undefined;
-  // * DAYS POPOVERS ENDS
 
   useEffect(() => {
     if (customersIsSuccess) {
@@ -374,7 +369,7 @@ const AllUsers = () => {
           <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3 flex-grow-1">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2 className="text-lightBlue fw-400">50</h2>
+                <h2 className="text-lightBlue fw-400">{customerCount?.active}</h2>
                 <small className="text-grey-6 mt-2">Active</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -393,7 +388,7 @@ const AllUsers = () => {
           <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3 flex-grow-1">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2 className="text-lightBlue fw-400">50</h2>
+                <h2 className="text-lightBlue fw-400">{customerCount?.inActive}</h2>
                 <small className="text-grey-6 mt-2">In-Active</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -492,11 +487,11 @@ const AllUsers = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Active" className="tabs-head" />
-              <Tab label="New" className="tabs-head" />
-              <Tab label="In-Active" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab label={`All (${customerCount?.active + customerCount?.inActive + customerCount?.archived})`} className="tabs-head" />
+              <Tab label={`Active (${customerCount?.active})`} className="tabs-head" />
+              <Tab label={`New (${customerCount?.new})`} className="tabs-head" />
+              <Tab label={`In-Active (${customerCount?.inActive})`} className="tabs-head" />
+              <Tab label={`Archived (${customerCount?.archived})`} className="tabs-head" />
             </Tabs>
             <div
               className="tabs-country c-pointer"
@@ -807,6 +802,7 @@ const AllUsers = () => {
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               onEdit={editHandler}
+              customerType={usersState.customerType}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={1}>
@@ -820,6 +816,7 @@ const AllUsers = () => {
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               onEdit={editHandler}
+              customerType={usersState.customerType}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={2}>
@@ -833,6 +830,7 @@ const AllUsers = () => {
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               onEdit={editHandler}
+              customerType={usersState.customerType}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={3}>
@@ -846,6 +844,7 @@ const AllUsers = () => {
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               onEdit={editHandler}
+              customerType={usersState.customerType}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={4}>
@@ -859,6 +858,7 @@ const AllUsers = () => {
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               onEdit={editHandler}
+              customerType={usersState.customerType}
             />
           </TabPanel>
         </Paper>
