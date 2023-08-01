@@ -31,18 +31,11 @@ import {
 } from "@mui/material";
 
 import UseFileUpload from "../../../features/fileUpload/fileUploadHook";
-import {
-  EnhancedTableHead,
-  stableSort,
-  getComparator,
-} from "../../../components/TableDependencies/TableDependencies";
-import {
-  showSuccess,
-  showError,
-} from "../../../features/snackbar/snackbarAction";
+import { EnhancedTableHead, stableSort, getComparator } from "../../../components/TableDependencies/TableDependencies";
+import { showSuccess, showError } from "../../../features/snackbar/snackbarAction";
 import {
   useGetAllCollectionsQuery,
-  useCreateCollectionMutation
+  useCreateCollectionMutation,
 } from "../../../features/parameters/collections/collectionsApiSlice";
 
 import AppTextEditor from "../../../components/AppTextEditor/AppTextEditor";
@@ -52,8 +45,8 @@ import NotesBox from "../../../components/NotesBox/NotesBox";
 import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
 import UploadBanner from "../../../components/UploadBanner/UploadBanner";
 import StatusBox from "../../../components/StatusBox/StatusBox";
-import VisibilityBox from '../../../components/VisibilityBox/VisibilityBox'
-import AddHeader from "../../../components/AddHeader/AddHeader"
+import VisibilityBox from "../../../components/VisibilityBox/VisibilityBox";
+import AddHeader from "../../../components/AddHeader/AddHeader";
 import DiscardModal from "../../../components/Discard/DiscardModal";
 
 import "./CreateCollection.scss";
@@ -107,36 +100,11 @@ function createData(pId, productName, category, price) {
 }
 
 const rows = [
-  createData(
-    1,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    2,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    3,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    4,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    5,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
+  createData(1, "The Fringe Diamond Ring", "Gold Products", "₹ 20,600 - ₹ 50,000"),
+  createData(2, "The Fringe Diamond Ring", "Gold Products", "₹ 20,600 - ₹ 50,000"),
+  createData(3, "The Fringe Diamond Ring", "Gold Products", "₹ 20,600 - ₹ 50,000"),
+  createData(4, "The Fringe Diamond Ring", "Gold Products", "₹ 20,600 - ₹ 50,000"),
+  createData(5, "The Fringe Diamond Ring", "Gold Products", "₹ 20,600 - ₹ 50,000"),
 ];
 
 const drawerHeadCells = [
@@ -192,23 +160,13 @@ const likeHeadCells = [
 ];
 
 const likeProductRows = [
-  createLikeProductData(
-    1,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 25,000"
-  ),
+  createLikeProductData(1, "The Fringe Diamond Ring", "Gold Products", "₹ 25,000"),
   createLikeProductData(2, "Fringe Diamond Ring", "Gold Products", "₹ 25,000"),
-  createLikeProductData(
-    3,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 25,000"
-  ),
+  createLikeProductData(3, "The Fringe Diamond Ring", "Gold Products", "₹ 25,000"),
 ];
 
 const collectionValidationSchema = Yup.object({
-  title: Yup.string().trim().min(3).max(50).required("Required")
+  title: Yup.string().trim().min(3).max(50).required("Required"),
 });
 
 const CreateCollection = () => {
@@ -216,10 +174,10 @@ const CreateCollection = () => {
   let navigate = useNavigate();
   const [startDate1, setStartDate] = useState(null);
   const [endDate1, setEndDate] = useState(null);
-  const [collectionList, setCollectionList] = useState()
+  const [collectionList, setCollectionList] = useState();
   const collectionId = useSelector((state) => state.collection.collectionId);
-  const [categorySeo,setCategorySeo] = useState({});
-  const [appTextEditor, setAppTextEditor] = useState()
+  const [categorySeo, setCategorySeo] = useState({});
+  const [appTextEditor, setAppTextEditor] = useState();
   const [showDiscardModal, setShowDiscardModal] = useState(false);
   const [likeProductRadio, setLikeProductRadio] = useState("automated");
   const [likeMatchRadio, setLikeMatchRadio] = useState("allCondition");
@@ -243,21 +201,21 @@ const CreateCollection = () => {
   const clearDate = () => {
     setStartDate(null);
     setEndDate(null);
-  }  
-  
+  };
+
   const handleVisiblility = (value) => {
     collectionFormik?.setFieldValue("isVisibleFrontend", Boolean(value));
-  }
+  };
 
   const handleMediaUrl = (value) => {
-    if(value !== null) {
+    if (value !== null) {
       collectionFormik?.setFieldValue("mediaUrl", value);
     }
-  }
+  };
 
   const handleProductStatus = (value, status) => {
     collectionFormik?.setFieldValue("status", status);
-  }
+  };
 
   const toggleDiscardModal = () => {
     setShowDiscardModal((prevState) => !prevState);
@@ -265,7 +223,7 @@ const CreateCollection = () => {
 
   const handleDiscard = () => {
     setShowDiscardModal(true);
-  }
+  };
 
   const {
     data: collectionData,
@@ -276,11 +234,7 @@ const CreateCollection = () => {
 
   const [
     createCollection,
-    {
-      isLoading: createCollectionIsLoading,
-      isSuccess: createCollectionIsSuccess,
-      error: createCollectionError,
-    },
+    { isLoading: createCollectionIsLoading, isSuccess: createCollectionIsSuccess, error: createCollectionError },
   ] = useCreateCollectionMutation();
 
   const collectionFormik = useFormik({
@@ -294,11 +248,11 @@ const CreateCollection = () => {
     validationSchema: collectionValidationSchema,
     onSubmit: (values) => {
       for (const key in values) {
-        if(values[key] === "" || values[key] === null){
-          delete values[key] 
+        if (values[key] === "" || values[key] === null) {
+          delete values[key];
         }
       }
-      let obj={
+      let obj = {
         ...values,
       };
 
@@ -317,43 +271,40 @@ const CreateCollection = () => {
           obj.seo.slug = categorySeo.slug;
         }
 
-        if(categorySeo?.metaKeywords) {
-          obj.seo.metaKeywords = categorySeo?.metaKeywords
+        if (categorySeo?.metaKeywords) {
+          obj.seo.metaKeywords = categorySeo?.metaKeywords;
         }
       }
       createCollection(obj)
         .unwrap()
-        .then(() => { 
+        .then(() => {
           navigate("/parameters/collections");
           dispatch(showSuccess({ message: "Collection created successfully" }));
         });
-       
     },
   });
 
   useEffect(() => {
-    if(appTextEditor !== null) {
-      collectionFormik.setFieldValue("description", appTextEditor)
+    if (appTextEditor !== null) {
+      collectionFormik.setFieldValue("description", appTextEditor);
     }
-    if(startDate1 !== null){
+    if (startDate1 !== null) {
       collectionFormik.setFieldValue("startDate", startDate1);
     }
-    if(endDate1 !== null){
+    if (endDate1 !== null) {
       collectionFormik.setFieldValue("endDate", endDate1);
     }
-    if(startDate1 !== null){
+    if (startDate1 !== null) {
       collectionFormik.setFieldValue("status", "scheduled");
     }
-  },[appTextEditor, startDate1, endDate1])
+  }, [appTextEditor, startDate1, endDate1]);
 
   useEffect(() => {
     if (createCollectionError) {
       if (createCollectionError?.data?.message) {
         dispatch(showError({ message: createCollectionError.data.message }));
       } else {
-        dispatch(
-          showError({ message: "Oops! Failed to create Collection. Please try again." })
-        );
+        dispatch(showError({ message: "Oops! Failed to create Collection. Please try again." }));
       }
     }
   }, [createCollectionError, dispatch]);
@@ -367,11 +318,7 @@ const CreateCollection = () => {
   };
 
   const toggleAddProductDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
+    if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
     setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
@@ -422,10 +369,7 @@ const CreateCollection = () => {
     } else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
     setSelected(newSelected);
   };
@@ -478,32 +422,32 @@ const CreateCollection = () => {
       if (collectionError?.data?.message) {
         dispatch(showError({ message: collectionError.data.message }));
       } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
+        dispatch(showError({ message: "Something went wrong!, please try again" }));
       }
     }
     if (collectionIsSuccess) {
-        setCollectionList(collectionData.data.data);
+      setCollectionList(collectionData.data.data);
     }
-  }, [
-    collectionData,
-    collectionIsSuccess,
-    collectionError,
-    dispatch,
-  ]);
+  }, [collectionData, collectionIsSuccess, collectionError, dispatch]);
 
   return (
-    <form noValidate onSubmit={collectionFormik.handleSubmit}>
+    <form
+      noValidate
+      onSubmit={collectionFormik.handleSubmit}>
       <div className="page container-fluid position-relative user-group">
-        <AddHeader headerName={"Create Collection"} navigateLink={"/parameters/collections"}/>
+        <AddHeader
+          headerName={"Create Collection"}
+          navigateLink={"/parameters/collections"}
+        />
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
               <div className="col-md-12 px-0 mt-1">
                 <div className="d-flex mb-1">
                   <p className="text-lightBlue me-2">Collection Title *</p>
-                  <Tooltip title="Lorem ipsum" placement="top">
+                  <Tooltip
+                    title="Lorem ipsum"
+                    placement="top">
                     <img
                       src={info}
                       alt="info"
@@ -524,9 +468,7 @@ const CreateCollection = () => {
                   />
                 </FormControl>
                 {!!collectionFormik.touched.title && collectionFormik.errors.title && (
-                  <FormHelperText error>
-                    {collectionFormik.errors.title}
-                  </FormHelperText>
+                  <FormHelperText error>{collectionFormik.errors.title}</FormHelperText>
                 )}
                 <FormGroup>
                   <div className="d-flex align-items-center col-12 px-0">
@@ -559,7 +501,9 @@ const CreateCollection = () => {
               <div className="col-12 mt-3 px-0">
                 <div className="d-flex  mb-1">
                   <p className="text-lightBlue me-2">Description</p>
-                  <Tooltip title="Lorem ipsum" placement="top">
+                  <Tooltip
+                    title="Lorem ipsum"
+                    placement="top">
                     <img
                       src={info}
                       alt="info"
@@ -571,15 +515,13 @@ const CreateCollection = () => {
                 <AppTextEditor
                   setFieldValue={setAppTextEditor}
                   value={appTextEditor}
-                 />
+                />
               </div>
             </div>
 
             <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-4">
               <div className="d-flex justify-content-between mb-2 px-0">
-                <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
-                  Add Product
-                </h6>
+                <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">Add Product</h6>
               </div>
               <div className="d-flex align-items-center col-12 px-0 mb-2">
                 <RadioGroup
@@ -588,8 +530,7 @@ const CreateCollection = () => {
                   name="row-radio-buttons-group"
                   value={likeProductRadio}
                   onChange={handleLikeProductRadio}
-                  className="features-radio px-0"
-                >
+                  className="features-radio px-0">
                   <FormControlLabel
                     value="automated"
                     control={<Radio size="small" />}
@@ -629,8 +570,7 @@ const CreateCollection = () => {
                             name="row-radio-buttons-group"
                             value={likeMatchRadio}
                             onChange={handleLikeMatchRadio}
-                            className="features-radio"
-                          >
+                            className="features-radio">
                             <FormControlLabel
                               value="allCondition"
                               control={<Radio size="small" />}
@@ -657,8 +597,7 @@ const CreateCollection = () => {
                         </div>
                         <button
                           className="button-gradient py-1 px-4"
-                          onClick={handleLikeAddCondition}
-                        >
+                          onClick={handleLikeAddCondition}>
                           <p>Add Condition</p>
                         </button>
                       </div>
@@ -714,8 +653,7 @@ const CreateCollection = () => {
                               className="px-0 me-0"
                             />
                             <small className="ms-0 text-lightBlue">
-                              <span className="text-blue-2">Price</span>&nbsp;is
-                              equal to&nbsp;
+                              <span className="text-blue-2">Price</span>&nbsp;is equal to&nbsp;
                               <span className="text-blue-2">₹&nbsp;25,000</span>
                             </small>
                           </div>
@@ -739,42 +677,38 @@ const CreateCollection = () => {
                           <div className="col-sm-6 col-md-3 mt-3 mb-1 ps-4">
                             <p className="text-lightBlue mb-1">Field</p>
 
-                            <FormControl className="w-100 px-0" size="small">
+                            <FormControl
+                              className="w-100 px-0"
+                              size="small">
                               <Select
                                 labelId="demo-select-small"
                                 id="demo-select-small"
                                 value={field}
                                 onChange={handleFieldChange}
-                                size="small"
-                              >
+                                size="small">
                                 <MenuItem
                                   value="price"
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Price
                                 </MenuItem>
                                 <MenuItem
                                   value={"collection"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Collection
                                 </MenuItem>
                                 <MenuItem
                                   value={"tags"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Tags
                                 </MenuItem>
                                 <MenuItem
                                   value={"category"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Catagory
                                 </MenuItem>
                                 <MenuItem
                                   value={"subCategory"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Sub Category
                                 </MenuItem>
                               </Select>
@@ -783,36 +717,33 @@ const CreateCollection = () => {
                           <div className="col-sm-6 col-md-3 mt-3 mb-1">
                             <p className="text-lightBlue mb-1">Operator</p>
 
-                            <FormControl className="w-100 px-0" size="small">
+                            <FormControl
+                              className="w-100 px-0"
+                              size="small">
                               <Select
                                 labelId="demo-select-small"
                                 id="demo-select-small"
                                 value={operator}
                                 onChange={handleOperatorChange}
-                                size="small"
-                              >
+                                size="small">
                                 <MenuItem
                                   value="equals"
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Equals
                                 </MenuItem>
                                 <MenuItem
                                   value={"notEquals"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Not Equals
                                 </MenuItem>
                                 <MenuItem
                                   value={"greaterThan"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Greater Than
                                 </MenuItem>
                                 <MenuItem
                                   value={"less"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Less
                                 </MenuItem>
                               </Select>
@@ -837,14 +768,12 @@ const CreateCollection = () => {
                           <div className="col-sm-6 col-md-3 mt-3 mb-1">
                             <button
                               className="button-gradient py-1 px-3 w-100 mb-2"
-                              onClick={handleLikeApplyCondition}
-                            >
+                              onClick={handleLikeApplyCondition}>
                               <p>Apply</p>
                             </button>
                             <button
                               className="button-lightBlue-outline py-1 px-3 w-100"
-                              onClick={handleLikeApplyCondition}
-                            >
+                              onClick={handleLikeApplyCondition}>
                               <p>Cancel</p>
                             </button>
                           </div>
@@ -872,8 +801,7 @@ const CreateCollection = () => {
                       <div className="col-md-3 pe-md-0 py-2">
                         <button
                           className="button-gradient w-100 py-1 px-3"
-                          onClick={toggleAddProductDrawer("right", true)}
-                        >
+                          onClick={toggleAddProductDrawer("right", true)}>
                           <p>Add Products</p>
                         </button>
                       </div>
@@ -884,8 +812,7 @@ const CreateCollection = () => {
                       <Table
                         sx={{ minWidth: 750 }}
                         aria-labelledby="tableTitle"
-                        size="medium"
-                      >
+                        size="medium">
                         <EnhancedTableHead
                           numSelected={selected.length}
                           order={order}
@@ -896,14 +823,8 @@ const CreateCollection = () => {
                           headCells={drawerHeadCells}
                         />
                         <TableBody>
-                          {stableSort(
-                            likeProductRows,
-                            getComparator(order, orderBy)
-                          )
-                            .slice(
-                              page * rowsPerPage,
-                              page * rowsPerPage + rowsPerPage
-                            )
+                          {stableSort(likeProductRows, getComparator(order, orderBy))
+                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row, index) => {
                               const isItemSelected = isSelected(row.pId);
                               const labelId = `enhanced-table-checkbox-${index}`;
@@ -915,8 +836,7 @@ const CreateCollection = () => {
                                   aria-checked={isItemSelected}
                                   tabIndex={-1}
                                   key={row.pId}
-                                  selected={isItemSelected}
-                                >
+                                  selected={isItemSelected}>
                                   <TableCell padding="checkbox">
                                     <Checkbox
                                       color="primary"
@@ -925,9 +845,7 @@ const CreateCollection = () => {
                                         "aria-labelledby": labelId,
                                       }}
                                       size="small"
-                                      onClick={(event) =>
-                                        handleClick(event, row.pId)
-                                      }
+                                      onClick={(event) => handleClick(event, row.pId)}
                                       style={{
                                         color: "#5C6D8E",
                                         marginRight: 0,
@@ -938,8 +856,7 @@ const CreateCollection = () => {
                                     component="th"
                                     id={labelId}
                                     scope="row"
-                                    padding="none"
-                                  >
+                                    padding="none">
                                     <div className="d-flex align-items-center my-2">
                                       <img
                                         src={ringSmall}
@@ -949,25 +866,17 @@ const CreateCollection = () => {
                                         width={45}
                                       />
                                       <div>
-                                        <p className="text-lightBlue fw-600">
-                                          {row.productName}
-                                        </p>
-                                        <small className="mt-2 text-grey-6">
-                                          SKU: TFDR012345
-                                        </small>
+                                        <p className="text-lightBlue fw-600">{row.productName}</p>
+                                        <small className="mt-2 text-grey-6">SKU: TFDR012345</small>
                                       </div>
                                     </div>
                                   </TableCell>
                                   <TableCell>
-                                    <p className="text-lightBlue">
-                                      {row.category}
-                                    </p>
+                                    <p className="text-lightBlue">{row.category}</p>
                                   </TableCell>
                                   <TableCell>
                                     <div className="d-flex align-items-center c-pointer ">
-                                      <p className="text-lightBlue">
-                                        {row.price}
-                                      </p>
+                                      <p className="text-lightBlue">{row.price}</p>
                                     </div>
                                   </TableCell>
                                   <TableCell>
@@ -987,8 +896,7 @@ const CreateCollection = () => {
                             <TableRow
                               style={{
                                 height: 53 * emptyRows,
-                              }}
-                            >
+                              }}>
                               <TableCell colSpan={6} />
                             </TableRow>
                           )}
@@ -1020,10 +928,10 @@ const CreateCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO  
-                seoName={collectionFormik.values.title} 
-                seoValue={categorySeo} 
-                handleSeoChange={setCategorySeo} 
+              <SEO
+                seoName={collectionFormik.values.title}
+                seoValue={categorySeo}
+                handleSeoChange={setCategorySeo}
                 refrenceId={""}
               />
             </div>
@@ -1032,8 +940,7 @@ const CreateCollection = () => {
               anchor="right"
               open={addProductDrawer["right"]}
               onClose={toggleAddProductDrawer("right", false)}
-              onOpen={toggleAddProductDrawer("right", true)}
-            >
+              onOpen={toggleAddProductDrawer("right", true)}>
               {/* {list()} */}
               <div className="d-flex justify-content-between py-3 ps-3 pe-2 me-1 align-items-center">
                 <h6 className="text-lightBlue">Select Products</h6>
@@ -1061,8 +968,7 @@ const CreateCollection = () => {
                 <Table
                   sx={{ minWidth: 750 }}
                   aria-labelledby="tableTitle"
-                  size="medium"
-                >
+                  size="medium">
                   <EnhancedTableHead
                     numSelected={selected.length}
                     order={order}
@@ -1074,10 +980,7 @@ const CreateCollection = () => {
                   />
                   <TableBody>
                     {stableSort(rows, getComparator(order, orderBy))
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((row, index) => {
                         const isItemSelected = isSelected(row.pId);
                         const labelId = `enhanced-table-checkbox-${index}`;
@@ -1089,8 +992,7 @@ const CreateCollection = () => {
                             aria-checked={isItemSelected}
                             tabIndex={-1}
                             key={row.pId}
-                            selected={isItemSelected}
-                          >
+                            selected={isItemSelected}>
                             <TableCell padding="checkbox">
                               <Checkbox
                                 color="primary"
@@ -1110,8 +1012,7 @@ const CreateCollection = () => {
                               component="th"
                               id={labelId}
                               scope="row"
-                              padding="none"
-                            >
+                              padding="none">
                               <div className="d-flex align-items-center my-2">
                                 <img
                                   src={ringSmall}
@@ -1121,12 +1022,8 @@ const CreateCollection = () => {
                                   width={45}
                                 />
                                 <div>
-                                  <p className="text-lightBlue fw-600">
-                                    {row.productName}
-                                  </p>
-                                  <small className="mt-2 text-grey-6">
-                                    SKU: TFDR012345
-                                  </small>
+                                  <p className="text-lightBlue fw-600">{row.productName}</p>
+                                  <small className="mt-2 text-grey-6">SKU: TFDR012345</small>
                                 </div>
                               </div>
                             </TableCell>
@@ -1138,8 +1035,7 @@ const CreateCollection = () => {
                                 className="d-flex align-items-center c-pointer "
                                 aria-describedby={idPrice}
                                 variant="contained"
-                                onClick={handlePriceClick}
-                              >
+                                onClick={handlePriceClick}>
                                 <p className="text-lightBlue">{row.price}</p>
                                 <img
                                   className="ms-3"
@@ -1159,17 +1055,12 @@ const CreateCollection = () => {
                                 id={idPrice}
                                 open={openPrice}
                                 anchorEl={anchorPriceEl}
-                                onClose={handlePriceClose}
-                              >
+                                onClose={handlePriceClose}>
                                 <div className="px-3">
-                                  <small className="text-lightBlue">
-                                    Default : 12KT • Yellow • Gold • IJ-SI
-                                  </small>
+                                  <small className="text-lightBlue">Default : 12KT • Yellow • Gold • IJ-SI</small>
                                   <div className="d-flex align-items-center justify-content-between mb-2 mt-3 text-grey-6">
                                     <small>Metal Price</small>
-                                    <small className="ms-2">
-                                      ₹&nbsp;15,000
-                                    </small>
+                                    <small className="ms-2">₹&nbsp;15,000</small>
                                   </div>
                                   <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
                                     <small>Diamond Price</small>
@@ -1181,15 +1072,11 @@ const CreateCollection = () => {
                                   </div>
                                   <div className="d-flex align-items-center justify-content-between mb-3 mt-2 text-grey-6">
                                     <small>GST</small>
-                                    <small className="ms-2">
-                                      ₹&nbsp;&nbsp;600
-                                    </small>
+                                    <small className="ms-2">₹&nbsp;&nbsp;600</small>
                                   </div>
                                   <div className="d-flex align-items-center justify-content-between mb-2 mt-2">
                                     <p className="text-lightBlue">Total</p>
-                                    <p className="ms-2 text-lightBlue fw-600">
-                                      ₹&nbsp;20,600
-                                    </p>
+                                    <p className="ms-2 text-lightBlue fw-600">₹&nbsp;20,600</p>
                                   </div>
                                 </div>
                               </Popover>
@@ -1201,8 +1088,7 @@ const CreateCollection = () => {
                       <TableRow
                         style={{
                           height: 53 * emptyRows,
-                        }}
-                      >
+                        }}>
                         <TableCell colSpan={6} />
                       </TableRow>
                     )}
@@ -1233,10 +1119,11 @@ const CreateCollection = () => {
             </SwipeableDrawer>
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
-            <StatusBox 
+            <StatusBox
               showSchedule={true}
               name={"status"}
-              value={collectionFormik?.values?.status} headingName={"Collection Status"} 
+              value={collectionFormik?.values?.status}
+              headingName={"Collection Status"}
               titleName={"Collection"}
               handleProductStatus={handleProductStatus}
               startDate={startDate1}
@@ -1247,26 +1134,29 @@ const CreateCollection = () => {
             />
             {/* <VisibilityBox name={"isVisibleFrontend"} onChange={handleVisiblility} value={collectionFormik?.values?.isVisibleFrontend} /> */}
             <div className="mt-4">
-              <UploadMediaBox 
-                name={"mediaUrl"}  
-                value={collectionFormik?.values?.mediaUrl}  
-                imageName={addMedia} 
-                headingName={"Media"} 
-                UploadChange={handleMediaUrl} 
-                isUploaded={()=>{}}
+              <UploadMediaBox
+                name={"mediaUrl"}
+                value={collectionFormik?.values?.mediaUrl}
+                imageName={addMedia}
+                headingName={"Media"}
+                UploadChange={handleMediaUrl}
+                isUploaded={() => {}}
               />
             </div>
-             {/* {!!collectionFormik.touched.mediaUrl && collectionFormik.errors.mediaUrl && (
+            {/* {!!collectionFormik.touched.mediaUrl && collectionFormik.errors.mediaUrl && (
                 <FormHelperText error>
                   {collectionFormik.errors.mediaUrl}
                 </FormHelperText>
               )} */}
             <div className="mt-4">
-              <UploadBanner imageName={addMedia} headingName={"Up Selling Banners"} />
+              <UploadBanner
+                imageName={addMedia}
+                headingName={"Up Selling Banners"}
+              />
             </div>
-            <NotesBox 
+            <NotesBox
               name={"notes"}
-              onChange={collectionFormik.handleChange} 
+              onChange={collectionFormik.handleChange}
               value={collectionFormik.values.notes}
             />
           </div>
@@ -1275,24 +1165,22 @@ const CreateCollection = () => {
           <div className="d-flex w-auto px-0">
             <button
               className="button-red-outline py-2 px-4"
-              onClick={handleDiscard}
-            >
+              onClick={handleDiscard}>
               <p>Discard</p>
             </button>
           </div>
           <div className="d-flex w-auto px-0">
-              <LoadingButton
-                loading={createCollectionIsLoading}
-                disabled={createCollectionIsLoading}
-                className="button-gradient py-2 px-5"
-                type="submit"
-              >
-                <p>Save</p>
-              </LoadingButton>
+            <LoadingButton
+              loading={createCollectionIsLoading}
+              disabled={createCollectionIsLoading}
+              className="button-gradient py-2 px-5"
+              type="submit">
+              <p>Save</p>
+            </LoadingButton>
           </div>
         </div>
       </div>
-      <DiscardModal           
+      <DiscardModal
         showDiscardModal={showDiscardModal}
         toggleDiscardModal={toggleDiscardModal}
       />
