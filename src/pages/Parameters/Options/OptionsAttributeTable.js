@@ -119,10 +119,22 @@ const OptionsAttributeTable = (props) => {
                       style={{
                         cursor: "pointer",
                         marginTop: "5px",
+                        display: "grid",
+                        placeContent: "center",
+                        padding: "7px",
                       }}
                       className="reset"
                     >
-                      <img src={arrowDown} alt="sort" className="" />
+                      <img
+                        src={arrowDown}
+                        alt="sort"
+                        style={{
+                          transform: collapseStatus[attribute._id]
+                            ? "rotate(-180deg)"
+                            : "rotate(0deg)",
+                          transition: "all .2s",
+                        }}
+                      />
                     </button>
                   </TableCell>
                   <TableCell
