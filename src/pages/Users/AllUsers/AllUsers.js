@@ -62,10 +62,12 @@ const locationData = [
 ];
 
 const initialQueryFilterState = {
+  createdAt: 1,
   pageSize: 10,
   pageNo: 0,
   name:"",
-  searchValue: ""
+  searchValue: "",
+  status: ""
 };
 
 const initialUsersState = {
@@ -73,6 +75,10 @@ const initialUsersState = {
   totalCount: 0,
   error: false,
   customerType:0,
+};
+
+const initialCustomerState = {
+  status: "all",
 };
 
 const queryFilterReducer = (state, action) => {
@@ -86,7 +92,7 @@ const queryFilterReducer = (state, action) => {
   if (action.type === "CHANGE_PAGE") {
     return {
       ...state,
-      pageNo: action.pageNo ,
+      pageNo: action.pageNo +1,
     };
   }
   if (action.type === "SEARCH") {
@@ -103,7 +109,24 @@ const queryFilterReducer = (state, action) => {
       searchValue: action.searchValue,
     };
   }
+  if (action.type === "SET_STATUS") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      status: action.status ? action.status : initialQueryFilterState.status,
+    };
+  }
   return initialQueryFilterState;
+};
+
+const customerReducer = (state, action) => {
+  if (action.type === "SET_STATUS") {
+    return {
+      status: action.status,
+    };
+  }
+
+  return initialCustomerState;
 };
 
 const usersReducer = (state, action) => {
@@ -121,7 +144,6 @@ const usersReducer = (state, action) => {
     };
   }
   if (action.type === "SET_CUSTOMER_TYPE") {
-    console.log(action, 'acations');
     return {
       ...state,
       customerType: action.customerType,
@@ -139,7 +161,8 @@ const AllUsers = () => {
   const [anchorLocationEl, setAnchorLocationEl] = useState(null);
   const [anchorStatusEl, setAnchorStatusEl] = useState(null);
   const [anchorDaysEl, setDaysEl] = useState(null);
-  const[searchParams, setSearchParams] = useSearchParams();
+  const [firstRender, setFirstRender] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -148,32 +171,17 @@ const AllUsers = () => {
     usersReducer,
     initialUsersState
   );
-
-  const queryParameters = {};
-
-  if(queryFilterState.name) {
-    queryParameters.name = queryFilterState.name;
-  }
-
-  const customerStatusQuery = 
-    usersState.customerType === 0 ? {createdAt: -1}
-  : usersState.customerType === 1 ? { status: "active" }
-  : usersState.customerType === 2 ? { status: "new" }
-  : usersState.customerType === 3 ? { createdAt: -1, status: "in-active" }
-  : usersState.customerType === 4 ? { createdAt: -1, status: "archieved" }
-  : {};
+  const [customerState, dispatchCustomerState] = useReducer(
+    customerReducer,
+    initialCustomerState
+  );
 
   const {
     data: customersData,  
     isLoading: customersIsLoading, 
     isSuccess: customersIsSuccess, 
     error: customersError
-  } = useGetAllCustomersQuery({
-      createdAt:1,
-      pageSize:queryFilterState.pageSize,
-      pageNo:queryFilterState.pageNo+1,
-      ...queryParameters, ...customerStatusQuery
-    });
+  } = useGetAllCustomersQuery({ ...queryFilterState });
 
   const {
     data: customersCountData,  
@@ -185,7 +193,7 @@ const AllUsers = () => {
   const customerCount = customersCountData?.data[0];
 
   const editHandler = (id) => {
-    let combinedObject = {id, customerStatusQuery}
+    let combinedObject = {id, queryFilterState}
     const paramsQuery = encodeURIComponent(JSON.stringify(combinedObject));    
 
     navigate(`./details/${paramsQuery}`);
@@ -199,24 +207,149 @@ const AllUsers = () => {
     dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
   };
 
-  const changeCustomerTypeHandler = (event, newValue) => {
-    dispatchUsers({
-      type:"SET_CUSTOMER_TYPE", customerType:newValue
-    })
-    setSearchParams(newValue)
+  const handleStatusChange = (event) => {
+    if (event.target.checked) {
+      if (customerState.status === "all") {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [event.target.value],
+        });
+        dispatchCustomerState({
+          type: "SET_STATUS",
+          status: "",
+        });
+      } else {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [...queryFilterState.status, event.target.value],
+        });
+      }
+    } else {
+      if (queryFilterState.status.length > 1) {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: queryFilterState.status.filter(
+            (status) => status !== event.target.value
+          ),
+        });
+      } else {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: "",
+        });
+        dispatchCustomerState({
+          type: "SET_STATUS",
+          status: "all",
+        });
+      }
+    }
   };
 
-  useEffect(() => {
-    if( +searchParams.get("status") == 0 ) {
-      usersState.customerType = 0;
-    } else if(+searchParams.get("status")==1) {
-      usersState.customerType = 1;
-    } else if(+searchParams.get("status")===2) {
-      usersState.customerType = 2;
-    } else if(+searchParams.get("status")===3) {
-      usersState.customerType = 3;
+  const changeCustomerTypeHandler = (_event, tabIndex) => {
+    dispatchUsers({
+      type:"SET_CUSTOMER_TYPE", customerType: tabIndex
+    })
+    if (tabIndex === 0) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "all",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: "",
+      });
+    } else if (tabIndex === 1) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active"],
+      });
+    } else if (tabIndex === 2) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["new"],
+      });
+    } else if (tabIndex === 3) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["in-active"],
+      });
+    } else if (tabIndex === 4) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["archieved"],
+      });
     }
-  }, [searchParams])
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
+    setSearchParams(tabIndex)
+  };
+
+  console.log(usersState, 'usersState');
+
+  console.log(queryFilterState, 'queryFilterState');
+
+  useEffect(() => {
+    const filterParams = JSON.parse(searchParams.get("filter")) || {
+      customerType: usersState.customerType,
+    };
+    if (firstRender && Object.keys(filterParams).length) {
+      let filters = {};
+      for (let key in filterParams) {
+        if (key !== "customerType") {
+          if (filterParams[key] !== (null || "")) {
+            if (key === "status" && filterParams[key].length < 2) {
+              dispatchCustomerState({
+                type: "SET_STATUS",
+                status: "",
+              });
+            }
+            filters = {
+              ...filters,
+              [key]: filterParams[key],
+            };
+          }
+        } else {
+          dispatchUsers({
+            type:"SET_CUSTOMER_TYPE", customerType: +filterParams[key]
+          })
+        }
+      }
+      if (filterParams.collectionType === (null || "")) {
+        dispatchUsers({
+            type:"SET_CUSTOMER_TYPE", customerType: 0
+          })
+      }
+      dispatchQueryFilter({
+        type: "SET_ALL_FILTERS",
+        filters,
+      });
+      setFirstRender(false);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      setSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, customerType: usersState.customerType }),
+      });
+    }
+  }, [queryFilterState, setSearchParams, usersState, firstRender]);
 
   const handleSearchChange = (value) => {
     dispatchQueryFilter({ type: "SEARCH", name: value });
@@ -655,8 +788,9 @@ const AllUsers = () => {
                   onClose={handleStatusClose}
                 >
                   <div className=" px-1">
-                    <FormGroup className="tags-checkbox">
+                    <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
+                        value="active"
                         control={
                           <Checkbox
                             size="small"
@@ -667,8 +801,14 @@ const AllUsers = () => {
                           />
                         }
                         label="Active"
+                        checked={
+                          customerState.status === "" &&
+                          queryFilterState.status.includes("active")
+                        }
                       />
+                    <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
+                        value="in-active"
                         control={
                           <Checkbox
                             size="small"
@@ -679,7 +819,12 @@ const AllUsers = () => {
                           />
                         }
                         label="In-Active"
+                        checked={
+                          customerState.status === "" &&
+                          queryFilterState.status.includes("in-active")
+                        }
                       />
+                    </FormGroup>
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -692,7 +837,10 @@ const AllUsers = () => {
                         }
                         label="Blocked"
                       />
+                    </FormGroup>
+                    <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
+                        value="archived"
                         control={
                           <Checkbox
                             size="small"
@@ -703,6 +851,10 @@ const AllUsers = () => {
                           />
                         }
                         label="Archived"
+                        checked={
+                          customerState.status === "" &&
+                          queryFilterState.status.includes("archived")
+                        }
                       />
                     </FormGroup>
                   </div>
