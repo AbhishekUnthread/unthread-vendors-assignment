@@ -97,8 +97,7 @@ function BuyXGetY({ value, field, formik, touched, error }) {
     formik.handleChange(event);
   };
 
-  const [anchorDiscountPercentEl, setAnchorDiscountPercentEl] =
-    useState(null);
+  const [anchorDiscountPercentEl, setAnchorDiscountPercentEl] = useState(null);
   const handleDiscountPercent = (event) => {
     setAnchorDiscountPercentEl(event.currentTarget);
   };
@@ -586,6 +585,10 @@ function BuyXGetY({ value, field, formik, touched, error }) {
             <div className="col-md-5 discount-inputs-two d-flex align-items-center">
               <FormControl className="px-0">
                 <OutlinedInput
+                  value={value?.discountValue}
+                  onChange={formik?.handleChange}
+                  onBlur={formik?.handleBlur}
+                  name={`${field}.discountValue`}
                   placeholder="Enter Discount"
                   size="small"
                   endAdornment={
@@ -596,7 +599,12 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                       className="c-pointer"
                     >
                       <span className="d-flex align-items-center">
-                        <p className="text-lightBlue"> {value?.type==="percentage"?`Percentage`:`Fixed Amount`}</p>
+                        <p className="text-lightBlue">
+                          {" "}
+                          {value?.type === "percentage"
+                            ? `Percentage`
+                            : `Fixed Amount`}
+                        </p>
                         <img src={arrowDown} alt="arrow" className="ms-2" />
                       </span>
                     </InputAdornment>
@@ -618,10 +626,16 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                 onClose={handleDiscountPercentClose}
               >
                 <div className="py-2 px-1">
-                  <small className="text-lightBlue rounded-3 p-2 hover-back d-block" onClick={() => handleChange("percentage")}>
+                  <small
+                    className="text-lightBlue rounded-3 p-2 hover-back d-block"
+                    onClick={() => handleChange("percentage")}
+                  >
                     Percentage Discount
                   </small>
-                  <small className="text-lightBlue rounded-3 p-2 hover-back d-block" onClick={() => handleChange("fixed")}>
+                  <small
+                    className="text-lightBlue rounded-3 p-2 hover-back d-block"
+                    onClick={() => handleChange("fixed")}
+                  >
                     Fixed Amount
                   </small>
                 </div>
@@ -642,7 +656,7 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                   id="demo-select-small"
                   value={value?.value || ""}
                   onChange={formik?.handleChange}
-                  name = {`${field}.value`}
+                  name={`${field}.value`}
                   size="small"
                 >
                   <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
