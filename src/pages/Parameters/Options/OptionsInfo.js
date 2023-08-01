@@ -909,13 +909,16 @@ const OptionsInfo = () => {
   const deleteConfirmationHandler = () => {
     if (optionState.deleteType === "attribute") {
       const updatedAttributes = optionFormik.values.attributes?.filter(
-        (attr) => {
+        (attr, index) => {
           if (attr._id === optionState.deleteId && attr.saved === true) {
+            if (attr.saved === true) {
+            }
             dispatchDeleteOption({
               type: "SET_DELETED_ATTRIBUTES",
               attribute: attr,
             });
           }
+
           return attr._id !== optionState.deleteId;
         }
       );

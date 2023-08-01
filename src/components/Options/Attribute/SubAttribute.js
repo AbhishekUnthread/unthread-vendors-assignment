@@ -121,7 +121,7 @@ const SubAttribute = (props) => {
             "colorAndImageSwatches" && (
             <Grid item sx={{ display: "grid", alignItems: "start" }}>
               <Grid container columnSpacing={2}>
-                <Grid item sx={{ display: "grid", alignItems: "center" }}>
+                <Grid item sx={{ display: "grid", alignItems: "start" }}>
                   <FormControl
                     sx={{
                       m: 0,
