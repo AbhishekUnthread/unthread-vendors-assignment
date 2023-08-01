@@ -40,7 +40,7 @@ import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModa
 import './Collections.scss';
 
 import unthreadLogo from "../../../assets/images/unthreadLogo.png";
-import defaultLogo from "../../../assets/images/users/collection_defaultdp 01.svg";
+import defaultLogo from "../../../assets/images/users/collection_defaultdp.svg";
 import unArchived from "../../../assets/images/Components/Archived.png"
 import { Link } from "react-router-dom";
 

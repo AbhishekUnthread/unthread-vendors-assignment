@@ -34,7 +34,8 @@ const Transition = forwardRef(function Transition(props, ref) {
 const DuplicateCollection = ({
     duplicateData,
     openDuplicateCollection, 
-    handleDuplicateCollectionClose
+    handleDuplicateCollectionClose,
+    newDuplicateCollection
 }) => {
     const dispatch = useDispatch();
     const [collectionTitle, setCollectionTitle] = useState("");
@@ -42,62 +43,63 @@ const DuplicateCollection = ({
     const [duplicateDescription, setDuplicateDescription] = useState(false);
 
     useEffect(() => {
-        if (duplicateData != null) {
-            setCollectionTitle(duplicateData?.title);
-        }
+      if (duplicateData != null) {
+        setCollectionTitle(duplicateData?.title);
+      }
     }, [duplicateData]);
 
     useEffect(() => {
-        if(duplicateTitle == "" && collectionTitle) {
-            setDuplicateTitle(`${collectionTitle} copy`);
-        }
+      if(duplicateTitle == "" && collectionTitle) {
+        setDuplicateTitle(`${collectionTitle} copy`);
+      }
     }, [collectionTitle]);
 
     const handleDuplicateTitle = (e) => {
-        const value = e.target.value;
-        setDuplicateTitle(value)
+      const value = e.target.value;
+      setDuplicateTitle(value)
     };
 
     const [
-        createCollection,
-        {
-            isLoading: createCollectionIsLoading,
-            isSuccess: createCollectionIsSuccess,
-            error: createCollectionError
-        },
+      createCollection,
+      {
+        isLoading: createCollectionIsLoading,
+        isSuccess: createCollectionIsSuccess,
+        error: createCollectionError
+      },
     ] = useCreateCollectionMutation();
 
     const createDuplicateCollection = () => {
-        const collectionData = {
-            title: duplicateTitle,
-            filter: duplicateData?.filter,
-            status: duplicateData?.status,
-            isVisibleFrontend: duplicateData?.isVisibleFrontend,
-            notes: duplicateData?.notes
-        };
+      const collectionData = {
+        title: duplicateTitle,
+        filter: duplicateData?.filter,
+        status: duplicateData?.status,
+        isVisibleFrontend: duplicateData?.isVisibleFrontend,
+        notes: duplicateData?.notes
+      };
 
-        if (duplicateDescription === true) {
-            collectionData.description = duplicateData?.description;
-        }
+      if (duplicateDescription === true) {
+        collectionData.description = duplicateData?.description;
+      }
 
-        createCollection(collectionData)
-        .unwrap()
-        .then((res) => {
-            handleDuplicateCollectionClose(false);
-            dispatch(showSuccess({ message: "Duplicate Created successfully" }));
-        });
+      createCollection(collectionData)
+      .unwrap()
+      .then((res) => {
+          newDuplicateCollection(res)
+          handleDuplicateCollectionClose(false);
+          dispatch(showSuccess({ message: "Duplicate Created successfully" }));
+      });
     };
 
     useEffect(() => {
-        if (createCollectionError) {
-            if (createCollectionError?.data?.message) {
-                dispatch(showError({ message: createCollectionError.data.message }));
-            } else {
-                dispatch(
-                    showError({ message: "Failed to update Collection. Please try again." })
-                );
-            }
+      if (createCollectionError) {
+        if (createCollectionError?.data?.message) {
+          dispatch(showError({ message: createCollectionError.data.message }));
+        } else {
+          dispatch(
+            showError({ message: "Failed to update Collection. Please try again." })
+          );
         }
+      }
     }, [createCollectionError, dispatch]);
 
   return (

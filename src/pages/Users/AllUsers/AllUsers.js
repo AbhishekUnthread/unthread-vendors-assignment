@@ -167,8 +167,7 @@ const AllUsers = () => {
     });
 
   const editHandler = (id) => {
-    let customerId = {_id: id}
-    let combinedObject = {customerId, customerStatusQuery}
+    let combinedObject = {id, customerStatusQuery}
     const paramsQuery = encodeURIComponent(JSON.stringify(combinedObject));    
 
     navigate(`./details/${paramsQuery}`);
