@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   FormControl,
   OutlinedInput,
@@ -112,10 +111,6 @@ const SubOption = (props) => {
     onSubAttributeAdd,
     onSubAttributeDelete,
   } = props;
-  const [isDuplicate, setIsDuplicate] = useState({
-    status: false,
-    value: "",
-  });
 
   const subOptionAppearanceHandler = (e) => {
     formik.setFieldValue(`subOptions[${index}].apperance`, e.target.value);
@@ -127,27 +122,36 @@ const SubOption = (props) => {
     );
 
     subAttributeIndexes.forEach((index) => {
+      if (
+        e.target.value !== "dropDownThumbnail" &&
+        e.target.value !== "colorAndImageSwatches"
+      ) {
+        formik.setFieldValue(`subAttributes[${index}].value`, "");
+      } else {
+        formik.setFieldValue(`subAttributes[${index}].value`, "colour");
+        formik.setFieldValue(`subAttributes[${index}].colour`, "#000000");
+      }
       formik.setFieldValue(`subAttributes[${index}].apperance`, e.target.value);
     });
   };
 
   const changeTitleHandler = (e) => {
     const isDuplicate = formik.values?.subOptions.find((subOp) => {
-      return subOp.title.toLowerCase() === e.target.value.toLowerCase();
+      return (
+        subOp.title.toLowerCase().trim() ===
+          e.target.value.toLowerCase().trim() &&
+        subOp.metaAttribute === formik.values.subOptions[index]?.metaAttribute
+      );
     });
     formik.handleChange(e);
-    if (isDuplicate && isDuplicate.title) {
-      setIsDuplicate({
-        status: true,
-        value: isDuplicate.title,
-      });
+    if (isDuplicate && isDuplicate.title && e.target.value.trim()) {
+      formik.setFieldValue(
+        `subOptions[${index}].error`,
+        `${isDuplicate.title} already exists`
+      );
       return;
     }
-
-    setIsDuplicate({
-      status: false,
-      value: "",
-    });
+    formik.setFieldValue(`subOptions[${index}].error`, "");
   };
 
   return (
@@ -182,10 +186,10 @@ const SubOption = (props) => {
               formik.errors?.subOptions[index]?.title) ||
             (formik.touched?.subOptions?.length &&
               !!formik.touched?.subOptions[index]?.title &&
-              isDuplicate.status) ? (
+              formik.values.subOptions[index]?.error) ? (
               <FormHelperText error>
-                {isDuplicate.status
-                  ? `${isDuplicate.value} already exists`
+                {formik.values.subOptions[index]?.error
+                  ? formik.values.subOptions[index]?.error
                   : formik?.errors?.subOptions[index]?.title}
               </FormHelperText>
             ) : null}

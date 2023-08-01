@@ -48,7 +48,6 @@ import {
 } from "../../../features/parameters/options/optionsApiSlice";
 
 import { colorReg, urlReg } from "../../../utils/regex";
-import { AssignmentReturn } from "@mui/icons-material";
 
 const FRONTEND_APPEARANCE = [
   {
@@ -146,6 +145,7 @@ const optionValidationSchema = Yup.object({
           ])
           .required("Required"),
         saved: Yup.boolean(),
+        error: Yup.string(),
       })
     )
     .min(1)
@@ -167,6 +167,7 @@ const optionValidationSchema = Yup.object({
         .required("Required"),
       saved: Yup.boolean(),
       isOption: Yup.boolean(),
+      error: Yup.string(),
     })
   ),
   subAttributes: Yup.array()
@@ -215,6 +216,7 @@ const optionValidationSchema = Yup.object({
           .required("Required"),
         saved: Yup.boolean(),
         isOption: Yup.boolean(),
+        error: Yup.string(),
       })
     )
     .when(["subOptions"], ([subOptions], schema) => {
@@ -241,6 +243,7 @@ const initialOptionState = {
   deleteTitle: "",
   deleteType: "",
   isLoading: false,
+  createdSuccess: false,
 };
 
 const initialDeletedOptionState = {
@@ -319,7 +322,18 @@ const optionReducer = (state, action) => {
       isLoading: false,
     };
   }
-
+  if (action.type === "ENABLE_SUCCESS") {
+    return {
+      ...state,
+      createdSuccess: true,
+    };
+  }
+  if (action.type === "DISABLE_SUCCESS") {
+    return {
+      ...state,
+      createdSuccess: false,
+    };
+  }
   return initialOptionState;
 };
 
@@ -418,7 +432,9 @@ const OptionsInfo = () => {
     isSuccess: attributesIsSuccess,
     isFetching: attributesDataIsFetching,
   } = useGetAllAttributesQuery(
-    { attribute: optionsData?.data?.length && optionsData?.data[0]?._id },
+    {
+      attribute: optionsData?.data?.length && optionsData?.data[0]?._id,
+    },
     {
       skip:
         optionsData?.data?.length && optionsData?.data[0]?._id ? false : true,
@@ -432,7 +448,9 @@ const OptionsInfo = () => {
     isSuccess: subOptionsIsSuccess,
     isFetching: subOptionsDataIsFetching,
   } = useGetAllSubOptionsQuery(
-    { attribute: optionsData?.data?.length && optionsData?.data[0]?._id },
+    {
+      attribute: optionsData?.data?.length && optionsData?.data[0]?._id,
+    },
     {
       skip:
         optionsData?.data?.length && optionsData?.data[0]?._id ? false : true,
@@ -446,7 +464,9 @@ const OptionsInfo = () => {
     isSuccess: subAttributesIsSuccess,
     isFetching: subAttributesDataIsFetching,
   } = useGetAllSubAttributesQuery(
-    { attribute: optionsData?.data?.length && optionsData?.data[0]?._id },
+    {
+      attribute: optionsData?.data?.length && optionsData?.data[0]?._id,
+    },
     {
       skip:
         optionsData?.data?.length && optionsData?.data[0]?._id ? false : true,
@@ -594,6 +614,7 @@ const OptionsInfo = () => {
               value,
               apperance: optionsData?.data[0]?.apperance,
               saved: true,
+              error: "",
             };
           })
         : [
@@ -606,6 +627,7 @@ const OptionsInfo = () => {
               value: "colour",
               apperance: "dropDownList",
               saved: false,
+              error: "",
             },
           ],
       subOptions: subOptionsData?.data?.length
@@ -617,6 +639,7 @@ const OptionsInfo = () => {
               apperance: item.apperance,
               saved: true,
               isOption: item.isOption,
+              error: "",
             };
           })
         : [],
@@ -641,6 +664,7 @@ const OptionsInfo = () => {
               apperance: item.metaSubAttribute.apperance,
               saved: true,
               isOption: true,
+              error: "",
             };
           })
         : [],
@@ -653,6 +677,22 @@ const OptionsInfo = () => {
       const subOptions = values.subOptions;
       const subAttributes = values.subAttributes;
 
+      for (const attr of attributes) {
+        if (attr.error) {
+          return;
+        }
+      }
+      for (const subOp of subOptions) {
+        if (subOp.error) {
+          return;
+        }
+      }
+      for (const subAttr of subAttributes) {
+        if (subAttr.error) {
+          return;
+        }
+      }
+
       try {
         dispatchOption({ type: "ENABLE_LOADING" });
         if (!option.saved) {
@@ -662,206 +702,113 @@ const OptionsInfo = () => {
         } else {
           await updateOption({ details: option, id: option._id }).unwrap();
         }
-        const attributePromises = await Promise.allSettled(
-          attributes.concat(deleteOptionState.attributes).map((attr) => {
-            if (!attr.saved && !attr.deleted) {
-              attr.attribute = option._id;
-              const attrCopy = structuredClone(attr);
-              Object.keys(attrCopy).forEach((key) => {
-                if (attrCopy[key] === (null || undefined || ""))
-                  delete attrCopy[key];
-              });
 
-              return new Promise((resolve, reject) => {
-                createAttribute(attrCopy)
-                  .unwrap()
-                  .then(({ _id }) => {
-                    attr.saved = true;
-                    subOptions.forEach((subOption) => {
-                      if (subOption.metaAttribute === attr._id) {
-                        subOption.metaAttribute = _id;
-                      }
-                    });
-                    attr._id = _id;
-                    resolve();
-                  })
-                  .catch((error) => {
-                    reject(error);
-                  });
-              });
-            } else if (attr.saved && !attr.deleted) {
-              const attrCopy = structuredClone(attr);
-              Object.keys(attrCopy).forEach((key) => {
-                if (attrCopy[key] === (null || undefined || ""))
-                  delete attrCopy[key];
-              });
-              return new Promise((resolve, reject) => {
-                updateAttribute({ details: attrCopy, id: attr._id })
-                  .unwrap()
-                  .then(() => {
-                    resolve();
-                  })
-                  .catch((error) => {
-                    reject(error);
-                  });
-              });
-            } else if (attr.saved && attr.deleted) {
-              return new Promise((resolve, reject) => {
-                deleteAttribute(attr._id)
-                  .unwrap()
-                  .then(() => {
-                    dispatchDeleteOption({
-                      type: "REMOVE_DELETED_ATTRIBUTES",
-                      id: attr._id,
-                    });
-                    resolve();
-                  })
-                  .catch((error) => {
-                    reject(error);
-                  });
-              });
-            } else {
-              return null;
-            }
-          })
-        );
-        attributePromises.forEach((attrPromise) => {
-          if (attrPromise.status === "rejected") {
-            throw attrPromise.reason;
-          }
-        });
-        const subOptionPromises = await Promise.allSettled(
-          subOptions.concat(deleteOptionState.subOptions).map((subOp) => {
-            if (!subOp.saved && !subOp.deleted) {
-              subOp.attribute = option._id;
-              const subOpCopy = structuredClone(subOp);
-              Object.keys(subOpCopy).forEach((key) => {
-                if (subOpCopy[key] === (null || undefined || ""))
-                  delete subOpCopy[key];
-              });
-              return new Promise((resolve, reject) => {
-                createSubOption(subOpCopy)
-                  .unwrap()
-                  .then(({ _id }) => {
-                    subOp.saved = true;
-                    subAttributes.forEach((subAttribute) => {
-                      if (subAttribute.metaSubAttribute === subOp._id) {
-                        subAttribute.metaAttribute = subOp.metaAttribute;
-                        subAttribute.metaSubAttribute = _id;
-                      }
-                    });
-                    subOp._id = _id;
-                    resolve();
-                  })
-                  .catch((error) => {
-                    reject(error);
-                  });
-              });
-            } else if (subOp.saved && !subOp.deleted) {
-              const subOpCopy = structuredClone(subOp);
-              Object.keys(subOpCopy).forEach((key) => {
-                if (subOpCopy[key] === (null || undefined || ""))
-                  delete subOpCopy[key];
-              });
-              return new Promise((resolve, reject) => {
-                updateSubOption({ details: subOpCopy, id: subOp._id })
-                  .unwrap()
-                  .then(() => {
-                    resolve();
-                  })
-                  .catch((error) => {
-                    reject(error);
-                  });
-              });
-            } else if (subOp.saved && subOp.deleted) {
-              return new Promise((resolve, reject) => {
-                deleteSubOption(subOp._id)
-                  .unwrap()
-                  .then(() => {
-                    dispatchDeleteOption({
-                      type: "REMOVE_DELETED_SUB_OPTIONS",
-                      id: subOp._id,
-                    });
-                    resolve();
-                  })
-                  .catch((error) => {
-                    reject(error);
-                  });
-              });
-            } else {
-              return null;
-            }
-          })
-        );
-        subOptionPromises.forEach((subOpPromise) => {
-          if (subOpPromise.status === "rejected") {
-            throw subOpPromise.reason;
-          }
-        });
-        const subAttributePromises = await Promise.allSettled(
-          subAttributes
-            .concat(deleteOptionState.subAttributes)
-            .map((subAttr) => {
-              if (!subAttr.saved && !subAttr.deleted) {
-                subAttr.attribute = option._id;
-                const subAttrCopy = structuredClone(subAttr);
-                Object.keys(subAttrCopy).forEach((key) => {
-                  if (subAttrCopy[key] === (null || undefined || ""))
-                    delete subAttrCopy[key];
-                });
-                return new Promise((resolve, reject) => {
-                  createSubAttribute(subAttrCopy)
-                    .unwrap()
-                    .then(({ _id }) => {
-                      subAttr.saved = true;
-                      subAttr._id = _id;
-                      resolve();
-                    })
-                    .catch((error) => {
-                      reject(error);
-                    });
-                });
-              } else if (subAttr.saved && !subAttr.deleted) {
-                const subAttrCopy = structuredClone(subAttr);
-                Object.keys(subAttrCopy).forEach((key) => {
-                  if (subAttrCopy[key] === (null || undefined || ""))
-                    delete subAttrCopy[key];
-                });
-                return new Promise((resolve, reject) => {
-                  updateSubAttribute({ details: subAttrCopy, id: subAttr._id })
-                    .unwrap()
-                    .then(() => {
-                      resolve();
-                    })
-                    .catch((error) => {
-                      reject(error);
-                    });
-                });
-              } else if (subAttr.saved && subAttr.deleted) {
-                return new Promise((resolve, reject) => {
-                  deleteSubAttribute(subAttr._id)
-                    .unwrap()
-                    .then(() => {
-                      dispatchDeleteOption({
-                        type: "REMOVE_DELETED_SUB_ATTRIBUTES",
-                        id: subAttr._id,
-                      });
-                      resolve();
-                    })
-                    .catch((error) => {
-                      reject(error);
-                    });
-                });
-              } else {
-                return null;
+        for (const attr of attributes.concat(deleteOptionState.attributes)) {
+          if (!attr.saved && !attr.deleted) {
+            attr.attribute = option._id;
+            const attrCopy = structuredClone(attr);
+            Object.keys(attrCopy).forEach((key) => {
+              if (attrCopy[key] === (null || undefined || ""))
+                delete attrCopy[key];
+            });
+            const { _id } = await createAttribute(attrCopy).unwrap();
+            attr.saved = true;
+            subOptions.forEach((subOption) => {
+              if (subOption.metaAttribute === attr._id) {
+                subOption.metaAttribute = _id;
               }
-            })
-        );
-        subAttributePromises.forEach((subAttrPromise) => {
-          if (subAttrPromise.status === "rejected") {
-            throw subAttrPromise.reason;
+            });
+            attr._id = _id;
+          } else if (attr.saved && !attr.deleted) {
+            const attrCopy = structuredClone(attr);
+            Object.keys(attrCopy).forEach((key) => {
+              if (attrCopy[key] === (null || undefined || ""))
+                delete attrCopy[key];
+            });
+
+            await updateAttribute({ details: attrCopy, id: attr._id }).unwrap();
+          } else if (attr.saved && attr.deleted) {
+            await deleteAttribute(attr._id).unwrap();
+            dispatchDeleteOption({
+              type: "REMOVE_DELETED_ATTRIBUTES",
+              id: attr._id,
+            });
           }
-        });
+        }
+
+        for (const subOp of subOptions.concat(deleteOptionState.subOptions)) {
+          if (!subOp.saved && !subOp.deleted) {
+            subOp.attribute = option._id;
+            const subOpCopy = structuredClone(subOp);
+            Object.keys(subOpCopy).forEach((key) => {
+              if (subOpCopy[key] === (null || undefined || ""))
+                delete subOpCopy[key];
+            });
+
+            const { _id } = await createSubOption(subOpCopy).unwrap();
+            subOp.saved = true;
+            subAttributes.forEach((subAttribute) => {
+              if (subAttribute.metaSubAttribute === subOp._id) {
+                subAttribute.metaAttribute = subOp.metaAttribute;
+                subAttribute.metaSubAttribute = _id;
+              }
+            });
+            subOp._id = _id;
+          } else if (subOp.saved && !subOp.deleted) {
+            const subOpCopy = structuredClone(subOp);
+            Object.keys(subOpCopy).forEach((key) => {
+              if (subOpCopy[key] === (null || undefined || ""))
+                delete subOpCopy[key];
+            });
+
+            await updateSubOption({
+              details: subOpCopy,
+              id: subOp._id,
+            }).unwrap();
+          } else if (subOp.saved && subOp.deleted) {
+            await deleteSubOption(subOp._id).unwrap();
+            dispatchDeleteOption({
+              type: "REMOVE_DELETED_SUB_OPTIONS",
+              id: subOp._id,
+            });
+          }
+        }
+
+        for (const subAttr of subAttributes.concat(
+          deleteOptionState.subAttributes
+        )) {
+          if (!subAttr.saved && !subAttr.deleted) {
+            subAttr.attribute = option._id;
+            const subAttrCopy = structuredClone(subAttr);
+            Object.keys(subAttrCopy).forEach((key) => {
+              if (subAttrCopy[key] === (null || undefined || ""))
+                delete subAttrCopy[key];
+            });
+
+            const { _id } = await createSubAttribute(subAttrCopy).unwrap();
+            subAttr.saved = true;
+            subAttr._id = _id;
+          } else if (subAttr.saved && !subAttr.deleted) {
+            const subAttrCopy = structuredClone(subAttr);
+            Object.keys(subAttrCopy).forEach((key) => {
+              if (subAttrCopy[key] === (null || undefined || ""))
+                delete subAttrCopy[key];
+            });
+
+            await updateSubAttribute({
+              details: subAttrCopy,
+              id: subAttr._id,
+            }).unwrap();
+          } else if (subAttr.saved && subAttr.deleted) {
+            await deleteSubAttribute(subAttr._id).unwrap();
+
+            dispatchDeleteOption({
+              type: "REMOVE_DELETED_SUB_ATTRIBUTES",
+              id: subAttr._id,
+            });
+          }
+        }
+
         optionFormik.resetForm();
         dispatchOption({ type: "DISABLE_LOADING" });
         dispatch(
@@ -871,6 +818,9 @@ const OptionsInfo = () => {
               : "Option created successfully",
           })
         );
+        if (!id) {
+          dispatchOption({ type: "ENABLE_SUCCESS" });
+        }
       } catch (error) {
         dispatchOption({ type: "DISABLE_LOADING" });
         if (error?.data?.message) {
@@ -1058,10 +1008,18 @@ const OptionsInfo = () => {
   };
 
   const addAttributeFieldHandler = () => {
-    const newAttributeFields = optionFormik.values.attributes?.concat({
-      _id: `attribute-${
+    let attributeId;
+    if (
+      !isNaN(+optionFormik.values.attributes.slice(-1)[0]._id.split("-")[1])
+    ) {
+      attributeId = `attribute-${
         +optionFormik.values.attributes.slice(-1)[0]._id.split("-")[1] + 1
-      }`,
+      }`;
+    } else {
+      attributeId = "attribute-0";
+    }
+    const newAttributeFields = optionFormik.values.attributes?.concat({
+      _id: attributeId,
       title: "",
       colour: "#000000",
       imageUrl: "",
@@ -1069,16 +1027,19 @@ const OptionsInfo = () => {
       value: "colour",
       apperance: optionFormik.values.option.apperance,
       saved: false,
+      error: "",
     });
     optionFormik.setFieldValue("attributes", newAttributeFields);
   };
 
   const addSubOptionFieldHandler = (id) => {
-    const subOptionId = optionFormik.values.subOptions.length
-      ? `subOption-${
-          +optionFormik.values.subOptions.slice(-1)[0]._id.split("-")[1] + 1
-        }`
-      : "subOption-0";
+    const subOptionId =
+      optionFormik.values.subOptions.length &&
+      !isNaN(+optionFormik.values.subOptions.slice(-1)[0]._id.split("-")[1])
+        ? `subOption-${
+            +optionFormik.values.subOptions.slice(-1)[0]._id.split("-")[1] + 1
+          }`
+        : "subOption-0";
     const newSubOptions = optionFormik.values.subOptions?.concat({
       _id: subOptionId,
       metaAttribute: id,
@@ -1086,14 +1047,18 @@ const OptionsInfo = () => {
       apperance: "dropDownList",
       saved: false,
       isOption: true,
+      error: "",
     });
     optionFormik.setFieldValue("subOptions", newSubOptions);
 
-    const subAttributeId = optionFormik.values.subAttributes.length
-      ? `subAttribute-${
-          +optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1] + 1
-        }`
-      : "subAttribute-0";
+    const subAttributeId =
+      optionFormik.values.subAttributes.length &&
+      !isNaN(+optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1])
+        ? `subAttribute-${
+            +optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1] +
+            1
+          }`
+        : "subAttribute-0";
 
     const newSubAttribute = optionFormik.values.subAttributes?.concat({
       _id: subAttributeId,
@@ -1107,16 +1072,20 @@ const OptionsInfo = () => {
       apperance: "dropDownList",
       saved: false,
       isOption: true,
+      error: "",
     });
     optionFormik.setFieldValue("subAttributes", newSubAttribute);
   };
 
   const addSubAttributeFieldHandler = ({ attributeId, subOptionId }) => {
-    const subAttributeId = optionFormik.values.subAttributes.length
-      ? `subAttribute-${
-          +optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1] + 1
-        }`
-      : "subAttribute-0";
+    const subAttributeId =
+      optionFormik.values.subAttributes.length &&
+      !isNaN(+optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1])
+        ? `subAttribute-${
+            +optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1] +
+            1
+          }`
+        : "subAttribute-0";
 
     const subOptionAppearance = optionFormik.values.subOptions.find(
       (subOption) => subOption._id === subOptionId
@@ -1134,6 +1103,7 @@ const OptionsInfo = () => {
       apperance: subOptionAppearance.apperance,
       saved: false,
       isOption: true,
+      error: "",
     });
     optionFormik.setFieldValue("subAttributes", newSubAttribute);
   };
@@ -1141,6 +1111,15 @@ const OptionsInfo = () => {
   const optionAppearanceHandler = (e) => {
     optionFormik.setFieldValue("option.apperance", e.target.value);
     optionFormik.values.attributes.forEach((_, index) => {
+      if (
+        e.target.value !== "dropDownThumbnail" &&
+        e.target.value !== "colorAndImageSwatches"
+      ) {
+        optionFormik.setFieldValue(`attributes[${index}].value`, "");
+      } else {
+        optionFormik.setFieldValue(`attributes[${index}].value`, "colour");
+        optionFormik.setFieldValue(`attributes[${index}].colour`, "#000000");
+      }
       optionFormik.setFieldValue(
         `attributes[${index}].apperance`,
         e.target.value
@@ -1182,6 +1161,12 @@ const OptionsInfo = () => {
       dispatchOption({ type: "DISABLE_EDIT" });
     }
   }, [optionFormik.initialValues, optionFormik.values, id]);
+
+  useEffect(() => {
+    if (optionState.createdSuccess) {
+      navigate("/parameters/options");
+    }
+  }, [optionState.createdSuccess, navigate]);
 
   return (
     <div className="page container-fluid position-relative user-group product-tab-page">
@@ -1399,7 +1384,11 @@ const OptionsInfo = () => {
         title={optionState.deleteTitle}
       />
       <DiscardModalSecondary
-        when={!_.isEqual(optionFormik.values, optionFormik.initialValues)}
+        when={
+          optionState.createdSuccess
+            ? false
+            : !_.isEqual(optionFormik.values, optionFormik.initialValues)
+        }
         message="option"
       />
     </div>

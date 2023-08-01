@@ -22,6 +22,7 @@ import DeleteIconButton from "../../../components/DeleteIconButton/DeleteIconBut
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import Attribute from "../../../components/Options/Attribute/Attribute";
 import SubOption from "../../../components/Options/SubOption";
+import SubOptionCollapse from "../../../components/Options/SubOptionCollapse";
 
 const DragHandle = SortableHandle(() => (
   <TableCell sx={{ padding: "16px 0", verticalAlign: "top" }}>
@@ -92,6 +93,7 @@ const OptionsAttributeTable = (props) => {
                     {formik.values.subOptions.map((subOption, index) => {
                       if (subOption.metaAttribute === attribute._id) {
                         return (
+                          // <SubOptionCollapse />
                           <SubOption
                             key={subOption._id}
                             id={subOption._id}

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import {
   Grid,
   FormControl,
@@ -29,10 +29,6 @@ const CUSTOM_FIELD_DISPLAY = [
 
 const Attribute = (props) => {
   const { formik, index, onAttributeDelete, onSubOptionAdd } = props;
-  const [isDuplicate, setIsDuplicate] = useState({
-    status: false,
-    value: "",
-  });
 
   const imageUploadHandler = useCallback((url) => {
     formik.setFieldValue(`attributes[${index}].imageUrl`, url);
@@ -49,21 +45,20 @@ const Attribute = (props) => {
 
   const changeTitleHandler = (e) => {
     const isDuplicate = formik.values?.attributes.find((attr) => {
-      return attr.title.toLowerCase() === e.target.value.toLowerCase();
+      return (
+        attr.title.toLowerCase().trim() === e.target.value.toLowerCase().trim()
+      );
     });
     formik.handleChange(e);
-    if (isDuplicate && isDuplicate.title) {
-      setIsDuplicate({
-        status: true,
-        value: isDuplicate.title,
-      });
+
+    if (isDuplicate && isDuplicate.title && e.target.value.trim()) {
+      formik.setFieldValue(
+        `attributes[${index}].error`,
+        `${isDuplicate.title} already exists`
+      );
       return;
     }
-
-    setIsDuplicate({
-      status: false,
-      value: "",
-    });
+    formik.setFieldValue(`attributes[${index}].error`, "");
   };
 
   return (
@@ -85,10 +80,10 @@ const Attribute = (props) => {
                 formik.errors?.attributes[index]?.title) ||
               (formik.touched?.attributes?.length &&
                 !!formik.touched?.attributes[index]?.title &&
-                isDuplicate.status) ? (
+                formik.values?.attributes[index]?.error) ? (
                 <FormHelperText error>
-                  {isDuplicate.status
-                    ? `${isDuplicate.value} already exists`
+                  {formik.values?.attributes[index]?.error
+                    ? formik.values?.attributes[index]?.error
                     : formik?.errors?.attributes[index]?.title}
                 </FormHelperText>
               ) : null}

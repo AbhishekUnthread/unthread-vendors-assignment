@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import {
   Grid,
   FormControl,
@@ -28,10 +28,6 @@ const CUSTOM_FIELD_DISPLAY = [
 
 const SubAttribute = (props) => {
   const { formik, index, onSubAttributeDelete } = props;
-  const [isDuplicate, setIsDuplicate] = useState({
-    status: false,
-    value: "",
-  });
 
   const imageUploadHandler = useCallback((url) => {
     formik.setFieldValue(`subAttributes[${index}].imageUrl`, url);
@@ -48,21 +44,22 @@ const SubAttribute = (props) => {
 
   const changeTitleHandler = (e) => {
     const isDuplicate = formik.values?.subAttributes.find((subAttr) => {
-      return subAttr.title.toLowerCase() === e.target.value.toLowerCase();
+      return (
+        subAttr.title.toLowerCase().trim() ===
+          e.target.value.toLowerCase().trim() &&
+        subAttr.metaSubAttribute ===
+          formik.values?.subAttributes[index]?.metaSubAttribute
+      );
     });
     formik.handleChange(e);
-    if (isDuplicate && isDuplicate.title) {
-      setIsDuplicate({
-        status: true,
-        value: isDuplicate.title,
-      });
+    if (isDuplicate && isDuplicate.title && e.target.value.trim()) {
+      formik.setFieldValue(
+        `subAttributes[${index}].error`,
+        `${isDuplicate.title} already exists`
+      );
       return;
     }
-
-    setIsDuplicate({
-      status: false,
-      value: "",
-    });
+    formik.setFieldValue(`subAttributes[${index}].error`, "");
   };
 
   return (
@@ -84,10 +81,10 @@ const SubAttribute = (props) => {
                 formik.errors?.subAttributes[index]?.title) ||
               (formik.touched?.subAttributes?.length &&
                 !!formik.touched?.subAttributes[index]?.title &&
-                isDuplicate.status) ? (
+                formik.values?.subAttributes[index]?.error) ? (
                 <FormHelperText error>
-                  {isDuplicate.status
-                    ? `${isDuplicate.value} already exists`
+                  {formik.values?.subAttributes[index]?.error
+                    ? formik.values?.subAttributes[index]?.error
                     : formik?.errors?.subAttributes[index]?.title}
                 </FormHelperText>
               ) : null}
