@@ -93,17 +93,17 @@ const OptionsAttributeTable = (props) => {
                     {formik.values.subOptions.map((subOption, index) => {
                       if (subOption.metaAttribute === attribute._id) {
                         return (
-                          // <SubOptionCollapse />
-                          <SubOption
-                            key={subOption._id}
-                            id={subOption._id}
-                            attributeId={attribute._id}
-                            formik={formik}
-                            index={index}
-                            onSubOptionDelete={onSubOptionDelete}
-                            onSubAttributeAdd={onSubAttributeAdd}
-                            onSubAttributeDelete={onSubAttributeDelete}
-                          />
+                          <SubOptionCollapse />
+                          // <SubOption
+                          //   key={subOption._id}
+                          //   id={subOption._id}
+                          //   attributeId={attribute._id}
+                          //   formik={formik}
+                          //   index={index}
+                          //   onSubOptionDelete={onSubOptionDelete}
+                          //   onSubAttributeAdd={onSubAttributeAdd}
+                          //   onSubAttributeDelete={onSubAttributeDelete}
+                          // />
                         );
                       }
                       return null;

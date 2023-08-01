@@ -143,7 +143,6 @@ const SubOption = (props) => {
         subOp.metaAttribute === formik.values.subOptions[index]?.metaAttribute
       );
     });
-    formik.handleChange(e);
     if (isDuplicate && isDuplicate.title && e.target.value.trim()) {
       formik.setFieldValue(
         `subOptions[${index}].error`,
@@ -152,6 +151,7 @@ const SubOption = (props) => {
       return;
     }
     formik.setFieldValue(`subOptions[${index}].error`, "");
+    formik.handleChange(e);
   };
 
   return (

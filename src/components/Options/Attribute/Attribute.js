@@ -49,8 +49,6 @@ const Attribute = (props) => {
         attr.title.toLowerCase().trim() === e.target.value.toLowerCase().trim()
       );
     });
-    formik.handleChange(e);
-
     if (isDuplicate && isDuplicate.title && e.target.value.trim()) {
       formik.setFieldValue(
         `attributes[${index}].error`,
@@ -59,6 +57,7 @@ const Attribute = (props) => {
       return;
     }
     formik.setFieldValue(`attributes[${index}].error`, "");
+    formik.handleChange(e);
   };
 
   return (

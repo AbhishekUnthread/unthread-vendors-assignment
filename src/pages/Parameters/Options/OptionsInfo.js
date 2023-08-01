@@ -85,7 +85,7 @@ const FRONTEND_APPEARANCE = [
 const optionValidationSchema = Yup.object({
   option: Yup.object({
     _id: Yup.string(),
-    title: Yup.string().trim().min(3, "Too short").required("Required"),
+    title: Yup.string().trim().required("Required"),
     apperance: Yup.string()
       .oneOf([
         "dropDownList",
@@ -97,7 +97,7 @@ const optionValidationSchema = Yup.object({
       ])
       .required("Required"),
     type: Yup.string().oneOf(["optionset", "custom"]).required("Required"),
-    frontEndTitle: Yup.string().trim().min(3, "Too short").required("Required"),
+    frontEndTitle: Yup.string().trim().required("Required"),
     isFilter: Yup.boolean().required("Required"),
     isPriceMaster: Yup.boolean().required("Required"),
     saved: Yup.boolean(),
@@ -106,7 +106,7 @@ const optionValidationSchema = Yup.object({
     .of(
       Yup.object({
         _id: Yup.string(),
-        title: Yup.string().trim().min(3, "Too short").required("Required"),
+        title: Yup.string().trim().required("Required"),
         colour: Yup.string()
           .trim()
           .matches(colorReg, "Not valid")
@@ -154,7 +154,7 @@ const optionValidationSchema = Yup.object({
     Yup.object({
       _id: Yup.string(),
       metaAttribute: Yup.string(),
-      title: Yup.string().trim().min(3, "Too short").required("Required"),
+      title: Yup.string().trim().required("Required"),
       apperance: Yup.string()
         .oneOf([
           "dropDownList",
@@ -176,7 +176,7 @@ const optionValidationSchema = Yup.object({
         _id: Yup.string(),
         metaAttribute: Yup.string(),
         metaSubAttribute: Yup.string(),
-        title: Yup.string().trim().min(3, "Too short").required("Required"),
+        title: Yup.string().trim().required("Required"),
         colour: Yup.string()
           .trim()
           .matches(colorReg, "Not valid")
