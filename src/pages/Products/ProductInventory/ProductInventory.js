@@ -37,6 +37,7 @@ import { useGetAllStoresQuery } from "../../../features/products/inventory/inven
 const initialQueryFilterState = {
   name: "",
   pageNo: 1,
+  tabIndex: 0,
   pageSize: 10,
   searchValue: "",
   createdAt: "1",
@@ -103,17 +104,24 @@ const queryFilterReducer = (state, action) => {
         ...action.filters,
       };
 
+    case "SET_TAB_INDEX":
+      return {
+        ...state,
+        tabIndex: action.tab,
+      };
+
     default:
       return initialQueryFilterState;
   }
 };
 
 const ProductInventory = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [firstRender, setFirstRender] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [tabIndex, setTabIndex] = useState(0);
-  const handleTabIndexChange = (event, index) => setTabIndex(index);
+  // const [queryFilterState.tabIndex, setTabIndex] = useState(0);
+  // const handleTabIndexChange = (event, index) => setTabIndex(index);
+  const handleTabIndexChange = (event, tab) => dispatchQueryFilter({ type: "SET_TAB_INDEX", tab });
 
   const [queryFilterState, dispatchQueryFilter] = useReducer(queryFilterReducer, initialQueryFilterState);
 
@@ -171,7 +179,7 @@ const ProductInventory = () => {
   }, [searchParams, firstRender]);
 
   useEffect(() => {
-    setSearchParams(queryFilterState);
+    setSearchParams({ ...queryFilterState });
   }, [queryFilterState]);
 
   return (
@@ -205,7 +213,7 @@ const ProductInventory = () => {
             sx={{ width: "100%" }}
             className="d-flex justify-content-between tabs-header-box">
             <Tabs
-              value={tabIndex}
+              value={queryFilterState.tabIndex}
               onChange={handleTabIndexChange}
               aria-label="scrollable force tabs example"
               className="tabs">
@@ -364,7 +372,7 @@ const ProductInventory = () => {
             </Popover>
           </div>
           <TabPanel
-            value={tabIndex}
+            value={queryFilterState.tabIndex}
             index={0}>
             <AllInventory
               // edit={}
@@ -384,7 +392,7 @@ const ProductInventory = () => {
             />
           </TabPanel>
           <TabPanel
-            value={tabIndex}
+            value={queryFilterState.tabIndex}
             index={1}>
             <ArchivedInventory />
           </TabPanel>
