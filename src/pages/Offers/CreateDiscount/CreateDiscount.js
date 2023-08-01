@@ -335,12 +335,16 @@ const CreateDiscount = () => {
         cartLabel : null
       },
       buyXGetY : {
-        buy :null,
-      selectBuyItem: null,
-      buyProduct : null,
+      buy :null,
+      selectBuyItem: "",
+      buyProduct : [],
       get :null,
       selectGetItem : "",
-      getProduct : null,
+      getProduct : [],
+      discountMode : "giveDiscount",
+      discountValue : null,
+      type : "percentage",
+      value : null,
       }    
     },
     enableReinitialize: true,
