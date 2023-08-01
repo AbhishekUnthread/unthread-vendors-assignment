@@ -1,3 +1,5 @@
+import { useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
 import {
   FormControl,
   OutlinedInput,
@@ -16,7 +18,6 @@ import {
   TableRow,
   Chip,
 } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
   SortableContainer,
@@ -26,9 +27,12 @@ import {
 } from "react-sortable-hoc";
 import _ from "lodash";
 
+import { showError } from "../../features/snackbar/snackbarAction";
+
 import DeleteIconButton from "../DeleteIconButton/DeleteIconButton";
 import SubAttribute from "./Attribute/SubAttribute";
 import TableHeader from "../TableHeader/TableHeader";
+import SubOptionCollapse from "./SubOptionCollapse";
 
 import info from "../../assets/icons/info.svg";
 
@@ -111,6 +115,9 @@ const SubOption = (props) => {
     onSubAttributeAdd,
     onSubAttributeDelete,
   } = props;
+  const [collapsed, setCollapsed] = useState(false);
+  const [subAttrIndex, setSubAttrIndex] = useState([]);
+  const dispatch = useDispatch();
 
   const subOptionAppearanceHandler = (e) => {
     formik.setFieldValue(`subOptions[${index}].apperance`, e.target.value);
@@ -138,7 +145,7 @@ const SubOption = (props) => {
   const changeTitleHandler = (e) => {
     const isDuplicate = formik.values?.subOptions.find((subOp) => {
       return (
-        subOp.title.toLowerCase().trim() ===
+        subOp.title?.toLowerCase().trim() ===
           e.target.value.toLowerCase().trim() &&
         subOp.metaAttribute === formik.values.subOptions[index]?.metaAttribute
       );
@@ -154,7 +161,56 @@ const SubOption = (props) => {
     formik.handleChange(e);
   };
 
-  return (
+  const collapsedHandler = () => {
+    let isError = false;
+
+    if (formik.values?.subOptions?.length) {
+      for (const key in formik.values?.subOptions[index]) {
+        formik.setFieldTouched(`subOptions[${index}][${key}]`, true);
+      }
+    }
+    if (subAttrIndex.length) {
+      for (const subIndex of subAttrIndex) {
+        for (const key in formik.values?.subAttributes[subIndex]) {
+          formik.setFieldTouched(`subAttributes[${subIndex}][${key}]`, true);
+        }
+      }
+    }
+    if (formik.errors?.subOptions?.length && formik.errors?.subOptions[index]) {
+      isError = true;
+    } else if (subAttrIndex.length) {
+      for (const subIndex of subAttrIndex) {
+        if (
+          formik.errors?.subAttributes?.length &&
+          formik.errors?.subAttributes[subIndex]
+        ) {
+          isError = true;
+        }
+      }
+    }
+    if (isError) {
+      return;
+    }
+    setCollapsed(true);
+  };
+
+  const editHandler = () => {
+    setCollapsed(false);
+  };
+
+  const addSubAttributeIndexHandler = useCallback((value) => {
+    setSubAttrIndex((prevState) => [...prevState, value]);
+  }, []);
+
+  return collapsed ? (
+    <SubOptionCollapse
+      id={id}
+      attributeId={attributeId}
+      formik={formik}
+      index={index}
+      onEdit={editHandler}
+    />
+  ) : (
     <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4 ">
       <div
         style={{
@@ -241,7 +297,11 @@ const SubOption = (props) => {
             ) : null}
           </FormControl>
         </div>
-        <div className="d-flex align-items-end" style={{ gap: "15px" }}>
+
+        <div
+          className="d-flex align-items-start"
+          style={{ gap: "15px", marginTop: "22px" }}
+        >
           <DeleteIconButton
             onClick={onSubOptionDelete.bind(null, {
               deleteId: formik.values.subOptions[index]?._id,
@@ -252,8 +312,17 @@ const SubOption = (props) => {
             })}
             title="Delete"
           />
+
+          <button
+            onClick={collapsedHandler}
+            className="button-gradient py-2 px-4 w-auto"
+            type="button"
+          >
+            <p>Save</p>
+          </button>
         </div>
       </div>
+
       <TableContainer sx={{ padding: 0 }}>
         <Table sx={{ minWidth: 750 }} size="medium">
           <TableHeader sx={{ background: "#22213f" }} headCells={HEAD_CELLS} />
@@ -268,6 +337,7 @@ const SubOption = (props) => {
                         sx={{ textTransform: "capitalize", cursor: "pointer" }}
                       >
                         <SubAttribute
+                          onMount={addSubAttributeIndexHandler}
                           formik={formik}
                           index={index}
                           onSubAttributeDelete={onSubAttributeDelete}

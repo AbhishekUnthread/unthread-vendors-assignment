@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Grid,
   FormControl,
@@ -27,7 +27,7 @@ const CUSTOM_FIELD_DISPLAY = [
 ];
 
 const SubAttribute = (props) => {
-  const { formik, index, onSubAttributeDelete } = props;
+  const { formik, index, onSubAttributeDelete, onMount } = props;
 
   const imageUploadHandler = useCallback((url) => {
     formik.setFieldValue(`subAttributes[${index}].imageUrl`, url);
@@ -39,13 +39,14 @@ const SubAttribute = (props) => {
       formik.setFieldValue(`subAttributes[${index}].colour`, "");
     } else {
       formik.setFieldValue(`subAttributes[${index}].imageUrl`, "");
+      formik.setFieldValue(`subAttributes[${index}].colour`, "#000000");
     }
   };
 
   const changeTitleHandler = (e) => {
     const isDuplicate = formik.values?.subAttributes.find((subAttr) => {
       return (
-        subAttr.title.toLowerCase().trim() ===
+        subAttr.title?.toLowerCase().trim() ===
           e.target.value.toLowerCase().trim() &&
         subAttr.metaSubAttribute ===
           formik.values?.subAttributes[index]?.metaSubAttribute
@@ -62,11 +63,15 @@ const SubAttribute = (props) => {
     formik.handleChange(e);
   };
 
+  useEffect(() => {
+    index !== (null || undefined || "") && onMount(index);
+  }, [index, onMount]);
+
   return (
     <Grid container>
       <Grid item sm={10.5} sx={{ display: "grid", alignItems: "center" }}>
         <Grid container columnSpacing={2}>
-          <Grid item sm={4} sx={{ display: "grid", alignItems: "center" }}>
+          <Grid item sm={4} sx={{ display: "grid", alignItems: "start" }}>
             <FormControl className="w-100 px-0">
               <OutlinedInput
                 size="small"
@@ -100,6 +105,10 @@ const SubAttribute = (props) => {
                   formik.errors.subAttributes[index]?.imageUrl
                 }
                 onUpload={imageUploadHandler}
+                touched={
+                  formik.touched?.subAttributes?.length &&
+                  !!formik.touched.subAttributes[index]?.imageUrl
+                }
                 onBlur={formik.handleBlur}
                 name={`subAttributes[${index}].imageUrl`}
                 disableLabel={true}
@@ -110,7 +119,7 @@ const SubAttribute = (props) => {
           )}
           {formik.values?.subAttributes[index]?.apperance ===
             "colorAndImageSwatches" && (
-            <Grid item sx={{ display: "grid", alignItems: "center" }}>
+            <Grid item sx={{ display: "grid", alignItems: "start" }}>
               <Grid container columnSpacing={2}>
                 <Grid item sx={{ display: "grid", alignItems: "center" }}>
                   <FormControl
@@ -160,6 +169,10 @@ const SubAttribute = (props) => {
                         formik.errors?.subAttributes?.length &&
                         formik.errors.subAttributes[index]?.imageUrl
                       }
+                      touched={
+                        formik.touched?.subAttributes?.length &&
+                        !!formik.touched.subAttributes[index]?.imageUrl
+                      }
                       onUpload={imageUploadHandler}
                       onBlur={formik.handleBlur}
                       name={`subAttributes[${index}].imageUrl`}
@@ -201,8 +214,8 @@ const SubAttribute = (props) => {
         sm={1.5}
         sx={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
+          justifyContent: "flex-end",
+          alignItems: "flex-start",
         }}
       >
         <DeleteIconButton

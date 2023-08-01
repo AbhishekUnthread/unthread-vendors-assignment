@@ -1010,10 +1010,10 @@ const OptionsInfo = () => {
   const addAttributeFieldHandler = () => {
     let attributeId;
     if (
-      !isNaN(+optionFormik.values.attributes.slice(-1)[0]._id.split("-")[1])
+      !isNaN(+optionFormik.values?.attributes.slice(-1)[0]._id?.split("-")[1])
     ) {
       attributeId = `attribute-${
-        +optionFormik.values.attributes.slice(-1)[0]._id.split("-")[1] + 1
+        +optionFormik.values?.attributes.slice(-1)[0]._id?.split("-")[1] + 1
       }`;
     } else {
       attributeId = "attribute-0";
@@ -1035,9 +1035,9 @@ const OptionsInfo = () => {
   const addSubOptionFieldHandler = (id) => {
     const subOptionId =
       optionFormik.values.subOptions.length &&
-      !isNaN(+optionFormik.values.subOptions.slice(-1)[0]._id.split("-")[1])
+      !isNaN(+optionFormik.values?.subOptions.slice(-1)[0]._id?.split("-")[1])
         ? `subOption-${
-            +optionFormik.values.subOptions.slice(-1)[0]._id.split("-")[1] + 1
+            +optionFormik.values?.subOptions.slice(-1)[0]._id?.split("-")[1] + 1
           }`
         : "subOption-0";
     const newSubOptions = optionFormik.values.subOptions?.concat({
@@ -1053,10 +1053,13 @@ const OptionsInfo = () => {
 
     const subAttributeId =
       optionFormik.values.subAttributes.length &&
-      !isNaN(+optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1])
+      !isNaN(
+        +optionFormik.values?.subAttributes.slice(-1)[0]._id?.split("-")[1]
+      )
         ? `subAttribute-${
-            +optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1] +
-            1
+            +optionFormik.values?.subAttributes
+              .slice(-1)[0]
+              ._id?.split("-")[1] + 1
           }`
         : "subAttribute-0";
 
@@ -1079,11 +1082,14 @@ const OptionsInfo = () => {
 
   const addSubAttributeFieldHandler = ({ attributeId, subOptionId }) => {
     const subAttributeId =
-      optionFormik.values.subAttributes.length &&
-      !isNaN(+optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1])
+      optionFormik.values.subAttributes?.length &&
+      !isNaN(
+        +optionFormik.values?.subAttributes.slice(-1)[0]?._id?.split("-")[1]
+      )
         ? `subAttribute-${
-            +optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1] +
-            1
+            +optionFormik.values?.subAttributes
+              .slice(-1)[0]
+              ?._id?.split("-")[1] + 1
           }`
         : "subAttribute-0";
 

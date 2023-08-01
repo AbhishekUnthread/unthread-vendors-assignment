@@ -40,13 +40,14 @@ const Attribute = (props) => {
       formik.setFieldValue(`attributes[${index}].colour`, "");
     } else {
       formik.setFieldValue(`attributes[${index}].imageUrl`, "");
+      formik.setFieldValue(`attributes[${index}].colour`, "#000000");
     }
   };
 
   const changeTitleHandler = (e) => {
     const isDuplicate = formik.values?.attributes.find((attr) => {
       return (
-        attr.title.toLowerCase().trim() === e.target.value.toLowerCase().trim()
+        attr.title?.toLowerCase().trim() === e.target.value.toLowerCase().trim()
       );
     });
     if (isDuplicate && isDuplicate.title && e.target.value.trim()) {
@@ -64,7 +65,7 @@ const Attribute = (props) => {
     <Grid container>
       <Grid item sm={10.5} sx={{ display: "grid", alignItems: "center" }}>
         <Grid container columnSpacing={2}>
-          <Grid item sm={4} sx={{ display: "grid", alignItems: "center" }}>
+          <Grid item sm={4} sx={{ display: "grid", alignItems: "start" }}>
             <FormControl className="w-100 px-0">
               <OutlinedInput
                 size="small"
@@ -106,7 +107,7 @@ const Attribute = (props) => {
             </Grid>
           )}
           {formik.values.option?.apperance === "colorAndImageSwatches" && (
-            <Grid item sx={{ display: "grid", alignItems: "center" }}>
+            <Grid item sx={{ display: "grid", alignItems: "start" }}>
               <Grid container columnSpacing={2}>
                 <Grid item sx={{ display: "grid", alignItems: "center" }}>
                   <FormControl
@@ -197,8 +198,8 @@ const Attribute = (props) => {
         sm={1.5}
         sx={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
+          justifyContent: "flex-end",
+          alignItems: "flex-start",
         }}
       >
         <AddIconButton

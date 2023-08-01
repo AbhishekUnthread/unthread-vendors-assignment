@@ -28,6 +28,7 @@ const UploadMediaSmall = (props) => {
     disableLabel,
     style,
     isSubmitting,
+    touched,
   } = props;
   const [blurred, setBlurred] = useState(false);
   const [uploadFile, { data, isSuccess, isError }] = UseFileUpload();
@@ -75,10 +76,10 @@ const UploadMediaSmall = (props) => {
   }, [errorRef, error, blurred, isFocused, isFileDialogActive]);
 
   useEffect(() => {
-    if (isSubmitting) {
+    if (isSubmitting || touched) {
       setBlurred(true);
     }
-  }, [isSubmitting]);
+  }, [isSubmitting, touched]);
 
   return (
     <>
