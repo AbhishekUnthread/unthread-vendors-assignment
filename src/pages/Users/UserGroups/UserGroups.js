@@ -318,17 +318,17 @@ const UserGroups = () => {
           </div>
           <TabPanel value={value} index={0}>
             <UserGroupsTable 
-              data={customerData}
+              data={customerData?.data}
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <UserGroupsTable 
-              data={customerData}
+              data={customerData?.data}
             />
           </TabPanel>
           <TabPanel value={value} index={2}>
             <UserGroupsTable 
-              data={customerData}
+              data={customerData?.data}
             />
           </TabPanel>
         </Paper>
