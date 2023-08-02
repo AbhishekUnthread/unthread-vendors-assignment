@@ -133,7 +133,7 @@ const AllUsersTable = ({
     }
   ];
 
-  if (customerType === 0) {
+  if (customerType === 0 || customerType === 4) {
     headCells.push({
       id: "status",
       numeric: false,
@@ -338,20 +338,16 @@ const AllUsersTable = ({
                           <p className="text-lightBlue">₹ 52,000</p>
                         </div>
                       </TableCell>
-                      { customerType === 0 && 
+                      { (customerType === 0 || customerType === 4 ) && 
                         <TableCell>
                           <div className="d-flex align-items-center">
                             <div className="rounded-pill d-flex px-2 py-1" 
                               style={{
                                 background: row.status == "active" ? "#A6FAAF" : 
-                                row.status == "in-active" ? "#5C6D8E" : "#F67476" 
+                                row.status == "in-active" ? "#F67476" : "#F67476" 
                               }}
                             >
-                              <small className="fw-400"
-                                style={{
-                                  color: row.status == "active" ? "#202837" : "#fff"
-                                }}
-                              >
+                              <small className="text-black fw-500">
                                 {
                                   row.status == "active" ? "Active" : 
                                   row.status == "in-active" ? "In-active" : "Archived"

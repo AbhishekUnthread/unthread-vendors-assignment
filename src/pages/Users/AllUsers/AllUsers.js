@@ -67,7 +67,7 @@ const initialQueryFilterState = {
   pageNo: 0,
   name:"",
   searchValue: "",
-  status: ""
+  status: ["active", "in-active"],
 };
 
 const initialUsersState = {
@@ -802,6 +802,7 @@ const AllUsers = () => {
                           queryFilterState.status.includes("active")
                         }
                       />
+                    </FormGroup>
                     <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
                         value="in-active"
@@ -833,7 +834,6 @@ const AllUsers = () => {
                         }
                         label="Blocked"
                       />
-                    </FormGroup>
                     <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
                         value="archieved"

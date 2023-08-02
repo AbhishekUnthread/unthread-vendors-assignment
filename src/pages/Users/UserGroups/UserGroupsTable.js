@@ -18,6 +18,8 @@ import {
 } from "../../../components/TableDependencies/TableDependencies";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import Loader from "../../../components/Loader/TableLoader";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
