@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 const isHttpValid = (str) => {
   try {
     const newUrl = new URL(str);
@@ -7,4 +9,8 @@ const isHttpValid = (str) => {
   }
 };
 
-export { isHttpValid };
+const omitEmptyKeys = (obj) => {
+  return _.omitBy(obj, (value) => value === (null || "" || undefined));
+};
+
+export { isHttpValid, omitEmptyKeys };

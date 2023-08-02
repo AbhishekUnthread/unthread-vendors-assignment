@@ -11,7 +11,10 @@
   background-color: #38395c !important;
 }
 
-div [type="button"]:not(.ck-insert-table-dropdown-grid-box) {
+div
+  [type="button"]:not(.ck-insert-table-dropdown-grid-box):not(
+    .button-red-outline
+  ) {
   border: none !important;
 }
 
