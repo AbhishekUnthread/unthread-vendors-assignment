@@ -19,7 +19,10 @@ import {
   TextField,
 } from "@mui/material";
 
-import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
+import { 
+  useGetAllCustomerGroupQuery,
+  useGetCustomerGroupCountQuery
+  } from "../../../features/customers/customerGroup/customerGroupApiSlice";
 
 import UserGroupsTable from "./UserGroupsTable";
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -43,6 +46,13 @@ const UserGroups = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const {
+    data: groupCountData,
+    isLoading: groupCountIsLoading,
+    isSuccess: groupCountIsSuccess,
+    error: groupCountError,
+  } = useGetCustomerGroupCountQuery();
 
   const {
     data: customerGroupData,
@@ -214,18 +224,15 @@ const UserGroups = () => {
             sx={{ width: "100%" }}
             className="d-flex justify-content-between tabs-header-box"
           >
-            {/* variant="scrollable"
-              scrollButtons
-              allowScrollButtonsMobile */}
             <Tabs
               value={value}
               onChange={handleChange}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Active" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab label={`All (${groupCountData?.data[0]?.all })`} className="tabs-head" />
+              <Tab label={`Active (${groupCountData?.data[0]?.active })`} className="tabs-head" />
+              <Tab label={`Archived (${groupCountData?.data[0]?.archived })`} className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -260,8 +267,6 @@ const UserGroups = () => {
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
-                    // value={value}
-                    // onChange={handleRadioChange}
                   >
                     <FormControlLabel
                       value="userName"
@@ -315,17 +320,20 @@ const UserGroups = () => {
           </div>
           <TabPanel value={value} index={0}>
             <UserGroupsTable 
-              data={customerData?.data}
+              data={customerData?.data || []}
+              totalCount={customerData?.totalCount || 0}
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <UserGroupsTable 
-              data={customerData?.data}
+              data={customerData?.data || []}
+              totalCount={customerData?.totalCount || 0}
             />
           </TabPanel>
           <TabPanel value={value} index={2}>
             <UserGroupsTable 
-              data={customerData?.data}
+              data={customerData?.data || []}
+              totalCount={customerData?.totalCount || 0}
             />
           </TabPanel>
         </Paper>

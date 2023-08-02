@@ -4,9 +4,11 @@ import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import { visuallyHidden } from "@mui/utils";
 import { useFormik } from "formik";
+import * as Yup from "yup";
 import {
   Box,
   FormControl,
+  FormHelperText,
   MenuItem,
   Select,
   InputAdornment,
@@ -300,6 +302,10 @@ LikeProductTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
+const customerGroupValidationSchema = Yup.object({
+  name: Yup.string().trim().min(3).max(50).required("Required"),
+});
+
 const CreateUserGroup = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
@@ -339,7 +345,7 @@ const CreateUserGroup = () => {
       addType: "manual"
     },
     enableReinitialize: true,
-    // validationSchema: customerValidationSchema,
+    validationSchema: customerGroupValidationSchema,
     onSubmit: (values) => {
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
@@ -349,8 +355,8 @@ const CreateUserGroup = () => {
       createCustomerGroup(values)
         .unwrap()
         .then((res) => {
-          navigate("/users/allUsers");
-          dispatch(showSuccess({ message: "Custormer created successfully" }));
+          navigate("/users/userGroups");
+          dispatch(showSuccess({ message: "Custormer group created successfully" }));
         })
     },
   })
@@ -496,6 +502,9 @@ const CreateUserGroup = () => {
                     onChange={customerGroupFormik.handleChange}
                   />
                 </FormControl>
+                {!!customerGroupFormik.touched.name && customerGroupFormik.errors.name && (
+                  <FormHelperText error>{customerGroupFormik.errors.name}</FormHelperText>
+                )}
               </div>
               <div className="col-md-12 d-flex px-0">
                 <FormControlLabel

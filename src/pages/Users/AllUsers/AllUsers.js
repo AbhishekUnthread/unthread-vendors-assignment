@@ -300,10 +300,6 @@ const AllUsers = () => {
     setSearchParams(tabIndex)
   };
 
-  console.log(usersState, 'usersState');
-
-  console.log(queryFilterState, 'queryFilterState');
-
   useEffect(() => {
     const filterParams = JSON.parse(searchParams.get("filter")) || {
       customerType: usersState.customerType,
@@ -840,7 +836,7 @@ const AllUsers = () => {
                     </FormGroup>
                     <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
-                        value="archived"
+                        value="archieved"
                         control={
                           <Checkbox
                             size="small"
@@ -853,7 +849,7 @@ const AllUsers = () => {
                         label="Archived"
                         checked={
                           customerState.status === "" &&
-                          queryFilterState.status.includes("archived")
+                          queryFilterState.status.includes("archieved")
                         }
                       />
                     </FormGroup>

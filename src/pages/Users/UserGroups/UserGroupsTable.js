@@ -1,17 +1,5 @@
-import React from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-// ! COMPONENTS IMPORTS
-import {
-  EnhancedTableHead,
-  stableSort,
-  getComparator,
-} from "../../../components/TableDependencies/TableDependencies";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
-// ! IMAGES IMPORTS
-import verticalDots from "../../../assets/icons/verticalDots.svg";
-import deleteRed from "../../../assets/icons/delete.svg";
-// ! MATERIAL IMPORTS
 import {
   Checkbox,
   Popover,
@@ -23,7 +11,17 @@ import {
   TableRow,
 } from "@mui/material";
 
-// ? TABLE STARTS HERE
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../components/TableDependencies/TableDependencies";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+
+import verticalDots from "../../../assets/icons/verticalDots.svg";
+import deleteRed from "../../../assets/icons/delete.svg";
+
 function createData(uId, groupName, usersInGroup, status) {
   return { uId, groupName, usersInGroup, status };
 }
@@ -61,16 +59,13 @@ const headCells = [
   },
 ];
 
-// ? TABLE ENDS HERE
-
-const UserGroupsTable = ({ data }) => {
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("groupName");
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  console.log(data, 'data dklj');
+const UserGroupsTable = ({ data, totalCount }) => {
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("groupName");
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [anchorActionEl, setAnchorActionEl] = useState(null);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -110,7 +105,6 @@ const UserGroupsTable = ({ data }) => {
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
   };
 
@@ -120,9 +114,6 @@ const UserGroupsTable = ({ data }) => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  // * ACTION POPOVERS STARTS
-  const [anchorActionEl, setAnchorActionEl] = React.useState(null);
 
   const handleActionClick = (event) => {
     setAnchorActionEl(event.currentTarget);
@@ -134,10 +125,9 @@ const UserGroupsTable = ({ data }) => {
 
   const openActions = Boolean(anchorActionEl);
   const idActions = openActions ? "simple-popover" : undefined;
-  // * ACTION POPOVERS ENDS
 
   return (
-    <React.Fragment>
+    <>
       {selected.length > 0 && (
         <div className="d-flex align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
@@ -167,7 +157,7 @@ const UserGroupsTable = ({ data }) => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={rows.length}
+            rowCount={totalCount}
             headCells={headCells}
           />
           <TableBody>
@@ -222,7 +212,7 @@ const UserGroupsTable = ({ data }) => {
                       <div className="d-flex align-items-center">
                         <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
                           <small className="text-black fw-400">
-                            {row?.status == true ? "Active" : "In-Active"}
+                            {row?.active == true ? "Active" : "In-Active"}
                           </small>
                         </div>
                       </div>
@@ -288,14 +278,14 @@ const UserGroupsTable = ({ data }) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={totalCount}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         className="table-pagination"
       />
-    </React.Fragment>
+    </>
   );
 };
 

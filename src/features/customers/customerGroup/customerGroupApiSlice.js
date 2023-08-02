@@ -28,11 +28,31 @@ export const customerGroupApiSlice = apiSlice.injectEndpoints({
         };
       },
       providesTags: ["CustomerGroup"],
-    })
+    }),
+
+    getCustomerGroupCount: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+
+        return {
+          url: `/customerGroup/count${queryString}`,
+        };
+      },
+      providesTags: ["CustomerGroup"],
+    }),
+
   }),
 });
 
 export const {
   useCreateCustomerGroupMutation,
-  useGetAllCustomerGroupQuery
+  useGetAllCustomerGroupQuery,
+  useGetCustomerGroupCountQuery
 } = customerGroupApiSlice;
