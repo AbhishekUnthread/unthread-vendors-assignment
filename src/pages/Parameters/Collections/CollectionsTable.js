@@ -262,6 +262,7 @@ const CollectionsTable = ({
       setSelectedStatus(massActionStatus);
       setArchivedModal(false);
     } else {
+      handleClick(null, collectionId);
       setArchivedModal(false);
       editCollection({
           id: collectionId,
@@ -274,7 +275,6 @@ const CollectionsTable = ({
   }
 
   const handleUnArchive = (id, title) => {
-    console.log(selected, 'selected');
     setForMassAction(false)
     setShowUnArhcivedModal(true)
     setUnArchiveID(id)
@@ -285,6 +285,7 @@ const CollectionsTable = ({
     if(forMassAction === true) {
       setSelectedStatus(massActionStatus);
     } else {
+      handleClick(null, unArchiveID);
       editCollection({
           id: unArchiveID,
           details : {
@@ -304,6 +305,7 @@ const CollectionsTable = ({
       dispatch(showSuccess({ message: "Collection deleted successfully!" }));
       setSelected([])
     } else {
+      handleClick(null, archiveID?._id);
       hardDeleteCollection(archiveID?._id);
       toggleArchiveModalHandler();
       dispatch(showSuccess({ message: "Collection deleted successfully!" }));

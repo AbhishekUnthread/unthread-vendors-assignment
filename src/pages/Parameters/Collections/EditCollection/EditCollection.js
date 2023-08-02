@@ -336,12 +336,14 @@ const EditCollection = () => {
     }
   },[newDuplicateCollection])
 
+  const srNo = serialId ? serialId : id;
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
-    error: collectionError,
-  } = useGetAllCollectionsQuery({ srNo: serialId ? serialId : id, ...decodedObject, pageNo:0 });
+    error: collectionError
+  } = useGetAllCollectionsQuery({ srNo, ...decodedObject, pageNo:0 });
 
   const nextPageHandler = () => {
     const { pageNo } = queryFilterState;
