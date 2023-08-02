@@ -25,6 +25,23 @@ export const optionsApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: optionDetails,
       }),
+      transformResponse: (res) => res.data,
+      invalidatesTags: ["Options"],
+    }),
+    updateOption: builder.mutation({
+      query: ({ details, id }) => ({
+        url: `/parameters/optionSet/attribute/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      transformResponse: (res) => res.data,
+      invalidatesTags: ["Options"],
+    }),
+    deleteOption: builder.mutation({
+      query: (id) => ({
+        url: `/parameters/optionSet/attribute/${id}`,
+        method: "DELETE",
+      }),
       invalidatesTags: ["Options"],
     }),
     getAllAttributes: builder.query({
@@ -49,6 +66,23 @@ export const optionsApiSlice = apiSlice.injectEndpoints({
         url: "/parameters/optionSet/metaAttribute",
         method: "POST",
         body: attributeDetails,
+      }),
+      transformResponse: (res) => res.data,
+      invalidatesTags: ["Attributes"],
+    }),
+    updateAttribute: builder.mutation({
+      query: ({ details, id }) => ({
+        url: `/parameters/optionSet/metaAttribute/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      transformResponse: (res) => res.data,
+      invalidatesTags: ["Attributes"],
+    }),
+    deleteAttribute: builder.mutation({
+      query: (id) => ({
+        url: `/parameters/optionSet/metaAttribute/${id}`,
+        method: "DELETE",
       }),
       invalidatesTags: ["Attributes"],
     }),
@@ -75,6 +109,23 @@ export const optionsApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: subOptionDetails,
       }),
+      transformResponse: (res) => res.data,
+      invalidatesTags: ["SubOptions"],
+    }),
+    updateSubOption: builder.mutation({
+      query: ({ details, id }) => ({
+        url: `/parameters/optionSet/metaSubAttribute/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      transformResponse: (res) => res.data,
+      invalidatesTags: ["SubOptions"],
+    }),
+    deleteSubOption: builder.mutation({
+      query: (id) => ({
+        url: `/parameters/optionSet/metaSubAttribute/${id}`,
+        method: "DELETE",
+      }),
       invalidatesTags: ["SubOptions"],
     }),
     getAllSubAttributes: builder.query({
@@ -100,6 +151,23 @@ export const optionsApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: subAttributeDetails,
       }),
+      transformResponse: (res) => res.data,
+      invalidatesTags: ["SubAttributes"],
+    }),
+    updateSubAttribute: builder.mutation({
+      query: ({ details, id }) => ({
+        url: `/parameters/optionSet/metaSubAttributeValue/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      transformResponse: (res) => res.data,
+      invalidatesTags: ["SubAttributes"],
+    }),
+    deleteSubAttribute: builder.mutation({
+      query: (id) => ({
+        url: `/parameters/optionSet/metaSubAttributeValue/${id}`,
+        method: "DELETE",
+      }),
       invalidatesTags: ["SubAttributes"],
     }),
   }),
@@ -108,10 +176,18 @@ export const optionsApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetAllOptionsQuery,
   useCreateOptionMutation,
+  useUpdateOptionMutation,
+  useDeleteOptionMutation,
   useGetAllAttributesQuery,
   useCreateAttributeMutation,
+  useUpdateAttributeMutation,
+  useDeleteAttributeMutation,
   useGetAllSubOptionsQuery,
   useCreateSubOptionMutation,
+  useUpdateSubOptionMutation,
+  useDeleteSubOptionMutation,
   useGetAllSubAttributesQuery,
   useCreateSubAttributeMutation,
+  useUpdateSubAttributeMutation,
+  useDeleteSubAttributeMutation,
 } = optionsApiSlice;

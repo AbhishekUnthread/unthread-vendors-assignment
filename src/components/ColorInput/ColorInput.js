@@ -1,10 +1,11 @@
 import "./ColorInput.scss";
 
-const ColorInput = () => {
+const ColorInput = (props) => {
+  const { inputProps } = props;
   return (
     <div className="container">
-      <input type="color" className="picker" />
-      <p className="text-lightBlue text">red</p>
+      <input {...inputProps} type="color" className="picker" />
+      <p className="text-lightBlue text">{inputProps.value}</p>
     </div>
   );
 };

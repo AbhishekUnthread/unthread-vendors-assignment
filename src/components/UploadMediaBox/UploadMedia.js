@@ -19,7 +19,16 @@ import { ReactComponent as UploadIcon } from "../../assets/icons/upload.svg";
 import { ReactComponent as ImagePlaceHolder } from "../../assets/icons/imagePlaceHolder.svg";
 
 const UploadMediaSmall = (props) => {
-  const { fileSrc, error, onUpload, onBlur, name, disableLabel, style } = props;
+  const {
+    fileSrc,
+    error,
+    onUpload,
+    onBlur,
+    name,
+    disableLabel,
+    style,
+    isSubmitting,
+  } = props;
   const [blurred, setBlurred] = useState(false);
   const [uploadFile, { data, isSuccess, isError }] = UseFileUpload();
   const errorRef = useRef(null);
@@ -65,6 +74,12 @@ const UploadMediaSmall = (props) => {
     }
   }, [errorRef, error, blurred, isFocused, isFileDialogActive]);
 
+  useEffect(() => {
+    if (isSubmitting) {
+      setBlurred(true);
+    }
+  }, [isSubmitting]);
+
   return (
     <>
       {!disableLabel && (
@@ -107,7 +122,7 @@ const UploadMediaSmall = (props) => {
           {...getInputProps()}
           size="small"
         />
-        <FormHelperText ref={errorRef} error></FormHelperText>
+        {!fileSrc && <FormHelperText ref={errorRef} error></FormHelperText>}
       </FormControl>
     </>
   );

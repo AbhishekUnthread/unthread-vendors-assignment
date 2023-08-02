@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -14,17 +14,12 @@ import {
 } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import _ from "lodash";
 
-import AddCustomField from "../../../components/AddCustomField/AddCustomField";
-import AddCustomFieldTable from "../../../components/AddCustomField/AddCustomFieldTable";
 import InfoHeader from "../../../components/Header/InfoHeader";
-import { UploadMediaSmall } from "../../../components/UploadMediaBox/UploadMedia";
 import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
-import ConfirmationModal from "../../../components/ConfirmationModal/ConfirmationModal";
-import Attribute from "../../../components/Options/Attribute/Attribute";
 import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
 import OptionsAttributeTable from "./OptionsAttributeTable";
+import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -35,12 +30,19 @@ import {
 import {
   useGetAllOptionsQuery,
   useCreateOptionMutation,
+  useUpdateOptionMutation,
   useGetAllAttributesQuery,
   useCreateAttributeMutation,
+  useUpdateAttributeMutation,
+  useDeleteAttributeMutation,
   useGetAllSubOptionsQuery,
   useCreateSubOptionMutation,
+  useUpdateSubOptionMutation,
+  useDeleteSubOptionMutation,
   useGetAllSubAttributesQuery,
   useCreateSubAttributeMutation,
+  useUpdateSubAttributeMutation,
+  useDeleteSubAttributeMutation,
 } from "../../../features/parameters/options/optionsApiSlice";
 
 import { colorReg, urlReg } from "../../../utils/regex";
@@ -78,64 +80,146 @@ const FRONTEND_APPEARANCE = [
   },
 ];
 
-const createOptionValidationSchema = Yup.object({
-  title: Yup.string().trim().min(3, "Too short").required("Required"),
-  apperance: Yup.string()
-    .oneOf([
-      "dropDownList",
-      "dropDownThumbnail",
-      "colorAndImageSwatches",
-      "radioButtons",
-      "rectangleButtons",
-      "circleButtons",
-    ])
+const optionValidationSchema = Yup.object({
+  option: Yup.object({
+    _id: Yup.string(),
+    title: Yup.string().trim().min(3, "Too short").required("Required"),
+    apperance: Yup.string()
+      .oneOf([
+        "dropDownList",
+        "dropDownThumbnail",
+        "colorAndImageSwatches",
+        "radioButtons",
+        "rectangleButtons",
+        "circleButtons",
+      ])
+      .required("Required"),
+    type: Yup.string().oneOf(["optionset", "custom"]).required("Required"),
+    frontEndTitle: Yup.string().trim().min(3, "Too short").required("Required"),
+    isFilter: Yup.boolean().required("Required"),
+    isPriceMaster: Yup.boolean().required("Required"),
+    saved: Yup.boolean(),
+  }),
+  attributes: Yup.array()
+    .of(
+      Yup.object({
+        _id: Yup.string(),
+        title: Yup.string().trim().min(3, "Too short").required("Required"),
+        colour: Yup.string()
+          .trim()
+          .matches(colorReg, "Not valid")
+          .when(["value"], ([value], schema) => {
+            if (value === "colour") {
+              return schema.required("Required");
+            }
+            return schema;
+          }),
+        imageUrl: Yup.string()
+          .trim()
+          .matches(urlReg, "Not valid")
+          .when(["value", "apperance"], ([value, apperance], schema) => {
+            if (value === "imageUrl" || apperance === "dropDownThumbnail") {
+              return schema.required("Required");
+            }
+            return schema;
+          }),
+        type: Yup.string().oneOf(["optionset", "custom"]).required("Required"),
+        value: Yup.string()
+          .oneOf(["colour", "imageUrl"])
+          .when(["apperance"], ([apperance], schema) => {
+            if (apperance === "colorAndImageSwatches") {
+              return schema.required("Required");
+            }
+            return schema;
+          }),
+        apperance: Yup.string()
+          .oneOf([
+            "dropDownList",
+            "dropDownThumbnail",
+            "colorAndImageSwatches",
+            "radioButtons",
+            "rectangleButtons",
+            "circleButtons",
+          ])
+          .required("Required"),
+        saved: Yup.boolean(),
+      })
+    )
+    .min(1)
     .required("Required"),
-  type: Yup.string().oneOf(["optionset", "custom"]).required("Required"),
-  frontEndTitle: Yup.string().trim().min(3, "Too short").required("Required"),
-  isFilter: Yup.boolean().required("Required"),
-  isPriceMaster: Yup.boolean().required("Required"),
-});
-
-const createAttributeValidationSchema = Yup.object({
-  title: Yup.string().trim().min(3, "Too short").required("Required"),
-  attribute: Yup.string().trim().required("Required"),
-  colour: Yup.string()
-    .trim()
-    .matches(colorReg, "Not valid")
-    .when(["value"], ([value], schema) => {
-      if (value === "colour") {
-        return schema.required("Required");
+  subOptions: Yup.array().of(
+    Yup.object({
+      _id: Yup.string(),
+      metaAttribute: Yup.string(),
+      title: Yup.string().trim().min(3, "Too short").required("Required"),
+      apperance: Yup.string()
+        .oneOf([
+          "dropDownList",
+          "dropDownThumbnail",
+          "colorAndImageSwatches",
+          "radioButtons",
+          "rectangleButtons",
+          "circleButtons",
+        ])
+        .required("Required"),
+      saved: Yup.boolean(),
+      isOption: Yup.boolean(),
+    })
+  ),
+  subAttributes: Yup.array()
+    .of(
+      Yup.object({
+        _id: Yup.string(),
+        metaAttribute: Yup.string(),
+        metaSubAttribute: Yup.string(),
+        title: Yup.string().trim().min(3, "Too short").required("Required"),
+        colour: Yup.string()
+          .trim()
+          .matches(colorReg, "Not valid")
+          .when(["value"], ([value], schema) => {
+            if (value === "colour") {
+              return schema.required("Required");
+            }
+            return schema;
+          }),
+        imageUrl: Yup.string()
+          .trim()
+          .matches(urlReg, "Not valid")
+          .when(["value", "apperance"], ([value, apperance], schema) => {
+            if (value === "imageUrl" || apperance === "dropDownThumbnail") {
+              return schema.required("Required");
+            }
+            return schema;
+          }),
+        type: Yup.string().oneOf(["optionset", "custom"]).required("Required"),
+        value: Yup.string()
+          .oneOf(["colour", "imageUrl"])
+          .when(["apperance"], ([apperance], schema) => {
+            if (apperance === "colorAndImageSwatches") {
+              return schema.required("Required");
+            }
+            return schema;
+          }),
+        apperance: Yup.string()
+          .oneOf([
+            "dropDownList",
+            "dropDownThumbnail",
+            "colorAndImageSwatches",
+            "radioButtons",
+            "rectangleButtons",
+            "circleButtons",
+          ])
+          .required("Required"),
+        saved: Yup.boolean(),
+        isOption: Yup.boolean(),
+      })
+    )
+    .when(["subOptions"], ([subOptions], schema) => {
+      if (subOptions.length) {
+        return schema.min(1).required("Required");
       }
       return schema;
     }),
-  imageUrl: Yup.string()
-    .trim()
-    .matches(urlReg, "Not valid")
-    .when(["value", "apperance"], ([value, apperance], schema) => {
-      if (value === "imageUrl" || apperance === "dropDownThumbnail") {
-        return schema.required("Required");
-      }
-      return schema;
-    }),
-  type: Yup.string().oneOf(["optionset", "custom"]).required("Required"),
-  value: Yup.string()
-    .oneOf(["colour", "imageUrl"])
-    .when(["apperance"], ([apperance], schema) => {
-      if (apperance === "colorAndImageSwatches") {
-        return schema.required("Required");
-      }
-      return schema;
-    }),
-  apperance: Yup.string()
-    .oneOf([
-      "dropDownList",
-      "dropDownThumbnail",
-      "colorAndImageSwatches",
-      "radioButtons",
-      "rectangleButtons",
-      "circleButtons",
-    ])
-    .required("Required"),
 });
 
 const initialOptionQueryFilterState = {
@@ -147,6 +231,18 @@ const initialOptionQueryFilterState = {
 const initialOptionState = {
   totalCount: 0,
   isEditing: false,
+  deleteId: null,
+  saved: false,
+  confirmationMessage: "",
+  showDeleteModal: false,
+  deleteTitle: "",
+  deleteType: "",
+};
+
+const initialDeletedOptionState = {
+  attributes: [],
+  subOptions: [],
+  subAttributes: [],
 };
 
 const optionQueryFilterReducer = (state, action) => {
@@ -167,6 +263,28 @@ const optionQueryFilterReducer = (state, action) => {
 };
 
 const optionReducer = (state, action) => {
+  if (action.type === "SET_DELETE") {
+    return {
+      ...state,
+      deleteId: action.deleteId,
+      saved: action.saved,
+      confirmationMessage: action.message || "",
+      showDeleteModal: true,
+      deleteTitle: action.deleteTitle,
+      deleteType: action.deleteType,
+    };
+  }
+  if (action.type === "REMOVE_DELETE") {
+    return {
+      ...state,
+      deleteId: initialOptionState.deleteId,
+      saved: initialOptionState.saved,
+      confirmationMessage: initialOptionState.confirmationMessage,
+      showDeleteModal: initialOptionState.showDeleteModal,
+      deleteTitle: initialOptionState.deleteTitle,
+      deleteType: initialOptionState.deleteType,
+    };
+  }
   if (action.type === "SET_TOTAL_COUNT") {
     return {
       ...state,
@@ -175,6 +293,64 @@ const optionReducer = (state, action) => {
   }
 
   return initialOptionState;
+};
+
+const deleteOptionReducer = (state, action) => {
+  if (action.type === "SET_DELETED_ATTRIBUTES") {
+    return {
+      ...state,
+      attributes: state.attributes.concat({
+        ...action.attribute,
+        deleted: true,
+      }),
+    };
+  }
+  if (action.type === "REMOVE_DELETED_ATTRIBUTES") {
+    const updatedAttr = state.attributes.filter(
+      (attr) => attr._id !== action.id
+    );
+    return {
+      ...state,
+      attributes: updatedAttr,
+    };
+  }
+  if (action.type === "SET_DELETED_SUB_OPTIONS") {
+    return {
+      ...state,
+      subOptions: state.subOptions.concat({
+        ...action.subOption,
+        deleted: true,
+      }),
+    };
+  }
+  if (action.type === "REMOVE_DELETED_SUB_OPTIONS") {
+    const updatedSubOp = state.subOptions.filter(
+      (subOp) => subOp._id !== action.id
+    );
+    return {
+      ...state,
+      subOptions: updatedSubOp,
+    };
+  }
+  if (action.type === "SET_DELETED_SUB_ATTRIBUTES") {
+    return {
+      ...state,
+      subAttributes: state.subAttributes.concat({
+        ...action.subAttribute,
+        deleted: true,
+      }),
+    };
+  }
+  if (action.type === "REMOVE_DELETED_SUB_ATTRIBUTES") {
+    const updatedSubAttr = state.subAttributes.filter(
+      (subAttr) => subAttr._id !== action.id
+    );
+    return {
+      ...state,
+      subAttributes: updatedSubAttr,
+    };
+  }
+  return initialDeletedOptionState;
 };
 
 const OptionsInfo = () => {
@@ -189,6 +365,10 @@ const OptionsInfo = () => {
     optionReducer,
     initialOptionState
   );
+  const [deleteOptionState, dispatchDeleteOption] = useReducer(
+    deleteOptionReducer,
+    initialDeletedOptionState
+  );
 
   const {
     data: optionsData,
@@ -202,14 +382,14 @@ const OptionsInfo = () => {
       optionQueryFilterState.pageNo || optionQueryFilterState.id ? false : true,
   });
 
-  const {
-    data: attributesData,
-    isLoading: attributesIsLoading,
-    error: attributesError,
-    isError: attributesIsError,
-    isSuccess: attributesIsSuccess,
-    isFetching: attributesDataIsFetching,
-  } = useGetAllAttributesQuery();
+  // const {
+  //   data: attributesData,
+  //   isLoading: attributesIsLoading,
+  //   error: attributesError,
+  //   isError: attributesIsError,
+  //   isSuccess: attributesIsSuccess,
+  //   isFetching: attributesDataIsFetching,
+  // } = useGetAllAttributesQuery();
 
   const [
     createOption,
@@ -220,62 +400,355 @@ const OptionsInfo = () => {
       isError: createOptionIsError,
     },
   ] = useCreateOptionMutation();
+  const [
+    updateOption,
+    {
+      isLoading: updateOptionIsLoading,
+      isSuccess: updateOptionIsSuccess,
+      error: updateOptionError,
+      isError: updateOptionIsError,
+    },
+  ] = useUpdateOptionMutation();
+  const [
+    createAttribute,
+    {
+      isLoading: createAttributeIsLoading,
+      isSuccess: createAttributeIsSuccess,
+      error: createAttributeError,
+      isError: createAttributeIsError,
+    },
+  ] = useCreateAttributeMutation();
+  const [
+    updateAttribute,
+    {
+      isLoading: updateAttributeIsLoading,
+      isSuccess: updateAttributeIsSuccess,
+      error: updateAttributeError,
+      isError: updateAttributeIsError,
+    },
+  ] = useUpdateAttributeMutation();
+  const [
+    deleteAttribute,
+    {
+      isLoading: deleteAttributeIsLoading,
+      isSuccess: deleteAttributeIsSuccess,
+      error: deleteAttributeError,
+      isError: deleteAttributeIsError,
+    },
+  ] = useDeleteAttributeMutation();
+  const [
+    createSubOption,
+    {
+      isLoading: createSubOptionIsLoading,
+      isSuccess: createSubOptionIsSuccess,
+      error: createSubOptionError,
+      isError: createSubOptionIsError,
+    },
+  ] = useCreateSubOptionMutation();
+  const [
+    updateSubOption,
+    {
+      isLoading: updateSubOptionIsLoading,
+      isSuccess: updateSubOptionIsSuccess,
+      error: updateSubOptionError,
+      isError: updateSubOptionIsError,
+    },
+  ] = useUpdateSubOptionMutation();
+  const [
+    deleteSubOption,
+    {
+      isLoading: deleteSubOptionIsLoading,
+      isSuccess: deleteSubOptionIsSuccess,
+      error: deleteSubOptionError,
+      isError: deleteSubOptionIsError,
+    },
+  ] = useDeleteSubOptionMutation();
+  const [
+    createSubAttribute,
+    {
+      isLoading: createSubAttributeIsLoading,
+      isSuccess: createSubAttributeIsSuccess,
+      error: createSubAttributeError,
+      isError: createSubAttributeIsError,
+    },
+  ] = useCreateSubAttributeMutation();
+  const [
+    updateSubAttribute,
+    {
+      isLoading: updateSubAttributeIsLoading,
+      isSuccess: updateSubAttributeIsSuccess,
+      error: updateSubAttributeError,
+      isError: updateSubAttributeIsError,
+    },
+  ] = useUpdateSubAttributeMutation();
+  const [
+    deleteSubAttribute,
+    {
+      isLoading: deleteSubAttributeIsLoading,
+      isSuccess: deleteSubAttributeIsSuccess,
+      error: deleteSubAttributeError,
+      isError: deleteSubAttributeIsError,
+    },
+  ] = useDeleteSubAttributeMutation();
 
   const optionFormik = useFormik({
     initialValues: {
-      title: optionsData?.data[0].title || "",
-      apperance: optionsData?.data[0].apperance || "",
-      type: optionsData?.data[0].type || "optionset",
-      frontEndTitle: optionsData?.data[0].frontEndTitle || "",
-      isFilter: optionsData?.data[0].isFilter || false,
-      isPriceMaster: optionsData?.data[0].isPriceMaster || false,
+      option: {
+        _id: "option-0",
+        title: "",
+        apperance: "dropDownList",
+        type: "optionset",
+        frontEndTitle: "",
+        isFilter: false,
+        isPriceMaster: false,
+        saved: false,
+      },
+      attributes: [
+        {
+          _id: "attribute-0",
+          title: "",
+          colour: "#000000",
+          imageUrl: "",
+          type: "optionset",
+          value: "colour",
+          apperance: "dropDownList",
+          saved: false,
+        },
+      ],
+      subOptions: [],
+      subAttributes: [],
     },
     enableReinitialize: true,
-    validationSchema: createOptionValidationSchema,
-    onSubmit: (values) => {},
-  });
-  const attributeFormik = useFormik({
-    initialValues: [
-      {
-        title: "",
-        attribute: optionsData?.data[0]._id,
-        colour: "",
-        imageUrl: "",
-        type: "optionset",
-        value: "",
-        apperance: optionFormik.values.apperance,
-      },
-    ],
+    validationSchema: optionValidationSchema,
+    onSubmit: async (values) => {
+      const option = values.option;
+      const attributes = values.attributes;
+      const subOptions = values.subOptions;
+      const subAttributes = values.subAttributes;
 
-    // (attributesData?.data.length &&
-    // attributesData?.data.map((attribute) => ({
-    //   title: attribute.title,
-    //   attribute: attribute.attribute,
-    //   colour: attribute.colour,
-    //   imageUrl: attribute.imageUrl,
-    //   type: attribute.type,
-    //   value:
-    //     optionFormik.values.apperance === "colorAndImageSwatches"
-    //       ? (attribute.imageUrl && "imageUrl") ||
-    //         (attribute.colour && "colour")
-    //       : "",
-    //   apperance: optionFormik.values.apperance,
-    // }))) ||
-    // [
-    //   {
-    //     title: "",
-    //     attribute: optionsData?.data[0]._id,
-    //     colour: "",
-    //     imageUrl: "",
-    //     type: "optionset",
-    //     value: "",
-    //     apperance: optionFormik.values.apperance,
-    //   },
-    // ],
-    enableReinitialize: true,
-    validationSchema: Yup.array().min(1).of(createAttributeValidationSchema),
-    onSubmit: (values) => {},
+      try {
+        if (!option.saved) {
+          const { _id } = await createOption(option).unwrap();
+          option._id = _id;
+          option.saved = true;
+        } else {
+          await updateOption({ details: option, id: option._id }).unwrap();
+        }
+        const attributePromises = await Promise.allSettled(
+          attributes.concat(deleteOptionState.attributes).map((attr) => {
+            if (!attr.saved && !attr.deleted) {
+              attr.attribute = option._id;
+              const attrCopy = structuredClone(attr);
+              Object.keys(attrCopy).forEach((key) => {
+                if (attrCopy[key] === (null || undefined || ""))
+                  delete attrCopy[key];
+              });
+
+              return new Promise((resolve, reject) => {
+                createAttribute(attrCopy)
+                  .unwrap()
+                  .then(({ _id }) => {
+                    attr.saved = true;
+                    subOptions.forEach((subOption) => {
+                      if (subOption.metaAttribute === attr._id) {
+                        subOption.metaAttribute = _id;
+                      }
+                    });
+                    attr._id = _id;
+                    resolve();
+                  })
+                  .catch((error) => {
+                    reject(error);
+                  });
+              });
+            } else if (attr.saved && !attr.deleted) {
+              const attrCopy = structuredClone(attr);
+              Object.keys(attrCopy).forEach((key) => {
+                if (attrCopy[key] === (null || undefined || ""))
+                  delete attrCopy[key];
+              });
+              return new Promise((resolve, reject) => {
+                updateAttribute({ details: attrCopy, id: attr._id })
+                  .unwrap()
+                  .then(() => {
+                    resolve();
+                  })
+                  .catch((error) => {
+                    reject(error);
+                  });
+              });
+            } else if (attr.saved && attr.deleted) {
+              return new Promise((resolve, reject) => {
+                deleteAttribute(attr._id)
+                  .unwrap()
+                  .then(() => {
+                    dispatchDeleteOption({
+                      type: "REMOVE_DELETED_ATTRIBUTES",
+                      id: attr._id,
+                    });
+                    resolve();
+                  })
+                  .catch((error) => {
+                    reject(error);
+                  });
+              });
+            } else {
+              return null;
+            }
+          })
+        );
+        attributePromises.forEach((attrPromise) => {
+          if (attrPromise.status === "rejected") {
+            throw attrPromise.reason;
+          }
+        });
+        const subOptionPromises = await Promise.allSettled(
+          subOptions.concat(deleteOptionState.subOptions).map((subOp) => {
+            if (!subOp.saved && !subOp.deleted) {
+              subOp.attribute = option._id;
+              const subOpCopy = structuredClone(subOp);
+              Object.keys(subOpCopy).forEach((key) => {
+                if (subOpCopy[key] === (null || undefined || ""))
+                  delete subOpCopy[key];
+              });
+              return new Promise((resolve, reject) => {
+                createSubOption(subOpCopy)
+                  .unwrap()
+                  .then(({ _id }) => {
+                    subOp.saved = true;
+                    subAttributes.forEach((subAttribute) => {
+                      if (subAttribute.metaSubAttribute === subOp._id) {
+                        subAttribute.metaAttribute = subOp.metaAttribute;
+                        subAttribute.metaSubAttribute = _id;
+                      }
+                    });
+                    subOp._id = _id;
+                    resolve();
+                  })
+                  .catch((error) => {
+                    reject(error);
+                  });
+              });
+            } else if (subOp.saved && !subOp.deleted) {
+              const subOpCopy = structuredClone(subOp);
+              Object.keys(subOpCopy).forEach((key) => {
+                if (subOpCopy[key] === (null || undefined || ""))
+                  delete subOpCopy[key];
+              });
+              return new Promise((resolve, reject) => {
+                updateSubOption({ details: subOpCopy, id: subOp._id })
+                  .unwrap()
+                  .then(() => {
+                    resolve();
+                  })
+                  .catch((error) => {
+                    reject(error);
+                  });
+              });
+            } else if (subOp.saved && subOp.deleted) {
+              return new Promise((resolve, reject) => {
+                deleteSubOption(subOp._id)
+                  .unwrap()
+                  .then(() => {
+                    dispatchDeleteOption({
+                      type: "REMOVE_DELETED_SUB_OPTIONS",
+                      id: subOp._id,
+                    });
+                    resolve();
+                  })
+                  .catch((error) => {
+                    reject(error);
+                  });
+              });
+            } else {
+              return null;
+            }
+          })
+        );
+        subOptionPromises.forEach((subOpPromise) => {
+          if (subOpPromise.status === "rejected") {
+            throw subOpPromise.reason;
+          }
+        });
+        const subAttributePromises = await Promise.allSettled(
+          subAttributes
+            .concat(deleteOptionState.subAttributes)
+            .map((subAttr) => {
+              if (!subAttr.saved && !subAttr.deleted) {
+                subAttr.attribute = option._id;
+                const subAttrCopy = structuredClone(subAttr);
+                Object.keys(subAttrCopy).forEach((key) => {
+                  if (subAttrCopy[key] === (null || undefined || ""))
+                    delete subAttrCopy[key];
+                });
+                return new Promise((resolve, reject) => {
+                  createSubAttribute(subAttrCopy)
+                    .unwrap()
+                    .then(({ _id }) => {
+                      subAttr.saved = true;
+                      subAttr._id = _id;
+                      resolve();
+                    })
+                    .catch((error) => {
+                      reject(error);
+                    });
+                });
+              } else if (subAttr.saved && !subAttr.deleted) {
+                const subAttrCopy = structuredClone(subAttr);
+                Object.keys(subAttrCopy).forEach((key) => {
+                  if (subAttrCopy[key] === (null || undefined || ""))
+                    delete subAttrCopy[key];
+                });
+                return new Promise((resolve, reject) => {
+                  updateSubAttribute({ details: subAttrCopy, id: subAttr._id })
+                    .unwrap()
+                    .then(() => {
+                      resolve();
+                    })
+                    .catch((error) => {
+                      reject(error);
+                    });
+                });
+              } else if (subAttr.saved && subAttr.deleted) {
+                return new Promise((resolve, reject) => {
+                  deleteSubAttribute(subAttr._id)
+                    .unwrap()
+                    .then(() => {
+                      dispatchDeleteOption({
+                        type: "REMOVE_DELETED_SUB_ATTRIBUTES",
+                        id: subAttr._id,
+                      });
+                      resolve();
+                    })
+                    .catch((error) => {
+                      reject(error);
+                    });
+                });
+              } else {
+                return null;
+              }
+            })
+        );
+        subAttributePromises.forEach((subAttrPromise) => {
+          if (subAttrPromise.status === "rejected") {
+            throw subAttrPromise.reason;
+          }
+        });
+        optionFormik.resetForm();
+        dispatch(showSuccess({ message: "Option created successfully" }));
+      } catch (error) {
+        if (error?.data?.message) {
+          dispatch(showError({ message: error.data.message }));
+        } else {
+          dispatch(
+            showError({ message: "Something went wrong!, please try again" })
+          );
+        }
+      }
+    },
   });
+
+  console.log(optionFormik.errors);
 
   const backHandler = () => {
     navigate("/parameters/productTabs");
@@ -296,36 +769,250 @@ const OptionsInfo = () => {
     }
   };
 
+  const deleteAttributeHandler = ({ deleteId, saved, message }) => {
+    if (optionFormik.values.attributes?.length === 1) {
+      dispatch(showError({ message: "At least one attribute required" }));
+      return;
+    }
+    dispatchOption({
+      type: "SET_DELETE",
+      deleteId,
+      saved,
+      message,
+      deleteTitle: "attribute",
+      deleteType: "attribute",
+    });
+  };
+
+  const deleteSubOptionHandler = ({ deleteId, saved, message }) => {
+    dispatchOption({
+      type: "SET_DELETE",
+      deleteId,
+      saved,
+      message,
+      deleteTitle: "sub option",
+      deleteType: "subOption",
+    });
+  };
+
+  const deleteSubAttributeHandler = ({
+    subOptionId,
+    deleteId,
+    saved,
+    message,
+  }) => {
+    const subAttributeArr = optionFormik.values.subAttributes.filter((attr) => {
+      return attr.metaSubAttribute === subOptionId;
+    });
+    if (subAttributeArr?.length === 1) {
+      dispatch(showError({ message: "At least one sub attribute required" }));
+      return;
+    }
+    dispatchOption({
+      type: "SET_DELETE",
+      deleteId,
+      saved,
+      message,
+      deleteTitle: "sub attribute",
+      deleteType: "subAttribute",
+    });
+  };
+
+  const cancelDeleteAttributeHandler = () => {
+    dispatchOption({ type: "REMOVE_DELETE" });
+  };
+
+  const deleteConfirmationHandler = () => {
+    if (optionState.deleteType === "attribute") {
+      const updatedAttributes = optionFormik.values.attributes?.filter(
+        (attr) => {
+          if (attr._id === optionState.deleteId && attr.saved === true) {
+            dispatchDeleteOption({
+              type: "SET_DELETED_ATTRIBUTES",
+              attribute: attr,
+            });
+          }
+          return attr._id !== optionState.deleteId;
+        }
+      );
+      optionFormik.setFieldValue("attributes", updatedAttributes);
+
+      const updatedSubOptions = optionFormik.values.subOptions?.filter(
+        (subOption) => {
+          if (
+            subOption.metaAttribute === optionState.deleteId &&
+            subOption.saved === true
+          ) {
+            dispatchDeleteOption({
+              type: "SET_DELETED_SUB_OPTIONS",
+              subOption,
+            });
+          }
+          return subOption.metaAttribute !== optionState.deleteId;
+        }
+      );
+      optionFormik.setFieldValue("subOptions", updatedSubOptions);
+
+      const updatedSubAttributes = optionFormik.values.subAttributes?.filter(
+        (subAttribute) => {
+          if (
+            subAttribute.metaAttribute === optionState.deleteId &&
+            subAttribute.saved === true
+          ) {
+            dispatchDeleteOption({
+              type: "SET_DELETED_SUB_ATTRIBUTES",
+              subAttribute,
+            });
+          }
+          return subAttribute.metaAttribute !== optionState.deleteId;
+        }
+      );
+      optionFormik.setFieldValue("subAttributes", updatedSubAttributes);
+    }
+    if (optionState.deleteType === "subOption") {
+      const updatedSubOptions = optionFormik.values.subOptions?.filter(
+        (subOption) => {
+          if (
+            subOption._id === optionState.deleteId &&
+            subOption.saved === true
+          ) {
+            dispatchDeleteOption({
+              type: "SET_DELETED_SUB_OPTIONS",
+              subOption,
+            });
+          }
+          return subOption._id !== optionState.deleteId;
+        }
+      );
+      optionFormik.setFieldValue("subOptions", updatedSubOptions);
+
+      const updatedSubAttributes = optionFormik.values.subAttributes?.filter(
+        (subAttribute) => {
+          if (
+            subAttribute.metaSubAttribute === optionState.deleteId &&
+            subAttribute.saved === true
+          ) {
+            dispatchDeleteOption({
+              type: "SET_DELETED_SUB_ATTRIBUTES",
+              subAttribute,
+            });
+          }
+          return subAttribute.metaSubAttribute !== optionState.deleteId;
+        }
+      );
+      optionFormik.setFieldValue("subAttributes", updatedSubAttributes);
+    }
+    if (optionState.deleteType === "subAttribute") {
+      const updatedSubAttributes = optionFormik.values.subAttributes?.filter(
+        (subAttribute) => {
+          if (
+            subAttribute._id === optionState.deleteId &&
+            subAttribute.saved === true
+          ) {
+            dispatchDeleteOption({
+              type: "SET_DELETED_SUB_ATTRIBUTES",
+              subAttribute,
+            });
+          }
+          return subAttribute._id !== optionState.deleteId;
+        }
+      );
+      optionFormik.setFieldValue("subAttributes", updatedSubAttributes);
+    }
+
+    dispatchOption({ type: "REMOVE_DELETE" });
+  };
+
   const addAttributeFieldHandler = () => {
-    const newAttributeFields = attributeFormik?.values?.concat({
+    const newAttributeFields = optionFormik.values.attributes?.concat({
+      _id: `attribute-${
+        +optionFormik.values.attributes.slice(-1)[0]._id.split("-")[1] + 1
+      }`,
       title: "",
-      attribute: optionsData?.data[0]._id,
-      colour: "",
+      colour: "#000000",
       imageUrl: "",
       type: "optionset",
-      value: "",
-      apperance: optionFormik.values.apperance,
+      value: "colour",
+      apperance: optionFormik.values.option.apperance,
+      saved: false,
     });
-    attributeFormik.setValues(newAttributeFields);
+    optionFormik.setFieldValue("attributes", newAttributeFields);
   };
 
-  const submitOptionHandler = (e) => {
-    e.preventDefault();
-    console.log(optionFormik.values);
-    console.log(attributeFormik.values);
+  const addSubOptionFieldHandler = (id) => {
+    const subOptionId = optionFormik.values.subOptions.length
+      ? `subOption-${
+          +optionFormik.values.subOptions.slice(-1)[0]._id.split("-")[1] + 1
+        }`
+      : "subOption-0";
+    const newSubOptions = optionFormik.values.subOptions?.concat({
+      _id: subOptionId,
+      metaAttribute: id,
+      title: "",
+      apperance: "dropDownList",
+      saved: false,
+      isOption: true,
+    });
+    optionFormik.setFieldValue("subOptions", newSubOptions);
+
+    const subAttributeId = optionFormik.values.subAttributes.length
+      ? `subAttribute-${
+          +optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1] + 1
+        }`
+      : "subAttribute-0";
+
+    const newSubAttribute = optionFormik.values.subAttributes?.concat({
+      _id: subAttributeId,
+      metaAttribute: id,
+      metaSubAttribute: subOptionId,
+      title: "",
+      colour: "#000000",
+      imageUrl: "",
+      type: "optionset",
+      value: "colour",
+      apperance: "dropDownList",
+      saved: false,
+      isOption: true,
+    });
+    optionFormik.setFieldValue("subAttributes", newSubAttribute);
   };
 
-  useEffect(() => {
-    if (createOptionIsError) {
-      if (createOptionError.data?.message) {
-        dispatch(showError({ message: createOptionError.data.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong!, please try again" })
-        );
-      }
-    }
-  }, [createOptionError, createOptionIsError, dispatch]);
+  const addSubAttributeFieldHandler = ({ attributeId, subOptionId }) => {
+    const subAttributeId = optionFormik.values.subAttributes.length
+      ? `subAttribute-${
+          +optionFormik.values.subAttributes.slice(-1)[0]._id.split("-")[1] + 1
+        }`
+      : "subAttribute-0";
+
+    const subOptionAppearance = optionFormik.values.subOptions.find(
+      (subOption) => subOption._id === subOptionId
+    );
+
+    const newSubAttribute = optionFormik.values.subAttributes?.concat({
+      _id: subAttributeId,
+      metaAttribute: attributeId,
+      metaSubAttribute: subOptionId,
+      title: "",
+      colour: "#000000",
+      imageUrl: "",
+      type: "optionset",
+      value: "colour",
+      apperance: subOptionAppearance.apperance,
+      saved: false,
+      isOption: true,
+    });
+    optionFormik.setFieldValue("subAttributes", newSubAttribute);
+  };
+
+  const optionAppearanceHandler = (e) => {
+    optionFormik.setFieldValue("option.apperance", e.target.value);
+    optionFormik.values.attributes.forEach((_, index) => {
+      optionFormik.setFieldValue(
+        `attributes[${index}].apperance`,
+        e.target.value
+      );
+    });
+  };
 
   useEffect(() => {
     if (id) {
@@ -362,13 +1049,17 @@ const OptionsInfo = () => {
   return (
     <div className="page container-fluid position-relative user-group product-tab-page">
       <InfoHeader
-        title={optionFormik.values.title || "Create Options"}
+        title={optionFormik.values.option?.title || "Create Options"}
         onBack={backHandler}
         onPrev={prevPageHandler}
         onNext={nextPageHandler}
         isEdit={!!id}
       />
-      <form className="product-form" noValidate onSubmit={submitOptionHandler}>
+      <form
+        className="product-form"
+        noValidate
+        onSubmit={optionFormik.handleSubmit}
+      >
         <div className="row mt-3">
           <div className="col-lg-9 mt-3">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -394,16 +1085,16 @@ const OptionsInfo = () => {
                           <OutlinedInput
                             size="small"
                             sx={{ paddingLeft: 0 }}
-                            name="title"
-                            value={optionFormik.values?.title}
+                            name="option.title"
+                            value={optionFormik.values.option?.title}
                             onBlur={optionFormik.handleBlur}
                             onChange={optionFormik.handleChange}
                             autoFocus={true}
                           />
-                          {!!optionFormik.touched.title &&
-                            optionFormik.errors.title && (
+                          {!!optionFormik.touched.option?.title &&
+                            optionFormik.errors.option?.title && (
                               <FormHelperText error>
-                                {optionFormik.errors.title}
+                                {optionFormik.errors.option?.title}
                               </FormHelperText>
                             )}
                         </FormControl>
@@ -417,8 +1108,8 @@ const OptionsInfo = () => {
                                 marginRight: 0,
                                 width: "auto",
                               }}
-                              name="isFilter"
-                              value={optionFormik.values?.isFilter}
+                              name="option.isFilter"
+                              value={optionFormik.values.option?.isFilter}
                               onBlur={optionFormik.handleBlur}
                               onChange={optionFormik.handleChange}
                             />
@@ -451,15 +1142,15 @@ const OptionsInfo = () => {
                           <OutlinedInput
                             size="small"
                             sx={{ paddingLeft: 0 }}
-                            name="frontEndTitle"
-                            value={optionFormik.values?.frontEndTitle}
+                            name="option.frontEndTitle"
+                            value={optionFormik.values.option?.frontEndTitle}
                             onBlur={optionFormik.handleBlur}
                             onChange={optionFormik.handleChange}
                           />
-                          {!!optionFormik.touched.frontEndTitle &&
-                            optionFormik.errors.frontEndTitle && (
+                          {!!optionFormik.touched.option?.frontEndTitle &&
+                            optionFormik.errors.option?.frontEndTitle && (
                               <FormHelperText error>
-                                {optionFormik.errors.frontEndTitle}
+                                {optionFormik.errors.option?.frontEndTitle}
                               </FormHelperText>
                             )}
                         </FormControl>
@@ -498,10 +1189,10 @@ const OptionsInfo = () => {
                               labelId="demo-select-small"
                               id="demo-select-small"
                               size="small"
-                              name="apperance"
-                              value={optionFormik.values?.apperance}
+                              name="option.apperance"
+                              value={optionFormik.values.option?.apperance}
                               onBlur={optionFormik.handleBlur}
-                              onChange={optionFormik.handleChange}
+                              onChange={optionAppearanceHandler}
                             >
                               {FRONTEND_APPEARANCE.map((appearance) => {
                                 return (
@@ -515,10 +1206,10 @@ const OptionsInfo = () => {
                                 );
                               })}
                             </Select>
-                            {!!optionFormik.touched.apperance &&
-                              optionFormik.errors.apperance && (
+                            {!!optionFormik.touched.option?.apperance &&
+                              optionFormik.errors.option?.apperance && (
                                 <FormHelperText error>
-                                  {optionFormik.errors.apperance}
+                                  {optionFormik.errors.option?.apperance}
                                 </FormHelperText>
                               )}
                           </FormControl>
@@ -533,8 +1224,8 @@ const OptionsInfo = () => {
                             Is this option based on price master?
                           </p>
                           <AntSwitch
-                            name="isPriceMaster"
-                            value={optionFormik.values?.isPriceMaster}
+                            name="option.isPriceMaster"
+                            value={optionFormik.values.option?.isPriceMaster}
                             onBlur={optionFormik.handleBlur}
                             onChange={optionFormik.handleChange}
                           />
@@ -546,17 +1237,30 @@ const OptionsInfo = () => {
               </div>
               <OptionsAttributeTable
                 onAttributeAdd={addAttributeFieldHandler}
-                formik={attributeFormik}
+                formik={optionFormik}
+                onAttributeDelete={deleteAttributeHandler}
+                onSubOptionAdd={addSubOptionFieldHandler}
+                onSubOptionDelete={deleteSubOptionHandler}
+                onSubAttributeAdd={addSubAttributeFieldHandler}
+                onSubAttributeDelete={deleteSubAttributeHandler}
               />
             </div>
           </div>
         </div>
+
         <SaveFooterTertiary
           show={true}
           onDiscard={() => {}}
           isLoading={false}
         />
       </form>
+      <DeleteModalSecondary
+        onConfirm={deleteConfirmationHandler}
+        onCancel={cancelDeleteAttributeHandler}
+        show={optionState.showDeleteModal}
+        message={optionState.confirmationMessage}
+        title={optionState.deleteTitle}
+      />
     </div>
   );
 };

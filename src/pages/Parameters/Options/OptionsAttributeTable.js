@@ -21,7 +21,7 @@ import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconBut
 import DeleteIconButton from "../../../components/DeleteIconButton/DeleteIconButton";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import Attribute from "../../../components/Options/Attribute/Attribute";
-import SubAttribute from "../../../components/Options/Attribute/SubAttribute";
+import SubOption from "../../../components/Options/SubOption";
 
 const DragHandle = SortableHandle(() => (
   <TableCell sx={{ padding: "16px 0", verticalAlign: "top" }}>
@@ -60,37 +60,22 @@ const HEAD_CELLS = [
 ];
 
 const OptionsAttributeTable = (props) => {
-  const { formik, onAttributeAdd, error, isLoading, data, onSort, onDelete } =
-    props;
-
-  //   const sortEndHandler = ({ oldIndex, newIndex }) => {
-  //     onSort(arrayMove(structuredClone(data), oldIndex, newIndex));
-  //   };
-
-  //   if (error) {
-  //     return <></>;
-  //   }
-
-  //   if (isLoading) {
-  //     return (
-  //       <span className="d-flex justify-content-center m-3">Loading...</span>
-  //     );
-  //   }
-
-  //   if (!data) {
-  //     return <></>;
-  //   }
-
-  //   if (data && !data.length) {
-  //     return <NoDataFound />;
-  //   }
+  const {
+    formik,
+    onAttributeAdd,
+    onAttributeDelete,
+    onSubOptionAdd,
+    onSubOptionDelete,
+    onSubAttributeAdd,
+    onSubAttributeDelete,
+  } = props;
 
   return (
     <TableContainer sx={{ padding: 0 }}>
       <Table sx={{ minWidth: 750 }} size="medium">
         <TableHeader sx={{ background: "#22213f" }} headCells={HEAD_CELLS} />
         <TableBodySortable useDragHandle>
-          {formik.values.map((attribute, index) => {
+          {formik.values?.attributes.map((attribute, index) => {
             return (
               <SortableRow key={index} index={index}>
                 <TableRow tabIndex={-1} className="table-rows">
@@ -98,8 +83,29 @@ const OptionsAttributeTable = (props) => {
                   <TableCell
                     sx={{ textTransform: "capitalize", cursor: "pointer" }}
                   >
-                    <Attribute formik={formik} index={index} />
-                    {/* <SubAttribute /> */}
+                    <Attribute
+                      formik={formik}
+                      index={index}
+                      onAttributeDelete={onAttributeDelete}
+                      onSubOptionAdd={onSubOptionAdd}
+                    />
+                    {formik.values.subOptions.map((subOption, index) => {
+                      if (subOption.metaAttribute === attribute._id) {
+                        return (
+                          <SubOption
+                            key={subOption._id}
+                            id={subOption._id}
+                            attributeId={attribute._id}
+                            formik={formik}
+                            index={index}
+                            onSubOptionDelete={onSubOptionDelete}
+                            onSubAttributeAdd={onSubAttributeAdd}
+                            onSubAttributeDelete={onSubAttributeDelete}
+                          />
+                        );
+                      }
+                      return null;
+                    })}
                   </TableCell>
                 </TableRow>
               </SortableRow>
