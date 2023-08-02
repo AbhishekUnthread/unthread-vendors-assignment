@@ -37,6 +37,9 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 const UserGroups = () => {
   const [value, setValue] = useState(0);
+  const [openManageGroups, setOpenManageGroups] = useState(false);
+  const [anchorSortEl, setAnchorSortEl] = useState(null);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -49,10 +52,6 @@ const UserGroups = () => {
   } = useGetAllCustomerGroupQuery({createdAt: -1});
 
   const customerData =  customerGroupData?.data
-
-  console.log(customerData, 'customerData');
-
-  const [anchorSortEl, setAnchorSortEl] = useState(null);
 
   const handleSortClick = (event) => {
     setAnchorSortEl(event.currentTarget);
@@ -76,8 +75,6 @@ const UserGroups = () => {
     { title: "Default Users", value: "content8" },
     { title: "Guest Users", value: "content9" },
   ];
-
-  const [openManageGroups, setOpenManageGroups] = useState(false);
 
   const handleOpenManageGroups = () => {
     setOpenManageGroups(true);
