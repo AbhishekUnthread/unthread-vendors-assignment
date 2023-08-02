@@ -24,52 +24,7 @@ import NoData from "../../../components/NoDataFound/NoDataFound";
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
-import defaultUser from "../../../assets/images/unthreadLogo.png"
-
-const headCells = [
-  {
-    id: "userName",
-    numeric: false,
-    disablePadding: true,
-    label: "Customer Name",
-  },
-  {
-    id: "groups",
-    numeric: false,
-    disablePadding: false,
-    label: "Groups",
-  },
-  {
-    id: "location",
-    numeric: false,
-    disablePadding: false,
-    label: "Location",
-  },
-  {
-    id: "orders",
-    numeric: false,
-    disablePadding: false,
-    label: "Orders",
-  },
-  {
-    id: "totalSpent",
-    numeric: false,
-    disablePadding: false,
-    label: "Total Spent",
-  },
-  {
-    id: "status",
-    numeric: false,
-    disablePadding: false,
-    label: "Status",
-  },
-  {
-    id: "actions",
-    numeric: false,
-    disablePadding: true,
-    label: "",
-  },
-];
+import defaultUser from "../../../assets/images/users/user_defauldp.svg"
 
 const AllUsersTable = ({
   isLoading,
@@ -80,13 +35,14 @@ const AllUsersTable = ({
   changeRowsPerPage,
   changePage,
   page,
-  onEdit
+  onEdit,
+  customerType
 }) => {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("userName");
   const [selected, setSelected] = useState([]);
-
-  console.log(list, 'list');
+  const [anchorMassActionEl, setAnchorMassActionEl] = useState(null);
+  const [anchorActionEl, setAnchorActionEl] = useState(null);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -124,8 +80,6 @@ const AllUsersTable = ({
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  // * MASS ACTION POPOVERS STARTS
-  const [anchorMassActionEl, setAnchorMassActionEl] = useState(null);
   const handleMassActionClick = (event) => {
     setAnchorMassActionEl(event.currentTarget);
   };
@@ -134,10 +88,6 @@ const AllUsersTable = ({
   };
   const openMassAction = Boolean(anchorMassActionEl);
   const idMassAction = openMassAction ? "simple-popover" : undefined;
-  // * MASS ACTION POPOVERS ENDS
-
-  // * ACTION POPOVERS STARTS
-  const [anchorActionEl, setAnchorActionEl] = useState(null);
 
   const handleActionClick = (event) => {
     setAnchorActionEl(event.currentTarget);
@@ -149,7 +99,55 @@ const AllUsersTable = ({
 
   const openActions = Boolean(anchorActionEl);
   const idActions = openActions ? "simple-popover" : undefined;
-  // * ACTION POPOVERS ENDS
+
+  const headCells = [
+    {
+      id: "userName",
+      numeric: false,
+      disablePadding: true,
+      label: "Customer Name",
+    },
+    {
+      id: "groups",
+      numeric: false,
+      disablePadding: false,
+      label: "Groups",
+    },
+    {
+      id: "location",
+      numeric: false,
+      disablePadding: false,
+      label: "Location",
+    },
+    {
+      id: "orders",
+      numeric: false,
+      disablePadding: false,
+      label: "Orders",
+    },
+    {
+      id: "totalSpent",
+      numeric: false,
+      disablePadding: false,
+      label: "Total Spent",
+    }
+  ];
+
+  if (customerType === 0) {
+    headCells.push({
+      id: "status",
+      numeric: false,
+      disablePadding: false,
+      label: "Status",
+    });
+  }
+
+  headCells.push({
+    id: "actions",
+    numeric: false,
+    disablePadding: true,
+    label: "",
+  });
 
   return (
     <>
@@ -219,218 +217,220 @@ const AllUsersTable = ({
           </div>
         </div>
       )}
-     {!error ? (list.length ?( <>
-      <TableContainer>
-        <Table
-          sx={{ minWidth: 750 }}
-          aria-labelledby="tableTitle"
-          size="medium"
-        >
-          <EnhancedTableHead
-            numSelected={selected.length}
-            order={order}
-            orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
-            rowCount={list.length}
-            headCells={headCells}
-          />
-          <TableBody>
-            {stableSort(list, getComparator(order, orderBy))
-              .map((row, index) => {
-                const isItemSelected = isSelected(row._id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+      {!error ? (list.length ?( <>
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size="medium"
+          >
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={list.length}
+              headCells={headCells}
+            />
+            <TableBody>
+              {stableSort(list, getComparator(order, orderBy))
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row._id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row._id}
-                    selected={isItemSelected}
-                    className="table-rows"
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                        onClick={(event) => handleClick(event, row._id)}
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row._id}
+                      selected={isItemSelected}
+                      className="table-rows"
                     >
-                      <div className="d-flex align-items-center py-3">
-                        <img
-                          src={row?.imageUrl ? row?.imageUrl : defaultUser}
-                          alt="user"
-                          className="me-2 rounded-circle"
-                          height={45}
-                          width={45}
-                        />
-
-                        <div>
-                          <div
-                            className=" text-decoration-none c-pointer"
-                            onClick={() => onEdit(row?._id)}
-                          >
-                            <p className="text-lightBlue rounded-circle fw-600">
-                              {row?.firstName} {row?.lastName}
-                            </p>
-                          </div>
-                          <small className="mt-2 text-grey-6">
-                            {row?.email}
-                            <Tooltip title="Copy" placement="top">
-                              <ContentCopyIcon
-                                sx={{ fontSize: 12, color: "#c8d8ff" }}
-                                className="c-pointer ms-2"
-                              />
-                            </Tooltip>
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="d-flex align-items-center">
-                        <p className="text-lightBlue">
-                        {row.groups.length>0?(
-                          row?.groups?.map((group,index) => (
-                            <span key={group._id}>{group.name}{index !== row.groups.length - 1 && ","}</span>
-                        ))):""}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="d-flex flex-column align-items-start">
-                        {row?.addresses?.map((address, index) => {
-                          if (address.isDefaultAddress === true) {
-                            return (
-                              <div key={index}>
-                              <div className="d-flex align-items-center">
-                                <img src={row?.addresses[0]?.country?.imageUrl} alt="indiaFlag" height={16} />
-                                <p className="text-lightBlue ms-2">
-                                  {row?.addresses[0]?.state?.name}, {" "}
-                                  {row?.addresses[0]?.country?.name}
-                                </p>
-                                </div>
-                                <br />
-                              </div>
-                            );
-                          } else {
-                            return null;
-                          }
-                        })}
-                      </div>
-                  </TableCell>
-
-                    <TableCell>
-                      <p className="text-lightBlue">24</p>
-                    </TableCell>
-                    <TableCell>
-                      <div className="d-flex">
-                        <p className="text-lightBlue">₹ 52,000</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex px-2 py-1" 
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={isItemSelected}
+                          inputProps={{
+                            "aria-labelledby": labelId,
+                          }}
+                          onClick={(event) => handleClick(event, row._id)}
+                          size="small"
                           style={{
-                            background: row.status == "active" ? "#A6FAAF" : 
-                            row.status == "in-active" ? "#5C6D8E" : "#F67476" 
+                            color: "#5C6D8E",
                           }}
-                        >
-                          <small className="fw-400"
-                            style={{
-                              color: row.status == "active" ? "#202837" : "#fff"
-                            }}
-                          >
-                            {
-                              row.status == "active" ? "Active" : 
-                              row.status == "in-active" ? "In-active" : "Archived"
-                            }
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="d-flex align-items-center">
-                        <img
-                          src={verticalDots}
-                          alt="verticalDots"
-                          className="c-pointer"
-                          aria-describedby={idActions}
-                          variant="contained"
-                          onClick={handleActionClick}
                         />
-                        <Popover
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "center",
-                          }}
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "center",
-                          }}
-                          id={idActions}
-                          open={openActions}
-                          anchorEl={anchorActionEl}
-                          onClose={handleActionClose}
-                        >
-                          <div className="py-2 px-2">
-                            <small className="text-grey-7 px-2">ACTIONS</small>
-                            <hr className="hr-grey-6 my-2" />
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit Customer
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        <div className="d-flex align-items-center py-3">
+                          <img
+                            src={row?.imageUrl ? row?.imageUrl : defaultUser}
+                            alt="user"
+                            className="me-2 rounded-circle"
+                            height={45}
+                            width={45}
+                          />
+
+                          <div>
+                            <div
+                              className=" text-decoration-none c-pointer"
+                              onClick={() => onEdit(row?._id)}
+                            >
+                              <p className="text-lightBlue rounded-circle fw-600">
+                                {row?.firstName} {row?.lastName}
+                              </p>
+                            </div>
+                            <small className="mt-2 text-grey-6">
+                              {row?.email}
+                              <Tooltip title="Copy" placement="top">
+                                <ContentCopyIcon
+                                  sx={{ fontSize: 12, color: "#c8d8ff" }}
+                                  className="c-pointer ms-2"
+                                />
+                              </Tooltip>
                             </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Edit Customer Group
-                            </small>
-                            <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                              Add or Remove Tags
-                            </small>
-                            <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                              <small className="font2 d-block" style={{color: "#F67E80"}}>
-                                Archive Customer
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="d-flex align-items-center">
+                          <p className="text-lightBlue">
+                          {row.groups.length>0?(
+                            row?.groups?.map((group,index) => (
+                              <span key={group._id}>{group.name}{index !== row.groups.length - 1 && ","}</span>
+                          ))):""}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="d-flex flex-column align-items-start">
+                          {row?.addresses?.map((address, index) => {
+                            if (address.isDefaultAddress === true) {
+                              return (
+                                <div key={index}>
+                                <div className="d-flex align-items-center">
+                                  <img src={row?.addresses[0]?.country?.imageUrl} alt="indiaFlag" height={16} />
+                                  <p className="text-lightBlue ms-2">
+                                    {row?.addresses[0]?.state?.name}, {" "}
+                                    {row?.addresses[0]?.country?.name}
+                                  </p>
+                                  </div>
+                                  <br />
+                                </div>
+                              );
+                            } else {
+                              return null;
+                            }
+                          })}
+                        </div>
+                    </TableCell>
+
+                      <TableCell>
+                        <p className="text-lightBlue">24</p>
+                      </TableCell>
+                      <TableCell>
+                        <div className="d-flex">
+                          <p className="text-lightBlue">₹ 52,000</p>
+                        </div>
+                      </TableCell>
+                      { customerType === 0 && 
+                        <TableCell>
+                          <div className="d-flex align-items-center">
+                            <div className="rounded-pill d-flex px-2 py-1" 
+                              style={{
+                                background: row.status == "active" ? "#A6FAAF" : 
+                                row.status == "in-active" ? "#5C6D8E" : "#F67476" 
+                              }}
+                            >
+                              <small className="fw-400"
+                                style={{
+                                  color: row.status == "active" ? "#202837" : "#fff"
+                                }}
+                              >
+                                {
+                                  row.status == "active" ? "Active" : 
+                                  row.status == "in-active" ? "In-active" : "Archived"
+                                }
                               </small>
-                              <img src={deleteRed} alt="delete" className="" />
                             </div>
                           </div>
-                        </Popover>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={changePage}
-        onRowsPerPageChange={changeRowsPerPage}
-        className="table-pagination"
-      />
-      </>):isLoading ? (
-          <span className="d-flex justify-content-center m-3">
-            <Loader />
-          </span>
-        ): (
-          <span className="d-flex justify-content-center m-3">
-            <NoData />
-          </span>
+                        </TableCell> 
+                      }
+                      <TableCell>
+                        <div className="d-flex align-items-center">
+                          <img
+                            src={verticalDots}
+                            alt="verticalDots"
+                            className="c-pointer"
+                            aria-describedby={idActions}
+                            variant="contained"
+                            onClick={handleActionClick}
+                          />
+                          <Popover
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "center",
+                            }}
+                            transformOrigin={{
+                              vertical: "top",
+                              horizontal: "center",
+                            }}
+                            id={idActions}
+                            open={openActions}
+                            anchorEl={anchorActionEl}
+                            onClose={handleActionClose}
+                          >
+                            <div className="py-2 px-2">
+                              <small className="text-grey-7 px-2">ACTIONS</small>
+                              <hr className="hr-grey-6 my-2" />
+                              <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                                Edit Customer
+                              </small>
+                              <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                                Edit Customer Group
+                              </small>
+                              <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                                Add or Remove Tags
+                              </small>
+                              <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
+                                <small className="font2 d-block" style={{color: "#F67E80"}}>
+                                  Archive Customer
+                                </small>
+                                <img src={deleteRed} alt="delete" className="" />
+                              </div>
+                            </div>
+                          </Popover>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={totalCount}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={changePage}
+          onRowsPerPageChange={changeRowsPerPage}
+          className="table-pagination"
+        />
+        </>):isLoading ? (
+            <span className="d-flex justify-content-center m-3">
+              <Loader />
+            </span>
+          ): (
+            <span className="d-flex justify-content-center m-3">
+              <NoData />
+            </span>
         )): (
         <></>
       )}

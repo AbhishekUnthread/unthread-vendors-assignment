@@ -45,6 +45,24 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ["Customers"],
     }),
+
+    getCustomersCount: builder.query({
+      query: (queries) => {
+        let queryString = "";
+        for (const key in queries) {
+          if (queries[key]) {
+            queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
+              queries[key]
+            }`;
+          }
+        }
+
+        return {
+          url: `/customer/count${queryString}`,
+        };
+      },
+      providesTags: ["Customers"],
+    }),
     
   }),
 });
@@ -52,5 +70,6 @@ export const customerApiSlice = apiSlice.injectEndpoints({
 export const {
   useCreateCustomerMutation,
   useGetAllCustomersQuery,
-  useGetSingleCustomerQuery
+  useGetSingleCustomerQuery,
+  useGetCustomersCountQuery
 } = customerApiSlice;

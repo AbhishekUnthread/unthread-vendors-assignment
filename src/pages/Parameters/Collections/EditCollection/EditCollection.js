@@ -285,6 +285,7 @@ const EditCollection = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [duplicateData, setDuplicateData] = useState("");
   const [newDuplicateCollection, setDuplicateCollection] = useState();
+  const [serialId, setSerialNo] = useState(null);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -329,12 +330,20 @@ const EditCollection = () => {
     setDecodedObject(parsedObject);
   }, [searchParams]);
 
+  useEffect(() => {
+    if(newDuplicateCollection?.data?.srNo) {
+      setSerialNo(newDuplicateCollection?.data?.srNo)
+    }
+  },[newDuplicateCollection])
+
+  const srNo = serialId ? serialId : id;
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
-    error: collectionError,
-  } = useGetAllCollectionsQuery({ srNo: id, ...decodedObject, pageNo:0 });
+    error: collectionError
+  } = useGetAllCollectionsQuery({ srNo, ...decodedObject, pageNo:0 });
 
   const nextPageHandler = () => {
     const { pageNo } = queryFilterState;

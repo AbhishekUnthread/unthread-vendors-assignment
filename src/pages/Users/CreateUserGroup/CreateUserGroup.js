@@ -4,9 +4,11 @@ import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import { visuallyHidden } from "@mui/utils";
 import { useFormik } from "formik";
+import * as Yup from "yup";
 import {
   Box,
   FormControl,
+  FormHelperText,
   MenuItem,
   Select,
   InputAdornment,
@@ -299,11 +301,33 @@ LikeProductTableHead.propTypes = {
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
 };
-// ? TABLE ENDS HERE
+
+const customerGroupValidationSchema = Yup.object({
+  name: Yup.string().trim().min(3).max(50).required("Required"),
+});
 
 const CreateUserGroup = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
+  const [likeProductRadio, setLikeProductRadio] = useState("automated");
+  const [likeMatchRadio, setLikeMatchRadio] = useState("allCondition");
+  const [anchorPriceEl, setAnchorPriceEl] = useState(null);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("productName");
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [field, setField] = useState("price");
+  const [operator, setOperator] = useState("equals");
+  const [checked, setChecked] = useState(false);
+  const [likeAddCondition, setLikeAddCondition] = useState(false);
+  const [likeApplyCondition, setLikeApplyCondition] = useState(false);
+  const [addProductDrawer, setAddProductDrawer] = useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
 
   const [
     createCustomerGroup,
@@ -321,7 +345,7 @@ const CreateUserGroup = () => {
       addType: "manual"
     },
     enableReinitialize: true,
-    // validationSchema: customerValidationSchema,
+    validationSchema: customerGroupValidationSchema,
     onSubmit: (values) => {
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
@@ -331,34 +355,20 @@ const CreateUserGroup = () => {
       createCustomerGroup(values)
         .unwrap()
         .then((res) => {
-          navigate("/users/allUsers");
-          dispatch(showSuccess({ message: "Custormer created successfully" }));
+          navigate("/users/userGroups");
+          dispatch(showSuccess({ message: "Custormer group created successfully" }));
         })
     },
   })
   
-  // ? RADIO BUTTON STARTS HERE
-  const [likeProductRadio, setLikeProductRadio] = useState("automated");
   const handleLikeProductRadio = (event) => {
     setLikeProductRadio(event.target.value);
   };
 
-  const [likeMatchRadio, setLikeMatchRadio] = useState("allCondition");
   const handleLikeMatchRadio = (event) => {
     setLikeMatchRadio(event.target.value);
   };
-
-  // ? RADIO BUTTON ENDS HERE
-
-  // ? ADD PRODUCT DRAWER STARTS HERE
-
-  const [addProductDrawer, setAddProductDrawer] = useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
-
+ 
   const toggleAddProductDrawer = (anchor, open) => (event) => {
     if (
       event &&
@@ -370,10 +380,7 @@ const CreateUserGroup = () => {
 
     setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
   };
-  // ? ADD PRODUCT DRAWER ENDS HERE
 
-  // * PRICE POPOVERS STARTS
-  const [anchorPriceEl, setAnchorPriceEl] = useState(null);
   const handlePriceClick = (event) => {
     setAnchorPriceEl(event.currentTarget);
   };
@@ -384,14 +391,6 @@ const CreateUserGroup = () => {
 
   const openPrice = Boolean(anchorPriceEl);
   const idPrice = openPrice ? "simple-popover" : undefined;
-  // * PRICE POPOVERS ENDS
-
-  // * TABLE STARTS HERE
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("productName");
-  const [selected, setSelected] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -441,34 +440,19 @@ const CreateUserGroup = () => {
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  // * TABLE ENDS HERE
-
-  // ? SIZE SELECT STARTS HERE
-  const [field, setField] = useState("price");
 
   const handleFieldChange = (event) => {
     setField(event.target.value);
   };
-  // ? SIZE SELECT ENDS HERE
-
-  // ? OPERATOR SELECT STARTS HERE
-  const [operator, setOperator] = useState("equals");
 
   const handleOperatorChange = (event) => {
     setOperator(event.target.value);
   };
-  // ? OPERATOR SELECT ENDS HERE
-
-  // ? CHECKBOX STARTS HERE
-  const [checked, setChecked] = useState(false);
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
   };
-  // ? CHECKBOX ENDS HERE
 
-  // ? LIKE ADD CONDITION STARTS HERE
-  const [likeAddCondition, setLikeAddCondition] = useState(false);
   const handleLikeAddCondition = () => {
     if (!likeAddCondition) {
       setLikeAddCondition(true);
@@ -477,10 +461,7 @@ const CreateUserGroup = () => {
       setLikeApplyCondition(false);
     }
   };
-  // ? LIKE ADD CONDITION ENDS HERE
 
-  // ? LIKE APPLY CONDITION STARTS HERE
-  const [likeApplyCondition, setLikeApplyCondition] = useState(false);
   const handleLikeApplyCondition = () => {
     if (likeApplyCondition) {
       setLikeApplyCondition(false);
@@ -489,7 +470,6 @@ const CreateUserGroup = () => {
       setLikeAddCondition(false);
     }
   };
-  // ? LIKE APPLY CONDITION ENDS HERE
 
   return (
     <form noValidate onSubmit={customerGroupFormik.handleSubmit}>
@@ -522,6 +502,9 @@ const CreateUserGroup = () => {
                     onChange={customerGroupFormik.handleChange}
                   />
                 </FormControl>
+                {!!customerGroupFormik.touched.name && customerGroupFormik.errors.name && (
+                  <FormHelperText error>{customerGroupFormik.errors.name}</FormHelperText>
+                )}
               </div>
               <div className="col-md-12 d-flex px-0">
                 <FormControlLabel

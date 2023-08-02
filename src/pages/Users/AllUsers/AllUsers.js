@@ -20,7 +20,10 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 import { showError } from "../../../features/snackbar/snackbarAction";
-import { useGetAllCustomersQuery } from "../../../features/customers/customer/customerApiSlice";
+import { 
+  useGetAllCustomersQuery,
+  useGetCustomersCountQuery 
+} from "../../../features/customers/customer/customerApiSlice";
 
 import AllUsersTable from "./AllUsersTable";
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -59,10 +62,12 @@ const locationData = [
 ];
 
 const initialQueryFilterState = {
+  createdAt: 1,
   pageSize: 10,
   pageNo: 0,
   name:"",
-  searchValue: ""
+  searchValue: "",
+  status: ""
 };
 
 const initialUsersState = {
@@ -70,6 +75,10 @@ const initialUsersState = {
   totalCount: 0,
   error: false,
   customerType:0,
+};
+
+const initialCustomerState = {
+  status: "all",
 };
 
 const queryFilterReducer = (state, action) => {
@@ -83,7 +92,7 @@ const queryFilterReducer = (state, action) => {
   if (action.type === "CHANGE_PAGE") {
     return {
       ...state,
-      pageNo: action.pageNo ,
+      pageNo: action.pageNo +1,
     };
   }
   if (action.type === "SEARCH") {
@@ -100,7 +109,24 @@ const queryFilterReducer = (state, action) => {
       searchValue: action.searchValue,
     };
   }
+  if (action.type === "SET_STATUS") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      status: action.status ? action.status : initialQueryFilterState.status,
+    };
+  }
   return initialQueryFilterState;
+};
+
+const customerReducer = (state, action) => {
+  if (action.type === "SET_STATUS") {
+    return {
+      status: action.status,
+    };
+  }
+
+  return initialCustomerState;
 };
 
 const usersReducer = (state, action) => {
@@ -118,7 +144,6 @@ const usersReducer = (state, action) => {
     };
   }
   if (action.type === "SET_CUSTOMER_TYPE") {
-    console.log(action, 'acations');
     return {
       ...state,
       customerType: action.customerType,
@@ -130,7 +155,14 @@ const usersReducer = (state, action) => {
 const AllUsers = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const[searchParams, setSearchParams] = useSearchParams();
+  const [anchorFlagEl, setAnchorFlagEl] = useState(null);
+  const [anchorOrdersEl, setAnchorOrdersEl] = useState(null);
+  const [anchorSortEl, setAnchorSortEl] = useState(null);
+  const [anchorLocationEl, setAnchorLocationEl] = useState(null);
+  const [anchorStatusEl, setAnchorStatusEl] = useState(null);
+  const [anchorDaysEl, setDaysEl] = useState(null);
+  const [firstRender, setFirstRender] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -139,35 +171,29 @@ const AllUsers = () => {
     usersReducer,
     initialUsersState
   );
-
-  const queryParameters = {};
-
-  if(queryFilterState.name) {
-    queryParameters.name = queryFilterState.name;
-  }
-
-  const customerStatusQuery = 
-    usersState.customerType === 0 ? {createdAt: -1}
-  : usersState.customerType === 1 ? { status: "active" }
-  : usersState.customerType === 2 ? { status: "new" }
-  : usersState.customerType === 3 ? { createdAt: -1, status: "in-active" }
-  : usersState.customerType === 4 ? { createdAt: -1, status: "archieved" }
-  : {};
+  const [customerState, dispatchCustomerState] = useReducer(
+    customerReducer,
+    initialCustomerState
+  );
 
   const {
     data: customersData,  
     isLoading: customersIsLoading, 
     isSuccess: customersIsSuccess, 
     error: customersError
-  } = useGetAllCustomersQuery({
-      createdAt:1,
-      pageSize:queryFilterState.pageSize,
-      pageNo:queryFilterState.pageNo+1,
-      ...queryParameters, ...customerStatusQuery
-    });
+  } = useGetAllCustomersQuery({ ...queryFilterState });
+
+  const {
+    data: customersCountData,  
+    isLoading: customersCountIsLoading, 
+    isSuccess: customersCountIsSuccess, 
+    error: customersCountError
+  } = useGetCustomersCountQuery();
+
+  const customerCount = customersCountData?.data[0];
 
   const editHandler = (id) => {
-    let combinedObject = {id, customerStatusQuery}
+    let combinedObject = {id, queryFilterState}
     const paramsQuery = encodeURIComponent(JSON.stringify(combinedObject));    
 
     navigate(`./details/${paramsQuery}`);
@@ -181,24 +207,145 @@ const AllUsers = () => {
     dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
   };
 
-  const changeCustomerTypeHandler = (event, newValue) => {
+  const handleStatusChange = (event) => {
+    if (event.target.checked) {
+      if (customerState.status === "all") {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [event.target.value],
+        });
+        dispatchCustomerState({
+          type: "SET_STATUS",
+          status: "",
+        });
+      } else {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: [...queryFilterState.status, event.target.value],
+        });
+      }
+    } else {
+      if (queryFilterState.status.length > 1) {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: queryFilterState.status.filter(
+            (status) => status !== event.target.value
+          ),
+        });
+      } else {
+        dispatchQueryFilter({
+          type: "SET_STATUS",
+          status: "",
+        });
+        dispatchCustomerState({
+          type: "SET_STATUS",
+          status: "all",
+        });
+      }
+    }
+  };
+
+  const changeCustomerTypeHandler = (_event, tabIndex) => {
     dispatchUsers({
-      type:"SET_CUSTOMER_TYPE", customerType:newValue
+      type:"SET_CUSTOMER_TYPE", customerType: tabIndex
     })
-    setSearchParams(newValue)
+    if (tabIndex === 0) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "all",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: "",
+      });
+    } else if (tabIndex === 1) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active"],
+      });
+    } else if (tabIndex === 2) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["new"],
+      });
+    } else if (tabIndex === 3) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["in-active"],
+      });
+    } else if (tabIndex === 4) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["archieved"],
+      });
+    }
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
+    setSearchParams(tabIndex)
   };
 
   useEffect(() => {
-    if( +searchParams.get("status") == 0 ) {
-      usersState.customerType = 0;
-    } else if(+searchParams.get("status")==1) {
-      usersState.customerType = 1;
-    } else if(+searchParams.get("status")===2) {
-      usersState.customerType = 2;
-    } else if(+searchParams.get("status")===3) {
-      usersState.customerType = 3;
+    const filterParams = JSON.parse(searchParams.get("filter")) || {
+      customerType: usersState.customerType,
+    };
+    if (firstRender && Object.keys(filterParams).length) {
+      let filters = {};
+      for (let key in filterParams) {
+        if (key !== "customerType") {
+          if (filterParams[key] !== (null || "")) {
+            if (key === "status" && filterParams[key].length < 2) {
+              dispatchCustomerState({
+                type: "SET_STATUS",
+                status: "",
+              });
+            }
+            filters = {
+              ...filters,
+              [key]: filterParams[key],
+            };
+          }
+        } else {
+          dispatchUsers({
+            type:"SET_CUSTOMER_TYPE", customerType: +filterParams[key]
+          })
+        }
+      }
+      if (filterParams.collectionType === (null || "")) {
+        dispatchUsers({
+            type:"SET_CUSTOMER_TYPE", customerType: 0
+          })
+      }
+      dispatchQueryFilter({
+        type: "SET_ALL_FILTERS",
+        filters,
+      });
+      setFirstRender(false);
     }
-  }, [searchParams])
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      setSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, customerType: usersState.customerType }),
+      });
+    }
+  }, [queryFilterState, setSearchParams, usersState, firstRender]);
 
   const handleSearchChange = (value) => {
     dispatchQueryFilter({ type: "SEARCH", name: value });
@@ -208,8 +355,6 @@ const AllUsers = () => {
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
   }
 
-  // * FLAG POPOVERS STARTS
-  const [anchorFlagEl, setAnchorFlagEl] = useState(null);
   const handleFlagClick = (event) => {
     setAnchorFlagEl(event.currentTarget);
   };
@@ -218,10 +363,6 @@ const AllUsers = () => {
   };
   const openFlag = Boolean(anchorFlagEl);
   const idFlag = openFlag ? "simple-popover" : undefined;
-  // * FLAG POPOVERS ENDS
-
-  // * SORT POPOVERS STARTS
-  const [anchorSortEl, setAnchorSortEl] = useState(null);
 
   const handleSortClick = (event) => {
     setAnchorSortEl(event.currentTarget);
@@ -233,10 +374,6 @@ const AllUsers = () => {
 
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
-  // * SORT POPOVERS ENDS
-
-  // * LOCATION POPOVERS STARTS
-  const [anchorLocationEl, setAnchorLocationEl] = useState(null);
 
   const handleLocationClick = (event) => {
     setAnchorLocationEl(event.currentTarget);
@@ -248,10 +385,6 @@ const AllUsers = () => {
 
   const openLocation = Boolean(anchorLocationEl);
   const idLocation = openLocation ? "simple-popover" : undefined;
-  // * LOCATION POPOVERS ENDS
-
-  // * NO OF ORDERS POPOVERS STARTS
-  const [anchorOrdersEl, setAnchorOrdersEl] = useState(null);
 
   const handleOrdersClick = (event) => {
     setAnchorOrdersEl(event.currentTarget);
@@ -263,10 +396,6 @@ const AllUsers = () => {
 
   const openOrders = Boolean(anchorOrdersEl);
   const idOrders = openOrders ? "simple-popover" : undefined;
-  // * NO OF ORDERS POPOVERS ENDS
-
-  // * STATUS POPOVERS STARTS
-  const [anchorStatusEl, setAnchorStatusEl] = useState(null);
 
   const handleStatusClick = (event) => {
     setAnchorStatusEl(event.currentTarget);
@@ -278,10 +407,6 @@ const AllUsers = () => {
 
   const openStatus = Boolean(anchorStatusEl);
   const idStatus = openStatus ? "simple-popover" : undefined;
-  // * STATUS POPOVERS ENDS
-
-  // * DAYS POPOVERS STARTS
-  const [anchorDaysEl, setDaysEl] = useState(null);
 
   const handleDaysClick = (event) => {
     setDaysEl(event.currentTarget);
@@ -293,7 +418,6 @@ const AllUsers = () => {
 
   const openDays = Boolean(anchorDaysEl);
   const idDays = openDays ? "simple-popover" : undefined;
-  // * DAYS POPOVERS ENDS
 
   useEffect(() => {
     if (customersIsSuccess) {
@@ -374,7 +498,7 @@ const AllUsers = () => {
           <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3 flex-grow-1">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2 className="text-lightBlue fw-400">50</h2>
+                <h2 className="text-lightBlue fw-400">{customerCount?.active}</h2>
                 <small className="text-grey-6 mt-2">Active</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -393,7 +517,7 @@ const AllUsers = () => {
           <div className="border-grey-5 bg-black-15 rounded-8 py-3 px-3 flex-grow-1">
             <div className="d-flex justify-content-between align-items-end">
               <div className="d-flex flex-column">
-                <h2 className="text-lightBlue fw-400">50</h2>
+                <h2 className="text-lightBlue fw-400">{customerCount?.inActive}</h2>
                 <small className="text-grey-6 mt-2">In-Active</small>
               </div>
               <div className="d-flex flex-column align-items-end">
@@ -492,11 +616,11 @@ const AllUsers = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Active" className="tabs-head" />
-              <Tab label="New" className="tabs-head" />
-              <Tab label="In-Active" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab label={`All (${customerCount?.active + customerCount?.inActive + customerCount?.archived})`} className="tabs-head" />
+              <Tab label={`Active (${customerCount?.active})`} className="tabs-head" />
+              <Tab label={`New (${customerCount?.new})`} className="tabs-head" />
+              <Tab label={`In-Active (${customerCount?.inActive})`} className="tabs-head" />
+              <Tab label={`Archived (${customerCount?.archived})`} className="tabs-head" />
             </Tabs>
             <div
               className="tabs-country c-pointer"
@@ -660,8 +784,9 @@ const AllUsers = () => {
                   onClose={handleStatusClose}
                 >
                   <div className=" px-1">
-                    <FormGroup className="tags-checkbox">
+                    <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
+                        value="active"
                         control={
                           <Checkbox
                             size="small"
@@ -672,8 +797,14 @@ const AllUsers = () => {
                           />
                         }
                         label="Active"
+                        checked={
+                          customerState.status === "" &&
+                          queryFilterState.status.includes("active")
+                        }
                       />
+                    <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
+                        value="in-active"
                         control={
                           <Checkbox
                             size="small"
@@ -684,7 +815,12 @@ const AllUsers = () => {
                           />
                         }
                         label="In-Active"
+                        checked={
+                          customerState.status === "" &&
+                          queryFilterState.status.includes("in-active")
+                        }
                       />
+                    </FormGroup>
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -697,7 +833,10 @@ const AllUsers = () => {
                         }
                         label="Blocked"
                       />
+                    </FormGroup>
+                    <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
+                        value="archieved"
                         control={
                           <Checkbox
                             size="small"
@@ -708,6 +847,10 @@ const AllUsers = () => {
                           />
                         }
                         label="Archived"
+                        checked={
+                          customerState.status === "" &&
+                          queryFilterState.status.includes("archieved")
+                        }
                       />
                     </FormGroup>
                   </div>
@@ -807,6 +950,7 @@ const AllUsers = () => {
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               onEdit={editHandler}
+              customerType={usersState.customerType}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={1}>
@@ -820,6 +964,7 @@ const AllUsers = () => {
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               onEdit={editHandler}
+              customerType={usersState.customerType}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={2}>
@@ -833,6 +978,7 @@ const AllUsers = () => {
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               onEdit={editHandler}
+              customerType={usersState.customerType}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={3}>
@@ -846,6 +992,7 @@ const AllUsers = () => {
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               onEdit={editHandler}
+              customerType={usersState.customerType}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={4}>
@@ -859,6 +1006,7 @@ const AllUsers = () => {
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               onEdit={editHandler}
+              customerType={usersState.customerType}
             />
           </TabPanel>
         </Paper>

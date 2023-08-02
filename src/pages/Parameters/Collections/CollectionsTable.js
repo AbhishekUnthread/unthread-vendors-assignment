@@ -1,5 +1,6 @@
-import { useEffect, useState, forwardRef } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import moment from "moment";
 import {
   Checkbox,
@@ -39,10 +40,8 @@ import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModa
 
 import './Collections.scss';
 
-import unthreadLogo from "../../../assets/images/unthreadLogo.png";
 import defaultLogo from "../../../assets/images/users/collection_defaultdp.svg";
 import unArchived from "../../../assets/images/Components/Archived.png"
-import { Link } from "react-router-dom";
 
 const CollectionsTable = ({ 
   list,
@@ -263,6 +262,7 @@ const CollectionsTable = ({
       setSelectedStatus(massActionStatus);
       setArchivedModal(false);
     } else {
+      handleClick(null, collectionId);
       setArchivedModal(false);
       editCollection({
           id: collectionId,
@@ -275,7 +275,6 @@ const CollectionsTable = ({
   }
 
   const handleUnArchive = (id, title) => {
-    console.log(selected, 'selected');
     setForMassAction(false)
     setShowUnArhcivedModal(true)
     setUnArchiveID(id)
@@ -286,6 +285,7 @@ const CollectionsTable = ({
     if(forMassAction === true) {
       setSelectedStatus(massActionStatus);
     } else {
+      handleClick(null, unArchiveID);
       editCollection({
           id: unArchiveID,
           details : {
@@ -305,6 +305,7 @@ const CollectionsTable = ({
       dispatch(showSuccess({ message: "Collection deleted successfully!" }));
       setSelected([])
     } else {
+      handleClick(null, archiveID?._id);
       hardDeleteCollection(archiveID?._id);
       toggleArchiveModalHandler();
       dispatch(showSuccess({ message: "Collection deleted successfully!" }));
