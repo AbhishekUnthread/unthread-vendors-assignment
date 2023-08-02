@@ -1,12 +1,10 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { countries } from "../../assets/DefaultValues/Countries";
 
 import { useGetAllCountryQuery } from "../../features/master/country/countryApiSlice";
 
-export default function AppCountrySelect({ GetCountryName, SelectCountryName }) {
+export default function AppCountrySelect({ GetCountryName = () => {}, SelectCountryName = () => {} }) {
   const handleCountryName = (event) => {
     if (event) {
       GetCountryName(event.target.value);
@@ -14,15 +12,15 @@ export default function AppCountrySelect({ GetCountryName, SelectCountryName }) 
   };
 
   const selectCountryName = (event, value) => {
-    SelectCountryName(value?._id);
-  }
+    SelectCountryName(value?._id ?? "");
+  };
 
-   const {
+  const {
     data: countryData,
-    isLoading: countryIsLoading,
-    isSuccess: countryIsSuccess,
-    error: countryError,
-  } = useGetAllCountryQuery({createdAt: -1});
+    // isLoading: countryIsLoading,
+    // isSuccess: countryIsSuccess,
+    // error: countryError,
+  } = useGetAllCountryQuery({ createdAt: -1 });
 
   return (
     <Autocomplete
@@ -47,8 +45,7 @@ export default function AppCountrySelect({ GetCountryName, SelectCountryName }) 
         <Box
           component="li"
           sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-          {...props}
-        >
+          {...props}>
           {/* <img
             loading="lazy"
             width="20"
@@ -56,9 +53,7 @@ export default function AppCountrySelect({ GetCountryName, SelectCountryName }) 
             srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
             alt=""
           /> */}
-          <small className="text-lightBlue my-1">
-            {option?.name}
-          </small>
+          <small className="text-lightBlue my-1">{option?.name}</small>
         </Box>
       )}
       renderInput={(params) => (

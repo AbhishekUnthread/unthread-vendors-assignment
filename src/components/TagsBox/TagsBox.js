@@ -29,7 +29,13 @@ import SearchIcon from "@mui/icons-material/Search";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+  return (
+    <Slide
+      direction="up"
+      ref={ref}
+      {...props}
+    />
+  );
 });
 // ? DIALOG TRANSITION ENDS HERE
 
@@ -84,11 +90,10 @@ const taggedWithData = [
   { title: "Tag 12", value: "tag12" },
 ];
 
-const TagsBox = ({tagsList, selectedTagList}) => {
-
+const TagsBox = ({ tagsList = [], selectedTagList }) => {
   const handleTagList = (event, value) => {
-    selectedTagList(value.map(option => option.name))
-  }
+    selectedTagList(value.map((option) => option.name));
+  };
   // ? TAGS DIALOG STARTS HERE
   const [openTags, setOpenTags] = React.useState(false);
 
@@ -120,7 +125,9 @@ const TagsBox = ({tagsList, selectedTagList}) => {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="d-flex">
           <h6 className="text-lightBlue fw-500">Tags</h6>
-          <Tooltip title="Lorem ipsum" placement="top">
+          <Tooltip
+            title="Lorem ipsum"
+            placement="top">
             <img
               src={info}
               alt="info"
@@ -129,7 +136,9 @@ const TagsBox = ({tagsList, selectedTagList}) => {
             />
           </Tooltip>
         </div>
-        <small className="text-blue-2 c-pointer" onClick={handleTagsOpen}>
+        <small
+          className="text-blue-2 c-pointer"
+          onClick={handleTagsOpen}>
           View all Tags
         </small>
 
@@ -140,8 +149,7 @@ const TagsBox = ({tagsList, selectedTagList}) => {
           onClose={handleTagsClose}
           aria-describedby="alert-dialog-slide-description"
           maxWidth="md"
-          fullWidth={true}
-        >
+          fullWidth={true}>
           <DialogTitle>
             <div className="d-flex justify-content-between align-items-center">
               <h5 className="text-lightBlue fw-500">Tags</h5>
@@ -171,17 +179,19 @@ const TagsBox = ({tagsList, selectedTagList}) => {
               <div className="col-md-3 col-6 ps-md-0 pe-0 mt-2">
                 <button
                   className="button-grey py-1 px-3 w-100"
-                  variant="contained"
-                >
+                  variant="contained">
                   <p className="text-lightBlue">Alphabetical (A-Z)</p>
-                  <img src={arrowDown} alt="arrowDown" className="ms-2" />
+                  <img
+                    src={arrowDown}
+                    alt="arrowDown"
+                    className="ms-2"
+                  />
                 </button>
               </div>
               <div className="col-md-3 col-6 mt-2">
                 <button
                   className="button-gradient py-1 px-3 w-100"
-                  onClick={handleTagClick}
-                >
+                  onClick={handleTagClick}>
                   <p>Create a New Tag</p>
                 </button>
                 <Popover
@@ -197,12 +207,13 @@ const TagsBox = ({tagsList, selectedTagList}) => {
                   open={openTag}
                   anchorEl={anchorTagEl}
                   onClose={handleTagClose}
-                  className="columns"
-                >
+                  className="columns">
                   <div className="py-2 px-2">
                     <div className="d-flex mb-2 pt-1">
                       <small className="text-grey-6">Enter Tag Name</small>
-                      <Tooltip title="Lorem ipsum" placement="top">
+                      <Tooltip
+                        title="Lorem ipsum"
+                        placement="top">
                         <img
                           src={info}
                           alt="info"
@@ -221,9 +232,7 @@ const TagsBox = ({tagsList, selectedTagList}) => {
                 </Popover>
               </div>
             </div>
-            <p className="text-lightBlue mt-3 mb-2">
-              458 Tags are listed below
-            </p>
+            <p className="text-lightBlue mt-3 mb-2">458 Tags are listed below</p>
 
             <FormGroup className="tags-checkbox">
               <FormControlLabel
@@ -302,13 +311,14 @@ const TagsBox = ({tagsList, selectedTagList}) => {
           </DialogContent>
           <hr className="hr-grey-6 my-0" />
           <DialogActions className="d-flex justify-content-between px-4 py-3">
-            <button className="button-grey py-2 px-5" onClick={handleTagsClose}>
+            <button
+              className="button-grey py-2 px-5"
+              onClick={handleTagsClose}>
               <p className="text-lightBlue">Cancel</p>
             </button>
             <button
               className="button-gradient py-2 px-5"
-              onClick={handleTagsClose}
-            >
+              onClick={handleTagsClose}>
               <p>Add 5 Tags</p>
             </button>
           </DialogActions>
@@ -339,7 +349,11 @@ const TagsBox = ({tagsList, selectedTagList}) => {
           </li>
         )}
         renderInput={(params) => (
-          <TextField size="small" {...params} placeholder="Search" />
+          <TextField
+            size="small"
+            {...params}
+            placeholder="Search"
+          />
         )}
       />
     </div>

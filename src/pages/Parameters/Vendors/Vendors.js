@@ -198,7 +198,7 @@ const Vendors = () => {
     error: vendorsStatusCountError,
   } = useGetAllVendorsStatusCountQuery();
 
-  console.log("status Count", vendorsStatusCount)
+  console.log("status Count", vendorsStatusCount);
   const [
     createVendor,
     {
@@ -303,7 +303,7 @@ const Vendors = () => {
   const editCategoryPageNavigationHandler = (data, index) => {
     setIsEditing(true);
     navigate({
-      pathname: `./edit/${data ? data._id : ""}`,
+      pathname: `./edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
         filter: JSON.stringify({ ...queryFilterState, vendorType }),
       })}`,
@@ -829,10 +829,25 @@ const Vendors = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label={`All (${vendorsStatusCount?.data[0]?.active+vendorsStatusCount?.data[0]?.inActive})`} className="tabs-head" />
-              <Tab label={`Active (${vendorsStatusCount?.data[0]?.active})`} className="tabs-head" />
-              <Tab label={`In-Active (${vendorsStatusCount?.data[0]?.inActive})`} className="tabs-head" />
-              <Tab label={`Archived (${vendorsStatusCount?.data[0]?.archived})`} className="tabs-head" />
+              <Tab
+                label={`All (${
+                  vendorsStatusCount?.data[0]?.active +
+                  vendorsStatusCount?.data[0]?.inActive
+                })`}
+                className="tabs-head"
+              />
+              <Tab
+                label={`Active (${vendorsStatusCount?.data[0]?.active})`}
+                className="tabs-head"
+              />
+              <Tab
+                label={`In-Active (${vendorsStatusCount?.data[0]?.inActive})`}
+                className="tabs-head"
+              />
+              <Tab
+                label={`Archived (${vendorsStatusCount?.data[0]?.archived})`}
+                className="tabs-head"
+              />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -841,70 +856,74 @@ const Vendors = () => {
               value={queryFilterState.searchValue}
               onChange={handleSearchChange}
             />
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idStatus}
-              variant="contained"
-              onClick={handleStatusClick}
-            >
-              <small className="text-lightBlue me-2">Status</small>
-              <img src={arrowDown} alt="status" className="" />
-            </button>
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-              id={idStatus}
-              open={openStatus}
-              anchorEl={anchorStatusEl}
-              onClose={handleStatusClose}
-              className="columns"
-            >
-              <FormGroup
-                className="px-2 py-1"
-                onChange={handleStatusCheckboxChange}
-              >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      style={{
-                        color: "#5C6D8E",
-                      }}
+            {vendorType === 0 && (
+              <React.Fragment>
+                <button
+                  className="button-grey py-2 px-3 ms-2"
+                  aria-describedby={idStatus}
+                  variant="contained"
+                  onClick={handleStatusClick}
+                >
+                  <small className="text-lightBlue me-2">Status</small>
+                  <img src={arrowDown} alt="status" className="" />
+                </button>
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  id={idStatus}
+                  open={openStatus}
+                  anchorEl={anchorStatusEl}
+                  onClose={handleStatusClose}
+                  className="columns"
+                >
+                  <FormGroup
+                    className="px-2 py-1"
+                    onChange={handleStatusCheckboxChange}
+                  >
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                          }}
+                        />
+                      }
+                      label="Active"
+                      value="active"
+                      className="me-0"
+                      checked={
+                        vendorState.status === "" &&
+                        queryFilterState.status.includes("active")
+                      }
                     />
-                  }
-                  label="Active"
-                  value="active"
-                  className="me-0"
-                  checked={
-                    vendorState.status === "" &&
-                    queryFilterState.status.includes("active")
-                  }
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      style={{
-                        color: "#5C6D8E",
-                      }}
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                          }}
+                        />
+                      }
+                      label="In-Active"
+                      className="me-0"
+                      value="in-active"
+                      checked={
+                        vendorState.status === "" &&
+                        queryFilterState.status.includes("in-active")
+                      }
                     />
-                  }
-                  label="In-Active"
-                  className="me-0"
-                  value="in-active"
-                  checked={
-                    vendorState.status === "" &&
-                    queryFilterState.status.includes("in-active")
-                  }
-                />
-              </FormGroup>
-            </Popover>
+                  </FormGroup>
+                </Popover>
+              </React.Fragment>
+            )}
 
             <button
               className="button-grey py-2 px-3 ms-2"

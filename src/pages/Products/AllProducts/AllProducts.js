@@ -1819,60 +1819,33 @@ const handleAlphabeticalSorting = (event) => {
                             // value={recommendedProductRadio}
                             // onChange={handleRecommendedProductRadio}
                           >
-                            <FormControlLabel
-                              value="active"
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  sx={{ color: "#C8D8FF" }}
-                                />
-                              }
-                              label="Active"
-                              onChange={handleStatusChange}
-                              checked={statusFilter.includes("active")}
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                            <FormControlLabel
-                              value="in-active"
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  sx={{ color: "#C8D8FF" }}
-                                />
-                              }
-                              label="In Active"
-                              onChange={handleStatusChange}
-                              checked={statusFilter.includes("in-active")}
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
-                            <FormControlLabel
-                              value="scheduled"
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  sx={{ color: "#C8D8FF" }}
-                                />
-                              }
-                              label="Scheduled"
-                              onChange={handleStatusChange}
-                              checked={statusFilter.includes("scheduled")}
-                              sx={{
-                                "& .MuiTypography-root": {
-                                  fontSize: 13,
-                                  color: "#c8d8ff",
-                                },
-                              }}
-                            />
+                         <FormControlLabel
+                    value="active"
+                    control={
+                      <Checkbox size="small" sx={{ color: "#C8D8FF" }} />
+                    }
+                    label="Active"
+                    onChange={handleStatusChange}
+                    checked={queryFilterState.firstStatus ==="" && queryFilterState.status.includes("active")}
+                  />
+                  <FormControlLabel
+                    value="in-active"
+                    control={
+                      <Checkbox size="small" sx={{ color: "#C8D8FF" }} />
+                    }
+                    label="In-Active"
+                    onChange={handleStatusChange}
+                    checked={queryFilterState.firstStatus ==="" && queryFilterState.status.includes("in-active")}
+                  />
+                  <FormControlLabel
+                    value="scheduled"
+                    control={
+                      <Checkbox size="small" sx={{ color: "#C8D8FF" }} />
+                    }
+                    label="Scheduled"
+                    onChange={handleStatusChange}
+                    checked={queryFilterState.firstStatus ==="" && queryFilterState.status.includes("scheduled")}
+                  />
                           </RadioGroup>
                         </AccordionDetails>
                       </Accordion>

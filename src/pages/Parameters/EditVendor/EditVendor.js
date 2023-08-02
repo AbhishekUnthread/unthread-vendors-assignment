@@ -44,6 +44,8 @@ const initialQueryFilterState = {
   pageSize: 1,
   pageNo: null,
   totalCount: 0,
+  order: null,
+  srNo: null,
 };
 const initialVendorState = {
   isEditing: false,
@@ -62,6 +64,18 @@ const queryFilterReducer = (state, action) => {
     return {
       ...state,
       totalCount: action.totalCount,
+    };
+  }
+  if (action.type === "SET_ORDER") {
+    return {
+      ...state,
+      order: action.order,
+    };
+  }
+  if (action.type === "SET_SERIAL_NUMBER") {
+    return {
+      ...state,
+      srNo: action.srNo,
     };
   }
   return initialQueryFilterState;
@@ -130,6 +144,12 @@ const EditVendor = () => {
     initialVendorState
   );
   const [searchParams, setSearchParams] = useSearchParams();
+  const [decodedObject, setDecodedObject] = useState(null);
+  console.log("ehfdje", decodedObject);
+
+  useEffect(() => {
+    dispatchQueryFilter({ type: "SET_SERIAL_NUMBER", srNo: id });
+  }, [id]);
 
   const {
     data: vendorsData,
@@ -137,7 +157,17 @@ const EditVendor = () => {
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
     isError: vendorsIsError,
-  } = useGetAllVendorsQuery({ id: id });
+  } = useGetAllVendorsQuery({
+    srNo: queryFilterState?.srNo,
+    ...decodedObject,
+    order: queryFilterState?.order,
+    pageSize: 1,
+    pageNo: "0",
+    alphabetical: decodedObject?.alphabetical,
+    createdAt: decodedObject?.createdAt,
+    name: decodedObject?.name,
+    status: decodedObject?.status,
+  });
 
   const [
     editVendor,
@@ -150,20 +180,46 @@ const EditVendor = () => {
   ] = useEditVendorMutation();
 
   const nextPageHandler = () => {
-    const { pageNo, totalCount } = queryFilterState;
+    // const { pageNo, totalCount } = queryFilterState;
 
-    if (pageNo + 1 > totalCount) {
+    // if (pageNo + 1 > totalCount) {
+    //   return;
+    // }
+    // navigate(`/parameters/vendors/edit/${pageNo + 1}/${filter}`);
+    const { pageNo } = queryFilterState;
+    if (vendorsData?.data?.nextCount === 0) {
       return;
     }
-    navigate(`/parameters/vendors/edit/${pageNo + 1}/${filter}`);
+    dispatchQueryFilter({ type: "SET_ORDER", order: 1 });
+    dispatchQueryFilter({
+      type: "SET_PAGE_NO",
+      pageNo: vendorsData?.data?.data?.[0]?.srNo,
+    });
+    navigate({
+      pathname: `/parameters/vendors/edit/${pageNo}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({...decodedObject,order:1}),
+      })}`,
+    });
   };
 
   const prevPageHandler = () => {
+    // const { pageNo } = queryFilterState;
+    // if (pageNo - 1 === 0) {
+    //   return;
+    // }
+    // navigate(`/parameters/vendors/edit/${pageNo - 1}/${filter}`);
     const { pageNo } = queryFilterState;
-    if (pageNo - 1 === 0) {
-      return;
+    if( vendorsData?.data?.prevCount === 0){
+      return
     }
-    navigate(`/parameters/vendors/edit/${pageNo - 1}/${filter}`);
+    dispatchQueryFilter({ type: "SET_ORDER", order: -1 });
+    navigate({
+      pathname: `/parameters/categories/edit/${pageNo}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify(decodedObject),
+      })}`,
+    });
   };
 
   const backHandler = () => {
@@ -215,10 +271,10 @@ const EditVendor = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: vendorsData?.data?.data[0].name || "",
-      notes: vendorsData?.data?.data[0].notes,
-      status: vendorsData?.data?.data[0].status,
-      filter: vendorsData?.data?.data[0].showFilter || false,
+      name: vendorsData?.data?.data[0]?.name || "",
+      notes: vendorsData?.data?.data[0]?.notes,
+      status: vendorsData?.data?.data[0]?.status,
+      filter: vendorsData?.data?.data[0]?.showFilter || false,
     },
     enableReinitialize: true,
     validationSchema: vendorValidationSchema,
@@ -238,7 +294,6 @@ const EditVendor = () => {
           .then(() => {
             dispatchVendor({ type: "DISABLE_EDIT" });
             dispatch(showSuccess({ message: "Vendor edited successfully" }));
-            // navigate(`/parameters/vendors?status=${decodedObject.tab}`);
           });
       }
     },
@@ -253,6 +308,24 @@ const EditVendor = () => {
       dispatchVendor({ type: "DISABLE_EDIT" });
     }
   }, [formik.initialValues, formik.values, id]);
+
+  useEffect(() => {
+    const encodedString = searchParams.get("filter");
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+    setDecodedObject(parsedObject);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (vendorsData?.data?.data?.[0]?.srNo) {
+      dispatchQueryFilter({
+        type: "SET_PAGE_NO",
+        pageNo: vendorsData?.data?.data?.[0]?.srNo,
+      });
+    }
+  }, [vendorsData]);
+
 
   return (
     <div

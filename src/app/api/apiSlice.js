@@ -33,6 +33,7 @@ const apiSlice = createApi({
     "ProductTabs",
     "Options",
     "Attributes",
+    "Inventory",
     "SubOptions",
     "SubAttributes",
     "Customers",

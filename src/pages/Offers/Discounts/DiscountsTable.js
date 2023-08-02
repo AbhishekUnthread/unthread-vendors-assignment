@@ -103,23 +103,29 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
       label: "Name",
     },
     {
-      id: "discountType",
+      id: "discount",
       numeric: false,
       disablePadding: false,
-      label: "Discount Type",
+      label: "Discount",
     },
     {
-      id: "timePeriod",
+      id: "type",
       numeric: false,
       disablePadding: false,
-      label: "Time Period",
+      label: "Type",
     },
-    {
-      id: "totalUsage",
-      numeric: false,
-      disablePadding: false,
-      label: "Total Usage",
-    },
+    // {
+    //   id: "timePeriod",
+    //   numeric: false,
+    //   disablePadding: false,
+    //   label: "Time Period",
+    // },
+    // {
+    //   id: "totalUsage",
+    //   numeric: false,
+    //   disablePadding: false,
+    //   label: "Total Usage",
+    // },
     {
       id: "status",
       numeric: false,
@@ -143,7 +149,7 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = list.map((n) => n.dId);
+      const newSelected = list?.map((n) => n.dId);
       setSelected(newSelected);
       return;
     }
@@ -203,7 +209,7 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={list.length}
+            rowCount={list?.length}
             headCells={headCells}
           />
           <TableBody>
@@ -254,7 +260,7 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
                         </p>
                       </div>
                     </TableCell>
-                    <TableCell style={{ width: 180 }}>
+                    {/* <TableCell style={{ width: 180 }}>
                       <div className="d-flex flex-column">
                         <div className="d-flex align-items-center">
                           <p className="text-lightBlue me-2">
@@ -275,22 +281,22 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
                           {row.discountType}
                         </small>
                       </div>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell style={{ width: 180 }}>
                       <div className="d-flex flex-column">
                         <div className="d-flex">
                           <p className="text-lightBlue">{row.timePeriod}</p>
                         </div>
-                        <small className="text-grey-6 mt-1 d-block">
-                          {row.date}
-                        </small>
+                        <p className="text-lightBlue me-2">
+                          {row?.mainDiscount?.discountCode}
+                       </p>
                       </div>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
                       <div className="d-flex flex-column">
                         <div className="d-flex">
                           <p className="text-lightBlue me-2">
-                            {row.totalUsage}
+                            {row?.mainDiscount?.type}
                           </p>
                         </div>
                       </div>
