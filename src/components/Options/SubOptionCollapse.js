@@ -1,6 +1,7 @@
 import { Grid } from "@mui/material";
 
 import EditButton from "../EditButton/EditButton";
+import DeleteIconButton from "../DeleteIconButton/DeleteIconButton";
 
 const FRONTEND_APPEARANCE = {
   dropDownList: "Drop-Down List",
@@ -12,7 +13,7 @@ const FRONTEND_APPEARANCE = {
 };
 
 const SubOptionCollapse = (props) => {
-  const { id, attributeId, formik, index, onEdit } = props;
+  const { id, attributeId, formik, index, onEdit, onSubOptionDelete } = props;
   return (
     <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4 ">
       <Grid container style={{ gap: "10px" }}>
@@ -51,6 +52,16 @@ const SubOptionCollapse = (props) => {
                 </span>
               </div>
               <EditButton onClick={onEdit} />
+              <DeleteIconButton
+                onClick={onSubOptionDelete.bind(null, {
+                  deleteId: formik.values.subOptions[index]?._id,
+                  saved: formik.values.subOptions[index]?.saved,
+                  message: formik.values.subOptions[index]?.title
+                    ? `${formik.values.subOptions[index]?.title} sub option`
+                    : "sub option",
+                })}
+                title="Delete"
+              />
             </Grid>
           </Grid>
         </Grid>

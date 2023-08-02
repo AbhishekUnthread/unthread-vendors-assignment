@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Box, Paper, Tab, Tabs } from "@mui/material";
 import { useDispatch } from "react-redux";
 
@@ -19,8 +19,10 @@ import {
   showError,
 } from "../../../features/snackbar/snackbarAction";
 
+import { omitEmptyKeys } from "../../../utils/helper";
+
 const TAB_LIST = [
-  { id: 1, label: "all" },
+  { id: 1, label: "all options" },
   //   { id: 2, label: "archived" },
 ];
 
@@ -37,6 +39,7 @@ const initialOptionsState = {
   confirmationMessage: "",
   showDeleteModal: false,
   search: "",
+  firstRender: true,
 };
 
 const queryFilterReducer = (state, action) => {
@@ -57,7 +60,13 @@ const queryFilterReducer = (state, action) => {
     return {
       ...state,
       pageNo: initialQueryFilterState.pageNo,
-      title: action.title,
+      title: action.value,
+    };
+  }
+  if (action.type === "SET_FILTERS") {
+    return {
+      ...state,
+      ...action.filters,
     };
   }
   return initialQueryFilterState;
@@ -83,6 +92,7 @@ const optionReducer = (state, action) => {
   if (action.type === "REMOVE_DELETE") {
     return {
       ...initialOptionsState,
+      firstRender: false,
       search: state.search,
       totalCount: state.totalCount,
       data: state.data,
@@ -94,12 +104,19 @@ const optionReducer = (state, action) => {
       search: action.search,
     };
   }
+  if (action.type === "DISABLE_FIRST_RENDER") {
+    return {
+      ...state,
+      firstRender: false,
+    };
+  }
   return initialOptionsState;
 };
 
 const Options = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams("");
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -116,7 +133,9 @@ const Options = () => {
     isError: optionsIsError,
     isSuccess: optionsIsSuccess,
     isFetching: optionsDataIsFetching,
-  } = useGetAllOptionsQuery(queryFilterState);
+  } = useGetAllOptionsQuery(queryFilterState, {
+    skip: optionsState.firstRender,
+  });
 
   const [
     deleteOption,
@@ -136,7 +155,7 @@ const Options = () => {
   };
 
   const searchHandler = (value) => {
-    dispatchQueryFilter({ type: "SEARCH_TITLE", title: value });
+    dispatchQueryFilter({ type: "SEARCH_TITLE", value });
   };
 
   const searchValueHandler = (value) => {
@@ -199,6 +218,27 @@ const Options = () => {
       });
     }
   }, [optionsError, optionsIsSuccess, optionsData, dispatch]);
+
+  useEffect(() => {
+    if (optionsState.firstRender) {
+      // const search = omitEmptyKeys(JSON.parse(searchParams.get("search")));
+      // console.log({ search });
+      // dispatchQueryFilter({
+      //   type: "SET_FILTERS",
+      //   filters: search,
+      // });
+      // dispatchOptions({ type: "SEARCH_VALUE", search: search.title || '' });
+      dispatchOptions({ type: "DISABLE_FIRST_RENDER" });
+    }
+  }, [searchParams, optionsState.firstRender]);
+
+  // useEffect(() => {
+  //   if (!optionsState.firstRender) {
+  //     setSearchParams({
+  //       search: JSON.stringify(queryFilterState),
+  //     });
+  //   }
+  // }, [queryFilterState, setSearchParams, optionsState.firstRender]);
 
   return (
     <div className="container-fluid page">

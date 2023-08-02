@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { useDispatch } from "react-redux";
 import {
   FormControl,
   OutlinedInput,
@@ -107,6 +106,7 @@ const FRONTEND_APPEARANCE = [
 
 const SubOption = (props) => {
   const {
+    isEditing = false,
     id,
     attributeId,
     formik,
@@ -115,9 +115,8 @@ const SubOption = (props) => {
     onSubAttributeAdd,
     onSubAttributeDelete,
   } = props;
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(isEditing);
   const [subAttrIndex, setSubAttrIndex] = useState([]);
-  const dispatch = useDispatch();
 
   const subOptionAppearanceHandler = (e) => {
     formik.setFieldValue(`subOptions[${index}].apperance`, e.target.value);
@@ -150,6 +149,7 @@ const SubOption = (props) => {
         subOp.metaAttribute === formik.values.subOptions[index]?.metaAttribute
       );
     });
+    formik.handleChange(e);
     if (isDuplicate && isDuplicate.title && e.target.value.trim()) {
       formik.setFieldValue(
         `subOptions[${index}].error`,
@@ -158,7 +158,6 @@ const SubOption = (props) => {
       return;
     }
     formik.setFieldValue(`subOptions[${index}].error`, "");
-    formik.handleChange(e);
   };
 
   const collapsedHandler = () => {
@@ -209,6 +208,7 @@ const SubOption = (props) => {
       formik={formik}
       index={index}
       onEdit={editHandler}
+      onSubOptionDelete={onSubOptionDelete}
     />
   ) : (
     <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4 ">

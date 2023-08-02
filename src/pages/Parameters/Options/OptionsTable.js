@@ -20,6 +20,7 @@ import EditButton from "../../../components/EditButton/EditButton";
 import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
 import DeleteIconButton from "../../../components/DeleteIconButton/DeleteIconButton";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
+import TableLoader from "../../../components/Loader/TableLoader";
 
 const HEAD_CELLS = [
   {
@@ -88,9 +89,7 @@ const OptionsTable = (props) => {
   }
 
   if (isLoading) {
-    return (
-      <span className="d-flex justify-content-center m-3">Loading...</span>
-    );
+    return <TableLoader />;
   }
 
   if (!data) {

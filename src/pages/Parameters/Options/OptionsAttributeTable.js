@@ -130,9 +130,11 @@ const OptionsAttributeTable = (props) => {
                         alt="sort"
                         style={{
                           transform: collapseStatus[attribute._id]
-                            ? "rotate(-180deg)"
-                            : "rotate(0deg)",
+                            ? "rotate(0deg)"
+                            : "rotate(-90deg)",
                           transition: "all .2s",
+                          width: "16px",
+                          height: "16px",
                         }}
                       />
                     </button>
@@ -155,6 +157,7 @@ const OptionsAttributeTable = (props) => {
                         if (subOption.metaAttribute === attribute._id) {
                           return (
                             <SubOption
+                              isEditing={!!isEditing}
                               key={subOption._id}
                               id={subOption._id}
                               attributeId={attribute._id}

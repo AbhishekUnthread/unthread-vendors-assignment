@@ -52,6 +52,7 @@ const SubAttribute = (props) => {
           formik.values?.subAttributes[index]?.metaSubAttribute
       );
     });
+    formik.handleChange(e);
     if (isDuplicate && isDuplicate.title && e.target.value.trim()) {
       formik.setFieldValue(
         `subAttributes[${index}].error`,
@@ -60,7 +61,6 @@ const SubAttribute = (props) => {
       return;
     }
     formik.setFieldValue(`subAttributes[${index}].error`, "");
-    formik.handleChange(e);
   };
 
   useEffect(() => {
