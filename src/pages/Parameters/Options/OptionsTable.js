@@ -71,6 +71,7 @@ const OptionsTable = (props) => {
     error,
     isLoading,
     data,
+    dataSecondary,
     totalCount,
     onPageChange,
     onPageSize,
@@ -129,21 +130,20 @@ const OptionsTable = (props) => {
                     </p>
                   </TableCell>
                   <TableCell>
-                    {/* <div className="d-flex flex-wrap align-items-center gap-2">
-                      {item.customFields.length ? (
-                        item.customFields.map((field) => {
+                    <div className="d-flex flex-wrap align-items-center gap-2">
+                      {dataSecondary.map((secondaryItem) => {
+                        if (secondaryItem.attribute === item._id) {
                           return (
                             <Chip
-                              key={field._id}
-                              label={field.title}
+                              key={secondaryItem._id}
+                              label={`${secondaryItem.title} (${secondaryItem.metaSubAttributes.length})`}
                               size="small"
                             />
                           );
-                        })
-                      ) : (
-                        <></>
-                      )}
-                    </div> */}
+                        }
+                        return null;
+                      })}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="d-flex align-items-center justify-content-end">

@@ -136,6 +136,21 @@ const Options = () => {
   } = useGetAllOptionsQuery(queryFilterState, {
     skip: optionsState.firstRender,
   });
+  const {
+    data: attributesData,
+    isLoading: attributesIsLoading,
+    error: attributesError,
+    isError: attributesIsError,
+    isSuccess: attributesIsSuccess,
+    isFetching: attributesDataIsFetching,
+  } = useGetAllAttributesQuery(
+    {
+      attribute: optionsData?.data.map((option) => option._id),
+    },
+    {
+      skip: !!!optionsData?.data?.length,
+    }
+  );
 
   const [
     deleteOption,
@@ -210,14 +225,16 @@ const Options = () => {
         );
       }
     }
-    if (optionsIsSuccess) {
-      dispatchOptions({
-        type: "SET_DATA",
-        data: optionsData.data,
-        totalCount: optionsData.totalCount,
-      });
+    if (attributesError) {
+      if (attributesError?.data?.message) {
+        dispatch(showError({ message: attributesError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
     }
-  }, [optionsError, optionsIsSuccess, optionsData, dispatch]);
+  }, [optionsError, attributesError, dispatch]);
 
   useEffect(() => {
     if (optionsState.firstRender) {
@@ -283,9 +300,15 @@ const Options = () => {
           </div>
           <TabPanel value={0} index={0}>
             <OptionsTable
-              error={optionsIsError}
-              isLoading={optionsIsLoading || optionsDataIsFetching}
-              data={optionsState?.data}
+              error={optionsIsError || attributesIsError}
+              isLoading={
+                optionsIsLoading ||
+                optionsDataIsFetching ||
+                attributesIsLoading ||
+                attributesDataIsFetching
+              }
+              data={optionsData?.data}
+              dataSecondary={attributesData?.data}
               totalCount={optionsState?.totalCount}
               onPageChange={pageChangeHandler}
               onPageSize={pageSizeHandler}
