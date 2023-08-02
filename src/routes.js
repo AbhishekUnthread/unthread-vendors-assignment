@@ -215,7 +215,7 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to="collections" replace={true} />,
+                  element: <Navigate to="categories" replace={true} />,
                 },
                 {
                   path: "collections",
