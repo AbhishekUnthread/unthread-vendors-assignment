@@ -1,6 +1,11 @@
 import { useEffect, useReducer } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useSearchParams,
+  createSearchParams,
+} from "react-router-dom";
 import {
   FormControl,
   OutlinedInput,
@@ -229,8 +234,6 @@ const optionValidationSchema = Yup.object({
 
 const initialOptionQueryFilterState = {
   id: null,
-  pageSize: 1,
-  pageNo: null,
 };
 
 const initialOptionState = {
@@ -253,13 +256,6 @@ const initialDeletedOptionState = {
 };
 
 const optionQueryFilterReducer = (state, action) => {
-  if (action.type === "SET_PAGE_NO") {
-    return {
-      ...state,
-      id: initialOptionQueryFilterState.id,
-      pageNo: +action.pageNo,
-    };
-  }
   if (action.type === "SET_ID") {
     return {
       ...initialOptionQueryFilterState,
@@ -398,6 +394,7 @@ const deleteOptionReducer = (state, action) => {
 const OptionsInfo = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams("");
   let { id } = useParams();
   const [optionQueryFilterState, dispatchOptionQueryFilter] = useReducer(
     optionQueryFilterReducer,
@@ -420,8 +417,7 @@ const OptionsInfo = () => {
     isSuccess: optionsIsSuccess,
     isFetching: optionsDataIsFetching,
   } = useGetAllOptionsQuery(optionQueryFilterState, {
-    skip:
-      optionQueryFilterState.pageNo || optionQueryFilterState.id ? false : true,
+    skip: optionQueryFilterState.id ? false : true,
   });
 
   const {
@@ -835,22 +831,18 @@ const OptionsInfo = () => {
 
   const backHandler = () => {
     navigate("/parameters/options");
+
+    navigate({
+      pathname: "/parameters/options",
+      search: `?${createSearchParams({
+        search: searchParams.get("search")
+      })}`,
+    });
   };
 
-  const nextPageHandler = () => {
-    const { pageNo } = optionQueryFilterState;
-    const { totalCount } = optionState;
-    if (pageNo + 1 > totalCount) {
-      return;
-    }
-  };
+  const nextPageHandler = () => {};
 
-  const prevPageHandler = () => {
-    const { pageNo } = optionQueryFilterState;
-    if (pageNo - 1 === 0) {
-      return;
-    }
-  };
+  const prevPageHandler = () => {};
 
   const deleteAttributeHandler = ({ deleteId, saved, message }) => {
     if (optionFormik.values.attributes?.length === 1) {
@@ -1129,7 +1121,7 @@ const OptionsInfo = () => {
 
   useEffect(() => {
     if (id) {
-      dispatchOptionQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+      dispatchOptionQueryFilter({ type: "SET_ID", id });
     }
   }, [id]);
 
@@ -1176,6 +1168,8 @@ const OptionsInfo = () => {
         onPrev={prevPageHandler}
         onNext={nextPageHandler}
         isEdit={!!id}
+        hasPrev={0}
+        hasNext={0}
       />
       <form
         className="product-form"

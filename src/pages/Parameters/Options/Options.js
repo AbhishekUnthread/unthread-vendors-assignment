@@ -1,5 +1,9 @@
 import { useEffect, useReducer } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { Box, Paper, Tab, Tabs } from "@mui/material";
 import { useDispatch } from "react-redux";
 
@@ -173,10 +177,13 @@ const Options = () => {
     dispatchOptions({ type: "SEARCH_VALUE", search: value });
   };
 
-  const editHandler = (index) => {
-    const currentOption =
-      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-    navigate(`./edit/${currentOption}`);
+  const editHandler = (optionId) => {
+    navigate({
+      pathname: `./edit/${optionId}`,
+      search: `?${createSearchParams({
+        search: JSON.stringify(queryFilterState),
+      })}`,
+    });
   };
 
   const createOptionHandler = () => {
@@ -262,7 +269,7 @@ const Options = () => {
       });
     }
   }, [queryFilterState, setSearchParams, optionsState.firstRender]);
-  console.log("test");
+
   return (
     <div className="container-fluid page">
       <PageTitleBar
