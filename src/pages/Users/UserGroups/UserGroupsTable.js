@@ -1,5 +1,17 @@
-import { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+// ! COMPONENTS IMPORTS
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../components/TableDependencies/TableDependencies";
+import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
+import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+// ! IMAGES IMPORTS
+import verticalDots from "../../../assets/icons/verticalDots.svg";
+import deleteRed from "../../../assets/icons/delete.svg";
+// ! MATERIAL IMPORTS
 import {
   Checkbox,
   Popover,
@@ -11,17 +23,7 @@ import {
   TableRow,
 } from "@mui/material";
 
-import {
-  EnhancedTableHead,
-  stableSort,
-  getComparator,
-} from "../../../components/TableDependencies/TableDependencies";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
-import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
-
-import verticalDots from "../../../assets/icons/verticalDots.svg";
-import deleteRed from "../../../assets/icons/delete.svg";
-
+// ? TABLE STARTS HERE
 function createData(uId, groupName, usersInGroup, status) {
   return { uId, groupName, usersInGroup, status };
 }
@@ -59,15 +61,19 @@ const headCells = [
   },
 ];
 
-const UserGroupsTable = ({ data }) => {
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("groupName");
-  const [selected, setSelected] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [anchorActionEl, setAnchorActionEl] = useState(null);
+// ? TABLE ENDS HERE
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+const UserGroupsTable = ({ data }) => {
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("groupName");
+  const [selected, setSelected] = React.useState([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  console.log(data, 'data dklj');
+
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -104,6 +110,7 @@ const UserGroupsTable = ({ data }) => {
         selected.slice(selectedIndex + 1)
       );
     }
+
     setSelected(newSelected);
   };
 
@@ -113,6 +120,9 @@ const UserGroupsTable = ({ data }) => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  // * ACTION POPOVERS STARTS
+  const [anchorActionEl, setAnchorActionEl] = React.useState(null);
 
   const handleActionClick = (event) => {
     setAnchorActionEl(event.currentTarget);
@@ -124,9 +134,10 @@ const UserGroupsTable = ({ data }) => {
 
   const openActions = Boolean(anchorActionEl);
   const idActions = openActions ? "simple-popover" : undefined;
+  // * ACTION POPOVERS ENDS
 
   return (
-    <>
+    <React.Fragment>
       {selected.length > 0 && (
         <div className="d-flex align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
@@ -161,8 +172,9 @@ const UserGroupsTable = ({ data }) => {
           />
           <TableBody>
             {stableSort(data, getComparator(order, orderBy))
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const isItemSelected = isSelected(row._id);
+                const isItemSelected = isSelected(row?._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -171,7 +183,7 @@ const UserGroupsTable = ({ data }) => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row._id}
+                    key={row?._id}
                     selected={isItemSelected}
                     className="table-rows"
                   >
@@ -181,7 +193,7 @@ const UserGroupsTable = ({ data }) => {
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
-                        onClick={(event) => handleClick(event, row._id)}
+                        onClick={(event) => handleClick(event, row?._id)}
                         size="small"
                         style={{
                           color: "#5C6D8E",
@@ -210,7 +222,7 @@ const UserGroupsTable = ({ data }) => {
                       <div className="d-flex align-items-center">
                         <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
                           <small className="text-black fw-400">
-                            {row?.active == true ? "Active" : "In-Active"}
+                            {row?.status == true ? "Active" : "In-Active"}
                           </small>
                         </div>
                       </div>
@@ -283,7 +295,7 @@ const UserGroupsTable = ({ data }) => {
         onRowsPerPageChange={handleChangeRowsPerPage}
         className="table-pagination"
       />
-    </>
+    </React.Fragment>
   );
 };
 
