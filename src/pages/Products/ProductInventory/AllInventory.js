@@ -16,7 +16,8 @@ import { EnhancedTableHead } from "../../../components/TableDependencies/TableDe
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 // !IMAGES IMPORTS
-import storeIcon from "../../../assets/icons/storeIcon.svg";
+import storeIcon from "../../../assets/images/users/collection_defaultdp.svg";
+// import storeIcon from "../../../assets/icons/storeIcon.svg";
 // ! MATERIAL ICONS IMPORTS
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -249,14 +250,6 @@ const AllInventory = ({
                       </TableRow>
                     );
                   })}
-                  {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: 53 * emptyRows,
-                      }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
                 </TableBody>
               </Table>
             </TableContainer>

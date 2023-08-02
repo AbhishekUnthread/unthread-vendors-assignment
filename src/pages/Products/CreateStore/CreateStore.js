@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./CreateStore.scss";
 import { Link, useNavigate } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
@@ -17,6 +16,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   InputAdornment,
   MenuItem,
   OutlinedInput,
@@ -31,39 +31,19 @@ import { TimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import moment from "moment";
-
-const dayObj = {
-  status: Yup.string().oneOf(["closed", "open"]),
-  to: Yup.string().when("status", (status, schema) =>
-    status === "open" ? schema.required("Required") : schema.nullable(true)
-  ),
-  from: Yup.string().when("status", (status, schema) =>
-    status === "open" ? schema.required("Required") : schema.nullable(true)
-  ),
-  visible: Yup.boolean(),
-};
-
-const storeValidationSchema = Yup.object({
-  name: Yup.string().trim().required("required"),
-  phone: Yup.string().trim().required("required"),
-  email: Yup.string().trim().lowercase().email("email is not valid").required("required"),
-  countryCode: Yup.string().trim().required("required"),
-  storeHours: Yup.object({
-    monday: Yup.object(dayObj),
-    tuesday: Yup.object(dayObj),
-    wednesday: Yup.object(dayObj),
-    thursday: Yup.object(dayObj),
-    friday: Yup.object(dayObj),
-    saturday: Yup.object(dayObj),
-    sunday: Yup.object(dayObj),
-  }),
-});
+import AppCitySelect from "../../../components/AppCitySelect/AppCitySelect";
+import AppGenericSelect from "../../../components/AppGenericSelect/AppGenericSelect";
+import { useGetAllCityQuery } from "../../../features/master/city/cityApiSlice";
+import { useGetAllStateQuery } from "../../../features/master/state/stateApiSlice";
+import { useGetAllCountryQuery } from "../../../features/master/country/countryApiSlice";
+// import MapDirections from "../../../components/GoogleMapDirections/GoogleMapDirections/GoogleMapDirections";
 
 const storeInitialValue = {
   name: "",
-  countryCode: "",
   phone: "",
   email: "",
+  countryCode: "",
+  isDefault: false,
   status: "active",
   managerDetails: {
     fullName: "",
@@ -118,7 +98,7 @@ const storeInitialValue = {
       from: "",
     },
   },
-  mediaUrl: "",
+  mediaUrl: [],
   notes: "",
   settings: {
     fullfillOnlineOrder: true,
@@ -126,37 +106,102 @@ const storeInitialValue = {
   },
 };
 
+const dayObj = {
+  status: Yup.string().oneOf(["closed", "open"]),
+  from: Yup.string().when("status", (status, schema) =>
+    status === "open" ? schema.required("required") : schema.nullable(true)
+  ),
+  to: Yup.string().when("status", (status, schema) =>
+    status === "open" ? schema.required("required") : schema.nullable(true)
+  ),
+};
+
+const storeValidationSchema = Yup.object({
+  name: Yup.string().trim().required("required"),
+  countryCode: Yup.string().trim().required("required"),
+  phone: Yup.number().required("required"),
+  email: Yup.string().trim().email("email is not valid").required("required"),
+  status: Yup.string().oneOf(["active", "in-active"]),
+  managerDetails: Yup.object({
+    fullName: Yup.string().trim(),
+    countryCode: Yup.string().trim(),
+    phone: Yup.number(),
+    email: Yup.string().trim().email("email is not valid"),
+  }),
+  address: Yup.object({
+    country: Yup.string().required("required"),
+    line1: Yup.string().required("required"),
+    line2: Yup.string(),
+    city: Yup.string().required("required"),
+    pincode: Yup.number().required("required"),
+    state: Yup.string().required("required"),
+    lattitude: Yup.string(),
+    longitude: Yup.string(),
+  }),
+  storeHours: Yup.object({
+    monday: Yup.object(dayObj),
+    tuesday: Yup.object(dayObj),
+    wednesday: Yup.object(dayObj),
+    thursday: Yup.object(dayObj),
+    friday: Yup.object(dayObj),
+    saturday: Yup.object(dayObj),
+    sunday: Yup.object(dayObj),
+  }),
+  mediaUrl: Yup.array(),
+  notes: Yup.string(),
+  settings: Yup.object({
+    fullfillOnlineOrder: Yup.boolean(),
+    enableStorePickup: Yup.boolean(),
+  }),
+});
+
 const CreateStore = () => {
   const navigate = useNavigate();
   const [createStore] = useCreateStoreMutation();
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: storeInitialValue,
     validationSchema: storeValidationSchema,
     onSubmit: (values) => {
-      console.log(values);
-      // values.countryCode = values.managerDetails.countryCode = values.address.country;
-      createStore(values).then(() => navigate("/products/inventory"));
+      // console.log({ values });
+      createStore(values)
+        .unwrap()
+        .then(() => navigate("/products/inventory"))
+        .catch((e) => console.log(e));
     },
   });
+
+  console.log(formik.touched);
+  // console.log(formik.errors);
+  // console.log(formik.values);
 
   const updateStateValue = (value) => formik.setFieldValue("address.state", value);
   const updateCountryValue = (value) => formik.setFieldValue("address.country", value);
   const updateStoreStatus = (value, status) => formik.setFieldValue("status", status);
-  const updateMediaUrl = (value) => formik.setFieldValue("mediaUrl", value ?? "");
+  // const updateMediaUrl = (value) => formik.setFieldValue("mediaUrl", value ?? "");
   const updateCountryCodeValue = (value) => formik.setFieldValue("countryCode", value ?? "");
   const updateManagerDetailsCountryCodeValue = (value) =>
     formik.setFieldValue("managerDetails.countryCode", value ?? "");
 
+  const setDayToTimings = (dayName = "", timeValue = "") => formik.setFieldValue(`storeHours.${dayName}.to`, timeValue);
+  const setDayFromTimings = (dayName = "", timeValue = "") =>
+    formik.setFieldValue(`storeHours.${dayName}.from`, timeValue);
   const resetDayTimings = (dayName = "") => {
     formik.setFieldValue(`storeHours.${dayName}.to`, "10:00");
     formik.setFieldValue(`storeHours.${dayName}.from`, "18:30");
   };
 
-  const setDayFromTimings = (dayName = "", timeValue = "") =>
-    formik.setFieldValue(`storeHours.${dayName}.from`, timeValue);
+  const addressStateHandler = (_, value) => {
+    formik.setFieldValue("address.state", value?._id || "");
+  };
 
-  const setDayToTimings = (dayName = "", timeValue = "") => formik.setFieldValue(`storeHours.${dayName}.to`, timeValue);
+  const changeCityHandler = (_, value) => formik.setFieldValue("address.city", value?._id ?? "");
+  const changeStateHandler = (_, value) => formik.setFieldValue("address.state", value?._id ?? "");
+  const changeCountryHandler = (_, value) => formik.setFieldValue("address.country", value?._id ?? "");
+
+  const changeManagerCountryCodeHandler = (_, value) =>
+    formik.setFieldValue("managerDetails.countryCode", value?._id ?? "");
 
   return (
     <form
@@ -211,7 +256,9 @@ const CreateStore = () => {
                       name="name"
                       value={formik.values.name}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                     />
+                    <FormHelperText error>{formik.touched.name && formik.errors.name}</FormHelperText>
                   </FormControl>
                 </div>
                 <div className="col-md-12 mt-3">
@@ -223,16 +270,31 @@ const CreateStore = () => {
                       name="phone"
                       value={formik.values.phone}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       sx={{ paddingLeft: 0 }}
                       startAdornment={
                         <InputAdornment position="start">
-                          <AppMobileCodeSelect
+                          <AppGenericSelect
+                            hasImg
+                            dataId="_id"
+                            dataLabel="countryCode"
+                            dataImgUrl="imageUrl"
+                            name="countryCode"
+                            value={formik.values.countryCode}
+                            error={formik.touched.countryCode ? formik.errors.countryCode : ""}
+                            onChange={changeCityHandler}
+                            formik={formik}
+                            useGetQuery={useGetAllCountryQuery}
+                            getQueryFilters={{ createdAt: -1 }}
+                          />
+                          {/* <AppMobileCodeSelect
                             GetCountryCode={updateCountryCodeValue}
                             SelectCountryCode={updateCountryCodeValue}
-                          />
+                          /> */}
                         </InputAdornment>
                       }
                     />
+                    <FormHelperText error>{formik.touched.phone && formik.errors.phone}</FormHelperText>
                   </FormControl>
                 </div>
                 <div className="col-md-12 mt-3">
@@ -256,7 +318,9 @@ const CreateStore = () => {
                       name="email"
                       value={formik.values.email}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                     />
+                    <FormHelperText error>{formik.touched.email && formik.errors.email}</FormHelperText>
                   </FormControl>
                 </div>
               </div>
@@ -276,7 +340,9 @@ const CreateStore = () => {
                   name="address.line1"
                   value={formik.values.address.line1}
                   onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                <FormHelperText error>{formik.touched.address?.line1 && formik.errors.address?.line1}</FormHelperText>
               </FormControl>
             </div>
             <div className="col-md-6 pe-0 mt-3">
@@ -291,21 +357,33 @@ const CreateStore = () => {
                   name="address.line2"
                   value={formik.values.address.line2}
                   onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                <FormHelperText error>{formik.touched.address?.line2 && formik.errors.address?.line2}</FormHelperText>
               </FormControl>
             </div>
+
             <div className="col-md-6 ps-0 mt-3">
               <p className="text-lightBlue mb-1">Town / City</p>
-              <FormControl className="w-100 px-0">
-                <OutlinedInput
-                  placeholder="Enter Town / City"
-                  size="small"
-                  name="address.city"
-                  value={formik.values.address.city}
-                  onChange={formik.handleChange}
-                />
-              </FormControl>
+
+              <AppGenericSelect
+                name="address.city"
+                dataId="_id"
+                dataLabel="name"
+                value={formik.values.address.city}
+                error={formik.touched.address?.city ? formik.errors.address?.city : ""}
+                onChange={changeCityHandler}
+                formik={formik}
+                useGetQuery={useGetAllCityQuery}
+                getQueryFilters={{ createdAt: -1 }}
+              />
+              {/* <AppCitySelect
+                name="address.city"
+                GetCountryName={updateCityValue}
+                SelectCityName={updateCityValue}
+              /> */}
             </div>
+
             <div className="col-md-6 pe-0 mt-3">
               <p className="text-lightBlue mb-1">Zipcode / Postalcode</p>
               <FormControl className="w-100 px-0">
@@ -315,38 +393,71 @@ const CreateStore = () => {
                   name="address.pincode"
                   value={formik.values.address.pincode}
                   onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                <FormHelperText error>
+                  {formik.touched.address?.pincode && formik.errors.address?.pincode}
+                </FormHelperText>
               </FormControl>
             </div>
 
             <div className="col-md-12 px-0 mt-3 add-user-country">
               <p className="text-lightBlue mb-1">State or Region</p>
-              <AppStateSelect
+              <AppGenericSelect
                 name="address.state"
-                getStateName={updateStateValue}
-                SelectStateName={updateStateValue}
+                dataId="_id"
+                dataLabel="name"
+                value={formik.values.address.state}
+                error={formik.touched.address?.state ? formik.errors.address?.state : ""}
+                onChange={changeStateHandler}
+                formik={formik}
+                // onChange={formik.handleChange}
+                // onBlur={formik.handleBlur}
+                useGetQuery={useGetAllStateQuery}
+                getQueryFilters={{ createdAt: -1 }}
               />
+              {/* <AppStateSelect
+                name="address.state"
+                // getStateName={updateStateValue}
+                // SelectStateName={updateStateValue}
+                onChange={addressStateHandler}
+                onBlur={formik.handleBlur}
+                value={formik.values.address.state}
+              /> */}
             </div>
 
             <div className="col-md-12 px-0 mt-3 add-user-country">
               <p className="text-lightBlue mb-1">Country</p>
-              <AppCountrySelect
+              <AppGenericSelect
+                name="address.country"
+                dataId="_id"
+                dataLabel="name"
+                value={formik.values.address.country}
+                error={formik.touched.address?.country ? formik.errors.address?.country : ""}
+                onChange={changeCountryHandler}
+                formik={formik}
+                // onChange={formik.handleChange}
+                // onBlur={formik.handleBlur}
+                useGetQuery={useGetAllCountryQuery}
+                getQueryFilters={{ createdAt: -1 }}
+              />
+              {/* <AppCountrySelect
                 name="address.country"
                 GetCountryName={updateCountryValue}
                 SelectCountryName={updateCountryValue}
-              />
+              /> */}
             </div>
 
             <div className="col-12 px-0 mt-3">
+              {/* <MapDirections /> */}
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15282225.79979123!2d73.7250245393691!3d20.750301298393563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30635ff06b92b791%3A0xd78c4fa1854213a6!2sIndia!5e0!3m2!1sen!2sin!4v1587818542745!5m2!1sen!2sin"
                 width="100%"
                 height="300"
-                frameborder="0"
+                frameBorder="0"
                 style={{ border: 0 }}
-                allowfullscreen=""
-                aria-hidden="false"
-                tabindex="0"
+                allowFullScreen
+                tabIndex="0"
                 title="store map"></iframe>
             </div>
             <div className="col-md-6 mt-3 ps-0">
@@ -358,7 +469,11 @@ const CreateStore = () => {
                   name="address.lattitude"
                   value={formik.values.address.lattitude}
                   onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                <FormHelperText error>
+                  {formik.touched.address?.lattitude && formik.errors.address?.lattitude}
+                </FormHelperText>
               </FormControl>
             </div>
             <div className="col-md-6 mt-3 pe-0">
@@ -370,7 +485,11 @@ const CreateStore = () => {
                   name="address.longitude"
                   value={formik.values.address.longitude}
                   onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                <FormHelperText error>
+                  {formik.touched.address?.longitude && formik.errors.address?.longitude}
+                </FormHelperText>
               </FormControl>
             </div>
           </div>
@@ -457,9 +576,8 @@ const CreateStore = () => {
           </div>
           <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4 row attributes">
             <div className="d-flex col-12 px-0 justify-content-between">
-              <div className="d-flex align-items-center">
-                <h6 className="text-lightBlue me-auto text-lightBlue fw-500">Manager Info</h6>
-              </div>
+              <h6 className="text-lightBlue fw-500">Manager Info</h6>
+              <small className="text-grey-6 mb-1">(Optional)</small>
             </div>
             <hr className="hr-grey-6 mt-3 mb-0" />
             <div className="col-12 px-0">
@@ -485,7 +603,11 @@ const CreateStore = () => {
                       name="managerDetails.fullName"
                       value={formik.values.managerDetails.fullName}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                     />
+                    <FormHelperText error>
+                      {formik.touched.managerDetails?.fullName && formik.errors.managerDetails?.fullName}
+                    </FormHelperText>
                   </FormControl>
                 </div>
                 <div className="col-md-12 mt-3">
@@ -497,17 +619,39 @@ const CreateStore = () => {
                       name="managerDetails.phone"
                       value={formik.values.managerDetails.phone}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       sx={{ paddingLeft: 0 }}
                       startAdornment={
                         <InputAdornment position="start">
-                          <AppMobileCodeSelect
+                          <AppGenericSelect
+                            hasImg
+                            dataId="_id"
+                            dataLabel="countryCode"
+                            dataImgUrl="imageUrl"
+                            name="managerDetails.countryCode"
+                            value={formik.values.managerDetails.countryCode}
+                            error={
+                              formik.touched.managerDetails?.countryCode
+                                ? formik.errors.managerDetails?.countryCode
+                                : ""
+                            }
+                            onChange={changeManagerCountryCodeHandler}
+                            formik={formik}
+                            // onChange={formik.handleChange}
+                            // onBlur={formik.handleBlur}
+                            useGetQuery={useGetAllCountryQuery}
+                            getQueryFilters={{ createdAt: -1 }}
+                          />
+                          {/* <AppMobileCodeSelect
                             GetCountryCode={updateManagerDetailsCountryCodeValue}
                             SelectCountryCode={updateManagerDetailsCountryCodeValue}
-                          />
-                          {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
+                          /> */}
                         </InputAdornment>
                       }
                     />
+                    <FormHelperText error>
+                      {formik.touched.managerDetails?.phone && formik.errors.managerDetails?.phone}
+                    </FormHelperText>
                   </FormControl>
                 </div>
                 <div className="col-md-12 mt-3">
@@ -519,7 +663,11 @@ const CreateStore = () => {
                       name="managerDetails.email"
                       value={formik.values.managerDetails.email}
                       onChange={formik.handleChange}
+                      onBlur={formik.onBlur}
                     />
+                    <FormHelperText error>
+                      {formik.touched.managerDetails?.email && formik.errors.managerDetails?.email}
+                    </FormHelperText>
                   </FormControl>
                 </div>
               </div>
@@ -530,73 +678,85 @@ const CreateStore = () => {
               <h6 className="text-lightBlue me-auto text-lightBlue fw-500">Setting</h6>
             </div>
 
-            <div className="d-flex align-items-center mt-3 col-12 px-0">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="settings.fullfillOnlineOrder"
-                    checked={formik.values.settings.fullfillOnlineOrder}
-                    onChange={formik.handleChange}
-                    size="small"
-                    style={{
-                      color: "#5C6D8E",
-                      marginRight: 0,
-                    }}
-                  />
-                }
-                label="Fulfill online orders from this location"
-                sx={{
-                  "& .MuiTypography-root": {
-                    fontSize: 13,
-                    color: "#C8D8FF",
-                  },
-                }}
-              />
-              <Tooltip
-                title="Lorem ipsum"
-                placement="top">
-                <img
-                  src={info}
-                  alt="info"
-                  className="ms-1 c-pointer"
-                  width={13.5}
+            <FormControl className="w-100 px-0">
+              <div className="d-flex align-items-center mt-3 col-12 px-0">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="settings.fullfillOnlineOrder"
+                      checked={formik.values.settings.fullfillOnlineOrder}
+                      onChange={formik.handleChange}
+                      onBlur={formik.onBlur}
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                        marginRight: 0,
+                      }}
+                    />
+                  }
+                  label="Fulfill online orders from this location"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#C8D8FF",
+                    },
+                  }}
                 />
-              </Tooltip>
-            </div>
+                <Tooltip
+                  title="Lorem ipsum"
+                  placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="ms-1 c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+              </div>
+              <FormHelperText error>
+                {formik.touched.settings?.fullfillOnlineOrder && formik.errors.settings?.fullfillOnlineOrder}
+              </FormHelperText>
+            </FormControl>
 
-            <div className="d-flex align-items-center mt-1 col-12 px-0">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="settings.enableStorePickup"
-                    checked={formik.values.settings.enableStorePickup}
-                    onChange={formik.handleChange}
-                    size="small"
-                    style={{
-                      color: "#5C6D8E",
-                      marginRight: 0,
-                    }}
-                  />
-                }
-                label="Enable Store Pickup"
-                sx={{
-                  "& .MuiTypography-root": {
-                    fontSize: 13,
-                    color: "#C8D8FF",
-                  },
-                }}
-              />
-              <Tooltip
-                title="Lorem ipsum"
-                placement="top">
-                <img
-                  src={info}
-                  alt="info"
-                  className="ms-1 c-pointer"
-                  width={13.5}
+            <FormControl className="w-100 px-0">
+              <div className="d-flex align-items-center mt-1 col-12 px-0">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="settings.enableStorePickup"
+                      checked={formik.values.settings.enableStorePickup}
+                      onChange={formik.handleChange}
+                      onBlur={formik.onBlur}
+                      size="small"
+                      style={{
+                        color: "#5C6D8E",
+                        marginRight: 0,
+                      }}
+                    />
+                  }
+                  label="Enable Store Pickup"
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 13,
+                      color: "#C8D8FF",
+                    },
+                  }}
                 />
-              </Tooltip>
-            </div>
+                <Tooltip
+                  title="Lorem ipsum"
+                  placement="top">
+                  <img
+                    src={info}
+                    alt="info"
+                    className="ms-1 c-pointer"
+                    width={13.5}
+                  />
+                </Tooltip>
+              </div>
+              <FormHelperText error>
+                {formik.touched.settings?.enableStorePickup && formik.errors.settings?.enableStorePickup}
+              </FormHelperText>
+            </FormControl>
           </div>
         </div>
         <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
@@ -609,10 +769,10 @@ const CreateStore = () => {
           <div className="mt-4">
             <UploadMediaBox
               name="mediaUrl"
-              value={formik?.values?.mediaUrl}
+              // value={formik?.values?.mediaUrl}
               imageName={addMedia}
               headingName={"Store Media"}
-              UploadChange={updateMediaUrl}
+              // UploadChange={updateMediaUrl}
               isUploaded={() => {}}
             />
           </div>
@@ -627,7 +787,7 @@ const CreateStore = () => {
       <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
         <div className="d-flex w-auto px-0">
           <Link
-            to="/users/allUsers"
+            to="/products/inventory"
             className="button-red-outline py-2 px-4">
             <p>Discard</p>
           </Link>
@@ -679,7 +839,6 @@ function StoreHoursWeekDay({
   resetDayTimings = () => {},
 }) {
   const handleStatusChange = (e) => {
-    console.log(e.target.value);
     if (e.target.value) resetDayTimings(dayName);
     formikHandleChange(e);
   };
@@ -688,19 +847,17 @@ function StoreHoursWeekDay({
   const handleFromChange = (newValue) => {
     setFrom(newValue);
     onFromTimeChange(dayName, newValue.format("HH:mm"));
-    console.log(newValue.format("HH:mm"));
   };
 
   const [to, setTo] = useState(moment(dayValues.to, "HH:mm"));
   const handleToChange = (newValue) => {
     setTo(newValue);
     onToTimeChange(dayName, newValue.format("HH:mm"));
-    console.log(newValue.format("HH:mm"));
   };
 
   return (
     <div className="col-12">
-      <div className="row align-items-center">
+      <div className="row align-items-center py-2">
         <div className="col-2">
           <span className="text-lightBlue text-capitalize">{dayName}</span>
         </div>
@@ -724,10 +881,15 @@ function StoreHoursWeekDay({
             <div className="col-3">
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <TimePicker
-                  label="From"
+                  label="Start Time"
                   value={from}
                   onChange={handleFromChange}
-                  renderInput={(params) => <TextField {...params} />}
+                  renderInput={(params) => (
+                    <TextField
+                      size="small"
+                      {...params}
+                    />
+                  )}
                 />
               </LocalizationProvider>
             </div>
@@ -735,10 +897,15 @@ function StoreHoursWeekDay({
             <div className="col-3">
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <TimePicker
-                  label="To"
+                  label="End Time"
                   value={to}
                   onChange={handleToChange}
-                  renderInput={(params) => <TextField {...params} />}
+                  renderInput={(params) => (
+                    <TextField
+                      size="small"
+                      {...params}
+                    />
+                  )}
                 />
               </LocalizationProvider>
             </div>

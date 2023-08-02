@@ -20,3 +20,17 @@
 
 - alphabetical sort query x
 - cronological sort query x
+
+## Change Notes
+
+- [x] list height has to be fitted
+- [x] Use default image from collections instead of whatever is there
+- [x] Manager info add optional
+- [x] Store Hours row level margin needed
+- [x] The timing feilds need to be squizeed
+- [x] From = Start Time | To = End Time
+- [x] Validation Errors show
+- Add \* to all required feilds
+- [?] End Time Validation not before Start Time
+- [?] Country Code Issue - Need API Change
+- [?] Map Integrate - Need Conversion Code peer Dependency issue
