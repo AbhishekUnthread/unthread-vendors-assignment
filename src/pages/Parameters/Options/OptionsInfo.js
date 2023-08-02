@@ -835,7 +835,7 @@ const OptionsInfo = () => {
     navigate({
       pathname: "/parameters/options",
       search: `?${createSearchParams({
-        search: searchParams.get("search")
+        search: searchParams.get("search"),
       })}`,
     });
   };
