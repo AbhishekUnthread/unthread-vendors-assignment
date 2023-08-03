@@ -13,7 +13,7 @@ const FRONTEND_APPEARANCE = {
 };
 
 const SubOptionCollapse = (props) => {
-  const { id, attributeId, formik, index, onEdit, onSubOptionDelete } = props;
+  const { id, formik, index, onEdit, onSubOptionDelete } = props;
   return (
     <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4 ">
       <Grid container style={{ gap: "10px" }}>

@@ -190,6 +190,10 @@ const Options = () => {
     navigate("./create");
   };
 
+  const createOptionSetHandler = () => {
+    navigate("./sets/create");
+  };
+
   const deleteHandler = ({ id, message }) => {
     dispatchOptions({ type: "SET_DELETE", id, message });
   };
@@ -278,7 +282,7 @@ const Options = () => {
         onExport={() => {}}
         onImport={() => {}}
         onCreate={createOptionHandler}
-        onSecondaryCreate={createOptionHandler}
+        onSecondaryCreate={createOptionSetHandler}
         createBtnText="+ Create Options"
         createSecondaryBtnText="+ Options Sets"
       />

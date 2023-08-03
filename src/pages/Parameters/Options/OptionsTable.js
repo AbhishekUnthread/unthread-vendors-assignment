@@ -7,17 +7,9 @@ import {
   TableRow,
   Chip,
 } from "@mui/material";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import {
-  SortableContainer,
-  SortableHandle,
-  SortableElement,
-  arrayMove,
-} from "react-sortable-hoc";
 
 import TableHeader from "../../../components/TableHeader/TableHeader";
 import EditButton from "../../../components/EditButton/EditButton";
-import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
 import DeleteIconButton from "../../../components/DeleteIconButton/DeleteIconButton";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import TableLoader from "../../../components/Loader/TableLoader";

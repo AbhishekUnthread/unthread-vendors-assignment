@@ -75,6 +75,7 @@ import Options from "./pages/Parameters/Options/Options";
 import OptionsInfo from "./pages/Parameters/Options/OptionsInfo";
 import Settings from "./pages/Settings/Settings";
 import TaxManager from "./pages/Settings/TaxManager/TaxManager";
+import OptionSetsInfo from "./pages/Parameters/Options/OptionSetsInfo";
 
 const router = () => {
   const loginStatus = store.getState().auth.isLoggedIn;
@@ -268,6 +269,10 @@ const router = () => {
                 {
                   path: "options/create",
                   element: <OptionsInfo />,
+                },
+                {
+                  path: "options/sets/create",
+                  element: <OptionSetsInfo />,
                 },
                 {
                   path: "options/edit/:id",

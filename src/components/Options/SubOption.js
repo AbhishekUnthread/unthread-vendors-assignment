@@ -114,7 +114,6 @@ const SubOption = (props) => {
     onSubAttributeAdd,
     onSubAttributeDelete,
   } = props;
-  const [collapsed, setCollapsed] = useState(false);
   const [subAttrIndex, setSubAttrIndex] = useState([]);
 
   const subOptionAppearanceHandler = (e) => {
@@ -213,7 +212,6 @@ const SubOption = (props) => {
   return !formik.values.subOptions[index].expanded ? (
     <SubOptionCollapse
       id={id}
-      attributeId={attributeId}
       formik={formik}
       index={index}
       onEdit={editHandler}

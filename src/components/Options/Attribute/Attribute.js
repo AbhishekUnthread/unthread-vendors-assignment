@@ -28,7 +28,8 @@ const CUSTOM_FIELD_DISPLAY = [
 ];
 
 const Attribute = (props) => {
-  const { formik, index, onAttributeDelete, onSubOptionAdd } = props;
+  const { formik, index, onAttributeDelete, onSubOptionAdd, subOptionCount } =
+    props;
 
   const imageUploadHandler = useCallback((url) => {
     formik.setFieldValue(`attributes[${index}].imageUrl`, url);
@@ -63,7 +64,7 @@ const Attribute = (props) => {
 
   return (
     <Grid container>
-      <Grid item sm={10.5} sx={{ display: "grid", alignItems: "center" }}>
+      <Grid item sm={9} sx={{ display: "grid", alignItems: "center" }}>
         <Grid container columnSpacing={2}>
           <Grid item sm={4} sx={{ display: "grid", alignItems: "start" }}>
             <FormControl className="w-100 px-0">
@@ -193,9 +194,23 @@ const Attribute = (props) => {
           )}
         </Grid>
       </Grid>
+      <Grid item sm={2} sx={{ display: "grid", alignItems: "center" }}>
+        <div
+          className="small"
+          style={{
+            display: "inline-block",
+            marginRight: "10px",
+          }}
+        >
+          <span className="text-grey-6">
+            Inner Groups:{" "}
+            <span className="text-lightBlue">{subOptionCount}</span>
+          </span>
+        </div>
+      </Grid>
       <Grid
         item
-        sm={1.5}
+        sm={1}
         sx={{
           display: "flex",
           justifyContent: "flex-end",
