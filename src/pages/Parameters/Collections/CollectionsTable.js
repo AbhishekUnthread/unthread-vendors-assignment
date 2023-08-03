@@ -265,10 +265,10 @@ const CollectionsTable = ({
       handleClick(null, collectionId);
       setArchivedModal(false);
       editCollection({
-          id: collectionId,
-          details : {
-            status: "archieved"
-          }
+        id: collectionId,
+        details : {
+          status: "archieved"
+        }
       })
       dispatch(showSuccess({ message: "Collection archived successfully!" }));
     }

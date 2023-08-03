@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   Checkbox,
   Popover,
@@ -12,6 +13,11 @@ import {
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
+import { 
+  useEditCustomerMutation
+} from "../../../features/customers/customer/customerApiSlice";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
+
 import {
   EnhancedTableHead,
   stableSort,
@@ -20,6 +26,7 @@ import {
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import Loader from "../../../components/Loader/TableLoader";
 import NoData from "../../../components/NoDataFound/NoDataFound";
+import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
 
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
@@ -38,11 +45,48 @@ const AllUsersTable = ({
   onEdit,
   customerType
 }) => {
+  const dispatch = useDispatch();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("userName");
   const [selected, setSelected] = useState([]);
   const [anchorMassActionEl, setAnchorMassActionEl] = useState(null);
   const [anchorActionEl, setAnchorActionEl] = useState(null);
+  const [openArchivedModal, setArchivedModal] = useState(false);
+  const [customerId, setCustomerId] = useState();
+  const [firstName, setFirstName] = useState();
+  const [lastName, setLastName] = useState();
+
+  const [
+    editCustomer,
+    {
+      data: editData,
+      isLoading: editCustomerIsLoading,
+      isSuccess: editCustomerIsSuccess,
+      error: editCustomerError,
+    }
+  ] = useEditCustomerMutation();
+
+  const handleArchive = (id, first, last) => {
+    setArchivedModal(true);
+    setCustomerId(id);
+    setFirstName(first);
+    setLastName(last)
+  }
+
+  const handleArchivedModalClose = () => {
+    editCustomer({
+      id: customerId,
+      details : {
+        status: "archieved"
+      }
+    })
+    setArchivedModal(false);
+    dispatch(showSuccess({ message: "Customer archived successfully!" }));
+  }
+
+  const handleModalClose = () => {
+    setArchivedModal(false);
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -51,13 +95,17 @@ const AllUsersTable = ({
   };
 
   const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = list.map((n) => n._id);
-      setSelected(newSelected);
-      return;
+    if(selected.length>0) {
+      setSelected([]);
     }
-    setSelected([]);
-  };
+    else if(event.target.checked) {
+      const newSelected = list.slice(0, rowsPerPage).map((n) => n._id);
+      setSelected(newSelected);
+    }
+    else {
+      setSelected([]);
+    }
+  }; 
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -236,7 +284,7 @@ const AllUsersTable = ({
             <TableBody>
               {stableSort(list, getComparator(order, orderBy))
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row._id);
+                  const isItemSelected = isSelected(row?._id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -245,7 +293,7 @@ const AllUsersTable = ({
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row._id}
+                      key={row?._id}
                       selected={isItemSelected}
                       className="table-rows"
                     >
@@ -255,7 +303,7 @@ const AllUsersTable = ({
                           inputProps={{
                             "aria-labelledby": labelId,
                           }}
-                          onClick={(event) => handleClick(event, row._id)}
+                          onClick={(event) => handleClick(event, row?._id)}
                           size="small"
                           style={{
                             color: "#5C6D8E",
@@ -393,7 +441,10 @@ const AllUsersTable = ({
                               <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                                 Add or Remove Tags
                               </small>
-                              <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
+                              <div 
+                                className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
+                                onClick={() => { handleArchive(row?._id, row?.firstName, row?.lastName)}}
+                              >
                                 <small className="font2 d-block" style={{color: "#F67E80"}}>
                                   Archive Customer
                                 </small>
@@ -430,6 +481,15 @@ const AllUsersTable = ({
         )): (
         <></>
       )}
+      <ArchiveModal
+        onConfirm ={handleArchivedModalClose}
+        onCancel={handleModalClose}
+        show={openArchivedModal}
+        title={"Customer"}
+        message={firstName + lastName}
+        archiveType={"Customer"}
+        products={"25 products"}
+      />
     </>
   );
 };

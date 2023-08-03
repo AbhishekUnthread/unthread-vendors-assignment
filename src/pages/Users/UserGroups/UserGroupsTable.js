@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import {
   Checkbox,
@@ -11,6 +12,9 @@ import {
   TableRow,
 } from "@mui/material";
 
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import { useEditCustomerGroupMutation } from "../../../features/customers/customerGroup/customerGroupApiSlice";
+
 import {
   EnhancedTableHead,
   stableSort,
@@ -20,6 +24,7 @@ import TableEditStatusButton from "../../../components/TableEditStatusButton/Tab
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import Loader from "../../../components/Loader/TableLoader";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
+import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
 
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
@@ -62,12 +67,52 @@ const headCells = [
 ];
 
 const UserGroupsTable = ({ data, totalCount }) => {
+  const dispatch = useDispatch();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("groupName");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [anchorActionEl, setAnchorActionEl] = useState(null);
+  const [openArchivedModal, setArchivedModal] = useState(false);
+  const [groupId, setGroupId] = useState();
+  const [groupName, setGroupName] = useState();
+
+  console.log(groupName, 'groupName');
+
+  const [
+    editCustomerGroup,
+    {
+      data: editData,
+      isLoading: editGroupIsLoading,
+      isSuccess: editGroupIsSuccess,
+      error: editGroupError,
+    }
+  ] = useEditCustomerGroupMutation();
+
+  const handleArchive = (id, group, list) => {
+      console.log(group, 'group');
+      console.log(list, 'list');
+
+    setArchivedModal(true);
+    setGroupId(id);
+    setGroupName(group)
+  }
+
+  const handleArchivedModalClose = () => {
+    editCustomerGroup({
+      id: groupId,
+      details : {
+        status: "archived"
+      }
+    })
+    setArchivedModal(false);
+    dispatch(showSuccess({ message: "Customer Group archived successfully!" }));
+  }
+
+  const handleModalClose = () => {
+    setArchivedModal(false);
+  };
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -83,13 +128,17 @@ const UserGroupsTable = ({ data, totalCount }) => {
   };
 
   const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.uId);
-      setSelected(newSelected);
-      return;
+    if(selected.length>0) {
+      setSelected([]);
     }
-    setSelected([]);
-  };
+    else if(event.target.checked) {
+      const newSelected = data.slice(0, rowsPerPage).map((n) => n._id);
+      setSelected(newSelected);
+    }
+    else {
+      setSelected([]);
+    }
+  }; 
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -164,7 +213,6 @@ const UserGroupsTable = ({ data, totalCount }) => {
           />
           <TableBody>
             {stableSort(data, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row?._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -212,9 +260,14 @@ const UserGroupsTable = ({ data, totalCount }) => {
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
                       <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row?.active == true ? "Active" : "In-Active"}
+                        <div 
+                          className="rounded-pill d-flex px-2 py-1 c-pointer"
+                          style={{
+                            background: row.status == "active" ? "#A6FAAF" : "#F67476" 
+                          }}
+                        >
+                          <small className="text-black fw-500">
+                            {row?.status == "active" ? "Active" : "In-Active"}
                           </small>
                         </div>
                       </div>
@@ -249,9 +302,11 @@ const UserGroupsTable = ({ data, totalCount }) => {
                           <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                             Edit User Groups
                           </small>
-                          <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
+                          <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
+                            onClick={() => { handleArchive(row?._id, row?.name)}}
+                          >
                             <small className="text-lightBlue font2 d-block">
-                              Delete Groups
+                              Archive Groups
                             </small>
                             <img
                               src={deleteRed}
@@ -286,6 +341,15 @@ const UserGroupsTable = ({ data, totalCount }) => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         className="table-pagination"
+      />
+      <ArchiveModal
+        onConfirm ={handleArchivedModalClose}
+        onCancel={handleModalClose}
+        show={openArchivedModal}
+        title={"Customer Group"}
+        message={groupName}
+        archiveType={"Customer Group"}
+        products={"25 products"}
       />
     </>
   );

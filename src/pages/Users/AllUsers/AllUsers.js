@@ -616,7 +616,7 @@ const AllUsers = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label={`All (${customerCount?.active + customerCount?.inActive + customerCount?.archived})`} className="tabs-head" />
+              <Tab label={`All (${customerCount?.active + customerCount?.inActive})`} className="tabs-head" />
               <Tab label={`Active (${customerCount?.active})`} className="tabs-head" />
               <Tab label={`New (${customerCount?.new})`} className="tabs-head" />
               <Tab label={`In-Active (${customerCount?.inActive})`} className="tabs-head" />

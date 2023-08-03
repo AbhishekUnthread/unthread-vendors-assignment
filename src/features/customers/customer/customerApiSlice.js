@@ -63,6 +63,15 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ["Customers"],
     }),
+
+    editCustomer: builder.mutation({
+      query: ({ id, details }) => ({
+        url: `/customer/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      invalidatesTags: ["Customers"],
+    }),
     
   }),
 });
@@ -71,5 +80,6 @@ export const {
   useCreateCustomerMutation,
   useGetAllCustomersQuery,
   useGetSingleCustomerQuery,
-  useGetCustomersCountQuery
+  useGetCustomersCountQuery,
+  useEditCustomerMutation
 } = customerApiSlice;

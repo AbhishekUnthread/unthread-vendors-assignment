@@ -48,11 +48,21 @@ export const customerGroupApiSlice = apiSlice.injectEndpoints({
       providesTags: ["CustomerGroup"],
     }),
 
+    editCustomerGroup: builder.mutation({
+      query: ({ id, details }) => ({
+        url: `/customerGroup/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      invalidatesTags: ["CustomerGroup"],
+    }),
+
   }),
 });
 
 export const {
   useCreateCustomerGroupMutation,
   useGetAllCustomerGroupQuery,
-  useGetCustomerGroupCountQuery
+  useGetCustomerGroupCountQuery,
+  useEditCustomerGroupMutation
 } = customerGroupApiSlice;
