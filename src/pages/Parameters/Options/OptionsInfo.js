@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   useNavigate,
@@ -419,6 +419,7 @@ const OptionsInfo = () => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams("");
   let { id } = useParams();
+  const [pageIsLoading, setPageIsLoading] = useState(!!id);
   const [optionQueryFilterState, dispatchOptionQueryFilter] = useReducer(
     optionQueryFilterReducer,
     initialOptionQueryFilterState
@@ -1198,18 +1199,36 @@ const OptionsInfo = () => {
     }
   }, [optionState.createdSuccess, navigate]);
 
-  const isLoading =
-    optionsIsLoading ||
-    attributesIsLoading ||
-    subOptionsIsLoading ||
-    subAttributesIsLoading;
+  useEffect(() => {
+    if (id) {
+      const isLoading =
+        optionsIsLoading ||
+        attributesIsLoading ||
+        subOptionsIsLoading ||
+        subAttributesIsLoading;
+      if (isLoading) {
+        setPageIsLoading(true);
+      } else {
+        setPageIsLoading(false);
+      }
+    }
+  }, [
+    optionsIsLoading,
+    attributesIsLoading,
+    subOptionsIsLoading,
+    subAttributesIsLoading,
+    id,
+  ]);
 
   return (
     <>
-      {isLoading && <PageLoader />}
+      {pageIsLoading && <PageLoader />}
       <div className="page container-fluid position-relative user-group product-tab-page">
         <InfoHeader
-          title={optionFormik.values.option?.title || "Create Options"}
+          title={
+            optionFormik.values.option?.title ||
+            (id ? "Edit Options" : "Create Options")
+          }
           onBack={backHandler}
           onPrev={prevPageHandler}
           onNext={nextPageHandler}
@@ -1217,7 +1236,7 @@ const OptionsInfo = () => {
           hasPrev={optionState.prevCount}
           hasNext={optionState.nextCount}
         />
-        {!isLoading && (
+        {!pageIsLoading && (
           <form
             className="product-form"
             noValidate
