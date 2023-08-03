@@ -106,7 +106,6 @@ const FRONTEND_APPEARANCE = [
 
 const SubOption = (props) => {
   const {
-    isEditing = false,
     id,
     attributeId,
     formik,
@@ -200,18 +199,18 @@ const SubOption = (props) => {
     if (isError) {
       return;
     }
-    setCollapsed(true);
+    formik.setFieldValue(`subOptions[${index}].expanded`, false);
   };
 
   const editHandler = () => {
-    setCollapsed(false);
+    formik.setFieldValue(`subOptions[${index}].expanded`, true);
   };
 
   const addSubAttributeIndexHandler = useCallback((value) => {
     setSubAttrIndex((prevState) => [...prevState, value]);
   }, []);
 
-  return collapsed ? (
+  return !formik.values.subOptions[index].expanded ? (
     <SubOptionCollapse
       id={id}
       attributeId={attributeId}

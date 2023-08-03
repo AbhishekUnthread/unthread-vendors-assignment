@@ -174,6 +174,7 @@ const optionValidationSchema = Yup.object({
       saved: Yup.boolean(),
       isOption: Yup.boolean(),
       error: Yup.string(),
+      expanded: Yup.boolean(),
     })
   ),
   subAttributes: Yup.array()
@@ -659,6 +660,7 @@ const OptionsInfo = () => {
               saved: true,
               isOption: item.isOption,
               error: "",
+              expanded: false,
             };
           })
         : [],
@@ -1062,6 +1064,7 @@ const OptionsInfo = () => {
       saved: false,
       isOption: true,
       error: "",
+      expanded: true,
     });
     optionFormik.setFieldValue("subOptions", newSubOptions);
 
