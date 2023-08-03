@@ -73,7 +73,7 @@ const AllInventory = ({
     },
   ];
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
+  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     changePage(newPage);
@@ -212,7 +212,9 @@ const AllInventory = ({
                         </TableCell>
                         <TableCell style={{ width: 140, padding: 0 }}>
                           <div className="d-flex align-items-center">
-                            <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
+                            <div
+                              className="rounded-pill d-flex table-status px-2 py-1 c-pointer"
+                              style={{ backgroundColor: row.status === "active" ? "#A6FAAF" : "#F67476" }}>
                               <small className="text-black fw-400">{row.status}</small>
                             </div>
                           </div>

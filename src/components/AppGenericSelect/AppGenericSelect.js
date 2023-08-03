@@ -12,14 +12,12 @@ export default function AppGenericSelect({
   label = "",
   placeholder = "",
   error = "",
-  dataId = "", // dataId
-  dataLabel = "", // name
-  dataImgUrl = "", // imageUrl
+  dataId = "",
+  dataLabel = "",
+  dataImgUrl = "",
   hasImg = false,
   formik,
-  // pass nested props as string if needed like options?.dataId, option?.dataLabel, option?.imageUrl,
   onChange = emptyFn,
-  // onBlur = emptyFn,
   useGetQuery = emptyFn,
   getQueryFilters = {},
 }) {

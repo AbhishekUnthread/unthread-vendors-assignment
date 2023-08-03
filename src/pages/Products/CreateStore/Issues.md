@@ -30,7 +30,8 @@
 - [x] The timing feilds need to be squizeed
 - [x] From = Start Time | To = End Time
 - [x] Validation Errors show
-- Add \* to all required feilds
-- [?] End Time Validation not before Start Time
-- [?] Country Code Issue - Need API Change
-- [?] Map Integrate - Need Conversion Code peer Dependency issue
+- [x] Add \* to all required feilds
+- [x] In Active stores should be red badged
+- [x] End Time Validation not before Start Time - some UI mods may be needed
+- [x] Country Code Issue - Need API Change
+- [] Map Integrate - Need Conversion Code peer Dependency issue
