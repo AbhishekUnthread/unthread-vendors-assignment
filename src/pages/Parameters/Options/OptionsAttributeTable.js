@@ -154,7 +154,6 @@ const OptionsAttributeTable = (props) => {
                         if (subOption.metaAttribute === attribute._id) {
                           return (
                             <SubOption
-                              isEditing={!!isEditing}
                               key={subOption._id}
                               id={subOption._id}
                               attributeId={attribute._id}
