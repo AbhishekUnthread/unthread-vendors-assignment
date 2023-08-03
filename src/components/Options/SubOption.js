@@ -1,32 +1,24 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import {
   FormControl,
   OutlinedInput,
   Tooltip,
-  Grid,
   FormHelperText,
-  FormControlLabel,
-  Checkbox,
   Select,
   MenuItem,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TablePagination,
   TableRow,
-  Chip,
 } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
   SortableContainer,
   SortableHandle,
   SortableElement,
-  arrayMove,
 } from "react-sortable-hoc";
 import _ from "lodash";
-
-import { showError } from "../../features/snackbar/snackbarAction";
 
 import DeleteIconButton from "../DeleteIconButton/DeleteIconButton";
 import SubAttribute from "./Attribute/SubAttribute";
@@ -173,6 +165,7 @@ const SubOption = (props) => {
         }
       }
     }
+
     if (formik.errors?.subOptions?.length && formik.errors?.subOptions[index]) {
       isError = true;
     } else if (
@@ -195,6 +188,7 @@ const SubOption = (props) => {
         }
       }
     }
+
     if (isError) {
       return;
     }
@@ -236,6 +230,7 @@ const SubOption = (props) => {
           </div>
           <FormControl className="w-100 px-0">
             <OutlinedInput
+              autoFocus
               size="small"
               sx={{ paddingLeft: 0 }}
               name={`subOptions[${index}].title`}
