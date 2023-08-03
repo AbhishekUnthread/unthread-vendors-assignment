@@ -1200,7 +1200,7 @@ const OptionsInfo = () => {
   }, [optionState.createdSuccess, navigate]);
 
   useEffect(() => {
-    if (id) {
+    if (optionQueryFilterState.srNo) {
       const isLoading =
         optionsIsLoading ||
         attributesIsLoading ||
@@ -1217,9 +1217,8 @@ const OptionsInfo = () => {
     attributesIsLoading,
     subOptionsIsLoading,
     subAttributesIsLoading,
-    id,
+    optionQueryFilterState.srNo,
   ]);
-
   return (
     <>
       {pageIsLoading && <PageLoader />}
