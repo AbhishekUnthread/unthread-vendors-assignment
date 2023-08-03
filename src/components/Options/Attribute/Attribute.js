@@ -194,12 +194,13 @@ const Attribute = (props) => {
           )}
         </Grid>
       </Grid>
-      <Grid item sm={2} sx={{ display: "grid", alignItems: "center" }}>
+      <Grid item sm={2} sx={{ display: "grid", alignItems: "start" }}>
         <div
           className="small"
           style={{
             display: "inline-block",
             marginRight: "10px",
+            marginTop: "10px",
           }}
         >
           <span className="text-grey-6">
