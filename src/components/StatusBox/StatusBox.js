@@ -1,5 +1,4 @@
 import React from "react";
-// import dayjs from 'dayjs';
 import {
   Dialog,
   DialogActions,
@@ -22,13 +21,7 @@ import cancel from "../../assets/icons/cancel.svg";
 
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return (
-    <Slide
-      direction="up"
-      ref={ref}
-      {...props}
-    />
-  );
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 // ? DIALOG TRANSITION ENDS HERE
 const StatusBox = ({
@@ -46,9 +39,13 @@ const StatusBox = ({
 }) => {
   const showScheduleData = showSchedule === undefined ? false : true;
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
-  const [startDateLocal, setStartDate] = React.useState(startDate ? moment(startDate).toDate() : null);
+  const [startDateLocal, setStartDate] = React.useState(
+    startDate ? moment(startDate).toDate() : null
+  );
   const [endDateLocal, setEndDate] = React.useState("");
-  const startDateNew = moment(startDate).utcOffset("+05:30").format("DD/MM/YYYY");
+  const startDateNew = moment(startDate)
+    .utcOffset("+05:30")
+    .format("DD/MM/YYYY");
   const startTime = moment(startDate).utcOffset("+05:30").format("HH:mm A");
   const endDateNew = moment(endDate).utcOffset("+05:30").format("DD/MM/YYYY");
   const endTime = moment(endDate).format("HH:mm A");
@@ -74,14 +71,16 @@ const StatusBox = ({
         aria-label="text formatting"
         className="row d-flex px-2 productInfo-toggle"
         size="small"
-        exclusive>
+        exclusive
+      >
         <ToggleButton
           value={toggleData[0]}
           type="button"
           aria-label="active"
           style={{ width: "50%" }}
           className="productInfo-toggle__active"
-          disabled={startDate != null}>
+          disabled={startDate != null}
+        >
           <div className="d-flex">
             <p className="text-grey-6">{toggleData[0]}</p>
           </div>
@@ -92,7 +91,8 @@ const StatusBox = ({
           aria-label="inactive"
           style={{ width: "50%" }}
           className="productInfo-toggle__draft"
-          disabled={startDate != null}>
+          disabled={startDate != null}
+        >
           <div className="d-flex">
             <p className="text-grey-6">{toggleData[1]}</p>
           </div>
@@ -100,16 +100,10 @@ const StatusBox = ({
       </ToggleButtonGroup>
       {showScheduleData && (
         <div className="d-flex align-items-center mt-4 c-pointer">
-          <img
-            src={clock}
-            alt="clock"
-            className="me-1"
-            width={12}
-          />
-          <small
-            className="text-blue-2"
-            onClick={handelScheduleProduct}>
-            Schedule {startDate == null ? "" : `for ${startDateNew} at ${startTime}`}{" "}
+          <img src={clock} alt="clock" className="me-1" width={12} />
+          <small className="text-blue-2" onClick={handelScheduleProduct}>
+            Schedule{" "}
+            {startDate == null ? "" : `for ${startDateNew} at ${startTime}`}{" "}
             {endDate == null ? "" : `till ${endDateNew} at ${endTime}`}
           </small>
         </div>
@@ -119,12 +113,14 @@ const StatusBox = ({
           <small
             className="text-blue-2 px-3"
             style={{ cursor: "pointer" }}
-            onClick={handelScheduleProduct}>
+            onClick={handelScheduleProduct}
+          >
             Edit
           </small>
           <small
             style={{ color: "#F67476", cursor: "pointer" }}
-            onClick={clearDate}>
+            onClick={clearDate}
+          >
             Clear
           </small>
         </div>
@@ -137,7 +133,8 @@ const StatusBox = ({
         onClose={handelScheduleProductClose}
         aria-describedby="alert-dialog-slide-description"
         maxWidth="sm"
-        fullWidth={true}>
+        fullWidth={true}
+      >
         <DialogTitle>
           <div className="d-flex justify-content-between align-items-center">
             <h5 className="text-lightBlue fw-500">Schedule {titleName}</h5>
@@ -154,9 +151,7 @@ const StatusBox = ({
         <DialogContent className="py-3 px-4 schedule-product">
           <div className="d-flex mb-1">
             <p className="text-lightBlue">Start Date</p>
-            <Tooltip
-              title="Lorem ipsum"
-              placement="top">
+            <Tooltip title="Lorem ipsum" placement="top">
               <img
                 src={info}
                 alt="info"
@@ -172,12 +167,7 @@ const StatusBox = ({
                 setStartDate(newValue);
                 handleStartDate(newValue);
               }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                />
-              )}
+              renderInput={(params) => <TextField {...params} size="small" />}
               minDate={new Date()}
             />
           </LocalizationProvider>
@@ -185,9 +175,7 @@ const StatusBox = ({
             <p className="text-lightBlue">End Date</p>
             <p className="text-lightBlue">(Optional)</p>
 
-            <Tooltip
-              title="Lorem ipsum"
-              placement="top">
+            <Tooltip title="Lorem ipsum" placement="top">
               <img
                 src={info}
                 alt="info"
@@ -203,12 +191,7 @@ const StatusBox = ({
                 setEndDate(newValue);
                 handleEndDate(newValue);
               }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                />
-              )}
+              renderInput={(params) => <TextField {...params} size="small" />}
               minDate={startDate}
               minTime={minDateTime}
               disabled={startDate == null ? true : false}
@@ -220,12 +203,14 @@ const StatusBox = ({
           <div className="d-flex justify-content-between w-100">
             <button
               className="button-grey py-2 px-5"
-              onClick={handelScheduleProductClose}>
+              onClick={handelScheduleProductClose}
+            >
               <p className="text-lightBlue">Cancel</p>
             </button>
             <button
               className="button-gradient py-2 px-5"
-              onClick={handelScheduleProductClose}>
+              onClick={handelScheduleProductClose}
+            >
               <p>Schedule</p>
             </button>
           </div>

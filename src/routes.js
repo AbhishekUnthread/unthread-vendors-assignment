@@ -71,6 +71,7 @@ import EditSubCategories from "./pages/Parameters/Categories/EditSubCategories/E
 import EditCollection from "./pages/Parameters/Collections/EditCollection/EditCollection";
 import ProductTabs from "./pages/Parameters/ProductTabs/ProductTabs";
 import ProductTabInfo from "./pages/Parameters/ProductTabs/ProductTabInfo";
+import Options from "./pages/Parameters/Options/Options";
 import OptionsInfo from "./pages/Parameters/Options/OptionsInfo";
 import Settings from "./pages/Settings/Settings";
 import TaxManager from "./pages/Settings/TaxManager/TaxManager";
@@ -214,7 +215,7 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to="collections" replace={true} />,
+                  element: <Navigate to="categories" replace={true} />,
                 },
                 {
                   path: "collections",
@@ -261,7 +262,15 @@ const router = () => {
                   element: <EditSubCategories />,
                 },
                 {
+                  path: "options",
+                  element: <Options />,
+                },
+                {
                   path: "options/create",
+                  element: <OptionsInfo />,
+                },
+                {
+                  path: "options/edit/:id",
                   element: <OptionsInfo />,
                 },
                 {

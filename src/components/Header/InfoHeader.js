@@ -5,8 +5,17 @@ import paginationRight from "../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../assets/icons/paginationLeft.svg";
 
 const InfoHeader = (props) => {
-  const { title, onBack, onDuplicate, onPreview, onPrev, onNext, isEdit } =
-    props;
+  const {
+    title,
+    onBack,
+    onDuplicate,
+    onPreview,
+    onPrev,
+    onNext,
+    isEdit,
+    hasPrev,
+    hasNext,
+  } = props;
 
   const nextHandler = _debounce(onNext, 750, {
     leading: false,
@@ -51,7 +60,7 @@ const InfoHeader = (props) => {
         {isEdit && onPrev && (
           <button onClick={backHandler} className="reset">
             <img
-              style={{ opacity: props?.hasPrev > 0 ? 1 : 0.5 }}
+              style={{ opacity: hasPrev > 0 ? 1 : 0.5 }}
               src={paginationLeft}
               alt="paginationLeft"
               className="c-pointer"
@@ -62,7 +71,7 @@ const InfoHeader = (props) => {
         {isEdit && onNext && (
           <button onClick={nextHandler} className="reset">
             <img
-              style={{ opacity: props?.hasNext > 0 ? 1 : 0.5 }}
+              style={{ opacity: hasNext > 0 ? 1 : 0.5 }}
               src={paginationRight}
               alt="paginationRight"
               className="c-pointer"

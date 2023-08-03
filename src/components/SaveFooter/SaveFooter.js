@@ -10,7 +10,7 @@ const SaveFooter = ({
   handleSubmitAndAddAnother,
   saveAsDraft,
   saveAddAnother,
-  handleDiscard
+  handleDiscard,
 }) => {
   const navigate = useNavigate();
 
