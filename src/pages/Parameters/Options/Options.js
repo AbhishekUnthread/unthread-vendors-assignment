@@ -177,9 +177,9 @@ const Options = () => {
     dispatchOptions({ type: "SEARCH_VALUE", search: value });
   };
 
-  const editHandler = (optionId) => {
+  const editHandler = (srNo) => {
     navigate({
-      pathname: `./edit/${optionId}`,
+      pathname: `./edit/${srNo}`,
       search: `?${createSearchParams({
         search: JSON.stringify(queryFilterState),
       })}`,
