@@ -57,6 +57,15 @@ export const customerGroupApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["CustomerGroup"],
     }),
 
+    deleteCustomerGroup: builder.mutation({
+      query: (customerGroupId) => ({
+        url: `/customerGroup/${customerGroupId}`,
+        method: "DELETE",
+        body: customerGroupId,
+      }),
+      invalidatesTags: ["CustomerGroup"],
+    }),
+
   }),
 });
 
@@ -64,5 +73,6 @@ export const {
   useCreateCustomerGroupMutation,
   useGetAllCustomerGroupQuery,
   useGetCustomerGroupCountQuery,
-  useEditCustomerGroupMutation
+  useEditCustomerGroupMutation,
+  useDeleteCustomerGroupMutation
 } = customerGroupApiSlice;

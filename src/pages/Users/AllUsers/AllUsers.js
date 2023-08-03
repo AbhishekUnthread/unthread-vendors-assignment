@@ -125,7 +125,6 @@ const customerReducer = (state, action) => {
       status: action.status,
     };
   }
-
   return initialCustomerState;
 };
 

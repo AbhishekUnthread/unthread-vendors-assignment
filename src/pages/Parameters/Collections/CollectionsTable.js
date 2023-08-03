@@ -17,11 +17,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import {
-  EnhancedTableHead,
-  stableSort,
-  getComparator,
-} from "../../../components/TableDependencies/TableDependencies";
+
 import { updateCollectionId } from "../../../features/parameters/collections/collectionSlice";
 import { 
   useBulkEditCollectionMutation,
@@ -29,6 +25,11 @@ import {
 } from "../../../features/parameters/collections/collectionsApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 
+import {
+  EnhancedTableHead,
+  stableSort,
+  getComparator,
+} from "../../../components/TableDependencies/TableDependencies";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import DuplicateCollection from "./DuplicateCollection/DuplicateCollection";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
