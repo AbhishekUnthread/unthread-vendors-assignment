@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   FormControl,
   OutlinedInput,
@@ -115,7 +115,7 @@ const SubOption = (props) => {
     onSubAttributeAdd,
     onSubAttributeDelete,
   } = props;
-  const [collapsed, setCollapsed] = useState(isEditing);
+  const [collapsed, setCollapsed] = useState(false);
   const [subAttrIndex, setSubAttrIndex] = useState([]);
 
   const subOptionAppearanceHandler = (e) => {
