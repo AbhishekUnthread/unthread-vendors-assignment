@@ -177,11 +177,21 @@ const SubOption = (props) => {
     }
     if (formik.errors?.subOptions?.length && formik.errors?.subOptions[index]) {
       isError = true;
+    } else if (
+      formik.values?.subOptions?.length &&
+      formik.values?.subOptions[index].error
+    ) {
+      isError = true;
     } else if (subAttrIndex.length) {
       for (const subIndex of subAttrIndex) {
         if (
           formik.errors?.subAttributes?.length &&
           formik.errors?.subAttributes[subIndex]
+        ) {
+          isError = true;
+        } else if (
+          formik.values?.subAttributes?.length &&
+          formik.values?.subAttributes[subIndex].error
         ) {
           isError = true;
         }
