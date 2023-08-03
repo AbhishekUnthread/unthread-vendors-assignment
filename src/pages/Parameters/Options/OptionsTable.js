@@ -117,7 +117,7 @@ const OptionsTable = (props) => {
                 >
                   <TableCell />
                   <TableCell
-                    onClick={onEdit.bind(null, item._id)}
+                    onClick={onEdit.bind(null, item.srNo)}
                     sx={{ textTransform: "capitalize", cursor: "pointer" }}
                   >
                     <p className="text-lightBlue fw-600">{item.title}</p>
@@ -147,7 +147,7 @@ const OptionsTable = (props) => {
                   </TableCell>
                   <TableCell>
                     <div className="d-flex align-items-center justify-content-end">
-                      <EditButton onClick={onEdit.bind(null, item._id)} />
+                      <EditButton onClick={onEdit.bind(null, item.srNo)} />
                       <DeleteIconButton
                         onClick={onDelete.bind(null, {
                           id: item._id,

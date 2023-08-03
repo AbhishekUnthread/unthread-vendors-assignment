@@ -233,11 +233,14 @@ const optionValidationSchema = Yup.object({
 });
 
 const initialOptionQueryFilterState = {
-  id: null,
+  srNo: null,
 };
 
 const initialOptionState = {
   totalCount: 0,
+  nextCount: 0,
+  prevCount: 0,
+  order: 1,
   isEditing: false,
   deleteId: null,
   saved: false,
@@ -256,10 +259,10 @@ const initialDeletedOptionState = {
 };
 
 const optionQueryFilterReducer = (state, action) => {
-  if (action.type === "SET_ID") {
+  if (action.type === "SET_SR_NO") {
     return {
       ...initialOptionQueryFilterState,
-      id: action.id,
+      srNo: action.srNo,
     };
   }
   return initialOptionQueryFilterState;
@@ -288,10 +291,12 @@ const optionReducer = (state, action) => {
       deleteType: initialOptionState.deleteType,
     };
   }
-  if (action.type === "SET_TOTAL_COUNT") {
+  if (action.type === "SET_PAGINATION") {
     return {
       ...state,
       totalCount: action.totalCount,
+      nextCount: action.nextCount,
+      prevCount: action.prevCount,
     };
   }
   if (action.type === "ENABLE_EDIT") {
@@ -417,7 +422,7 @@ const OptionsInfo = () => {
     isSuccess: optionsIsSuccess,
     isFetching: optionsDataIsFetching,
   } = useGetAllOptionsQuery(optionQueryFilterState, {
-    skip: optionQueryFilterState.id ? false : true,
+    skip: optionQueryFilterState.srNo ? false : true,
   });
 
   const {
@@ -830,8 +835,6 @@ const OptionsInfo = () => {
   });
 
   const backHandler = () => {
-    navigate("/parameters/options");
-
     navigate({
       pathname: "/parameters/options",
       search: `?${createSearchParams({
@@ -1121,7 +1124,7 @@ const OptionsInfo = () => {
 
   useEffect(() => {
     if (id) {
-      dispatchOptionQueryFilter({ type: "SET_ID", id });
+      dispatchOptionQueryFilter({ type: "SET_SR_NO", srNo: id });
     }
   }, [id]);
 
@@ -1137,8 +1140,10 @@ const OptionsInfo = () => {
     }
     if (optionsIsSuccess) {
       dispatchOption({
-        type: "SET_TOTAL_COUNT",
+        type: "SET_PAGINATION",
         totalCount: optionsData.totalCount,
+        nextCount: optionsData.nextCount,
+        prevCount: optionsData.prevCount,
       });
     }
   }, [optionsData, optionsError, optionsIsError, optionsIsSuccess, dispatch]);
@@ -1160,6 +1165,8 @@ const OptionsInfo = () => {
     }
   }, [optionState.createdSuccess, navigate]);
 
+  console.log({ optionState });
+
   return (
     <div className="page container-fluid position-relative user-group product-tab-page">
       <InfoHeader
@@ -1168,8 +1175,8 @@ const OptionsInfo = () => {
         onPrev={prevPageHandler}
         onNext={nextPageHandler}
         isEdit={!!id}
-        hasPrev={0}
-        hasNext={0}
+        hasPrev={optionState.prevCount}
+        hasNext={optionState.nextCount}
       />
       <form
         className="product-form"
