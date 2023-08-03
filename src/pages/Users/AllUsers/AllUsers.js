@@ -67,7 +67,7 @@ const initialQueryFilterState = {
   pageNo: 0,
   name:"",
   searchValue: "",
-  status: ""
+  status: ["active", "in-active"],
 };
 
 const initialUsersState = {
@@ -125,7 +125,6 @@ const customerReducer = (state, action) => {
       status: action.status,
     };
   }
-
   return initialCustomerState;
 };
 
@@ -616,7 +615,7 @@ const AllUsers = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label={`All (${customerCount?.active + customerCount?.inActive + customerCount?.archived})`} className="tabs-head" />
+              <Tab label={`All (${customerCount?.active + customerCount?.inActive})`} className="tabs-head" />
               <Tab label={`Active (${customerCount?.active})`} className="tabs-head" />
               <Tab label={`New (${customerCount?.new})`} className="tabs-head" />
               <Tab label={`In-Active (${customerCount?.inActive})`} className="tabs-head" />
@@ -802,6 +801,7 @@ const AllUsers = () => {
                           queryFilterState.status.includes("active")
                         }
                       />
+                    </FormGroup>
                     <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
                         value="in-active"
@@ -833,7 +833,6 @@ const AllUsers = () => {
                         }
                         label="Blocked"
                       />
-                    </FormGroup>
                     <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
                         value="archieved"

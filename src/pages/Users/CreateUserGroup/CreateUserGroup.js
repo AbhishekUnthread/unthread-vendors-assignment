@@ -43,6 +43,7 @@ import TagsBox from "../../../components/TagsBox/TagsBox";
 import AllUsersTable from "../AllUsers/AllUsersTable";
 import SearchBorder from "../../../components/SearchBorder/SearchBorder";
 import SaveFooter from "../../../components/SaveFooter/SaveFooter";
+import NotesBox from "../../../components/NotesBox/NotesBox";
 
 import "./CreateUserGroup.scss";
 
@@ -342,7 +343,9 @@ const CreateUserGroup = () => {
     initialValues: {
       name: "",
       description: "",
-      addType: "manual"
+      addType: "manual",
+      status: "active",
+      notes: ""
     },
     enableReinitialize: true,
     validationSchema: customerGroupValidationSchema,
@@ -506,40 +509,6 @@ const CreateUserGroup = () => {
                   <FormHelperText error>{customerGroupFormik.errors.name}</FormHelperText>
                 )}
               </div>
-              <div className="col-md-12 d-flex px-0">
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      // checked={checked}
-                      // onChange={handleCheckboxChange}
-                      inputProps={{ "aria-label": "controlled" }}
-                      size="small"
-                      style={{
-                        color: "#5C6D8E",
-                        marginRight: 0,
-                        width: "auto",
-                      }}
-                    />
-                  }
-                  label="Overwride Other User Groups"
-                  sx={{
-                    "& .MuiTypography-root": {
-                      fontSize: "0.8rem",
-                      color: "#5C6D8E",
-                      marginRight: 0,
-                    },
-                  }}
-                  className="me-0 px-0"
-                />
-                <Tooltip title="Lorem ipsum" placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className="c-pointer ms-2"
-                    width={13.5}
-                  />
-                </Tooltip>
-              </div>
               <div className="col-md-12 mt-3 px-0">
                 <p className="text-lightBlue mb-1">Description</p>
                 <TextareaAutosize
@@ -552,6 +521,7 @@ const CreateUserGroup = () => {
                     background: "#15142A",
                     color: "#c8d8ff",
                     borderRadius: 5,
+                    padding: 10
                   }}
                   minRows={5}
                   className="w-100"
@@ -1060,8 +1030,19 @@ const CreateUserGroup = () => {
             </SwipeableDrawer>
           </div>
           <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-            {/* <StatusBox headingName={"Group Status"} /> */}
-            {/* <TagsBox /> */}
+            <StatusBox 
+              headingName={"Group Status"} 
+              value={customerGroupFormik?.values?.status}
+              toggleData={["active", "in-active"]}
+              handleProductStatus={(_, val) =>
+                customerGroupFormik.setFieldValue("status", val)
+              }
+            />
+            <NotesBox
+              name="notes"
+              value={customerGroupFormik.values?.notes}
+              onChange={customerGroupFormik.handleChange}
+            />
           </div>
         </div>
         <div className="row create-buttons pt-5 pb-3 justify-content-between">
