@@ -1421,7 +1421,6 @@ const OptionsInfo = () => {
                     </Grid>
                   </div>
                   <OptionsAttributeTable
-                    isEditing={id}
                     onAttributeAdd={addAttributeFieldHandler}
                     formik={optionFormik}
                     onAttributeDelete={deleteAttributeHandler}

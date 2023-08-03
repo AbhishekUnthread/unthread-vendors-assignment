@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+
 import {
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TablePagination,
+  
   TableRow,
-  Chip,
+  
   Collapse,
 } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -14,17 +14,13 @@ import {
   SortableContainer,
   SortableHandle,
   SortableElement,
-  arrayMove,
+  
 } from "react-sortable-hoc";
 
 import TableHeader from "../../../components/TableHeader/TableHeader";
-import EditButton from "../../../components/EditButton/EditButton";
-import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
-import DeleteIconButton from "../../../components/DeleteIconButton/DeleteIconButton";
-import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import Attribute from "../../../components/Options/Attribute/Attribute";
 import SubOption from "../../../components/Options/SubOption";
-import SubOptionCollapse from "../../../components/Options/SubOptionCollapse";
+
 
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 
@@ -72,7 +68,7 @@ const HEAD_CELLS = [
 
 const OptionsAttributeTable = (props) => {
   const {
-    isEditing,
+  
     formik,
     onAttributeAdd,
     onAttributeDelete,
@@ -100,15 +96,16 @@ const OptionsAttributeTable = (props) => {
         <TableHeader sx={{ background: "#22213f" }} headCells={HEAD_CELLS} />
         <TableBodySortable useDragHandle>
           {formik.values?.attributes.map((attribute, index) => {
-            const hasSubOptions = formik.values.subOptions.find(
-              (subOp) => subOp.metaAttribute === attribute._id
-            );
+            const hasSubOptions = formik.values.subOptions.filter((subOp) => {
+              return subOp.metaAttribute === attribute._id;
+            });
+
             return (
               <SortableRow key={index} index={index}>
                 <TableRow tabIndex={-1} className="table-rows">
                   <DragHandle />
                   <TableCell sx={{ padding: "16px 0", verticalAlign: "top" }}>
-                    {hasSubOptions && (
+                    {hasSubOptions.length > 0 && (
                       <button
                         onClick={toggleSubOption.bind(null, index)}
                         type="button"
@@ -144,6 +141,7 @@ const OptionsAttributeTable = (props) => {
                       index={index}
                       onAttributeDelete={onAttributeDelete}
                       onSubOptionAdd={addSubOptionHandler.bind(this, index)}
+                      subOptionCount={hasSubOptions.length}
                     />
                     <Collapse
                       in={attribute.expanded}
