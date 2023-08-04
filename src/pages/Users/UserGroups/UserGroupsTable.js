@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -15,7 +15,8 @@ import {
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { 
   useEditCustomerGroupMutation,
-  useDeleteCustomerGroupMutation
+  useDeleteCustomerGroupMutation,
+  useBulkEditCustomerGroupMutation,
 } from "../../../features/customers/customerGroup/customerGroupApiSlice";
 
 import {
@@ -33,7 +34,7 @@ import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModa
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 
-const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
+const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }) => {
   const dispatch = useDispatch();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("groupName");
@@ -49,6 +50,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
   const [massActionStatus, setMassActionStatus] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [showUnArchivedModal, setShowUnArhcivedModal] = useState(false);
+  const [state, setState] = useState([]);
 
   const [
     editCustomerGroup,
@@ -69,19 +71,80 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
     },
   ] = useDeleteCustomerGroupMutation();
 
+  const[
+    bulkEditCustomerGroup,
+    {
+      data: bulkEditGroup,
+      isLoading: bulkGroupEditLoading,
+      isSuccess: bulkGroupEditIsSuccess,
+      error: bulkGroupEditError,
+    }
+  ] = useBulkEditCustomerGroupMutation();
+
   const handleArchive = () => {
     setArchivedModal(true);
+    setForMassAction(false)
   }
 
+  useEffect(() => {
+    if (selectedStatus !== null && selectedStatus !== "Delete") {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as In-Active") {
+          return {
+            id,
+            status: "in-active",
+          };
+        } else if (selectedStatus === "Set as Archived") {
+          return {
+            id,
+            status: "archived",
+          };
+        } else {
+          return {
+            id,
+            status: "", 
+          };
+        }
+      });
+      setState(newState);
+      const requestData = {
+        updates: newState
+      };
+      bulkEditCustomerGroup(requestData).unwrap().then(()=> {
+        const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Collection un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+                ? "Collection archived  successfully" : "Status updated successfully";
+
+        dispatch(showSuccess({ message: successMessage }));
+        setSelectedStatus(null);
+        setShowUnArhcivedModal(false)
+        setShowDeleteModal(false);
+        setSelected([])
+      })}    
+  }, [selectedStatus]);  
+
   const handleArchivedModalClose = () => {
-    editCustomerGroup({
-      id: groupId,
-      details : {
-        status: "archived"
-      }
-    })
-    setArchivedModal(false);
-    dispatch(showSuccess({ message: "Customer Group archived successfully!" }));
+    if(forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      setArchivedModal(false);
+    } else {
+      handleClick(null, groupId);
+      setArchivedModal(false);
+      editCustomerGroup({
+        id: groupId,
+        details : {
+          status: "archived"
+        }
+      })
+      dispatch(showSuccess({ message: "Customer Group archived successfully!" }));
+    }
   }
 
   const handleModalClose = () => {
@@ -89,10 +152,18 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
   };
 
   const handleArchiveModal =()=>{
-    handleClick(null, groupId);
-    deleteCustomerGroup(groupId);
-    setShowDeleteModal(false)
-    dispatch(showSuccess({ message: "Collection deleted successfully!" }));
+    if(forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      bulkDelete(selected)
+      setShowDeleteModal(false);
+      dispatch(showSuccess({ message: "Collection deleted successfully!" }));
+      setSelected([])
+    } else {
+      handleClick(null, groupId);
+      deleteCustomerGroup(groupId);
+      setShowDeleteModal(false)
+      dispatch(showSuccess({ message: "Customer group deleted successfully!" }));
+    }
   }
 
   const toggleArchiveModalHandler = (row) => {
@@ -361,11 +432,6 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                                     <small className="text-lightBlue font2 d-block">
                                       Archive Groups
                                     </small>
-                                    <img
-                                      src={deleteRed}
-                                      alt="delete"
-                                      className="ms-2"
-                                    />
                                   </div>
                                 </> : 
                                 <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
@@ -427,8 +493,8 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
         products={"25 products"}
       />   
       <DeleteModalSecondary 
-        message={groupName}
-        title={" Customer Group"}
+        message={forMassAction == false ? groupName : selected.length == 1 ? groupName : selected.length} 
+        title={ forMassAction == true ? selected.length == 1 ? " Customer Group" : " Customer Groups": " Customer Group" }
         onConfirm ={handleArchiveModal}
         onCancel={toggleArchiveModalHandler}
         show={showDeleteModal}

@@ -66,6 +66,24 @@ export const customerGroupApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["CustomerGroup"],
     }),
 
+    bulkEditCustomerGroup: builder.mutation({
+      query: (updates) => ({
+        url: `/customerGroup/bulkUpdate`,
+        method: "PUT",
+        body: updates ,
+      }),
+      invalidatesTags: ["CustomerGroup"],
+    }),
+
+    bulkDeleteCustomerGroup: builder.mutation({
+      query: (groupDelete) => ({
+        url: `/customerGroup/bulkDelete`,
+        method: "DELETE",
+        body: groupDelete,
+      }),
+      invalidatesTags: ["CustomerGroup"],
+    }),
+
   }),
 });
 
@@ -74,5 +92,7 @@ export const {
   useGetAllCustomerGroupQuery,
   useGetCustomerGroupCountQuery,
   useEditCustomerGroupMutation,
-  useDeleteCustomerGroupMutation
+  useDeleteCustomerGroupMutation,
+  useBulkEditCustomerGroupMutation,
+  useBulkDeleteCustomerGroupMutation
 } = customerGroupApiSlice;

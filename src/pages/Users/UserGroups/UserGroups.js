@@ -25,7 +25,8 @@ import {
 } from "../../../features/snackbar/snackbarAction";
 import { 
   useGetAllCustomerGroupQuery,
-  useGetCustomerGroupCountQuery
+  useGetCustomerGroupCountQuery,
+  useBulkDeleteCustomerGroupMutation
 } from "../../../features/customers/customerGroup/customerGroupApiSlice";
 
 import UserGroupsTable from "./UserGroupsTable";
@@ -120,6 +121,15 @@ const UserGroups = () => {
     initialCustomerState
   );
 
+  const [
+    bulkDeleteCustomerGroup,
+    {
+      isLoading: bulkDeleteGroupIsLoading,
+      isSuccess: bulkDeleteGroupIsSuccess,
+      error: bulkDeleteGroupError,
+    },
+  ] = useBulkDeleteCustomerGroupMutation();
+
   const {
     data: groupCountData,
     isLoading: groupCountIsLoading,
@@ -135,6 +145,10 @@ const UserGroups = () => {
   } = useGetAllCustomerGroupQuery({...queryFilterState});
 
   const customerData =  customerGroupData?.data;
+
+  const deleteBulkCollection = (data) => {
+    bulkDeleteCustomerGroup({deletes: data})
+  }
 
   const handleChangeRowsPerPage = (event) => {
     dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
@@ -571,6 +585,7 @@ const UserGroups = () => {
               totalCount={customerData?.totalCount || 0}
               loading={customerGroupIsLoading}
               error={customerGroupError}
+              bulkDelete={deleteBulkCollection}
             />
           </TabPanel>
         </Paper>
