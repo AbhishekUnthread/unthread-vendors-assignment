@@ -30,9 +30,11 @@ import Loader from "../../../components/Loader/TableLoader";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
+import { UnArchivedModal } from "../../../components/UnArchiveModal/UnArchiveModal";
 
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
+import unArchived from "../../../assets/images/Components/Archived.png"
 
 const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }) => {
   const dispatch = useDispatch();
@@ -51,6 +53,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [showUnArchivedModal, setShowUnArhcivedModal] = useState(false);
   const [state, setState] = useState([]);
+  const [statusValue, setStatusValue] = useState("in-active");
 
   const [
     editCustomerGroup,
@@ -104,6 +107,11 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
             id,
             status: "archived",
           };
+        } else if (selectedStatus === "Set as Un-Archived") {
+          return {
+            id,
+            status: statusValue,
+          };
         } else {
           return {
             id,
@@ -151,12 +159,12 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
     setArchivedModal(false);
   };
 
-  const handleArchiveModal =()=>{
+  const handleDeleteModal =()=>{
     if(forMassAction === true) {
       setSelectedStatus(massActionStatus);
       bulkDelete(selected)
       setShowDeleteModal(false);
-      dispatch(showSuccess({ message: "Collection deleted successfully!" }));
+      dispatch(showSuccess({ message: "Customer group deleted successfully!" }));
       setSelected([])
     } else {
       handleClick(null, groupId);
@@ -166,9 +174,38 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
     }
   }
 
-  const toggleArchiveModalHandler = (row) => {
+  const toggleDeleteModalHandler = (row) => {
     setShowDeleteModal((prevState) => !prevState);
   };
+
+   const handleUnArchived = () => {
+    if(forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+    } else {
+      handleClick(null, groupId);
+      editCustomerGroup({
+          id: groupId,
+          details : {
+            status: statusValue
+          }
+      })
+      setShowUnArhcivedModal(false)
+      dispatch(showSuccess({ message: "Collection un-archived successfully" }));
+    }
+  }
+
+  const closeUnArchivedModal = () => {
+    setShowUnArhcivedModal(false)
+  }
+
+  const handleStatusValue = (value) => {
+    setStatusValue(value);
+  };
+  
+  const handleUnArchive = () => {
+    setForMassAction(false)
+    setShowUnArhcivedModal(true)
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -426,20 +463,30 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
                                   <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                                     Edit User Groups
                                   </small>
-                                  <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
+                                  <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer mt-2"
                                     onClick={() => { handleArchive()}}
                                   >
-                                    <small className="text-lightBlue font2 d-block">
-                                      Archive Groups
+                                    <small className="font2 d-block" style={{color: "#F67E80"}}>
+                                      Archived Groups
                                     </small>
                                   </div>
                                 </> : 
-                                <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
+                                <>
+                                <small className="font2 d-block mt-4 c-pointer hover-back p-2 rounded-3" 
+                                  style={{color: "#F67E80"}}
                                   onClick={() => {
-                                    toggleArchiveModalHandler()
+                                    handleUnArchive()
+                                  }
+                              }
+                                >
+                                  Un-Archived Groups
+                                </small>
+                                <div className="d-flex justify-content-between hover-back rounded-3 p-2 c-pointer mt-3"
+                                  onClick={() => {
+                                    toggleDeleteModalHandler()
                                   }}
                                 >
-                                  <small className="text-lightBlue font2 d-block">
+                                  <small className="font2 d-block" style={{color: "#F67E80"}}>
                                     Delete Groups
                                   </small>
                                   <img
@@ -448,6 +495,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
                                     className="ms-2"
                                   />
                                 </div>
+                                </>
                               }
                             </div>
                           </Popover>
@@ -483,20 +531,34 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
         onConfirm ={handleArchivedModalClose}
         onCancel={handleModalClose}
         show={openArchivedModal}
-        title={"Customer Group"}
+        title={"customer group"}
         message={forMassAction == true ? selected.length == 1 ? 
           groupName : selected.length : groupName 
         }
         archiveType={ forMassAction == true ? selected.length == 1 ?
-          " Customer Group" : " Customer Groups": " Customer Group" 
+          " customer group" : " customer groups": " customer group" 
         }
         products={"25 products"}
       />   
+      <UnArchivedModal 
+        onConfirm={handleUnArchived}
+        onCancel={closeUnArchivedModal}
+        show={showUnArchivedModal}
+        title={"Un-Archive Collection ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${groupName}</span> vendor,
+        `}
+        secondaryMessage={"Please set its status"}
+        confirmText={"Un-Archive"}
+        handleStatusValue={handleStatusValue}
+        icon={unArchived}
+        name={forMassAction == false ? groupName : selected.length == 1 ? groupName : selected.length} 
+        nameType={ forMassAction == true ? selected.length == 1 ? " customer group" : " customer groups": " customer group" }
+      />
       <DeleteModalSecondary 
         message={forMassAction == false ? groupName : selected.length == 1 ? groupName : selected.length} 
-        title={ forMassAction == true ? selected.length == 1 ? " Customer Group" : " Customer Groups": " Customer Group" }
-        onConfirm ={handleArchiveModal}
-        onCancel={toggleArchiveModalHandler}
+        title={ forMassAction == true ? selected.length == 1 ? " customer group" : " customer groups": " customer group" }
+        onConfirm ={handleDeleteModal}
+        onCancel={toggleDeleteModalHandler}
         show={showDeleteModal}
       />
     </>
