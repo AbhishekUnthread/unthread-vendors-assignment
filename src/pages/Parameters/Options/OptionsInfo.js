@@ -1183,12 +1183,28 @@ const OptionsInfo = () => {
   }, [optionsData, optionsError, optionsIsError, optionsIsSuccess, dispatch]);
 
   useEffect(() => {
-    if (id && !_.isEqual(optionFormik.values, optionFormik.initialValues)) {
+    const currentValues = structuredClone(optionFormik.values);
+    const initialValues = structuredClone(optionFormik.initialValues);
+    currentValues.attributes = currentValues.attributes.map((attr) => {
+      delete attr.expanded;
+      return attr;
+    });
+    currentValues.subOptions = currentValues.subOptions.map((subOp) => {
+      delete subOp.expanded;
+      return subOp;
+    });
+    initialValues.attributes = initialValues.attributes.map((attr) => {
+      delete attr.expanded;
+      return attr;
+    });
+    initialValues.subOptions = initialValues.subOptions.map((subOp) => {
+      delete subOp.expanded;
+      return subOp;
+    });
+
+    if (id && !_.isEqual(currentValues, initialValues)) {
       dispatchOption({ type: "ENABLE_EDIT" });
-    } else if (
-      id &&
-      _.isEqual(optionFormik.values, optionFormik.initialValues)
-    ) {
+    } else if (id && _.isEqual(currentValues, initialValues)) {
       dispatchOption({ type: "DISABLE_EDIT" });
     }
   }, [optionFormik.initialValues, optionFormik.values, id]);
@@ -1219,6 +1235,7 @@ const OptionsInfo = () => {
     subAttributesIsLoading,
     optionQueryFilterState.srNo,
   ]);
+
   return (
     <>
       {pageIsLoading && <PageLoader />}
@@ -1408,7 +1425,7 @@ const OptionsInfo = () => {
                               </p>
                               <AntSwitch
                                 name="option.isPriceMaster"
-                                value={
+                                checked={
                                   optionFormik.values.option?.isPriceMaster
                                 }
                                 onBlur={optionFormik.handleBlur}

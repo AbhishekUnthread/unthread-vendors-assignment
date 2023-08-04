@@ -85,7 +85,7 @@ const OptionSetsInfo = () => {
       <form className="product-form" noValidate>
         <div className="row mt-3">
           <div className="col-lg-9 mt-3">
-            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
+            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mb-4">
               <div className="col-md-12 px-0 d-flex mb-4">
                 <Grid container spacing={2}>
                   <Grid item md={6}>
@@ -158,6 +158,29 @@ const OptionSetsInfo = () => {
                       </FormControl>
                     </div>
                   </Grid>
+                </Grid>
+              </div>
+            </div>
+
+            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
+              <div className="col-md-12 px-0 d-flex mb-4">
+                <Grid container spacing={2}>
+                  <Grid item sm={6}>
+                    <div className="d-flex mb-1">
+                      <label className="small text-lightBlue me-2">
+                        Frontend Name
+                      </label>
+                      <Tooltip title="Lorem ipsum" placement="top">
+                        <img
+                          src={info}
+                          alt="info"
+                          className=" c-pointer"
+                          width={13.5}
+                        />
+                      </Tooltip>
+                    </div>
+                  </Grid>
+                  <Grid item sm={6}></Grid>
                 </Grid>
               </div>
             </div>
