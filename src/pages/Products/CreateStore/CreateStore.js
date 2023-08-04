@@ -9,18 +9,7 @@ import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import addMedia from "../../../assets/icons/addMedia.svg";
 import info from "../../../assets/icons/info.svg";
 // ! MATERIAL IMPORTS
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormHelperText,
-  InputAdornment,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import { Checkbox, FormControl, FormControlLabel, FormHelperText, InputAdornment, MenuItem, OutlinedInput, Select, TextField, Tooltip } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useCreateStoreMutation } from "../../../features/products/inventory/inventoryApiSlice";
@@ -158,14 +147,12 @@ const storeValidationSchema = Yup.object({
     saturday: Yup.object().shape(dayObj),
     sunday: Yup.object().shape(dayObj),
   }),
-  mediaUrl: Yup.array()
-    .of(
-      Yup.object({
-        isDefault: Yup.boolean().required(),
-        image: Yup.string().url().required(),
-      })
-    )
-    .required(),
+  mediaUrl: Yup.array().of(
+    Yup.object({
+      isDefault: Yup.boolean(),
+      image: Yup.string().url(),
+    })
+  ),
   notes: Yup.string(),
   settings: Yup.object({
     fullfillOnlineOrder: Yup.boolean(),
@@ -182,9 +169,8 @@ const CreateStore = () => {
     initialValues: storeInitialValue,
     validationSchema: storeValidationSchema,
     onSubmit: (values) => {
-      for (const key of Object.keys(values.managerDetails)) {
-        if (values.managerDetails[key] === "") delete values.managerDetails[key];
-      }
+      for (const key of Object.keys(values.managerDetails)) if (values.managerDetails[key] === "") delete values.managerDetails[key];
+      if (values.mediaUrl.length === 0) delete values.mediaUrl;
       createStore(values)
         .unwrap()
         .then(() => navigate("/products/inventory"))
@@ -197,9 +183,9 @@ const CreateStore = () => {
   const changeStateHandler = (_, value) => formik.setFieldValue("address.state", value?._id ?? "");
   const changeCountryHandler = (_, value) => formik.setFieldValue("address.country", value?._id ?? "");
   const changeCountryCodeHandler = (_, value) => formik.setFieldValue("countryCode", value?._id ?? "");
-  const changeManagerCountryCodeHandler = (_, value) =>
-    formik.setFieldValue("managerDetails.countryCode", value?._id ?? "");
+  const changeManagerCountryCodeHandler = (_, value) => formik.setFieldValue("managerDetails.countryCode", value?._id ?? "");
   const changeMediaUrl = (value) =>
+    !!value &&
     formik.setFieldValue("mediaUrl", [
       {
         isDefault: true,
@@ -441,9 +427,7 @@ const CreateStore = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                <FormHelperText error>
-                  {formik.touched.address?.pincode && formik.errors.address?.pincode}
-                </FormHelperText>
+                <FormHelperText error>{formik.touched.address?.pincode && formik.errors.address?.pincode}</FormHelperText>
               </FormControl>
             </div>
 
@@ -524,9 +508,7 @@ const CreateStore = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                <FormHelperText error>
-                  {formik.touched.address?.mapLink && formik.errors.address?.mapLink}
-                </FormHelperText>
+                <FormHelperText error>{formik.touched.address?.mapLink && formik.errors.address?.mapLink}</FormHelperText>
               </FormControl>
             </div>
 
@@ -687,9 +669,7 @@ const CreateStore = () => {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     />
-                    <FormHelperText error>
-                      {formik.touched.managerDetails?.fullName && formik.errors.managerDetails?.fullName}
-                    </FormHelperText>
+                    <FormHelperText error>{formik.touched.managerDetails?.fullName && formik.errors.managerDetails?.fullName}</FormHelperText>
                   </FormControl>
                 </div>
                 <div className="col-md-12 mt-3">
@@ -712,11 +692,7 @@ const CreateStore = () => {
                             dataImgUrl="imageUrl"
                             name="managerDetails.countryCode"
                             value={formik.values.managerDetails.countryCode}
-                            error={
-                              formik.touched.managerDetails?.countryCode
-                                ? formik.errors.managerDetails?.countryCode
-                                : ""
-                            }
+                            error={formik.touched.managerDetails?.countryCode ? formik.errors.managerDetails?.countryCode : ""}
                             onChange={changeManagerCountryCodeHandler}
                             formik={formik}
                             // onChange={formik.handleChange}
@@ -731,9 +707,7 @@ const CreateStore = () => {
                         </InputAdornment>
                       }
                     />
-                    <FormHelperText error>
-                      {formik.touched.managerDetails?.phone && formik.errors.managerDetails?.phone}
-                    </FormHelperText>
+                    <FormHelperText error>{formik.touched.managerDetails?.phone && formik.errors.managerDetails?.phone}</FormHelperText>
                   </FormControl>
                 </div>
                 <div className="col-md-12 mt-3">
@@ -747,9 +721,7 @@ const CreateStore = () => {
                       onChange={formik.handleChange}
                       onBlur={formik.onBlur}
                     />
-                    <FormHelperText error>
-                      {formik.touched.managerDetails?.email && formik.errors.managerDetails?.email}
-                    </FormHelperText>
+                    <FormHelperText error>{formik.touched.managerDetails?.email && formik.errors.managerDetails?.email}</FormHelperText>
                   </FormControl>
                 </div>
               </div>
@@ -795,9 +767,7 @@ const CreateStore = () => {
                   />
                 </Tooltip>
               </div>
-              <FormHelperText error>
-                {formik.touched.settings?.fullfillOnlineOrder && formik.errors.settings?.fullfillOnlineOrder}
-              </FormHelperText>
+              <FormHelperText error>{formik.touched.settings?.fullfillOnlineOrder && formik.errors.settings?.fullfillOnlineOrder}</FormHelperText>
             </FormControl>
 
             <FormControl className="w-100 px-0">
@@ -835,9 +805,7 @@ const CreateStore = () => {
                   />
                 </Tooltip>
               </div>
-              <FormHelperText error>
-                {formik.touched.settings?.enableStorePickup && formik.errors.settings?.enableStorePickup}
-              </FormHelperText>
+              <FormHelperText error>{formik.touched.settings?.enableStorePickup && formik.errors.settings?.enableStorePickup}</FormHelperText>
             </FormControl>
           </div>
         </div>

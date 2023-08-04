@@ -35,3 +35,13 @@
 - [x] End Time Validation not before Start Time - some UI mods may be needed
 - [x] Country Code Issue - Need API Change
 - [] Map Integrate - Need Conversion Code peer Dependency issue
+
+## Store Inventory API
+
+- PUT Store request schema (tried to change status to archived)
+- Archive Store Format (status dependent or new api route)
+
+## Pending GET API Stuff
+
+- Image URL missing for old store please send empty array if none
+- Sort Query params dont work

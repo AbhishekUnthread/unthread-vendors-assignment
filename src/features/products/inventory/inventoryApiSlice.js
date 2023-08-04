@@ -2,18 +2,8 @@ import apiSlice from "../../../app/api/apiSlice";
 
 export const inventoryApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    
     getAllStores: builder.query({
       query: (queries = {}) => {
-        // let queryString = "";
-        // for (const key in queries) {
-        //   if (queries[key]) {
-        //     queryString = `${queryString}${queryString ? "&" : "?"}${key}=${
-        //       queries[key]
-        //     }`;
-        //   }
-        // }
-
         const queryString = new URLSearchParams(queries).toString();
 
         return {
@@ -31,7 +21,24 @@ export const inventoryApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Inventory"],
     }),
+
+    editStore: builder.mutation({
+      query: ({ id, details }) => ({
+        url: `/store/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      invalidatesTags: ["Inventory"],
+    }),
+
+    deleteStore: builder.mutation({
+      query: (storeId) => ({
+        url: `/store/${storeId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Inventory"],
+    }),
   }),
 });
 
-export const {useGetAllStoresQuery, useCreateStoreMutation } = inventoryApiSlice;
+export const { useGetAllStoresQuery, useCreateStoreMutation, useEditStoreMutation, useDeleteStoreMutation } = inventoryApiSlice;
