@@ -28,6 +28,7 @@ import OptionsAttributeTable from "./OptionsAttributeTable";
 import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
 import PageLoader from "../../../components/Loader/PageLoader";
+import OptionSet from "../../../components/Options/OptionSet/OptionSet";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -85,13 +86,13 @@ const OptionSetsInfo = () => {
       <form className="product-form" noValidate>
         <div className="row mt-3">
           <div className="col-lg-9 mt-3">
-            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mb-4">
-              <div className="col-md-12 px-0 d-flex mb-4">
+            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mb-3">
+              <div className="col-md-12 px-0 d-flex">
                 <Grid container spacing={2}>
                   <Grid item md={6}>
                     <div className="d-flex mb-1">
                       <label className="small text-lightBlue me-2">
-                        Frontend Name
+                        Enter Shared options Title
                       </label>
                       <Tooltip title="Lorem ipsum" placement="top">
                         <img
@@ -109,16 +110,14 @@ const OptionSetsInfo = () => {
                         name="option.frontEndTitle"
                       />
                     </FormControl>
-                    <FormHelperText>
-                      Customer will see this on frontend
-                    </FormHelperText>
                   </Grid>
 
                   <Grid item md={6}>
                     <div>
                       <div className="d-flex  mb-1">
                         <p className="text-lightBlue me-2">
-                          Frontend Appearance
+                          Apply to{" "}
+                          <span style={{ color: "#5c6d8e" }}>(optional)</span>
                         </p>
                         <Tooltip title="Lorem ipsum" placement="top">
                           <img
@@ -163,12 +162,12 @@ const OptionSetsInfo = () => {
             </div>
 
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-              <div className="col-md-12 px-0 d-flex mb-4">
+              <div className="col-md-12 px-0 d-flex">
                 <Grid container spacing={2}>
                   <Grid item sm={6}>
                     <div className="d-flex mb-1">
-                      <label className="small text-lightBlue me-2">
-                        Frontend Name
+                      <label className="text-lightBlue me-2">
+                        Make Option Sets
                       </label>
                       <Tooltip title="Lorem ipsum" placement="top">
                         <img
@@ -179,10 +178,35 @@ const OptionSetsInfo = () => {
                         />
                       </Tooltip>
                     </div>
+                    <FormHelperText>
+                      <div className="d-flex mb-1">
+                        <Tooltip title="Lorem ipsum" placement="top">
+                          <img
+                            src={info}
+                            alt="info"
+                            className=" c-pointer me-1"
+                            width={8.5}
+                          />
+                        </Tooltip>
+                        <label className="small">
+                          If this product has options, like size or color then
+                          add option
+                        </label>
+                      </div>
+                    </FormHelperText>
                   </Grid>
-                  <Grid item sm={6}></Grid>
+                  <Grid
+                    item
+                    sm={6}
+                    sx={{ display: "flex", justifyContent: "flex-end" }}
+                  >
+                    <button className="button-gradient py-2 px-4 ms-3 c-pointer">
+                      <p>+ Add Options</p>
+                    </button>
+                  </Grid>
                 </Grid>
               </div>
+              <OptionSet />
             </div>
           </div>
         </div>
