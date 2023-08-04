@@ -45,6 +45,10 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
   const [groupId, setGroupId] = useState();
   const [groupName, setGroupName] = useState();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [forMassAction, setForMassAction] = useState(false);
+  const [massActionStatus, setMassActionStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [showUnArchivedModal, setShowUnArhcivedModal] = useState(false);
 
   const [
     editCustomerGroup,
@@ -65,10 +69,8 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
     },
   ] = useDeleteCustomerGroupMutation();
 
-  const handleArchive = (id, group, list) => {
+  const handleArchive = () => {
     setArchivedModal(true);
-    setGroupId(id);
-    setGroupName(group)
   }
 
   const handleArchivedModalClose = () => {
@@ -95,8 +97,6 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
 
   const toggleArchiveModalHandler = (row) => {
     setShowDeleteModal((prevState) => !prevState);
-    setGroupId(row._id);
-    setGroupName(row?.name);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -122,12 +122,13 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
     }
   }; 
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, id, name) => {
+    setGroupName(name)
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -148,7 +149,9 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const handleActionClick = (event) => {
+  const handleActionClick = (event, row) => {
+    setGroupId(row._id);
+    setGroupName(row?.name);
     setAnchorActionEl(event.currentTarget);
   };
 
@@ -158,6 +161,22 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
 
   const openActions = Boolean(anchorActionEl);
   const idActions = openActions ? "simple-popover" : undefined;
+
+   const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
+
+  const handleMassAction  = (status) => {
+    setForMassAction(true)
+    setMassActionStatus(status);
+    if(value !== 3 && status === "Set as Archived") {
+      setArchivedModal(true);
+    } else if(value === 3 && status === "Set as Un-Archived") {
+      setShowUnArhcivedModal(true);
+    } else if(value === 3 && status === "Delete") {
+      setShowDeleteModal(true);
+    }
+  };
 
   const headCells = [
     {
@@ -174,7 +193,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
     }
   ];
 
-  if (value === 0 || value === 2) {
+  if (value === 0 || value === 3) {
     headCells.push({
       id: "status",
       numeric: false,
@@ -205,8 +224,20 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
-          <TableMassActionButton />
+          { value !== 3 && 
+            <TableEditStatusButton 
+              onSelect={handleStatusSelect} 
+              defaultValue={['Set as Active','Set as In-Active']} 
+              headingName="Edit Status"
+            />
+          }
+          <TableMassActionButton 
+            headingName="Mass Action" 
+            onSelect={handleMassAction} 
+            defaultValue={ value !== 3 ? 
+            ['Edit','Set as Archived'] : 
+            ['Delete','Set as Un-Archived']}
+          />
         </div>
       )}
       { data.length ?
@@ -238,7 +269,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row?._id}
+                        key={index}
                         selected={isItemSelected}
                         className="table-rows"
                       >
@@ -248,7 +279,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                             inputProps={{
                               "aria-labelledby": labelId,
                             }}
-                            onClick={(event) => handleClick(event, row?._id)}
+                            onClick={(event) => handleClick(event, row?._id, row?.name)}
                             size="small"
                             style={{
                               color: "#5C6D8E",
@@ -261,19 +292,18 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                           scope="row"
                           padding="none"
                         >
-                          <Link
-                            to="/users/userGroups/create"
+                          <div
                             className="d-flex align-items-center text-decoration-none c-pointer"
                           >
                             <p className="text-lightBlue rounded-circle fw-600">
                               {row?.name}
                             </p>
-                          </Link>
+                          </div>
                         </TableCell>
                         <TableCell style={{ width: 180 }}>
                           <p className="text-lightBlue">{row.usersInGroup}</p>
                         </TableCell>
-                        { (value == 0 || value == 2) &&
+                        { (value == 0 || value == 3) &&
                           <TableCell style={{ width: 180 }}>
                             <div className="d-flex align-items-center">
                               <div 
@@ -300,7 +330,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                             className="c-pointer"
                             aria-describedby={idActions}
                             variant="contained"
-                            onClick={handleActionClick}
+                            onClick={(event) => handleActionClick(event, row)}
                           />
 
                           <Popover
@@ -320,13 +350,13 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                             <div className="py-2 px-2">
                               <small className="text-grey-7 px-2">ACTIONS</small>
                               <hr className="hr-grey-6 my-2" />
-                              { value != 2 ? 
+                              { value != 3 ? 
                                 <>
                                   <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                                     Edit User Groups
                                   </small>
                                   <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
-                                    onClick={() => { handleArchive(row?._id, row?.name)}}
+                                    onClick={() => { handleArchive()}}
                                   >
                                     <small className="text-lightBlue font2 d-block">
                                       Archive Groups
@@ -339,8 +369,8 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                                   </div>
                                 </> : 
                                 <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
-                                  onClick={(e) => {
-                                    toggleArchiveModalHandler(row)
+                                  onClick={() => {
+                                    toggleArchiveModalHandler()
                                   }}
                                 >
                                   <small className="text-lightBlue font2 d-block">
@@ -388,10 +418,14 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
         onCancel={handleModalClose}
         show={openArchivedModal}
         title={"Customer Group"}
-        message={groupName}
-        archiveType={"Customer Group"}
+        message={forMassAction == true ? selected.length == 1 ? 
+          groupName : selected.length : groupName 
+        }
+        archiveType={ forMassAction == true ? selected.length == 1 ?
+          " Customer Group" : " Customer Groups": " Customer Group" 
+        }
         products={"25 products"}
-      />
+      />   
       <DeleteModalSecondary 
         message={groupName}
         title={" Customer Group"}
