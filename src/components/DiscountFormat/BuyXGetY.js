@@ -46,6 +46,7 @@ const buyXgetYReducer = (state, action) => {
       getProduct: action.getProduct,
     };
   }
+
 };
 
 function BuyXGetY({ value, field, formik, touched, error }) {
@@ -225,8 +226,6 @@ function BuyXGetY({ value, field, formik, touched, error }) {
     }
   }, [value?.selectGetItem, collectionData, categoriesData, subCategoriesData]);
 
-  console.log({ ABCD1: value?.buyProduct });
-  console.log({ ABCD2: value?.getProduct });
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
