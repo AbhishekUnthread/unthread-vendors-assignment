@@ -52,6 +52,7 @@ import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
 import DuplicateCollection from "../DuplicateCollection/DuplicateCollectionModal";
 import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
 import { SaveFooterTertiary } from "../../../../components/SaveFooter/SaveFooter";
+import InfoHeader from "../../../../components/Header/InfoHeader";
 
 import "../../CreateCollection/CreateCollection.scss";
 
@@ -64,9 +65,6 @@ import deleteWhite from "../../../../assets/icons/deleteWhite.svg";
 import editWhite from "../../../../assets/icons/editWhite.svg";
 import deleteButton from "../../../../assets/icons/deleteButton.svg";
 import addMedia from "../../../../assets/icons/addMedia.svg";
-import paginationRight from "../../../../assets/icons/paginationRight.svg";
-import paginationLeft from "../../../../assets/icons/paginationLeft.svg";
-import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -282,9 +280,12 @@ const EditCollection = () => {
   const [likeAddCondition, setLikeAddCondition] = useState(false);
   const [likeApplyCondition, setLikeApplyCondition] = useState(false);
   const [collectionDescription, setCollectionDescription] = useState("");
+  const [decodedObject, setDecodedObject] = useState(null);
   const [duplicateModal, setDuplicateModal] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [duplicateData, setDuplicateData] = useState("");
+  const [newDuplicateCollection, setDuplicateCollection] = useState();
+  const [serialId, setSerialNo] = useState(null);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -321,36 +322,62 @@ const EditCollection = () => {
     setDuplicateData(row)
   }
 
+  useEffect(() => {
+    const encodedString = searchParams.get("filter");
+
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+    setDecodedObject(parsedObject);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if(newDuplicateCollection?.data?.srNo) {
+      setSerialNo(newDuplicateCollection?.data?.srNo)
+    }
+  },[newDuplicateCollection])
+
+  const srNo = serialId ? serialId : id;
+
   const {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
-    error: collectionError,
-  } = useGetAllCollectionsQuery({ id: id });
+    error: collectionError
+  } = useGetAllCollectionsQuery({ srNo, ...decodedObject, pageNo:0 });
 
   const nextPageHandler = () => {
-    const { pageNo, totalCount } = queryFilterState;
-    if (pageNo+1 > totalCount) {
+    const { pageNo } = queryFilterState;
+    if (collectionData?.data?.nextCount === 0) {
       return;
     }
-    navigate(`/parameters/collections/edit/${pageNo + 1}/${filter}`);
+    decodedObject.order = 1;
+    navigate({
+      pathname: `/parameters/collections/edit/${pageNo}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify(decodedObject),
+      })}`
+    });
   };
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
-    if (pageNo - 1 === 0) {
-      return;
+    if( collectionData?.data?.prevCount === 0){
+      return
     }
-    navigate(`/parameters/collections/edit/${pageNo - 1}/${filter}`);
+    decodedObject.order = -1;
+    navigate({
+      pathname: `/parameters/collections/edit/${pageNo}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify(decodedObject),
+      })}`,
+    });
   };  
 
   useEffect(() => {
-    if (id) {
-      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+    if (collectionData?.data?.data?.[0]?.srNo) {
+      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: collectionData?.data?.data?.[0]?.srNo });
     }
-  }, [id]);
-
-  const newCollectionData = collectionData?.data?.data[0];
+  }, [collectionData]);
 
   const [
     editCollection,
@@ -492,7 +519,7 @@ const EditCollection = () => {
       title: collectionData?.data?.data[0]?.title || "",
       notes: collectionData?.data?.data[0]?.notes || "",
       status: collectionData?.data?.data[0]?.status,
-      filter: collectionData?.data?.data[0]?.showFilter || false,
+      filter: collectionData?.data?.data[0]?.filter,
       description: collectionData?.data?.data?.[0]?.description || "<p></p>",
       seo: collectionData?.data?.data?.[0]?.seos || {},
       mediaUrl: collectionData?.data?.data[0]?.mediaUrl || "",
@@ -503,7 +530,7 @@ const EditCollection = () => {
     enableReinitialize: true,
     onSubmit: (values) => {
       let editItems = {
-        showFilter: values.showFilter,
+        filter: values.filter,
         title: values.title,
         description: values.description,
         status: values.startDate === null ? values.status : "scheduled",
@@ -571,44 +598,19 @@ const EditCollection = () => {
 
   return (
     <div className="page container-fluid position-relative user-group">
-      <div className="row justify-content-between">
-        <div className="d-flex align-items-center w-auto ps-0">
-            <img
-              src={arrowLeft}
-              alt="arrowLeft"
-              width={9}
-              className="c-pointer"
-              onClick={backHandler}
-            />
-          <h5 className="page-heading ms-2 ps-1">{formik.values.title}</h5>
-        </div>
-
-        <div className="d-flex align-items-center w-auto pe-0">
-          <button
-            className="button-transparent me-1 py-2 px-3"
-            onClick={() => {
-              dispatch(updateCollectionId(collectionData?.data?.data[0]?._id));
-              handleDuplicateCollection(newCollectionData)
-            }}
-          >
-            <p className="text-lightBlue">Duplicate</p>
-          </button>
-          <img
-            src={paginationLeft}
-            alt="paginationLeft"
-            className="c-pointer"
-            width={30}
-            onClick={prevPageHandler}
-          />
-          <img
-            src={paginationRight}
-            alt="paginationRight"
-            className="c-pointer"
-            width={30}
-            onClick={nextPageHandler}
-          />
-        </div>
-      </div>
+      <InfoHeader
+        title={formik.values.title || "Edit collection"}
+        onBack={backHandler}
+        onDuplicate={() => {
+          dispatch(updateCollectionId(collectionData?.data?.data[0]?._id));
+          handleDuplicateCollection(collectionData?.data?.data[0])
+        }}
+        onPrev={prevPageHandler}
+        hasNext={collectionData?.data?.nextCount}
+        hasPrev={ collectionData?.data?.prevCount}
+        onNext={nextPageHandler}
+        isEdit={!!id}
+      />
       <form onSubmit={formik.handleSubmit}>
         <div className="row">
           <div className="col-lg-9 mt-4">
@@ -640,9 +642,9 @@ const EditCollection = () => {
                       control={
                         <Checkbox
                           name="filter"
+                          inputProps={{ "aria-label": "controlled" }}
                           checked={formik.values.filter}
                           onChange={formik.handleChange}
-                          inputProps={{ "aria-label": "controlled" }}
                           size="small"
                           style={{
                             color: "#5C6D8E",
@@ -1400,6 +1402,7 @@ const EditCollection = () => {
         <DiscardModalSecondary when={collectionInfoState.discard} message="collection tab" />
       </form>
       <DuplicateCollection 
+        newDuplicateCollection={setDuplicateCollection}
         duplicateData={duplicateData}
         openDuplicateCollection={duplicateModal}
         handleDuplicateCollectionClose={handleDuplicateCollectionClose}

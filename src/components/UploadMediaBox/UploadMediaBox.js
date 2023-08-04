@@ -34,24 +34,23 @@ const rejectStyle = {
 const UploadMediaBox = ({
   imageName,
   headingName,
-  UploadChange,
+  UploadChange = () => {},
   imageValue,
   previousImage,
-  isUploaded
+  isUploaded = () => {},
 }) => {
   const [inputUrl, setInputUrl] = useState("");
   const [uploadFile, uploadState] = UseFileUpload();
 
   // ? FILE UPLOAD STARTS HERE
-  const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
-    useDropzone({
-      accept: {
-        "image/*": [".jpeg", ".jpg", ".png"],
-      },
-      onDrop: (acceptedFiles) => {
-        uploadFile({ file: acceptedFiles[0] });
-      },
-    });
+  const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
+    accept: {
+      "image/*": [".jpeg", ".jpg", ".png"],
+    },
+    onDrop: (acceptedFiles) => {
+      uploadFile({ file: acceptedFiles[0] });
+    },
+  });
 
   useEffect(() => {
     if (uploadState.data?.url) {
@@ -97,8 +96,7 @@ const UploadMediaBox = ({
           className="text-lightBlue text-blue-2 c-pointer"
           aria-describedby={idSaveFilter}
           variant="contained"
-          onClick={handleSaveFilterClick}
-        >
+          onClick={handleSaveFilterClick}>
           Add Media from URL
         </small>
         <Popover
@@ -113,12 +111,13 @@ const UploadMediaBox = ({
           id={idSaveFilter}
           open={openSaveFilter}
           anchorEl={anchorSaveFilterEl}
-          onClose={handleSaveFilterClose}
-        >
+          onClose={handleSaveFilterClose}>
           <div className="px-1 py-3">
             <div className="d-flex mb-1">
               <small className="text-lightBlue me-2">Add URL</small>
-              <Tooltip title="Lorem ipsum" placement="top">
+              <Tooltip
+                title="Lorem ipsum"
+                placement="top">
                 <img
                   src={info}
                   alt="info"
@@ -138,15 +137,16 @@ const UploadMediaBox = ({
             {/* <div className="d-flex"> */}
             <button
               onClick={handleSaveFilterClose}
-              className="ms-auto button-gradient py-1 px-4 mt-3"
-            >
+              className="ms-auto button-gradient py-1 px-4 mt-3">
               <p>Add Media</p>
             </button>
             {/* </div> */}
           </div>
         </Popover>
       </div>
-      <div {...getRootProps({ style })} className="mt-3">
+      <div
+        {...getRootProps({ style })}
+        className="mt-3">
         <input
           id="primary"
           {...getInputProps()}
@@ -161,7 +161,9 @@ const UploadMediaBox = ({
               ? uploadState?.data?.url
               : inputUrl !== ""
               ? inputUrl
-              : previousImage ? previousImage : imageName
+              : previousImage
+              ? previousImage
+              : imageName
           }
           className="w-100"
           style={{ height: "150px" }}

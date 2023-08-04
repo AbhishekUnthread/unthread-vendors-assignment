@@ -40,6 +40,7 @@ import arrowDown from "../../../assets/icons/arrowDown.svg";
 const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 1,
+  totalCount: 0,
   title:"",
   searchValue:"",
   status: ["active", "in-active", "scheduled"],
@@ -291,9 +292,9 @@ const Collections = () => {
 
   const editCategoryPageNavigationHandler = (data, index) => {
     navigate({
-      pathname: `./edit/${data ? data._id : ""}`,
+      pathname: `./edit/${data ? data.srNo : ""}`,
       search: `?${createSearchParams({
-        filter: JSON.stringify({ ...queryFilterState, collectionType }),
+        filter: JSON.stringify({ ...queryFilterState, pageSize: 1, collectionType }),
       })}`,
     });
   };

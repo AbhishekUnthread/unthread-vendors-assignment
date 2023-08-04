@@ -1,5 +1,6 @@
-import { useState, forwardRef } from "react";
-import { Link } from "react-router-dom";
+import { useState, forwardRef, useReducer, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import {
   Autocomplete,
   Box,
@@ -19,12 +20,18 @@ import {
   TextField,
 } from "@mui/material";
 
-import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
+import {
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import { 
+  useGetAllCustomerGroupQuery,
+  useGetCustomerGroupCountQuery
+} from "../../../features/customers/customerGroup/customerGroupApiSlice";
 
 import UserGroupsTable from "./UserGroupsTable";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
-import TableSearch from "../../../components/TableSearch/TableSearch";
+import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 
 import cancel from "../../../assets/icons/cancel.svg";
@@ -35,24 +42,227 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const initialQueryFilterState = {
+  createdAt: -1,
+  pageSize: 10,
+  pageNo: 0,
+  name:"",
+  searchValue: "",
+  status: ["active", "in-active"],
+};
+
+const initialCustomerState = {
+  status: "all",
+};
+
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_SIZE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      pageSize: +action.value,
+    };
+  }
+  if (action.type === "CHANGE_PAGE") {
+    return {
+      ...state,
+      pageNo: action.pageNo +1,
+    };
+  }
+  if (action.type === "SEARCH") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      name: action.name,
+    };
+  }
+  if (action.type === "SET_SEARCH_VALUE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      searchValue: action.searchValue,
+    };
+  }
+  if (action.type === "SET_STATUS") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      status: action.status ? action.status : initialQueryFilterState.status,
+    };
+  }
+  return initialQueryFilterState;
+};
+
+const customerReducer = (state, action) => {
+  if (action.type === "SET_STATUS") {
+    return {
+      status: action.status,
+    };
+  }
+  return initialCustomerState;
+};
+
 const UserGroups = () => {
+  const dispatch = useDispatch();
   const [value, setValue] = useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const [openManageGroups, setOpenManageGroups] = useState(false);
+  const [anchorSortEl, setAnchorSortEl] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [firstRender, setFirstRender] = useState(true);
+  const [customerList, setCustomerList] = useState([]);
+  const [pageLength, setPageLegnth] = useState();
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+  const [customerState, dispatchCustomerState] = useReducer(
+    customerReducer,
+    initialCustomerState
+  );
+
+  const {
+    data: groupCountData,
+    isLoading: groupCountIsLoading,
+    isSuccess: groupCountIsSuccess,
+    error: groupCountError,
+  } = useGetCustomerGroupCountQuery();
+
+  console.log(queryFilterState, 'queryFilterState');
 
   const {
     data: customerGroupData,
     isLoading: customerGroupIsLoading,
     isSuccess: customerGroupIsSuccess,
     error: customerGroupError,
-  } = useGetAllCustomerGroupQuery({createdAt: -1});
+  } = useGetAllCustomerGroupQuery({...queryFilterState});
 
-  const customerData =  customerGroupData?.data
+  const customerData =  customerGroupData?.data;
 
-  console.log(customerData, 'customerData');
+  const handleChangeRowsPerPage = (event) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
+  };
 
-  const [anchorSortEl, setAnchorSortEl] = useState(null);
+  const handleChangePage = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+  };
+
+  const handleSearchChange = (value) => {
+    dispatchQueryFilter({ type: "SEARCH", name: value });
+  };
+
+  const handleSearchValue =(value)=>{
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
+  }
+
+  const handleChange = (_event, tabIndex) => {
+    setValue(tabIndex);
+    if (tabIndex === 0) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "all",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active", "in-active"],
+      });
+    } else if (tabIndex === 1) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["active"],
+      });
+    } else if (tabIndex === 2) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["archived"],
+      });
+    }
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
+    setSearchParams(tabIndex)
+  };
+
+   useEffect(() => {
+    const filterParams = JSON.parse(searchParams.get("filter")) || {
+      value,
+    };
+    if (firstRender && Object.keys(filterParams).length) {
+      let filters = {};
+      for (let key in filterParams) {
+        if (key !== "value") {
+          if (filterParams[key] !== (null || "")) {
+            if (key === "status" && filterParams[key].length < 2) {
+              dispatchCustomerState({
+                type: "SET_STATUS",
+                status: "",
+              });
+            }
+            filters = {
+              ...filters,
+              [key]: filterParams[key],
+            };
+          }
+        } else {
+          setValue(+filterParams[key])
+        }
+      }
+      if (filterParams.collectionType === (null || "")) {
+        setValue(0)
+      }
+      dispatchQueryFilter({
+        type: "SET_ALL_FILTERS",
+        filters,
+      });
+      setFirstRender(false);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      setSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, value }),
+      });
+    }
+  }, [queryFilterState, setSearchParams, value, firstRender]);
+
+  useEffect(() => {
+    if (customerGroupError) {
+      if (customerGroupError?.data?.message) {
+        dispatch(showError({ message: customerGroupError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+    if (customerGroupIsSuccess) {
+      if (value === 0) {
+        setCustomerList(customerGroupData.data.data);
+        setPageLegnth(customerGroupData.data.totalCount)
+      }
+      if (value === 1) {
+        setCustomerList(customerGroupData.data.data);
+        setPageLegnth(customerGroupData.data.totalCount)
+      }
+      if (value === 2) {
+        setCustomerList(customerGroupData.data.data);
+        setPageLegnth(customerGroupData.data.totalCount)
+      }
+    }
+  }, [
+    customerGroupData,
+    customerGroupIsSuccess,
+    customerGroupError,
+    value,
+    dispatch,
+  ]);
 
   const handleSortClick = (event) => {
     setAnchorSortEl(event.currentTarget);
@@ -76,8 +286,6 @@ const UserGroups = () => {
     { title: "Default Users", value: "content8" },
     { title: "Guest Users", value: "content9" },
   ];
-
-  const [openManageGroups, setOpenManageGroups] = useState(false);
 
   const handleOpenManageGroups = () => {
     setOpenManageGroups(true);
@@ -217,22 +425,23 @@ const UserGroups = () => {
             sx={{ width: "100%" }}
             className="d-flex justify-content-between tabs-header-box"
           >
-            {/* variant="scrollable"
-              scrollButtons
-              allowScrollButtonsMobile */}
             <Tabs
               value={value}
               onChange={handleChange}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Active" className="tabs-head" />
-              <Tab label="Archived" className="tabs-head" />
+              <Tab label={`All (${groupCountData?.data[0]?.all })`} className="tabs-head" />
+              <Tab label={`Active (${groupCountData?.data[0]?.active })`} className="tabs-head" />
+              <Tab label={`Archived (${groupCountData?.data[0]?.archived })`} className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+            <TableSearchSecondary 
+              onSearchValueChange={handleSearchValue} 
+              value={queryFilterState.searchValue} 
+              onChange={handleSearchChange} 
+            />
             <div className="d-flex ms-2">
               <button
                 className="button-grey py-2 px-3"
@@ -263,8 +472,6 @@ const UserGroups = () => {
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
-                    // value={value}
-                    // onChange={handleRadioChange}
                   >
                     <FormControlLabel
                       value="userName"
@@ -318,17 +525,29 @@ const UserGroups = () => {
           </div>
           <TabPanel value={value} index={0}>
             <UserGroupsTable 
-              data={customerData}
+              value={value}
+              data={customerList}
+              totalCount={customerData?.totalCount || 0}
+              loading={customerGroupIsLoading}
+              error={customerGroupError}
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <UserGroupsTable 
-              data={customerData}
+              value={value}
+              data={customerList}
+              totalCount={customerData?.totalCount || 0}
+              loading={customerGroupIsLoading}
+              error={customerGroupError}
             />
           </TabPanel>
           <TabPanel value={value} index={2}>
             <UserGroupsTable 
-              data={customerData}
+              value={value}
+              data={customerList}
+              totalCount={customerData?.totalCount || 0}
+              loading={customerGroupIsLoading}
+              error={customerGroupError}
             />
           </TabPanel>
         </Paper>

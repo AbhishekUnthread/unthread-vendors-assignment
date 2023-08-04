@@ -1,6 +1,7 @@
 import { forwardRef, useState, useReducer, useEffect } from "react";
 import moment from "moment";
 import { Link, useParams } from "react-router-dom";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import {
   Box,
   Tab,
@@ -12,7 +13,6 @@ import {
   Popover,
   Chip,
 } from "@mui/material";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 import { useGetAllCustomersQuery } from "../../../features/customers/customer/customerApiSlice";
 
@@ -32,9 +32,9 @@ import phone from "../../../assets/icons/phone.svg";
 import message from "../../../assets/icons/message.svg";
 import indiaFlag from "../../../assets/images/products/indiaFlag.svg";
 import block from "../../../assets/images/users/block.svg";
-import userLarge from "../../../assets/images/users/userLarge.svg";
 import verified from "../../../assets/icons/verified.svg";
 import copy from "../../../assets/icons/copy.svg";
+import customerImage from "../../../assets/images/users/user_defauldp.svg";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -71,12 +71,14 @@ const queryFilterReducer = (state, action) => {
 
 const UserDetails = () => {
   let { id } = useParams();
+  const [value, setValue] = useState(0);
+  const [paramsData, setParamsData] = useState(null);
+  const [openBlock, setOpenBlock] = useState(false);
+  const [anchorContactEl, setContactEl] = useState(null);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
-  const [value, setValue] = useState(0);
-  const [paramsData, setParamsData] = useState(null);
 
   const {
     data: customerData,
@@ -89,8 +91,6 @@ const UserDetails = () => {
 
   const customerDetails = customerData?.data?.data[0];
 
-    console.log(customerDetails, 'customerDetails customerDetails');
-
   useEffect(() => {
     const paramsString = id;
     const decodedString = decodeURIComponent(paramsString);
@@ -99,7 +99,9 @@ const UserDetails = () => {
     setParamsData(parsedObject);
   }, []);
 
-  const customerId = paramsData?._id;
+  console.log(paramsData, 'paramsData');
+
+  const customerId = paramsData?.id;
 
   useEffect(() => {
     if (customerId) {
@@ -111,9 +113,6 @@ const UserDetails = () => {
     setValue(newValue);
   };
 
-  // * CONTACT POPOVERS STARTS
-  const [anchorContactEl, setContactEl] = useState(null);
-
   const handleContactClick = (event) => {
     setContactEl(event.currentTarget);
   };
@@ -124,10 +123,6 @@ const UserDetails = () => {
 
   const openContact = Boolean(anchorContactEl);
   const idContact = openContact ? "simple-popover" : undefined;
-  // * CONTACT POPOVERS ENDS
-
-  // ? BLOCK DIALOG STARTS HERE
-  const [openBlock, setOpenBlock] = useState(false);
 
   const handleBlock = () => {
     setOpenBlock(true);
@@ -136,7 +131,6 @@ const UserDetails = () => {
   const handleBlockClose = () => {
     setOpenBlock(false);
   };
-  // ? BLOCK DIALOG ENDS HERE
 
   return (
     <div className="page container-fluid position-relative">
@@ -221,7 +215,6 @@ const UserDetails = () => {
                 fontSize: 14,
                 cursor: "pointer",
                 margin: "0 8px 0 8px",
-                // marginTop: "-3px",
               }}
             />
             <p>Edit</p>
@@ -324,7 +317,7 @@ const UserDetails = () => {
         <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3">
             <img 
-              src={customerDetails?.imageUrl} 
+              src={customerDetails?.imageUrl ? customerDetails?.imageUrl : customerImage} 
               alt="userLarge" 
               className="rounded-circle" 
               width={100} 

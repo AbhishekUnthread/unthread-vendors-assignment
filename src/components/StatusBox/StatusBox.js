@@ -1,5 +1,4 @@
 import React from "react";
-// import dayjs from 'dayjs';
 import {
   Dialog,
   DialogActions,
@@ -25,27 +24,30 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 // ? DIALOG TRANSITION ENDS HERE
-const StatusBox = ({ 
+const StatusBox = ({
   headingName,
-  titleName, 
+  titleName,
   showSchedule,
   value,
-  handleProductStatus, 
-  toggleData=['active','in-active'], 
-  startDate, 
+  handleProductStatus,
+  toggleData = ["active", "in-active"],
+  startDate,
   endDate,
-  handleStartDate, 
-  handleEndDate, 
-  clearDate
+  handleStartDate,
+  handleEndDate,
+  clearDate,
 }) => {
-
   const showScheduleData = showSchedule === undefined ? false : true;
   const [openScheduleProduct, setOpenScheduleProduct] = React.useState(false);
-  const [startDateLocal, setStartDate] = React.useState(startDate ? moment(startDate).toDate() : null);
+  const [startDateLocal, setStartDate] = React.useState(
+    startDate ? moment(startDate).toDate() : null
+  );
   const [endDateLocal, setEndDate] = React.useState("");
-  const startDateNew = moment(startDate).utcOffset("+05:30").format("DD/MM/YYYY")
+  const startDateNew = moment(startDate)
+    .utcOffset("+05:30")
+    .format("DD/MM/YYYY");
   const startTime = moment(startDate).utcOffset("+05:30").format("HH:mm A");
-  const endDateNew = moment(endDate).utcOffset("+05:30").format("DD/MM/YYYY")
+  const endDateNew = moment(endDate).utcOffset("+05:30").format("DD/MM/YYYY");
   const endTime = moment(endDate).format("HH:mm A");
 
   const handelScheduleProduct = () => {
@@ -56,7 +58,7 @@ const StatusBox = ({
     setOpenScheduleProduct(false);
   };
 
-  const minDateTime = startDate ? moment(startDate).add(10, 'minutes') : null;
+  const minDateTime = startDate ? moment(startDate).add(10, "minutes") : null;
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3">
@@ -64,7 +66,7 @@ const StatusBox = ({
         <h6 className="text-lightBlue mb-3 fw-500">{headingName}</h6>
       </div>
       <ToggleButtonGroup
-        value={value === "scheduled" ? 'in-active': value}
+        value={value === "scheduled" ? "in-active" : value}
         onChange={handleProductStatus}
         aria-label="text formatting"
         className="row d-flex px-2 productInfo-toggle"
@@ -73,6 +75,7 @@ const StatusBox = ({
       >
         <ToggleButton
           value={toggleData[0]}
+          type="button"
           aria-label="active"
           style={{ width: "50%" }}
           className="productInfo-toggle__active"
@@ -84,6 +87,7 @@ const StatusBox = ({
         </ToggleButton>
         <ToggleButton
           value={toggleData[1]}
+          type="button"
           aria-label="inactive"
           style={{ width: "50%" }}
           className="productInfo-toggle__draft"
@@ -95,18 +99,31 @@ const StatusBox = ({
         </ToggleButton>
       </ToggleButtonGroup>
       {showScheduleData && (
-          <div className="d-flex align-items-center mt-4 c-pointer">
-            <img src={clock} alt="clock" className="me-1" width={12} />
-            <small className="text-blue-2" onClick={handelScheduleProduct}>
-              Schedule {startDate == null ? '' : `for ${startDateNew} at ${startTime}`} {endDate == null ? '' : `till ${endDateNew} at ${endTime}` }
-            </small>
-          </div>
+        <div className="d-flex align-items-center mt-4 c-pointer">
+          <img src={clock} alt="clock" className="me-1" width={12} />
+          <small className="text-blue-2" onClick={handelScheduleProduct}>
+            Schedule{" "}
+            {startDate == null ? "" : `for ${startDateNew} at ${startTime}`}{" "}
+            {endDate == null ? "" : `till ${endDateNew} at ${endTime}`}
+          </small>
+        </div>
       )}
       {startDate != null && (
-          <div className="d-flex justify-content-end px-4 py-3">
-            <small className="text-blue-2 px-3" style={{cursor: 'pointer'}} onClick={handelScheduleProduct}>Edit</small>
-            <small style={{color: '#F67476', cursor: 'pointer'}} onClick={clearDate}>Clear</small>
-          </div>
+        <div className="d-flex justify-content-end px-4 py-3">
+          <small
+            className="text-blue-2 px-3"
+            style={{ cursor: "pointer" }}
+            onClick={handelScheduleProduct}
+          >
+            Edit
+          </small>
+          <small
+            style={{ color: "#F67476", cursor: "pointer" }}
+            onClick={clearDate}
+          >
+            Clear
+          </small>
+        </div>
       )}
 
       <Dialog
@@ -148,7 +165,7 @@ const StatusBox = ({
               value={startDate ? startDate : null}
               onChange={(newValue) => {
                 setStartDate(newValue);
-                handleStartDate(newValue)
+                handleStartDate(newValue);
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
               minDate={new Date()}
@@ -169,7 +186,7 @@ const StatusBox = ({
           </div>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DesktopDateTimePicker
-              value={endDate ? endDate : null }
+              value={endDate ? endDate : null}
               onChange={(newValue) => {
                 setEndDate(newValue);
                 handleEndDate(newValue);

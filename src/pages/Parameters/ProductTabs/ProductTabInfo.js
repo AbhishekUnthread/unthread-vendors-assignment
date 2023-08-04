@@ -282,12 +282,12 @@ const ProductTabInfo = () => {
         createProductTab(productTabValues)
           .unwrap()
           .then(() => {
+            formik.resetForm();
             dispatch(
               showSuccess({
                 message: "Product tab created successfully",
               })
             );
-            formik.resetForm();
           });
       }
     },
