@@ -55,39 +55,6 @@ import {
   showError,
 } from "../../../features/snackbar/snackbarAction";
 
-const FRONTEND_APPEARANCE = [
-  {
-    id: 1,
-    value: "dropDownList",
-    text: "Drop-Down List",
-  },
-  {
-    id: 2,
-    value: "dropDownThumbnail",
-    text: "Drop-Down List with Thumbnail",
-  },
-  {
-    id: 3,
-    value: "colorAndImageSwatches",
-    text: "Color & Image Swatches",
-  },
-  {
-    id: 4,
-    value: "radioButtons",
-    text: "Radio Buttons",
-  },
-  {
-    id: 5,
-    value: "rectangleButtons",
-    text: "Rectangle Buttons",
-  },
-  {
-    id: 6,
-    value: "circleButtons",
-    text: "Circle Buttons",
-  },
-];
-
 const collectionsData = [
   { title: "Collection 1", value: "Collection1" },
   { title: "Collection 2", value: "Collection2" },
@@ -97,7 +64,8 @@ const collectionsData = [
   { title: "Collection 6", value: "Collection6" },
 ];
 
-const SubOptionSet = () => {
+const SubOptionSet = (props) => {
+  const { attribute } = props;
   return (
     <>
       <FormControlLabel
@@ -113,7 +81,7 @@ const SubOptionSet = () => {
             name="option.isFilter"
           />
         }
-        label="Include in Filters"
+        label={attribute.title}
         sx={{
           "& .MuiTypography-root": {
             color: "#c8d8ff",
@@ -161,57 +129,6 @@ const SubOptionSet = () => {
                   <small className="text-lightBlue">{option.title}</small>
                 </li>
               )}
-              renderInput={(params) => <TextField size="small" {...params} />}
-            />
-          </FormControl>
-        </li>
-        <li className="d-block mb-3">
-          <div className="d-flex  mb-1">
-            <p className="text-lightBlue me-2">Frontend Appearance</p>
-            <Tooltip title="Lorem ipsum" placement="top">
-              <img src={info} alt="info" className=" c-pointer" width={13.5} />
-            </Tooltip>
-          </div>
-          <FormControl
-            sx={{
-              m: 0,
-              minWidth: 120,
-              width: "100%",
-            }}
-            size="small"
-          >
-            <Autocomplete
-              multiple
-              id="checkboxes-tags-demo"
-              sx={{ width: "100%" }}
-              options={collectionsData}
-              disableCloseOnSelect
-              getOptionLabel={(option) => option.title}
-              size="small"
-              renderOption={(props, option, { selected }) => (
-                <li {...props}>
-                  <Checkbox
-                    icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                    checkedIcon={<CheckBoxIcon fontSize="small" />}
-                    checked={selected}
-                    size="small"
-                    style={{
-                      color: "#5C6D8E",
-                      marginRight: 0,
-                    }}
-                  />
-                  <small className="text-lightBlue">{option.title}</small>
-                </li>
-              )}
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    variant="outlined"
-                    label={option.title}
-                    {...getTagProps({ index })}
-                  />
-                ))
-              }
               renderInput={(params) => <TextField size="small" {...params} />}
             />
           </FormControl>
