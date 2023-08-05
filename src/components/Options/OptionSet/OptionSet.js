@@ -123,7 +123,6 @@ const OptionSet = (props) => {
     error: subAttributesError,
     isError: subAttributesIsError,
     isSuccess: subAttributesIsSuccess,
-    isFetching: subAttributesDataIsFetching,
   } = useGetAllSubAttributesQuery(
     {
       attribute: selectedOption?._id,
@@ -151,9 +150,10 @@ const OptionSet = (props) => {
     setIsTouched(true);
   };
 
-  const selectedAttributeIds = formik.values.option[
-    index
-  ].attribute[0].metaAttributes?.map((attr) => attr.id);
+  const selectedAttributeIds =
+    formik.values.option[index].attribute[0].metaAttributes?.map(
+      (attr) => attr.id
+    ) || [];
 
   const selectedAttributes =
     selectedAttributeIds.length && attributesData?.data?.length
@@ -290,21 +290,33 @@ const OptionSet = (props) => {
       {selectedOption && (
         <div className="mt-3">
           {selectedOption.metaSubAttributes.length ? (
-            <ul className="reset">
-              {attributesData?.data?.length &&
-                attributesData?.data.map((attr) => {
-                  return (
-                    <li key={attr._id} className="d-block">
-                      <SubOptionSet
-                        attribute={attr}
-                        index={index}
-                        formik={formik}
-                        isSubmitting={isSubmitting}
-                      />
-                    </li>
-                  );
-                })}
-            </ul>
+            <>
+              <ul className="reset">
+                {attributesData?.data?.length &&
+                  attributesData?.data.map((attr) => {
+                    return (
+                      <li key={attr._id} className="d-block">
+                        <SubOptionSet
+                          attribute={attr}
+                          index={index}
+                          formik={formik}
+                          isSubmitting={isSubmitting}
+                          selectedAttributeIds={selectedAttributeIds}
+                          subOptions={subOptionsData?.data || []}
+                          subAttributes={subAttributesData?.data || []}
+                        />
+                      </li>
+                    );
+                  })}
+              </ul>
+              {isTouched &&
+                formik.errors?.option?.length &&
+                formik.errors.option[index]?.attribute[0].metaAttributes && (
+                  <FormHelperText error>
+                    {formik.errors.option[index].attribute[0].metaAttributes}
+                  </FormHelperText>
+                )}
+            </>
           ) : (
             <div>
               <div className="d-flex  mb-1">
