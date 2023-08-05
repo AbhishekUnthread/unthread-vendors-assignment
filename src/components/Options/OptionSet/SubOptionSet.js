@@ -70,13 +70,20 @@ const SubOptionSet = (props) => {
   const addSingleAttributeHandler = (e) => {
     const isChecked = e.target.checked;
 
+    const childSubOptions = subOptions;
+
     let updatedAttributes = [];
     if (isChecked) {
       updatedAttributes = formik.values.option[
         index
       ].attribute[0].metaAttributes.concat({
         id: attribute._id,
-        metaSubAttribute: [],
+        metaSubAttribute: [
+          {
+            id: "",
+            metaSubAttributeValue: [],
+          },
+        ],
       });
     } else {
       updatedAttributes = formik.values.option[
@@ -90,8 +97,6 @@ const SubOptionSet = (props) => {
   };
 
   const isAttributeAdded = selectedAttributeIds.includes(attribute._id);
-
-  console.log(subOptions);
 
   return (
     <>

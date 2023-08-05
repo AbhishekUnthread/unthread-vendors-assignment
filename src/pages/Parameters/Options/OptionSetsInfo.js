@@ -80,28 +80,19 @@ const optionSetValidationSchema = Yup.object({
       attribute: Yup.array().of(
         Yup.object({
           id: Yup.string().required("Required"),
-          metaAttributes: Yup.array()
-            .of(
-              Yup.object({
-                id: Yup.string().required("Required"),
-                metaSubAttribute: Yup.array().of(
-                  Yup.object({
-                    id: Yup.string().required("Required"),
-                    metaSubAttributeValue: Yup.array().of(
-                      Yup.string().required("Required")
-                    ),
-                  })
-                ),
-              })
-            )
-            .when(["id"], ([id], schema) => {
-              if (id) {
-                return schema
-                  .min(1, "Minimum 1 attribute should be selected")
-                  .required("Required");
-              }
-              return schema;
-            }),
+          metaAttributes: Yup.array().of(
+            Yup.object({
+              id: Yup.string().required("Required"),
+              metaSubAttribute: Yup.array().of(
+                Yup.object({
+                  id: Yup.string().required("Required"),
+                  metaSubAttributeValue: Yup.array().of(
+                    Yup.string().required("Required")
+                  ),
+                })
+              ),
+            })
+          ),
         })
       ),
     })

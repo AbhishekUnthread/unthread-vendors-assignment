@@ -310,10 +310,11 @@ const OptionSet = (props) => {
                   })}
               </ul>
               {isTouched &&
-                formik.errors?.option?.length &&
-                formik.errors.option[index]?.attribute[0].metaAttributes && (
+                formik.values?.option?.length &&
+                !formik.values.option[index]?.attribute[0].metaAttributes
+                  .length && (
                   <FormHelperText error>
-                    {formik.errors.option[index].attribute[0].metaAttributes}
+                    Minimum 1 attribute should be selected
                   </FormHelperText>
                 )}
             </>
@@ -376,10 +377,11 @@ const OptionSet = (props) => {
                   )}
                 />
                 {isTouched &&
-                  formik.errors?.option?.length &&
-                  formik.errors.option[index]?.attribute[0].metaAttributes && (
+                  formik.values?.option?.length &&
+                  !formik.values.option[index]?.attribute[0].metaAttributes
+                    .length && (
                     <FormHelperText error>
-                      {formik.errors.option[index].attribute[0].metaAttributes}
+                      Minimum 1 attribute should be selected
                     </FormHelperText>
                   )}
               </FormControl>
