@@ -230,7 +230,7 @@ const SubOption = (props) => {
           </div>
           <FormControl className="w-100 px-0">
             <OutlinedInput
-              autoFocus
+              autoFocus={true}
               size="small"
               sx={{ paddingLeft: 0 }}
               name={`subOptions[${index}].title`}
