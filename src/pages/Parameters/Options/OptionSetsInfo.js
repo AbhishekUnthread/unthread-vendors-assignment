@@ -83,11 +83,13 @@ const optionSetValidationSchema = Yup.object({
           metaAttributes: Yup.array()
             .of(
               Yup.object({
-                id: Yup.string(),
+                id: Yup.string().required("Required"),
                 metaSubAttribute: Yup.array().of(
                   Yup.object({
-                    id: Yup.string(),
-                    metaSubAttributeValue: Yup.array().of(Yup.string()),
+                    id: Yup.string().required("Required"),
+                    metaSubAttributeValue: Yup.array().of(
+                      Yup.string().required("Required")
+                    ),
                   })
                 ),
               })
@@ -324,7 +326,7 @@ const OptionSetsInfo = () => {
     }
   }, [categoriesIsLoading, optionSetQueryFilterState.srNo]);
 
-  console.log(optionSetFormik.values);
+  // console.log(optionSetFormik.values.option);
 
   return (
     <>
