@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -15,7 +15,8 @@ import {
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 import { 
   useEditCustomerGroupMutation,
-  useDeleteCustomerGroupMutation
+  useDeleteCustomerGroupMutation,
+  useBulkEditCustomerGroupMutation,
 } from "../../../features/customers/customerGroup/customerGroupApiSlice";
 
 import {
@@ -29,11 +30,13 @@ import Loader from "../../../components/Loader/TableLoader";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
+import { UnArchivedModal } from "../../../components/UnArchiveModal/UnArchiveModal";
 
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
+import unArchived from "../../../assets/images/Components/Archived.png"
 
-const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
+const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }) => {
   const dispatch = useDispatch();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("groupName");
@@ -45,6 +48,12 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
   const [groupId, setGroupId] = useState();
   const [groupName, setGroupName] = useState();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [forMassAction, setForMassAction] = useState(false);
+  const [massActionStatus, setMassActionStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [showUnArchivedModal, setShowUnArhcivedModal] = useState(false);
+  const [state, setState] = useState([]);
+  const [statusValue, setStatusValue] = useState("in-active");
 
   const [
     editCustomerGroup,
@@ -65,39 +74,138 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
     },
   ] = useDeleteCustomerGroupMutation();
 
-  const handleArchive = (id, group, list) => {
+  const[
+    bulkEditCustomerGroup,
+    {
+      data: bulkEditGroup,
+      isLoading: bulkGroupEditLoading,
+      isSuccess: bulkGroupEditIsSuccess,
+      error: bulkGroupEditError,
+    }
+  ] = useBulkEditCustomerGroupMutation();
+
+  const handleArchive = () => {
     setArchivedModal(true);
-    setGroupId(id);
-    setGroupName(group)
+    setForMassAction(false)
   }
 
+  useEffect(() => {
+    if (selectedStatus !== null && selectedStatus !== "Delete") {
+      const newState = selected.map((id) => {
+        if (selectedStatus === "Set as Active") {
+          return {
+            id,
+            status: "active",
+          };
+        } else if (selectedStatus === "Set as In-Active") {
+          return {
+            id,
+            status: "in-active",
+          };
+        } else if (selectedStatus === "Set as Archived") {
+          return {
+            id,
+            status: "archived",
+          };
+        } else if (selectedStatus === "Set as Un-Archived") {
+          return {
+            id,
+            status: statusValue,
+          };
+        } else {
+          return {
+            id,
+            status: "", 
+          };
+        }
+      });
+      setState(newState);
+      const requestData = {
+        updates: newState
+      };
+      bulkEditCustomerGroup(requestData).unwrap().then(()=> {
+        const successMessage =
+            selectedStatus === "Set as Un-Archived"
+              ? "Collection un-archived  successfully"
+              : selectedStatus === "Set as Archived"
+                ? "Collection archived  successfully" : "Status updated successfully";
+
+        dispatch(showSuccess({ message: successMessage }));
+        setSelectedStatus(null);
+        setShowUnArhcivedModal(false)
+        setShowDeleteModal(false);
+        setSelected([])
+      })}    
+  }, [selectedStatus]);  
+
   const handleArchivedModalClose = () => {
-    editCustomerGroup({
-      id: groupId,
-      details : {
-        status: "archived"
-      }
-    })
-    setArchivedModal(false);
-    dispatch(showSuccess({ message: "Customer Group archived successfully!" }));
+    if(forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      setArchivedModal(false);
+    } else {
+      handleClick(null, groupId);
+      setArchivedModal(false);
+      editCustomerGroup({
+        id: groupId,
+        details : {
+          status: "archived"
+        }
+      })
+      dispatch(showSuccess({ message: "Customer Group archived successfully!" }));
+    }
   }
 
   const handleModalClose = () => {
     setArchivedModal(false);
   };
 
-  const handleArchiveModal =()=>{
-    handleClick(null, groupId);
-    deleteCustomerGroup(groupId);
-    setShowDeleteModal(false)
-    dispatch(showSuccess({ message: "Collection deleted successfully!" }));
+  const handleDeleteModal =()=>{
+    if(forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+      bulkDelete(selected)
+      setShowDeleteModal(false);
+      dispatch(showSuccess({ message: "Customer group deleted successfully!" }));
+      setSelected([])
+    } else {
+      handleClick(null, groupId);
+      deleteCustomerGroup(groupId);
+      setShowDeleteModal(false)
+      dispatch(showSuccess({ message: "Customer group deleted successfully!" }));
+    }
   }
 
-  const toggleArchiveModalHandler = (row) => {
+  const toggleDeleteModalHandler = (row) => {
     setShowDeleteModal((prevState) => !prevState);
-    setGroupId(row._id);
-    setGroupName(row?.name);
   };
+
+   const handleUnArchived = () => {
+    if(forMassAction === true) {
+      setSelectedStatus(massActionStatus);
+    } else {
+      handleClick(null, groupId);
+      editCustomerGroup({
+          id: groupId,
+          details : {
+            status: statusValue
+          }
+      })
+      setShowUnArhcivedModal(false)
+      dispatch(showSuccess({ message: "Collection un-archived successfully" }));
+    }
+  }
+
+  const closeUnArchivedModal = () => {
+    setShowUnArhcivedModal(false)
+  }
+
+  const handleStatusValue = (value) => {
+    setStatusValue(value);
+  };
+  
+  const handleUnArchive = () => {
+    setForMassAction(false)
+    setShowUnArhcivedModal(true)
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -122,12 +230,13 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
     }
   }; 
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, id, name) => {
+    setGroupName(name)
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -148,7 +257,9 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const handleActionClick = (event) => {
+  const handleActionClick = (event, row) => {
+    setGroupId(row._id);
+    setGroupName(row?.name);
     setAnchorActionEl(event.currentTarget);
   };
 
@@ -158,6 +269,22 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
 
   const openActions = Boolean(anchorActionEl);
   const idActions = openActions ? "simple-popover" : undefined;
+
+   const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
+
+  const handleMassAction  = (status) => {
+    setForMassAction(true)
+    setMassActionStatus(status);
+    if(value !== 3 && status === "Set as Archived") {
+      setArchivedModal(true);
+    } else if(value === 3 && status === "Set as Un-Archived") {
+      setShowUnArhcivedModal(true);
+    } else if(value === 3 && status === "Delete") {
+      setShowDeleteModal(true);
+    }
+  };
 
   const headCells = [
     {
@@ -174,7 +301,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
     }
   ];
 
-  if (value === 0 || value === 2) {
+  if (value === 0 || value === 3) {
     headCells.push({
       id: "status",
       numeric: false,
@@ -205,8 +332,20 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
-          <TableMassActionButton />
+          { value !== 3 && 
+            <TableEditStatusButton 
+              onSelect={handleStatusSelect} 
+              defaultValue={['Set as Active','Set as In-Active']} 
+              headingName="Edit Status"
+            />
+          }
+          <TableMassActionButton 
+            headingName="Mass Action" 
+            onSelect={handleMassAction} 
+            defaultValue={ value !== 3 ? 
+            ['Edit','Set as Archived'] : 
+            ['Delete','Set as Un-Archived']}
+          />
         </div>
       )}
       { data.length ?
@@ -238,7 +377,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row?._id}
+                        key={index}
                         selected={isItemSelected}
                         className="table-rows"
                       >
@@ -248,7 +387,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                             inputProps={{
                               "aria-labelledby": labelId,
                             }}
-                            onClick={(event) => handleClick(event, row?._id)}
+                            onClick={(event) => handleClick(event, row?._id, row?.name)}
                             size="small"
                             style={{
                               color: "#5C6D8E",
@@ -261,19 +400,18 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                           scope="row"
                           padding="none"
                         >
-                          <Link
-                            to="/users/userGroups/create"
+                          <div
                             className="d-flex align-items-center text-decoration-none c-pointer"
                           >
                             <p className="text-lightBlue rounded-circle fw-600">
                               {row?.name}
                             </p>
-                          </Link>
+                          </div>
                         </TableCell>
                         <TableCell style={{ width: 180 }}>
                           <p className="text-lightBlue">{row.usersInGroup}</p>
                         </TableCell>
-                        { (value == 0 || value == 2) &&
+                        { (value == 0 || value == 3) &&
                           <TableCell style={{ width: 180 }}>
                             <div className="d-flex align-items-center">
                               <div 
@@ -300,7 +438,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                             className="c-pointer"
                             aria-describedby={idActions}
                             variant="contained"
-                            onClick={handleActionClick}
+                            onClick={(event) => handleActionClick(event, row)}
                           />
 
                           <Popover
@@ -320,30 +458,35 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                             <div className="py-2 px-2">
                               <small className="text-grey-7 px-2">ACTIONS</small>
                               <hr className="hr-grey-6 my-2" />
-                              { value != 2 ? 
+                              { value != 3 ? 
                                 <>
                                   <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                                     Edit User Groups
                                   </small>
-                                  <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
-                                    onClick={() => { handleArchive(row?._id, row?.name)}}
+                                  <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer mt-2"
+                                    onClick={() => { handleArchive()}}
                                   >
-                                    <small className="text-lightBlue font2 d-block">
-                                      Archive Groups
+                                    <small className="font2 d-block" style={{color: "#F67E80"}}>
+                                      Archived Groups
                                     </small>
-                                    <img
-                                      src={deleteRed}
-                                      alt="delete"
-                                      className="ms-2"
-                                    />
                                   </div>
                                 </> : 
-                                <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
-                                  onClick={(e) => {
-                                    toggleArchiveModalHandler(row)
+                                <>
+                                <small className="font2 d-block mt-4 c-pointer hover-back p-2 rounded-3" 
+                                  style={{color: "#F67E80"}}
+                                  onClick={() => {
+                                    handleUnArchive()
+                                  }
+                              }
+                                >
+                                  Un-Archived Groups
+                                </small>
+                                <div className="d-flex justify-content-between hover-back rounded-3 p-2 c-pointer mt-3"
+                                  onClick={() => {
+                                    toggleDeleteModalHandler()
                                   }}
                                 >
-                                  <small className="text-lightBlue font2 d-block">
+                                  <small className="font2 d-block" style={{color: "#F67E80"}}>
                                     Delete Groups
                                   </small>
                                   <img
@@ -352,6 +495,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
                                     className="ms-2"
                                   />
                                 </div>
+                                </>
                               }
                             </div>
                           </Popover>
@@ -387,16 +531,34 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error }) => {
         onConfirm ={handleArchivedModalClose}
         onCancel={handleModalClose}
         show={openArchivedModal}
-        title={"Customer Group"}
-        message={groupName}
-        archiveType={"Customer Group"}
+        title={"customer group"}
+        message={forMassAction == true ? selected.length == 1 ? 
+          groupName : selected.length : groupName 
+        }
+        archiveType={ forMassAction == true ? selected.length == 1 ?
+          " customer group" : " customer groups": " customer group" 
+        }
         products={"25 products"}
+      />   
+      <UnArchivedModal 
+        onConfirm={handleUnArchived}
+        onCancel={closeUnArchivedModal}
+        show={showUnArchivedModal}
+        title={"Un-Archive Collection ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${groupName}</span> vendor,
+        `}
+        secondaryMessage={"Please set its status"}
+        confirmText={"Un-Archive"}
+        handleStatusValue={handleStatusValue}
+        icon={unArchived}
+        name={forMassAction == false ? groupName : selected.length == 1 ? groupName : selected.length} 
+        nameType={ forMassAction == true ? selected.length == 1 ? " customer group" : " customer groups": " customer group" }
       />
       <DeleteModalSecondary 
-        message={groupName}
-        title={" Customer Group"}
-        onConfirm ={handleArchiveModal}
-        onCancel={toggleArchiveModalHandler}
+        message={forMassAction == false ? groupName : selected.length == 1 ? groupName : selected.length} 
+        title={ forMassAction == true ? selected.length == 1 ? " customer group" : " customer groups": " customer group" }
+        onConfirm ={handleDeleteModal}
+        onCancel={toggleDeleteModalHandler}
         show={showDeleteModal}
       />
     </>

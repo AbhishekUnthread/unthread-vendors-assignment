@@ -25,7 +25,8 @@ import {
 } from "../../../features/snackbar/snackbarAction";
 import { 
   useGetAllCustomerGroupQuery,
-  useGetCustomerGroupCountQuery
+  useGetCustomerGroupCountQuery,
+  useBulkDeleteCustomerGroupMutation
 } from "../../../features/customers/customerGroup/customerGroupApiSlice";
 
 import UserGroupsTable from "./UserGroupsTable";
@@ -120,14 +121,21 @@ const UserGroups = () => {
     initialCustomerState
   );
 
+  const [
+    bulkDeleteCustomerGroup,
+    {
+      isLoading: bulkDeleteGroupIsLoading,
+      isSuccess: bulkDeleteGroupIsSuccess,
+      error: bulkDeleteGroupError,
+    },
+  ] = useBulkDeleteCustomerGroupMutation();
+
   const {
     data: groupCountData,
     isLoading: groupCountIsLoading,
     isSuccess: groupCountIsSuccess,
     error: groupCountError,
   } = useGetCustomerGroupCountQuery();
-
-  console.log(queryFilterState, 'queryFilterState');
 
   const {
     data: customerGroupData,
@@ -137,6 +145,10 @@ const UserGroups = () => {
   } = useGetAllCustomerGroupQuery({...queryFilterState});
 
   const customerData =  customerGroupData?.data;
+
+  const deleteBulkCollection = (data) => {
+    bulkDeleteCustomerGroup({deletes: data})
+  }
 
   const handleChangeRowsPerPage = (event) => {
     dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
@@ -175,6 +187,15 @@ const UserGroups = () => {
         status: ["active"],
       });
     } else if (tabIndex === 2) {
+      dispatchCustomerState({
+        type: "SET_STATUS",
+        status: "",
+      });
+      dispatchQueryFilter({
+        type: "SET_STATUS",
+        status: ["in-active"],
+      });
+    } else if (tabIndex === 3) {
       dispatchCustomerState({
         type: "SET_STATUS",
         status: "",
@@ -252,6 +273,10 @@ const UserGroups = () => {
         setPageLegnth(customerGroupData.data.totalCount)
       }
       if (value === 2) {
+        setCustomerList(customerGroupData.data.data);
+        setPageLegnth(customerGroupData.data.totalCount)
+      }
+      if (value === 3) {
         setCustomerList(customerGroupData.data.data);
         setPageLegnth(customerGroupData.data.totalCount)
       }
@@ -431,8 +456,11 @@ const UserGroups = () => {
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label={`All (${groupCountData?.data[0]?.all })`} className="tabs-head" />
+              <Tab 
+                label={`All (${groupCountData?.data[0]?.active + groupCountData?.data[0]['in-active']})`} className="tabs-head" 
+              />
               <Tab label={`Active (${groupCountData?.data[0]?.active })`} className="tabs-head" />
+              <Tab label={`In-Active (${groupCountData?.data[0]['in-active']})`} className="tabs-head" />
               <Tab label={`Archived (${groupCountData?.data[0]?.archived })`} className="tabs-head" />
             </Tabs>
           </Box>
@@ -548,6 +576,16 @@ const UserGroups = () => {
               totalCount={customerData?.totalCount || 0}
               loading={customerGroupIsLoading}
               error={customerGroupError}
+            />
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+            <UserGroupsTable 
+              value={value}
+              data={customerList}
+              totalCount={customerData?.totalCount || 0}
+              loading={customerGroupIsLoading}
+              error={customerGroupError}
+              bulkDelete={deleteBulkCollection}
             />
           </TabPanel>
         </Paper>
