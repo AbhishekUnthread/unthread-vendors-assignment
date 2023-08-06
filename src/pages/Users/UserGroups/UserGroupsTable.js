@@ -62,6 +62,7 @@ const UserGroupsTable = ({
   const [showUnArchivedModal, setShowUnArhcivedModal] = useState(false);
   const [state, setState] = useState([]);
   const [statusValue, setStatusValue] = useState("in-active");
+  const [groupInfo, setGroupInfo] = useState();
 
   const [
     editCustomerGroup,
@@ -266,6 +267,7 @@ const UserGroupsTable = ({
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const handleActionClick = (event, row) => {
+    setGroupInfo(row)
     setGroupId(row._id);
     setGroupName(row?.name);
     setAnchorActionEl(event.currentTarget);
@@ -473,7 +475,14 @@ const UserGroupsTable = ({
                               <hr className="hr-grey-6 my-2" />
                               { value != 3 ? 
                                 <>
-                                  <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                                  <small 
+                                    className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                                    onClick={(e) => {
+                                      if(value != 3) {
+                                        onEdit(groupInfo, index+1, value);
+                                      }
+                                    }}
+                                  >
                                     Edit User Groups
                                   </small>
                                   <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer mt-2"
