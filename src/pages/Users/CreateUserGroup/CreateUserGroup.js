@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useReducer, useEffect } from "react";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import { visuallyHidden } from "@mui/utils";
@@ -35,7 +35,9 @@ import {
   showSuccess,
 } from "../../../features/snackbar/snackbarAction";
 import { 
-  useCreateCustomerGroupMutation
+  useCreateCustomerGroupMutation,
+  useEditCustomerGroupMutation,
+  useGetAllCustomerGroupQuery
 } from "../../../features/customers/customerGroup/customerGroupApiSlice";
 
 import StatusBox from "../../../components/StatusBox/StatusBox";
@@ -307,7 +309,30 @@ const customerGroupValidationSchema = Yup.object({
   name: Yup.string().trim().min(3).max(50).required("Required"),
 });
 
+const initialQueryFilterState = {
+  pageSize: 1,
+  pageNo: null,
+  totalCount: 0,
+};
+
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_NO") {
+    return {
+      ...state,
+      pageNo: +action.pageNo,
+    };
+  }
+  if (action.type === "SET_TOTAL_COUNT") {
+    return {
+      ...state,
+      totalCount: action.totalCount,
+    };
+  }
+  return initialQueryFilterState;
+};
+
 const CreateUserGroup = () => {
+  let { id } = useParams();
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const [likeProductRadio, setLikeProductRadio] = useState("automated");
@@ -329,6 +354,17 @@ const CreateUserGroup = () => {
     bottom: false,
     right: false,
   });
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+
+  const {
+    data: customerGroupData,
+    isLoading: customerGroupIsLoading,
+    isSuccess: customerGroupIsSuccess,
+    error: customerGroupError,
+  } = useGetAllCustomerGroupQuery({id: id},{ skip: id ? false : true});
 
   const [
     createCustomerGroup,
@@ -339,13 +375,23 @@ const CreateUserGroup = () => {
     },
   ] = useCreateCustomerGroupMutation();
 
+  const [
+    editCustomerGroup,
+    {
+      data: editData,
+      isLoading: editGroupIsLoading,
+      isSuccess: editGroupIsSuccess,
+      error: editGroupError,
+    }
+  ] = useEditCustomerGroupMutation();
+
   const customerGroupFormik = useFormik({
     initialValues: {
-      name: "",
-      description: "",
-      addType: "manual",
-      status: "active",
-      notes: ""
+      name: customerGroupData?.data?.data[0]?.name || "",
+      description: customerGroupData?.data?.data[0]?.description || "",
+      addType: customerGroupData?.data?.data[0]?.addType || "manual",
+      status: customerGroupData?.data?.data[0]?.status || "active",
+      notes: customerGroupData?.data?.data[0]?.notes || "",
     },
     enableReinitialize: true,
     validationSchema: customerGroupValidationSchema,
@@ -355,14 +401,31 @@ const CreateUserGroup = () => {
           delete values[key] 
         }
       }
-      createCustomerGroup(values)
+      if(!id) {
+        createCustomerGroup(values)
         .unwrap()
         .then((res) => {
           navigate("/users/userGroups");
           dispatch(showSuccess({ message: "Custormer group created successfully" }));
         })
+      } else {
+        editCustomerGroup({
+        id: id,
+        details : values
+      })
+        .unwrap()
+          .then(() => {
+            dispatch(showSuccess({ message: "Custormer group edited successfully" }));
+          });
+      }
     },
   })
+
+  useEffect(() => {
+    if (id) {
+      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+    }
+  }, [id]);
   
   const handleLikeProductRadio = (event) => {
     setLikeProductRadio(event.target.value);
@@ -541,8 +604,8 @@ const CreateUserGroup = () => {
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="addType" 
-                    value={customerGroupFormik.values.addType}
-                    onChange={customerGroupFormik.handleChange}
+                  value={customerGroupFormik.values.addType}
+                  onChange={customerGroupFormik.handleChange}
                   className="features-radio px-0"
                 >
                   <FormControlLabel
@@ -797,13 +860,13 @@ const CreateUserGroup = () => {
                           <div className="col-sm-6 col-md-3 mt-3 mb-1">
                             <button
                               className="button-gradient py-1 px-3 w-100 mb-2"
-                              onClick={handleLikeApplyCondition}
+                              // onClick={handleLikeApplyCondition}
                             >
                               <p>Apply</p>
                             </button>
                             <button
                               className="button-lightBlue-outline py-1 px-3 w-100"
-                              onClick={handleLikeApplyCondition}
+                              // onClick={handleLikeApplyCondition}
                             >
                               <p>Cancel</p>
                             </button>

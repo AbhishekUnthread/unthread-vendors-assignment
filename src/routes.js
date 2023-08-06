@@ -206,6 +206,10 @@ const router = () => {
                   element: <CreateUserGroup />,
                 },
                 {
+                  path: "userGroups/edit/:id",
+                  element: <CreateUserGroup />,
+                },
+                {
                   path: "userEnquiries",
                   element: <UserEnquiries />,
                 },

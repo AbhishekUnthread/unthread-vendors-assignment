@@ -36,7 +36,15 @@ import verticalDots from "../../../assets/icons/verticalDots.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import unArchived from "../../../assets/images/Components/Archived.png"
 
-const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }) => {
+const UserGroupsTable = ({ 
+  data, 
+  totalCount, 
+  value, 
+  loading, 
+  error, 
+  bulkDelete, 
+  onEdit 
+}) => {
   const dispatch = useDispatch();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("groupName");
@@ -402,6 +410,11 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
                         >
                           <div
                             className="d-flex align-items-center text-decoration-none c-pointer"
+                            onClick={(e) => {
+                              if(value != 3) {
+                                onEdit(row, index+1, value);
+                              }
+                            }}
                           >
                             <p className="text-lightBlue rounded-circle fw-600">
                               {row?.name}
@@ -415,7 +428,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
                           <TableCell style={{ width: 180 }}>
                             <div className="d-flex align-items-center">
                               <div 
-                                className="rounded-pill d-flex px-2 py-1 c-pointer"
+                                className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
                                 style={{
                                   background: row.status == "active" ? "#A6FAAF" :
                                   row.status == "archived" ? "#C8D8FF" : "#F67476" 
