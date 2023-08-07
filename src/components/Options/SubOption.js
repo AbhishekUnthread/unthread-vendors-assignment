@@ -3,30 +3,22 @@ import {
   FormControl,
   OutlinedInput,
   Tooltip,
-  Grid,
   FormHelperText,
-  FormControlLabel,
-  Checkbox,
   Select,
   MenuItem,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TablePagination,
   TableRow,
-  Chip,
 } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
   SortableContainer,
   SortableHandle,
   SortableElement,
-  arrayMove,
 } from "react-sortable-hoc";
 import _ from "lodash";
-
-import { showError } from "../../features/snackbar/snackbarAction";
 
 import DeleteIconButton from "../DeleteIconButton/DeleteIconButton";
 import SubAttribute from "./Attribute/SubAttribute";
@@ -106,7 +98,6 @@ const FRONTEND_APPEARANCE = [
 
 const SubOption = (props) => {
   const {
-    isEditing = false,
     id,
     attributeId,
     formik,
@@ -115,7 +106,6 @@ const SubOption = (props) => {
     onSubAttributeAdd,
     onSubAttributeDelete,
   } = props;
-  const [collapsed, setCollapsed] = useState(isEditing);
   const [subAttrIndex, setSubAttrIndex] = useState([]);
 
   const subOptionAppearanceHandler = (e) => {
@@ -175,7 +165,13 @@ const SubOption = (props) => {
         }
       }
     }
+
     if (formik.errors?.subOptions?.length && formik.errors?.subOptions[index]) {
+      isError = true;
+    } else if (
+      formik.values?.subOptions?.length &&
+      formik.values?.subOptions[index]?.error
+    ) {
       isError = true;
     } else if (subAttrIndex.length) {
       for (const subIndex of subAttrIndex) {
@@ -184,27 +180,32 @@ const SubOption = (props) => {
           formik.errors?.subAttributes[subIndex]
         ) {
           isError = true;
+        } else if (
+          formik.values?.subAttributes?.length &&
+          formik.values?.subAttributes[subIndex]?.error
+        ) {
+          isError = true;
         }
       }
     }
+
     if (isError) {
       return;
     }
-    setCollapsed(true);
+    formik.setFieldValue(`subOptions[${index}].expanded`, false);
   };
 
   const editHandler = () => {
-    setCollapsed(false);
+    formik.setFieldValue(`subOptions[${index}].expanded`, true);
   };
 
   const addSubAttributeIndexHandler = useCallback((value) => {
     setSubAttrIndex((prevState) => [...prevState, value]);
   }, []);
 
-  return collapsed ? (
+  return !formik.values.subOptions[index].expanded ? (
     <SubOptionCollapse
       id={id}
-      attributeId={attributeId}
       formik={formik}
       index={index}
       onEdit={editHandler}
@@ -229,6 +230,7 @@ const SubOption = (props) => {
           </div>
           <FormControl className="w-100 px-0">
             <OutlinedInput
+              autoFocus={true}
               size="small"
               sx={{ paddingLeft: 0 }}
               name={`subOptions[${index}].title`}

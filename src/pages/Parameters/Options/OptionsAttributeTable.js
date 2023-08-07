@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+
 import {
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TablePagination,
+  
   TableRow,
-  Chip,
+  
   Collapse,
 } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -14,17 +14,13 @@ import {
   SortableContainer,
   SortableHandle,
   SortableElement,
-  arrayMove,
+  
 } from "react-sortable-hoc";
 
 import TableHeader from "../../../components/TableHeader/TableHeader";
-import EditButton from "../../../components/EditButton/EditButton";
-import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
-import DeleteIconButton from "../../../components/DeleteIconButton/DeleteIconButton";
-import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import Attribute from "../../../components/Options/Attribute/Attribute";
 import SubOption from "../../../components/Options/SubOption";
-import SubOptionCollapse from "../../../components/Options/SubOptionCollapse";
+
 
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 
@@ -72,7 +68,7 @@ const HEAD_CELLS = [
 
 const OptionsAttributeTable = (props) => {
   const {
-    isEditing,
+  
     formik,
     onAttributeAdd,
     onAttributeDelete,
@@ -81,26 +77,18 @@ const OptionsAttributeTable = (props) => {
     onSubAttributeAdd,
     onSubAttributeDelete,
   } = props;
-  const [collapseStatus, setCollapseStatus] = useState({});
 
-  const toggleSubOption = (id) => {
-    setCollapseStatus((prevState) => {
-      return {
-        ...prevState,
-        [id]: !prevState[id],
-      };
-    });
+  const toggleSubOption = (index) => {
+    formik.setFieldValue(
+      `attributes[${index}].expanded`,
+      !formik.values.attributes[index].expanded
+    );
   };
 
-  useEffect(() => {
-    const attrObj = {};
-    if (formik.values?.attributes?.length) {
-      for (const attr of formik.values?.attributes) {
-        attrObj[attr._id] = !isEditing;
-      }
-    }
-    setCollapseStatus(attrObj);
-  }, [formik.values?.attributes, isEditing]);
+  const addSubOptionHandler = (index, id) => {
+    onSubOptionAdd(id);
+    formik.setFieldValue(`attributes[${index}].expanded`, true);
+  };
 
   return (
     <TableContainer sx={{ padding: 0 }}>
@@ -108,36 +96,42 @@ const OptionsAttributeTable = (props) => {
         <TableHeader sx={{ background: "#22213f" }} headCells={HEAD_CELLS} />
         <TableBodySortable useDragHandle>
           {formik.values?.attributes.map((attribute, index) => {
+            const hasSubOptions = formik.values.subOptions.filter((subOp) => {
+              return subOp.metaAttribute === attribute._id;
+            });
+
             return (
               <SortableRow key={index} index={index}>
                 <TableRow tabIndex={-1} className="table-rows">
                   <DragHandle />
                   <TableCell sx={{ padding: "16px 0", verticalAlign: "top" }}>
-                    <button
-                      onClick={toggleSubOption.bind(null, attribute._id)}
-                      type="button"
-                      style={{
-                        cursor: "pointer",
-                        marginTop: "5px",
-                        display: "grid",
-                        placeContent: "center",
-                        padding: "7px",
-                      }}
-                      className="reset"
-                    >
-                      <img
-                        src={arrowDown}
-                        alt="sort"
+                    {hasSubOptions.length > 0 && (
+                      <button
+                        onClick={toggleSubOption.bind(null, index)}
+                        type="button"
                         style={{
-                          transform: collapseStatus[attribute._id]
-                            ? "rotate(0deg)"
-                            : "rotate(-90deg)",
-                          transition: "all .2s",
-                          width: "16px",
-                          height: "16px",
+                          cursor: "pointer",
+                          marginTop: "5px",
+                          display: "grid",
+                          placeContent: "center",
+                          padding: "7px",
                         }}
-                      />
-                    </button>
+                        className="reset"
+                      >
+                        <img
+                          src={arrowDown}
+                          alt="sort"
+                          style={{
+                            transform: attribute.expanded
+                              ? "rotate(0deg)"
+                              : "rotate(-90deg)",
+                            transition: "all .2s",
+                            width: "16px",
+                            height: "16px",
+                          }}
+                        />
+                      </button>
+                    )}
                   </TableCell>
                   <TableCell
                     sx={{ textTransform: "capitalize", cursor: "pointer" }}
@@ -146,10 +140,11 @@ const OptionsAttributeTable = (props) => {
                       formik={formik}
                       index={index}
                       onAttributeDelete={onAttributeDelete}
-                      onSubOptionAdd={onSubOptionAdd}
+                      onSubOptionAdd={addSubOptionHandler.bind(this, index)}
+                      subOptionCount={hasSubOptions.length}
                     />
                     <Collapse
-                      in={collapseStatus[attribute._id]}
+                      in={attribute.expanded}
                       timeout="auto"
                       unmountOnExit
                     >
@@ -157,7 +152,6 @@ const OptionsAttributeTable = (props) => {
                         if (subOption.metaAttribute === attribute._id) {
                           return (
                             <SubOption
-                              isEditing={!!isEditing}
                               key={subOption._id}
                               id={subOption._id}
                               attributeId={attribute._id}

@@ -76,6 +76,7 @@ import OptionsInfo from "./pages/Parameters/Options/OptionsInfo";
 import Settings from "./pages/Settings/Settings";
 import TaxManager from "./pages/Settings/TaxManager/TaxManager";
 import EditStore from "./pages/Products/EditStore/EditStore";
+import OptionSetsInfo from "./pages/Parameters/Options/OptionSetsInfo";
 
 const router = () => {
   const loginStatus = store.getState().auth.isLoggedIn;
@@ -240,6 +241,10 @@ const router = () => {
                   element: <CreateUserGroup />,
                 },
                 {
+                  path: "userGroups/edit/:id",
+                  element: <CreateUserGroup />,
+                },
+                {
                   path: "userEnquiries",
                   element: <UserEnquiries />,
                 },
@@ -308,6 +313,10 @@ const router = () => {
                 {
                   path: "options/create",
                   element: <OptionsInfo />,
+                },
+                {
+                  path: "options/sets/create",
+                  element: <OptionSetsInfo />,
                 },
                 {
                   path: "options/edit/:id",

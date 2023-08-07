@@ -7,17 +7,9 @@ import {
   TableRow,
   Chip,
 } from "@mui/material";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import {
-  SortableContainer,
-  SortableHandle,
-  SortableElement,
-  arrayMove,
-} from "react-sortable-hoc";
 
 import TableHeader from "../../../components/TableHeader/TableHeader";
 import EditButton from "../../../components/EditButton/EditButton";
-import RemoveIconButton from "../../../components/RemoveIconButton/RemoveIconButton";
 import DeleteIconButton from "../../../components/DeleteIconButton/DeleteIconButton";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import TableLoader from "../../../components/Loader/TableLoader";
@@ -117,7 +109,7 @@ const OptionsTable = (props) => {
                 >
                   <TableCell />
                   <TableCell
-                    onClick={onEdit.bind(null, index + 1)}
+                    onClick={onEdit.bind(null, item.srNo)}
                     sx={{ textTransform: "capitalize", cursor: "pointer" }}
                   >
                     <p className="text-lightBlue fw-600">{item.title}</p>
@@ -147,7 +139,7 @@ const OptionsTable = (props) => {
                   </TableCell>
                   <TableCell>
                     <div className="d-flex align-items-center justify-content-end">
-                      <EditButton onClick={onEdit.bind(null, index + 1)} />
+                      <EditButton onClick={onEdit.bind(null, item.srNo)} />
                       <DeleteIconButton
                         onClick={onDelete.bind(null, {
                           id: item._id,

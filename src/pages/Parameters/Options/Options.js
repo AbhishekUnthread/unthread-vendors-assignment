@@ -1,5 +1,9 @@
 import { useEffect, useReducer } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { Box, Paper, Tab, Tabs } from "@mui/material";
 import { useDispatch } from "react-redux";
 
@@ -19,7 +23,7 @@ import {
   showError,
 } from "../../../features/snackbar/snackbarAction";
 
-import { omitEmptyKeys } from "../../../utils/helper";
+import { omitEmptyKeys, pickExactObjKeys } from "../../../utils/helper";
 
 const TAB_LIST = [
   { id: 1, label: "all options" },
@@ -33,7 +37,6 @@ const initialQueryFilterState = {
 };
 
 const initialOptionsState = {
-  data: null,
   totalCount: 0,
   deleteId: null,
   confirmationMessage: "",
@@ -73,11 +76,9 @@ const queryFilterReducer = (state, action) => {
 };
 
 const optionReducer = (state, action) => {
-  if (action.type === "SET_DATA") {
+  if (action.type === "SET_TOTAL_COUNT") {
     return {
-      ...initialOptionsState,
-      search: state.search,
-      data: action.data,
+      ...state,
       totalCount: action.totalCount,
     };
   }
@@ -92,10 +93,9 @@ const optionReducer = (state, action) => {
   if (action.type === "REMOVE_DELETE") {
     return {
       ...initialOptionsState,
+      totalCount: state.totalCount,
       firstRender: false,
       search: state.search,
-      totalCount: state.totalCount,
-      data: state.data,
     };
   }
   if (action.type === "SEARCH_VALUE") {
@@ -177,14 +177,21 @@ const Options = () => {
     dispatchOptions({ type: "SEARCH_VALUE", search: value });
   };
 
-  const editHandler = (index) => {
-    const currentOption =
-      index + (queryFilterState.pageNo - 1) * queryFilterState.pageSize;
-    navigate(`./edit/${currentOption}`);
+  const editHandler = (srNo) => {
+    navigate({
+      pathname: `./edit/${srNo}`,
+      search: `?${createSearchParams({
+        search: JSON.stringify(queryFilterState),
+      })}`,
+    });
   };
 
   const createOptionHandler = () => {
     navigate("./create");
+  };
+
+  const createOptionSetHandler = () => {
+    navigate("./sets/create");
   };
 
   const deleteHandler = ({ id, message }) => {
@@ -202,7 +209,7 @@ const Options = () => {
         dispatchOptions({
           type: "REMOVE_DELETE",
         });
-        dispatch(showSuccess({ message: "Option Deleted" }));
+        dispatch(showSuccess({ message: "Option deleted successfully" }));
       })
       .catch((error) => {
         if (error?.data?.message) {
@@ -234,28 +241,38 @@ const Options = () => {
         );
       }
     }
-  }, [optionsError, attributesError, dispatch]);
+    if (optionsIsSuccess) {
+      dispatchOptions({
+        type: "SET_TOTAL_COUNT",
+        totalCount: optionsData.totalCount,
+      });
+    }
+  }, [optionsError, optionsIsSuccess, optionsData, attributesError, dispatch]);
 
   useEffect(() => {
     if (optionsState.firstRender) {
-      // const search = omitEmptyKeys(JSON.parse(searchParams.get("search")));
-      // console.log({ search });
-      // dispatchQueryFilter({
-      //   type: "SET_FILTERS",
-      //   filters: search,
-      // });
-      // dispatchOptions({ type: "SEARCH_VALUE", search: search.title || '' });
+      const search = omitEmptyKeys(JSON.parse(searchParams.get("search")));
+      const filters = pickExactObjKeys(queryFilterState, search);
+      dispatchQueryFilter({
+        type: "SET_FILTERS",
+        filters,
+      });
+      filters.title &&
+        dispatchOptions({
+          type: "SEARCH_VALUE",
+          search: filters.title,
+        });
       dispatchOptions({ type: "DISABLE_FIRST_RENDER" });
     }
-  }, [searchParams, optionsState.firstRender]);
+  }, [searchParams, optionsState.firstRender, queryFilterState]);
 
-  // useEffect(() => {
-  //   if (!optionsState.firstRender) {
-  //     setSearchParams({
-  //       search: JSON.stringify(queryFilterState),
-  //     });
-  //   }
-  // }, [queryFilterState, setSearchParams, optionsState.firstRender]);
+  useEffect(() => {
+    if (!optionsState.firstRender) {
+      setSearchParams({
+        search: JSON.stringify(queryFilterState),
+      });
+    }
+  }, [queryFilterState, setSearchParams, optionsState.firstRender]);
 
   return (
     <div className="container-fluid page">
@@ -265,7 +282,7 @@ const Options = () => {
         onExport={() => {}}
         onImport={() => {}}
         onCreate={createOptionHandler}
-        onSecondaryCreate={createOptionHandler}
+        onSecondaryCreate={createOptionSetHandler}
         createBtnText="+ Create Options"
         createSecondaryBtnText="+ Options Sets"
       />

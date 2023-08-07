@@ -9,8 +9,12 @@ const isHttpValid = (str) => {
   }
 };
 
-const omitEmptyKeys = (obj) => {
-  return _.omitBy(obj, (value) => value === (null || "" || undefined));
-};
+const omitEmptyKeys = (obj) =>
+  _.omitBy(
+    obj,
+    (value) => value === "" || value === undefined || value === null
+  );
 
-export { isHttpValid, omitEmptyKeys };
+const pickExactObjKeys = (obj, pickObj) => _.pick(pickObj, Object.keys(obj));
+
+export { isHttpValid, omitEmptyKeys, pickExactObjKeys };

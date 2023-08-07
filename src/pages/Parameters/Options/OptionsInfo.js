@@ -1,6 +1,11 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useSearchParams,
+  createSearchParams,
+} from "react-router-dom";
 import {
   FormControl,
   OutlinedInput,
@@ -22,6 +27,7 @@ import { AntSwitch } from "../../../components/AntSwitch/AntSwitch";
 import OptionsAttributeTable from "./OptionsAttributeTable";
 import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
+import PageLoader from "../../../components/Loader/PageLoader";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -146,6 +152,7 @@ const optionValidationSchema = Yup.object({
           .required("Required"),
         saved: Yup.boolean(),
         error: Yup.string(),
+        expanded: Yup.boolean(),
       })
     )
     .min(1)
@@ -168,6 +175,7 @@ const optionValidationSchema = Yup.object({
       saved: Yup.boolean(),
       isOption: Yup.boolean(),
       error: Yup.string(),
+      expanded: Yup.boolean(),
     })
   ),
   subAttributes: Yup.array()
@@ -228,13 +236,16 @@ const optionValidationSchema = Yup.object({
 });
 
 const initialOptionQueryFilterState = {
-  id: null,
+  srNo: null,
+  order: null,
   pageSize: 1,
-  pageNo: null,
+  pageNo: 0,
 };
 
 const initialOptionState = {
   totalCount: 0,
+  nextCount: 0,
+  prevCount: 0,
   isEditing: false,
   deleteId: null,
   saved: false,
@@ -253,17 +264,23 @@ const initialDeletedOptionState = {
 };
 
 const optionQueryFilterReducer = (state, action) => {
-  if (action.type === "SET_PAGE_NO") {
+  if (action.type === "SET_SR_NO") {
     return {
       ...state,
-      id: initialOptionQueryFilterState.id,
-      pageNo: +action.pageNo,
+      srNo: action.srNo,
+      order: null,
     };
   }
-  if (action.type === "SET_ID") {
+  if (action.type === "SET_NEXT_ORDER") {
     return {
-      ...initialOptionQueryFilterState,
-      id: action.id,
+      ...state,
+      order: 1,
+    };
+  }
+  if (action.type === "SET_PREV_ORDER") {
+    return {
+      ...state,
+      order: -1,
     };
   }
   return initialOptionQueryFilterState;
@@ -292,10 +309,12 @@ const optionReducer = (state, action) => {
       deleteType: initialOptionState.deleteType,
     };
   }
-  if (action.type === "SET_TOTAL_COUNT") {
+  if (action.type === "SET_PAGINATION") {
     return {
       ...state,
       totalCount: action.totalCount,
+      nextCount: action.nextCount,
+      prevCount: action.prevCount,
     };
   }
   if (action.type === "ENABLE_EDIT") {
@@ -398,7 +417,9 @@ const deleteOptionReducer = (state, action) => {
 const OptionsInfo = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams("");
   let { id } = useParams();
+  const [pageIsLoading, setPageIsLoading] = useState(!!id);
   const [optionQueryFilterState, dispatchOptionQueryFilter] = useReducer(
     optionQueryFilterReducer,
     initialOptionQueryFilterState
@@ -420,8 +441,7 @@ const OptionsInfo = () => {
     isSuccess: optionsIsSuccess,
     isFetching: optionsDataIsFetching,
   } = useGetAllOptionsQuery(optionQueryFilterState, {
-    skip:
-      optionQueryFilterState.pageNo || optionQueryFilterState.id ? false : true,
+    skip: optionQueryFilterState.srNo ? false : true,
   });
 
   const {
@@ -615,6 +635,7 @@ const OptionsInfo = () => {
               apperance: optionsData?.data[0]?.apperance,
               saved: true,
               error: "",
+              expanded: false,
             };
           })
         : [
@@ -628,6 +649,7 @@ const OptionsInfo = () => {
               apperance: "dropDownList",
               saved: false,
               error: "",
+              expanded: false,
             },
           ],
       subOptions: subOptionsData?.data?.length
@@ -640,6 +662,7 @@ const OptionsInfo = () => {
               saved: true,
               isOption: item.isOption,
               error: "",
+              expanded: false,
             };
           })
         : [],
@@ -834,22 +857,20 @@ const OptionsInfo = () => {
   });
 
   const backHandler = () => {
-    navigate("/parameters/options");
+    navigate({
+      pathname: "/parameters/options",
+      search: `?${createSearchParams({
+        search: searchParams.get("search"),
+      })}`,
+    });
   };
 
   const nextPageHandler = () => {
-    const { pageNo } = optionQueryFilterState;
-    const { totalCount } = optionState;
-    if (pageNo + 1 > totalCount) {
-      return;
-    }
+    dispatchOptionQueryFilter({ type: "SET_NEXT_ORDER" });
   };
 
   const prevPageHandler = () => {
-    const { pageNo } = optionQueryFilterState;
-    if (pageNo - 1 === 0) {
-      return;
-    }
+    dispatchOptionQueryFilter({ type: "SET_PREV_ORDER" });
   };
 
   const deleteAttributeHandler = ({ deleteId, saved, message }) => {
@@ -908,12 +929,14 @@ const OptionsInfo = () => {
   const deleteConfirmationHandler = () => {
     if (optionState.deleteType === "attribute") {
       const updatedAttributes = optionFormik.values.attributes?.filter(
-        (attr, attrIndex) => {
-          if (attr._id === optionState.deleteId && attr.saved) {
-            dispatchDeleteOption({
-              type: "SET_DELETED_ATTRIBUTES",
-              attribute: attr,
-            });
+        (attr, index) => {
+          if (attr._id === optionState.deleteId) {
+            optionFormik.setFieldError(`attributes[${index}]`, {});
+            attr.saved &&
+              dispatchDeleteOption({
+                type: "SET_DELETED_ATTRIBUTES",
+                attribute: attr,
+              });
           }
 
           return attr._id !== optionState.deleteId;
@@ -922,15 +945,14 @@ const OptionsInfo = () => {
       optionFormik.setFieldValue("attributes", updatedAttributes);
 
       const updatedSubOptions = optionFormik.values.subOptions?.filter(
-        (subOption) => {
-          if (
-            subOption.metaAttribute === optionState.deleteId &&
-            subOption.saved
-          ) {
-            dispatchDeleteOption({
-              type: "SET_DELETED_SUB_OPTIONS",
-              subOption,
-            });
+        (subOption, index) => {
+          if (subOption.metaAttribute === optionState.deleteId) {
+            optionFormik.setFieldError(`subOptions[${index}]`, {});
+            subOption.saved &&
+              dispatchDeleteOption({
+                type: "SET_DELETED_SUB_OPTIONS",
+                subOption,
+              });
           }
           return subOption.metaAttribute !== optionState.deleteId;
         }
@@ -938,15 +960,14 @@ const OptionsInfo = () => {
       optionFormik.setFieldValue("subOptions", updatedSubOptions);
 
       const updatedSubAttributes = optionFormik.values.subAttributes?.filter(
-        (subAttribute) => {
-          if (
-            subAttribute.metaAttribute === optionState.deleteId &&
-            subAttribute.saved
-          ) {
-            dispatchDeleteOption({
-              type: "SET_DELETED_SUB_ATTRIBUTES",
-              subAttribute,
-            });
+        (subAttribute, index) => {
+          if (subAttribute.metaAttribute === optionState.deleteId) {
+            optionFormik.setFieldError(`subAttributes[${index}]`, {});
+            subAttribute.saved &&
+              dispatchDeleteOption({
+                type: "SET_DELETED_SUB_ATTRIBUTES",
+                subAttribute,
+              });
           }
           return subAttribute.metaAttribute !== optionState.deleteId;
         }
@@ -955,12 +976,14 @@ const OptionsInfo = () => {
     }
     if (optionState.deleteType === "subOption") {
       const updatedSubOptions = optionFormik.values.subOptions?.filter(
-        (subOption) => {
-          if (subOption._id === optionState.deleteId && subOption.saved) {
-            dispatchDeleteOption({
-              type: "SET_DELETED_SUB_OPTIONS",
-              subOption,
-            });
+        (subOption, index) => {
+          if (subOption._id === optionState.deleteId) {
+            optionFormik.setFieldError(`subOptions[${index}]`, {});
+            subOption.saved &&
+              dispatchDeleteOption({
+                type: "SET_DELETED_SUB_OPTIONS",
+                subOption,
+              });
           }
           return subOption._id !== optionState.deleteId;
         }
@@ -968,15 +991,14 @@ const OptionsInfo = () => {
       optionFormik.setFieldValue("subOptions", updatedSubOptions);
 
       const updatedSubAttributes = optionFormik.values.subAttributes?.filter(
-        (subAttribute) => {
-          if (
-            subAttribute.metaSubAttribute === optionState.deleteId &&
-            subAttribute.saved
-          ) {
-            dispatchDeleteOption({
-              type: "SET_DELETED_SUB_ATTRIBUTES",
-              subAttribute,
-            });
+        (subAttribute, index) => {
+          if (subAttribute.metaSubAttribute === optionState.deleteId) {
+            optionFormik.setFieldError(`subAttributes[${index}]`, {});
+            subAttribute.saved &&
+              dispatchDeleteOption({
+                type: "SET_DELETED_SUB_ATTRIBUTES",
+                subAttribute,
+              });
           }
           return subAttribute.metaSubAttribute !== optionState.deleteId;
         }
@@ -985,19 +1007,20 @@ const OptionsInfo = () => {
     }
     if (optionState.deleteType === "subAttribute") {
       const updatedSubAttributes = optionFormik.values.subAttributes?.filter(
-        (subAttribute) => {
-          if (subAttribute._id === optionState.deleteId && subAttribute.saved) {
-            dispatchDeleteOption({
-              type: "SET_DELETED_SUB_ATTRIBUTES",
-              subAttribute,
-            });
+        (subAttribute, index) => {
+          if (subAttribute._id === optionState.deleteId) {
+            optionFormik.setFieldError(`subAttributes[${index}]`, {});
+            subAttribute.saved &&
+              dispatchDeleteOption({
+                type: "SET_DELETED_SUB_ATTRIBUTES",
+                subAttribute,
+              });
           }
           return subAttribute._id !== optionState.deleteId;
         }
       );
       optionFormik.setFieldValue("subAttributes", updatedSubAttributes);
     }
-
     dispatchOption({ type: "REMOVE_DELETE" });
   };
 
@@ -1022,6 +1045,7 @@ const OptionsInfo = () => {
       apperance: optionFormik.values.option.apperance,
       saved: false,
       error: "",
+      expanded: false,
     });
     optionFormik.setFieldValue("attributes", newAttributeFields);
   };
@@ -1042,6 +1066,7 @@ const OptionsInfo = () => {
       saved: false,
       isOption: true,
       error: "",
+      expanded: true,
     });
     optionFormik.setFieldValue("subOptions", newSubOptions);
 
@@ -1129,7 +1154,7 @@ const OptionsInfo = () => {
 
   useEffect(() => {
     if (id) {
-      dispatchOptionQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+      dispatchOptionQueryFilter({ type: "SET_SR_NO", srNo: id });
     }
   }, [id]);
 
@@ -1145,19 +1170,41 @@ const OptionsInfo = () => {
     }
     if (optionsIsSuccess) {
       dispatchOption({
-        type: "SET_TOTAL_COUNT",
+        type: "SET_PAGINATION",
         totalCount: optionsData.totalCount,
+        nextCount: optionsData.nextCount,
+        prevCount: optionsData.prevCount,
+      });
+      dispatchOptionQueryFilter({
+        type: "SET_SR_NO",
+        srNo: optionsData.data[0].srNo,
       });
     }
   }, [optionsData, optionsError, optionsIsError, optionsIsSuccess, dispatch]);
 
   useEffect(() => {
-    if (id && !_.isEqual(optionFormik.values, optionFormik.initialValues)) {
+    const currentValues = structuredClone(optionFormik.values);
+    const initialValues = structuredClone(optionFormik.initialValues);
+    currentValues.attributes = currentValues.attributes.map((attr) => {
+      delete attr.expanded;
+      return attr;
+    });
+    currentValues.subOptions = currentValues.subOptions.map((subOp) => {
+      delete subOp.expanded;
+      return subOp;
+    });
+    initialValues.attributes = initialValues.attributes.map((attr) => {
+      delete attr.expanded;
+      return attr;
+    });
+    initialValues.subOptions = initialValues.subOptions.map((subOp) => {
+      delete subOp.expanded;
+      return subOp;
+    });
+
+    if (id && !_.isEqual(currentValues, initialValues)) {
       dispatchOption({ type: "ENABLE_EDIT" });
-    } else if (
-      id &&
-      _.isEqual(optionFormik.values, optionFormik.initialValues)
-    ) {
+    } else if (id && _.isEqual(currentValues, initialValues)) {
       dispatchOption({ type: "DISABLE_EDIT" });
     }
   }, [optionFormik.initialValues, optionFormik.values, id]);
@@ -1168,231 +1215,265 @@ const OptionsInfo = () => {
     }
   }, [optionState.createdSuccess, navigate]);
 
-  return (
-    <div className="page container-fluid position-relative user-group product-tab-page">
-      <InfoHeader
-        title={optionFormik.values.option?.title || "Create Options"}
-        onBack={backHandler}
-        onPrev={prevPageHandler}
-        onNext={nextPageHandler}
-        isEdit={!!id}
-      />
-      <form
-        className="product-form"
-        noValidate
-        onSubmit={optionFormik.handleSubmit}
-      >
-        <div className="row mt-3">
-          <div className="col-lg-9 mt-3">
-            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
-              <div className="col-md-12 px-0 d-flex mb-4">
-                <Grid container spacing={2}>
-                  <Grid item md={12}>
-                    <Grid container spacing={2}>
-                      <Grid item md={6}>
-                        <div className="d-flex mb-1">
-                          <label className="small text-lightBlue me-2">
-                            Option Name
-                          </label>
-                          <Tooltip title="Lorem ipsum" placement="top">
-                            <img
-                              src={info}
-                              alt="info"
-                              className=" c-pointer"
-                              width={13.5}
-                            />
-                          </Tooltip>
-                        </div>
-                        <FormControl className="w-100 px-0">
-                          <OutlinedInput
-                            size="small"
-                            sx={{ paddingLeft: 0 }}
-                            name="option.title"
-                            value={optionFormik.values.option?.title}
-                            onBlur={optionFormik.handleBlur}
-                            onChange={optionFormik.handleChange}
-                            autoFocus={true}
-                          />
-                          {!!optionFormik.touched.option?.title &&
-                            optionFormik.errors.option?.title && (
-                              <FormHelperText error>
-                                {optionFormik.errors.option?.title}
-                              </FormHelperText>
-                            )}
-                        </FormControl>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              inputProps={{ "aria-label": "controlled" }}
-                              size="small"
-                              style={{
-                                color: "#5C6D8E",
-                                marginRight: 0,
-                                width: "auto",
-                              }}
-                              name="option.isFilter"
-                              value={optionFormik.values.option?.isFilter}
-                              onBlur={optionFormik.handleBlur}
-                              onChange={optionFormik.handleChange}
-                            />
-                          }
-                          label="Include in Filters"
-                          sx={{
-                            "& .MuiTypography-root": {
-                              fontSize: "0.7rem",
-                              color: "#c8d8ff",
-                            },
-                          }}
-                          className=" px-0"
-                        ></FormControlLabel>
-                      </Grid>
-                      <Grid item md={6}>
-                        <div className="d-flex mb-1">
-                          <label className="small text-lightBlue me-2">
-                            Frontend Name
-                          </label>
-                          <Tooltip title="Lorem ipsum" placement="top">
-                            <img
-                              src={info}
-                              alt="info"
-                              className=" c-pointer"
-                              width={13.5}
-                            />
-                          </Tooltip>
-                        </div>
-                        <FormControl className="w-100 px-0">
-                          <OutlinedInput
-                            size="small"
-                            sx={{ paddingLeft: 0 }}
-                            name="option.frontEndTitle"
-                            value={optionFormik.values.option?.frontEndTitle}
-                            onBlur={optionFormik.handleBlur}
-                            onChange={optionFormik.handleChange}
-                          />
-                          {!!optionFormik.touched.option?.frontEndTitle &&
-                            optionFormik.errors.option?.frontEndTitle && (
-                              <FormHelperText error>
-                                {optionFormik.errors.option?.frontEndTitle}
-                              </FormHelperText>
-                            )}
-                        </FormControl>
-                        <FormHelperText>
-                          Customer will see this on frontend
-                        </FormHelperText>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item md={12}>
-                    <Grid container spacing={2}>
-                      <Grid item md={6}>
-                        <div>
-                          <div className="d-flex  mb-1">
-                            <p className="text-lightBlue me-2">
-                              Frontend Appearance
-                            </p>
-                            <Tooltip title="Lorem ipsum" placement="top">
-                              <img
-                                src={info}
-                                alt="info"
-                                className=" c-pointer"
-                                width={13.5}
-                              />
-                            </Tooltip>
-                          </div>
-                          <FormControl
-                            sx={{
-                              m: 0,
-                              minWidth: 120,
-                              width: "100%",
-                            }}
-                            size="small"
-                          >
-                            <Select
-                              labelId="demo-select-small"
-                              id="demo-select-small"
-                              size="small"
-                              name="option.apperance"
-                              value={optionFormik.values.option?.apperance}
-                              onBlur={optionFormik.handleBlur}
-                              onChange={optionAppearanceHandler}
-                            >
-                              {FRONTEND_APPEARANCE.map((appearance) => {
-                                return (
-                                  <MenuItem
-                                    key={appearance.id}
-                                    value={appearance.value}
-                                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                  >
-                                    {appearance.text}
-                                  </MenuItem>
-                                );
-                              })}
-                            </Select>
-                            {!!optionFormik.touched.option?.apperance &&
-                              optionFormik.errors.option?.apperance && (
-                                <FormHelperText error>
-                                  {optionFormik.errors.option?.apperance}
-                                </FormHelperText>
-                              )}
-                          </FormControl>
-                        </div>
-                      </Grid>
-                      <Grid item md={6}>
-                        <div
-                          className="d-flex align-items-center justify-content-between"
-                          style={{ marginTop: "32px" }}
-                        >
-                          <p className="text-lightBlue">
-                            Is this option based on price master?
-                          </p>
-                          <AntSwitch
-                            name="option.isPriceMaster"
-                            value={optionFormik.values.option?.isPriceMaster}
-                            onBlur={optionFormik.handleBlur}
-                            onChange={optionFormik.handleChange}
-                          />
-                        </div>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </div>
-              <OptionsAttributeTable
-                isEditing={id}
-                onAttributeAdd={addAttributeFieldHandler}
-                formik={optionFormik}
-                onAttributeDelete={deleteAttributeHandler}
-                onSubOptionAdd={addSubOptionFieldHandler}
-                onSubOptionDelete={deleteSubOptionHandler}
-                onSubAttributeAdd={addSubAttributeFieldHandler}
-                onSubAttributeDelete={deleteSubAttributeHandler}
-              />
-            </div>
-          </div>
-        </div>
+  useEffect(() => {
+    if (optionQueryFilterState.srNo) {
+      const isLoading =
+        optionsIsLoading ||
+        attributesIsLoading ||
+        subOptionsIsLoading ||
+        subAttributesIsLoading;
+      if (isLoading) {
+        setPageIsLoading(true);
+      } else {
+        setPageIsLoading(false);
+      }
+    }
+  }, [
+    optionsIsLoading,
+    attributesIsLoading,
+    subOptionsIsLoading,
+    subAttributesIsLoading,
+    optionQueryFilterState.srNo,
+  ]);
 
-        <SaveFooterTertiary
-          show={id ? optionState.isEditing : true}
-          onDiscard={backHandler}
-          isLoading={optionState.isLoading}
+  return (
+    <>
+      {pageIsLoading && <PageLoader />}
+      <div className="page container-fluid position-relative user-group product-tab-page">
+        <InfoHeader
+          title={
+            optionFormik.values.option?.title ||
+            (id ? "Edit Options" : "Create Options")
+          }
+          onBack={backHandler}
+          onPrev={prevPageHandler}
+          onNext={nextPageHandler}
+          isEdit={!!id}
+          hasPrev={optionState.prevCount}
+          hasNext={optionState.nextCount}
         />
-      </form>
-      <DeleteModalSecondary
-        onConfirm={deleteConfirmationHandler}
-        onCancel={cancelDeleteAttributeHandler}
-        show={optionState.showDeleteModal}
-        message={optionState.confirmationMessage}
-        title={optionState.deleteTitle}
-      />
-      <DiscardModalSecondary
-        when={
-          optionState.createdSuccess
-            ? false
-            : !_.isEqual(optionFormik.values, optionFormik.initialValues)
-        }
-        message="option"
-      />
-    </div>
+        {!pageIsLoading && (
+          <form
+            className="product-form"
+            noValidate
+            onSubmit={optionFormik.handleSubmit}
+          >
+            <div className="row mt-3">
+              <div className="col-lg-9 mt-3">
+                <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
+                  <div className="col-md-12 px-0 d-flex mb-4">
+                    <Grid container spacing={2}>
+                      <Grid item md={12}>
+                        <Grid container spacing={2}>
+                          <Grid item md={6}>
+                            <div className="d-flex mb-1">
+                              <label className="small text-lightBlue me-2">
+                                Option Name
+                              </label>
+                              <Tooltip title="Lorem ipsum" placement="top">
+                                <img
+                                  src={info}
+                                  alt="info"
+                                  className=" c-pointer"
+                                  width={13.5}
+                                />
+                              </Tooltip>
+                            </div>
+                            <FormControl className="w-100 px-0">
+                              <OutlinedInput
+                                size="small"
+                                sx={{ paddingLeft: 0 }}
+                                name="option.title"
+                                value={optionFormik.values.option?.title}
+                                onBlur={optionFormik.handleBlur}
+                                onChange={optionFormik.handleChange}
+                                autoFocus={true}
+                              />
+                              {!!optionFormik.touched.option?.title &&
+                                optionFormik.errors.option?.title && (
+                                  <FormHelperText error>
+                                    {optionFormik.errors.option?.title}
+                                  </FormHelperText>
+                                )}
+                            </FormControl>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  inputProps={{ "aria-label": "controlled" }}
+                                  size="small"
+                                  style={{
+                                    color: "#5C6D8E",
+                                    marginRight: 0,
+                                    width: "auto",
+                                  }}
+                                  name="option.isFilter"
+                                  value={optionFormik.values.option?.isFilter}
+                                  onBlur={optionFormik.handleBlur}
+                                  onChange={optionFormik.handleChange}
+                                />
+                              }
+                              label="Include in Filters"
+                              sx={{
+                                "& .MuiTypography-root": {
+                                  fontSize: "0.7rem",
+                                  color: "#c8d8ff",
+                                },
+                              }}
+                              className=" px-0"
+                            ></FormControlLabel>
+                          </Grid>
+                          <Grid item md={6}>
+                            <div className="d-flex mb-1">
+                              <label className="small text-lightBlue me-2">
+                                Frontend Name
+                              </label>
+                              <Tooltip title="Lorem ipsum" placement="top">
+                                <img
+                                  src={info}
+                                  alt="info"
+                                  className=" c-pointer"
+                                  width={13.5}
+                                />
+                              </Tooltip>
+                            </div>
+                            <FormControl className="w-100 px-0">
+                              <OutlinedInput
+                                size="small"
+                                sx={{ paddingLeft: 0 }}
+                                name="option.frontEndTitle"
+                                value={
+                                  optionFormik.values.option?.frontEndTitle
+                                }
+                                onBlur={optionFormik.handleBlur}
+                                onChange={optionFormik.handleChange}
+                              />
+                              {!!optionFormik.touched.option?.frontEndTitle &&
+                                optionFormik.errors.option?.frontEndTitle && (
+                                  <FormHelperText error>
+                                    {optionFormik.errors.option?.frontEndTitle}
+                                  </FormHelperText>
+                                )}
+                            </FormControl>
+                            <FormHelperText>
+                              Customer will see this on frontend
+                            </FormHelperText>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                      <Grid item md={12}>
+                        <Grid container spacing={2}>
+                          <Grid item md={6}>
+                            <div>
+                              <div className="d-flex  mb-1">
+                                <p className="text-lightBlue me-2">
+                                  Frontend Appearance
+                                </p>
+                                <Tooltip title="Lorem ipsum" placement="top">
+                                  <img
+                                    src={info}
+                                    alt="info"
+                                    className=" c-pointer"
+                                    width={13.5}
+                                  />
+                                </Tooltip>
+                              </div>
+                              <FormControl
+                                sx={{
+                                  m: 0,
+                                  minWidth: 120,
+                                  width: "100%",
+                                }}
+                                size="small"
+                              >
+                                <Select
+                                  labelId="demo-select-small"
+                                  id="demo-select-small"
+                                  size="small"
+                                  name="option.apperance"
+                                  value={optionFormik.values.option?.apperance}
+                                  onBlur={optionFormik.handleBlur}
+                                  onChange={optionAppearanceHandler}
+                                >
+                                  {FRONTEND_APPEARANCE.map((appearance) => {
+                                    return (
+                                      <MenuItem
+                                        key={appearance.id}
+                                        value={appearance.value}
+                                        sx={{ fontSize: 13, color: "#5c6d8e" }}
+                                      >
+                                        {appearance.text}
+                                      </MenuItem>
+                                    );
+                                  })}
+                                </Select>
+                                {!!optionFormik.touched.option?.apperance &&
+                                  optionFormik.errors.option?.apperance && (
+                                    <FormHelperText error>
+                                      {optionFormik.errors.option?.apperance}
+                                    </FormHelperText>
+                                  )}
+                              </FormControl>
+                            </div>
+                          </Grid>
+                          <Grid item md={6}>
+                            <div
+                              className="d-flex align-items-center justify-content-between"
+                              style={{ marginTop: "32px" }}
+                            >
+                              <p className="text-lightBlue">
+                                Is this option based on price master?
+                              </p>
+                              <AntSwitch
+                                name="option.isPriceMaster"
+                                checked={
+                                  optionFormik.values.option?.isPriceMaster
+                                }
+                                onBlur={optionFormik.handleBlur}
+                                onChange={optionFormik.handleChange}
+                              />
+                            </div>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </div>
+                  <OptionsAttributeTable
+                    onAttributeAdd={addAttributeFieldHandler}
+                    formik={optionFormik}
+                    onAttributeDelete={deleteAttributeHandler}
+                    onSubOptionAdd={addSubOptionFieldHandler}
+                    onSubOptionDelete={deleteSubOptionHandler}
+                    onSubAttributeAdd={addSubAttributeFieldHandler}
+                    onSubAttributeDelete={deleteSubAttributeHandler}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <SaveFooterTertiary
+              show={id ? optionState.isEditing : true}
+              onDiscard={backHandler}
+              isLoading={optionState.isLoading}
+            />
+          </form>
+        )}
+        <DeleteModalSecondary
+          onConfirm={deleteConfirmationHandler}
+          onCancel={cancelDeleteAttributeHandler}
+          show={optionState.showDeleteModal}
+          message={optionState.confirmationMessage}
+          title={optionState.deleteTitle}
+        />
+        <DiscardModalSecondary
+          when={
+            optionState.createdSuccess
+              ? false
+              : !_.isEqual(optionFormik.values, optionFormik.initialValues)
+          }
+          message="option"
+        />
+      </div>
+    </>
   );
 };
 

@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 
-import EditButton from "../EditButton/EditButton";
-import DeleteIconButton from "../DeleteIconButton/DeleteIconButton";
+import EditButton from "../../EditButton/EditButton";
+import DeleteIconButton from "../../DeleteIconButton/DeleteIconButton";
 
 const FRONTEND_APPEARANCE = {
   dropDownList: "Drop-Down List",
@@ -12,8 +12,9 @@ const FRONTEND_APPEARANCE = {
   circleButtons: "Circle Buttons",
 };
 
-const SubOptionCollapse = (props) => {
-  const { id, formik, index, onEdit, onSubOptionDelete } = props;
+const OptionSetCollapse = (props) => {
+  const { onEdit, onOptionDelete, index } = props;
+
   return (
     <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4 ">
       <Grid container style={{ gap: "10px" }}>
@@ -21,7 +22,7 @@ const SubOptionCollapse = (props) => {
           <Grid container alignItems="center">
             <Grid item sm={6}>
               <span className="text-lightBlue" style={{ fontSize: "15px" }}>
-                {formik.values.subOptions[index]?.title}
+                test
               </span>
             </Grid>
             <Grid
@@ -42,23 +43,14 @@ const SubOptionCollapse = (props) => {
               >
                 <span className="text-grey-6">
                   Input Field Type:{" "}
-                  <span className="text-lightBlue">
-                    {
-                      FRONTEND_APPEARANCE[
-                        formik.values.subOptions[index]?.apperance
-                      ]
-                    }
-                  </span>
+                  <span className="text-lightBlue">test'</span>
                 </span>
               </div>
               <EditButton onClick={onEdit} />
               <DeleteIconButton
-                onClick={onSubOptionDelete.bind(null, {
-                  deleteId: formik.values.subOptions[index]?._id,
-                  saved: formik.values.subOptions[index]?.saved,
-                  message: formik.values.subOptions[index]?.title
-                    ? `${formik.values.subOptions[index]?.title} sub option`
-                    : "sub option",
+                onClick={onOptionDelete.bind(null, {
+                  deleteIndex: index,
+                  message: "option",
                 })}
                 title="Delete"
               />
@@ -74,18 +66,14 @@ const SubOptionCollapse = (props) => {
               gap: "10px",
             }}
           >
-            {formik.values.subAttributes.map((subAttribute, index) => {
-              if (subAttribute.metaSubAttribute === id) {
-                return (
-                  <div
-                    key={subAttribute._id}
-                    className="rounded-pill d-flex align-items-center px-2 py-1 c-pointer"
-                    style={{
-                      background:
-                        "linear-gradient(303.01deg, #2f2e69 -4.4%, #514969 111.29%)",
-                    }}
-                  >
-                    {formik.values.subAttributes[index]?.imageUrl && (
+            <div
+              className="rounded-pill d-flex align-items-center px-2 py-1 c-pointer"
+              style={{
+                background:
+                  "linear-gradient(303.01deg, #2f2e69 -4.4%, #514969 111.29%)",
+              }}
+            >
+              {/* {formik.values.subAttributes[index]?.imageUrl && (
                       <img
                         src={formik.values.subAttributes[index]?.imageUrl}
                         alt="icon"
@@ -110,15 +98,9 @@ const SubOptionCollapse = (props) => {
                           }}
                           className="me-2"
                         />
-                      )}
-                    <small className="fw-400 text-lightBlue">
-                      {formik.values?.subAttributes[index]?.title}
-                    </small>
-                  </div>
-                );
-              }
-              return null;
-            })}
+                      )} */}
+              <small className="fw-400 text-lightBlue">test</small>
+            </div>
           </div>
         </Grid>
       </Grid>
@@ -126,4 +108,4 @@ const SubOptionCollapse = (props) => {
   );
 };
 
-export default SubOptionCollapse;
+export default OptionSetCollapse;
