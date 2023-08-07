@@ -13,9 +13,21 @@ import sort from "../../../assets/icons/sort.svg";
 import products from "../../../assets/icons/sidenav/products.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
-import { Box, Paper, Tab, Tabs, Popover, FormGroup, FormControl, FormControlLabel, Checkbox, RadioGroup, Radio } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Tab,
+  Tabs,
+  Popover,
+  FormGroup,
+  FormControl,
+  FormControlLabel,
+  Checkbox,
+  RadioGroup,
+  Radio,
+} from "@mui/material";
 import AllInventory from "./AllInventory";
-import { useGetAllStoresQuery } from "../../../features/products/inventory/inventoryApiSlice";
+import { useGetAllStoresQuery, useGetStoreCountQuery } from "../../../features/products/inventory/inventoryApiSlice";
 
 const initialQueryFilterState = {
   name: "",
@@ -121,6 +133,10 @@ const ProductInventory = () => {
     // isSuccess: storeIsSuccess,
     error: storeError,
   } = useGetAllStoresQuery({ ...queryFilterState });
+
+  const { data: storeCountData } = useGetStoreCountQuery();
+
+  const storeCounts = storeCountData?.data?.[0] ?? { active: 0, inActive: 0, archived: 0, scheduled: 0 };
 
   const handleTabIndexChange = (event, tab) => {
     switch (tab) {
@@ -230,19 +246,19 @@ const ProductInventory = () => {
               aria-label="scrollable force tabs example"
               className="tabs">
               <Tab
-                label="All"
+                label={`All (${Object.values(storeCounts).reduce((a, v) => a + v)})`}
                 className="tabs-head"
               />
               <Tab
-                label="Active"
+                label={`Active (${storeCounts.active})`}
                 className="tabs-head"
               />
               <Tab
-                label="In Active"
+                label={`In Active (${storeCounts.inActive})`}
                 className="tabs-head"
               />
               <Tab
-                label="Archived"
+                label={`Archived (${storeCounts.archived})`}
                 className="tabs-head"
               />
             </Tabs>

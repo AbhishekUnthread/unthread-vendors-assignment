@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 // ! MATERIAL IMPORTS
-import { Checkbox, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Tooltip } from "@mui/material";
+import {
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Tooltip,
+} from "@mui/material";
 // ! COMPONENT IMPORTS
 import { EnhancedTableHead } from "../../../components/TableDependencies/TableDependencies";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
@@ -273,7 +282,8 @@ export default function AllInventory({
                               <div>
                                 <p className="text-lightBlue rounded-circle fw-600">{row.name}</p>
                                 <small className="text-grey-6 mt-1">
-                                  {row.address.line1} {row.address.line2} {row.address.state.name} {row.address.pincode} {row.address.country.name}
+                                  {row.address.line1} {row.address.line2} {row.address.state.name} {row.address.pincode}{" "}
+                                  {row.address.country.name}
                                 </small>
                               </div>
                             </div>
@@ -289,8 +299,17 @@ export default function AllInventory({
                             <div className="d-flex align-items-center">
                               <div
                                 className="rounded-pill d-flex table-status px-2 py-1 c-pointer"
-                                style={{ backgroundColor: row.status === "active" ? "#A6FAAF" : row.status === "archieved" ? "#C8D8FF" : "#F67476" }}>
-                                <small className="text-capitalize text-black fw-400">{row.status}</small>
+                                style={{
+                                  backgroundColor:
+                                    row.status === "active"
+                                      ? "#A6FAAF"
+                                      : row.status === "archieved"
+                                      ? "#C8D8FF"
+                                      : "#F67476",
+                                }}>
+                                <small className="text-capitalize text-black fw-400">
+                                  {row.status === "archieved" ? "archived" : row.status}
+                                </small>
                               </div>
                             </div>
                           </TableCell>
@@ -333,7 +352,7 @@ export default function AllInventory({
                           ) : (
                             <div className="d-flex align-items-center">
                               <Tooltip
-                                title="Archive"
+                                title="Un-Archive"
                                 placement="top">
                                 <div
                                   onClick={() => handleUnarchiveClick(row)}
@@ -348,7 +367,7 @@ export default function AllInventory({
                                 </div>
                               </Tooltip>
                               <Tooltip
-                                title="Edit"
+                                title="Delete"
                                 placement="top">
                                 <div
                                   onClick={() => handleDeleteClick(row)}

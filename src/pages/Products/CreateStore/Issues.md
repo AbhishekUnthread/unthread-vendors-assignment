@@ -50,3 +50,24 @@
 
 - In Address, City, State, Country received as Object
 - Media URL has to be delt with as well
+
+## Edit Form Issues
+
+- [x] Create Store to not Edit Store name store
+- [x] Remove save & add another for Edit Store
+- [x] Discard Popup required
+- [x] If values changes then bottom buttons show
+- [x] Dont redirect After Edit Show Success Toast instead
+
+## Create Form Issues
+
+- [x] Discard Popup required
+- [x] Save & Add another required
+- [x] Show Success Toast and reset form
+- [ ] Add Image center allignment
+
+## List View
+
+- [x] Tooltip Text
+- [x] Counts Of Tabs
+- [x] Archived spelling mapping on front end

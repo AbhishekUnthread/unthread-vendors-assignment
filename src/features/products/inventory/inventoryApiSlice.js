@@ -13,6 +13,17 @@ export const inventoryApiSlice = apiSlice.injectEndpoints({
       providesTags: ["Inventory"],
     }),
 
+    getStoreCount: builder.query({
+      query: (queries = {}) => {
+        const queryString = new URLSearchParams(queries).toString();
+
+        return {
+          url: `/store/count?${queryString}`,
+        };
+      },
+      providesTags: ["Inventory"],
+    }),
+
     createStore: builder.mutation({
       query: (storeData) => ({
         url: "/store",
@@ -41,4 +52,10 @@ export const inventoryApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetAllStoresQuery, useCreateStoreMutation, useEditStoreMutation, useDeleteStoreMutation } = inventoryApiSlice;
+export const {
+  useGetAllStoresQuery,
+  useGetStoreCountQuery,
+  useCreateStoreMutation,
+  useEditStoreMutation,
+  useDeleteStoreMutation,
+} = inventoryApiSlice;
