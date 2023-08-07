@@ -48,6 +48,7 @@ import { DiscardModalSecondary } from "../../Discard/DiscardModal";
 import { DeleteModalSecondary } from "../../DeleteModal/DeleteModal";
 import PageLoader from "../../Loader/PageLoader";
 import OptionChip from "../OptionChip/OptionChip";
+import SubAttributeSelector from "./SubAttributeSelector";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -59,7 +60,7 @@ import {
 const SubOptionSet = (props) => {
   const {
     attribute,
-    index,
+    optionIndex,
     formik,
     isSubmitting,
     selectedAttributeIds,
@@ -70,28 +71,32 @@ const SubOptionSet = (props) => {
   const addSingleAttributeHandler = (e) => {
     const isChecked = e.target.checked;
 
-    const childSubOptions = subOptions;
+    const childSubOptions = subOptions
+      .filter((subOp) => {
+        return subOp.metaAttribute === attribute._id;
+      })
+      .map((subOp) => {
+        return {
+          id: subOp._id,
+          metaSubAttributeValue: [],
+        };
+      });
 
     let updatedAttributes = [];
     if (isChecked) {
       updatedAttributes = formik.values.option[
-        index
+        optionIndex
       ].attribute[0].metaAttributes.concat({
         id: attribute._id,
-        metaSubAttribute: [
-          {
-            id: "",
-            metaSubAttributeValue: [],
-          },
-        ],
+        metaSubAttribute: childSubOptions,
       });
     } else {
       updatedAttributes = formik.values.option[
-        index
+        optionIndex
       ].attribute[0].metaAttributes.filter((attr) => attr.id !== attribute._id);
     }
     formik.setFieldValue(
-      `option[${index}].attribute[0].metaAttributes`,
+      `option[${optionIndex}].attribute[0].metaAttributes`,
       updatedAttributes
     );
   };
@@ -133,7 +138,7 @@ const SubOptionSet = (props) => {
               return (
                 <li className="d-block mb-3" key={subOp._id}>
                   <div className="d-flex  mb-1">
-                    <p className="text-lightBlue me-2">{`Select ${attribute.title} ${subOp.title}`}</p>
+                    <p className="text-lightBlue me-2">{`Select ${subOp.title}`}</p>
                     <Tooltip title="Lorem ipsum" placement="top">
                       <img
                         src={info}
@@ -143,66 +148,15 @@ const SubOptionSet = (props) => {
                       />
                     </Tooltip>
                   </div>
-                  <FormControl
-                    sx={{
-                      m: 0,
-                      minWidth: 120,
-                      width: "100%",
-                    }}
-                    size="small"
-                  >
-                    <Autocomplete
-                      multiple
-                      // onChange={addAttributeHandler}
-                      // onBlur={attributeBlurHandler}
-                      // values={selectedAttributes}
-                      id="checkboxes-tags-demo"
-                      sx={{ width: "100%" }}
-                      options={childSubAttributes}
-                      disableCloseOnSelect
-                      getOptionLabel={(attribute) => attribute.title}
-                      size="small"
-                      renderOption={(props, attribute, { selected }) => (
-                        <li {...props}>
-                          <Checkbox
-                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                            checkedIcon={<CheckBoxIcon fontSize="small" />}
-                            checked={selected}
-                            size="small"
-                            style={{
-                              color: "#5C6D8E",
-                              marginRight: 0,
-                            }}
-                          />
-                          <small className="text-lightBlue">
-                            {attribute.title}
-                          </small>
-                        </li>
-                      )}
-                      renderTags={(value, getTagProps) =>
-                        value.map((option, index) => (
-                          <OptionChip
-                            option={option}
-                            {...getTagProps({ index })}
-                          />
-                        ))
-                      }
-                      renderInput={(params) => (
-                        <TextField size="small" {...params} />
-                      )}
-                    />
-                    {/* {isTouched &&
-                    formik.errors?.option?.length &&
-                    formik.errors.option[index]?.attribute[0]
-                      .metaAttributes && (
-                      <FormHelperText error>
-                        {
-                          formik.errors.option[index].attribute[0]
-                            .metaAttributes
-                        }
-                      </FormHelperText>
-                    )} */}
-                  </FormControl>
+                  <SubAttributeSelector
+                    subAttributesData={childSubAttributes}
+                    attrId={attribute._id}
+                    subOpId={subOp._id}
+                    formik={formik}
+                    optionIndex={optionIndex}
+                    isSubmitting={isSubmitting}
+                    isAttributeAdded={isAttributeAdded}
+                  />
                 </li>
               );
             }

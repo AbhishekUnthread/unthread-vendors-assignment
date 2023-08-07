@@ -52,6 +52,7 @@ import SubOptionSet from "./SubOptionSet";
 import OptionSetCollapse from "./OptionSetCollapse";
 import DeleteIconButton from "../../DeleteIconButton/DeleteIconButton";
 import OptionChip from "../OptionChip/OptionChip";
+import AttributeSelector from "./AttributeSelector";
 
 import info from "../../../assets/icons/info.svg";
 
@@ -65,6 +66,7 @@ import {
   useGetAllSubOptionsQuery,
   useGetAllSubAttributesQuery,
 } from "../../../features/parameters/options/optionsApiSlice";
+import { KeyboardReturn } from "@mui/icons-material";
 
 const FRONTEND_APPEARANCE = {
   dropDownList: "Drop-Down List",
@@ -75,11 +77,34 @@ const FRONTEND_APPEARANCE = {
   circleButtons: "Circle Buttons",
 };
 
+const initialOptionDetailState = {
+  title: "",
+  fieldType: "",
+  attributes: [],
+};
+
+const optionDetailReducer = (state, action) => {
+  if (action.type === "SET_DETAILS") {
+    return {
+      title: action.title,
+      fieldType: action.fieldType,
+      attributes: action.attributes,
+    };
+  }
+
+  return initialOptionDetailState;
+};
+
 const OptionSet = (props) => {
   const { isEdit, onOptionDelete, index, formik, isSubmitting } = props;
   const [collapse, setCollapse] = useState(isEdit);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [optionDetailState, dispatchOptionDetail] = useReducer(
+    optionDetailReducer,
+    initialOptionDetailState
+  );
   const [isTouched, setIsTouched] = useState(false);
+  const dispatch = useDispatch();
 
   const {
     data: optionsData,
@@ -116,7 +141,6 @@ const OptionSet = (props) => {
       skip: selectedOption?._id ? false : true,
     }
   );
-
   const {
     data: subAttributesData,
     isLoading: subAttributesIsLoading,
@@ -132,10 +156,29 @@ const OptionSet = (props) => {
     }
   );
 
-  const toggleCollapseHandler = () => {
-    setCollapse((prevState) => {
-      return !prevState;
+  const openCollapseHandler = () => {
+    setCollapse(false);
+  };
+  const closeCollapseHandler = () => {
+    if (formik.errors?.option?.length && formik.errors?.option[index]) {
+      dispatch(showError({ message: "Please fill required fields" }));
+      return;
+    }
+
+    const { title, apperance } = selectedOption;
+    const attributes =
+      selectedAttributeIds.length && attributesData?.data?.length
+        ? attributesData.data.filter((attr) =>
+            selectedAttributeIds.includes(attr._id)
+          )
+        : [];
+    dispatchOptionDetail({
+      type: "SET_DETAILS",
+      title,
+      fieldType: FRONTEND_APPEARANCE[apperance],
+      attributes,
     });
+    setCollapse(true);
   };
 
   const addAttributeHandler = (_, attrs) => {
@@ -146,8 +189,9 @@ const OptionSet = (props) => {
     );
   };
 
-  const attributeBlurHandler = () => {
-    setIsTouched(true);
+  const changeOptionHandler = (e) => {
+    formik.setFieldValue(`option[${index}].attribute[0].metaAttributes`, []);
+    formik.handleChange(e);
   };
 
   const selectedAttributeIds =
@@ -184,9 +228,10 @@ const OptionSet = (props) => {
 
   return collapse ? (
     <OptionSetCollapse
-      onEdit={toggleCollapseHandler}
+      onEdit={openCollapseHandler}
       onOptionDelete={onOptionDelete}
       index={index}
+      {...optionDetailState}
     />
   ) : (
     <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4 ">
@@ -218,7 +263,7 @@ const OptionSet = (props) => {
               name={`option[${index}].attribute[0].id`}
               value={formik.values.option[index].attribute[0].id}
               onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
+              onChange={changeOptionHandler}
             >
               {optionsData?.data?.length &&
                 optionsData.data.map((option) => {
@@ -298,7 +343,7 @@ const OptionSet = (props) => {
                       <li key={attr._id} className="d-block">
                         <SubOptionSet
                           attribute={attr}
-                          index={index}
+                          optionIndex={index}
                           formik={formik}
                           isSubmitting={isSubmitting}
                           selectedAttributeIds={selectedAttributeIds}
@@ -312,80 +357,22 @@ const OptionSet = (props) => {
               {isTouched &&
                 formik.values?.option?.length &&
                 !formik.values.option[index]?.attribute[0].metaAttributes
-                  .length && (
+                  ?.length && (
                   <FormHelperText error>
                     Minimum 1 attribute should be selected
                   </FormHelperText>
                 )}
             </>
           ) : (
-            <div>
-              <div className="d-flex  mb-1">
-                <p className="text-lightBlue me-2">{`Select ${selectedOption.title}`}</p>
-                <Tooltip title="Lorem ipsum" placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className=" c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip>
-              </div>
-              <FormControl
-                sx={{
-                  m: 0,
-                  minWidth: 120,
-                  width: "100%",
-                }}
-                size="small"
-              >
-                <Autocomplete
-                  multiple
-                  onChange={addAttributeHandler}
-                  onBlur={attributeBlurHandler}
-                  values={selectedAttributes}
-                  id="checkboxes-tags-demo"
-                  sx={{ width: "100%" }}
-                  options={attributesData?.data || []}
-                  disableCloseOnSelect
-                  getOptionLabel={(attribute) => attribute.title}
-                  size="small"
-                  renderOption={(props, attribute, { selected }) => (
-                    <li {...props}>
-                      <Checkbox
-                        icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                        checkedIcon={<CheckBoxIcon fontSize="small" />}
-                        checked={selected}
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                          marginRight: 0,
-                        }}
-                      />
-                      <small className="text-lightBlue">
-                        {attribute.title}
-                      </small>
-                    </li>
-                  )}
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index) => (
-                      <OptionChip option={option} {...getTagProps({ index })} />
-                    ))
-                  }
-                  renderInput={(params) => (
-                    <TextField size="small" {...params} />
-                  )}
-                />
-                {isTouched &&
-                  formik.values?.option?.length &&
-                  !formik.values.option[index]?.attribute[0].metaAttributes
-                    .length && (
-                    <FormHelperText error>
-                      Minimum 1 attribute should be selected
-                    </FormHelperText>
-                  )}
-              </FormControl>
-            </div>
+            <AttributeSelector
+              selectedOption={selectedOption}
+              addAttributeHandler={addAttributeHandler}
+              selectedAttributes={selectedAttributes}
+              attributesData={attributesData}
+              formik={formik}
+              index={index}
+              isSubmitting={isSubmitting}
+            />
           )}
         </div>
       )}
@@ -404,7 +391,7 @@ const OptionSet = (props) => {
 
         <button
           type="button"
-          onClick={toggleCollapseHandler}
+          onClick={closeCollapseHandler}
           className="button-gradient py-2 px-4 ms-3 c-pointer"
           style={{ minWidth: "8rem" }}
         >
