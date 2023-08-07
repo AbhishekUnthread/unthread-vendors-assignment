@@ -45,3 +45,8 @@
 
 - Image URL missing for old store please send empty array if none
 - Sort Query params dont work
+
+## Edit Store Stuff
+
+- In Address, City, State, Country received as Object
+- Media URL has to be delt with as well

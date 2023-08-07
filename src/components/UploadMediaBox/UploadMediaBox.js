@@ -61,6 +61,7 @@ const UploadMediaBox = ({
       isUploaded(false);
     }
   }, [uploadState, inputUrl]);
+
   useEffect(() => {
     if (imageValue) {
       setInputUrl(imageValue);

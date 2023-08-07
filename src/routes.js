@@ -16,7 +16,7 @@ import CreateFieldSets from "./pages/Parameters/CreateFieldSets/CreateFieldSets"
 import Categories from "./pages/Parameters/Categories/Categories";
 import Collections from "./pages/Parameters/Collections/Collections";
 import CreateCollection from "./pages/Parameters/CreateCollection/CreateCollection";
-import VariantSets from "./pages/Parameters/VariantSets/VariantSets";
+// import VariantSets from "./pages/Parameters/VariantSets/VariantSets";
 import Vendors from "./pages/Parameters/Vendors/Vendors";
 import EditVendor from "./pages/Parameters/EditVendor/EditVendor";
 import CreateVariantSets from "./pages/Parameters/CreateVariantSets/CreateVariantSets";
@@ -75,6 +75,7 @@ import Options from "./pages/Parameters/Options/Options";
 import OptionsInfo from "./pages/Parameters/Options/OptionsInfo";
 import Settings from "./pages/Settings/Settings";
 import TaxManager from "./pages/Settings/TaxManager/TaxManager";
+import EditStore from "./pages/Products/EditStore/EditStore";
 
 const router = () => {
   const loginStatus = store.getState().auth.isLoggedIn;
@@ -175,10 +176,10 @@ const router = () => {
                       path: "details/:storeId",
                       element: <ProductInventoryDetails />,
                     },
-                    // {
-                    //   path: "edit/:storeId",
-                    //   element: <ProductInventoryDetails />,
-                    // },
+                    {
+                      path: "edit/:storeId",
+                      element: <EditStore />,
+                    },
                   ],
                 },
               ],
