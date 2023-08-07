@@ -37,6 +37,12 @@ import {
   showError,
 } from "../../../features/snackbar/snackbarAction";
 import { useGetAllCategoriesQuery } from "../../../features/parameters/categories/categoriesApiSlice";
+import {
+  useGetAllOptionSetsQuery,
+  useCreateOptionSetMutation,
+  useUpdateOptionSetMutation,
+  useDeleteOptionSetMutation,
+} from "../../../features/parameters/options/optionSetsApiSlice";
 
 const FRONTEND_APPEARANCE = [
   {
@@ -80,19 +86,35 @@ const optionSetValidationSchema = Yup.object({
       attribute: Yup.array().of(
         Yup.object({
           id: Yup.string().required("Required"),
-          metaAttributes: Yup.array().of(
-            Yup.object({
-              id: Yup.string().required("Required"),
-              metaSubAttribute: Yup.array().of(
-                Yup.object({
-                  id: Yup.string().required("Required"),
-                  metaSubAttributeValue: Yup.array().of(
-                    Yup.string().required("Required")
-                  ),
-                })
-              ),
-            })
-          ),
+          metaAttributes: Yup.array()
+            .of(
+              Yup.object({
+                id: Yup.string().required("Required"),
+                metaSubAttribute: Yup.array().of(
+                  Yup.object({
+                    id: Yup.string().required("Required"),
+                    metaSubAttributeValue: Yup.array()
+                      .of(Yup.string().required("Required"))
+                      .when(["id"], ([id], schema) => {
+                        if (id) {
+                          return schema
+                            .min(1, "Minimum 1 sub attribute required")
+                            .required("Required");
+                        }
+                        return schema;
+                      }),
+                  })
+                ),
+              })
+            )
+            .when(["id"], ([id], schema) => {
+              if (id) {
+                return schema
+                  .min(1, "Minimum 1 attribute required")
+                  .required("Required");
+              }
+              return schema;
+            }),
         })
       ),
     })
@@ -115,7 +137,7 @@ const initialOptionSetState = {
   confirmationMessage: "",
   showDeleteModal: false,
   deleteTitle: "",
-  isLoading: false,
+  createdSuccess: false,
 };
 
 const optionSetQueryFilterReducer = (state, action) => {
@@ -180,16 +202,16 @@ const optionSetReducer = (state, action) => {
       isEditing: false,
     };
   }
-  if (action.type === "ENABLE_LOADING") {
+  if (action.type === "ENABLE_SUCCESS") {
     return {
       ...state,
-      isLoading: true,
+      createdSuccess: true,
     };
   }
-  if (action.type === "DISABLE_LOADING") {
+  if (action.type === "DISABLE_SUCCESS") {
     return {
       ...state,
-      isLoading: false,
+      createdSuccess: false,
     };
   }
 
@@ -228,6 +250,16 @@ const OptionSetsInfo = () => {
     isSuccess: categoriesIsSuccess,
   } = useGetAllCategoriesQuery();
 
+  const [
+    createOptionSet,
+    {
+      isLoading: createOptionSetIsLoading,
+      isSuccess: createOptionSetIsSuccess,
+      error: createOptionSetError,
+      isError: createOptionSetIsError,
+    },
+  ] = useCreateOptionSetMutation();
+
   const optionSetFormik = useFormik({
     initialValues: {
       name: "",
@@ -238,7 +270,37 @@ const OptionSetsInfo = () => {
     enableReinitialize: true,
     validationSchema: optionSetValidationSchema,
     onSubmit: (values) => {
-      console.log(values);
+      const optionSet = structuredClone(values);
+      for (const key in optionSet) {
+        if (
+          optionSet[key] === "" ||
+          optionSet[key] === null ||
+          optionSet[key] === undefined
+        )
+          delete optionSet[key];
+      }
+      createOptionSet(optionSet)
+        .unwrap()
+        .then(() => {
+          optionSetFormik.resetForm();
+          dispatch(
+            showSuccess({
+              message: "Option set created successfully",
+            })
+          );
+          dispatchOptionSet({ type: "ENABLE_SUCCESS" });
+        })
+        .catch((error) => {
+          if (error?.data?.message) {
+            dispatch(showError({ message: error.data.message }));
+          } else {
+            dispatch(
+              showError({
+                message: "Something went wrong!, please try again",
+              })
+            );
+          }
+        });
     },
   });
 
@@ -317,7 +379,16 @@ const OptionSetsInfo = () => {
     }
   }, [categoriesIsLoading, optionSetQueryFilterState.srNo]);
 
-  // console.log(optionSetFormik.values.option);
+  useEffect(() => {
+    if (optionSetState.createdSuccess) {
+      navigate({
+        pathname: "/parameters/options",
+        search: `?${createSearchParams({
+          search: searchParams.get("search"),
+        })}`,
+      });
+    }
+  }, [optionSetState.createdSuccess, navigate, searchParams]);
 
   return (
     <>
@@ -501,7 +572,7 @@ const OptionSetsInfo = () => {
             <SaveFooterTertiary
               show={id ? optionSetState.isEditing : true}
               onDiscard={backHandler}
-              isLoading={optionSetState.isLoading}
+              isLoading={createOptionSetIsLoading}
             />
           </form>
         )}
@@ -514,7 +585,12 @@ const OptionSetsInfo = () => {
         />
         <DiscardModalSecondary
           when={
-            !_.isEqual(optionSetFormik.values, optionSetFormik.initialValues)
+            optionSetState.createdSuccess
+              ? false
+              : !_.isEqual(
+                  optionSetFormik.values,
+                  optionSetFormik.initialValues
+                )
           }
           message="option"
         />

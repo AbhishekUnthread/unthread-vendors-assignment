@@ -1,11 +1,11 @@
 import cancel from "../../../assets/icons/cancel.svg";
 
 const OptionChip = (props) => {
-  const { onDelete, option } = props;
+  const { onDelete, option, className } = props;
 
   return (
     <div
-      className="rounded-pill d-flex align-items-center px-2 py-1 c-pointer"
+      className={`rounded-pill d-flex align-items-center px-2 py-1 c-pointer ${className}`}
       style={{
         background:
           "linear-gradient(303.01deg, #2f2e69 -4.4%, #514969 111.29%)",

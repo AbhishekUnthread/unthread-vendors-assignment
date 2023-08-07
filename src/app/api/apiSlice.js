@@ -32,6 +32,7 @@ const apiSlice = createApi({
     "TagsManager",
     "ProductTabs",
     "Options",
+    "OptionSets",
     "Attributes",
     "Inventory",
     "SubOptions",
