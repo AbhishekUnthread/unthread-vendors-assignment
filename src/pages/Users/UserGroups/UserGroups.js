@@ -1,5 +1,5 @@
 import { useState, forwardRef, useReducer, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams, createSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   Autocomplete,
@@ -104,6 +104,7 @@ const customerReducer = (state, action) => {
 };
 
 const UserGroups = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [value, setValue] = useState(0);
   const [openManageGroups, setOpenManageGroups] = useState(false);
@@ -318,6 +319,15 @@ const UserGroups = () => {
 
   const handleOpenManageGroupsClose = () => {
     setOpenManageGroups(false);
+  };
+
+  const editHandler = (data, index) => {
+    navigate({
+      pathname: `./edit/${data ? data._id : ""}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, pageSize: 1, value }),
+      })}`,
+    });
   };
 
   return (
@@ -558,6 +568,7 @@ const UserGroups = () => {
               totalCount={customerData?.totalCount || 0}
               loading={customerGroupIsLoading}
               error={customerGroupError}
+              onEdit={editHandler}
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
@@ -567,6 +578,7 @@ const UserGroups = () => {
               totalCount={customerData?.totalCount || 0}
               loading={customerGroupIsLoading}
               error={customerGroupError}
+              onEdit={editHandler}
             />
           </TabPanel>
           <TabPanel value={value} index={2}>
@@ -576,6 +588,7 @@ const UserGroups = () => {
               totalCount={customerData?.totalCount || 0}
               loading={customerGroupIsLoading}
               error={customerGroupError}
+              onEdit={editHandler}
             />
           </TabPanel>
           <TabPanel value={value} index={3}>

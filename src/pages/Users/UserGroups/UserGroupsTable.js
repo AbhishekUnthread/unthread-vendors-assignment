@@ -36,7 +36,15 @@ import verticalDots from "../../../assets/icons/verticalDots.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
 import unArchived from "../../../assets/images/Components/Archived.png"
 
-const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }) => {
+const UserGroupsTable = ({ 
+  data, 
+  totalCount, 
+  value, 
+  loading, 
+  error, 
+  bulkDelete, 
+  onEdit 
+}) => {
   const dispatch = useDispatch();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("groupName");
@@ -54,6 +62,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
   const [showUnArchivedModal, setShowUnArhcivedModal] = useState(false);
   const [state, setState] = useState([]);
   const [statusValue, setStatusValue] = useState("in-active");
+  const [groupInfo, setGroupInfo] = useState();
 
   const [
     editCustomerGroup,
@@ -258,6 +267,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const handleActionClick = (event, row) => {
+    setGroupInfo(row)
     setGroupId(row._id);
     setGroupName(row?.name);
     setAnchorActionEl(event.currentTarget);
@@ -402,6 +412,11 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
                         >
                           <div
                             className="d-flex align-items-center text-decoration-none c-pointer"
+                            onClick={(e) => {
+                              if(value != 3) {
+                                onEdit(row, index+1, value);
+                              }
+                            }}
                           >
                             <p className="text-lightBlue rounded-circle fw-600">
                               {row?.name}
@@ -415,7 +430,7 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
                           <TableCell style={{ width: 180 }}>
                             <div className="d-flex align-items-center">
                               <div 
-                                className="rounded-pill d-flex px-2 py-1 c-pointer"
+                                className="rounded-pill d-flex px-2 py-1 c-pointer statusBoxWidth"
                                 style={{
                                   background: row.status == "active" ? "#A6FAAF" :
                                   row.status == "archived" ? "#C8D8FF" : "#F67476" 
@@ -460,7 +475,14 @@ const UserGroupsTable = ({ data, totalCount, value, loading, error, bulkDelete }
                               <hr className="hr-grey-6 my-2" />
                               { value != 3 ? 
                                 <>
-                                  <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                                  <small 
+                                    className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                                    onClick={(e) => {
+                                      if(value != 3) {
+                                        onEdit(groupInfo, index+1, value);
+                                      }
+                                    }}
+                                  >
                                     Edit User Groups
                                   </small>
                                   <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer mt-2"
