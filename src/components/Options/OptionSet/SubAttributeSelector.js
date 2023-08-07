@@ -138,7 +138,7 @@ const SubAttributeSelector = (props) => {
           multiple
           onChange={addSubAttributeHandler}
           onBlur={subAttributeBlurHandler}
-          values={selectedSubAttributes}
+          value={selectedSubAttributes}
           id="checkboxes-tags-demo"
           sx={{ width: "100%" }}
           options={subAttributesData || []}

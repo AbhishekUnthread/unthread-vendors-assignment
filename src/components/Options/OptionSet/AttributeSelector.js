@@ -121,7 +121,7 @@ const AttributeSelector = (props) => {
           multiple
           onChange={addAttributeHandler}
           onBlur={attributeBlurHandler}
-          values={selectedAttributes}
+          value={selectedAttributes}
           id="checkboxes-tags-demo"
           sx={{ width: "100%" }}
           options={attributesData?.data || []}
