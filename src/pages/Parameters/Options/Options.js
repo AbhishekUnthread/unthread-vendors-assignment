@@ -238,11 +238,27 @@ const Options = () => {
   };
 
   const createOptionHandler = () => {
-    navigate("./create");
+    navigate({
+      pathname: "./create",
+      search: `?${createSearchParams({
+        search: JSON.stringify({
+          ...queryFilterState,
+          activeTab: optionsState.activeTab,
+        }),
+      })}`,
+    });
   };
 
   const createOptionSetHandler = () => {
-    navigate("./sets/create");
+    navigate({
+      pathname: "./sets/create",
+      search: `?${createSearchParams({
+        search: JSON.stringify({
+          ...queryFilterState,
+          activeTab: optionsState.activeTab,
+        }),
+      })}`,
+    });
   };
 
   const deleteHandler = ({ id, message }) => {
@@ -463,7 +479,7 @@ const Options = () => {
               <OptionSetsTable
                 error={optionSetsIsError}
                 isLoading={optionSetsIsLoading || optionSetsDataIsFetching}
-                data={optionSetsData || []}
+                data={optionSetsData?.data}
                 totalCount={optionSetsData?.totalCount}
                 onPageChange={pageChangeHandler}
                 onPageSize={pageSizeHandler}

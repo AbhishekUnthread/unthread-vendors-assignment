@@ -63,7 +63,6 @@ const OptionSetsTable = (props) => {
     error,
     isLoading,
     data,
-    dataSecondary,
     totalCount,
     onPageChange,
     onPageSize,
@@ -121,18 +120,15 @@ const OptionSetsTable = (props) => {
                   </TableCell>
                   <TableCell>
                     <div className="d-flex flex-wrap align-items-center gap-2">
-                      {/* {item.option.map((secondaryItem) => {
-                        if (secondaryItem.attribute === item._id) {
-                          return (
-                            <Chip
-                              key={secondaryItem._id}
-                              label={`${secondaryItem.title} (${secondaryItem.metaSubAttributes.length})`}
-                              size="small"
-                            />
-                          );
-                        }
-                        return null;
-                      })} */}
+                      {item.options.map((option) => {
+                        return (
+                          <Chip
+                            key={option._id}
+                            label={option.attributes[0]?.title || ""}
+                            size="small"
+                          />
+                        );
+                      })}
                     </div>
                   </TableCell>
                   <TableCell>
