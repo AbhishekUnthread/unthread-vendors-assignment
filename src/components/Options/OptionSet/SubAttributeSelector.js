@@ -106,18 +106,10 @@ const SubAttributeSelector = (props) => {
       subAttributes
     );
   };
-  const subAttributes = formik.values.option[
-    optionIndex
-  ].attribute[0].metaAttributes[attrIndex].metaSubAttribute[
-    subOpIndex
-  ].metaSubAttributeValue?.map((subAttr) => {
-    if (typeof subAttr === "string") {
-      return subAttr;
-    }
-    return subAttr._id;
-  });
 
-  const selectedSubAttributeIds = subAttributes || [];
+  const selectedSubAttributeIds =
+    formik.values.option[optionIndex].attribute[0].metaAttributes[attrIndex]
+      .metaSubAttribute[subOpIndex].metaSubAttributeValue || [];
 
   const selectedSubAttributes =
     selectedSubAttributeIds.length && subAttributesData?.length
@@ -131,23 +123,6 @@ const SubAttributeSelector = (props) => {
       setIsTouched(true);
     }
   }, [isSubmitting]);
-
-  useEffect(() => {
-    const subAttributes = formik.values.option[
-      optionIndex
-    ].attribute[0].metaAttributes[attrIndex].metaSubAttribute[
-      subOpIndex
-    ].metaSubAttributeValue.map((subAttr) => {
-      if (typeof subAttr === "string") {
-        return subAttr;
-      }
-      return subAttr._id;
-    });
-    formik.setFieldValue(
-      `option[${optionIndex}].attribute[0].metaAttributes[${attrIndex}].metaSubAttribute[${subOpIndex}].metaSubAttributeValue`,
-      subAttributes
-    );
-  }, []);
 
   return (
     <div>

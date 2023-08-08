@@ -13,7 +13,8 @@ const FRONTEND_APPEARANCE = {
 };
 
 const OptionSetCollapse = (props) => {
-  const { onEdit, onOptionDelete, index, title, fieldType, attributes } = props;
+  const { onEdit, onOptionDelete, index, selectedOption, selectedAttributes } =
+    props;
 
   return (
     <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4 ">
@@ -22,7 +23,7 @@ const OptionSetCollapse = (props) => {
           <Grid container alignItems="center">
             <Grid item sm={6}>
               <span className="text-lightBlue" style={{ fontSize: "15px" }}>
-                {title}
+                {selectedOption?.title}
               </span>
             </Grid>
             <Grid
@@ -43,7 +44,11 @@ const OptionSetCollapse = (props) => {
               >
                 <span className="text-grey-6">
                   Input Field Type:{" "}
-                  <span className="text-lightBlue">{fieldType}</span>
+                  {selectedOption?.apperance ? (
+                    <span className="text-lightBlue">
+                      {FRONTEND_APPEARANCE[selectedOption?.apperance]}
+                    </span>
+                  ) : null}
                 </span>
               </div>
               <EditButton onClick={onEdit} />
@@ -66,7 +71,7 @@ const OptionSetCollapse = (props) => {
               gap: "10px",
             }}
           >
-            {attributes.map((attr) => {
+            {selectedAttributes?.map((attr) => {
               return (
                 <div
                   key={attr._id}

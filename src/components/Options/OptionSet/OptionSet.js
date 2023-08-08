@@ -77,33 +77,10 @@ const FRONTEND_APPEARANCE = {
   circleButtons: "Circle Buttons",
 };
 
-const initialOptionDetailState = {
-  title: "",
-  fieldType: "",
-  attributes: [],
-};
-
-const optionDetailReducer = (state, action) => {
-  if (action.type === "SET_DETAILS") {
-    return {
-      title: action.title,
-      fieldType: action.fieldType,
-      attributes: action.attributes,
-    };
-  }
-
-  return initialOptionDetailState;
-};
-
 const OptionSet = (props) => {
   const { isEdit, onOptionDelete, index, formik, isSubmitting, onPageLoad } =
     props;
-  const [collapse, setCollapse] = useState(isEdit);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [optionDetailState, dispatchOptionDetail] = useReducer(
-    optionDetailReducer,
-    initialOptionDetailState
-  );
   const [isTouched, setIsTouched] = useState(false);
   const dispatch = useDispatch();
 
@@ -158,28 +135,18 @@ const OptionSet = (props) => {
   );
 
   const openCollapseHandler = () => {
-    setCollapse(false);
+    formik.setFieldValue(`option[${index}].attribute[0].expanded`, true);
   };
   const closeCollapseHandler = () => {
     if (formik.errors?.option?.length && formik.errors?.option[index]) {
       dispatch(showError({ message: "Please fill required fields" }));
       return;
     }
-
-    const { title, apperance } = selectedOption;
-    const attributes =
-      selectedAttributeIds.length && attributesData?.data?.length
-        ? attributesData.data.filter((attr) =>
-            selectedAttributeIds.includes(attr._id)
-          )
-        : [];
-    dispatchOptionDetail({
-      type: "SET_DETAILS",
-      title,
-      fieldType: FRONTEND_APPEARANCE[apperance],
-      attributes,
-    });
-    setCollapse(true);
+    const optionClone = structuredClone(
+      formik.values.option[index].attribute[0]
+    );
+    delete optionClone.expanded;
+    formik.setFieldValue(`option[${index}].attribute[0]`, optionClone);
   };
 
   const addAttributeHandler = (_, attrs) => {
@@ -247,12 +214,13 @@ const OptionSet = (props) => {
   //   onPageLoad,
   // ]);
 
-  return collapse ? (
+  return !formik.values.option[index].attribute[0].expanded ? (
     <OptionSetCollapse
       onEdit={openCollapseHandler}
       onOptionDelete={onOptionDelete}
       index={index}
-      {...optionDetailState}
+      selectedOption={selectedOption}
+      selectedAttributes={selectedAttributes}
     />
   ) : (
     <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4 ">
