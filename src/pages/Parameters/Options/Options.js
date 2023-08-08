@@ -421,10 +421,12 @@ const Options = () => {
         onTutorial={() => {}}
         onExport={() => {}}
         onImport={() => {}}
-        onCreate={createOptionHandler}
-        onSecondaryCreate={createOptionSetHandler}
+        onCreate={optionsState.activeTab === 1 ? createOptionHandler : null}
+        onSecondaryCreate={
+          optionsState.activeTab === 2 ? createOptionSetHandler : null
+        }
         createBtnText="+ Create Options"
-        createSecondaryBtnText="+ Options Sets"
+        createSecondaryBtnText="+ Create Option Sets"
       />
 
       {optionsState.activeTab && (
