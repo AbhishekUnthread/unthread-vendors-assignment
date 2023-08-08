@@ -206,6 +206,10 @@ const router = () => {
                   element: <CreateUserGroup />,
                 },
                 {
+                  path: "userGroups/edit/:id",
+                  element: <CreateUserGroup />,
+                },
+                {
                   path: "userEnquiries",
                   element: <UserEnquiries />,
                 },
@@ -277,6 +281,10 @@ const router = () => {
                 {
                   path: "options/edit/:id",
                   element: <OptionsInfo />,
+                },
+                {
+                  path: "options/sets/edit/:id",
+                  element: <OptionSetsInfo />,
                 },
                 {
                   path: "variantSets/edit",

@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import OptionsTable from "./OptionsTable";
+import OptionSetsTable from "./OptionSetsTable";
 import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import PageTitleBar from "../../../components/PageTitleBar/PageTitleBar";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
@@ -19,6 +20,10 @@ import {
   useDeleteOptionMutation,
 } from "../../../features/parameters/options/optionsApiSlice";
 import {
+  useGetAllOptionSetsQuery,
+  useDeleteOptionSetMutation,
+} from "../../../features/parameters/options/optionSetsApiSlice";
+import {
   showSuccess,
   showError,
 } from "../../../features/snackbar/snackbarAction";
@@ -27,8 +32,10 @@ import { omitEmptyKeys, pickExactObjKeys } from "../../../utils/helper";
 
 const TAB_LIST = [
   { id: 1, label: "all options" },
-  //   { id: 2, label: "archived" },
+  { id: 2, label: "option sets" },
 ];
+
+const DEFAULT_ACTIVE_TAB = 1;
 
 const initialQueryFilterState = {
   pageSize: 10,
@@ -39,10 +46,12 @@ const initialQueryFilterState = {
 const initialOptionsState = {
   totalCount: 0,
   deleteId: null,
+  deleteType: "",
   confirmationMessage: "",
   showDeleteModal: false,
   search: "",
   firstRender: true,
+  activeTab: null,
 };
 
 const queryFilterReducer = (state, action) => {
@@ -88,11 +97,13 @@ const optionReducer = (state, action) => {
       deleteId: action.id,
       confirmationMessage: action.message || "",
       showDeleteModal: true,
+      deleteType: action.deleteType,
     };
   }
   if (action.type === "REMOVE_DELETE") {
     return {
       ...initialOptionsState,
+      activeTab: state.activeTab,
       totalCount: state.totalCount,
       firstRender: false,
       search: state.search,
@@ -108,6 +119,12 @@ const optionReducer = (state, action) => {
     return {
       ...state,
       firstRender: false,
+    };
+  }
+  if (action.type === "SET_ACTIVE_TAB") {
+    return {
+      ...state,
+      activeTab: action.activeTab,
     };
   }
   return initialOptionsState;
@@ -127,6 +144,17 @@ const Options = () => {
   );
 
   const {
+    data: optionSetsData,
+    isLoading: optionSetsIsLoading,
+    error: optionSetsError,
+    isError: optionSetsIsError,
+    isSuccess: optionSetsIsSuccess,
+    isFetching: optionSetsDataIsFetching,
+  } = useGetAllOptionSetsQuery(queryFilterState, {
+    skip: optionsState.firstRender || optionsState.activeTab === 1,
+  });
+
+  const {
     data: optionsData,
     isLoading: optionsIsLoading,
     error: optionsError,
@@ -134,7 +162,7 @@ const Options = () => {
     isSuccess: optionsIsSuccess,
     isFetching: optionsDataIsFetching,
   } = useGetAllOptionsQuery(queryFilterState, {
-    skip: optionsState.firstRender,
+    skip: optionsState.firstRender || optionsState.activeTab === 2,
   });
   const {
     data: attributesData,
@@ -148,7 +176,7 @@ const Options = () => {
       attribute: optionsData?.data.map((option) => option._id),
     },
     {
-      skip: !!!optionsData?.data?.length,
+      skip: !!!optionsData?.data?.length || optionsState.activeTab === 2,
     }
   );
 
@@ -160,6 +188,14 @@ const Options = () => {
       isSuccess: deleteOptionIsSuccess,
     },
   ] = useDeleteOptionMutation();
+  const [
+    deleteOptionSet,
+    {
+      isLoading: deleteOptionSetIsLoading,
+      error: deleteOptionSetError,
+      isSuccess: deleteOptionSetIsSuccess,
+    },
+  ] = useDeleteOptionSetMutation();
 
   const pageChangeHandler = (_, pageNo) => {
     dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
@@ -181,21 +217,56 @@ const Options = () => {
     navigate({
       pathname: `./edit/${srNo}`,
       search: `?${createSearchParams({
-        search: JSON.stringify(queryFilterState),
+        search: JSON.stringify({
+          ...queryFilterState,
+          activeTab: optionsState.activeTab,
+        }),
       })}`,
     });
   };
 
+  const editSetHandler = (srNo) => {
+    // navigate({
+    //   pathname: `./sets/edit/${srNo}`,
+    //   search: `?${createSearchParams({
+    //     search: JSON.stringify({
+    //       ...queryFilterState,
+    //       activeTab: optionsState.activeTab,
+    //     }),
+    //   })}`,
+    // });
+  };
+
   const createOptionHandler = () => {
-    navigate("./create");
+    navigate({
+      pathname: "./create",
+      search: `?${createSearchParams({
+        search: JSON.stringify({
+          ...queryFilterState,
+          activeTab: optionsState.activeTab,
+        }),
+      })}`,
+    });
   };
 
   const createOptionSetHandler = () => {
-    navigate("./sets/create");
+    navigate({
+      pathname: "./sets/create",
+      search: `?${createSearchParams({
+        search: JSON.stringify({
+          ...queryFilterState,
+          activeTab: optionsState.activeTab,
+        }),
+      })}`,
+    });
   };
 
   const deleteHandler = ({ id, message }) => {
-    dispatchOptions({ type: "SET_DELETE", id, message });
+    dispatchOptions({ type: "SET_DELETE", id, message, deleteType: "option" });
+  };
+
+  const deleteSetHandler = ({ id, message }) => {
+    dispatchOptions({ type: "SET_DELETE", id, message, deleteType: "set" });
   };
 
   const CancelDeleteHandler = () => {
@@ -203,13 +274,33 @@ const Options = () => {
   };
 
   const deleteConfirmationHandler = () => {
-    deleteOption(optionsState.deleteId)
+    if (optionsState.deleteType === "option") {
+      deleteOption(optionsState.deleteId)
+        .unwrap()
+        .then(() => {
+          dispatchOptions({
+            type: "REMOVE_DELETE",
+          });
+          dispatch(showSuccess({ message: "Option deleted successfully" }));
+        })
+        .catch((error) => {
+          if (error?.data?.message) {
+            dispatch(showError({ message: error.data.message }));
+          } else {
+            dispatch(
+              showError({ message: "Something went wrong!, please try again" })
+            );
+          }
+        });
+      return;
+    }
+    deleteOptionSet(optionsState.deleteId)
       .unwrap()
       .then(() => {
         dispatchOptions({
           type: "REMOVE_DELETE",
         });
-        dispatch(showSuccess({ message: "Option deleted successfully" }));
+        dispatch(showSuccess({ message: "Option set deleted successfully" }));
       })
       .catch((error) => {
         if (error?.data?.message) {
@@ -220,6 +311,18 @@ const Options = () => {
           );
         }
       });
+  };
+
+  const changeTabHandler = (_, tabIndex) => {
+    dispatchQueryFilter({ type: "" });
+    dispatchOptions({
+      type: "SET_ACTIVE_TAB",
+      activeTab: tabIndex + 1,
+    });
+    dispatchOptions({
+      type: "SEARCH_VALUE",
+      search: "",
+    });
   };
 
   useEffect(() => {
@@ -250,6 +353,25 @@ const Options = () => {
   }, [optionsError, optionsIsSuccess, optionsData, attributesError, dispatch]);
 
   useEffect(() => {
+    if (optionSetsError) {
+      if (optionSetsError?.data?.message) {
+        dispatch(showError({ message: optionSetsError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+
+    if (optionSetsIsSuccess) {
+      dispatchOptions({
+        type: "SET_TOTAL_COUNT",
+        totalCount: optionSetsData.totalCount,
+      });
+    }
+  }, [optionSetsError, optionSetsIsSuccess, optionSetsData, dispatch]);
+
+  useEffect(() => {
     if (optionsState.firstRender) {
       const search = omitEmptyKeys(JSON.parse(searchParams.get("search")));
       const filters = pickExactObjKeys(queryFilterState, search);
@@ -262,17 +384,33 @@ const Options = () => {
           type: "SEARCH_VALUE",
           search: filters.title,
         });
+
+      dispatchOptions({
+        type: "SET_ACTIVE_TAB",
+        activeTab: search.activeTab || DEFAULT_ACTIVE_TAB,
+      });
       dispatchOptions({ type: "DISABLE_FIRST_RENDER" });
     }
   }, [searchParams, optionsState.firstRender, queryFilterState]);
 
   useEffect(() => {
     if (!optionsState.firstRender) {
-      setSearchParams({
-        search: JSON.stringify(queryFilterState),
-      });
+      setSearchParams(
+        {
+          search: JSON.stringify({
+            ...queryFilterState,
+            activeTab: optionsState.activeTab,
+          }),
+        },
+        { replace: true }
+      );
     }
-  }, [queryFilterState, setSearchParams, optionsState.firstRender]);
+  }, [
+    queryFilterState,
+    setSearchParams,
+    optionsState.firstRender,
+    optionsState.activeTab,
+  ]);
 
   return (
     <div className="container-fluid page">
@@ -287,63 +425,80 @@ const Options = () => {
         createSecondaryBtnText="+ Options Sets"
       />
 
-      <div className="row mt-4">
-        <Paper
-          sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
-          className="border-grey-5 bg-black-15"
-        >
-          <Box
-            sx={{ width: "100%" }}
-            className="d-flex justify-content-between tabs-header-box"
+      {optionsState.activeTab && (
+        <div className="row mt-4">
+          <Paper
+            sx={{ width: "100%", mb: 2, mt: 0, p: 0 }}
+            className="border-grey-5 bg-black-15"
           >
-            <Tabs
-              value={0}
-              aria-label="scrollable force tabs example"
-              className="tabs"
+            <Box
+              sx={{ width: "100%" }}
+              className="d-flex justify-content-between tabs-header-box"
             >
-              {TAB_LIST.map((tab) => {
-                return (
-                  <Tab key={tab.id} label={tab.label} className="tabs-head" />
-                );
-              })}
-            </Tabs>
-          </Box>
-          <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearchSecondary
-              onChange={searchHandler}
-              onSearchValueChange={searchValueHandler}
-              value={optionsState.search}
-            />
-          </div>
-          <TabPanel value={0} index={0}>
-            <OptionsTable
-              error={optionsIsError || attributesIsError}
-              isLoading={
-                optionsIsLoading ||
-                optionsDataIsFetching ||
-                attributesIsLoading ||
-                attributesDataIsFetching
-              }
-              data={optionsData?.data}
-              dataSecondary={attributesData?.data}
-              totalCount={optionsState?.totalCount}
-              onPageChange={pageChangeHandler}
-              onPageSize={pageSizeHandler}
-              pageSize={queryFilterState.pageSize}
-              page={queryFilterState.pageNo}
-              onEdit={editHandler}
-              onDelete={deleteHandler}
-            />
-          </TabPanel>
-        </Paper>
-      </div>
+              <Tabs
+                value={optionsState.activeTab - 1}
+                onChange={changeTabHandler}
+                aria-label="scrollable force tabs example"
+                className="tabs"
+              >
+                {TAB_LIST.map((tab) => {
+                  return (
+                    <Tab key={tab.id} label={tab.label} className="tabs-head" />
+                  );
+                })}
+              </Tabs>
+            </Box>
+            <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
+              <TableSearchSecondary
+                onChange={searchHandler}
+                onSearchValueChange={searchValueHandler}
+                value={optionsState.search}
+              />
+            </div>
+            <TabPanel value={optionsState.activeTab - 1} index={0}>
+              <OptionsTable
+                error={optionsIsError || attributesIsError}
+                isLoading={
+                  optionsIsLoading ||
+                  optionsDataIsFetching ||
+                  attributesIsLoading ||
+                  attributesDataIsFetching
+                }
+                data={optionsData?.data}
+                dataSecondary={attributesData?.data}
+                totalCount={optionsState?.totalCount}
+                onPageChange={pageChangeHandler}
+                onPageSize={pageSizeHandler}
+                pageSize={queryFilterState.pageSize}
+                page={queryFilterState.pageNo}
+                onEdit={editHandler}
+                onDelete={deleteHandler}
+              />
+            </TabPanel>
+            <TabPanel value={optionsState.activeTab - 1} index={1}>
+              <OptionSetsTable
+                error={optionSetsIsError}
+                isLoading={optionSetsIsLoading || optionSetsDataIsFetching}
+                data={optionSetsData?.data}
+                totalCount={optionSetsData?.totalCount}
+                onPageChange={pageChangeHandler}
+                onPageSize={pageSizeHandler}
+                pageSize={queryFilterState.pageSize}
+                page={queryFilterState.pageNo}
+                onEdit={editSetHandler}
+                onDelete={deleteSetHandler}
+              />
+            </TabPanel>
+          </Paper>
+        </div>
+      )}
       <DeleteModalSecondary
         onConfirm={deleteConfirmationHandler}
         onCancel={CancelDeleteHandler}
         show={optionsState.showDeleteModal}
-        isLoading={deleteOptionIsLoading}
+        isLoading={deleteOptionIsLoading || deleteOptionSetIsLoading}
         message={optionsState.confirmationMessage}
-        title="Option"
+        title={optionsState.deleteType === "option" ? "Option" : "Option Set"}
       />
     </div>
   );
