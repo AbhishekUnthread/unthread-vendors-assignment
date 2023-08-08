@@ -84,7 +84,7 @@ const OptionSet = (props) => {
   const [isTouched, setIsTouched] = useState(false);
   const [edited, setEdited] = useState(false);
   const [lastSavedData, setLastSavedData] = useState(
-    formik.initialValues.option[index].attribute[0]
+    formik.initialValues.option[index]?.attribute[0]
   );
   const dispatch = useDispatch();
 
@@ -205,17 +205,20 @@ const OptionSet = (props) => {
   }, [isSubmitting]);
 
   useEffect(() => {
-    let currentValues = structuredClone(
-      formik.values.option[index].attribute[0]
-    );
-    let initialValues = structuredClone(lastSavedData);
-    delete currentValues.expanded;
-    delete initialValues.expanded;
+    if (formik.values.option[index]?.attribute[0].id && lastSavedData.id) {
+      let currentValues = structuredClone(
+        formik.values.option[index].attribute[0]
+      );
+      let initialValues = structuredClone(lastSavedData);
 
-    if (!_.isEqual(currentValues, initialValues)) {
-      setEdited(true);
-    } else if (_.isEqual(currentValues, initialValues)) {
-      setEdited(false);
+      delete currentValues.expanded;
+      delete initialValues.expanded;
+
+      if (!_.isEqual(currentValues, initialValues)) {
+        setEdited(true);
+      } else if (_.isEqual(currentValues, initialValues)) {
+        setEdited(false);
+      }
     }
   }, [lastSavedData, formik.values, index]);
 
