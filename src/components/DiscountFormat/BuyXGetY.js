@@ -62,7 +62,7 @@ function BuyXGetY({ value, field, formik, touched, error }) {
     isSuccess: collectionIsSuccess,
     error: collectionError,
   } = useGetAllCollectionsQuery(undefined, {
-    skip: value?.selectGetItem !== 10 && value?.selectBuyItem !== 10,
+    skip: value?.selectGetItem !== "collection" && value?.selectBuyItem !== "collection",
   });
   const {
     data: categoriesData,
@@ -70,7 +70,7 @@ function BuyXGetY({ value, field, formik, touched, error }) {
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
   } = useGetAllCategoriesQuery(undefined, {
-    skip: value?.selectGetItem !== 30 && value?.selectBuyItem !== 30,
+    skip: value?.selectGetItem !== "category" && value?.selectBuyItem !== "category",
   });
   const {
     data: subCategoriesData,
@@ -78,7 +78,7 @@ function BuyXGetY({ value, field, formik, touched, error }) {
     isSuccess: subCategoriesIsSuccess,
     error: subCategoriesError,
   } = useGetAllSubCategoriesQuery(undefined, {
-    skip: value?.selectGetItem !== 40 && value?.selectBuyItem !== 40,
+    skip: value?.selectGetItem !== "subCategory" && value?.selectBuyItem !== "subCategory",
   });
 
   const handleDiscountModeChange = (_, newValue) => {
@@ -132,13 +132,13 @@ function BuyXGetY({ value, field, formik, touched, error }) {
   //Number Formatting ends here
   useEffect(() => {
     if (collectionIsSuccess) {
-      if (value?.selectBuyItem === 10) {
+      if (value?.selectBuyItem === "collection") {
         dispatchBuyXgetY({
           type: "SET_BUY_PRODUCT",
           buyProduct: collectionData,
         });
       }
-      if (value?.selectGetItem === 10) {
+      if (value?.selectGetItem === "collection") {
         dispatchBuyXgetY({
           type: "SET_GET_PRODUCT",
           getProduct: collectionData,
@@ -154,13 +154,13 @@ function BuyXGetY({ value, field, formik, touched, error }) {
 
   useEffect(() => {
     if (categoriesIsSuccess) {
-      if (value?.selectBuyItem === 30) {
+      if (value?.selectBuyItem === "category") {
         dispatchBuyXgetY({
           type: "SET_BUY_PRODUCT",
           buyProduct: categoriesData,
         });
       }
-      if (value?.selectGetItem === 30) {
+      if (value?.selectGetItem === "category") {
         dispatchBuyXgetY({
           type: "SET_GET_PRODUCT",
           getProduct: categoriesData,
@@ -176,13 +176,13 @@ function BuyXGetY({ value, field, formik, touched, error }) {
 
   useEffect(() => {
     if (subCategoriesIsSuccess) {
-      if (value?.selectBuyItem === 40) {
+      if (value?.selectBuyItem === "subCategory") {
         dispatchBuyXgetY({
           type: "SET_BUY_PRODUCT",
           buyProduct: subCategoriesData,
         });
       }
-      if (value?.selectGetItem === 40) {
+      if (value?.selectGetItem === "subCategory") {
         dispatchBuyXgetY({
           type: "SET_GET_PRODUCT",
           getProduct: subCategoriesData,
@@ -197,13 +197,13 @@ function BuyXGetY({ value, field, formik, touched, error }) {
   ]);
 
   useEffect(() => {
-    if (value?.selectBuyItem === 10) {
+    if (value?.selectBuyItem === "collection") {
       dispatchBuyXgetY({ type: "SET_BUY_PRODUCT", buyProduct: collectionData });
-    } else if (value?.selectBuyItem === 20) {
+    } else if (value?.selectBuyItem === "product") {
       dispatchBuyXgetY({ type: "SET_BUY_PRODUCT", buyProduct: [] });
-    } else if (value?.selectBuyItem === 30) {
+    } else if (value?.selectBuyItem === "category") {
       dispatchBuyXgetY({ type: "SET_BUY_PRODUCT", buyProduct: categoriesData });
-    } else if (value?.selectBuyItem === 40) {
+    } else if (value?.selectBuyItem === "subCategory") {
       dispatchBuyXgetY({
         type: "SET_BUY_PRODUCT",
         buyProduct: subCategoriesData,
@@ -212,13 +212,13 @@ function BuyXGetY({ value, field, formik, touched, error }) {
   }, [value?.selectBuyItem, collectionData, categoriesData, subCategoriesData]);
 
   useEffect(() => {
-    if (value?.selectGetItem === 10) {
+    if (value?.selectGetItem === "collection") {
       dispatchBuyXgetY({ type: "SET_GET_PRODUCT", getProduct: collectionData });
-    } else if (value?.selectGetItem === 20) {
+    } else if (value?.selectGetItem === "product") {
       dispatchBuyXgetY({ type: "SET_GET_PRODUCT", getProduct: [] });
-    } else if (value?.selectGetItem === 30) {
+    } else if (value?.selectGetItem === "category") {
       dispatchBuyXgetY({ type: "SET_GET_PRODUCT", getProduct: categoriesData });
-    } else if (value?.selectGetItem === 40) {
+    } else if (value?.selectGetItem === "subCategory") {
       dispatchBuyXgetY({
         type: "SET_GET_PRODUCT",
         getProduct: subCategoriesData,
@@ -305,25 +305,25 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                       Select
                     </MenuItem>
                     <MenuItem
-                      value={10}
+                      value="collection"
                       sx={{ fontSize: 13, color: "#5c6d8e" }}
                     >
                       Specific Collection
                     </MenuItem>
                     <MenuItem
-                      value={20}
+                      value="product"
                       sx={{ fontSize: 13, color: "#5c6d8e" }}
                     >
                       Specific Product
                     </MenuItem>
                     <MenuItem
-                      value={30}
+                      value="category"
                       sx={{ fontSize: 13, color: "#5c6d8e" }}
                     >
                       Specific Category
                     </MenuItem>
                     <MenuItem
-                      value={40}
+                      value="subCategory"
                       sx={{ fontSize: 13, color: "#5c6d8e" }}
                     >
                       Specific Sub-Category
@@ -349,7 +349,7 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                   id="checkboxes-tags-demo"
                   sx={{ width: "100%" }}
                   options={
-                    buyXgetYState?.buyProduct?.data?.data ?? [] // Add a default empty array if options is undefined or null
+                    buyXgetYState?.buyProduct?.data?.data ?? [] 
                   }
                   value={value?.buyProduct || []}
                   getOptionLabel={(option) =>
@@ -425,7 +425,13 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                 </div>
 
                 <FormControl className="w-100 px-0">
-                  <OutlinedInput placeholder="Enter Quantity" size="small" />
+                  <OutlinedInput 
+                    value={value?.get}
+                    onChange={formik?.handleChange}
+                    onBlur={formik?.handleBlur}
+                    name={`${field}.get`}
+                  placeholder="Enter Quantity" 
+                  size="small" />
                 </FormControl>
               </div>
               <div className="col-md-3 mt-3 ">
@@ -458,25 +464,25 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                       Select
                     </MenuItem>
                     <MenuItem
-                      value={10}
+                      value="collection"
                       sx={{ fontSize: 13, color: "#5c6d8e" }}
                     >
                       Specific Collection
                     </MenuItem>
                     <MenuItem
-                      value={20}
+                      value="product"
                       sx={{ fontSize: 13, color: "#5c6d8e" }}
                     >
                       Specific Product
                     </MenuItem>
                     <MenuItem
-                      value={30}
+                      value="category"
                       sx={{ fontSize: 13, color: "#5c6d8e" }}
                     >
                       Specific Category
                     </MenuItem>
                     <MenuItem
-                      value={40}
+                      value="subCategory"
                       sx={{ fontSize: 13, color: "#5c6d8e" }}
                     >
                       SPecific Sub-Category
@@ -678,16 +684,16 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                   <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
                     Select
                   </MenuItem>
-                  <MenuItem value={10} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                    Metal Price
+                  <MenuItem value="goldPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                    Gold Price
                   </MenuItem>
-                  <MenuItem value={20} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  <MenuItem value="diamondPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
                     Diamond Price
                   </MenuItem>
-                  <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  <MenuItem value="makingCharge" sx={{ fontSize: 13, color: "#5c6d8e" }}>
                     Making Charges
                   </MenuItem>
-                  <MenuItem value={40} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  <MenuItem value="totalPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
                     Total Price
                   </MenuItem>
                 </Select>

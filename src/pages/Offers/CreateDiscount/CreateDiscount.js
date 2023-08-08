@@ -309,7 +309,7 @@ const CreateDiscount = () => {
       discountName: "",
       discountType: "",
       discountFormat: {
-        discountFormat: "discountCouponCode",
+        discountFormat: "code",
         discountCode: "",
       },
       minimumRequirement: {
@@ -401,13 +401,35 @@ const CreateDiscount = () => {
           ...(values?.discountType === "cartDiscount"
             ? { cartLabel: values?.discountValue?.cartLabel }
             : {}),
-          filter: values?.filters.map((filter) => ({
-            type: filter?.field,
-            operator: filter?.operator,
-            value: filter?.fieldValue.map(
-              (item, index) => item?._id
-            ),
-          })),
+          ...(values?.discountType !=="buyxGety" 
+            ?{          filter: values?.filters.map((filter) => ({
+              type: filter?.field,
+              operator: filter?.operator,
+              value: filter?.fieldValue.map(
+                (item, index) => item?._id
+              ),
+            })),}
+            :{}
+          ),
+          ...(values?.discountType === "buyxGety" 
+          ?{
+            discountLabelType : values?.buyXGetY?.discountMode,
+            buyField : {
+              quantity : values?.buyXGetY?.buy,
+              selectItem : values?.buyXGetY?.selectBuyItem,
+              selectItemValue: values?.buyXGetY?.buyProduct.map(
+                (item, index) => item?._id
+              ),
+            },
+            getField:{
+              quantity : values?.buyXGetY?.get,
+              selectItem : values?.buyXGetY?.selectGetItem,
+              selectItemValue : values?.buyXGetY?.getProduct.map(
+                (item, index) => item?._id
+              ),
+            }
+          }
+          :{}),
         },
         minimumRequirement: {
           requirementType: values?.minimumRequirement?.requirement,
@@ -694,7 +716,7 @@ const CreateDiscount = () => {
               touched={formik?.touched?.discountValue}
               error={formik?.errors?.discountValue}
             />)}
-            <Filters
+            {formik?.values?.discountType !== "buyxGety" &&(<Filters
               value={formik.values?.filters}
               field="filters"
               formik={formik}
@@ -704,7 +726,7 @@ const CreateDiscount = () => {
               onSort={() => {}}
               onDeleteField={deleteFilterHandler}
               onAdd={addFilterHandler}
-            />
+            />)}
             {formik?.values?.discountType === "buyxGety" && (
               <BuyXGetY
                 value={formik.values?.buyXGetY}
@@ -715,7 +737,7 @@ const CreateDiscount = () => {
               />
             )}
 
-            {(formik?.values?.discountType === "bulkDiscountPricing" || formik?.values?.discountType === "buyxGety") && (
+            {(formik?.values?.discountType === "bulkDiscountPricing") && (
               <DiscountRange
                 value={formik.values?.discountRange}
                 field="discountRange"
