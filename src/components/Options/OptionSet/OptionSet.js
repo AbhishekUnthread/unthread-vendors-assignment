@@ -96,7 +96,8 @@ const optionDetailReducer = (state, action) => {
 };
 
 const OptionSet = (props) => {
-  const { isEdit, onOptionDelete, index, formik, isSubmitting } = props;
+  const { isEdit, onOptionDelete, index, formik, isSubmitting, onPageLoad } =
+    props;
   const [collapse, setCollapse] = useState(isEdit);
   const [selectedOption, setSelectedOption] = useState(null);
   const [optionDetailState, dispatchOptionDetail] = useReducer(
@@ -225,6 +226,26 @@ const OptionSet = (props) => {
       setIsTouched(true);
     }
   }, [isSubmitting]);
+
+  // useEffect(() => {
+  //   let isLoading =
+  //     optionsIsLoading ||
+  //     attributesIsLoading ||
+  //     subOptionsIsLoading ||
+  //     subAttributesIsLoading;
+
+  //   if (isLoading) {
+  //     onPageLoad(true);
+  //   } else {
+  //     onPageLoad(false);
+  //   }
+  // }, [
+  //   optionsIsLoading,
+  //   attributesIsLoading,
+  //   subOptionsIsLoading,
+  //   subAttributesIsLoading,
+  //   onPageLoad,
+  // ]);
 
   return collapse ? (
     <OptionSetCollapse
