@@ -170,7 +170,7 @@ const SubOption = (props) => {
       isError = true;
     } else if (
       formik.values?.subOptions?.length &&
-      formik.values?.subOptions[index].error
+      formik.values?.subOptions[index]?.error
     ) {
       isError = true;
     } else if (subAttrIndex.length) {
@@ -182,7 +182,7 @@ const SubOption = (props) => {
           isError = true;
         } else if (
           formik.values?.subAttributes?.length &&
-          formik.values?.subAttributes[subIndex].error
+          formik.values?.subAttributes[subIndex]?.error
         ) {
           isError = true;
         }
@@ -230,7 +230,7 @@ const SubOption = (props) => {
           </div>
           <FormControl className="w-100 px-0">
             <OutlinedInput
-              autoFocus
+              autoFocus={true}
               size="small"
               sx={{ paddingLeft: 0 }}
               name={`subOptions[${index}].title`}

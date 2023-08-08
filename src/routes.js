@@ -287,6 +287,10 @@ const router = () => {
                   element: <OptionsInfo />,
                 },
                 {
+                  path: "options/sets/edit/:id",
+                  element: <OptionSetsInfo />,
+                },
+                {
                   path: "variantSets/edit",
                   element: <CreateVariantSets />,
                 },
