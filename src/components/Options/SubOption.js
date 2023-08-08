@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
 import {
   FormControl,
   OutlinedInput,
@@ -24,6 +25,8 @@ import DeleteIconButton from "../DeleteIconButton/DeleteIconButton";
 import SubAttribute from "./Attribute/SubAttribute";
 import TableHeader from "../TableHeader/TableHeader";
 import SubOptionCollapse from "./SubOptionCollapse";
+
+import { showSuccess, showError } from "../../features/snackbar/snackbarAction";
 
 import info from "../../assets/icons/info.svg";
 
@@ -107,6 +110,7 @@ const SubOption = (props) => {
     onSubAttributeDelete,
   } = props;
   const [subAttrIndex, setSubAttrIndex] = useState([]);
+  const dispatch = useDispatch();
 
   const subOptionAppearanceHandler = (e) => {
     formik.setFieldValue(`subOptions[${index}].apperance`, e.target.value);
@@ -193,6 +197,11 @@ const SubOption = (props) => {
       return;
     }
     formik.setFieldValue(`subOptions[${index}].expanded`, false);
+    dispatch(
+      showSuccess({
+        message: "Sub option saved successfully",
+      })
+    );
   };
 
   const editHandler = () => {

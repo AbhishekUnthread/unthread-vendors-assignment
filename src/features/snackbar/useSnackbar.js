@@ -1,4 +1,4 @@
-import { useSnackbar } from "notistack";
+import { useSnackbar, closeSnackbar } from "notistack";
 
 const SNACKBAR_DURATION = 5000;
 
@@ -26,5 +26,14 @@ export default {
       variant,
       autoHideDuration: SNACKBAR_DURATION,
     });
+  },
+  savingToast(msg = "Saving your data please wait", variant = "info") {
+    useSnackbarRef.enqueueSnackbar(msg, {
+      variant,
+      persist: true,
+    });
+  },
+  hideToast() {
+    closeSnackbar(useSnackbarRef.current);
   },
 };

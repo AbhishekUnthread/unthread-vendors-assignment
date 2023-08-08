@@ -55,6 +55,8 @@ import {
 
 import { colorReg, urlReg } from "../../../utils/regex";
 
+import SnackbarUtils from "../../../features/snackbar/useSnackbar";
+
 const FRONTEND_APPEARANCE = [
   {
     id: 1,
@@ -718,6 +720,7 @@ const OptionsInfo = () => {
 
       try {
         dispatchOption({ type: "ENABLE_LOADING" });
+        SnackbarUtils.savingToast();
         if (!option.saved) {
           const { _id } = await createOption(option).unwrap();
           option._id = _id;
@@ -832,6 +835,7 @@ const OptionsInfo = () => {
         }
 
         optionFormik.resetForm();
+        SnackbarUtils.hideToast();
         dispatchOption({ type: "DISABLE_LOADING" });
         dispatch(
           showSuccess({
@@ -844,6 +848,7 @@ const OptionsInfo = () => {
           dispatchOption({ type: "ENABLE_SUCCESS" });
         }
       } catch (error) {
+        SnackbarUtils.hideToast();
         dispatchOption({ type: "DISABLE_LOADING" });
         if (error?.data?.message) {
           dispatch(showError({ message: error.data.message }));
@@ -1307,7 +1312,7 @@ const OptionsInfo = () => {
                                     width: "auto",
                                   }}
                                   name="option.isFilter"
-                                  value={optionFormik.values.option?.isFilter}
+                                  checked={optionFormik.values.option?.isFilter}
                                   onBlur={optionFormik.handleBlur}
                                   onChange={optionFormik.handleChange}
                                 />

@@ -27,7 +27,7 @@ const PageTitleBar = (props) => {
         {onSecondaryCreate && (
           <button
             onClick={onSecondaryCreate}
-            className="button-grey-outline py-2 px-4 ms-3 c-pointer"
+            className="button-gradient py-2 px-4 ms-3 c-pointer"
           >
             <p>{createSecondaryBtnText}</p>
           </button>
