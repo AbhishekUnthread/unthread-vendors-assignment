@@ -58,16 +58,40 @@
 - [x] Discard Popup required
 - [x] If values changes then bottom buttons show
 - [x] Dont redirect After Edit Show Success Toast instead
+- [x] 10 digit mobile numbers
+- [x] placeholder for time component instead of label
+- [x] Comment Map Iframe
+- [x] Map Link should start with google/apple map domain
+- [x] Store Notes Not getting Saved
+- [x] Store Edited Snackbar put store name in it
+- [x] Image is getting streched make it fit
+- [x] Image Note - Recommended Size: 1000px x 1000px
+- [?] time feild required just outline red #FC756E
 
 ## Create Form Issues
 
 - [x] Discard Popup required
 - [x] Save & Add another required
 - [x] Show Success Toast and reset form
-- [ ] Add Image center allignment
+- [x] Save & Add Another snackbar text Name of the store created succesfully
+- [x] 10 digit mobile numbers
+- [x] placeholder for time component instead of label
+- [x] Comment Map Iframe
+- [x] Map Link should start with google/apple map domain
+- [x] Store Notes Not getting Saved
+- [x] Store Created Snackbar put store name in it
+- [x] Image is getting streched make it fit
+- [x] Image Note - Recommended Size: 1000px x 1000px
+- [?] time feild required just outline red #FC756E
 
 ## List View
 
 - [x] Tooltip Text
 - [x] Counts Of Tabs
 - [x] Archived spelling mapping on front end
+- [x] The store should'nt open in the archive tab
+- [?] Send static store data to store detail page
+
+## Mass Selection in Listing
+
+This will take some time

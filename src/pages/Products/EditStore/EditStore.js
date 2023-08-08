@@ -9,25 +9,10 @@ import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import addMedia from "../../../assets/icons/addMedia.svg";
 import info from "../../../assets/icons/info.svg";
 // ! MATERIAL IMPORTS
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormHelperText,
-  InputAdornment,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import { Checkbox, FormControl, FormControlLabel, FormHelperText, InputAdornment, OutlinedInput, Tooltip } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import _ from "lodash";
-import { TimePicker } from "@mui/x-date-pickers";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import moment from "moment";
 import AppGenericSelect from "../../../components/AppGenericSelect/AppGenericSelect";
 import { useGetAllCityQuery } from "../../../features/master/city/cityApiSlice";
 import { useGetAllStateQuery } from "../../../features/master/state/stateApiSlice";
@@ -37,6 +22,7 @@ import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal"
 import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
 import { useDispatch } from "react-redux";
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
+import StoreHoursWeekDay from "../CreateStore/StoreHoursWeekDay";
 
 const initEditState = { isEditing: false, discard: false };
 
@@ -84,17 +70,7 @@ function extractStoreData(storeData = {}) {
     settings = {},
   } = storeData;
 
-  let {
-    country = "",
-    line1 = "",
-    line2 = "",
-    city = "",
-    pincode = "",
-    state = "",
-    mapLink = "",
-    lattitude = "0",
-    longitude = "0",
-  } = address;
+  let { country = "", line1 = "", line2 = "", city = "", pincode = "", state = "", mapLink = "", lattitude = "0", longitude = "0" } = address;
 
   if (!!country && typeof country !== "string") country = country?._id ?? "";
   if (!!city && typeof city !== "string") city = city?._id ?? "";
@@ -155,13 +131,17 @@ const dayObj = {
 const storeValidationSchema = Yup.object({
   name: Yup.string().trim().required("required"),
   countryCode: Yup.string().trim().required("required"),
-  phone: Yup.number().required("required"),
+  phone: Yup.string()
+    .min(10, "Phone must be 10 digits long")
+    .max(10, "Phone must be 10 digits long")
+    .matches(/[0-9]/, "Phone number must only be digits")
+    .required("required"),
   email: Yup.string().trim().email("email is not valid").required("required"),
   status: Yup.string().oneOf(["active", "in-active"]),
   managerDetails: Yup.object({
     fullName: Yup.string().trim(),
     countryCode: Yup.string().trim(),
-    phone: Yup.number(),
+    phone: Yup.string().min(10, "Phone must be 10 digits long").max(10, "Phone must be 10 digits long").matches(/[0-9]/, "Phone number must only be digits"),
     email: Yup.string().trim().email("email is not valid"),
   }),
   address: Yup.object({
@@ -171,7 +151,10 @@ const storeValidationSchema = Yup.object({
     city: Yup.string().required("required"),
     pincode: Yup.number().required("required"),
     state: Yup.string().required("required"),
-    mapLink: Yup.string().url("Invalid URL format").required("required"),
+    mapLink: Yup.string()
+      .matches(/^(https:\/\/maps\.apple\.com|https:\/\/maps\.app\.goo\.gl)/, "Must be a google maps or apple maps link")
+      .url("Invalid URL format")
+      .required("required"),
     lattitude: Yup.string(),
     longitude: Yup.string(),
   }),
@@ -228,8 +211,7 @@ const EditStore = () => {
     validationSchema: storeValidationSchema,
     onSubmit: (values) => {
       console.log("values", values);
-      for (const key of Object.keys(values.managerDetails))
-        if (values.managerDetails[key] === "") delete values.managerDetails[key];
+      for (const key of Object.keys(values.managerDetails)) if (values.managerDetails[key] === "") delete values.managerDetails[key];
       if (values.mediaUrl.length === 0) delete values.mediaUrl;
       editStore({ id: storeId, details: values })
         .unwrap()
@@ -237,7 +219,7 @@ const EditStore = () => {
         .then(() => {
           editDispatch({ type: "DISABLE_EDIT" });
           editDispatch({ type: "DISABLE_DISCARD" });
-          dispatch(showSuccess({ message: "Store edited successfully" }));
+          dispatch(showSuccess({ message: `${values.name} saved successfully` }));
         })
         .catch((e) => {
           console.log(e);
@@ -260,8 +242,7 @@ const EditStore = () => {
   const changeStateHandler = (_, value) => formik.setFieldValue("address.state", value?._id ?? "");
   const changeCountryHandler = (_, value) => formik.setFieldValue("address.country", value?._id ?? "");
   const changeCountryCodeHandler = (_, value) => formik.setFieldValue("countryCode", value?._id ?? "");
-  const changeManagerCountryCodeHandler = (_, value) =>
-    formik.setFieldValue("managerDetails.countryCode", value?._id ?? "");
+  const changeManagerCountryCodeHandler = (_, value) => formik.setFieldValue("managerDetails.countryCode", value?._id ?? "");
   const changeMediaUrl = (value) =>
     !!value &&
     formik.setFieldValue("mediaUrl", [
@@ -502,9 +483,7 @@ const EditStore = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                   />
-                  <FormHelperText error>
-                    {formik.touched.address?.pincode && formik.errors.address?.pincode}
-                  </FormHelperText>
+                  <FormHelperText error>{formik.touched.address?.pincode && formik.errors.address?.pincode}</FormHelperText>
                 </FormControl>
               </div>
 
@@ -554,8 +533,7 @@ const EditStore = () => {
                 />
               </div>
 
-              <div className="col-12 px-0 mt-3">
-                {/* <MapDirections /> */}
+              {/* <div className="col-12 px-0 mt-3">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15282225.79979123!2d73.7250245393691!3d20.750301298393563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30635ff06b92b791%3A0xd78c4fa1854213a6!2sIndia!5e0!3m2!1sen!2sin!4v1587818542745!5m2!1sen!2sin"
                   width="100%"
@@ -565,7 +543,7 @@ const EditStore = () => {
                   allowFullScreen
                   tabIndex="0"
                   title="store map"></iframe>
-              </div>
+              </div> */}
 
               <div className="col-md-12 px-0 mt-3 add-user-country">
                 <div className="text-lightBlue mb-1">
@@ -585,9 +563,7 @@ const EditStore = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                   />
-                  <FormHelperText error>
-                    {formik.touched.address?.mapLink && formik.errors.address?.mapLink}
-                  </FormHelperText>
+                  <FormHelperText error>{formik.touched.address?.mapLink && formik.errors.address?.mapLink}</FormHelperText>
                 </FormControl>
               </div>
 
@@ -748,9 +724,7 @@ const EditStore = () => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                       />
-                      <FormHelperText error>
-                        {formik.touched.managerDetails?.fullName && formik.errors.managerDetails?.fullName}
-                      </FormHelperText>
+                      <FormHelperText error>{formik.touched.managerDetails?.fullName && formik.errors.managerDetails?.fullName}</FormHelperText>
                     </FormControl>
                   </div>
                   <div className="col-md-12 mt-3">
@@ -773,11 +747,7 @@ const EditStore = () => {
                               dataImgUrl="imageUrl"
                               name="managerDetails.countryCode"
                               value={formik.values.managerDetails.countryCode}
-                              error={
-                                formik.touched.managerDetails?.countryCode
-                                  ? formik.errors.managerDetails?.countryCode
-                                  : ""
-                              }
+                              error={formik.touched.managerDetails?.countryCode ? formik.errors.managerDetails?.countryCode : ""}
                               onChange={changeManagerCountryCodeHandler}
                               formik={formik}
                               useGetQuery={useGetAllCountryQuery}
@@ -786,9 +756,7 @@ const EditStore = () => {
                           </InputAdornment>
                         }
                       />
-                      <FormHelperText error>
-                        {formik.touched.managerDetails?.phone && formik.errors.managerDetails?.phone}
-                      </FormHelperText>
+                      <FormHelperText error>{formik.touched.managerDetails?.phone && formik.errors.managerDetails?.phone}</FormHelperText>
                     </FormControl>
                   </div>
                   <div className="col-md-12 mt-3">
@@ -802,9 +770,7 @@ const EditStore = () => {
                         onChange={formik.handleChange}
                         onBlur={formik.onBlur}
                       />
-                      <FormHelperText error>
-                        {formik.touched.managerDetails?.email && formik.errors.managerDetails?.email}
-                      </FormHelperText>
+                      <FormHelperText error>{formik.touched.managerDetails?.email && formik.errors.managerDetails?.email}</FormHelperText>
                     </FormControl>
                   </div>
                 </div>
@@ -850,9 +816,7 @@ const EditStore = () => {
                     />
                   </Tooltip>
                 </div>
-                <FormHelperText error>
-                  {formik.touched.settings?.fullfillOnlineOrder && formik.errors.settings?.fullfillOnlineOrder}
-                </FormHelperText>
+                <FormHelperText error>{formik.touched.settings?.fullfillOnlineOrder && formik.errors.settings?.fullfillOnlineOrder}</FormHelperText>
               </FormControl>
 
               <FormControl className="w-100 px-0">
@@ -890,9 +854,7 @@ const EditStore = () => {
                     />
                   </Tooltip>
                 </div>
-                <FormHelperText error>
-                  {formik.touched.settings?.enableStorePickup && formik.errors.settings?.enableStorePickup}
-                </FormHelperText>
+                <FormHelperText error>{formik.touched.settings?.enableStorePickup && formik.errors.settings?.enableStorePickup}</FormHelperText>
               </FormControl>
             </div>
           </div>
@@ -908,6 +870,7 @@ const EditStore = () => {
                 imageName={formik.values?.mediaUrl?.[0]?.image ?? addMedia}
                 headingName={"Store Media"}
                 UploadChange={changeMediaUrl}
+                noteText="Recommended Size: 1000px x 1000px"
               />
             </div>
 
@@ -933,87 +896,3 @@ const EditStore = () => {
 };
 
 export default EditStore;
-
-function StoreHoursWeekDay({
-  dayName = "",
-  dayValues = {},
-  dayTouched = {},
-  dayErrors = {},
-  formikHandleBlur = () => {},
-  formikHandleChange = () => {},
-  formikSetValue = () => {},
-  formikSetTouched = () => {},
-}) {
-  const onFromChange = (mt, kt) => formikSetValue(`storeHours.${dayName}.from`, mt?.format("HH:mm") ?? "");
-  const onFromTouched = () => formikSetTouched(`storeHours.${dayName}.from`, true);
-  const onToChange = (mt, kt) => formikSetValue(`storeHours.${dayName}.to`, mt?.format("HH:mm") ?? "");
-  const onToTouched = () => formikSetTouched(`storeHours.${dayName}.to`, true);
-
-  return (
-    <div className="col-12">
-      <div className="row align-items-center py-2">
-        <div className="col-2">
-          <span className="text-lightBlue text-capitalize">{dayName}</span>
-        </div>
-        <div className="col-3">
-          <FormControl
-            size="small"
-            className="w-100">
-            <Select
-              size="small"
-              variant="outlined"
-              name={`storeHours.${dayName}.status`}
-              value={dayValues.status}
-              onChange={formikHandleChange}
-              onBlur={formikHandleBlur}>
-              <MenuItem value="closed">Closed</MenuItem>
-              <MenuItem value="open">Open</MenuItem>
-            </Select>
-            <FormHelperText error>{dayTouched?.status && dayErrors?.status}</FormHelperText>
-          </FormControl>
-        </div>
-        {dayValues.status === "open" && (
-          <>
-            <div className="col-3">
-              <LocalizationProvider dateAdapter={AdapterMoment}>
-                <TimePicker
-                  label="Start Time"
-                  value={moment(dayValues.from, "HH:mm")}
-                  onChange={onFromChange}
-                  onClose={onFromTouched}
-                  renderInput={(params) => (
-                    <TextField
-                      size="small"
-                      {...params}
-                      onBlur={onFromTouched}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-              <FormHelperText error>{dayTouched?.from && dayErrors?.from}</FormHelperText>
-            </div>
-            <div className="col-auto">-</div>
-            <div className="col-3">
-              <LocalizationProvider dateAdapter={AdapterMoment}>
-                <TimePicker
-                  label="End Time"
-                  value={moment(dayValues.to, "HH:mm")}
-                  onChange={onToChange}
-                  onClose={onToTouched}
-                  renderInput={(params) => (
-                    <TextField
-                      size="small"
-                      {...params}
-                      onBlur={onToTouched}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-              <FormHelperText error>{dayTouched?.to && dayErrors?.to}</FormHelperText>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}

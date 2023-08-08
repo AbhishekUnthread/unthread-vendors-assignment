@@ -1,16 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 // ! MATERIAL IMPORTS
-import {
-  Checkbox,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Tooltip,
-} from "@mui/material";
+import { Checkbox, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Tooltip } from "@mui/material";
 // ! COMPONENT IMPORTS
 import { EnhancedTableHead } from "../../../components/TableDependencies/TableDependencies";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
@@ -90,29 +81,29 @@ export default function AllInventory({
   };
 
   const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = list.map((n) => n.sId);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
+    setSelected(event.target.checked ? list.map((n) => n._id) : []);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
+  const handleClick = (id) => {
+    setSelected(selected.includes(id) ? selected.filter((sl) => sl !== id) : selected.concat(id));
+    // const selectedIndex = selected.indexOf(name);
+    // let newSelected = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
+    // if (selectedIndex === -1) {
+    //   newSelected = newSelected.concat(selected, name);
+    // } else if (selectedIndex === 0) {
+    //   newSelected = newSelected.concat(selected.slice(1));
+    // } else if (selectedIndex === selected.length - 1) {
+    //   newSelected = newSelected.concat(selected.slice(0, -1));
+    // } else if (selectedIndex > 0) {
+    //   newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    // }
 
-    setSelected(newSelected);
+    // setSelected(newSelected);
+  };
+
+  const handleBulkStatusChange = (status) => {
+    console.log(status);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -120,7 +111,10 @@ export default function AllInventory({
     changePage(0);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const isSelected = (id) => {
+    console.log(id, selected);
+    selected.includes(id);
+  };
 
   // const handleUnArchive = (id, title) => {
   //   setForMassAction(false);
@@ -212,7 +206,11 @@ export default function AllInventory({
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
+          <TableEditStatusButton
+            onSelect={handleBulkStatusChange}
+            defaultValue={["Set as Active", "Set as In-Active"]}
+            headingName="Edit Status"
+          />
           <TableMassActionButton />
         </div>
       )}
@@ -252,10 +250,8 @@ export default function AllInventory({
                         <TableCell padding="checkbox">
                           <Checkbox
                             checked={isItemSelected}
-                            inputProps={{
-                              "aria-labelledby": labelId,
-                            }}
-                            onClick={(event) => handleClick(event, row._id)}
+                            inputProps={{ "aria-labelledby": labelId }}
+                            onChange={() => handleClick(row._id)}
                             size="small"
                             style={{
                               color: "#5C6D8E",
@@ -268,9 +264,7 @@ export default function AllInventory({
                           id={labelId}
                           scope="row"
                           padding="none">
-                          <Link
-                            className="text-decoration-none"
-                            to={`details/${row?._id}`}>
+                          {tabIndex === 3 ? (
                             <div className="d-flex align-items-center py-3">
                               <img
                                 src={row.mediaUrl?.[0]?.image ?? storeIcon}
@@ -282,12 +276,31 @@ export default function AllInventory({
                               <div>
                                 <p className="text-lightBlue rounded-circle fw-600">{row.name}</p>
                                 <small className="text-grey-6 mt-1">
-                                  {row.address.line1} {row.address.line2} {row.address.state.name} {row.address.pincode}{" "}
-                                  {row.address.country.name}
+                                  {row.address.line1} {row.address.line2} {row.address.state.name} {row.address.pincode} {row.address.country.name}
                                 </small>
                               </div>
                             </div>
-                          </Link>
+                          ) : (
+                            <Link
+                              className="text-decoration-none"
+                              to={`details/${row?._id}`}>
+                              <div className="d-flex align-items-center py-3">
+                                <img
+                                  src={row.mediaUrl?.[0]?.image ?? storeIcon}
+                                  alt="storeIcon"
+                                  className="me-2"
+                                  height={45}
+                                  width={45}
+                                />
+                                <div>
+                                  <p className="text-lightBlue rounded-circle fw-600">{row.name}</p>
+                                  <small className="text-grey-6 mt-1">
+                                    {row.address.line1} {row.address.line2} {row.address.state.name} {row.address.pincode} {row.address.country.name}
+                                  </small>
+                                </div>
+                              </div>
+                            </Link>
+                          )}
                         </TableCell>
                         {/* No. of Products Cell */}
                         <TableCell style={{ width: 180 }}>
@@ -300,16 +313,9 @@ export default function AllInventory({
                               <div
                                 className="rounded-pill d-flex table-status px-2 py-1 c-pointer"
                                 style={{
-                                  backgroundColor:
-                                    row.status === "active"
-                                      ? "#A6FAAF"
-                                      : row.status === "archieved"
-                                      ? "#C8D8FF"
-                                      : "#F67476",
+                                  backgroundColor: row.status === "active" ? "#A6FAAF" : row.status === "archieved" ? "#C8D8FF" : "#F67476",
                                 }}>
-                                <small className="text-capitalize text-black fw-400">
-                                  {row.status === "archieved" ? "archived" : row.status}
-                                </small>
+                                <small className="text-capitalize text-black fw-400">{row.status === "archieved" ? "archived" : row.status}</small>
                               </div>
                             </div>
                           </TableCell>
