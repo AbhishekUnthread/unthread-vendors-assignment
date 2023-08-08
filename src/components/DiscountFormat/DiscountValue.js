@@ -11,7 +11,6 @@ import {
 import info from "../../assets/icons/info.svg";
 import arrowDown from "../../assets/icons/arrowDown.svg";
 
-
 function DiscountValue({ value, field, formik, touched, error }) {
   // * DISCOUNT PERCENT POPOVERS STARTS
   const [anchorDiscountPercentEl, setAnchorDiscountPercentEl] =
@@ -26,16 +25,16 @@ function DiscountValue({ value, field, formik, touched, error }) {
   const idDiscountPercent = openDiscountPercent ? "simple-popover" : undefined;
   // * DICOUNT PERCENT POPOVERS ENDS
 
-  const handleChange = (newValue)=>{
+  const handleChange = (newValue) => {
     formik.setFieldValue(`${field}.type`, newValue);
     setAnchorDiscountPercentEl(null);
-  }
-  return ( 
-   <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
+  };
+  return (
+    <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
       <div className="d-flex col-12 px-0 justify-content-between">
         <div className="d-flex align-items-center">
           <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-            Discount
+            Discount Value
           </h6>
           <Tooltip title="Lorem ipsum" placement="top">
             <img
@@ -71,7 +70,7 @@ function DiscountValue({ value, field, formik, touched, error }) {
                 value={value?.discountValue}
                 onChange={formik?.handleChange}
                 onBlur={formik?.handleBlur}
-                name={`${field}.discountValue`}    
+                name={`${field}.discountValue`}
                 placeholder="Enter Discount"
                 size="small"
                 endAdornment={
@@ -82,7 +81,12 @@ function DiscountValue({ value, field, formik, touched, error }) {
                     className="c-pointer"
                   >
                     <span className="d-flex align-items-center">
-                      <p className="text-lightBlue"> {value?.type==="percentage"?`Percentage`:`Fixed Amount`} </p>
+                      <p className="text-lightBlue">
+                        {" "}
+                        {value?.type === "percentage"
+                          ? `Percentage`
+                          : `Fixed Amount`}{" "}
+                      </p>
                       <img src={arrowDown} alt="arrow" className="ms-2" />
                     </span>
                   </InputAdornment>
@@ -102,13 +106,18 @@ function DiscountValue({ value, field, formik, touched, error }) {
               open={openDiscountPercent}
               anchorEl={anchorDiscountPercentEl}
               onClose={handleDiscountPercentClose}
-
             >
               <div className="py-2 px-1 c-pointer">
-                <small className="text-lightBlue rounded-3 p-2 hover-back d-block" onClick={() => handleChange("percentage")}>
+                <small
+                  className="text-lightBlue rounded-3 p-2 hover-back d-block"
+                  onClick={() => handleChange("percentage")}
+                >
                   Percentage Discount
                 </small>
-                <small className="text-lightBlue rounded-3 p-2 hover-back d-block" onClick={() => handleChange("fixed")}>
+                <small
+                  className="text-lightBlue rounded-3 p-2 hover-back d-block"
+                  onClick={() => handleChange("fixed")}
+                >
                   Fixed Amount
                 </small>
               </div>
@@ -135,19 +144,23 @@ function DiscountValue({ value, field, formik, touched, error }) {
                 <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
                   None
                 </MenuItem>
-                <MenuItem value={10} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                  Value 1
+                <MenuItem value="goldPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  Gold Price
                 </MenuItem>
-                <MenuItem value={20} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                  Value 2
+                <MenuItem value="diamondPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  Diamond Price
                 </MenuItem>
-                <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                  Value 3
+                <MenuItem value="makingCharge" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  Making Charges
+                </MenuItem>
+                <MenuItem value="totalPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  Total Price
                 </MenuItem>
               </Select>
             </FormControl>
           </div>
-          {
+
+          {formik?.values?.discountType === "cartDiscount" && (
             <div className="col-md-12 mt-3">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Cart Label</p>
@@ -162,15 +175,16 @@ function DiscountValue({ value, field, formik, touched, error }) {
               </div>
               <FormControl className="px-0 w-100">
                 <OutlinedInput
-                value={value?.cartLabel}
-                onChange={formik?.handleChange}
-                onBlur={formik?.handleBlur}
-                name={`${field}.cartLabel`}    
-                 placeholder="Enter Label" 
-                 size="small" />
+                  value={value?.cartLabel}
+                  onChange={formik?.handleChange}
+                  onBlur={formik?.handleBlur}
+                  name={`${field}.cartLabel`}
+                  placeholder="Enter Label"
+                  size="small"
+                />
               </FormControl>
             </div>
-          }
+          )}
         </div>
       </div>
     </div>

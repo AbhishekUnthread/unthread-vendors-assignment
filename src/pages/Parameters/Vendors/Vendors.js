@@ -198,7 +198,6 @@ const Vendors = () => {
     error: vendorsStatusCountError,
   } = useGetAllVendorsStatusCountQuery();
 
-  console.log("status Count", vendorsStatusCount);
   const [
     createVendor,
     {

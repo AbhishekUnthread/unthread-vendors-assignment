@@ -49,7 +49,6 @@ function DiscountFormat({ value, field, formik, touched, error }) {
   //   }
   // }, [formik.isSubmitting]);
 
-  // console.log({touch:touch})
 
   // useEffect(() => {
   //   formik.setFieldValue(`${field}.discountCode`, "");
@@ -82,19 +81,19 @@ function DiscountFormat({ value, field, formik, touched, error }) {
               name="controlled-radio-buttons-group"
               value={value?.discountFormat}
               onChange={handleDiscountFormatChange}
-              defaultValue="discountCouponCode"
+              defaultValue="code"
             >
               <FormControlLabel
-                value="discountCouponCode"
+                value="code"
                 control={<Radio size="small" />}
                 label=<p>Discount Coupon Code</p>
-                className={value?.discountFormat === "discountCouponCode" ? "text-lightBlue" : "text-grey-6"}
+                className={value?.discountFormat === "code" ? "text-lightBlue" : "text-grey-6"}
               />
               <FormControlLabel
-                value="automaticDiscount"
+                value="automatic"
                 control={<Radio size="small" />}
                 label=<p>Automatic Discount</p>
-                className={value?.discountFormat === "automaticDiscount" ? "text-lightBlue" : "text-grey-6"}
+                className={value?.discountFormat === "automatic" ? "text-lightBlue" : "text-grey-6"}
 
               />
             </RadioGroup>
@@ -102,7 +101,7 @@ function DiscountFormat({ value, field, formik, touched, error }) {
           <div className="col-md-7 mt-3 discount-gradient-inputs">
             <div className="d-flex mb-1">
               <p className="text-lightBlue">{`${
-                value?.discountFormat === "automaticDiscount"
+                value?.discountFormat === "automatic"
                   ? `Discount Name`
                   : `Type Discount Code`
               }`}</p>
@@ -129,7 +128,7 @@ function DiscountFormat({ value, field, formik, touched, error }) {
                 onBlur={formik?.handleBlur}
                 name={`${field}.discountCode`}
                 endAdornment={
-                  value?.discountFormat === "automaticDiscount" ? null : (
+                  value?.discountFormat === "automatic" ? null : (
                     <InputAdornment position="end" onClick={handleGenerateCode}>
                       Generate Code
                     </InputAdornment>
@@ -142,7 +141,7 @@ function DiscountFormat({ value, field, formik, touched, error }) {
                 <FormHelperText error>{error?.discountCode}</FormHelperText>
               ) : (
                 <>
-                  {value?.discountFormat === "automaticDiscount"
+                  {value?.discountFormat === "automatic"
                     ? "Customer will have to enter in coupons to avail discount"
                     : "User will have to enter in coupons to avail Discount"}
                 </>

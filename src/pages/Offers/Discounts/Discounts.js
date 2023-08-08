@@ -149,7 +149,6 @@ const Discounts = () => {
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
   }
 
-console.log("first",discountsData?.data?.data)
   // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
@@ -388,12 +387,8 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Product Discount" className="tabs-head" />
-              <Tab label="Cart Discount" className="tabs-head" />
-              <Tab label="Free Shipping" className="tabs-head" />
-              <Tab label="Buy X, Get Y" className="tabs-head" />
-              <Tab label="Bulk/Tired Discount Pricing" className="tabs-head" />
+              <Tab label="Discount Code" className="tabs-head" />
+              <Tab label="Automatic Discount" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
@@ -500,50 +495,6 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
              />
-          </TabPanel>
-          <TabPanel value={discountsState.discountType} index={2}>
-            <DiscountsTable
-              isLoading={discountsIsLoading}
-              list={discountsState.data}
-              totalCount={discountsState.totalCount}
-              changeRowsPerPage={handleChangeRowsPerPage}
-              rowsPerPage={queryFilterState.pageSize}
-              changePage={handleChangePage}
-              page={queryFilterState.pageNo}
-             />
-          </TabPanel>
-          <TabPanel value={discountsState.discountType} index={3}>
-            <DiscountsTable
-              isLoading={discountsIsLoading}
-              list={discountsState.data}
-              totalCount={discountsState.totalCount}
-              changeRowsPerPage={handleChangeRowsPerPage}
-              rowsPerPage={queryFilterState.pageSize}
-              changePage={handleChangePage}
-              page={queryFilterState.pageNo}
-             />
-          </TabPanel>
-          <TabPanel value={discountsState.discountType} index={4}>
-            <DiscountsTable
-              isLoading={discountsIsLoading}
-              list={discountsState.data}
-              totalCount={discountsState.totalCount}
-              changeRowsPerPage={handleChangeRowsPerPage}
-              rowsPerPage={queryFilterState.pageSize}
-              changePage={handleChangePage}
-              page={queryFilterState.pageNo}
-             />
-          </TabPanel>
-          <TabPanel value={discountsState.discountType} index={5}>
-            <DiscountsTable
-              isLoading={discountsIsLoading}
-              list={discountsState.data}
-              totalCount={discountsState.totalCount}
-              changeRowsPerPage={handleChangeRowsPerPage}
-              rowsPerPage={queryFilterState.pageSize}
-              changePage={handleChangePage}
-              page={queryFilterState.pageNo}
-            />
           </TabPanel>
         </Paper>
       </div>

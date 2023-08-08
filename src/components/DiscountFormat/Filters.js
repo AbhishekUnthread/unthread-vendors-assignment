@@ -69,7 +69,6 @@ function Filters({
   onDeleteField,
 }) {
   const filterValues = data.map((filter, index) => filter);
-  console.log({ FilterValues: filterValues });
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">

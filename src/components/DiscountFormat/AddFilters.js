@@ -30,26 +30,24 @@ import {
 } from "../../features/parameters/categories/categoriesApiSlice";
 
 const initialFilterState = {
-    filterValue : []
-  };
-  const filterReducer = (state, action) => {
-    if(action.type === "SET_DATA")
-    {
-        return {
-            ...state,
-            filterValue : action.filterValue ,
-        }
-    }
+  filterValue: [],
+};
+const filterReducer = (state, action) => {
+  if (action.type === "SET_DATA") {
+    return {
+      ...state,
+      filterValue: action.filterValue,
+    };
+  }
 
-    return initialFilterState;
-  };
+  return initialFilterState;
+};
 
 function AddFilters({ value, formik, field }) {
-
-    const [filterState, dispatchFilter] = useReducer(
-        filterReducer,
-        initialFilterState
-    )
+  const [filterState, dispatchFilter] = useReducer(
+    filterReducer,
+    initialFilterState
+  );
 
   const {
     data: categoriesData,
@@ -57,7 +55,7 @@ function AddFilters({ value, formik, field }) {
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
   } = useGetAllCategoriesQuery(undefined, {
-    skip: value?.field !== 30,
+    skip: value?.field !== "category",
   });
   const {
     data: subCategoriesData,
@@ -65,7 +63,7 @@ function AddFilters({ value, formik, field }) {
     isSuccess: subCategoriesIsSuccess,
     error: subCategoriesError,
   } = useGetAllSubCategoriesQuery(undefined, {
-    skip: value?.field !== 40,
+    skip: value?.field !== "subCategory",
   });
   const {
     data: collectionData,
@@ -73,7 +71,7 @@ function AddFilters({ value, formik, field }) {
     isSuccess: collectionIsSuccess,
     error: collectionError,
   } = useGetAllCollectionsQuery(undefined, {
-    skip: value?.field !== 50,
+    skip: value?.field !== "collection",
   });
 
   const {
@@ -81,98 +79,95 @@ function AddFilters({ value, formik, field }) {
     isLoading: vendorsIsLoading,
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
-  } = useGetAllVendorsQuery(undefined,{
-    skip : value?.field !== 60,
+  } = useGetAllVendorsQuery(undefined, {
+    skip: value?.field !== 60,
   });
   const {
     data: tagsData,
     isLoading: tagsIsLoading,
     isSuccess: tagsIsSuccess,
     error: tagsError,
-  } = useGetAllTagsQuery(undefined,{
-    skip : value?.field !== 80,
+  } = useGetAllTagsQuery(undefined, {
+    skip: value?.field !== "Tags",
   });
-
 
   const handleFieldChange = (event) => {
     formik.setFieldValue(`${field}.field`, event.target.value);
   };
 
   const handleOperatorChange = (event) => {
-    formik.setFieldValue(`${field}.operator`,event.target.value)
+    formik.setFieldValue(`${field}.operator`, event.target.value);
   };
 
-
- useEffect(() => {
-    if(categoriesIsSuccess)
-    {
-        formik.setFieldValue(`${field}.dropDownData`,categoriesData)
+  const handleCheck = (data) => {
+    const matchingItem = formik?.values?.filters.find((item, index) => {
+      return item?.field === value?.field && item?.operator === value?.operator;
+    });
+  
+    if (matchingItem) {
+      const updatedData = data?.data?.data?.filter((user) => {
+        const isUserInDropDown = matchingItem?.fieldValue?.includes(user?.name);
+        return !isUserInDropDown;
+      });
+      return updatedData;
+    } else {
+      return data; 
     }
- }, [categoriesIsSuccess,categoriesData])
+  };
+  
+  
 
- useEffect(() => {
-    if(subCategoriesIsSuccess)
-    {
-        formik.setFieldValue(`${field}.dropDownData`,subCategoriesData)
+  useEffect(() => {
+    if (categoriesIsSuccess) {
+      formik.setFieldValue(`${field}.dropDownData`, categoriesData);
     }
- }, [subCategoriesIsSuccess,subCategoriesData])
+  }, [categoriesIsSuccess, categoriesData]);
 
- useEffect(() => {
-    if(collectionIsSuccess)
-    {
-        formik.setFieldValue(`${field}.dropDownData`,collectionData)
-
+  useEffect(() => {
+    if (subCategoriesIsSuccess) {
+      formik.setFieldValue(`${field}.dropDownData`, subCategoriesData);
     }
- }, [collectionIsSuccess,collectionData])
+  }, [subCategoriesIsSuccess, subCategoriesData]);
 
- useEffect(() => {
-    if(vendorsIsSuccess)
-    {
-        formik.setFieldValue(`${field}.dropDownData`,vendorsData)
-
+  useEffect(() => {
+    if (collectionIsSuccess) {
+      formik.setFieldValue(`${field}.dropDownData`, collectionData);
     }
- }, [vendorsIsSuccess,vendorsData])
+  }, [collectionIsSuccess, collectionData]);
 
- useEffect(() => {
-    if(tagsIsSuccess)
-    {
-        formik.setFieldValue(`${field}.dropDownData`,tagsData)
-
+  useEffect(() => {
+    if (vendorsIsSuccess) {
+      formik.setFieldValue(`${field}.dropDownData`, vendorsData);
     }
- }, [tagsIsSuccess,tagsData])
+  }, [vendorsIsSuccess, vendorsData]);
 
- useEffect(() => {
-    if(value?.field === 30)
-    {
-        formik.setFieldValue(`${field}.dropDownData`,categoriesData)
-        
+  useEffect(() => {
+    if (tagsIsSuccess) {
+      formik.setFieldValue(`${field}.dropDownData`, tagsData);
     }
-    else if(value?.field === 40)
-    {
-        formik.setFieldValue(`${field}.dropDownData`,subCategoriesData)
+  }, [tagsIsSuccess, tagsData]);
 
+  useEffect(() => {
+    if (value?.field === "category") {
+      formik.setFieldValue(`${field}.dropDownData`, categoriesData);
+    } else if (value?.field === "subCategory") {
+      formik.setFieldValue(`${field}.dropDownData`, subCategoriesData);
+    } else if (value?.field === "collection") {
+      formik.setFieldValue(`${field}.dropDownData`, collectionData);
+    } else if (value?.field === 60) {
+      formik.setFieldValue(`${field}.dropDownData`, vendorsData);
+    } else if (value?.field === "Tags") {
+      formik.setFieldValue(`${field}.dropDownData`, tagsData);
     }
-    else if(value?.field === 50)
-    {
-        formik.setFieldValue(`${field}.dropDownData`,collectionData)
+  }, [
+    categoriesData,
+    subCategoriesData,
+    collectionData,
+    vendorsData,
+    tagsData,
+    value?.field,
+  ]);
 
-    }
-    else if(value?.field === 60)
-    {
-        formik.setFieldValue(`${field}.dropDownData`,vendorsData)
-
-        
-    }
-    else if(value?.field === 80)
-    {
-        formik.setFieldValue(`${field}.dropDownData`,tagsData)
-
-    }
-
- }, [categoriesData,subCategoriesData,collectionData,vendorsData,tagsData,value?.field])
-
-
- 
   return (
     <div className="row">
       <div className="col-md-3 mt-1 px-0">
@@ -198,19 +193,19 @@ function AddFilters({ value, formik, field }) {
             <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               None
             </MenuItem>
-            <MenuItem value={10} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="allProducts" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               All Products
             </MenuItem>
-            <MenuItem value={20} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               Products
             </MenuItem>
-            <MenuItem value={30} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="category" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               Category
             </MenuItem>
-            <MenuItem value={40} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="subCategory" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               Sub Category
             </MenuItem>
-            <MenuItem value={50} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="collection" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               Collection
             </MenuItem>
             <MenuItem value={60} sx={{ fontSize: 13, color: "#5c6d8e" }}>
@@ -219,10 +214,10 @@ function AddFilters({ value, formik, field }) {
             <MenuItem value={70} sx={{ fontSize: 13, color: "#5c6d8e" }}>
               Attributes
             </MenuItem>
-            <MenuItem value={80} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="Tags" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               Tags
             </MenuItem>
-            <MenuItem value={90} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="SKUs" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               SKU's
             </MenuItem>
           </Select>
@@ -272,35 +267,41 @@ function AddFilters({ value, formik, field }) {
             />
           </Tooltip>
         </div>
-          <Autocomplete
-            multiple
-            id="checkboxes-tags-demo"
-            sx={{ width: "100%" }}
-            options={value?.dropDownData?.data?.data ?? [] }
-            disableCloseOnSelect
-            getOptionLabel={(option) => 
+        <Autocomplete
+          multiple
+          id="checkboxes-tags-demo"
+          sx={{ width: "100%" }}
+          options={value?.dropDownData?.data?.data ?? []}
+          disableCloseOnSelect
+          getOptionLabel={(option) =>
             option?.firstName || option?.title || option?.name || []
-            }
-            size="small"
-            renderOption={(props, option, { selected }) => (
-              <li {...props}>
-                <Checkbox
-                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                  checkedIcon={<CheckBoxIcon fontSize="small" />}
-                  checked={selected}
-                  size="small"
-                  style={{
-                    color: "#5C6D8E",
-                    marginRight: 0,
-                  }}
-                />
-                <small className="text-lightBlue">{option?.firstName || option?.title || option?.name}</small>
-              </li>
-            )}
-            renderInput={(params) => (
-              <TextField size="small" {...params} placeholder="Search" />
-            )}
-          />       
+          }
+          size="small"
+          value={value?.fieldValue||[]}
+          onChange={(_, newValue) => {
+                formik.setFieldValue( `${field}.fieldValue`, newValue);
+              }}
+          renderOption={(props, option, { selected }) => (
+            <li {...props}>
+              <Checkbox
+                icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                checkedIcon={<CheckBoxIcon fontSize="small" />}
+                checked={selected}
+                size="small"
+                style={{
+                  color: "#5C6D8E",
+                  marginRight: 0,
+                }}
+              />
+              <small className="text-lightBlue">
+                {option?.firstName || option?.title || option?.name}
+              </small>
+            </li>
+          )}
+          renderInput={(params) => (
+            <TextField size="small" {...params} placeholder="Search" />
+          )}
+        />
       </div>
     </div>
   );

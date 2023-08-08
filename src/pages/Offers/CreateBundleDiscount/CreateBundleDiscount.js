@@ -122,7 +122,7 @@ const CreateBundleDiscount = () => {
                       />
                     </Tooltip>
                   </div>
-                  <ProductStatusToggle />
+                  {/* <ProductStatusToggle /> */}
                 </div>
               </div>
             </div>

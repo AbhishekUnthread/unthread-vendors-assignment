@@ -19,6 +19,7 @@ import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import info from "../../../assets/icons/info.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
+import moment from "moment";
 // ! MATERIAL IMPORTS
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -54,6 +55,8 @@ import CouponCode from "../../../components/DiscountFormat/CouponCode";
 import BuyXGetY from "../../../components/DiscountFormat/BuyXGetY";
 import { showError } from "../../../features/snackbar/snackbarAction";
 import DiscountRange from "../../../components/DiscountFormat/DiscountRange";
+import { useCreateDiscountMutation } from "../../../features/offers/discounts/discountsApiSlice";
+import LimitByLocation from "../../../components/DiscountFormat/LimitByLocation";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -143,12 +146,11 @@ const minimumRequirementValidationSchema = Yup.object().shape({
 });
 
 const discountFormatSchema = Yup.object().shape({
-  discountFormat: Yup.string()
-    .oneOf(
-      ["automaticDiscount", "discountCouponCode"],
-      "Invalid Discount Format"
-    )
-    .required("Discount Format is required"),
+  discountFormat: Yup.string().oneOf(
+    ["automaticDiscount", "discountCouponCode"],
+    "Invalid Discount Format"
+  ),
+  // .required("Discount Format is required")
   discountCode: Yup.string()
     .trim()
     .matches(/^[a-zA-Z0-9]+$/, "Discount Code must be alphanumeric")
@@ -174,7 +176,7 @@ const discountValidationSchema = Yup.object().shape({
       "Invalid Discount Type"
     )
     .required("Discount Type is required"),
-  discountFormat: discountFormatSchema,
+  // discountFormat: discountFormatSchema,
   minimumRequirement: minimumRequirementValidationSchema,
   returnExchange: Yup.string()
     .oneOf(["allowed", "notAllowed"], "Invalid")
@@ -190,6 +192,16 @@ const CreateDiscount = () => {
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [
+    createDiscount,
+    {
+      isLoading: createDiscountIsLoading,
+      isSuccess: createDiscountIsSuccess,
+      error: createDiscountError,
+    },
+  ] = useCreateDiscountMutation();
+
   // ? USER ROLE SELECT STARTS HERE
   const [discountType, setDiscountType] = React.useState("");
 
@@ -320,7 +332,7 @@ const CreateDiscount = () => {
           field: null,
           operator: null,
           fieldValue: null,
-          dropDownData:[],
+          dropDownData: [],
         },
       ],
       couponCode: {
@@ -359,10 +371,119 @@ const CreateDiscount = () => {
           value: null,
         },
       ],
+      limitByLocation: {
+        locationType: "",
+        location: "",
+      },
+      scheduledDiscount: {
+        startDateTime: "",
+        endDateTime: "",
+      },
     },
     enableReinitialize: true,
-    validationSchema: discountValidationSchema,
-    onSubmit: (values) => {},
+    // validationSchema: discountValidationSchema,
+    onSubmit: (values) => {
+      const test = {
+        name: values?.discountName,
+        status: "active",
+        mainDiscount: {
+          type: values?.discountType,
+          format: values?.discountFormat?.discountFormat,
+          value: values?.discountValue?.discountValue,
+          discountOn: values?.discountValue?.value,
+          unit: values?.discountValue?.type,
+          ...(values?.discountFormat?.discountFormat === "code"
+            ? { discountCode: values?.discountFormat?.discountCode }
+            : { discountName: values?.discountFormat?.discountCode }),
+          ...(values?.discountType === "cartDiscount"
+            ? { cartLabel: values?.discountValue?.cartLabel }
+            : {}),
+          filter: values?.filters.map((filter) => ({
+            type: filter?.field,
+            operator: filter?.operator,
+            value: filter?.fieldValue.map(
+              (item, index) => item?._id
+            ),
+          })),
+        },
+        minimumRequirement: {
+          requirementType: values?.minimumRequirement?.requirement,
+          ...(values?.minimumRequirement?.requirement === "amount"
+            ? { amount: values?.minimumRequirement?.value }
+            : values?.minimumRequirement?.requirement === "quantity"
+            ? { quantity: values?.minimumRequirement?.value }
+            : {}),
+        },
+        eligibility: {
+          eligibilityType: values?.customerEligibility?.customer,
+          ...(values?.customerEligibility?.customer === "allCustomers"
+            ? { allCustomers: true }
+            : values?.customerEligibility?.customer === "specificCustomers"
+            ? {
+                specificCustomers: values?.customerEligibility?.value.map(
+                  (item, index) => item?._id
+                ),
+              }
+            : values?.customerEligibility?.customer === "customerGroups"
+            ? {
+                customerGroups: values?.customerEligibility?.value.map(
+                  (item, index) => item?._id
+                ),
+              }
+            : {}),
+        },
+        maximumDiscountUse: {
+          ...(values?.maximumDiscount?.limitDiscountNumber === true &&
+          values?.maximumDiscount?.limitUsagePerCustomer === true
+            ? {
+                total: values?.maximumDiscount?.total,
+                perCustomer: values?.maximumDiscount?.perCustomer,
+              }
+            : values?.maximumDiscount?.limitDiscountNumber === true
+            ? { total: values?.maximumDiscount?.total }
+            : values?.maximumDiscount?.limitUsagePerCustomer === true
+            ? { perCustomer: values?.maximumDiscount?.perCustomer }
+            : { isUnlimited: true }),
+        },
+        returnExchangeCondition: values?.returnExchange,
+        allowCombineWithOthers:
+          values?.discountCombination?.allowCombineWithOthers,
+        ...(values?.discountCombination?.allowCombineWithOthers === true
+          ? { allowCombineWith: values?.discountCombination?.allowCombineWith }
+          : {}),
+        limitByLocation: {
+          locationType: values?.limitByLocation?.locationType,
+          ...(values?.limitByLocation?.locationType === "country"
+            ? {
+                country: values?.limitByLocation?.location.map(
+                  (item, index) => item?._id
+                ),
+              }
+            : values?.limitByLocation?.locationType === "state"
+            ? {
+                state: values?.limitByLocation?.location.map(
+                  (item, index) => item?._id
+                ),
+              }
+            : values?.limitByLocation?.locationType === "zip"
+            ? {
+                customerGroups: values?.limitByLocation?.location.map(
+                  (item, index) => item?._id
+                ),
+              }
+            : {}),
+        },
+        scheduledDiscount: {
+          startDateTime: moment(
+            values?.scheduledDiscount?.startDateTime
+          ).format("YYYY-MM-DDTHH:mm:ss[Z]"),
+          endDateTime: moment(values?.scheduledDiscount?.endDateTime).format(
+            "YYYY-MM-DDTHH:mm:ss[Z]"
+          ),
+        },
+      };
+      createDiscount(test);
+    },
   });
 
   const addFilterHandler = () => {
@@ -374,7 +495,7 @@ const CreateDiscount = () => {
     formik.setFieldValue("filters", newFilter);
   };
 
-  const deleteFilterHandler = ({deleteIndex}) => {
+  const deleteFilterHandler = ({ deleteIndex }) => {
     if (formik.values?.filters?.length === 1) {
       dispatch(showError({ message: "At least one filter is required" }));
       return;
@@ -388,9 +509,14 @@ const CreateDiscount = () => {
   const deleteDiscountRangeHandler = ({ deleteIndex }) => {
     const discountRange = formik.values?.discountRange;
     if (discountRange && discountRange.length === 1) {
-      dispatch(showError({ message: "At least one discount Range is required" }));
+      dispatch(
+        showError({ message: "At least one discount Range is required" })
+      );
     } else if (discountRange) {
-      formik.setFieldValue("discountRange", discountRange.filter((_, index) => index !== deleteIndex));
+      formik.setFieldValue(
+        "discountRange",
+        discountRange.filter((_, index) => index !== deleteIndex)
+      );
     }
   };
   const addDiscountRangeHandler = () => {
@@ -414,7 +540,7 @@ const CreateDiscount = () => {
         onNext={nextPageHandler}
         isEdit={false}
       />
-      <formik className="offers-form" noValidate onSubmit={formik.handleSubmit}>
+      <form className="offers-form" noValidate onSubmit={formik.handleSubmit}>
         <div className="row">
           <div className="col-lg-9 mt-4">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes">
@@ -548,7 +674,6 @@ const CreateDiscount = () => {
               touched={formik?.touched?.discountValue}
               error={formik?.errors?.discountValue}
             />
-
             <Filters
               value={formik.values?.filters}
               field="filters"
@@ -560,217 +685,29 @@ const CreateDiscount = () => {
               onDeleteField={deleteFilterHandler}
               onAdd={addFilterHandler}
             />
-            <BuyXGetY
-              value={formik.values?.buyXGetY}
-              field="buyXGetY"
-              formik={formik}
-              touched={formik?.touched?.buyXGetY}
-              error={formik?.errors?.buyXGetY}
-            />
+            {formik?.values?.discountType === "buyXGetY" && (
+              <BuyXGetY
+                value={formik.values?.buyXGetY}
+                field="buyXGetY"
+                formik={formik}
+                touched={formik?.touched?.buyXGetY}
+                error={formik?.errors?.buyXGetY}
+              />
+            )}
 
-            <DiscountRange
-              value={formik.values?.discountRange}
-              field="discountRange"
-              formik={formik}
-              touched={formik?.touched?.discountRange}
-              error={formik?.errors?.discountRange}
-              data={formik.values?.discountRange}
-              onSort={() => {}}
-              onDeleteField={deleteDiscountRangeHandler}
-              onAdd={addDiscountRangeHandler}
-            />
-            {/* <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
-              <div className="d-flex col-12 px-0 justify-content-between">
-                <div className="d-flex align-items-center">
-                  <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                    Discount
-                  </h6>
-                  <Tooltip title="Lorem ipsum" placement="top">
-                    <img
-                      src={info}
-                      alt="info"
-                      className="ms-2 c-pointer"
-                      width={13.5}
-                    />
-                  </Tooltip>
-                </div>
-              </div>
-              <hr className="hr-grey-6 mt-3 mb-0" />
-              <div className="col-md-2 col-6 mt-3 ps-0">
-                <div className="d-flex mb-1">
-                  <p className="text-lightBlue">Min Qty.</p>
-                  <Tooltip title="Lorem ipsum" placement="top">
-                    <img
-                      src={info}
-                      alt="info"
-                      className="ms-2 c-pointer"
-                      width={13.5}
-                    />
-                  </Tooltip>
-                </div>
-                <FormControl className="px-0">
-                  <OutlinedInput placeholder="Enter Min Qty" size="small" />
-                </FormControl>
-              </div>
-              <div className="col-md-2 col-6 mt-3 ">
-                <div className="d-flex mb-1">
-                  <p className="text-lightBlue">Max Qty.</p>
-                  <Tooltip title="Lorem ipsum" placement="top">
-                    <img
-                      src={info}
-                      alt="info"
-                      className="ms-2 c-pointer"
-                      width={13.5}
-                    />
-                  </Tooltip>
-                </div>
-                <FormControl className="px-0">
-                  <OutlinedInput placeholder="Enter Max Qty" size="small" />
-                </FormControl>
-              </div>
-              <div className="col-md-8 pe-0 ps-0 ps-md-3">
-                <div className="row mt-3">
-                  <div className="col-12">
-                    <div className="d-flex mb-1">
-                      <p className="text-lightBlue">Discount</p>
-                      <Tooltip title="Lorem ipsum" placement="top">
-                        <img
-                          src={info}
-                          alt="info"
-                          className="ms-2 c-pointer"
-                          width={13.5}
-                        />
-                      </Tooltip>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="row align-items-center">
-                  <div className="col-md-6 discount-inputs-two d-flex align-items-center">
-                    <FormControl className="px-0">
-                      <OutlinedInput
-                        placeholder="Enter Discount"
-                        size="small"
-                        endAdornment={
-                          <InputAdornment
-                            position="end"
-                            aria-describedby={idDiscountPercent}
-                            onClick={handleDiscountPercent}
-                            className="c-pointer"
-                          >
-                            <span className="d-flex align-items-center">
-                              <p className="text-lightBlue">Percentage</p>
-                              <img
-                                src={arrowDown}
-                                alt="arrow"
-                                className="ms-2"
-                              />
-                            </span>
-                          </InputAdornment>
-                        }
-                      />
-                    </FormControl>
-                    <Popover
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "left",
-                      }}
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "left",
-                      }}
-                      id={idDiscountPercent}
-                      open={openDiscountPercent}
-                      anchorEl={anchorDiscountPercentEl}
-                      onClose={handleDiscountPercentClose}
-                    >
-                      <div className="py-2 px-1">
-                        <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                          Percentage Discount
-                        </small>
-                        <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
-                          Fixed Amount
-                        </small>
-                      </div>
-                    </Popover>
-
-                    <div className="w-auto text-center ms-3">
-                      <p className="text-lightBlue">on</p>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <FormControl
-                      sx={{ m: 0, minWidth: 120, width: "100%" }}
-                      size="small"
-                    >
-                      <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        // value={field}
-                        // onChange={handleFieldChange}
-                        size="small"
-                      >
-                        <MenuItem
-                          value=""
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          None
-                        </MenuItem>
-                        <MenuItem
-                          value={10}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Value 1
-                        </MenuItem>
-                        <MenuItem
-                          value={20}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Value 2
-                        </MenuItem>
-                        <MenuItem
-                          value={30}
-                          sx={{ fontSize: 13, color: "#5c6d8e" }}
-                        >
-                          Value 3
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  </div>
-                  {discountType === 20 && (
-                    <div className="col-md-12 mt-3">
-                      <div className="d-flex mb-1">
-                        <p className="text-lightBlue">Cart Label</p>
-                        <Tooltip title="Lorem ipsum" placement="top">
-                        <img
-                          src={info}
-                          alt="info"
-                          className="ms-2 c-pointer"
-                          width={13.5}
-                        />
-                      </Tooltip>
-                      </div>
-                      <FormControl className="px-0 w-100">
-                        <OutlinedInput placeholder="Enter Label" size="small" />
-                      </FormControl>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-12 px-0 mt-3">
-                <small className="text-blue-2 fw-500 c-pointer">
-                  + Add More Range
-                </small>
-              </div>
-            </div> */}
-
-            <CouponCode
-              value={formik.values?.couponCode}
-              field="couponCode"
-              formik={formik}
-              touched={formik?.touched?.couponCode}
-              error={formik?.errors?.couponCode}
-            />
+            {formik?.values?.discountType === "bulkDiscountPricing" && (
+              <DiscountRange
+                value={formik.values?.discountRange}
+                field="discountRange"
+                formik={formik}
+                touched={formik?.touched?.discountRange}
+                error={formik?.errors?.discountRange}
+                data={formik.values?.discountRange}
+                onSort={() => {}}
+                onDeleteField={deleteDiscountRangeHandler}
+                onAdd={addDiscountRangeHandler}
+              />
+            )}
             <MinimumRequirement
               value={formik.values?.minimumRequirement}
               field="minimumRequirement"
@@ -785,107 +722,6 @@ const CreateDiscount = () => {
               touched={formik?.touched?.customerEligibility}
               error={formik?.errors?.customerEligibility}
             />
-
-                      
-            <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
-              <div className="d-flex col-12 px-0 justify-content-between">
-                <div className="d-flex align-items-center">
-                  <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                    Limit By Location
-                  </h6>
-                  <Tooltip title="Lorem ipsum" placement="top">
-                    <img
-                      src={info}
-                      alt="info"
-                      className="ms-2 c-pointer"
-                      width={13.5}
-                    />
-                  </Tooltip>
-                </div>
-              </div>
-              <hr className="hr-grey-6 mt-3 mb-0" />
-              <div className="col-12 d-flex flex-column px-0 mt-2">
-                <FormControl>
-                  <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    value={limitByLocation}
-                    onChange={handleLimitByLocationChange}
-                  >
-                    <FormControlLabel
-                      value=""
-                      control={<Radio size="small" />}
-                      label="Don't Limit"
-                      sx={{
-                        "& .MuiTypography-root": {
-                          fontSize: 13,
-                          color: "#c8d8ff",
-                          // color: "#5C6D8E",
-                        },
-                      }}
-                    />
-                    <FormControlLabel
-                      value="moreCountry"
-                      control={<Radio size="small" />}
-                      label="Limit use to one or more country"
-                      sx={{
-                        "& .MuiTypography-root": {
-                          fontSize: 13,
-                          color: "#c8d8ff",
-                          // color: "#5C6D8E",
-                        },
-                      }}
-                    />
-                    <FormControlLabel
-                      value="moreState"
-                      control={<Radio size="small" />}
-                      label="Limit use to one or more state"
-                      sx={{
-                        "& .MuiTypography-root": {
-                          fontSize: 13,
-                          color: "#c8d8ff",
-                          // color: "#5C6D8E",
-                        },
-                      }}
-                    />
-                    <FormControlLabel
-                      value="morePostalCode"
-                      control={<Radio size="small" />}
-                      label="Limit use to one or more Zip Codes or Postal Codes"
-                      sx={{
-                        "& .MuiTypography-root": {
-                          fontSize: 13,
-                          color: "#c8d8ff",
-                          // color: "#5C6D8E",
-                        },
-                      }}
-                    />
-                  </RadioGroup>
-                </FormControl>
-
-                <div className="d-flex mt-3">
-                  <TableSearch />
-                  <button className="button-grey py-2 px-3 ms-2">
-                    <small className="text-lightBlue me-2">Browse</small>
-                    <img src={arrowDown} alt="arrow" className="" />
-                  </button>
-                </div>
-                <div className="d-flex">
-                  <Chip
-                    label="Japan"
-                    onDelete={handleDelete}
-                    size="small"
-                    className="mt-3 me-2"
-                  />
-                  <Chip
-                    label="China"
-                    onDelete={handleDelete}
-                    className="me-2 mt-3"
-                    size="small"
-                  />
-                </div>
-              </div>
-            </div>
             <ReturnAndExchangeCondition
               sectionHeading={"Return & Exchange Condition"}
               value={formik.values?.returnExchange}
@@ -904,7 +740,26 @@ const CreateDiscount = () => {
               field="discountCombination"
               formik={formik}
             />
-            <ScheduleDiscountCode />
+
+            <ScheduleDiscountCode
+              value={formik.values?.scheduledDiscount}
+              field="scheduledDiscount"
+              formik={formik}
+            />
+            <LimitByLocation
+              value={formik.values?.limitByLocation}
+              field="limitByLocation"
+              formik={formik}
+              touched={formik?.touched?.limitByLocation}
+              error={formik?.errors?.limitByLocation}
+            />
+            <CouponCode
+              value={formik.values?.couponCode}
+              field="couponCode"
+              formik={formik}
+              touched={formik?.touched?.couponCode}
+              error={formik?.errors?.couponCode}
+            />
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3">
@@ -919,7 +774,9 @@ const CreateDiscount = () => {
               </div>
 
               <hr className="hr-grey-6 my-3" />
-              <small className="text-grey-6">Product Discount</small>
+              <small className="text-grey-6">
+                {formik.values?.discountType}
+              </small>
               <div className="d-flex align-items-center mt-1">
                 <small className="text-blue-1 fw-500">
                   • Code&nbsp;&nbsp;|
@@ -984,7 +841,7 @@ const CreateDiscount = () => {
           </div>
         </div>
         <SaveFooterTertiary show={true} onDiscard={backHandler} />
-      </formik>
+      </form>
     </div>
   );
 };

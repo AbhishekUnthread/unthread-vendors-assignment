@@ -375,12 +375,10 @@ const router = () => {
                 {
                   path: "bundleDiscount",
                   element: <BundleDiscount />,
-                  children: [
-                    {
-                      path: "create",
-                      element: <CreateBundleDiscount />,
-                    },
-                  ],
+                },
+                {
+                  path: "bundleDiscount/create",
+                  element: <CreateBundleDiscount />,
                 },
               ],
             },

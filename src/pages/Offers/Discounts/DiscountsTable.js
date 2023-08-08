@@ -22,6 +22,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 // ? TABLE STARTS HERE
 function createData(
@@ -89,18 +90,25 @@ const rows = [
   ),
 ];
 
-const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage,changePage,page}) => {
+const DiscountsTable = ({
+  isLoading,
+  list,
+  totalCount,
+  rowsPerPage,
+  changeRowsPerPage,
+  changePage,
+  page,
+}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
 
-
   const headCells = [
     {
-      id: "discountName",
+      id: "discountTitle",
       numeric: false,
       disablePadding: true,
-      label: "Name",
+      label: "Title",
     },
     {
       id: "discount",
@@ -120,12 +128,12 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
     //   disablePadding: false,
     //   label: "Time Period",
     // },
-    // {
-    //   id: "totalUsage",
-    //   numeric: false,
-    //   disablePadding: false,
-    //   label: "Total Usage",
-    // },
+    {
+      id: "totalUsage",
+      numeric: false,
+      disablePadding: false,
+      label: "Total Usage",
+    },
     {
       id: "status",
       numeric: false,
@@ -139,7 +147,6 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
       label: "Actions",
     },
   ];
-
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -213,8 +220,8 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
             headCells={headCells}
           />
           <TableBody>
-            {stableSort(list, getComparator(order, orderBy))
-              .map((row, index) => {
+            {stableSort(list, getComparator(order, orderBy)).map(
+              (row, index) => {
                 const isItemSelected = isSelected(row?._id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -246,6 +253,7 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
                       id={labelId}
                       scope="row"
                       padding="none"
+                      style={{ width: 180 }}
                     >
                       <div className="d-flex align-items-center py-2">
                         {/* <img
@@ -283,13 +291,22 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
                       </div>
                     </TableCell> */}
                     <TableCell style={{ width: 180 }}>
-                      <div className="d-flex flex-column">
+                      <div className="d-flex flex-row align-items-center">
                         <div className="d-flex">
                           <p className="text-lightBlue">{row.timePeriod}</p>
                         </div>
                         <p className="text-lightBlue me-2">
                           {row?.mainDiscount?.discountCode}
-                       </p>
+                        </p>
+                        {row?.mainDiscount?.discountCode?<Tooltip title="Copy" placement="top">
+                          <ContentCopyIcon
+                            sx={{
+                              color: "#5c6d8e",
+                              fontSize: 12,
+                              cursor: "pointer",
+                            }}
+                          />
+                        </Tooltip>:null}
                       </div>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
@@ -301,7 +318,18 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell style={{ width: 140, padding: 0 }}>
+                    <TableCell style={{ width: 180 }}>
+                      <div className="d-flex flex-column">
+                        <div className="d-flex">
+                          <p className="text-lightBlue me-2">
+                            {row?.maximumDiscountUse?.isUnlimited
+                              ? "Unlimited"
+                              : row?.maximumDiscountUse?.total}
+                          </p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell style={{ width: 180, padding: 0 }}>
                       <div className="d-flex align-items-center">
                         <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
                           <small className="text-black fw-400">
@@ -323,7 +351,7 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
                             />
                           </div>
                         </Tooltip>
-                        <Tooltip title="Duplicate" placement="top">
+                        {/* <Tooltip title="Duplicate" placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <ContentCopyIcon
                               sx={{
@@ -333,10 +361,15 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
                               }}
                             />
                           </div>
-                        </Tooltip>
-                        <Tooltip title="Archive" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
-                            <InventoryIcon
+                        </Tooltip> */}
+                        <Tooltip title="Delete" placement="top">
+                          <div
+                            className="table-edit-icon rounded-4 p-2"
+                            // onClick={(e) => {
+                            //   handleDeleteOnClick(row);
+                            // }}
+                          >
+                            <DeleteIcon
                               sx={{
                                 color: "#5c6d8e",
                                 fontSize: 18,
@@ -349,7 +382,8 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
                     </TableCell>
                   </TableRow>
                 );
-              })}
+              }
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -358,7 +392,7 @@ const DiscountsTable = ({isLoading,list,totalCount,rowsPerPage,changeRowsPerPage
         component="div"
         count={totalCount}
         rowsPerPage={rowsPerPage}
-        page={page-1}
+        page={page - 1}
         onPageChange={changePage}
         onRowsPerPageChange={changeRowsPerPage}
         className="table-pagination"
