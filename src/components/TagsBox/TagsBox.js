@@ -104,9 +104,7 @@ const TagsBox = ({ tagsList = [], selectedTagList }) => {
   const handleTagsClose = () => {
     setOpenTags(false);
   };
-  // ? TAGS DIALOG ENDS HERE
 
-  // * SORT POPOVERS STARTS
   const [anchorTagEl, setAnchorTagEl] = React.useState(null);
 
   const handleTagClick = (event) => {
@@ -119,7 +117,8 @@ const TagsBox = ({ tagsList = [], selectedTagList }) => {
 
   const openTag = Boolean(anchorTagEl);
   const idTag = openTag ? "simple-popover" : undefined;
-  // * SORT POPOVERS ENDS
+
+  console.log(tagsList, 'tagsList');
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">

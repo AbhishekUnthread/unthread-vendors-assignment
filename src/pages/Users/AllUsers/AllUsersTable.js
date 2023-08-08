@@ -43,7 +43,8 @@ const AllUsersTable = ({
   changePage,
   page,
   onEdit,
-  customerType
+  customerType,
+  edit
 }) => {
   const dispatch = useDispatch();
   const [order, setOrder] = useState("asc");
@@ -55,6 +56,7 @@ const AllUsersTable = ({
   const [customerId, setCustomerId] = useState();
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
+  const [customerInfo, setCustomerInfo] = useState();
 
   const [
     editCustomer,
@@ -131,13 +133,17 @@ const AllUsersTable = ({
   const handleMassActionClick = (event) => {
     setAnchorMassActionEl(event.currentTarget);
   };
+
   const handleMassActionClose = () => {
     setAnchorMassActionEl(null);
   };
+  
   const openMassAction = Boolean(anchorMassActionEl);
   const idMassAction = openMassAction ? "simple-popover" : undefined;
 
-  const handleActionClick = (event) => {
+  const handleActionClick = (event, row) => {
+    setCustomerInfo(row)
+    setCustomerId(row._id);
     setAnchorActionEl(event.currentTarget);
   };
 
@@ -357,26 +363,18 @@ const AllUsersTable = ({
                       </TableCell>
                       <TableCell>
                         <div className="d-flex flex-column align-items-start">
-                          {row?.addresses?.map((address, index) => {
-                            if (address.isDefaultAddress === true) {
-                              return (
-                                <div key={index}>
-                                <div className="d-flex align-items-center">
-                                  <img src={row?.addresses[0]?.country?.imageUrl} alt="indiaFlag" height={16} />
-                                  <p className="text-lightBlue ms-2">
-                                    {row?.addresses[0]?.state?.name}, {" "}
-                                    {row?.addresses[0]?.country?.name}
-                                  </p>
-                                  </div>
-                                  <br />
-                                </div>
-                              );
-                            } else {
-                              return null;
-                            }
-                          })}
+                          <div key={index}>
+                            <div className="d-flex align-items-center">
+                              <img src={row?.addresses[0]?.country?.imageUrl} alt="indiaFlag" height={16} />
+                              <p className="text-lightBlue ms-2">
+                                {row?.addresses[0]?.state?.name || " "}, {" "}
+                                {row?.addresses[0]?.country?.name}
+                              </p>
+                            </div>
+                            <br />
+                          </div>
                         </div>
-                    </TableCell>
+                      </TableCell>
 
                       <TableCell>
                         <p className="text-lightBlue">24</p>
@@ -413,7 +411,7 @@ const AllUsersTable = ({
                             className="c-pointer"
                             aria-describedby={idActions}
                             variant="contained"
-                            onClick={handleActionClick}
+                            onClick={(event) => handleActionClick(event, row)}
                           />
                           <Popover
                             anchorOrigin={{
@@ -432,7 +430,14 @@ const AllUsersTable = ({
                             <div className="py-2 px-2">
                               <small className="text-grey-7 px-2">ACTIONS</small>
                               <hr className="hr-grey-6 my-2" />
-                              <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                              <small 
+                                className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                                onClick={(e) => {
+                                  if(customerType != 3) {
+                                    edit(customerInfo, index+1, customerType);
+                                  }
+                                }}
+                              >
                                 Edit Customer
                               </small>
                               <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">

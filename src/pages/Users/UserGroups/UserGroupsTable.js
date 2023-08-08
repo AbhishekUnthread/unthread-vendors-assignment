@@ -308,6 +308,12 @@ const UserGroupsTable = ({
       numeric: false,
       disablePadding: false,
       label: "Users in Group",
+    },
+    {
+      id: "segment",
+      numeric: false,
+      disablePadding: false,
+      label: "Segment Size%",
     }
   ];
 
@@ -425,6 +431,9 @@ const UserGroupsTable = ({
                         </TableCell>
                         <TableCell style={{ width: 180 }}>
                           <p className="text-lightBlue">{row.usersInGroup}</p>
+                        </TableCell>
+                        <TableCell style={{ width: 180 }}>
+                          <p className="text-lightBlue">100%</p>
                         </TableCell>
                         { (value == 0 || value == 3) &&
                           <TableCell style={{ width: 180 }}>

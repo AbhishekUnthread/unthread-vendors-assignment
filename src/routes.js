@@ -194,6 +194,10 @@ const router = () => {
                   element: <AddUser />,
                 },
                 {
+                  path: "allUsers/edit/:id",
+                  element: <AddUser />,
+                },
+                {
                   path: "allUsers/details/:id",
                   element: <UserDetails />,
                 },

@@ -99,8 +99,6 @@ const UserDetails = () => {
     setParamsData(parsedObject);
   }, []);
 
-  console.log(paramsData, 'paramsData');
-
   const customerId = paramsData?.id;
 
   useEffect(() => {

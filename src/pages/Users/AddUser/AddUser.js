@@ -1,7 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useReducer, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
+import _ from "lodash";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -20,26 +22,89 @@ import {
   Autocomplete,
 } from "@mui/material";
 
+import { 
+  useCreateCustomerMutation, 
+  useGetAllCustomersQuery,
+  useEditCustomerMutation
+} from "../../../features/customers/customer/customerApiSlice"
+import { useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
+import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
 import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import TagsBox from "../../../components/TagsBox/TagsBox";
-import SaveFooter from "../../../components/SaveFooter/SaveFooter";
+import { SaveFooterTertiary} from "../../../components/SaveFooter/SaveFooter";
 import AddAddress from "./AddAddress";
+import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
 
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import addMedia from "../../../assets/icons/addMedia.svg";
 
 import "./AddUser.scss";
 
-import {
-  showSuccess,
-  showError,
-} from "../../../features/snackbar/snackbarAction";
+const initialQueryFilterState = {
+  pageSize: 1,
+  pageNo: null,
+  totalCount: 0,
+};
 
-import {useCreateCustomerMutation} from "../../../features/customers/customer/customerApiSlice"
-import { useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
-import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
+const initialCustomerState = {
+  deleteIndex: null,
+  confirmationMessage: "",
+  showDeleteModal: false,
+  isEditing: false,
+};
+
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_NO") {
+    return {
+      ...state,
+      pageNo: +action.pageNo,
+    };
+  }
+  if (action.type === "SET_TOTAL_COUNT") {
+    return {
+      ...state,
+      totalCount: action.totalCount,
+    };
+  }
+  return initialQueryFilterState;
+};
+
+const customerTabReducer = (state, action) => {
+  if (action.type === "SET_DELETE") {
+    return {
+      ...state,
+      deleteIndex: action.deleteIndex,
+      confirmationMessage: action.message || "",
+      showDeleteModal: true,
+    };
+  }
+  if (action.type === "REMOVE_DELETE") {
+    return {
+      ...initialCustomerState,
+    };
+  }
+  if (action.type === "ENABLE_EDIT") {
+    return {
+      ...initialCustomerState,
+      isEditing: true,
+    };
+  }
+  if (action.type === "DISABLE_EDIT") {
+    return {
+      ...initialCustomerState,
+      isEditing: false,
+    };
+  }
+
+  return initialCustomerState;
+};
 
 const customerValidationSchema = Yup.object({
   firstName: Yup.string().trim().min(3).required("Required"),
@@ -60,8 +125,36 @@ const customerValidationSchema = Yup.object({
 });
 
 const AddUser = () => {
+  let { id } = useParams();
   let navigate = useNavigate();
   const dispatch = useDispatch();
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+  const [customerState, dispatchCustomer] = useReducer(
+    customerTabReducer,
+    initialCustomerState
+  );
+
+  console.log(customerState.isEditing, "customerState");
+
+  const {
+    data: customerData,
+    isLoading: customerIsLoading,
+    error: customerIsError,
+    isSuccess: customerIsSuccess,
+  } = useGetAllCustomersQuery({id: id},{ skip: id ? false : true});
+
+  const [
+    editCustomer,
+    {
+      data: editData,
+      isLoading: editCustomerIsLoading,
+      isSuccess: editCustomerIsSuccess,
+      error: editCustomerError,
+    }
+  ] = useEditCustomerMutation();
 
   const {
     data: tagsData,
@@ -116,19 +209,25 @@ const AddUser = () => {
     customerFormik.setFieldValue("address", [event])
   }
 
+  const backHandler = () => {
+    navigate("/users/allUsers");
+  };
+
   const customerFormik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
-      dob: "",
-      gender: "",
-      countryCode: "",
-      phone: "",
-      email: "",
-      password: "",
-      address: "",
-      isSendEmail: false,
-      isTemporaryPassword: false
+      firstName: customerData?.data?.data[0]?.firstName || "",
+      lastName: customerData?.data?.data[0]?.lastName || "",
+      dob: customerData?.data?.data[0]?.dob || "",
+      gender: customerData?.data?.data[0]?.gender || "",
+      countryCode: customerData?.data?.data[0]?.countryCode || "",
+      phone: customerData?.data?.data[0]?.phone || "",
+      email: customerData?.data?.data[0]?.email || "",
+      password: customerData?.data?.data[0]?.password || "",
+      address: customerData?.data?.data[0]?.address || "",
+      isSendEmail: customerData?.data?.data[0]?.isSendEmail || false,
+      isTemporaryPassword: customerData?.data?.data[0]?.isTemporaryPassword || false,
+      notes: customerData?.data?.data[0]?.notes || "",
+      imageUrl: customerData?.data?.data[0]?.imageUrl || "",
     },
     enableReinitialize: true,
     validationSchema: customerValidationSchema,
@@ -138,14 +237,39 @@ const AddUser = () => {
           delete values[key] 
         }
       }
-      createCustomer(values)
+      if(!id) {
+        createCustomer(values)
+          .unwrap()
+          .then((res) => {
+              navigate("/users/allUsers");
+              dispatch(showSuccess({ message: "Custormer created successfully" }));
+          })
+      } else {
+        editCustomer({
+        id: id,
+        details : values
+      })
         .unwrap()
-        .then((res) => {
-            navigate("/users/allUsers");
-            dispatch(showSuccess({ message: "Custormer created successfully" }));
-        })
+          .then(() => {
+            dispatch(showSuccess({ message: "Custormer edited successfully" }));
+          });
+      }
     },
   });
+
+  useEffect(() => {
+    if (id) {
+      dispatchQueryFilter({ type: "SET_PAGE_NO", pageNo: id });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (id && !_.isEqual(customerFormik.values, customerFormik.initialValues)) {
+      dispatchCustomer({ type: "ENABLE_EDIT" });
+    } else if (id && _.isEqual(customerFormik.values, customerFormik.initialValues)) {
+      dispatchCustomer({ type: "DISABLE_EDIT" });
+    }
+  }, [customerFormik.initialValues, customerFormik.values, id]);
 
   return (
     <form noValidate onSubmit={customerFormik.handleSubmit}>
@@ -290,18 +414,14 @@ const AddUser = () => {
                         name="phone" 
                       />
                     </FormControl>
-                    {!!customerFormik.touched.phone && customerFormik.errors.phone && (
+                    { (!!customerFormik.touched.countryCode || !!customerFormik.touched.phone) 
+                      && (customerFormik.errors.countryCode || customerFormik.errors.phone) && (
                       <FormHelperText error>
-                        {customerFormik.errors.phone}
-                      </FormHelperText>
-                    )}
-                    {!!customerFormik.touched.countryCode && customerFormik.errors.countryCode && (
-                      <FormHelperText error>
-                        {customerFormik.errors.countryCode}
+                        {customerFormik.errors.countryCode || customerFormik.errors.phone}
                       </FormHelperText>
                     )}
                   </div>
-                   <div className="col-md-12">
+                  <div className="col-md-12">
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -431,7 +551,7 @@ const AddUser = () => {
                       renderInput={(params) => (
                         <TextField
                           size="small"
-                          {...params}
+                          {...params || customerData?.data?.data[0]?.groups[0]?.name}
                           placeholder="Search"
                         />
                       )}
@@ -445,17 +565,19 @@ const AddUser = () => {
               name="address"
               value={customerFormik.values.address}
               customerAddressDetails={customerAddressDetails}
+              data={customerData?.data?.data[0]?.addresses[0]}
             />
           </div>
           <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-            <UploadMediaBox 
+            {/* <UploadMediaBox 
               name={"imageUrl"}  
               value={customerFormik?.values?.imageUrl}  
               imageName={addMedia} 
               headingName={"Media"} 
               UploadChange={handleMediaUrl} 
               isUploaded={()=>{}}
-            />
+              previousImage={customerFormik?.values?.imageUrl}
+            /> */}
             <TagsBox 
               name="tags"
               value={customerFormik.values.tags}
@@ -470,9 +592,17 @@ const AddUser = () => {
           </div>
         </div>
         <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
-          <SaveFooter saveAddAnother={"Save & Add Another"} />
+          <SaveFooterTertiary
+            show={id ? customerState.isEditing : true}
+            onDiscard={backHandler}
+            isLoading={createCustomerIsLoading || editCustomerIsLoading}
+          />
         </div>
       </div>
+      <DiscardModalSecondary
+        when={!_.isEqual(customerFormik.values, customerFormik.initialValues)}
+        message="customer tab"
+      />
     </form>
   );
 };

@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams, createSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   Autocomplete,
@@ -191,11 +191,19 @@ const AllUsers = () => {
 
   const customerCount = customersCountData?.data[0];
 
-  const editHandler = (id) => {
+  const detailHandler = (id) => {
     let combinedObject = {id, queryFilterState}
     const paramsQuery = encodeURIComponent(JSON.stringify(combinedObject));    
-
     navigate(`./details/${paramsQuery}`);
+  };
+
+  const editHandler = (data) => {
+    navigate({
+      pathname: `./edit/${data ? data._id : ""}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, pageSize: 1, usersState: usersState.customerType }),
+      })}`,
+    });
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -948,8 +956,9 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-              onEdit={editHandler}
+              onEdit={detailHandler}
               customerType={usersState.customerType}
+              edit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={1}>
@@ -962,8 +971,9 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-              onEdit={editHandler}
+              onEdit={detailHandler}
               customerType={usersState.customerType}
+              edit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={2}>
@@ -976,8 +986,9 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-              onEdit={editHandler}
+              onEdit={detailHandler}
               customerType={usersState.customerType}
+              edit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={3}>
@@ -990,8 +1001,9 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-              onEdit={editHandler}
+              onEdit={detailHandler}
               customerType={usersState.customerType}
+              edit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={4}>
@@ -1004,7 +1016,7 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-              onEdit={editHandler}
+              onEdit={detailHandler}
               customerType={usersState.customerType}
             />
           </TabPanel>

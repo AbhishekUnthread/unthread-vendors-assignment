@@ -35,24 +35,25 @@ const customerAddressValidation = Yup.object({
   state: Yup.string().required("Required"),
 });
 
-const AddAddress = ({ customerAddressDetails }) => {
+const AddAddress = ({ customerAddressDetails, data }) => {
   const [address, setAddress] = useState(false);
   const [savedAddress, setSavedAddress] = useState(false);
 
   const customerAddressFormik = useFormik({
     initialValues: {
-      name: "",
-      firstName: "",
-      lastName: "",
-      companyName: "",
-      countryCode: "",
-      country: "",
-      phone: "",
-      line1: "",
-      city: "",
-      pinCode: "",
-      state: "",
-      isDefaultAddress: false,
+      name: data?.name || "",
+      firstName: data?.firstName || "",
+      lastName: data?.lastName || "",
+      companyName: data?.companyName || "",
+      countryCode: data?.countryCode || "",
+      country: data?.country?.name || "",
+      phone: data?.phone || "",
+      line1: data?.line1 || "",
+      line2: data?.line2 || "",
+      city: data?.city?.name || "",
+      pinCode: data?.pinCode || "",
+      state: data?.state?.name || "",
+      isDefaultAddress: data?.isDefaultAddress || false,
     },
     enableReinitialize: true,
     validationSchema: customerAddressValidation,

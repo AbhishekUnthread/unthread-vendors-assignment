@@ -349,7 +349,6 @@ const groupTabReducer = (state, action) => {
       isEditing: false,
     };
   }
-
   return initialCustomerGroupState;
 };
 

@@ -166,7 +166,7 @@ const UploadMediaBox = ({
               : imageName
           }
           className="w-100"
-          style={{ height: "150px" }}
+          style={{ height: "150px", borderRadius: "10px" }}
           alt=""
         />
       </div>
