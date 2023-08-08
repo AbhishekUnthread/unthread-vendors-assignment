@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import {
   useNavigate,
@@ -37,6 +37,14 @@ import {
   showError,
 } from "../../../features/snackbar/snackbarAction";
 import { useGetAllCategoriesQuery } from "../../../features/parameters/categories/categoriesApiSlice";
+import {
+  useGetAllOptionSetsQuery,
+  useCreateOptionSetMutation,
+  useUpdateOptionSetMutation,
+  useDeleteOptionSetMutation,
+} from "../../../features/parameters/options/optionSetsApiSlice";
+
+import SnackbarUtils from "../../../features/snackbar/useSnackbar";
 
 const FRONTEND_APPEARANCE = [
   {
@@ -79,20 +87,37 @@ const optionSetValidationSchema = Yup.object({
     Yup.object({
       attribute: Yup.array().of(
         Yup.object({
+          expanded: Yup.boolean().optional(),
           id: Yup.string().required("Required"),
-          metaAttributes: Yup.array().of(
-            Yup.object({
-              id: Yup.string().required("Required"),
-              metaSubAttribute: Yup.array().of(
-                Yup.object({
-                  id: Yup.string().required("Required"),
-                  metaSubAttributeValue: Yup.array().of(
-                    Yup.string().required("Required")
-                  ),
-                })
-              ),
-            })
-          ),
+          metaAttributes: Yup.array()
+            .of(
+              Yup.object({
+                id: Yup.string().required("Required"),
+                metaSubAttribute: Yup.array().of(
+                  Yup.object({
+                    id: Yup.string().required("Required"),
+                    metaSubAttributeValue: Yup.array()
+                      .of(Yup.string().required("Required"))
+                      .when(["id"], ([id], schema) => {
+                        if (id) {
+                          return schema
+                            .min(1, "Minimum 1 sub attribute required")
+                            .required("Required");
+                        }
+                        return schema;
+                      }),
+                  })
+                ),
+              })
+            )
+            .when(["id"], ([id], schema) => {
+              if (id) {
+                return schema
+                  .min(1, "Minimum 1 attribute required")
+                  .required("Required");
+              }
+              return schema;
+            }),
         })
       ),
     })
@@ -115,7 +140,7 @@ const initialOptionSetState = {
   confirmationMessage: "",
   showDeleteModal: false,
   deleteTitle: "",
-  isLoading: false,
+  createdSuccess: false,
 };
 
 const optionSetQueryFilterReducer = (state, action) => {
@@ -180,16 +205,16 @@ const optionSetReducer = (state, action) => {
       isEditing: false,
     };
   }
-  if (action.type === "ENABLE_LOADING") {
+  if (action.type === "ENABLE_SUCCESS") {
     return {
       ...state,
-      isLoading: true,
+      createdSuccess: true,
     };
   }
-  if (action.type === "DISABLE_LOADING") {
+  if (action.type === "DISABLE_SUCCESS") {
     return {
       ...state,
-      isLoading: false,
+      createdSuccess: false,
     };
   }
 
@@ -199,6 +224,7 @@ const optionSetReducer = (state, action) => {
 const EMPTY_OPTION = {
   attribute: [
     {
+      expanded: true,
       id: "",
       metaAttributes: [],
     },
@@ -228,17 +254,131 @@ const OptionSetsInfo = () => {
     isSuccess: categoriesIsSuccess,
   } = useGetAllCategoriesQuery();
 
+  const [
+    createOptionSet,
+    {
+      isLoading: createOptionSetIsLoading,
+      isSuccess: createOptionSetIsSuccess,
+      error: createOptionSetError,
+      isError: createOptionSetIsError,
+    },
+  ] = useCreateOptionSetMutation();
+
+  const {
+    data: optionSetsData,
+    isLoading: optionSetsIsLoading,
+    error: optionSetsError,
+    isError: optionSetsIsError,
+    isSuccess: optionSetsIsSuccess,
+  } = useGetAllOptionSetsQuery(optionSetQueryFilterState, {
+    skip: optionSetQueryFilterState.srNo ? false : true,
+  });
+
+  const [
+    updateOptionSet,
+    {
+      isLoading: updateOptionSetIsLoading,
+      isSuccess: updateOptionSetIsSuccess,
+      error: updateOptionSetError,
+      isError: updateOptionSetIsError,
+    },
+  ] = useUpdateOptionSetMutation();
+
   const optionSetFormik = useFormik({
     initialValues: {
-      name: "",
-      isProduct: false,
-      categoryId: "",
-      option: [],
+      name: optionSetsData?.data[0]?.name || "",
+      isProduct: optionSetsData?.data[0]?.isProduct || false,
+      categoryId: optionSetsData?.data[0]?.categoryId || "",
+      option: optionSetsData?.data[0]?.option.length
+        ? optionSetsData.data[0].option?.map((set) => {
+            return {
+              attribute: set.attribute?.map((option) => {
+                return {
+                  id: option.id,
+                  metaAttributes: option.metaAttributes?.map((attr) => {
+                    return {
+                      id: attr.id,
+                      metaSubAttribute: attr.metaSubAttribute.map((subOp) => {
+                        return {
+                          id: subOp.id,
+                          metaSubAttributeValue:
+                            subOp.metaSubAttributeValue.map((subAttr) => {
+                              return subAttr._id;
+                            }),
+                        };
+                      }),
+                    };
+                  }),
+                };
+              }),
+            };
+          })
+        : [],
     },
     enableReinitialize: true,
     validationSchema: optionSetValidationSchema,
     onSubmit: (values) => {
-      console.log(values);
+      const optionSet = structuredClone(values);
+      for (const key in optionSet) {
+        if (
+          optionSet[key] === "" ||
+          optionSet[key] === null ||
+          optionSet[key] === undefined
+        )
+          delete optionSet[key];
+      }
+      SnackbarUtils.savingToast();
+      if (id) {
+        updateOptionSet({
+          id: optionSetsData?.data[0]._id,
+          details: optionSet,
+        })
+          .unwrap()
+          .then(() => {
+            optionSetFormik.resetForm();
+            dispatch(
+              showSuccess({
+                message: "Option set edited successfully",
+              })
+            );
+          })
+          .catch((error) => {
+            if (error?.data?.message) {
+              dispatch(showError({ message: error.data.message }));
+            } else {
+              dispatch(
+                showError({
+                  message: "Something went wrong!, please try again",
+                })
+              );
+            }
+          });
+        SnackbarUtils.hideToast();
+        return;
+      }
+      createOptionSet(optionSet)
+        .unwrap()
+        .then(() => {
+          optionSetFormik.resetForm();
+          dispatch(
+            showSuccess({
+              message: "Option set created successfully",
+            })
+          );
+          dispatchOptionSet({ type: "ENABLE_SUCCESS" });
+        })
+        .catch((error) => {
+          if (error?.data?.message) {
+            dispatch(showError({ message: error.data.message }));
+          } else {
+            dispatch(
+              showError({
+                message: "Something went wrong!, please try again",
+              })
+            );
+          }
+        });
+      SnackbarUtils.hideToast();
     },
   });
 
@@ -286,6 +426,10 @@ const OptionSetsInfo = () => {
     optionSetFormik.setFieldValue("option", updatedOptions);
   };
 
+  const pageLoadingHandler = useCallback((value) => {
+    setPageIsLoading(true);
+  }, []);
+
   useEffect(() => {
     if (id) {
       dispatchOptionSetQueryFilter({ type: "SET_SR_NO", srNo: id });
@@ -307,17 +451,31 @@ const OptionSetsInfo = () => {
   }, [optionSetFormik.initialValues, optionSetFormik.values, id]);
 
   useEffect(() => {
-    const isLoading = categoriesIsLoading;
+    let isLoading = categoriesIsLoading;
     if (optionSetQueryFilterState.srNo) {
+      isLoading = categoriesIsLoading || optionSetsIsLoading;
     }
     if (isLoading) {
       setPageIsLoading(true);
     } else {
       setPageIsLoading(false);
     }
-  }, [categoriesIsLoading, optionSetQueryFilterState.srNo]);
+  }, [
+    categoriesIsLoading,
+    optionSetsIsLoading,
+    optionSetQueryFilterState.srNo,
+  ]);
 
-  // console.log(optionSetFormik.values.option);
+  useEffect(() => {
+    if (optionSetState.createdSuccess) {
+      navigate({
+        pathname: "/parameters/options",
+        search: `?${createSearchParams({
+          search: searchParams.get("search"),
+        })}`,
+      });
+    }
+  }, [optionSetState.createdSuccess, navigate, searchParams]);
 
   return (
     <>
@@ -491,6 +649,7 @@ const OptionSetsInfo = () => {
                         index={index}
                         formik={optionSetFormik}
                         isSubmitting={optionSetFormik.isSubmitting}
+                        onPageLoad={pageLoadingHandler}
                       />
                     );
                   })}
@@ -501,7 +660,7 @@ const OptionSetsInfo = () => {
             <SaveFooterTertiary
               show={id ? optionSetState.isEditing : true}
               onDiscard={backHandler}
-              isLoading={optionSetState.isLoading}
+              isLoading={createOptionSetIsLoading}
             />
           </form>
         )}
@@ -514,9 +673,14 @@ const OptionSetsInfo = () => {
         />
         <DiscardModalSecondary
           when={
-            !_.isEqual(optionSetFormik.values, optionSetFormik.initialValues)
+            optionSetState.createdSuccess
+              ? false
+              : !_.isEqual(
+                  optionSetFormik.values,
+                  optionSetFormik.initialValues
+                )
           }
-          message="option"
+          message="option set"
         />
       </div>
     </>

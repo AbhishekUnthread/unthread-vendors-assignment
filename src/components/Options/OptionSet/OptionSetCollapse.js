@@ -13,7 +13,8 @@ const FRONTEND_APPEARANCE = {
 };
 
 const OptionSetCollapse = (props) => {
-  const { onEdit, onOptionDelete, index } = props;
+  const { onEdit, onOptionDelete, index, selectedOption, selectedAttributes } =
+    props;
 
   return (
     <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4 ">
@@ -22,7 +23,7 @@ const OptionSetCollapse = (props) => {
           <Grid container alignItems="center">
             <Grid item sm={6}>
               <span className="text-lightBlue" style={{ fontSize: "15px" }}>
-                test
+                {selectedOption?.title}
               </span>
             </Grid>
             <Grid
@@ -43,14 +44,20 @@ const OptionSetCollapse = (props) => {
               >
                 <span className="text-grey-6">
                   Input Field Type:{" "}
-                  <span className="text-lightBlue">test'</span>
+                  {selectedOption?.apperance ? (
+                    <span className="text-lightBlue">
+                      {FRONTEND_APPEARANCE[selectedOption?.apperance]}
+                    </span>
+                  ) : null}
                 </span>
               </div>
               <EditButton onClick={onEdit} />
               <DeleteIconButton
                 onClick={onOptionDelete.bind(null, {
                   deleteIndex: index,
-                  message: "option",
+                  message: selectedOption?.title
+                    ? `${selectedOption?.title} option`
+                    : "option",
                 })}
                 title="Delete"
               />
@@ -66,41 +73,49 @@ const OptionSetCollapse = (props) => {
               gap: "10px",
             }}
           >
-            <div
-              className="rounded-pill d-flex align-items-center px-2 py-1 c-pointer"
-              style={{
-                background:
-                  "linear-gradient(303.01deg, #2f2e69 -4.4%, #514969 111.29%)",
-              }}
-            >
-              {/* {formik.values.subAttributes[index]?.imageUrl && (
-                      <img
-                        src={formik.values.subAttributes[index]?.imageUrl}
-                        alt="icon"
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                          borderRadius: "50%",
-                        }}
-                        className="me-2"
-                      />
-                    )}
-                    {formik.values?.subAttributes[index]?.apperance ===
-                      "colorAndImageSwatches" &&
-                      formik.values.subAttributes[index]?.colour && (
-                        <div
-                          style={{
-                            width: "20px",
-                            height: "20px",
-                            borderRadius: "50%",
-                            backgroundColor:
-                              formik.values.subAttributes[index]?.colour,
-                          }}
-                          className="me-2"
-                        />
-                      )} */}
-              <small className="fw-400 text-lightBlue">test</small>
-            </div>
+            {selectedAttributes?.map((attr) => {
+              return (
+                <div
+                  key={attr._id}
+                  className="rounded-pill d-flex align-items-center px-2 py-1 c-pointer"
+                  style={{
+                    background:
+                      "linear-gradient(303.01deg, #2f2e69 -4.4%, #514969 111.29%)",
+                  }}
+                >
+                  {attr?.imageUrl && (
+                    <img
+                      src={attr?.imageUrl}
+                      alt="icon"
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        borderRadius: "50%",
+                      }}
+                      className="me-2"
+                    />
+                  )}
+                  {attr?.colour && (
+                    <div
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        borderRadius: "50%",
+                        backgroundColor: attr?.colour,
+                      }}
+                      className="me-2"
+                    />
+                  )}
+                  <small className="fw-400 text-lightBlue">
+                    {`${attr.title} ${
+                      attr?.metaSubAttributes?.length
+                        ? `(${attr.metaSubAttributes.length})`
+                        : ""
+                    }`}
+                  </small>
+                </div>
+              );
+            })}
           </div>
         </Grid>
       </Grid>
