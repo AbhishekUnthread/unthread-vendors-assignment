@@ -85,6 +85,7 @@ const optionSetValidationSchema = Yup.object({
     Yup.object({
       attribute: Yup.array().of(
         Yup.object({
+          expanded: Yup.boolean().optional(),
           id: Yup.string().required("Required"),
           metaAttributes: Yup.array()
             .of(
@@ -221,6 +222,7 @@ const optionSetReducer = (state, action) => {
 const EMPTY_OPTION = {
   attribute: [
     {
+      expanded: true,
       id: "",
       metaAttributes: [],
     },
@@ -286,7 +288,29 @@ const OptionSetsInfo = () => {
       isProduct: optionSetsData?.data[0]?.isProduct || false,
       categoryId: optionSetsData?.data[0]?.categoryId || "",
       option: optionSetsData?.data[0]?.option.length
-        ? optionSetsData?.data[0]?.option
+        ? optionSetsData.data[0].option?.map((set) => {
+            return {
+              attribute: set.attribute?.map((option) => {
+                return {
+                  id: option.id,
+                  metaAttributes: option.metaAttributes?.map((attr) => {
+                    return {
+                      id: attr.id,
+                      metaSubAttribute: attr.metaSubAttribute.map((subOp) => {
+                        return {
+                          id: subOp.id,
+                          metaSubAttributeValue:
+                            subOp.metaSubAttributeValue.map((subAttr) => {
+                              return subAttr._id;
+                            }),
+                        };
+                      }),
+                    };
+                  }),
+                };
+              }),
+            };
+          })
         : [],
     },
     enableReinitialize: true,
@@ -306,6 +330,7 @@ const OptionSetsInfo = () => {
           id: optionSetsData?.data[0]._id,
           details: optionSet,
         })
+          .unwrap()
           .then(() => {
             optionSetFormik.resetForm();
             dispatch(
