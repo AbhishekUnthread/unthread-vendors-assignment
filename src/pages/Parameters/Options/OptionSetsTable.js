@@ -115,7 +115,7 @@ const OptionSetsTable = (props) => {
                         return (
                           <Chip
                             key={option._id}
-                            label={option.attributes[0]?.title || ""}
+                            label={option.attribute[0]?.title || ""}
                             size="small"
                           />
                         );

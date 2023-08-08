@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import {
   useNavigate,
@@ -351,7 +351,6 @@ const OptionSetsInfo = () => {
         });
     },
   });
-  console.log(optionSetFormik.values);
 
   const backHandler = () => {
     navigate({
@@ -396,6 +395,10 @@ const OptionSetsInfo = () => {
     const updatedOptions = optionSetFormik.values.option?.concat(EMPTY_OPTION);
     optionSetFormik.setFieldValue("option", updatedOptions);
   };
+
+  const pageLoadingHandler = useCallback((value) => {
+    setPageIsLoading(true);
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -616,6 +619,7 @@ const OptionSetsInfo = () => {
                         index={index}
                         formik={optionSetFormik}
                         isSubmitting={optionSetFormik.isSubmitting}
+                        onPageLoad={pageLoadingHandler}
                       />
                     );
                   })}
