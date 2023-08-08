@@ -483,6 +483,8 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
+              discountType ={discountsState.discountType}
+
              />
           </TabPanel>
           <TabPanel value={discountsState.discountType} index={1}>
@@ -494,6 +496,7 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
+              discountType ={discountsState.discountType}
              />
           </TabPanel>
         </Paper>

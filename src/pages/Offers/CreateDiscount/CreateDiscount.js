@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import "./CreateDiscount.scss";
@@ -53,7 +53,7 @@ import DiscountValue from "../../../components/DiscountFormat/DiscountValue";
 import Filters from "../../../components/DiscountFormat/Filters";
 import CouponCode from "../../../components/DiscountFormat/CouponCode";
 import BuyXGetY from "../../../components/DiscountFormat/BuyXGetY";
-import { showError } from "../../../features/snackbar/snackbarAction";
+import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import DiscountRange from "../../../components/DiscountFormat/DiscountRange";
 import { useCreateDiscountMutation } from "../../../features/offers/discounts/discountsApiSlice";
 import LimitByLocation from "../../../components/DiscountFormat/LimitByLocation";
@@ -168,8 +168,8 @@ const discountValidationSchema = Yup.object().shape({
       [
         "productDiscount",
         "cartDiscount",
-        "freeShiping",
-        "buyXGetY",
+        "freeShipping",
+        "buyxGety",
         "bulkDiscountPricing",
         "",
       ],
@@ -389,9 +389,12 @@ const CreateDiscount = () => {
         mainDiscount: {
           type: values?.discountType,
           format: values?.discountFormat?.discountFormat,
-          value: values?.discountValue?.discountValue,
-          discountOn: values?.discountValue?.value,
-          unit: values?.discountValue?.type,
+          ...(values?.discountType === "cartDiscount" || values?.discountType === "productDiscount" || values?.discountType === "buyxGety"
+          ? {value: values?.discountValue?.discountValue || values?.buyXGetY?.discountValue,
+            discountOn: values?.discountValue?.value || values?.buyXGetY?.value,
+            unit: values?.discountValue?.type||values?.buyXGetY?.type}
+          : {}
+          ),
           ...(values?.discountFormat?.discountFormat === "code"
             ? { discountCode: values?.discountFormat?.discountCode }
             : { discountName: values?.discountFormat?.discountCode }),
@@ -530,6 +533,21 @@ const CreateDiscount = () => {
     formik.setFieldValue("discountRange", newRange);
   };
 
+  useEffect(() => {
+    if (createDiscountIsSuccess) {
+      dispatch(showSuccess({ message: "Discount created successfully" }));
+    }
+    if (createDiscountError) {
+      if (createDiscountError?.data?.message) {
+        dispatch(showError({ message: createDiscountError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [createDiscountIsSuccess, createDiscountError, dispatch]);
+
   return (
     <div className="page container-fluid position-relative">
       <InfoHeader
@@ -568,7 +586,7 @@ const CreateDiscount = () => {
                     </div>
                     <FormControl className="w-100 px-0">
                       <OutlinedInput
-                        placeholder="Enter Discount Name"
+                        placeholder="Discount Name"
                         size="small"
                         name="discountName"
                         value={formik.values?.discountName}
@@ -617,6 +635,8 @@ const CreateDiscount = () => {
                         onBlur={formik.handleBlur}
                         name={"discountType"}
                         size="small"
+                        displayEmpty
+                        renderValue={formik.values?.discountType !== "" ? undefined : () => <span style={{ fontSize: "13px",color: "#5c6d8e"}}>Select</span>}
                       >
                         <MenuItem
                           value="productDiscount"
@@ -631,13 +651,13 @@ const CreateDiscount = () => {
                           Cart Discount
                         </MenuItem>
                         <MenuItem
-                          value="freeShiping"
+                          value="freeShipping"
                           sx={{ fontSize: 13, color: "#5c6d8e" }}
                         >
                           Free Shipping
                         </MenuItem>
                         <MenuItem
-                          value="buyXGetY"
+                          value="buyxGety"
                           sx={{ fontSize: 13, color: "#5c6d8e" }}
                         >
                           Buy X, Get Y
@@ -667,13 +687,13 @@ const CreateDiscount = () => {
               touched={formik?.touched?.discountFormat}
               error={formik?.errors?.discountFormat}
             />
-            <DiscountValue
+            {(formik?.values?.discountType === "productDiscount" || formik?.values?.discountType === "cartDiscount")&&(<DiscountValue
               value={formik.values?.discountValue}
               field="discountValue"
               formik={formik}
               touched={formik?.touched?.discountValue}
               error={formik?.errors?.discountValue}
-            />
+            />)}
             <Filters
               value={formik.values?.filters}
               field="filters"
@@ -685,7 +705,7 @@ const CreateDiscount = () => {
               onDeleteField={deleteFilterHandler}
               onAdd={addFilterHandler}
             />
-            {formik?.values?.discountType === "buyXGetY" && (
+            {formik?.values?.discountType === "buyxGety" && (
               <BuyXGetY
                 value={formik.values?.buyXGetY}
                 field="buyXGetY"
@@ -695,7 +715,7 @@ const CreateDiscount = () => {
               />
             )}
 
-            {formik?.values?.discountType === "bulkDiscountPricing" && (
+            {(formik?.values?.discountType === "bulkDiscountPricing" || formik?.values?.discountType === "buyxGety") && (
               <DiscountRange
                 value={formik.values?.discountRange}
                 field="discountRange"
@@ -746,20 +766,20 @@ const CreateDiscount = () => {
               field="scheduledDiscount"
               formik={formik}
             />
-            <LimitByLocation
+            {formik?.values?.discountType === "freeShipping" &&(<LimitByLocation
               value={formik.values?.limitByLocation}
               field="limitByLocation"
               formik={formik}
               touched={formik?.touched?.limitByLocation}
               error={formik?.errors?.limitByLocation}
-            />
-            <CouponCode
+            />)}
+            {/* <CouponCode
               value={formik.values?.couponCode}
               field="couponCode"
               formik={formik}
               touched={formik?.touched?.couponCode}
               error={formik?.errors?.couponCode}
-            />
+            /> */}
           </div>
           <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
             <div className="bg-black-15 border-grey-5 rounded-8 p-3">

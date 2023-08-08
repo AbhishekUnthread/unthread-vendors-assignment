@@ -98,6 +98,7 @@ const DiscountsTable = ({
   changeRowsPerPage,
   changePage,
   page,
+  discountType
 }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
@@ -298,7 +299,7 @@ const DiscountsTable = ({
                         <p className="text-lightBlue me-2">
                           {row?.mainDiscount?.discountCode}
                         </p>
-                        {row?.mainDiscount?.discountCode?<Tooltip title="Copy" placement="top">
+                        {discountType ===0 ? (row?.mainDiscount?.discountCode? <Tooltip title="Copy" placement="top">
                           <ContentCopyIcon
                             sx={{
                               color: "#5c6d8e",
@@ -306,7 +307,7 @@ const DiscountsTable = ({
                               cursor: "pointer",
                             }}
                           />
-                        </Tooltip>:null}
+                        </Tooltip>:null):row?.mainDiscount?.discountName}
                       </div>
                     </TableCell>
                     <TableCell style={{ width: 180 }}>
