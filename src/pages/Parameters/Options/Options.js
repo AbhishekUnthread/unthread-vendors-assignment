@@ -41,6 +41,7 @@ const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 1,
   title: "",
+  name: "",
 };
 
 const initialOptionsState = {
@@ -73,6 +74,7 @@ const queryFilterReducer = (state, action) => {
       ...state,
       pageNo: initialQueryFilterState.pageNo,
       title: action.value,
+      name: action.value,
     };
   }
   if (action.type === "SET_FILTERS") {
@@ -226,15 +228,15 @@ const Options = () => {
   };
 
   const editSetHandler = (srNo) => {
-    // navigate({
-    //   pathname: `./sets/edit/${srNo}`,
-    //   search: `?${createSearchParams({
-    //     search: JSON.stringify({
-    //       ...queryFilterState,
-    //       activeTab: optionsState.activeTab,
-    //     }),
-    //   })}`,
-    // });
+    navigate({
+      pathname: `./sets/edit/${srNo}`,
+      search: `?${createSearchParams({
+        search: JSON.stringify({
+          ...queryFilterState,
+          activeTab: optionsState.activeTab,
+        }),
+      })}`,
+    });
   };
 
   const createOptionHandler = () => {

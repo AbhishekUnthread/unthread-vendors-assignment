@@ -195,7 +195,7 @@ const OptionSet = (props) => {
   };
 
   const selectedAttributeIds =
-    formik.values.option[index].attribute[0].metaAttributes?.map(
+    formik.values.option[index]?.attribute[0]?.metaAttributes?.map(
       (attr) => attr.id
     ) || [];
 

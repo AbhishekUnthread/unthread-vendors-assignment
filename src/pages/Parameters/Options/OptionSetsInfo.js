@@ -260,12 +260,34 @@ const OptionSetsInfo = () => {
     },
   ] = useCreateOptionSetMutation();
 
+  const {
+    data: optionSetsData,
+    isLoading: optionSetsIsLoading,
+    error: optionSetsError,
+    isError: optionSetsIsError,
+    isSuccess: optionSetsIsSuccess,
+  } = useGetAllOptionSetsQuery(optionSetQueryFilterState, {
+    skip: optionSetQueryFilterState.srNo ? false : true,
+  });
+
+  const [
+    updateOptionSet,
+    {
+      isLoading: updateOptionSetIsLoading,
+      isSuccess: updateOptionSetIsSuccess,
+      error: updateOptionSetError,
+      isError: updateOptionSetIsError,
+    },
+  ] = useUpdateOptionSetMutation();
+
   const optionSetFormik = useFormik({
     initialValues: {
-      name: "",
-      isProduct: false,
-      categoryId: "",
-      option: [],
+      name: optionSetsData?.data[0]?.name || "",
+      isProduct: optionSetsData?.data[0]?.isProduct || false,
+      categoryId: optionSetsData?.data[0]?.categoryId || "",
+      option: optionSetsData?.data[0]?.option.length
+        ? optionSetsData?.data[0]?.option
+        : [],
     },
     enableReinitialize: true,
     validationSchema: optionSetValidationSchema,
@@ -278,6 +300,32 @@ const OptionSetsInfo = () => {
           optionSet[key] === undefined
         )
           delete optionSet[key];
+      }
+      if (id) {
+        updateOptionSet({
+          id: optionSetsData?.data[0]._id,
+          details: optionSet,
+        })
+          .then(() => {
+            optionSetFormik.resetForm();
+            dispatch(
+              showSuccess({
+                message: "Option set edited successfully",
+              })
+            );
+          })
+          .catch((error) => {
+            if (error?.data?.message) {
+              dispatch(showError({ message: error.data.message }));
+            } else {
+              dispatch(
+                showError({
+                  message: "Something went wrong!, please try again",
+                })
+              );
+            }
+          });
+        return;
       }
       createOptionSet(optionSet)
         .unwrap()
@@ -303,6 +351,7 @@ const OptionSetsInfo = () => {
         });
     },
   });
+  console.log(optionSetFormik.values);
 
   const backHandler = () => {
     navigate({
@@ -369,15 +418,20 @@ const OptionSetsInfo = () => {
   }, [optionSetFormik.initialValues, optionSetFormik.values, id]);
 
   useEffect(() => {
-    const isLoading = categoriesIsLoading;
+    let isLoading = categoriesIsLoading;
     if (optionSetQueryFilterState.srNo) {
+      isLoading = categoriesIsLoading || optionSetsIsLoading;
     }
     if (isLoading) {
       setPageIsLoading(true);
     } else {
       setPageIsLoading(false);
     }
-  }, [categoriesIsLoading, optionSetQueryFilterState.srNo]);
+  }, [
+    categoriesIsLoading,
+    optionSetsIsLoading,
+    optionSetQueryFilterState.srNo,
+  ]);
 
   useEffect(() => {
     if (optionSetState.createdSuccess) {
