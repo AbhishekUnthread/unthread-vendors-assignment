@@ -82,7 +82,10 @@
 - [x] Store Created Snackbar put store name in it
 - [x] Image is getting streched make it fit
 - [x] Image Note - Recommended Size: 1000px x 1000px
-- [?] time feild required just outline red #FC756E
+- [-] time feild required just outline red #FC756E
+- [x] time feild required should push the whole row
+- [x] required for mobile number should be unified
+
 
 ## List View
 
@@ -91,6 +94,8 @@
 - [x] Archived spelling mapping on front end
 - [x] The store should'nt open in the archive tab
 - [?] Send static store data to store detail page
+- [x] + to Add Store button
+- [x] Store Img Border radius 4 px rounded
 
 ## Mass Selection in Listing
 

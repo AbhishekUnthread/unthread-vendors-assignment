@@ -21,12 +21,7 @@ export default function AppGenericSelect({
   useGetQuery = emptyFn,
   getQueryFilters = {},
 }) {
-  const {
-    data: queryData,
-    isLoading: queryIsLoading,
-    isSuccess: queryIsSuccess,
-    error: queryError,
-  } = useGetQuery(getQueryFilters);
+  const { data: queryData, isLoading: queryIsLoading, isSuccess: queryIsSuccess, error: queryError } = useGetQuery(getQueryFilters);
 
   const options = queryData?.data?.data ?? [];
 
@@ -71,7 +66,7 @@ export default function AppGenericSelect({
             />
           )}
         />
-        <FormHelperText error>{error}</FormHelperText>
+        {!!error && <FormHelperText error>{error}</FormHelperText>}
       </FormControl>
     );
   else return <></>;

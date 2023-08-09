@@ -17,7 +17,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import TableLoader from "../../../components/Loader/TableLoader";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
-import { useDeleteStoreMutation, useEditStoreMutation } from "../../../features/products/inventory/inventoryApiSlice";
+import {
+  useBulkDeleteStoreMutation,
+  useBulkEditStoreMutation,
+  useDeleteStoreMutation,
+  useEditStoreMutation,
+} from "../../../features/products/inventory/inventoryApiSlice";
 import { useDispatch } from "react-redux";
 import { showSuccess, showError } from "../../../features/snackbar/snackbarAction";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
@@ -40,6 +45,16 @@ export default function AllInventory({
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("selectStore");
   const [selected, setSelected] = useState([]);
+
+  // console.log(selected);
+
+  const handleSelectAllClick = (checked) => setSelected(checked ? list.map((l) => l._id) : []);
+
+  const handleSelectOneClick = (checked, id) => setSelected((sl) => (checked ? sl.concat(id) : sl.filter((l) => l !== id)));
+
+  const clearSelected = () => setSelected([]);
+
+  const isSelected = (id) => selected.includes(id);
 
   const headCells = [
     {
@@ -68,8 +83,6 @@ export default function AllInventory({
     },
   ];
 
-  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
-
   const handleChangePage = (event, newPage) => {
     changePage(newPage);
   };
@@ -80,40 +93,9 @@ export default function AllInventory({
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    setSelected(event.target.checked ? list.map((n) => n._id) : []);
-  };
-
-  const handleClick = (id) => {
-    setSelected(selected.includes(id) ? selected.filter((sl) => sl !== id) : selected.concat(id));
-    // const selectedIndex = selected.indexOf(name);
-    // let newSelected = [];
-
-    // if (selectedIndex === -1) {
-    //   newSelected = newSelected.concat(selected, name);
-    // } else if (selectedIndex === 0) {
-    //   newSelected = newSelected.concat(selected.slice(1));
-    // } else if (selectedIndex === selected.length - 1) {
-    //   newSelected = newSelected.concat(selected.slice(0, -1));
-    // } else if (selectedIndex > 0) {
-    //   newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    // }
-
-    // setSelected(newSelected);
-  };
-
-  const handleBulkStatusChange = (status) => {
-    console.log(status);
-  };
-
   const handleChangeRowsPerPage = (event) => {
     changeRowsPerPage(parseInt(event.target.value, 10));
     changePage(0);
-  };
-
-  const isSelected = (id) => {
-    console.log(id, selected);
-    selected.includes(id);
   };
 
   // const handleUnArchive = (id, title) => {
@@ -125,71 +107,139 @@ export default function AllInventory({
 
   const [editStoreMutation] = useEditStoreMutation();
 
-  const [archiveStore, setArchiveStore] = useState({});
+  const [archiveStore, setArchiveStore] = useState(null);
 
   const handleArchiveClick = (store) => {
+    clearSelected();
     setArchiveStore(store);
     // setForMassAction(false);
   };
 
   const handleArchiveClose = () => {
-    setArchiveStore({});
+    clearSelected();
+    setArchiveStore(null);
     // setForMassAction(false);
   };
 
   const handleArchiveConfirm = () => {
     // setForMassAction(false);
-    editStoreMutation({ id: archiveStore._id, details: { status: "archieved" } })
-      .unwrap()
-      .then(() => dispatch(showSuccess({ message: "Store archived successfully!" })))
-      .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
-      .finally(() => setArchiveStore({}));
+    if (selected.length > 0) handleBulkStatusSelect("Set as Archived");
+    else
+      editStoreMutation({ id: archiveStore?._id, details: { status: "archieved" } })
+        .unwrap()
+        .then(() => dispatch(showSuccess({ message: "Store archived successfully!" })))
+        .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
+        .finally(() => {
+          clearSelected();
+          setArchiveStore(null);
+        });
   };
 
-  const [unarchiveStore, setUnarchiveStore] = useState({});
-  const [updatedStatus, setUpdatedStatus] = useState("");
+  const [unarchiveStore, setUnarchiveStore] = useState(null);
+  const [updatedStatus, setUpdatedStatus] = useState("in-active");
 
   const handleUnarchiveClick = (store) => {
+    clearSelected();
     setUnarchiveStore(store);
     setUpdatedStatus("in-active");
     // setForMassAction(false);
   };
 
   const handleUnarchiveClose = () => {
-    setUnarchiveStore({});
+    clearSelected();
+    setUnarchiveStore(null);
+    setUpdatedStatus("in-active");
     // setForMassAction(false);
   };
 
   const handleUnarchiveConfirm = () => {
     // setForMassAction(false);
-    editStoreMutation({ id: unarchiveStore._id, details: { status: updatedStatus } })
-      .unwrap()
-      .then(() => dispatch(showSuccess({ message: "Store un-archived successfully!" })))
-      .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
-      .finally(() => setUnarchiveStore({}));
+    if (selected.length > 0) handleBulkStatusSelect(updatedStatus);
+    else
+      editStoreMutation({ id: unarchiveStore?._id, details: { status: updatedStatus } })
+        .unwrap()
+        .then(() => dispatch(showSuccess({ message: "Store un-archived successfully!" })))
+        .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
+        .finally(() => {
+          clearSelected();
+          setUnarchiveStore(null);
+          setUpdatedStatus("in-active");
+        });
   };
 
   const [deleteStoreMutation] = useDeleteStoreMutation();
 
-  const [deleteStore, setDeleteStore] = useState({});
+  const [deleteStore, setDeleteStore] = useState(null);
 
   const handleDeleteClick = (store) => {
+    clearSelected();
     setDeleteStore(store);
-    // setForMassAction(false);
   };
 
   const handleDeleteClose = () => {
-    setDeleteStore({});
-    // setForMassAction(false);
+    clearSelected();
+    setDeleteStore(null);
   };
 
   const handleDeleteConfirm = () => {
-    // setForMassAction(false);
-    deleteStoreMutation(deleteStore._id)
+    if (selected.length > 0) {
+      bulkDeleteStoreMutation({ deletes: selected })
+        .unwrap()
+        .then(() => dispatch(showSuccess({ message: `${selected.length} Stores Deleted successfully!` })))
+        .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
+        .finally(() => {
+          clearSelected();
+          setDeleteStore(null);
+        });
+    } else {
+      deleteStoreMutation(deleteStore?._id)
+        .unwrap()
+        .then(() => dispatch(showSuccess({ message: "Store deleted successfully!" })))
+        .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
+        .finally(() => {
+          clearSelected();
+          setDeleteStore(null);
+        });
+    }
+  };
+
+  const [bulkEditStoreMutation] = useBulkEditStoreMutation();
+  const [bulkDeleteStoreMutation] = useBulkDeleteStoreMutation();
+
+  const handleBulkStatusSelect = (statusText) => {
+    const status = mapStatusText(statusText);
+    console.log("handleBulkStatusSelect", statusText, status);
+    bulkEditStoreMutation({ updates: selected.map((id) => ({ id, status })) })
       .unwrap()
-      .then(() => dispatch(showSuccess({ message: "Store deleted successfully!" })))
+      .then(() => dispatch(showSuccess({ message: `${selected.length} Stores ${statusText} successfully!` })))
       .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
-      .finally(() => setDeleteStore({}));
+      .finally(() => {
+        clearSelected();
+        setArchiveStore(null);
+        setUnarchiveStore(null);
+        setDeleteStore(null);
+        setUpdatedStatus("in-active");
+      });
+  };
+
+  const handleBulkActionSelect = (statusText) => {
+    console.log("handleBulkActionSelect", statusText);
+    // const status = mapStatusText(statusText);
+    switch (statusText) {
+      case "Set as Archived":
+        setArchiveStore({});
+        break;
+      case "Set as Un-Archived":
+        setUnarchiveStore({});
+        break;
+      case "Delete":
+        setDeleteStore({});
+        break;
+
+      default:
+        clearSelected();
+        break;
+    }
   };
 
   return (
@@ -198,20 +248,26 @@ export default function AllInventory({
         <div className="d-flex align-items-center px-2 mb-3">
           <button className="button-grey py-2 px-3">
             <small className="text-lightBlue">
-              {selected.length} collections are selected&nbsp;
+              {selected.length} stores are selected{" "}
               <span
                 className="text-blue-2 c-pointer"
-                onClick={() => setSelected([])}>
+                onClick={clearSelected}>
                 (Clear Selection)
               </span>
             </small>
           </button>
-          <TableEditStatusButton
-            onSelect={handleBulkStatusChange}
-            defaultValue={["Set as Active", "Set as In-Active"]}
-            headingName="Edit Status"
+          {tabIndex !== 3 && (
+            <TableEditStatusButton
+              onSelect={handleBulkStatusSelect}
+              defaultValue={["Set as Active", "Set as In-Active"]}
+              headingName="Edit Status"
+            />
+          )}
+          <TableMassActionButton
+            headingName="Mass Action"
+            onSelect={handleBulkActionSelect}
+            defaultValue={tabIndex !== 3 ? ["Edit", "Set as Archived"] : ["Delete", "Set as Un-Archived"]}
           />
-          <TableMassActionButton />
         </div>
       )}
       {!error ? (
@@ -226,7 +282,7 @@ export default function AllInventory({
                   numSelected={selected.length}
                   order={order}
                   orderBy={orderBy}
-                  onSelectAllClick={handleSelectAllClick}
+                  onSelectAllClick={(e) => handleSelectAllClick(e.target.checked)}
                   onRequestSort={handleRequestSort}
                   rowCount={list.length}
                   headCells={tabIndex === 0 || tabIndex === 3 ? headCells : headCells.toSpliced(2, 1)}
@@ -251,11 +307,9 @@ export default function AllInventory({
                           <Checkbox
                             checked={isItemSelected}
                             inputProps={{ "aria-labelledby": labelId }}
-                            onChange={() => handleClick(row._id)}
+                            onChange={(e) => handleSelectOneClick(e.target.checked, row._id)}
                             size="small"
-                            style={{
-                              color: "#5C6D8E",
-                            }}
+                            style={{ color: "#5C6D8E" }}
                           />
                         </TableCell>
                         {/* Image n Store Info Cell */}
@@ -269,7 +323,7 @@ export default function AllInventory({
                               <img
                                 src={row.mediaUrl?.[0]?.image ?? storeIcon}
                                 alt="storeIcon"
-                                className="me-2"
+                                className="me-2 rounded-4"
                                 height={45}
                                 width={45}
                               />
@@ -421,12 +475,13 @@ export default function AllInventory({
       )}
       <ArchiveModal
         title={"Store Inventory"}
-        show={!!archiveStore?._id}
+        show={!!archiveStore}
         products={"x products"}
         onConfirm={handleArchiveConfirm}
         onCancel={handleArchiveClose}
-        message={archiveStore?.name}
-        archiveType={" store"}
+        // message={archiveStore?.name ?? ""}
+        message={selected.length > 0 ? selected.length : archiveStore?.name ?? ""}
+        archiveType={selected.length > 1 ? " stores" : " store"}
         // message={forMassAction == true ? (selected.length == 1 ? singleTitle : selected.length) : collectionTitle}
         // archiveType={forMassAction == true ? (selected.length == 1 ? " collection" : " collections") : " collection"}
       />
@@ -434,26 +489,41 @@ export default function AllInventory({
         // message={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length}
         // title={forMassAction == true ? (selected.length == 1 ? " collection" : " collections") : " collection"}
         title={" store"}
-        show={!!deleteStore?._id}
-        message={deleteStore?.name}
+        show={!!deleteStore}
+        message={selected.length > 0 ? `${selected.length} stores` : deleteStore?.name ?? ""}
+        // message={}
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteClose}
       />
       <UnArchivedModal
         onConfirm={handleUnarchiveConfirm}
         onCancel={handleUnarchiveClose}
-        show={!!unarchiveStore?._id}
+        show={!!unarchiveStore}
         title={"Un-Archive Store ?"}
-        primaryMessage={`Before un-archiving <span class='text-blue-1'>${unarchiveStore?.name}</span>,`}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${unarchiveStore?.name ?? ""}</span>,`}
         secondaryMessage={"Please set its status"}
         confirmText={"Un-Archive"}
         handleStatusValue={setUpdatedStatus}
         icon={unArchived}
-        name={unarchiveStore?.name}
-        nameType={" store"}
+        name={selected.length > 0 ? selected.length : unarchiveStore?.name ?? ""}
+        nameType={selected.length > 1 ? " stores" : " store"}
         // name={forMassAction == false ? name : selected.length == 1 ? singleTitle : selected.length}
         // nameType={forMassAction == true ? (selected.length == 1 ? " collection" : " collections") : " collection"}
       />
     </>
   );
+}
+
+function mapStatusText(txt) {
+  switch (txt) {
+    case "Set as Active":
+      return "active";
+    case "Set as In-Active":
+      return "in-active";
+    case "Set as Archived":
+      return "archieved";
+
+    default:
+      return txt;
+  }
 }

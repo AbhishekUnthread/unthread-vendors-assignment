@@ -42,10 +42,28 @@ export const inventoryApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["Inventory"],
     }),
 
+    bulkEditStore: builder.mutation({
+      query: (updates) => ({
+        url: "/store/bulkUpdate",
+        method: "PUT",
+        body: updates,
+      }),
+      invalidatesTags: ["Inventory"],
+    }),
+
     deleteStore: builder.mutation({
       query: (storeId) => ({
         url: `/store/${storeId}`,
         method: "DELETE",
+      }),
+      invalidatesTags: ["Inventory"],
+    }),
+
+    bulkDeleteStore: builder.mutation({
+      query: (deletes) => ({
+        url: "/store/bulkDelete",
+        method: "DELETE",
+        body: deletes,
       }),
       invalidatesTags: ["Inventory"],
     }),
@@ -57,5 +75,7 @@ export const {
   useGetStoreCountQuery,
   useCreateStoreMutation,
   useEditStoreMutation,
+  useBulkEditStoreMutation,
   useDeleteStoreMutation,
+  useBulkDeleteStoreMutation,
 } = inventoryApiSlice;

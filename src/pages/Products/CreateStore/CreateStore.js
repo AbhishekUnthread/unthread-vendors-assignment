@@ -344,7 +344,7 @@ const CreateStore = () => {
                               dataImgUrl="imageUrl"
                               name="countryCode"
                               value={formik.values.countryCode}
-                              error={formik.touched.countryCode ? formik.errors.countryCode : ""}
+                              // error={formik.touched.countryCode ? formik.errors.countryCode : ""}
                               onChange={changeCountryCodeHandler}
                               formik={formik}
                               useGetQuery={useGetAllCountryQuery}
@@ -353,7 +353,9 @@ const CreateStore = () => {
                           </InputAdornment>
                         }
                       />
-                      <FormHelperText error>{formik.touched.phone && formik.errors.phone}</FormHelperText>
+                      <FormHelperText error>
+                        {formik.touched.countryCode && formik.errors.countryCode} {formik.touched.phone && formik.errors.phone}
+                      </FormHelperText>
                     </FormControl>
                   </div>
                   <div className="col-md-12 mt-3">
@@ -750,7 +752,7 @@ const CreateStore = () => {
                               dataImgUrl="imageUrl"
                               name="managerDetails.countryCode"
                               value={formik.values.managerDetails.countryCode}
-                              error={formik.touched.managerDetails?.countryCode ? formik.errors.managerDetails?.countryCode : ""}
+                              // error={formik.touched.managerDetails?.countryCode ? formik.errors.managerDetails?.countryCode : ""}
                               onChange={changeManagerCountryCodeHandler}
                               formik={formik}
                               // onChange={formik.handleChange}
@@ -765,7 +767,10 @@ const CreateStore = () => {
                           </InputAdornment>
                         }
                       />
-                      <FormHelperText error>{formik.touched.managerDetails?.phone && formik.errors.managerDetails?.phone}</FormHelperText>
+                      <FormHelperText error>
+                        {formik.touched.managerDetails?.countryCode && formik.errors.managerDetails?.countryCode}{" "}
+                        {formik.touched.managerDetails?.phone && formik.errors.managerDetails?.phone}
+                      </FormHelperText>
                     </FormControl>
                   </div>
                   <div className="col-md-12 mt-3">

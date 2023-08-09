@@ -13,19 +13,7 @@ import sort from "../../../assets/icons/sort.svg";
 import products from "../../../assets/icons/sidenav/products.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
-import {
-  Box,
-  Paper,
-  Tab,
-  Tabs,
-  Popover,
-  FormGroup,
-  FormControl,
-  FormControlLabel,
-  Checkbox,
-  RadioGroup,
-  Radio,
-} from "@mui/material";
+import { Box, Paper, Tab, Tabs, Popover, FormGroup, FormControl, FormControlLabel, Checkbox, RadioGroup, Radio } from "@mui/material";
 import AllInventory from "./AllInventory";
 import { useGetAllStoresQuery, useGetStoreCountQuery } from "../../../features/products/inventory/inventoryApiSlice";
 
@@ -228,7 +216,7 @@ const ProductInventory = () => {
           <Link
             to="/products/inventory/create"
             className="button-gradient py-2 px-4 ms-3">
-            <p>Add Store</p>
+            <p>+ Add Store</p>
           </Link>
         </div>
       </div>

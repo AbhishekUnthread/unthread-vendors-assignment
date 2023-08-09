@@ -1,8 +1,8 @@
-import { FormControl, MenuItem, OutlinedInput, Select, TextField } from "@mui/material";
+import "./StoreHoursWeekDay.scss";
+import { FormControl, FormHelperText, MenuItem, OutlinedInput, Select, TextField } from "@mui/material";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
-import "./StoreHoursWeekDay.scss";
 
 export default function StoreHoursWeekDay({
   dayName = "",
@@ -39,7 +39,6 @@ export default function StoreHoursWeekDay({
               <MenuItem value="closed">Closed</MenuItem>
               <MenuItem value="open">Open</MenuItem>
             </Select>
-            {/* <FormHelperText error>{dayTouched?.status && dayErrors?.status}</FormHelperText> */}
           </FormControl>
         </div>
         {dayValues.status === "open" && (
@@ -49,6 +48,7 @@ export default function StoreHoursWeekDay({
                 <TimePicker
                   value={moment(dayValues.from, "HH:mm")}
                   onChange={onFromChange}
+                  onOpen={onFromTouched}
                   onClose={onFromTouched}
                   renderInput={(params) => (
                     <TextField
@@ -63,7 +63,6 @@ export default function StoreHoursWeekDay({
                   )}
                 />
               </LocalizationProvider>
-              {/* <FormHelperText error>{dayTouched?.from && dayErrors?.from}</FormHelperText> */}
             </div>
             <div className="col-auto">-</div>
             <div className="col-3">
@@ -71,6 +70,7 @@ export default function StoreHoursWeekDay({
                 <TimePicker
                   value={moment(dayValues.to, "HH:mm")}
                   onChange={onToChange}
+                  onOpen={onToTouched}
                   onClose={onToTouched}
                   renderInput={(params) => (
                     <TextField
@@ -80,26 +80,24 @@ export default function StoreHoursWeekDay({
                         ...params.inputProps,
                         placeholder: "End Time",
                       }}
-                      onBlur={onFromTouched}
+                      onBlur={onToTouched}
                     />
-                    // <OutlinedInput
-                    //   size="small"
-                    //   {...params}
-                    //   inputProps={{
-                    //     ...params.inputProps,
-                    //     placeholder: "End Time",
-                    //   }}
-                    //   className="error"
-                    //   onBlur={onToTouched}
-                    // />
                   )}
                 />
               </LocalizationProvider>
-              {/* <FormHelperText error>{dayTouched?.to && dayErrors?.to}</FormHelperText> */}
             </div>
           </>
         )}
       </div>
+      {((dayTouched?.status && dayErrors?.status) || (dayTouched?.from && dayErrors?.from) || (dayTouched?.to && dayErrors?.to)) && (
+        <div className="row align-items-center pb-1">
+          <div className="col-2"></div>
+          <div className="col-3">{dayTouched?.status && <FormHelperText error>{dayErrors?.status}</FormHelperText>}</div>
+          <div className="col-3">{dayTouched?.from && <FormHelperText error>{dayErrors?.from}</FormHelperText>}</div>
+          <div className="col-auto opacity-0">-</div>
+          <div className="col-3">{dayTouched?.to && <FormHelperText error>{dayErrors?.to}</FormHelperText>}</div>
+        </div>
+      )}
     </div>
   );
 }
