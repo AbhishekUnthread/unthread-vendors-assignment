@@ -41,6 +41,7 @@ import TagsBox from "../../../components/TagsBox/TagsBox";
 import { SaveFooterTertiary} from "../../../components/SaveFooter/SaveFooter";
 import AddAddress from "./AddAddress";
 import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
+import CustomerChip from "./CustomerChip";
 
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import addMedia from "../../../assets/icons/addMedia.svg";
@@ -137,8 +138,6 @@ const AddUser = () => {
     initialCustomerState
   );
 
-  console.log(customerState.isEditing, "customerState");
-
   const {
     data: customerData,
     isLoading: customerIsLoading,
@@ -186,7 +185,7 @@ const AddUser = () => {
   }
 
   const GetCountryCode = (value) => {
-    customerFormik.setFieldValue("countryCode", value)
+    customerFormik.setFieldValue("countryCode", value ?? "")
   }
 
   const SelectCountryCode = (event) => {
@@ -213,6 +212,10 @@ const AddUser = () => {
     navigate("/users/allUsers");
   };
 
+  const onDelete = () => {
+    alert("hello")
+  }
+
   const customerFormik = useFormik({
     initialValues: {
       firstName: customerData?.data?.data[0]?.firstName || "",
@@ -228,6 +231,7 @@ const AddUser = () => {
       isTemporaryPassword: customerData?.data?.data[0]?.isTemporaryPassword || false,
       notes: customerData?.data?.data[0]?.notes || "",
       imageUrl: customerData?.data?.data[0]?.imageUrl || "",
+      groups: customerData?.data?.data[0]?.groups || ""
     },
     enableReinitialize: true,
     validationSchema: customerValidationSchema,
@@ -241,8 +245,8 @@ const AddUser = () => {
         createCustomer(values)
           .unwrap()
           .then((res) => {
-              navigate("/users/allUsers");
-              dispatch(showSuccess({ message: "Custormer created successfully" }));
+            navigate("/users/allUsers");
+            dispatch(showSuccess({ message: "Custormer created successfully" }));
           })
       } else {
         editCustomer({
@@ -402,10 +406,9 @@ const AddUser = () => {
                               value={customerFormik.values.countryCode}
                               onBlur={customerFormik.handleBlur}
                               GetCountryCode={GetCountryCode}
-                              SelectCountryCode = {SelectCountryCode}
+                              SelectCountryCode = {GetCountryCode}
                               name="countryCode" 
                             />
-                            {/* &nbsp;&nbsp;&nbsp;&nbsp;| */}
                           </InputAdornment>
                         }
                         value={customerFormik.values.phone}
@@ -522,13 +525,14 @@ const AddUser = () => {
                       }}
                     />
                   </div>
-                  <div className="col-md-12 mt-3">
+                  {/* <div className="col-md-12 mt-3">
                     <p className="text-lightBlue mb-1">User Group</p>
                     <Autocomplete
                       multiple
                       id="checkboxes-tags-demo"
                       sx={{ width: "100%" }}
                       options={customerGroupData?.data?.data || []}
+                      value={customerFormik.values.groups}
                       disableCloseOnSelect
                       getOptionLabel={(option) => option?.name}
                       size="small"
@@ -548,15 +552,25 @@ const AddUser = () => {
                           <small className="text-lightBlue">{option.name}</small>
                         </li>
                       )}
+                      renderTags={(value, getTagProps) =>
+                        value.map((option, index) => (
+                          <CustomerChip
+                            option={option}
+                            {...getTagProps({ index })}
+                            className="me-1"
+                            // onDelete={onDelete}
+                          />
+                        ))
+                      }
                       renderInput={(params) => (
                         <TextField
                           size="small"
-                          {...params || customerData?.data?.data[0]?.groups[0]?.name}
+                          {...params}
                           placeholder="Search"
                         />
                       )}
                     />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

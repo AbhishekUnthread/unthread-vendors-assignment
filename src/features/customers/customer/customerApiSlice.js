@@ -72,6 +72,33 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Customers"],
     }),
+
+    bulkEditCustomer: builder.mutation({
+      query: (updates) => ({
+        url: `/customer/bulkUpdate`,
+        method: "PUT",
+        body: updates ,
+      }),
+      invalidatesTags: ["Customers"],
+    }),
+
+    deleteCustomer: builder.mutation({
+      query: (customerId) => ({
+        url: `/customer/${customerId}`,
+        method: "DELETE",
+        body: customerId,
+      }),
+      invalidatesTags: ["Customers"],
+    }),
+
+    bulkDeleteCustomer: builder.mutation({
+      query: (deleteCusotomer) => ({
+        url: `/customer/bulkDelete`,
+        method: "DELETE",
+        body: deleteCusotomer,
+      }),
+      invalidatesTags: ["Customers"],
+    }),
     
   }),
 });
@@ -81,5 +108,8 @@ export const {
   useGetAllCustomersQuery,
   useGetSingleCustomerQuery,
   useGetCustomersCountQuery,
-  useEditCustomerMutation
+  useEditCustomerMutation,
+  useBulkEditCustomerMutation,
+  useDeleteCustomerMutation,
+  useBulkDeleteCustomerMutation
 } = customerApiSlice;

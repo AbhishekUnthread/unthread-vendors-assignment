@@ -1,8 +1,11 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, forwardRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   FormHelperText,
   InputAdornment,
@@ -10,6 +13,7 @@ import {
   Checkbox,
   FormControlLabel,
   Chip,
+  Slide
 } from "@mui/material";
 
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
@@ -19,8 +23,13 @@ import AppCitySelect from "../../../components/AddCitySelect/AddCitySelect";
 
 import archivedGrey from "../../../assets/icons/archivedGrey.svg";
 import editGrey from "../../../assets/icons/editGrey.svg";
+import cancel from "../../../assets/icons/cancel.svg";
 
 import "./AddUser.scss";
+
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const customerAddressValidation = Yup.object({
   name: Yup.string().trim().min(3).required("Required"),
@@ -38,7 +47,8 @@ const customerAddressValidation = Yup.object({
 const AddAddress = ({ customerAddressDetails, data }) => {
   const [address, setAddress] = useState(false);
   const [savedAddress, setSavedAddress] = useState(false);
-
+  const [openNewUser, setOpenNewUser] = useState(false);
+  
   const customerAddressFormik = useFormik({
     initialValues: {
       name: data?.name || "",
@@ -65,7 +75,8 @@ const AddAddress = ({ customerAddressDetails, data }) => {
           delete values[key] 
         }
       }
-      customerAddressDetails(values)
+      customerAddressDetails(values);
+      setOpenNewUser(false);
     },
   });
 
@@ -105,6 +116,14 @@ const AddAddress = ({ customerAddressDetails, data }) => {
     customerAddressFormik.setFieldValue("city", event)
   }
 
+  const handleNewUser = () => {
+    setOpenNewUser(true);
+  };
+
+  const handleNewUserClose = () => {
+    setOpenNewUser(false);
+  };
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
         <div className="d-flex col-12 px-0 justify-content-between">
@@ -114,7 +133,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                 </h6>
             </div>
 
-            <p className="button-gradient py-2 px-3" onClick={handleAddressChange}>
+            <p className="button-gradient py-2 px-3" onClick={handleNewUser}>
                 <p className="">+ Add Adress</p>
             </p>
         </div>
@@ -159,8 +178,36 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                 </div>
             </div>
         )}
-        {address && (
-            <div className="col-12 mt-3">
+
+        <Dialog
+            open={openNewUser}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleNewUserClose}
+            aria-describedby="alert-dialog-slide-description"
+            maxWidth="md"
+            fullWidth={true}
+        >
+            <DialogTitle>
+                <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex flex-column ">
+                        <h5 className="text-lightBlue fw-500">Create New User</h5>
+
+                        <small className="text-grey-6 mt-1 d-block">
+                        ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing
+                        elit.
+                        </small>
+                    </div>
+                    <img
+                        src={cancel}
+                        alt="cancel"
+                        width={30}
+                        onClick={handleNewUserClose}
+                        className="c-pointer"
+                    />
+                </div>
+            </DialogTitle>
+            <DialogContent className="pb-4 px-4">
                 <div className="row py-3 rounded-8 border-grey-5 bg-black-13">
                     <div className="col-md-12">
                         <p className="text-lightBlue mb-1">Name</p>
@@ -276,16 +323,13 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                             }
                             />
                         </FormControl>
-                        {!!customerAddressFormik.touched.countryCode && 
-                        customerAddressFormik.errors.countryCode && (
+                        { (!!customerAddressFormik.touched.countryCode || 
+                            !!customerAddressFormik.touched.phone) 
+                            && (customerAddressFormik.errors.countryCode || 
+                            customerAddressFormik.errors.phone) && (
                             <FormHelperText error>
-                                {customerAddressFormik.errors.countryCode}
-                            </FormHelperText>
-                        )}
-                        {!!customerAddressFormik.touched.phone && 
-                        customerAddressFormik.errors.phone && (
-                            <FormHelperText error>
-                                {customerAddressFormik.errors.phone}
+                                {customerAddressFormik.errors.countryCode || 
+                                customerAddressFormik.errors.phone}
                             </FormHelperText>
                         )}
                     </div>
@@ -385,25 +429,24 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                             </FormHelperText>
                         )}
                     </div>
-                    <div className="col-12 mt-4 d-flex justify-content-between">
-                    <Link
-                        onClick={handleAddressChange}
-                        className="button-red-outline py-2 px-4"
-                    >
-                        <p>Discard</p>
-                    </Link>
-
-                    <button
-                        type="button"
-                        onClick={() => customerAddressFormik.handleSubmit()}
-                        className="button-gradient py-2 px-4 w-auto"
-                    >
-                        <p>Save</p>
-                    </button>
-                    </div>
                 </div>
-            </div>
-        )}
+            </DialogContent>
+            <hr className="hr-grey-6 my-0" />
+            <DialogActions className="d-flex justify-content-between px-4 py-3">
+                <button
+                    className="button-grey py-2 px-5"
+                    onClick={handleNewUserClose}
+                >
+                    <p className="text-lightBlue">Cancel</p>
+                </button>
+                <button
+                    className="button-gradient py-2 px-5"
+                    onClick={() => customerAddressFormik.handleSubmit()}
+                >
+                    <p>Create</p>
+                </button>
+            </DialogActions>
+        </Dialog>
     </div>
   );
 };

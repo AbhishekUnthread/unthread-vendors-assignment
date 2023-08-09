@@ -575,8 +575,8 @@ const UserGroupsTable = ({
         onConfirm={handleUnArchived}
         onCancel={closeUnArchivedModal}
         show={showUnArchivedModal}
-        title={"Un-Archive Collection ?"}
-        primaryMessage={`Before un-archiving <span class='text-blue-1'>${groupName}</span> vendor,
+        title={"Un-Archive Customer Group ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${groupName}</span> customer group,
         `}
         secondaryMessage={"Please set its status"}
         confirmText={"Un-Archive"}
