@@ -271,7 +271,7 @@ const Options = () => {
     dispatchOptions({ type: "SET_DELETE", id, message, deleteType: "set" });
   };
 
-  const CancelDeleteHandler = () => {
+  const cancelDeleteHandler = () => {
     dispatchOptions({ type: "REMOVE_DELETE" });
   };
 
@@ -498,7 +498,7 @@ const Options = () => {
       )}
       <DeleteModalSecondary
         onConfirm={deleteConfirmationHandler}
-        onCancel={CancelDeleteHandler}
+        onCancel={cancelDeleteHandler}
         show={optionsState.showDeleteModal}
         isLoading={deleteOptionIsLoading || deleteOptionSetIsLoading}
         message={optionsState.confirmationMessage}

@@ -57,6 +57,7 @@ const PriceMaster = () => {
           >
             {/* variant="scrollable"
               scrollButtons
+              variant="scrollable"
               allowScrollButtonsMobile */}
             <Tabs
               value={value}
