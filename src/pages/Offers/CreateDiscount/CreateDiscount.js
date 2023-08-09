@@ -53,7 +53,10 @@ import DiscountValue from "../../../components/DiscountFormat/DiscountValue";
 import Filters from "../../../components/DiscountFormat/Filters";
 import CouponCode from "../../../components/DiscountFormat/CouponCode";
 import BuyXGetY from "../../../components/DiscountFormat/BuyXGetY";
-import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
+import {
+  showError,
+  showSuccess,
+} from "../../../features/snackbar/snackbarAction";
 import DiscountRange from "../../../components/DiscountFormat/DiscountRange";
 import { useCreateDiscountMutation } from "../../../features/offers/discounts/discountsApiSlice";
 import LimitByLocation from "../../../components/DiscountFormat/LimitByLocation";
@@ -170,7 +173,7 @@ const discountValidationSchema = Yup.object().shape({
         "cartDiscount",
         "freeShipping",
         "buyxGety",
-        "bulkDiscountPricing",
+        "bulk",
         "",
       ],
       "Invalid Discount Type"
@@ -178,11 +181,11 @@ const discountValidationSchema = Yup.object().shape({
     .required("Discount Type is required"),
   // discountFormat: discountFormatSchema,
   minimumRequirement: minimumRequirementValidationSchema,
-  returnExchange: Yup.string()
-    .oneOf(["allowed", "notAllowed"], "Invalid")
-    .required("required"),
-  maximumDiscount: maximumDiscountValidationSchema,
-  couponCode: couponCodeSchema,
+  // returnExchange: Yup.string()
+  //   .oneOf(["allowed", "notAllowed"], "Invalid")
+  //   .required("required"),
+  // maximumDiscount: maximumDiscountValidationSchema,
+  // couponCode: couponCodeSchema,
 });
 
 const CreateDiscount = () => {
@@ -381,7 +384,7 @@ const CreateDiscount = () => {
       },
     },
     enableReinitialize: true,
-    // validationSchema: discountValidationSchema,
+    validationSchema: discountValidationSchema,
     onSubmit: (values) => {
       const test = {
         name: values?.discountName,
@@ -389,47 +392,63 @@ const CreateDiscount = () => {
         mainDiscount: {
           type: values?.discountType,
           format: values?.discountFormat?.discountFormat,
-          ...(values?.discountType === "cartDiscount" || values?.discountType === "productDiscount" || values?.discountType === "buyxGety"
-          ? {value: values?.discountValue?.discountValue || values?.buyXGetY?.discountValue,
-            discountOn: values?.discountValue?.value || values?.buyXGetY?.value,
-            unit: values?.discountValue?.type||values?.buyXGetY?.type}
-          : {}
-          ),
+          ...(values?.discountType === "cartDiscount" ||
+          values?.discountType === "productDiscount" ||
+          values?.discountType === "buyxGety"
+            ? {
+                value:
+                  values?.discountValue?.discountValue ||
+                  values?.buyXGetY?.discountValue,
+                discountOn:
+                  values?.discountValue?.value || values?.buyXGetY?.value,
+                unit: values?.discountValue?.type || values?.buyXGetY?.type,
+              }
+            : {}),
           ...(values?.discountFormat?.discountFormat === "code"
             ? { discountCode: values?.discountFormat?.discountCode }
             : { discountName: values?.discountFormat?.discountCode }),
           ...(values?.discountType === "cartDiscount"
             ? { cartLabel: values?.discountValue?.cartLabel }
             : {}),
-          ...(values?.discountType !=="buyxGety" 
-            ?{          filter: values?.filters.map((filter) => ({
-              type: filter?.field,
-              operator: filter?.operator,
-              value: filter?.fieldValue.map(
-                (item, index) => item?._id
-              ),
-            })),}
-            :{}
-          ),
-          ...(values?.discountType === "buyxGety" 
-          ?{
-            discountLabelType : values?.buyXGetY?.discountMode,
-            buyField : {
-              quantity : values?.buyXGetY?.buy,
-              selectItem : values?.buyXGetY?.selectBuyItem,
-              selectItemValue: values?.buyXGetY?.buyProduct.map(
-                (item, index) => item?._id
-              ),
-            },
-            getField:{
-              quantity : values?.buyXGetY?.get,
-              selectItem : values?.buyXGetY?.selectGetItem,
-              selectItemValue : values?.buyXGetY?.getProduct.map(
-                (item, index) => item?._id
-              ),
-            }
-          }
-          :{}),
+          ...(values?.discountType !== "buyxGety"
+            ? {
+                filter: values?.filters.map((filter) => ({
+                  type: filter?.field,
+                  operator: filter?.operator,
+                  value: filter?.fieldValue.map((item, index) => item?._id),
+                })),
+              }
+            : {}),
+          ...(values?.discountType === "buyxGety"
+            ? {
+                discountLabelType: values?.buyXGetY?.discountMode,
+                buyField: {
+                  quantity: values?.buyXGetY?.buy,
+                  selectItem: values?.buyXGetY?.selectBuyItem,
+                  selectItemValue: values?.buyXGetY?.buyProduct.map(
+                    (item, index) => item?._id
+                  ),
+                },
+                getField: {
+                  quantity: values?.buyXGetY?.get,
+                  selectItem: values?.buyXGetY?.selectGetItem,
+                  selectItemValue: values?.buyXGetY?.getProduct.map(
+                    (item, index) => item?._id
+                  ),
+                },
+              }
+            : {}),
+          ...(values?.discountType === "bulk"
+            ? {
+              rangeDiscount: values?.discountRange.map((discount) => ({
+                  value : discount?.discountValue,
+                  unit : discount?.type,
+                  minQty : discount?.minQty,
+                  maxQty : discount?.maxQty,
+                  discountOn : discount?.value
+                })),
+              }
+            : {}),
         },
         minimumRequirement: {
           requirementType: values?.minimumRequirement?.requirement,
@@ -658,7 +677,17 @@ const CreateDiscount = () => {
                         name={"discountType"}
                         size="small"
                         displayEmpty
-                        renderValue={formik.values?.discountType !== "" ? undefined : () => <span style={{ fontSize: "13px",color: "#5c6d8e"}}>Select</span>}
+                        renderValue={
+                          formik.values?.discountType !== ""
+                            ? undefined
+                            : () => (
+                                <span
+                                  style={{ fontSize: "13px", color: "#5c6d8e" }}
+                                >
+                                  Select
+                                </span>
+                              )
+                        }
                       >
                         <MenuItem
                           value="productDiscount"
@@ -685,7 +714,7 @@ const CreateDiscount = () => {
                           Buy X, Get Y
                         </MenuItem>
                         <MenuItem
-                          value="bulkDiscountPricing"
+                          value="bulk"
                           sx={{ fontSize: 13, color: "#5c6d8e" }}
                         >
                           Bulk/Tiried Discount Pricing
@@ -709,24 +738,29 @@ const CreateDiscount = () => {
               touched={formik?.touched?.discountFormat}
               error={formik?.errors?.discountFormat}
             />
-            {(formik?.values?.discountType === "productDiscount" || formik?.values?.discountType === "cartDiscount")&&(<DiscountValue
-              value={formik.values?.discountValue}
-              field="discountValue"
-              formik={formik}
-              touched={formik?.touched?.discountValue}
-              error={formik?.errors?.discountValue}
-            />)}
-            {formik?.values?.discountType !== "buyxGety" &&(<Filters
-              value={formik.values?.filters}
-              field="filters"
-              formik={formik}
-              touched={formik?.touched?.filters}
-              error={formik?.errors?.filters}
-              data={formik.values?.filters}
-              onSort={() => {}}
-              onDeleteField={deleteFilterHandler}
-              onAdd={addFilterHandler}
-            />)}
+            {(formik?.values?.discountType === "productDiscount" ||
+              formik?.values?.discountType === "cartDiscount") && (
+              <DiscountValue
+                value={formik.values?.discountValue}
+                field="discountValue"
+                formik={formik}
+                touched={formik?.touched?.discountValue}
+                error={formik?.errors?.discountValue}
+              />
+            )}
+            {formik?.values?.discountType !== "buyxGety" && (
+              <Filters
+                value={formik.values?.filters}
+                field="filters"
+                formik={formik}
+                touched={formik?.touched?.filters}
+                error={formik?.errors?.filters}
+                data={formik.values?.filters}
+                onSort={() => {}}
+                onDeleteField={deleteFilterHandler}
+                onAdd={addFilterHandler}
+              />
+            )}
             {formik?.values?.discountType === "buyxGety" && (
               <BuyXGetY
                 value={formik.values?.buyXGetY}
@@ -737,7 +771,7 @@ const CreateDiscount = () => {
               />
             )}
 
-            {(formik?.values?.discountType === "bulkDiscountPricing") && (
+            {formik?.values?.discountType === "bulk" && (
               <DiscountRange
                 value={formik.values?.discountRange}
                 field="discountRange"
@@ -788,13 +822,15 @@ const CreateDiscount = () => {
               field="scheduledDiscount"
               formik={formik}
             />
-            {formik?.values?.discountType === "freeShipping" &&(<LimitByLocation
-              value={formik.values?.limitByLocation}
-              field="limitByLocation"
-              formik={formik}
-              touched={formik?.touched?.limitByLocation}
-              error={formik?.errors?.limitByLocation}
-            />)}
+            {formik?.values?.discountType === "freeShipping" && (
+              <LimitByLocation
+                value={formik.values?.limitByLocation}
+                field="limitByLocation"
+                formik={formik}
+                touched={formik?.touched?.limitByLocation}
+                error={formik?.errors?.limitByLocation}
+              />
+            )}
             {/* <CouponCode
               value={formik.values?.couponCode}
               field="couponCode"

@@ -24,7 +24,7 @@ function DiscountRange({
   data,
   onAdd,
 }) {
-
+  console.log("fdeohwfeuwtfdew", formik?.values?.discountRange)
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
       <div className="d-flex col-12 px-0 justify-content-between">
@@ -93,8 +93,8 @@ function DiscountRange({
                   <TableCell colSpan={3} style={{ paddingLeft: 0, paddingTop:0 }}>
                     <AddDiscountRange
                       formik={formik}
-                      value={value}
-                      field={field}
+                      value={formik?.values?.discountRange[index]}
+                      field={`discountRange[${index}]`}
                     />
                   </TableCell>
                   {data.length > 1 &&(<TableCell style={{ width: 16,  paddingTop:0, paddingRight:0}}>
