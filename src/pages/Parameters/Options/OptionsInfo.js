@@ -683,7 +683,7 @@ const OptionsInfo = () => {
               imageUrl: item.imageUrl,
               type: item.type || "optionset",
               value,
-              apperance: item.metaSubAttribute.apperance,
+              apperance: item.metaSubAttribute?.apperance,
               saved: true,
               isOption: true,
               error: "",
