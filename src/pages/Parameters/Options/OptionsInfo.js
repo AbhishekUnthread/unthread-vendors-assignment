@@ -55,6 +55,8 @@ import {
 
 import { colorReg, urlReg } from "../../../utils/regex";
 
+import SnackbarUtils from "../../../features/snackbar/useSnackbar";
+
 const FRONTEND_APPEARANCE = [
   {
     id: 1,
@@ -105,7 +107,6 @@ const optionValidationSchema = Yup.object({
     type: Yup.string().oneOf(["optionset", "custom"]).required("Required"),
     frontEndTitle: Yup.string().trim().required("Required"),
     isFilter: Yup.boolean().required("Required"),
-    isPriceMaster: Yup.boolean().required("Required"),
     saved: Yup.boolean(),
   }),
   attributes: Yup.array()
@@ -603,7 +604,6 @@ const OptionsInfo = () => {
             type: optionsData?.data[0]?.type,
             frontEndTitle: optionsData?.data[0]?.frontEndTitle,
             isFilter: optionsData?.data[0]?.isFilter,
-            isPriceMaster: optionsData?.data[0]?.isPriceMaster,
             saved: true,
           }
         : {
@@ -613,7 +613,6 @@ const OptionsInfo = () => {
             type: "optionset",
             frontEndTitle: "",
             isFilter: false,
-            isPriceMaster: false,
             saved: false,
           },
       attributes: attributesData?.data?.length
@@ -676,15 +675,15 @@ const OptionsInfo = () => {
               value = "colour";
             }
             return {
-              _id: item._id,
-              metaAttribute: item.metaAttribute._id,
-              metaSubAttribute: item.metaSubAttribute._id,
+              _id: item?._id,
+              metaAttribute: item.metaAttribute?._id,
+              metaSubAttribute: item.metaSubAttribute?._id,
               title: item.title,
               colour: item.colour,
               imageUrl: item.imageUrl,
               type: item.type || "optionset",
               value,
-              apperance: item.metaSubAttribute.apperance,
+              apperance: item.metaSubAttribute?.apperance,
               saved: true,
               isOption: true,
               error: "",
@@ -718,6 +717,7 @@ const OptionsInfo = () => {
 
       try {
         dispatchOption({ type: "ENABLE_LOADING" });
+        SnackbarUtils.savingToast();
         if (!option.saved) {
           const { _id } = await createOption(option).unwrap();
           option._id = _id;
@@ -832,6 +832,7 @@ const OptionsInfo = () => {
         }
 
         optionFormik.resetForm();
+        SnackbarUtils.hideToast();
         dispatchOption({ type: "DISABLE_LOADING" });
         dispatch(
           showSuccess({
@@ -844,6 +845,7 @@ const OptionsInfo = () => {
           dispatchOption({ type: "ENABLE_SUCCESS" });
         }
       } catch (error) {
+        SnackbarUtils.hideToast();
         dispatchOption({ type: "DISABLE_LOADING" });
         if (error?.data?.message) {
           dispatch(showError({ message: error.data.message }));
@@ -1307,7 +1309,7 @@ const OptionsInfo = () => {
                                     width: "auto",
                                   }}
                                   name="option.isFilter"
-                                  value={optionFormik.values.option?.isFilter}
+                                  checked={optionFormik.values.option?.isFilter}
                                   onBlur={optionFormik.handleBlur}
                                   onChange={optionFormik.handleChange}
                                 />
@@ -1415,24 +1417,7 @@ const OptionsInfo = () => {
                               </FormControl>
                             </div>
                           </Grid>
-                          <Grid item md={6}>
-                            <div
-                              className="d-flex align-items-center justify-content-between"
-                              style={{ marginTop: "32px" }}
-                            >
-                              <p className="text-lightBlue">
-                                Is this option based on price master?
-                              </p>
-                              <AntSwitch
-                                name="option.isPriceMaster"
-                                checked={
-                                  optionFormik.values.option?.isPriceMaster
-                                }
-                                onBlur={optionFormik.handleBlur}
-                                onChange={optionFormik.handleChange}
-                              />
-                            </div>
-                          </Grid>
+                          <Grid item md={6}></Grid>
                         </Grid>
                       </Grid>
                     </Grid>

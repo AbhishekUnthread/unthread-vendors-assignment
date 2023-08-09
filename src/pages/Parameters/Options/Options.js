@@ -271,7 +271,7 @@ const Options = () => {
     dispatchOptions({ type: "SET_DELETE", id, message, deleteType: "set" });
   };
 
-  const CancelDeleteHandler = () => {
+  const cancelDeleteHandler = () => {
     dispatchOptions({ type: "REMOVE_DELETE" });
   };
 
@@ -421,10 +421,12 @@ const Options = () => {
         onTutorial={() => {}}
         onExport={() => {}}
         onImport={() => {}}
-        onCreate={createOptionHandler}
-        onSecondaryCreate={createOptionSetHandler}
+        onCreate={optionsState.activeTab === 1 ? createOptionHandler : null}
+        onSecondaryCreate={
+          optionsState.activeTab === 2 ? createOptionSetHandler : null
+        }
         createBtnText="+ Create Options"
-        createSecondaryBtnText="+ Options Sets"
+        createSecondaryBtnText="+ Create Option Sets"
       />
 
       {optionsState.activeTab && (
@@ -496,7 +498,7 @@ const Options = () => {
       )}
       <DeleteModalSecondary
         onConfirm={deleteConfirmationHandler}
-        onCancel={CancelDeleteHandler}
+        onCancel={cancelDeleteHandler}
         show={optionsState.showDeleteModal}
         isLoading={deleteOptionIsLoading || deleteOptionSetIsLoading}
         message={optionsState.confirmationMessage}

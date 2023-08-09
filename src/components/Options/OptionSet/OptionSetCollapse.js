@@ -55,7 +55,9 @@ const OptionSetCollapse = (props) => {
               <DeleteIconButton
                 onClick={onOptionDelete.bind(null, {
                   deleteIndex: index,
-                  message: "option",
+                  message: selectedOption?.title
+                    ? `${selectedOption?.title} option`
+                    : "option",
                 })}
                 title="Delete"
               />

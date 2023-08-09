@@ -44,6 +44,8 @@ import {
   useDeleteOptionSetMutation,
 } from "../../../features/parameters/options/optionSetsApiSlice";
 
+import SnackbarUtils from "../../../features/snackbar/useSnackbar";
+
 const FRONTEND_APPEARANCE = [
   {
     id: 1,
@@ -325,6 +327,7 @@ const OptionSetsInfo = () => {
         )
           delete optionSet[key];
       }
+      SnackbarUtils.savingToast();
       if (id) {
         updateOptionSet({
           id: optionSetsData?.data[0]._id,
@@ -350,6 +353,7 @@ const OptionSetsInfo = () => {
               );
             }
           });
+        SnackbarUtils.hideToast();
         return;
       }
       createOptionSet(optionSet)
@@ -374,6 +378,7 @@ const OptionSetsInfo = () => {
             );
           }
         });
+      SnackbarUtils.hideToast();
     },
   });
 
@@ -675,7 +680,7 @@ const OptionSetsInfo = () => {
                   optionSetFormik.initialValues
                 )
           }
-          message="option"
+          message="option set"
         />
       </div>
     </>
