@@ -170,7 +170,7 @@ const ProductTabs = () => {
     dispatchProductsTab({ type: "SET_DELETE", id, message });
   };
 
-  const CancelDeleteHandler = () => {
+  const cancelDeleteHandler = () => {
     dispatchProductsTab({ type: "REMOVE_DELETE" });
   };
 
@@ -272,7 +272,7 @@ const ProductTabs = () => {
       </div>
       <DeleteModalSecondary
         onConfirm={deleteConfirmationHandler}
-        onCancel={CancelDeleteHandler}
+        onCancel={cancelDeleteHandler}
         show={productsTabState.showDeleteModal}
         isLoading={deleteProductTabIsLoading}
         message={productsTabState.confirmationMessage}
