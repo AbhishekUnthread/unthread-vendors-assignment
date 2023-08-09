@@ -528,13 +528,15 @@ const AllUsersTable = ({
                       <TableCell>
                         <div className="d-flex flex-column align-items-start">
                           <div key={index}>
-                            <div className="d-flex align-items-center">
-                              <img src={row?.addresses[0]?.country?.imageUrl} alt="indiaFlag" height={16} />
-                              <p className="text-lightBlue ms-2">
-                                {row?.addresses[0]?.state?.name || " "}, {" "}
-                                {row?.addresses[0]?.country?.name}
-                              </p>
-                            </div>
+                            {row?.addresses[0] &&
+                              <div className="d-flex align-items-center">
+                                <img src={row?.addresses[0]?.country?.imageUrl} height={16} />
+                                <p className="text-lightBlue ms-2">
+                                  {row?.addresses[0]?.state?.name || " "}, {" "}
+                                  {row?.addresses[0]?.country?.name}
+                                </p>
+                              </div>
+                            }
                             <br />
                           </div>
                         </div>

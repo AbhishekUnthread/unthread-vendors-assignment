@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
@@ -45,6 +45,7 @@ import CustomerChip from "./CustomerChip";
 
 import arrowLeft from "../../../assets/icons/arrowLeft.svg";
 import addMedia from "../../../assets/icons/addMedia.svg";
+import cancel from "../../../assets/icons/cancel.svg";
 
 import "./AddUser.scss";
 
@@ -129,6 +130,7 @@ const AddUser = () => {
   let { id } = useParams();
   let navigate = useNavigate();
   const dispatch = useDispatch();
+  const [selectedGroupList, setSelectedGrouplist] = useState();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -212,10 +214,6 @@ const AddUser = () => {
     navigate("/users/allUsers");
   };
 
-  const onDelete = () => {
-    alert("hello")
-  }
-
   const customerFormik = useFormik({
     initialValues: {
       firstName: customerData?.data?.data[0]?.firstName || "",
@@ -231,7 +229,8 @@ const AddUser = () => {
       isTemporaryPassword: customerData?.data?.data[0]?.isTemporaryPassword || false,
       notes: customerData?.data?.data[0]?.notes || "",
       imageUrl: customerData?.data?.data[0]?.imageUrl || "",
-      groups: customerData?.data?.data[0]?.groups || ""
+      userGroup: customerData?.data?.data[0]?.groups || "",
+      tags: customerData?.data?.data[0]?.tags || ""
     },
     enableReinitialize: true,
     validationSchema: customerValidationSchema,
@@ -274,6 +273,12 @@ const AddUser = () => {
       dispatchCustomer({ type: "DISABLE_EDIT" });
     }
   }, [customerFormik.initialValues, customerFormik.values, id]);
+
+  const removeGroup = (group) => {
+    const updatedGroup = customerFormik.values.groups.filter(existingGroup => existingGroup !== group);
+    console.log(updatedGroup, 'updatedGroup');
+    // selectedGroupList(updatedGroup);
+  };
 
   return (
     <form noValidate onSubmit={customerFormik.handleSubmit}>
@@ -408,6 +413,7 @@ const AddUser = () => {
                               GetCountryCode={GetCountryCode}
                               SelectCountryCode = {GetCountryCode}
                               name="countryCode" 
+                              formik={customerFormik}
                             />
                           </InputAdornment>
                         }
@@ -525,18 +531,24 @@ const AddUser = () => {
                       }}
                     />
                   </div>
-                  {/* <div className="col-md-12 mt-3">
+                  <div className="col-md-12 mt-3">
                     <p className="text-lightBlue mb-1">User Group</p>
                     <Autocomplete
                       multiple
                       id="checkboxes-tags-demo"
                       sx={{ width: "100%" }}
                       options={customerGroupData?.data?.data || []}
-                      value={customerFormik.values.groups}
+                      value={(customerFormik.values.userGroup || []).map(groupId => {
+      const selectedGroup = customerGroupData?.data?.data.find(group => group._id === groupId);
+      return selectedGroup ? { _id: groupId, name: selectedGroup.name } : null;
+    }).filter(selectedGroup => selectedGroup !== null)}
                       disableCloseOnSelect
                       getOptionLabel={(option) => option?.name}
                       size="small"
-                      onChange={handleGroupName}
+                      onChange={(event, value) => {
+                        const selectedIds = value.map(option => option._id);
+                        customerFormik.setFieldValue("userGroup", selectedIds);
+                      }}
                       renderOption={(props, option, { selected }) => (
                         <li {...props}>
                           <Checkbox
@@ -552,14 +564,34 @@ const AddUser = () => {
                           <small className="text-lightBlue">{option.name}</small>
                         </li>
                       )}
-                      renderTags={(value, getTagProps) =>
-                        value.map((option, index) => (
-                          <CustomerChip
-                            option={option}
-                            {...getTagProps({ index })}
-                            className="me-1"
-                            // onDelete={onDelete}
-                          />
+                      renderTags={(value) =>
+                        value.map((option) => (
+                          <div
+                            key={option?._id}
+                            className={`rounded-pill d-flex align-items-center px-2 py-1 c-pointer`}
+                            style={{
+                              background:
+                                "linear-gradient(303.01deg, #2f2e69 -4.4%, #514969 111.29%)",
+                            }}
+                          >
+                            <small className="fw-400 text-lightBlue">{option?.name}</small>
+                            <button type="button" className="reset"
+                              onClick={() => {
+                                const updatedGroups = customerFormik.values.userGroup.filter(
+                                  (existingGroup) => existingGroup._id !== option._id
+                                );
+                                customerFormik.setFieldValue("userGroup", updatedGroups);
+                              }}
+                            >
+                              <img 
+                                src={cancel} 
+                                alt="cancel" 
+                                width={20} 
+                                className="c-pointer" 
+                                onClick={() => removeGroup(option)}
+                              />
+                            </button>
+                          </div>
                         ))
                       }
                       renderInput={(params) => (
@@ -570,7 +602,7 @@ const AddUser = () => {
                         />
                       )}
                     />
-                  </div> */}
+                  </div>
                 </div>
               </div>
             </div>
@@ -593,6 +625,7 @@ const AddUser = () => {
               previousImage={customerFormik?.values?.imageUrl}
             /> */}
             <TagsBox 
+              formik={customerFormik}
               name="tags"
               value={customerFormik.values.tags}
               tagsList={tagsData?.data?.data || []}
