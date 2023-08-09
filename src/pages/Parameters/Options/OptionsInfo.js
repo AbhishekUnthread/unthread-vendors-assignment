@@ -675,9 +675,9 @@ const OptionsInfo = () => {
               value = "colour";
             }
             return {
-              _id: item._id,
-              metaAttribute: item.metaAttribute._id,
-              metaSubAttribute: item.metaSubAttribute._id,
+              _id: item?._id,
+              metaAttribute: item.metaAttribute?._id,
+              metaSubAttribute: item.metaSubAttribute?._id,
               title: item.title,
               colour: item.colour,
               imageUrl: item.imageUrl,
