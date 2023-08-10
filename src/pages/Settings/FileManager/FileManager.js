@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 // ! COMPONENT IMPORTS
 import AllFiles from "./AllFiles/AllFiles";
 import FoldersOnly from "./FoldersOnly/FoldersOnly";
@@ -16,11 +17,9 @@ import folderOpen from "../../../assets/icons/folderOpen.svg";
 import imagesOn from "../../../assets/icons/imagesOn.svg";
 import videosOn from "../../../assets/icons/videosOn.svg";
 import sortVertical from "../../../assets/icons/sortVertical.svg";
-import folderLargePurple from "../../../assets/icons/folderLargePurple.svg";
 import searchVertical from "../../../assets/icons/searchVertical.svg";
 import uploadCloud from "../../../assets/icons/uploadCloud.svg";
 import folderPlus from "../../../assets/icons/folderPlus.svg";
-import cancel from "../../../assets/icons/cancel.svg";
 // ! MATERIAL IMPORTS
 import {
   Button,
@@ -40,8 +39,29 @@ import {
 // import FolderIcon from "@mui/icons-material/Folder";
 import AddIcon from "@mui/icons-material/Add";
 import IconMenuItem from "./IconMenuItem";
+import ImagesOnly from "./ImagesOnly/ImagesOnly";
+import VideosOnly from "./VideosOnly/VideosOnly";
+import FolderNameDialog from "./FolderNameDialog";
+import { useCreateFolderMutation } from "../../../features/settings/filemanager/filemanagerApiSlice";
+import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 
 const FileManager = () => {
+  const dispatch = useDispatch();
+  const [createNewFolder] = useCreateFolderMutation();
+
+  const handleCreateNewFolder = (name = "") => {
+    createNewFolder({ name })
+      .unwrap()
+      .then(() => {
+        handleAddFolderClose();
+        dispatch(showSuccess({ message: `${name} created successfully` }));
+      })
+      .catch((e) => {
+        console.log(e);
+        dispatch(showError({ message: "Something went wrong" }));
+      });
+  };
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [openAddFolder, setOpenAddFolder] = useState(false);
@@ -53,13 +73,13 @@ const FileManager = () => {
   const handleViews = (_, v) => setViews(v);
   const handleSortClick = (e) => setSortAnchorEl(e.currentTarget);
   const handleSortClose = () => setSortAnchorEl(null);
-  const handleAddClick = (e) => setAddAnchorEl(e.currentTarget);
-  const handleAddClose = () => setAddAnchorEl(null);
+  const handleAddNewClick = (e) => setAddAnchorEl(e.currentTarget);
+  const handleAddNewClose = () => setAddAnchorEl(null);
   const handleTabChange = (_, tab) => setSearchParams({ tab });
-  const handleAddFolderClick = () => setOpenAddFolder(true);
+  const handleAddNewFolderClick = () => setOpenAddFolder(true);
   const handleAddFolderClose = () => setOpenAddFolder(false);
 
-  const open = Boolean(sortAnchorEl);
+  const openSortMenu = Boolean(sortAnchorEl);
 
   useLayoutEffect(() => {
     if (searchParams.has("tab")) {
@@ -77,13 +97,22 @@ const FileManager = () => {
           <div className="col d-flex align-items-center">
             <h4 className="text-lightBlue fw-600 me-2">File Manager</h4>
 
-            <Tooltip title="Lorem ipsum" placement="top">
-              <img src={info} alt="info" className="c-pointer" width={13.5} />
+            <Tooltip
+              title="Lorem ipsum"
+              placement="top">
+              <img
+                src={info}
+                alt="info"
+                className="c-pointer"
+                width={13.5}
+              />
             </Tooltip>
           </div>
 
           <div className="col-auto">
-            <Button variant="text" className="me-2">
+            <Button
+              variant="text"
+              className="me-2">
               <span className="text-lightBlue">Connect Storage</span>
             </Button>
 
@@ -91,81 +120,35 @@ const FileManager = () => {
               variant="contained"
               className="button-gradient text-white ms-2"
               startIcon={<AddIcon />}
-              onClick={handleAddClick}
-            >
+              onClick={handleAddNewClick}>
               Add New
             </Button>
             <Menu
               anchorEl={addAnchorEl}
               open={Boolean(addAnchorEl)}
-              onClose={handleAddClose}
-            >
+              onClose={handleAddNewClose}>
               <IconMenuItem
                 icon={uploadCloud}
                 text="Upload"
-                close={handleAddClose}
+                close={handleAddNewClose}
+                onCreate={handleCreateNewFolder}
               />
 
               <IconMenuItem
                 icon={folderPlus}
                 text="Add New Folder"
-                action={handleAddFolderClick}
-                close={handleAddClose}
+                action={handleAddNewFolderClick}
+                close={handleAddNewClose}
               />
             </Menu>
           </div>
-
-          <Dialog
-            fullWidth
-            keepMounted
-            maxWidth="sm"
-            open={openAddFolder}
+          <FolderNameDialog
+            isOpen={openAddFolder}
+            headingText="Create New Folder"
+            buttonText="Create"
             onClose={handleAddFolderClose}
-          >
-            <DialogTitle>
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="m-0 p-0">
-                  <h4 className="text-lightBlue fw-500">Create New Folder</h4>
-                  <small className="text-grey-6 fw-200">
-                    Lorem ipsum dolor sit amet.
-                  </small>
-                </div>
-                <img
-                  src={cancel}
-                  alt="cancel"
-                  width={24}
-                  onClick={handleAddFolderClose}
-                  className="c-pointer"
-                />
-              </div>
-            </DialogTitle>
-            <hr className="hr-grey-6 my-0" />
-            <DialogContent className="p-3">
-              <div className="row align-items-center">
-                <div className="col-auto">
-                  <div className="folder-icon rounded-8 p-4 m-3">
-                    <img src={folderLargePurple} alt="folder" width={66} />
-                  </div>
-                </div>
-                <div className="col">
-                  <label className="text-lightBlue mb-2">Folder Name</label>
-                  <TextField size="small" fullWidth />
-                </div>
-              </div>
-            </DialogContent>
-            <hr className="hr-grey-6 my-0" />
-            <DialogActions className="d-flex justify-content-between px-4 py-3">
-              <button
-                className="button-lightBlue-outline py-2 px-4"
-                onClick={handleAddFolderClose}
-              >
-                <p className="text-lightBlue">Cancel</p>
-              </button>
-              <button className="button-gradient py-2 px-4" onClick={null}>
-                <p>Create</p>
-              </button>
-            </DialogActions>
-          </Dialog>
+            onAction={handleCreateNewFolder}
+          />
         </div>
 
         <div className="row py-3">
@@ -214,30 +197,57 @@ const FileManager = () => {
       <div className="my-3">
         <div className="row align-items-center">
           <div className="col">
-            <Tabs className="tabs" value={tabIndex} onChange={handleTabChange}>
+            <Tabs
+              className="tabs"
+              value={tabIndex}
+              onChange={handleTabChange}>
               <Tab
-                icon={<img src={allfiles} alt="icon" width={15} />}
+                icon={
+                  <img
+                    src={allfiles}
+                    alt="icon"
+                    width={15}
+                  />
+                }
                 iconPosition="start"
                 label="All Files"
                 className="tabs-head"
               />
 
               <Tab
-                icon={<img src={folderOpen} alt="icon" width={15} />}
+                icon={
+                  <img
+                    src={folderOpen}
+                    alt="icon"
+                    width={15}
+                  />
+                }
                 iconPosition="start"
                 label="Folders"
                 className="tabs-head"
               />
 
               <Tab
-                icon={<img src={imagesOn} alt="icon" width={15} />}
+                icon={
+                  <img
+                    src={imagesOn}
+                    alt="icon"
+                    width={15}
+                  />
+                }
                 iconPosition="start"
                 label="Images"
                 className="tabs-head"
               />
 
               <Tab
-                icon={<img src={videosOn} alt="icon" width={15} />}
+                icon={
+                  <img
+                    src={videosOn}
+                    alt="icon"
+                    width={15}
+                  />
+                }
                 iconPosition="start"
                 label="Videos"
                 className="tabs-head"
@@ -248,27 +258,36 @@ const FileManager = () => {
           <div className="col-auto d-flex align-items-center">
             <Button
               variant="text"
-              startIcon={<img src={searchVertical} alt="icon" width={15} />}
-            >
+              startIcon={
+                <img
+                  src={searchVertical}
+                  alt="icon"
+                  width={15}
+                />
+              }>
               <span className="text-grey-6">Search</span>
             </Button>
 
             <Button
               variant="text"
-              endIcon={<img src={sortVertical} alt="icon" width={15} />}
-              onClick={handleSortClick}
-            >
+              endIcon={
+                <img
+                  src={sortVertical}
+                  alt="icon"
+                  width={15}
+                />
+              }
+              onClick={handleSortClick}>
               <span className="text-grey-6">Sort</span>
             </Button>
 
-            <Menu anchorEl={sortAnchorEl} open={open} onClose={handleSortClose}>
-              <MenuItem onClick={handleSortClose}>
-                File Size (High to Low)
-              </MenuItem>
+            <Menu
+              anchorEl={sortAnchorEl}
+              open={openSortMenu}
+              onClose={handleSortClose}>
+              <MenuItem onClick={handleSortClose}>File Size (High to Low)</MenuItem>
 
-              <MenuItem onClick={handleSortClose}>
-                File Size (Low to High)
-              </MenuItem>
+              <MenuItem onClick={handleSortClose}>File Size (Low to High)</MenuItem>
 
               <MenuItem onClick={handleSortClose}>Modified (Newest)</MenuItem>
 
@@ -283,14 +302,21 @@ const FileManager = () => {
               exclusive
               value={views}
               onChange={handleViews}
-              className="ms-2"
-            >
+              className="ms-2">
               <ToggleButton value="icon">
-                <img src={allfiles} alt="icon" width={15} />
+                <img
+                  src={allfiles}
+                  alt="icon"
+                  width={15}
+                />
               </ToggleButton>
 
               <ToggleButton value="list">
-                <img src={listFiles} alt="icon" width={15} />
+                <img
+                  src={listFiles}
+                  alt="icon"
+                  width={15}
+                />
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
@@ -300,8 +326,10 @@ const FileManager = () => {
       </div>
 
       {/* Tab contents for each index */}
-      {tabIndex === 0 && <AllFiles />}
+      {tabIndex === 0 && <AllFiles changeTab={handleTabChange} />}
       {tabIndex === 1 && <FoldersOnly />}
+      {tabIndex === 2 && <ImagesOnly />}
+      {tabIndex === 3 && <VideosOnly />}
     </div>
   );
 };

@@ -20,3 +20,24 @@
 
 - alphabetical sort query x
 - cronological sort query x
+
+## File Manager API Stuff
+
+- [ ] Folder & File sequencing and pagination
+- [ ] File Type filter for image/video
+- [-] The green dot thing linked to some module or something
+- [ ] Folder Search also include current files count and maybe remove description
+
+## Folder Context Menu
+
+- Rename n Delete only
+
+## File Context Menu
+
+- Remove Share
+
+## Extra File Upload Params
+
+- filesize: Number
+- filetype: ['image', 'video']
+- module: ["category", "subCategory", "vendor", "collection", "productTab", "tagManager", "product", "sizeChart", "offer"]
