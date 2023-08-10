@@ -2,13 +2,13 @@ import React from "react";
 import "./CreatePriceMaster.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
-import NotesBox from "../../../components/NotesBox/NotesBox";
-import StatusBox from "../../../components/StatusBox/StatusBox";
-import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
+import NotesBox from "../../components/NotesBox/NotesBox";
+import StatusBox from "../../components/StatusBox/StatusBox";
+import UploadMediaBox from "../../components/UploadMediaBox/UploadMediaBox";
 // ! IMAGES IMPORTS
-import arrowLeft from "../../../assets/icons/arrowLeft.svg";
-import info from "../../../assets/icons/info.svg";
-import addMedia from "../../../assets/icons/addMedia.svg";
+import arrowLeft from "../../assets/icons/arrowLeft.svg";
+import info from "../../assets/icons/info.svg";
+import addMedia from "../../assets/icons/addMedia.svg";
 // ! MATERIAL IMPORTS
 import {
   Autocomplete,
