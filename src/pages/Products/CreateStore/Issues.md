@@ -104,7 +104,7 @@ This will take some time
 
 - [x] email . part validate
 - [x] map link non required
-- time minute selector
+- [ ] time minute selector
 - [x] image in listing stretch
 - [x] notes bug remove if empty
 - [x] All Inventor status unchecked checks
