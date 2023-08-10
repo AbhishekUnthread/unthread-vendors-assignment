@@ -288,6 +288,9 @@ const AddUser = () => {
     customerFormik.setFieldValue("userGroup", groupIds)
   }
 
+  const currentDate = new Date();
+  const maxDate = new Date(currentDate.getFullYear() - 18, currentDate.getMonth(), currentDate.getDate());
+
   return (
     <form noValidate onSubmit={customerFormik.handleSubmit}>
       <div className="page container-fluid position-relative">
@@ -362,6 +365,7 @@ const AddUser = () => {
                           value={customerFormik.values.dob}
                           onChange={handleDOB}
                           renderInput={(params) => <TextField {...params} size="small" />}
+                          maxDate={maxDate}
                         />
                       </LocalizationProvider>
                     </FormControl>
@@ -610,7 +614,7 @@ const AddUser = () => {
             />
           </div>
           <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
-            {/* <UploadMediaBox 
+            <UploadMediaBox 
               name={"imageUrl"}  
               value={customerFormik?.values?.imageUrl}  
               imageName={addMedia} 
@@ -618,7 +622,7 @@ const AddUser = () => {
               UploadChange={handleMediaUrl} 
               isUploaded={()=>{}}
               previousImage={customerFormik?.values?.imageUrl}
-            /> */}
+            />
             <TagsBox 
               formik={customerFormik}
               name="tags"

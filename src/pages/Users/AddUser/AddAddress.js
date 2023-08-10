@@ -1,6 +1,7 @@
-import { useState, forwardRef } from "react";
+import { useState, forwardRef, useEffect, useReducer } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import _ from "lodash";
 import {
   Dialog,
   DialogActions,
@@ -31,6 +32,28 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const initialAddressState = {
+  confirmationMessage: "",
+  isEditing: false,
+};
+
+const addressTabReducer = (state, action) => {
+  if (action.type === "ENABLE_EDIT") {
+    return {
+      ...initialAddressState,
+      isEditing: true,
+    };
+  }
+  if (action.type === "DISABLE_EDIT") {
+    return {
+      ...initialAddressState,
+      isEditing: false,
+    };
+  }
+
+  return initialAddressState;
+};
+
 const customerAddressValidation = Yup.object({
   name: Yup.string().trim().min(3).required("Required"),
   firstName: Yup.string().trim().min(3).required("Required"),
@@ -46,9 +69,12 @@ const customerAddressValidation = Yup.object({
 
 const AddAddress = ({ customerAddressDetails, data }) => {
   const [address, setAddress] = useState(false);
-  const [savedAddress, setSavedAddress] = useState(false);
   const [openNewUser, setOpenNewUser] = useState(false);
-  
+  const [addressState, dispatchAddress] = useReducer(
+    addressTabReducer,
+    initialAddressState
+  );
+
   const customerAddressFormik = useFormik({
     initialValues: {
       name: data?.name || "",
@@ -124,6 +150,14 @@ const AddAddress = ({ customerAddressDetails, data }) => {
     setOpenNewUser(false);
   };
 
+  useEffect(() => {
+    if (!_.isEqual(customerAddressFormik.values, customerAddressFormik.initialValues)) {
+      dispatchAddress({ type: "ENABLE_EDIT" });
+    } else if (_.isEqual(customerAddressFormik.values, customerAddressFormik.initialValues)) {
+      dispatchAddress({ type: "DISABLE_EDIT" });
+    }
+  }, [customerAddressFormik.initialValues, customerAddressFormik.values]);
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
         <div className="d-flex col-12 px-0 justify-content-between">
@@ -137,7 +171,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                 <p className="">+ Add Adress</p>
             </p>
         </div>
-        {savedAddress && (
+        {customerAddressFormik && (
             <div className="col-12 mt-3">
                 <div
                     className="row py-3 mb-3 rounded-8"
@@ -163,16 +197,16 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                     </div>
                     <div className="col-12 px-3">
                         <small className="text-lightBlue d-block">
-                            Sanjay Chauhan
+                            {customerAddressFormik.values.firstName} {customerAddressFormik.values.lastName}
                         </small>
                         <small className="text-lightBlue d-block">
-                            66-68, Jambi Moballa, Bapu Khote Street, Mandvi
+                            {customerAddressFormik.values.line1}
                         </small>
                         <small className="text-lightBlue d-block">
-                            Mumbai-400003, Maharashtra, Mumbai
+                            {customerAddressFormik.values.city}-{customerAddressFormik.values.pinCode}, {customerAddressFormik.values.state}, {customerAddressFormik.values.city}
                         </small>
                         <small className="text-lightBlue d-block">
-                            +91 9876543210
+                            {customerAddressFormik.values.countryCode} {customerAddressFormik.values.phone}
                         </small>
                     </div>
                 </div>

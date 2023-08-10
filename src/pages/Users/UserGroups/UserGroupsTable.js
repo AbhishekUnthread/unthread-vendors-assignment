@@ -433,7 +433,7 @@ const UserGroupsTable = ({
                           <p className="text-lightBlue">{row.usersInGroup}</p>
                         </TableCell>
                         <TableCell style={{ width: 180 }}>
-                          <p className="text-lightBlue">100%</p>
+                          <p className="text-lightBlue">{(row?.segmentRatio).toFixed(2)}%</p>
                         </TableCell>
                         { (value == 0 || value == 3) &&
                           <TableCell style={{ width: 180 }}>

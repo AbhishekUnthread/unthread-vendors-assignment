@@ -356,7 +356,7 @@ const UserDetails = () => {
             </div>
             <small className="text-grey-6 mt-3 d-block">Mobile Number</small>
             <div className="d-flex mt-1">
-              <p className="text-lightBlue me-2">{customerDetails?.countryCode} {customerDetails?.phone}</p>
+              <p className="text-lightBlue me-2">{customerDetails?.countryCode?.countryCode} {customerDetails?.phone}</p>
               <img src={copy} alt="copy" />
             </div>
             <small className="text-grey-6 mt-3 d-block">Date of Birth</small>
