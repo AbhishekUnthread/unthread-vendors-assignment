@@ -116,6 +116,7 @@ const customerValidationSchema = Yup.object({
   email: Yup.string().email().required("Required"),
   countryCode: Yup.string().required("Required"),
   phone: Yup.number().required("Required"),
+  userGroup: Yup.array().of(Yup.string()),
   password:  Yup
     .string()
     .min(8, 'Password must be 8 characters long')
@@ -130,7 +131,6 @@ const AddUser = () => {
   let { id } = useParams();
   let navigate = useNavigate();
   const dispatch = useDispatch();
-  const [selectedGroupList, setSelectedGrouplist] = useState();
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -229,7 +229,7 @@ const AddUser = () => {
       isTemporaryPassword: customerData?.data?.data[0]?.isTemporaryPassword || false,
       notes: customerData?.data?.data[0]?.notes || "",
       imageUrl: customerData?.data?.data[0]?.imageUrl || "",
-      userGroup: customerData?.data?.data[0]?.groups || "",
+      userGroup: customerData?.data?.data[0]?.userGroup || [],
       tags: customerData?.data?.data[0]?.tags || ""
     },
     enableReinitialize: true,
@@ -274,11 +274,19 @@ const AddUser = () => {
     }
   }, [customerFormik.initialValues, customerFormik.values, id]);
 
-  const removeGroup = (group) => {
-    const updatedGroup = customerFormik.values.groups.filter(existingGroup => existingGroup !== group);
-    console.log(updatedGroup, 'updatedGroup');
-    // selectedGroupList(updatedGroup);
+  const removeGroup = (groupIdToRemove) => {
+    const updatedGroups = customerFormik.values.userGroup.filter(groupId => groupId !== groupIdToRemove);
+    customerFormik.setFieldValue("userGroup", updatedGroups);
   };
+
+  const selectedGroups = customerGroupData?.data?.data?.filter(group =>
+    customerFormik.values.userGroup.includes(group._id)
+  );
+
+  const handleGroupChange = (_, group) => {
+    const groupIds = group?.map((group) => group?._id)
+    customerFormik.setFieldValue("userGroup", groupIds)
+  }
 
   return (
     <form noValidate onSubmit={customerFormik.handleSubmit}>
@@ -538,17 +546,11 @@ const AddUser = () => {
                       id="checkboxes-tags-demo"
                       sx={{ width: "100%" }}
                       options={customerGroupData?.data?.data || []}
-                      value={(customerFormik.values.userGroup || []).map(groupId => {
-      const selectedGroup = customerGroupData?.data?.data.find(group => group._id === groupId);
-      return selectedGroup ? { _id: groupId, name: selectedGroup.name } : null;
-    }).filter(selectedGroup => selectedGroup !== null)}
+                      value={selectedGroups || []}
                       disableCloseOnSelect
                       getOptionLabel={(option) => option?.name}
                       size="small"
-                      onChange={(event, value) => {
-                        const selectedIds = value.map(option => option._id);
-                        customerFormik.setFieldValue("userGroup", selectedIds);
-                      }}
+                      onChange={handleGroupChange}
                       renderOption={(props, option, { selected }) => (
                         <li {...props}>
                           <Checkbox
@@ -575,20 +577,13 @@ const AddUser = () => {
                             }}
                           >
                             <small className="fw-400 text-lightBlue">{option?.name}</small>
-                            <button type="button" className="reset"
-                              onClick={() => {
-                                const updatedGroups = customerFormik.values.userGroup.filter(
-                                  (existingGroup) => existingGroup._id !== option._id
-                                );
-                                customerFormik.setFieldValue("userGroup", updatedGroups);
-                              }}
-                            >
+                            <button type="button" className="reset">
                               <img 
                                 src={cancel} 
                                 alt="cancel" 
                                 width={20} 
                                 className="c-pointer" 
-                                onClick={() => removeGroup(option)}
+                                onClick={() => removeGroup(option?._id)}
                               />
                             </button>
                           </div>
@@ -627,7 +622,7 @@ const AddUser = () => {
             <TagsBox 
               formik={customerFormik}
               name="tags"
-              value={customerFormik.values.tags}
+              value={customerFormik.values.tags || []}
               tagsList={tagsData?.data?.data || []}
               selectedTagList={selectedTagList}
             />
@@ -647,7 +642,7 @@ const AddUser = () => {
         </div>
       </div>
       <DiscardModalSecondary
-        when={!_.isEqual(customerFormik.values, customerFormik.initialValues)}
+        when={id && !_.isEqual(customerFormik.values, customerFormik.initialValues)}
         message="customer tab"
       />
     </form>

@@ -1172,7 +1172,7 @@ const CreateUserGroup = () => {
         </div>
       </form>
       <DiscardModalSecondary
-        when={!_.isEqual(customerGroupFormik.values, customerGroupFormik.initialValues)}
+        when={id && !_.isEqual(customerGroupFormik.values, customerGroupFormik.initialValues)}
         message="product tab"
       />
     </>
