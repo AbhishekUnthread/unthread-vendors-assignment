@@ -20,7 +20,7 @@ const PriceMasterLanding = () => {
       </p>
       <Link
         className="button-gradient py-2 px-4 mt-4 mb-4"
-        to="/parameters/priceMaster/create"
+        to="/priceMaster/create"
       >
         <p>Create Price Master</p>
       </Link>

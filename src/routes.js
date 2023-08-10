@@ -46,7 +46,7 @@ import BundleDiscount from "./pages/Offers/BundleDiscount/BundleDiscount";
 import CreateBundleDiscount from "./pages/Offers/CreateBundleDiscount/CreateBundleDiscount";
 import PriceMasterLanding from "./pages/Parameters/PriceMasterLanding/PriceMasterLanding";
 import PriceMaster from "./pages/Parameters/PriceMaster/PriceMaster";
-import CreatePriceMaster from "./pages/Parameters/CreatePriceMaster/CreatePriceMaster";
+import CreatePriceMaster from "./pages/CreatePriceMaster/CreatePriceMaster";
 import MetalPriceManager from "./pages/Parameters/MetalPriceManager/MetalPriceManager";
 import DiamondPriceManager from "./pages/Parameters/DiamondPriceManager/DiamondPriceManager";
 import MakingChargesManager from "./pages/Parameters/MakingChargesManager/MakingChargesManager";
@@ -332,6 +332,35 @@ const router = () => {
                 },
                 {
                   path: "priceMaster/makingMaster",
+                  element: <MakingChargesManager />,
+                },
+              ],
+            },
+            {
+              path: "priceMaster",
+              children: [
+                {
+                  index: true,
+                  element: <PriceMasterLanding />,
+                },
+                {
+                  path: "inventory",
+                  element: <PriceMaster />,
+                },
+                {
+                  path: "create",
+                  element: <CreatePriceMaster />,
+                },
+                {
+                  path: "metalMaster",
+                  element: <MetalPriceManager />,
+                },
+                {
+                  path: "diamondMaster",
+                  element: <DiamondPriceManager />,
+                },
+                {
+                  path: "makingMaster",
                   element: <MakingChargesManager />,
                 },
               ],
