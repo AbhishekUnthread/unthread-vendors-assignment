@@ -98,7 +98,8 @@ const DiscountsTable = ({
   changeRowsPerPage,
   changePage,
   page,
-  discountType
+  discountType,
+  edit
 }) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
@@ -342,7 +343,7 @@ const DiscountsTable = ({
                     <TableCell style={{ width: 140, padding: 0 }}>
                       <div className="d-flex align-items-center">
                         <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2">
+                          <div className="table-edit-icon rounded-4 p-2" onClick={()=>{edit(row, index + 1, discountType)}}>
                             <EditOutlinedIcon
                               sx={{
                                 color: "#5c6d8e",

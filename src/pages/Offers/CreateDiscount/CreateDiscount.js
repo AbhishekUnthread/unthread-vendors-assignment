@@ -1,6 +1,6 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import "./CreateDiscount.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
@@ -58,7 +58,10 @@ import {
   showSuccess,
 } from "../../../features/snackbar/snackbarAction";
 import DiscountRange from "../../../components/DiscountFormat/DiscountRange";
-import { useCreateDiscountMutation } from "../../../features/offers/discounts/discountsApiSlice";
+import {
+  useCreateDiscountMutation,
+  useGetAllDiscountsQuery,
+} from "../../../features/offers/discounts/discountsApiSlice";
 import LimitByLocation from "../../../components/DiscountFormat/LimitByLocation";
 
 const taggedWithData = [
@@ -109,16 +112,19 @@ const couponCodeSchema = Yup.object().shape({
 const maximumDiscountValidationSchema = Yup.object().shape({
   limitDiscountNumber: Yup.boolean().optional(),
   limitUsagePerCustomer: Yup.boolean().optional(),
-  total: Yup.number().when(['limitDiscountNumber'], ([limitDiscountNumber], schema) => {
-    return limitDiscountNumber ? schema.required('required') : schema;
-
-  }),
-  perCustomer: Yup.number().when(['limitUsagePerCustomer'], ([limitUsagePerCustomer], schema) => {
-    return limitUsagePerCustomer ? schema.required('required') : schema;
-
-  })
+  total: Yup.number().when(
+    ["limitDiscountNumber"],
+    ([limitDiscountNumber], schema) => {
+      return limitDiscountNumber ? schema.required("required") : schema;
+    }
+  ),
+  perCustomer: Yup.number().when(
+    ["limitUsagePerCustomer"],
+    ([limitUsagePerCustomer], schema) => {
+      return limitUsagePerCustomer ? schema.required("required") : schema;
+    }
+  ),
 });
-
 
 // const minimumRequirementValidationSchema = Yup.object().shape({
 //   requirement: Yup.string()
@@ -143,11 +149,12 @@ const maximumDiscountValidationSchema = Yup.object().shape({
 
 const minimumRequirementValidationSchema = Yup.object().shape({
   requirement: Yup.string(),
-  value: Yup.number().when(['requirement'], ([requirement], schema) => {
-    return (requirement === "amount" || requirement === "quantity") ? schema.required('required') : schema;
+  value: Yup.number().when(["requirement"], ([requirement], schema) => {
+    return requirement === "amount" || requirement === "quantity"
+      ? schema.required("required")
+      : schema;
   }),
 });
-
 
 const discountFormatSchema = Yup.object().shape({
   discountFormat: Yup.string().oneOf(
@@ -162,13 +169,13 @@ const discountFormatSchema = Yup.object().shape({
 });
 
 const filterSchema = Yup.object().shape({
-  field: Yup.string().required('Field is required'),
-  operator: Yup.string().required('Operator is required'),
-  fieldValue: Yup.mixed().required('Field value is required'),
+  field: Yup.string().required("Field is required"),
+  operator: Yup.string().required("Operator is required"),
+  fieldValue: Yup.mixed().required("Field value is required"),
 });
 
 const scheduleDateSchema = Yup.object().shape({
-  startDateTime: Yup.date().required('Start date is required'),
+  startDateTime: Yup.date().required("Start date is required"),
   // endDateTime: Yup.date()
   //   .nullable()
   //   .when('startDateTime', (start, schema) => {
@@ -177,17 +184,18 @@ const scheduleDateSchema = Yup.object().shape({
 });
 
 const discountValueSchema = Yup.object().shape({
-  discountValue: Yup.number().required('Discount value is required'),
-  type: Yup.string().oneOf(['percentage', 'fixed']).required('Type must be percentage or fixed'),
-  value: Yup.string().required('Value is required'),
+  discountValue: Yup.number().required("Discount value is required"),
+  type: Yup.string()
+    .oneOf(["percentage", "fixed"])
+    .required("Type must be percentage or fixed"),
+  value: Yup.string().required("Value is required"),
   // cartLabel: Yup.string().when(['discountType'], ([discountType], schema) => {
   //   if (discountType === 'cartDiscount') {
   //     return schema.required('Cart label is required');
   //   }
-  //   return schema;
+  //   return schema;b
   // }),
 });
-
 
 const discountValidationSchema = Yup.object().shape({
   discountName: Yup.string()
@@ -209,23 +217,50 @@ const discountValidationSchema = Yup.object().shape({
     .required("Discount Type is required"),
   discountFormat: discountFormatSchema,
   minimumRequirement: minimumRequirementValidationSchema,
-  filters : Yup.array().of(filterSchema),
+  filters: Yup.array().of(filterSchema),
   returnExchange: Yup.string()
     .oneOf(["allowed", "notAllowed"], "Invalid")
     .required("required"),
   maximumDiscount: maximumDiscountValidationSchema,
-  scheduledDiscount : scheduleDateSchema,
-  discountValue : discountValueSchema
+  scheduledDiscount: scheduleDateSchema,
+  discountValue: discountValueSchema,
   // couponCode: couponCodeSchema,
-
 });
+const initialDiscountsState = {
+  data: [],
+  totalCount: 0,
+  discountType: 0,
+};
+const discountsReducer = (state, action) => {
+  if (action.type === "SET_DATA") {
+    return {
+      ...state,
+      data: action.data,
+      totalCount: action.totalCount,
+    };
+  }
+  if (action.type === "SET_DISCOUNT_TYPE") {
+    return {
+      ...state,
+      discountType: action.discountType,
+    };
+  }
+  return initialDiscountsState;
+};
 const CreateDiscount = () => {
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
+  const [discountsState, dispatchDiscounts] = useReducer(
+    discountsReducer,
+    initialDiscountsState
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [decodedObject, setDecodedObject] = useState(null);
+  let { id } = useParams();
 
   const [
     createDiscount,
@@ -235,6 +270,20 @@ const CreateDiscount = () => {
       error: createDiscountError,
     },
   ] = useCreateDiscountMutation();
+
+  const {
+    data: discountsData,
+    isLoading: discountsIsLoading,
+    isSuccess: discountsIsSuccess,  
+    error: discountsError,
+    isError: discountsIsError,
+  } = useGetAllDiscountsQuery({
+    id: id,
+    alphabetical: decodedObject?.alphabetical,
+    createdAt: decodedObject?.createdAt,
+    name: decodedObject?.name,
+    status: decodedObject?.status,
+  });
 
   // ? USER ROLE SELECT STARTS HERE
   const [discountType, setDiscountType] = React.useState("");
@@ -338,17 +387,19 @@ const CreateDiscount = () => {
     navigate("/offers/discounts");
   };
 
+  console.log("fbewjvhewh",discountsData )
+
   const formik = useFormik({
     initialValues: {
-      discountName: "",
-      discountType: "",
+      discountName: "" || discountsData?.data?.data[0].name,
+      discountType: "" || discountsData?.data?.data[0].mainDiscount?.type,
       discountFormat: {
-        discountFormat: "code",
-        discountCode: "",
+        discountFormat: "code"|| discountsData?.data.data[0].mainDiscount.format,
+        discountCode: "" || discountsData?.data.data[0].mainDiscount.discountCode,
       },
       minimumRequirement: {
-        requirement: "none",
-        value: "",
+        requirement: "none" || discountsData?.data.data[0].minimumRequirement.requirementType,
+        value: "" ,
       },
       returnExchange: "allowed",
       maximumDiscount: {
@@ -379,10 +430,10 @@ const CreateDiscount = () => {
         value: [],
       },
       discountValue: {
-        discountValue: "",
-        type: "percentage",
-        value: "",
-        cartLabel: "",
+        discountValue: "" || discountsData?.data.data[0].mainDiscount.value ,
+        type: "percentage" || discountsData?.data.data[0].mainDiscount.type ,
+        value: "" || discountsData?.data.data[0].mainDiscount.discountOn,
+        cartLabel: "" || discountsData,
       },
       buyXGetY: {
         buy: null,
@@ -471,12 +522,12 @@ const CreateDiscount = () => {
             : {}),
           ...(values?.discountType === "bulk"
             ? {
-              rangeDiscount: values?.discountRange.map((discount) => ({
-                  value : discount?.discountValue,
-                  unit : discount?.type,
-                  minQty : discount?.minQty,
-                  maxQty : discount?.maxQty,
-                  discountOn : discount?.value
+                rangeDiscount: values?.discountRange.map((discount) => ({
+                  value: discount?.discountValue,
+                  unit: discount?.type,
+                  minQty: discount?.minQty,
+                  maxQty: discount?.maxQty,
+                  discountOn: discount?.value,
                 })),
               }
             : {}),
@@ -620,9 +671,16 @@ const CreateDiscount = () => {
     }
   }, [createDiscountIsSuccess, createDiscountError, dispatch]);
 
-  console.log("rrenkkjndedederw", formik?.errors)
-  console.log("gngslgnsflgnsfngls", formik?.values?.maximumDiscount)
+  useEffect(() => {
+    const encodedString = searchParams.get("filter");
 
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+    setDecodedObject(parsedObject);
+  }, [searchParams]);
+
+  console.log("rrenkkjndedederw", formik?.errors);
+  console.log("gngslgnsflgnsfngls", formik?.values?.maximumDiscount);
 
   return (
     <div className="page container-fluid position-relative">
@@ -857,8 +915,7 @@ const CreateDiscount = () => {
               field="scheduledDiscount"
               formik={formik}
               touched={formik?.touched?.scheduledDiscount}
-                error={formik?.errors?.scheduledDiscount}
-
+              error={formik?.errors?.scheduledDiscount}
             />
             {formik?.values?.discountType === "freeShipping" && (
               <LimitByLocation

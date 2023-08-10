@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from "react";
 import { useDispatch } from "react-redux";
-import { Link,useSearchParams } from "react-router-dom";
+import { Link,Navigate,createSearchParams,useNavigate,useSearchParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import DiscountsTable from "./DiscountsTable";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
@@ -46,7 +46,10 @@ const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 1,
   name:"",
-  searchValue:""
+  searchValue:"",
+  // status: ["active", "in-active"],
+  createdAt: "-1",
+  alphabetical: null,
 };
 const initialDiscountsState = {
   data: [],
@@ -79,8 +82,23 @@ const queryFilterReducer = (state, action) => {
       ...state,
       pageNo: initialQueryFilterState.pageNo,
       searchValue: action.searchValue,
+    };  
+  }
+  if (action.type === "SET_ALPHABETICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      alphabetical: action.alphabetical,
+      createdAt: null,
     };
-    
+  }
+  if (action.type === "SET_CRONOLOGICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      createdAt: action.createdAt,
+      alphabetical: null,
+    };
   }
   return initialQueryFilterState;
 };
@@ -103,6 +121,7 @@ const  discountsReducer = (state, action) => {
 
 const Discounts = () => {
   const[searchParams, setSearchParams] = useSearchParams();
+  const Navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -271,6 +290,30 @@ const Discounts = () => {
 
 const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk/Tiered Discount', 'Free Shipping'];
 
+const editDiscountPageNavigation = (data)=>{
+  Navigate({
+    pathname: `./edit/${data ? data._id : ""}`,
+    search: `?${createSearchParams({
+      filter: JSON.stringify({ ...queryFilterState, discountType }),
+    })}`,
+  });
+};
+
+const handleAlphabeticalSorting = (event) => {
+  dispatchQueryFilter({
+    type: "SET_ALPHABETICAL_SORTING",
+    alphabetical: event.target.value,
+  });
+  setAnchorSortEl(null);
+};
+
+const handleChronologicalSorting = (event) => {
+  dispatchQueryFilter({
+    type: "SET_CRONOLOGICAL_SORTING",
+    createdAt: event.target.value,
+  });
+  setAnchorSortEl(null);
+};
 
   return (
     <div className="container-fluid page">
@@ -392,7 +435,11 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-          <TableSearchSecondary onSearchValueChange={handleSearchChange} value={queryFilterState.searchValue} onChange={handleSearchValue} />
+          <TableSearchSecondary
+              onSearchValueChange={handleSearchValue}
+              value={queryFilterState.searchValue}
+              onChange={handleSearchChange}
+            />
             <button
               className="button-grey py-2 px-3 ms-2"
               aria-describedby={idSort}
@@ -451,24 +498,48 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
                     label="Upload Time"
                   />
                   <FormControlLabel
-                    value="alphabeticalAtoZ"
-                    control={<Radio size="small" />}
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "1"}
+                      />
+                    }
                     label="Alphabetical (A-Z)"
+                    onChange={handleAlphabeticalSorting}
                   />
                   <FormControlLabel
-                    value="alphabeticalZtoA"
-                    control={<Radio size="small" />}
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "-1"}
+                      />
+                    }
                     label="Alphabetical (Z-A)"
+                    onChange={handleAlphabeticalSorting}
                   />
                   <FormControlLabel
-                    value="oldestToNewest"
-                    control={<Radio size="small" />}
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "1"}
+                      />
+                    }
                     label="Oldest to Newest"
+                    onChange={handleChronologicalSorting}
                   />
                   <FormControlLabel
-                    value="newestToOldest"
-                    control={<Radio size="small" />}
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "-1"}
+                      />
+                    }
                     label="Newest to Oldest"
+                    onChange={handleChronologicalSorting}
                   />
                 </RadioGroup>
               </FormControl>
@@ -484,7 +555,7 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               discountType ={discountsState.discountType}
-
+              edit={editDiscountPageNavigation}
              />
           </TabPanel>
           <TabPanel value={discountsState.discountType} index={1}>
@@ -497,6 +568,8 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
               discountType ={discountsState.discountType}
+              edit={editDiscountPageNavigation}
+
              />
           </TabPanel>
         </Paper>

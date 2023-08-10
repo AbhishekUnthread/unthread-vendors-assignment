@@ -377,6 +377,10 @@ const router = () => {
                   element: <Discounts />,
                 },
                 {
+                  path: "discounts/edit/:id",
+                  element: <CreateDiscount />,
+                },
+                {
                   path: "discounts/create",
                   element: <CreateDiscount />,
                 },
