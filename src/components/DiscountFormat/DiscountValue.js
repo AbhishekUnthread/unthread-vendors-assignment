@@ -7,6 +7,7 @@ import {
   OutlinedInput,
   Tooltip,
   Popover,
+  FormHelperText,
 } from "@mui/material";
 import info from "../../assets/icons/info.svg";
 import arrowDown from "../../assets/icons/arrowDown.svg";
@@ -65,6 +66,7 @@ function DiscountValue({ value, field, formik, touched, error }) {
         </div>
         <div className="row align-items-center">
           <div className="col-md-5 discount-inputs-two d-flex align-items-center">
+          <div className="d-flex column">
             <FormControl className="px-0">
               <OutlinedInput
                 value={value?.discountValue}
@@ -93,6 +95,12 @@ function DiscountValue({ value, field, formik, touched, error }) {
                 }
               />
             </FormControl>
+            <small>
+            {!!touched?.discountValue && error?.discountValue && (
+              <FormHelperText error>{error?.discountValue}</FormHelperText>
+            )}
+            </small>
+            </div>
             <Popover
               anchorOrigin={{
                 vertical: "bottom",
@@ -158,6 +166,9 @@ function DiscountValue({ value, field, formik, touched, error }) {
                 </MenuItem>
               </Select>
             </FormControl>
+            {!!touched?.value && error?.value && (
+              <FormHelperText error>{error?.value}</FormHelperText>
+            )}
           </div>
 
           {formik?.values?.discountType === "cartDiscount" && (

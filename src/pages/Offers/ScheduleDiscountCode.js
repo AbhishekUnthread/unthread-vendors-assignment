@@ -2,13 +2,13 @@ import React from "react";
 // ! IMAGES IMPORTS
 import info from "../../assets/icons/info.svg";
 // ! MATERIAL IMPORTS
-import { TextField, Tooltip } from "@mui/material";
+import { FormHelperText, TextField, Tooltip } from "@mui/material";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import moment from "moment";
 
-const ScheduleDiscountCode = ({formik,field,value}) => {
+const ScheduleDiscountCode = ({formik,field,value,touched, error}) => {
   console.log("jheuyfdewde", value?.startDateTime)
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -45,6 +45,9 @@ const ScheduleDiscountCode = ({formik,field,value}) => {
                 minDateTime={moment()}
               />
             </LocalizationProvider>
+            {!!touched?.startDateTime && error?.startDateTime && (
+              <FormHelperText error>{error?.startDateTime}</FormHelperText>
+            )}
           </div>
           <div className="col-md-6 mt-3">
             <div className="d-flex mb-1 justify-content-between">

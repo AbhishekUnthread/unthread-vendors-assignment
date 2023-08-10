@@ -16,8 +16,8 @@ import React, { useEffect, useState } from "react";
 import info from "../../assets/icons/info.svg";
 
 function DiscountFormat({ value, field, formik, touched, error }) {
-  const [touch, setTouch] = useState(false);
-  const [generatedCode, setGeneratedCode] = useState("");
+  const [IsTouched, setIsTouched] = useState(false);
+
 
   const generateRandomCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -43,11 +43,11 @@ function DiscountFormat({ value, field, formik, touched, error }) {
     formik.setFieldValue(`${field}.discountCode`, "");
   };
 
-  // useEffect(() => {
-  //   if (formik.isSubmitting) {
-  //       setTouch(true)
-  //   }
-  // }, [formik.isSubmitting]);
+  useEffect(() => {
+    if (formik.isSubmitting) {
+      setIsTouched(true)
+    }
+  }, [formik.isSubmitting]);
 
 
   // useEffect(() => {
@@ -137,7 +137,7 @@ function DiscountFormat({ value, field, formik, touched, error }) {
               />
             </FormControl>
             <small className="mt-1 text-grey-6 font1">
-              {!!touched?.discountCode && error?.discountCode ? (
+              {!!touched && error?.discountCode ? (
                 <FormHelperText error>{error?.discountCode}</FormHelperText>
               ) : (
                 <>
