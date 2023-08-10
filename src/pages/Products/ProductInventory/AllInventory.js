@@ -342,6 +342,7 @@ export default function AllInventory({
                                 <img
                                   src={row.mediaUrl?.[0]?.image ?? storeIcon}
                                   alt="storeIcon"
+                                  style={{ objectFit: "contain", overflow: "hidden" }}
                                   className="me-2 rounded-4"
                                   height={45}
                                   width={45}

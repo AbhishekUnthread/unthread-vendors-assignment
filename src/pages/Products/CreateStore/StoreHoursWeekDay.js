@@ -14,9 +14,15 @@ export default function StoreHoursWeekDay({
   formikSetValue = () => {},
   formikSetTouched = () => {},
 }) {
-  const onFromChange = (mt, kt) => formikSetValue(`storeHours.${dayName}.from`, mt?.format("HH:mm") ?? "");
+  const onFromChange = (mt, kt) => {
+    console.log("onFromChange", mt, kt);
+    formikSetValue(`storeHours.${dayName}.from`, mt?.format("HH:mm") ?? "");
+  };
   const onFromTouched = () => formikSetTouched(`storeHours.${dayName}.from`, true);
-  const onToChange = (mt, kt) => formikSetValue(`storeHours.${dayName}.to`, mt?.format("HH:mm") ?? "");
+  const onToChange = (mt, kt) => {
+    console.log("onToChange", mt, kt);
+    formikSetValue(`storeHours.${dayName}.to`, mt?.format("HH:mm") ?? "");
+  };
   const onToTouched = () => formikSetTouched(`storeHours.${dayName}.to`, true);
 
   return (

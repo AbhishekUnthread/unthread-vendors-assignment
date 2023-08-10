@@ -20,7 +20,7 @@ import { useGetAllStoresQuery, useGetStoreCountQuery } from "../../../features/p
 const initialQueryFilterState = {
   name: "",
   country: "",
-  status: ["active", "in-active"],
+  status: [],
   createdAt: "-1",
   alphabetical: "",
   pageNo: 1,

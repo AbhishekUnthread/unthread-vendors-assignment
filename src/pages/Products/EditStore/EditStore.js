@@ -136,13 +136,20 @@ const storeValidationSchema = Yup.object({
     .max(10, "Phone must be 10 digits long")
     .matches(/[0-9]/, "Phone number must only be digits")
     .required("required"),
-  email: Yup.string().trim().email("email is not valid").required("required"),
+  email: Yup.string()
+    .trim()
+    .email("email is not valid")
+    .matches(/\.\w+$/, "email is not valid")
+    .required("required"),
   status: Yup.string().oneOf(["active", "in-active"]),
   managerDetails: Yup.object({
     fullName: Yup.string().trim(),
     countryCode: Yup.string().trim(),
     phone: Yup.string().min(10, "Phone must be 10 digits long").max(10, "Phone must be 10 digits long").matches(/[0-9]/, "Phone number must only be digits"),
-    email: Yup.string().trim().email("email is not valid"),
+    email: Yup.string()
+      .trim()
+      .email("email is not valid")
+      .matches(/\.\w+$/, "email is not valid"),
   }),
   address: Yup.object({
     country: Yup.string().required("required"),
@@ -152,9 +159,8 @@ const storeValidationSchema = Yup.object({
     pincode: Yup.number().required("required"),
     state: Yup.string().required("required"),
     mapLink: Yup.string()
-      .matches(/^(https:\/\/maps\.apple\.com|https:\/\/maps\.app\.goo\.gl)/, "Must be a google maps or apple maps link")
       .url("Invalid URL format")
-      .required("required"),
+      .matches(/^(https:\/\/www.google.com\/maps\/|https:\/\/goo.gl\/maps\/)/, "Must be a google maps link"),
     lattitude: Yup.string(),
     longitude: Yup.string(),
   }),
@@ -210,9 +216,10 @@ const EditStore = () => {
     initialValues: storeData,
     validationSchema: storeValidationSchema,
     onSubmit: (values) => {
-      console.log("values", values);
       for (const key of Object.keys(values.managerDetails)) if (values.managerDetails[key] === "") delete values.managerDetails[key];
+      if (values.address.mapLink === "") delete values.address.mapLink;
       if (values.mediaUrl.length === 0) delete values.mediaUrl;
+      if (values.notes === "") delete values.notes;
       editStore({ id: storeId, details: values })
         .unwrap()
         // .then(() => navigate(`/products/inventory/details/${storeId}`))
@@ -548,14 +555,7 @@ const EditStore = () => {
               </div> */}
 
               <div className="col-md-12 px-0 mt-3 add-user-country">
-                <div className="text-lightBlue mb-1">
-                  Maps Link{" "}
-                  <FormHelperText
-                    className="d-inline"
-                    error>
-                    *
-                  </FormHelperText>
-                </div>
+                <div className="text-lightBlue mb-1">Maps Link</div>
                 <FormControl className="w-100 px-0">
                   <OutlinedInput
                     placeholder="Enter Maps Link"
