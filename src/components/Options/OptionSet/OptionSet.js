@@ -205,7 +205,7 @@ const OptionSet = (props) => {
   }, [isSubmitting]);
 
   useEffect(() => {
-    if (formik.values.option[index]?.attribute[0].id && lastSavedData.id) {
+    if (formik.values.option[index]?.attribute[0]?.id && lastSavedData?.id) {
       let currentValues = structuredClone(
         formik.values.option[index].attribute[0]
       );
