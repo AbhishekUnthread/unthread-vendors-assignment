@@ -33,7 +33,7 @@ import {
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORT
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { useGetAllDiscountsQuery } from "../../../features/offers/discounts/discountsApiSlice";
+import { useBulkDeleteDiscountMutation, useDeleteDiscountMutation, useGetAllDiscountsQuery } from "../../../features/offers/discounts/discountsApiSlice";
 import { showError } from "../../../features/snackbar/snackbarAction";
 
 // ? DIALOG TRANSITION STARTS HERE
@@ -67,7 +67,7 @@ const queryFilterReducer = (state, action) => {
   if (action.type === "CHANGE_PAGE") {
     return {
       ...state,
-      pageNo: action.pageNo ,
+      pageNo: action.pageNo + 1,
     };
   }
   if (action.type === "SEARCH") {
@@ -140,9 +140,25 @@ const Discounts = () => {
     isSuccess: discountsIsSuccess, 
     error: discountsError,
     isError:discountsIsError
-    
-
   }=useGetAllDiscountsQuery(queryFilterState);
+
+  const [
+    deleteDiscount,
+    {
+      isLoading: deleteDiscountIsLoading,
+      isSuccess: deleteDiscountIsSuccess,
+      error: deleteDiscountError,
+    },
+  ] = useDeleteDiscountMutation();
+
+  const [
+    bulkDeleteDiscount,
+    {
+      isLoading: bulkDeleteDiscountIsLoading,
+      isSuccess: bulkDeleteDiscountIsSuccess,
+      error: bulkDeleteDiscountError
+    }
+  ] = useBulkDeleteDiscountMutation();
 
   const handleDiscountTypeChangeHandler = (event, newValue) => {
     dispatchDiscounts({
@@ -250,6 +266,30 @@ const Discounts = () => {
   }, [discountsIsSuccess,discountsIsError,discountsError,dispatch,discountsData,discountsState.discountType])
 
   useEffect(() => {
+    if (deleteDiscountError) {
+      if (deleteDiscountError?.data?.message) {
+        dispatch(showError({ message: deleteDiscountError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [deleteDiscountError, dispatch]);
+
+  useEffect(() => {
+    if (bulkDeleteDiscountError) {
+      if (bulkDeleteDiscountError?.data?.message) {
+        dispatch(showError({ message: bulkDeleteDiscountError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [bulkDeleteDiscountError, dispatch]);
+
+  useEffect(() => {
     if(+searchParams.get("type")===0)
     {
       dispatchDiscounts({
@@ -314,6 +354,7 @@ const handleChronologicalSorting = (event) => {
   });
   setAnchorSortEl(null);
 };
+
 
   return (
     <div className="container-fluid page">
@@ -556,6 +597,8 @@ const handleChronologicalSorting = (event) => {
               page={queryFilterState.pageNo}
               discountType ={discountsState.discountType}
               edit={editDiscountPageNavigation}
+              deleteData={deleteDiscount}
+              bulkDelete={bulkDeleteDiscount}
              />
           </TabPanel>
           <TabPanel value={discountsState.discountType} index={1}>
@@ -569,6 +612,8 @@ const handleChronologicalSorting = (event) => {
               page={queryFilterState.pageNo}
               discountType ={discountsState.discountType}
               edit={editDiscountPageNavigation}
+              deleteData={deleteDiscount}
+              bulkDelete={bulkDeleteDiscount}
 
              />
           </TabPanel>

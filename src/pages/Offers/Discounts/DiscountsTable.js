@@ -23,6 +23,11 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import TableMassActionButton from "../../../components/TableMassActionButton/TableMassActionButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
+import { useDispatch } from "react-redux";
+import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
+import NoDataFound from "../../../components/NoDataFound/NoDataFound";
+import TableLoader from "../../../components/Loader/TableLoader";
 
 // ? TABLE STARTS HERE
 function createData(
@@ -99,11 +104,19 @@ const DiscountsTable = ({
   changePage,
   page,
   discountType,
-  edit
+  edit,
+  deleteData,
+  bulkDelete,
 }) => {
+  const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("groupName");
   const [selected, setSelected] = React.useState([]);
+  const [discount, setDiscount] = React.useState(false);
+  const [discountName, setDiscountName] = React.useState("");
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+  const [showMultipleDeleteModal, setShowMultipleDeleteModal] =
+    React.useState(false);
 
   const headCells = [
     {
@@ -157,12 +170,14 @@ const DiscountsTable = ({
   };
 
   const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = list?.map((n) => n.dId);
+    if (selected.length > 0) {
+      setSelected([]);
+    } else if (event.target.checked) {
+      const newSelected = list.slice(0, rowsPerPage).map((n) => n._id);
       setSelected(newSelected);
-      return;
+    } else {
+      setSelected([]);
     }
-    setSelected([]);
   };
 
   const handleClick = (event, name) => {
@@ -187,6 +202,47 @@ const DiscountsTable = ({
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  const handleMassAction = (status) => {
+    if (status === "Delete") {
+      setShowMultipleDeleteModal(true);
+    }
+  };
+
+  //Delete Starts Here
+  const handleDeleteOnClick = (row) => {
+    setShowDeleteModal(true);
+    setDiscount(row);
+    setDiscountName(row?.name);
+  };
+  const handleDeleteModalClose = () => {
+    setShowDeleteModal(false);
+    setShowMultipleDeleteModal(false);
+  };
+  const handleDelete = () => {
+    deleteData(discount?._id)
+      .unwrap()
+      .then(() =>
+        dispatch(showSuccess({ message: "Discount Deleted successfully" }))
+      );
+    setShowDeleteModal(false);
+  };
+  const handleMultipleDelete = () => {
+    bulkDelete({ deletes: selected })
+      .unwrap()
+      .then(() =>
+        dispatch(
+          showSuccess({
+            message: `${
+              selected.length === 1 ? "Discount" : "Discounts"
+            } Deleted Successfully`,
+          })
+        )
+      );
+    setShowMultipleDeleteModal(false);
+    setSelected([]);
+  };
+  //delete ends here
+console.log("fewfewf", list.length)
   return (
     <React.Fragment>
       {selected.length > 0 && (
@@ -203,74 +259,80 @@ const DiscountsTable = ({
             </small>
           </button>
           <TableEditStatusButton />
-          <TableMassActionButton />
+          <TableMassActionButton
+            headingName="Mass Action"
+            onSelect={handleMassAction}
+            defaultValue={["Delete"]}
+          />
         </div>
       )}
-      <TableContainer>
-        <Table
-          sx={{ minWidth: 750 }}
-          aria-labelledby="tableTitle"
-          size="medium"
-        >
-          <EnhancedTableHead
-            numSelected={selected.length}
-            order={order}
-            orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
-            rowCount={list?.length}
-            headCells={headCells}
-          />
-          <TableBody>
-            {stableSort(list, getComparator(order, orderBy)).map(
-              (row, index) => {
-                const isItemSelected = isSelected(row?._id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+      {list.length ? (
+        <>
+          <TableContainer>
+            <Table
+              sx={{ minWidth: 750 }}
+              aria-labelledby="tableTitle"
+              size="medium"
+            >
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={list?.length}
+                headCells={headCells}
+              />
+              <TableBody>
+                {stableSort(list, getComparator(order, orderBy)).map(
+                  (row, index) => {
+                    const isItemSelected = isSelected(row?._id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row?._id}
-                    selected={isItemSelected}
-                    className="table-rows"
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                        onClick={(event) => handleClick(event, row?._id)}
-                        size="small"
-                        style={{
-                          color: "#5C6D8E",
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                      style={{ width: 180 }}
-                    >
-                      <div className="d-flex align-items-center py-2">
-                        {/* <img
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row?._id}
+                        selected={isItemSelected}
+                        className="table-rows"
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={isItemSelected}
+                            inputProps={{
+                              "aria-labelledby": labelId,
+                            }}
+                            onClick={(event) => handleClick(event, row?._id)}
+                            size="small"
+                            style={{
+                              color: "#5C6D8E",
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
+                          style={{ width: 180 }}
+                        >
+                          <div className="d-flex align-items-center py-2">
+                            {/* <img
                           src={ringSmall}
                           alt="ringSmall"
                           className="me-2"
                           height={45}
                           width={45}
                         /> */}
-                        <p className="text-lightBlue rounded-circle fw-600">
-                          {row.name}
-                        </p>
-                      </div>
-                    </TableCell>
-                    {/* <TableCell style={{ width: 180 }}>
+                            <p className="text-lightBlue rounded-circle fw-600">
+                              {row.name}
+                            </p>
+                          </div>
+                        </TableCell>
+                        {/* <TableCell style={{ width: 180 }}>
                       <div className="d-flex flex-column">
                         <div className="d-flex align-items-center">
                           <p className="text-lightBlue me-2">
@@ -292,68 +354,79 @@ const DiscountsTable = ({
                         </small>
                       </div>
                     </TableCell> */}
-                    <TableCell style={{ width: 180 }}>
-                      <div className="d-flex flex-row align-items-center">
-                        <div className="d-flex">
-                          <p className="text-lightBlue">{row.timePeriod}</p>
-                        </div>
-                        <p className="text-lightBlue me-2">
-                          {row?.mainDiscount?.discountCode}
-                        </p>
-                        {discountType ===0 ? (row?.mainDiscount?.discountCode? <Tooltip title="Copy" placement="top">
-                          <ContentCopyIcon
-                            sx={{
-                              color: "#5c6d8e",
-                              fontSize: 12,
-                              cursor: "pointer",
-                            }}
-                          />
-                        </Tooltip>:null):row?.mainDiscount?.discountName}
-                      </div>
-                    </TableCell>
-                    <TableCell style={{ width: 180 }}>
-                      <div className="d-flex flex-column">
-                        <div className="d-flex">
-                          <p className="text-lightBlue me-2">
-                            {row?.mainDiscount?.type}
-                          </p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell style={{ width: 180 }}>
-                      <div className="d-flex flex-column">
-                        <div className="d-flex">
-                          <p className="text-lightBlue me-2">
-                            {row?.maximumDiscountUse?.isUnlimited
-                              ? "Unlimited"
-                              : row?.maximumDiscountUse?.total}
-                          </p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell style={{ width: 180, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
-                          <small className="text-black fw-400">
-                            {row.status}
-                          </small>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell style={{ width: 140, padding: 0 }}>
-                      <div className="d-flex align-items-center">
-                        <Tooltip title="Edit" placement="top">
-                          <div className="table-edit-icon rounded-4 p-2" onClick={()=>{edit(row, index + 1, discountType)}}>
-                            <EditOutlinedIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
+                        <TableCell style={{ width: 180 }}>
+                          <div className="d-flex flex-row align-items-center">
+                            <div className="d-flex">
+                              <p className="text-lightBlue">{row.timePeriod}</p>
+                            </div>
+                            <p className="text-lightBlue me-2">
+                              {row?.mainDiscount?.discountCode}
+                            </p>
+                            {discountType === 0 ? (
+                              row?.mainDiscount?.discountCode ? (
+                                <Tooltip title="Copy" placement="top">
+                                  <ContentCopyIcon
+                                    sx={{
+                                      color: "#5c6d8e",
+                                      fontSize: 12,
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                </Tooltip>
+                              ) : null
+                            ) : (
+                              row?.mainDiscount?.discountName
+                            )}
                           </div>
-                        </Tooltip>
-                        {/* <Tooltip title="Duplicate" placement="top">
+                        </TableCell>
+                        <TableCell style={{ width: 180 }}>
+                          <div className="d-flex flex-column">
+                            <div className="d-flex">
+                              <p className="text-lightBlue me-2">
+                                {row?.mainDiscount?.type}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell style={{ width: 180 }}>
+                          <div className="d-flex flex-column">
+                            <div className="d-flex">
+                              <p className="text-lightBlue me-2">
+                                {row?.maximumDiscountUse?.isUnlimited
+                                  ? "Unlimited"
+                                  : row?.maximumDiscountUse?.total}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell style={{ width: 180, padding: 0 }}>
+                          <div className="d-flex align-items-center">
+                            <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
+                              <small className="text-black fw-400">
+                                {row.status}
+                              </small>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell style={{ width: 140, padding: 0 }}>
+                          <div className="d-flex align-items-center">
+                            <Tooltip title="Edit" placement="top">
+                              <div
+                                className="table-edit-icon rounded-4 p-2"
+                                onClick={() => {
+                                  edit(row, index + 1, discountType);
+                                }}
+                              >
+                                <EditOutlinedIcon
+                                  sx={{
+                                    color: "#5c6d8e",
+                                    fontSize: 18,
+                                    cursor: "pointer",
+                                  }}
+                                />
+                              </div>
+                            </Tooltip>
+                            {/* <Tooltip title="Duplicate" placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <ContentCopyIcon
                               sx={{
@@ -364,40 +437,69 @@ const DiscountsTable = ({
                             />
                           </div>
                         </Tooltip> */}
-                        <Tooltip title="Delete" placement="top">
-                          <div
-                            className="table-edit-icon rounded-4 p-2"
-                            // onClick={(e) => {
-                            //   handleDeleteOnClick(row);
-                            // }}
-                          >
-                            <DeleteIcon
-                              sx={{
-                                color: "#5c6d8e",
-                                fontSize: 18,
-                                cursor: "pointer",
-                              }}
-                            />
+                            <Tooltip title="Delete" placement="top">
+                              <div
+                                className="table-edit-icon rounded-4 p-2"
+                                onClick={(e) => {
+                                  handleDeleteOnClick(row);
+                                }}
+                              >
+                                <DeleteIcon
+                                  sx={{
+                                    color: "#5c6d8e",
+                                    fontSize: 18,
+                                    cursor: "pointer",
+                                  }}
+                                />
+                              </div>
+                            </Tooltip>
                           </div>
-                        </Tooltip>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              }
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={rowsPerPage}
-        page={page - 1}
-        onPageChange={changePage}
-        onRowsPerPageChange={changeRowsPerPage}
-        className="table-pagination"
+                        </TableCell>
+                      </TableRow>
+                    );
+                  }
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={totalCount}
+            rowsPerPage={rowsPerPage}
+            page={page - 1}
+            onPageChange={changePage}
+            onRowsPerPageChange={changeRowsPerPage}
+            className="table-pagination"
+          />
+        </>
+      ) : isLoading ? (
+        <span className="d-flex justify-content-center m-3">
+          <TableLoader />
+        </span>
+      ) : (
+        <span className="d-flex justify-content-center m-3">
+          <NoDataFound />
+        </span>
+      )}
+
+      <DeleteModalSecondary
+        onConfirm={handleDelete}
+        onCancel={handleDeleteModalClose}
+        show={showDeleteModal}
+        title={"discount"}
+        message={discountName}
+      />
+      <DeleteModalSecondary
+        onConfirm={handleMultipleDelete}
+        onCancel={handleDeleteModalClose}
+        show={showMultipleDeleteModal}
+        title={"multiple discount"}
+        message={`${
+          selected.length === 1
+            ? `${selected.length} discount`
+            : `${selected.length} discounts`
+        }`}
       />
     </React.Fragment>
   );
