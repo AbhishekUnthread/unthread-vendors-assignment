@@ -5,6 +5,7 @@ import orders from "../../assets/icons/sidenav/orders.svg";
 import products from "../../assets/icons/sidenav/products.svg";
 // import analytics from "../../assets/icons/sidenav/analytics.svg";
 import customers from "../../assets/icons/sidenav/customers.svg";
+import rupee from "../../assets/icons/sidenav/rupee.svg";
 import discounts from "../../assets/icons/sidenav/discounts.svg";
 // import emailers from "../../assets/icons/sidenav/emailers.svg";
 import functionality from "../../assets/icons/sidenav/functionality.svg";
@@ -136,6 +137,11 @@ export const SidebarData = [
       //   image: parameters,
       // },
     ],
+  },
+  {
+    title: "Price Master",
+    path: "/priceMaster",
+    image: rupee,
   },
   {
     title: "Customers",
