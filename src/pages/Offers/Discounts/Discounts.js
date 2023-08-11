@@ -263,7 +263,7 @@ const Discounts = () => {
       }
     }
 
-  }, [discountsIsSuccess,discountsIsError,discountsError,dispatch,discountsData,discountsState.discountType])
+  }, [discountsIsSuccess,discountsIsError,discountsError,dispatch,discountsData,discountsState.discountType,deleteDiscountIsSuccess,bulkDeleteDiscountIsSuccess])
 
   useEffect(() => {
     if (deleteDiscountError) {
@@ -334,7 +334,7 @@ const editDiscountPageNavigation = (data)=>{
   Navigate({
     pathname: `./edit/${data ? data._id : ""}`,
     search: `?${createSearchParams({
-      filter: JSON.stringify({ ...queryFilterState, discountType }),
+      filter: JSON.stringify({ ...queryFilterState, discountType: discountsState.discountType }),
     })}`,
   });
 };

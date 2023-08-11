@@ -421,6 +421,10 @@ const router = () => {
                   path: "bundleDiscount/create",
                   element: <CreateBundleDiscount />,
                 },
+                {
+                  path: "bundleDiscount/edit/:id",
+                  element: <CreateBundleDiscount />,
+                },
               ],
             },
             {

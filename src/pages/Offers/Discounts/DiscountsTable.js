@@ -242,7 +242,7 @@ const DiscountsTable = ({
     setSelected([]);
   };
   //delete ends here
-console.log("fewfewf", list.length)
+  console.log("fewfewf", list.length);
   return (
     <React.Fragment>
       {selected.length > 0 && (
