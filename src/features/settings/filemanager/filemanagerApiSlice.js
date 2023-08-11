@@ -2,6 +2,40 @@ import apiSlice from "../../../app/api/apiSlice";
 
 export const filemanagerApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getFiles: builder.query({
+      query: (searchParams = {}) => {
+        const queryString = new URLSearchParams(searchParams).toString();
+        return { url: `/gallery/file?${queryString}` };
+      },
+      providesTags: ["FileManager"],
+    }),
+
+    editFile: builder.mutation({
+      query: ({ id, fileData }) => ({
+        url: `/gallery/file/${id}`,
+        method: "PUT",
+        body: fileData,
+      }),
+      invalidatesTags: ["FileManager"],
+    }),
+
+    deleteFile: builder.mutation({
+      query: (id) => ({
+        url: `/gallery/file/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["FileManager"],
+    }),
+
+    bulkDeleteFiles: builder.mutation({
+      query: (deletes) => ({
+        url: "/gallery/file/bulkDelete",
+        method: "DELETE",
+        body: deletes,
+      }),
+      invalidatesTags: ["FileManager"],
+    }),
+
     getFolders: builder.query({
       query: (searchParams = {}) => {
         const queryString = new URLSearchParams(searchParams).toString();
@@ -35,8 +69,26 @@ export const filemanagerApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["FileManager"],
     }),
+
+    bulkDeleteFolders: builder.mutation({
+      query: (deletes) => ({
+        url: "/store/bulkDelete",
+        method: "DELETE",
+        body: deletes,
+      }),
+      invalidatesTags: ["FileManager"],
+    }),
   }),
 });
 
-export const { useGetFoldersQuery, useCreateFolderMutation, useEditFolderMutation, useDeleteFolderMutation } = filemanagerApiSlice;
-// export const { useGetAllFoldersQuery, useCreateNewFolderMutation } = filemanagerApiSlice;
+export const {
+  useGetFilesQuery,
+  useEditFileMutation,
+  useDeleteFileMutation,
+  useBulkDeleteFilesMutation,
+  useGetFoldersQuery,
+  useCreateFolderMutation,
+  useEditFolderMutation,
+  useDeleteFolderMutation,
+  useBulkDeleteFoldersMutation,
+} = filemanagerApiSlice;

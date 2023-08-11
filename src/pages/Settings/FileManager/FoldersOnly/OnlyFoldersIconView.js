@@ -6,10 +6,9 @@ import folderLargePurple from "../../../../assets/icons/folderLargePurple.svg";
 import archive from "../../../../assets/icons/folderdropdown/archive.svg";
 import edit from "../../../../assets/icons/folderdropdown/edit.svg";
 
-export default function OnlyFoldersIconView({ folder = {}, onRename = () => {}, onDelete = () => {} }) {
+export default function OnlyFoldersIconView({ folder = {}, isSelected = false, onSelect = () => {}, onRename = () => {}, onDelete = () => {} }) {
   const { name, count } = folder;
 
-  const [isChecked, setIsChecked] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -27,12 +26,19 @@ export default function OnlyFoldersIconView({ folder = {}, onRename = () => {}, 
     handleClose();
   };
 
+  const handleDeleteClick = () => {
+    onDelete(folder);
+    handleClose();
+  };
+
+  const handleSelectionClick = (check) => onSelect(check, folder);
+
   return (
     <div
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
       className={`folder-icon-view position-relative d-flex flex-column align-items-center rounded-8${
-        showMore || isChecked ? " folder-icon-view-hovering" : ""
+        showMore || isSelected ? " folder-icon-view-hovering" : ""
       }`}>
       <div className="folder-icon rounded-8 p-4 m-2">
         <img
@@ -43,14 +49,14 @@ export default function OnlyFoldersIconView({ folder = {}, onRename = () => {}, 
       </div>
       <span className="text-lightBlue text-3">{name}</span>
       <small className="text-lightBlue text-1">{count} items</small>
-      {(showMore || isChecked) && (
+      {(showMore || isSelected) && (
         <div className="position-absolute top-0 start-0">
           <Checkbox
             size="small"
             color="primary"
             className="rounded-4"
-            checked={isChecked}
-            onChange={(e) => setIsChecked(e.target.checked)}
+            checked={isSelected}
+            onChange={(e) => handleSelectionClick(e.target.checked)}
           />
         </div>
       )}
@@ -71,7 +77,6 @@ export default function OnlyFoldersIconView({ folder = {}, onRename = () => {}, 
             <IconMenuItem
               icon={edit}
               text="Rename"
-              // click={}
               action={handleRenameClick}
               close={handleClose}
             />
@@ -79,7 +84,7 @@ export default function OnlyFoldersIconView({ folder = {}, onRename = () => {}, 
               icon={archive}
               text="Delete"
               isRed
-              // action={() => onDelete(folder)}
+              action={handleDeleteClick}
               close={handleClose}
             />
           </Menu>

@@ -19,7 +19,13 @@ const TaxManager = () => {
               />
             </Tooltip>
           </div>
-          <div className="col-auto">col-auto</div>
+          <div className="col-auto">
+            <input
+              type="file"
+              accept="image/png, image/jpeg, image/webp, video/mp4"
+              onChange={(e) => console.log(e.target.files)}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 // ! COMPONENT IMPORTS
@@ -21,21 +21,7 @@ import searchVertical from "../../../assets/icons/searchVertical.svg";
 import uploadCloud from "../../../assets/icons/uploadCloud.svg";
 import folderPlus from "../../../assets/icons/folderPlus.svg";
 // ! MATERIAL IMPORTS
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Menu,
-  MenuItem,
-  Tab,
-  Tabs,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  Tooltip,
-} from "@mui/material";
+import { Button, Menu, MenuItem, Tab, Tabs, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
 // import FolderIcon from "@mui/icons-material/Folder";
 import AddIcon from "@mui/icons-material/Add";
 import IconMenuItem from "./IconMenuItem";
@@ -44,6 +30,7 @@ import VideosOnly from "./VideosOnly/VideosOnly";
 import FolderNameDialog from "./FolderNameDialog";
 import { useCreateFolderMutation } from "../../../features/settings/filemanager/filemanagerApiSlice";
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
+import UseFileUpload from "../../../features/fileUpload/fileUploadHook";
 
 const FileManager = () => {
   const dispatch = useDispatch();
@@ -60,6 +47,16 @@ const FileManager = () => {
         console.log(e);
         dispatch(showError({ message: "Something went wrong" }));
       });
+  };
+
+  const inputFileRef = useRef(null);
+  const [uploadFile] = UseFileUpload();
+
+  const handleUploadNewFile = () => inputFileRef.current?.click();
+  const handleUploadFilesChanged = (file) => {
+    console.log(file);
+    const format = file.type === "video/mp4" ? "video" : "image";
+    uploadFile({ file, format });
   };
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -131,14 +128,14 @@ const FileManager = () => {
                 icon={uploadCloud}
                 text="Upload"
                 close={handleAddNewClose}
-                onCreate={handleCreateNewFolder}
+                action={handleUploadNewFile}
               />
 
               <IconMenuItem
                 icon={folderPlus}
                 text="Add New Folder"
-                action={handleAddNewFolderClick}
                 close={handleAddNewClose}
+                action={handleAddNewFolderClick}
               />
             </Menu>
           </div>
@@ -325,11 +322,20 @@ const FileManager = () => {
         <hr className="hr-grey-6 my-0" />
       </div>
 
+      <input
+        type="file"
+        ref={inputFileRef}
+        accept="image/png, image/jpeg, image/webp, video/mp4"
+        onChange={(e) => handleUploadFilesChanged(e.target.files[0])}
+        style={{ display: "none" }}
+      />
+
       {/* Tab contents for each index */}
       {tabIndex === 0 && <AllFiles changeTab={handleTabChange} />}
       {tabIndex === 1 && <FoldersOnly />}
-      {tabIndex === 2 && <ImagesOnly />}
-      {tabIndex === 3 && <VideosOnly />}
+      {tabIndex === 2 && <ImagesOnly fileType="image" />}
+      {tabIndex === 3 && <ImagesOnly fileType="video" />}
+      {/* {tabIndex === 3 && <VideosOnly />} */}
     </div>
   );
 };

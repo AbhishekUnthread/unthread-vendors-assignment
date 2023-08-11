@@ -41,3 +41,15 @@
 - filesize: Number
 - filetype: ['image', 'video']
 - module: ["category", "subCategory", "vendor", "collection", "productTab", "tagManager", "product", "sizeChart", "offer"]
+
+## Folder API Debt
+
+- GET Current File Count
+- No need for Description
+- Delete Folder
+- Mass Delete Folder
+
+## File API Debt
+
+- Upload File Params
+- GET Files Alt feild

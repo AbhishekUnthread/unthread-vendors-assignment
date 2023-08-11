@@ -1,15 +1,27 @@
-import { Tooltip } from "@mui/material";
-import OnlyFoldersIconView from "./OnlyFoldersIconView";
-import info from "../../../../assets/icons/info.svg";
-import { useDeleteFolderMutation, useEditFolderMutation, useGetFoldersQuery } from "../../../../features/settings/filemanager/filemanagerApiSlice";
-import FolderNameDialog from "../FolderNameDialog";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Tooltip } from "@mui/material";
 import { showError, showSuccess } from "../../../../features/snackbar/snackbarAction";
+import {
+  useBulkDeleteFoldersMutation,
+  useDeleteFolderMutation,
+  useEditFolderMutation,
+  useGetFoldersQuery,
+} from "../../../../features/settings/filemanager/filemanagerApiSlice";
+import info from "../../../../assets/icons/info.svg";
+import FolderNameDialog from "../FolderNameDialog";
 import DeleteAlertDialog from "../DeleteAlertDialog";
+import OnlyFoldersIconView from "./OnlyFoldersIconView";
+import TableMassActionButton from "../../../../components/TableMassActionButton/TableMassActionButton";
 
 export default function FoldersOnly() {
   const dispatch = useDispatch();
+
+  const [selected, setSelected] = useState([]);
+
+  const clearSelected = () => setSelected([]);
+
+  const handleFolderSelection = (check, folder) => setSelected(check ? selected.concat(folder) : selected.filter((sl) => !Object.is(sl, folder)));
 
   const { data: allFoldersData } = useGetFoldersQuery(/* { search: "", sort: "" } */);
   const allFolders = allFoldersData?.data?.data ?? [];
@@ -36,16 +48,47 @@ export default function FoldersOnly() {
   const handleDeleteFolderSelect = (folder) => setDeletingFolder(folder);
   const handleDeleteFolderClose = () => setDeletingFolder(null);
   const handleDeleteFolder = () => {
-    deleteFolder(deletingFolder._id)
-      .unwrap()
-      .then(() => {
-        handleDeleteFolderClose();
-        dispatch(showSuccess({ message: "Folder deleted successfully" }));
-      })
-      .catch((e) => {
-        console.log(e);
-        dispatch(showError({ message: "Something went wrong" }));
-      });
+    if (selected.length > 0) {
+      bulkDeleteFolders({ deletes: selected.map((sl) => sl._id) })
+        .unwrap()
+        .then(() => dispatch(showSuccess({ message: `${selected.length} Folders Deleted successfully!` })))
+        .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
+        .finally(() => {
+          clearSelected();
+          setDeletingFolder(null);
+        });
+    } else {
+      deleteFolder(deletingFolder._id)
+        .unwrap()
+        .then(() => {
+          dispatch(showSuccess({ message: "Folder deleted successfully" }));
+        })
+        .catch((e) => {
+          console.log(e);
+          dispatch(showError({ message: e.message ?? "Something went wrong" }));
+        })
+        .finally(() => {
+          clearSelected();
+          setDeletingFolder(null);
+        });
+    }
+  };
+
+  const [bulkDeleteFolders] = useBulkDeleteFoldersMutation();
+
+  const handleBulkActionSelect = (action) => {
+    // console.log("action", action);
+    // switch (action) {
+    //   case "Delete":
+    //     bulkDeleteFolders()
+    //     break;
+
+    //   default:
+    //     break;
+    // }
+    if (action === "Delete") {
+      handleDeleteFolderSelect({});
+    }
   };
 
   return (
@@ -64,6 +107,25 @@ export default function FoldersOnly() {
             />
           </Tooltip>
         </div>
+        {selected.length > 0 && (
+          <div className="d-flex align-items-center px-2 mb-3">
+            <button className="button-grey py-2 px-3">
+              <small className="text-lightBlue">
+                {selected.length} folders are selected{" "}
+                <span
+                  className="text-blue-2 c-pointer"
+                  onClick={clearSelected}>
+                  (Clear Selection)
+                </span>
+              </small>
+            </button>
+            <TableMassActionButton
+              headingName="Mass Action"
+              onSelect={handleBulkActionSelect}
+              defaultValue={["Delete"]}
+            />
+          </div>
+        )}
         {/* Multi Select stuff will be here */}
         {/* <div className="col-auto">
           <Button
@@ -84,6 +146,8 @@ export default function FoldersOnly() {
             className="col-2 my-2">
             <OnlyFoldersIconView
               folder={folder}
+              isSelected={selected.includes(folder)}
+              onSelect={handleFolderSelection}
               onRename={handleRenameFolderSelect}
               onDelete={handleDeleteFolderSelect}
             />
@@ -103,8 +167,10 @@ export default function FoldersOnly() {
       <DeleteAlertDialog
         show={!!deletingFolder}
         title="Delete Folder"
-        primaryMessage={`Do you want to delete ${deletingFolder?.name ?? ""} permanently?`}
-        secondaryMessage={`This will also delete ${deletingFolder?.count ?? ""} files in it!`}
+        primaryMessage={`Do you want to delete ${selected.length > 0 ? `${selected.length} folders` : deletingFolder?.name ?? ""} permanently?`}
+        secondaryMessage={`This will also delete ${
+          selected.length > 0 ? `${selected.reduce((t, sl) => t + sl.fileCount, 0)}` : deletingFolder?.count ?? ""
+        } files in it!`}
         confirmText="Delete"
         onConfirm={handleDeleteFolder}
         onCancel={handleDeleteFolderClose}
