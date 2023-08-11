@@ -77,33 +77,15 @@ const FRONTEND_APPEARANCE = {
   circleButtons: "Circle Buttons",
 };
 
-const initialOptionDetailState = {
-  title: "",
-  fieldType: "",
-  attributes: [],
-};
-
-const optionDetailReducer = (state, action) => {
-  if (action.type === "SET_DETAILS") {
-    return {
-      title: action.title,
-      fieldType: action.fieldType,
-      attributes: action.attributes,
-    };
-  }
-
-  return initialOptionDetailState;
-};
-
 const OptionSet = (props) => {
-  const { isEdit, onOptionDelete, index, formik, isSubmitting } = props;
-  const [collapse, setCollapse] = useState(isEdit);
+  const { isEdit, onOptionDelete, index, formik, isSubmitting, onPageLoad } =
+    props;
   const [selectedOption, setSelectedOption] = useState(null);
-  const [optionDetailState, dispatchOptionDetail] = useReducer(
-    optionDetailReducer,
-    initialOptionDetailState
-  );
   const [isTouched, setIsTouched] = useState(false);
+  const [edited, setEdited] = useState(false);
+  const [lastSavedData, setLastSavedData] = useState(
+    formik.initialValues.option[index]?.attribute[0]
+  );
   const dispatch = useDispatch();
 
   const {
@@ -157,28 +139,20 @@ const OptionSet = (props) => {
   );
 
   const openCollapseHandler = () => {
-    setCollapse(false);
+    formik.setFieldValue(`option[${index}].attribute[0].expanded`, true);
   };
   const closeCollapseHandler = () => {
     if (formik.errors?.option?.length && formik.errors?.option[index]) {
       dispatch(showError({ message: "Please fill required fields" }));
       return;
     }
-
-    const { title, apperance } = selectedOption;
-    const attributes =
-      selectedAttributeIds.length && attributesData?.data?.length
-        ? attributesData.data.filter((attr) =>
-            selectedAttributeIds.includes(attr._id)
-          )
-        : [];
-    dispatchOptionDetail({
-      type: "SET_DETAILS",
-      title,
-      fieldType: FRONTEND_APPEARANCE[apperance],
-      attributes,
-    });
-    setCollapse(true);
+    const optionClone = structuredClone(
+      formik.values.option[index].attribute[0]
+    );
+    delete optionClone.expanded;
+    formik.setFieldValue(`option[${index}].attribute[0]`, optionClone);
+    setLastSavedData(optionClone);
+    dispatch(showSuccess({ message: "Option saved successfully" }));
   };
 
   const addAttributeHandler = (_, attrs) => {
@@ -194,8 +168,12 @@ const OptionSet = (props) => {
     formik.handleChange(e);
   };
 
+  const discardOptionHandler = () => {
+    formik.setFieldValue(`option[${index}].attribute[0]`, lastSavedData);
+  };
+
   const selectedAttributeIds =
-    formik.values.option[index].attribute[0].metaAttributes?.map(
+    formik.values.option[index]?.attribute[0]?.metaAttributes?.map(
       (attr) => attr.id
     ) || [];
 
@@ -226,12 +204,51 @@ const OptionSet = (props) => {
     }
   }, [isSubmitting]);
 
-  return collapse ? (
+  useEffect(() => {
+    if (formik.values.option[index]?.attribute[0]?.id && lastSavedData?.id) {
+      let currentValues = structuredClone(
+        formik.values.option[index].attribute[0]
+      );
+      let initialValues = structuredClone(lastSavedData);
+
+      delete currentValues.expanded;
+      delete initialValues.expanded;
+
+      if (!_.isEqual(currentValues, initialValues)) {
+        setEdited(true);
+      } else if (_.isEqual(currentValues, initialValues)) {
+        setEdited(false);
+      }
+    }
+  }, [lastSavedData, formik.values, index]);
+
+  // useEffect(() => {
+  //   let isLoading =
+  //     optionsIsLoading ||
+  //     attributesIsLoading ||
+  //     subOptionsIsLoading ||
+  //     subAttributesIsLoading;
+
+  //   if (isLoading) {
+  //     onPageLoad(true);
+  //   } else {
+  //     onPageLoad(false);
+  //   }
+  // }, [
+  //   optionsIsLoading,
+  //   attributesIsLoading,
+  //   subOptionsIsLoading,
+  //   subAttributesIsLoading,
+  //   onPageLoad,
+  // ]);
+
+  return !formik.values.option[index].attribute[0].expanded ? (
     <OptionSetCollapse
       onEdit={openCollapseHandler}
       onOptionDelete={onOptionDelete}
       index={index}
-      {...optionDetailState}
+      selectedOption={selectedOption}
+      selectedAttributes={selectedAttributes}
     />
   ) : (
     <div className="bg-black-13 border-grey-5 rounded-8 p-3 features mt-4 ">
@@ -330,7 +347,17 @@ const OptionSet = (props) => {
             </Grid>
           </>
         )}
-        <Grid item sx={{ marginLeft: "auto" }}></Grid>
+        <Grid item sx={{ marginLeft: "auto" }}>
+          <DeleteIconButton
+            onClick={onOptionDelete.bind(null, {
+              deleteIndex: index,
+              message: selectedOption?.title
+                ? `${selectedOption?.title} option`
+                : "option",
+            })}
+            title="Delete"
+          />
+        </Grid>
       </Grid>
       {selectedOption && (
         <div className="mt-3">
@@ -377,17 +404,16 @@ const OptionSet = (props) => {
         </div>
       )}
       <div className="d-flex justify-content-end mt-4">
-        <button
-          onClick={onOptionDelete.bind(null, {
-            deleteIndex: index,
-            message: "option",
-          })}
-          type="button"
-          className="button-grey-outline py-2 px-4 ms-3 c-pointer"
-          style={{ minWidth: "8rem" }}
-        >
-          <p>Discard</p>
-        </button>
+        {edited && (
+          <button
+            onClick={discardOptionHandler}
+            type="button"
+            className="button-grey-outline py-2 px-4 ms-3 c-pointer"
+            style={{ minWidth: "8rem" }}
+          >
+            <p>Discard</p>
+          </button>
+        )}
 
         <button
           type="button"

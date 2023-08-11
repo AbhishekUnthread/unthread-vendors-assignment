@@ -41,6 +41,7 @@ const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 1,
   title: "",
+  name: "",
 };
 
 const initialOptionsState = {
@@ -73,6 +74,7 @@ const queryFilterReducer = (state, action) => {
       ...state,
       pageNo: initialQueryFilterState.pageNo,
       title: action.value,
+      name: action.value,
     };
   }
   if (action.type === "SET_FILTERS") {
@@ -226,15 +228,15 @@ const Options = () => {
   };
 
   const editSetHandler = (srNo) => {
-    // navigate({
-    //   pathname: `./sets/edit/${srNo}`,
-    //   search: `?${createSearchParams({
-    //     search: JSON.stringify({
-    //       ...queryFilterState,
-    //       activeTab: optionsState.activeTab,
-    //     }),
-    //   })}`,
-    // });
+    navigate({
+      pathname: `./sets/edit/${srNo}`,
+      search: `?${createSearchParams({
+        search: JSON.stringify({
+          ...queryFilterState,
+          activeTab: optionsState.activeTab,
+        }),
+      })}`,
+    });
   };
 
   const createOptionHandler = () => {
@@ -269,7 +271,7 @@ const Options = () => {
     dispatchOptions({ type: "SET_DELETE", id, message, deleteType: "set" });
   };
 
-  const CancelDeleteHandler = () => {
+  const cancelDeleteHandler = () => {
     dispatchOptions({ type: "REMOVE_DELETE" });
   };
 
@@ -419,10 +421,12 @@ const Options = () => {
         onTutorial={() => {}}
         onExport={() => {}}
         onImport={() => {}}
-        onCreate={createOptionHandler}
-        onSecondaryCreate={createOptionSetHandler}
+        onCreate={optionsState.activeTab === 1 ? createOptionHandler : null}
+        onSecondaryCreate={
+          optionsState.activeTab === 2 ? createOptionSetHandler : null
+        }
         createBtnText="+ Create Options"
-        createSecondaryBtnText="+ Options Sets"
+        createSecondaryBtnText="+ Create Option Sets"
       />
 
       {optionsState.activeTab && (
@@ -494,7 +498,7 @@ const Options = () => {
       )}
       <DeleteModalSecondary
         onConfirm={deleteConfirmationHandler}
-        onCancel={CancelDeleteHandler}
+        onCancel={cancelDeleteHandler}
         show={optionsState.showDeleteModal}
         isLoading={deleteOptionIsLoading || deleteOptionSetIsLoading}
         message={optionsState.confirmationMessage}

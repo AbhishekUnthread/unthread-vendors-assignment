@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import {
   useNavigate,
@@ -44,6 +44,8 @@ import {
   useDeleteOptionSetMutation,
 } from "../../../features/parameters/options/optionSetsApiSlice";
 
+import SnackbarUtils from "../../../features/snackbar/useSnackbar";
+
 const FRONTEND_APPEARANCE = [
   {
     id: 1,
@@ -85,6 +87,7 @@ const optionSetValidationSchema = Yup.object({
     Yup.object({
       attribute: Yup.array().of(
         Yup.object({
+          expanded: Yup.boolean().optional(),
           id: Yup.string().required("Required"),
           metaAttributes: Yup.array()
             .of(
@@ -221,6 +224,7 @@ const optionSetReducer = (state, action) => {
 const EMPTY_OPTION = {
   attribute: [
     {
+      expanded: true,
       id: "",
       metaAttributes: [],
     },
@@ -260,12 +264,56 @@ const OptionSetsInfo = () => {
     },
   ] = useCreateOptionSetMutation();
 
+  const {
+    data: optionSetsData,
+    isLoading: optionSetsIsLoading,
+    error: optionSetsError,
+    isError: optionSetsIsError,
+    isSuccess: optionSetsIsSuccess,
+  } = useGetAllOptionSetsQuery(optionSetQueryFilterState, {
+    skip: optionSetQueryFilterState.srNo ? false : true,
+  });
+
+  const [
+    updateOptionSet,
+    {
+      isLoading: updateOptionSetIsLoading,
+      isSuccess: updateOptionSetIsSuccess,
+      error: updateOptionSetError,
+      isError: updateOptionSetIsError,
+    },
+  ] = useUpdateOptionSetMutation();
+
   const optionSetFormik = useFormik({
     initialValues: {
-      name: "",
-      isProduct: false,
-      categoryId: "",
-      option: [],
+      name: optionSetsData?.data[0]?.name || "",
+      isProduct: optionSetsData?.data[0]?.isProduct || false,
+      categoryId: optionSetsData?.data[0]?.categoryId || "",
+      option: optionSetsData?.data[0]?.option.length
+        ? optionSetsData.data[0].option?.map((set) => {
+            return {
+              attribute: set.attribute?.map((option) => {
+                return {
+                  id: option.id,
+                  metaAttributes: option.metaAttributes?.map((attr) => {
+                    return {
+                      id: attr.id,
+                      metaSubAttribute: attr.metaSubAttribute.map((subOp) => {
+                        return {
+                          id: subOp.id,
+                          metaSubAttributeValue:
+                            subOp.metaSubAttributeValue.map((subAttr) => {
+                              return subAttr._id;
+                            }),
+                        };
+                      }),
+                    };
+                  }),
+                };
+              }),
+            };
+          })
+        : [],
     },
     enableReinitialize: true,
     validationSchema: optionSetValidationSchema,
@@ -278,6 +326,35 @@ const OptionSetsInfo = () => {
           optionSet[key] === undefined
         )
           delete optionSet[key];
+      }
+      SnackbarUtils.savingToast();
+      if (id) {
+        updateOptionSet({
+          id: optionSetsData?.data[0]._id,
+          details: optionSet,
+        })
+          .unwrap()
+          .then(() => {
+            optionSetFormik.resetForm();
+            dispatch(
+              showSuccess({
+                message: "Option set edited successfully",
+              })
+            );
+          })
+          .catch((error) => {
+            if (error?.data?.message) {
+              dispatch(showError({ message: error.data.message }));
+            } else {
+              dispatch(
+                showError({
+                  message: "Something went wrong!, please try again",
+                })
+              );
+            }
+          });
+        SnackbarUtils.hideToast();
+        return;
       }
       createOptionSet(optionSet)
         .unwrap()
@@ -301,6 +378,7 @@ const OptionSetsInfo = () => {
             );
           }
         });
+      SnackbarUtils.hideToast();
     },
   });
 
@@ -348,6 +426,10 @@ const OptionSetsInfo = () => {
     optionSetFormik.setFieldValue("option", updatedOptions);
   };
 
+  const pageLoadingHandler = useCallback((value) => {
+    setPageIsLoading(true);
+  }, []);
+
   useEffect(() => {
     if (id) {
       dispatchOptionSetQueryFilter({ type: "SET_SR_NO", srNo: id });
@@ -369,15 +451,20 @@ const OptionSetsInfo = () => {
   }, [optionSetFormik.initialValues, optionSetFormik.values, id]);
 
   useEffect(() => {
-    const isLoading = categoriesIsLoading;
+    let isLoading = categoriesIsLoading;
     if (optionSetQueryFilterState.srNo) {
+      isLoading = categoriesIsLoading || optionSetsIsLoading;
     }
     if (isLoading) {
       setPageIsLoading(true);
     } else {
       setPageIsLoading(false);
     }
-  }, [categoriesIsLoading, optionSetQueryFilterState.srNo]);
+  }, [
+    categoriesIsLoading,
+    optionSetsIsLoading,
+    optionSetQueryFilterState.srNo,
+  ]);
 
   useEffect(() => {
     if (optionSetState.createdSuccess) {
@@ -562,6 +649,7 @@ const OptionSetsInfo = () => {
                         index={index}
                         formik={optionSetFormik}
                         isSubmitting={optionSetFormik.isSubmitting}
+                        onPageLoad={pageLoadingHandler}
                       />
                     );
                   })}
@@ -592,7 +680,7 @@ const OptionSetsInfo = () => {
                   optionSetFormik.initialValues
                 )
           }
-          message="option"
+          message="option set"
         />
       </div>
     </>

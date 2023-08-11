@@ -49,15 +49,6 @@ const HEAD_CELLS = [
 
 const PAGINATION_ROWS = [10, 20, 30];
 
-const FRONTEND_APPEARANCE = {
-  dropDownList: "Drop-Down List",
-  dropDownThumbnail: "Drop-Down List with Thumbnail",
-  colorAndImageSwatches: "Color & Image Swatches",
-  radioButtons: "Radio Buttons",
-  rectangleButtons: "Rectangle Buttons",
-  circleButtons: "Circle Buttons",
-};
-
 const OptionSetsTable = (props) => {
   const {
     error,
@@ -120,11 +111,11 @@ const OptionSetsTable = (props) => {
                   </TableCell>
                   <TableCell>
                     <div className="d-flex flex-wrap align-items-center gap-2">
-                      {item.options.map((option) => {
+                      {item.option.map((option) => {
                         return (
                           <Chip
                             key={option._id}
-                            label={option.attributes[0]?.title || ""}
+                            label={option.attribute[0]?.title || ""}
                             size="small"
                           />
                         );
