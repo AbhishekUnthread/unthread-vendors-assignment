@@ -78,7 +78,7 @@ const customerAddressValidation = Yup.object({
 
 const AddAddress = ({ customerAddressDetails, data }) => {
   const dispatch = useDispatch();
-  const [address, setAddress] = useState(false);
+  const [address, setAddress] = useState([]);
   const [openNewUser, setOpenNewUser] = useState(false);
   const [addressState, dispatchAddress] = useReducer(
     addressTabReducer,
@@ -119,7 +119,8 @@ const AddAddress = ({ customerAddressDetails, data }) => {
           delete values[key] 
         }
       }
-      customerAddressDetails(values);
+      customerAddressDetails([values]);
+      setAddress((prevAddresses) => [...prevAddresses, values]);
       setOpenNewUser(false)
       if(data?._id) {
         editCustomerAddress({
@@ -133,10 +134,6 @@ const AddAddress = ({ customerAddressDetails, data }) => {
       }
     },
   });
-
-  const handleAddressChange = () => {
-    setAddress(prevState => !prevState)
-  };
 
   const GetCountryCode = (value) => {
     customerAddressFormik.setFieldValue("countryCode", value)
@@ -188,7 +185,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
 
   const handleNewAddress = () => {
     customerAddressFormik.resetForm();
-        setOpenNewUser(true);
+    setOpenNewUser(true);
   }
 
   return (
@@ -204,8 +201,8 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                 <p className="">+ Add Adress</p>
             </p>
         </div>
-        {customerAddressFormik && (
-            <div className="col-12 mt-3">
+        {address.map((address, index) => (
+            <div className="col-12 mt-3" key={index}>
                 <div
                     className="row py-3 mb-3 rounded-8"
                     style={{ background: "rgba(39, 40, 63, 0.5)" }}
@@ -231,21 +228,21 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                     </div>
                     <div className="col-12 px-3">
                         <small className="text-lightBlue d-block">
-                            {customerAddressFormik.values.firstName} {customerAddressFormik.values.lastName}
+                            {address?.firstName} {address?.lastName}
                         </small>
                         <small className="text-lightBlue d-block">
-                            {customerAddressFormik.values.line1}
+                            {address?.line1}
                         </small>
                         <small className="text-lightBlue d-block">
-                            {customerAddressFormik.values.city}-{customerAddressFormik.values.pinCode}, {customerAddressFormik.values.state}, {customerAddressFormik.values.city}
+                            {address?.city}-{address?.pinCode}, {address?.state}, {address?.city}
                         </small>
                         <small className="text-lightBlue d-block">
-                            {customerAddressFormik.values.countryCode} {customerAddressFormik.values.phone}
+                            {address?.countryCode} {address?.phone}
                         </small>
                     </div>
                 </div>
             </div>
-        )}
+        ))}
 
         <Dialog
             open={openNewUser}
@@ -278,7 +275,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
             <DialogContent className="pb-4 px-4">
                 <div className="row py-3 rounded-8 border-grey-5 bg-black-13">
                     <div className="col-md-12">
-                        <p className="text-lightBlue mb-1">Name</p>
+                        <p className="text-lightBlue mb-1">Name <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Office Address, Home Address"
@@ -322,7 +319,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                         />
                     </div>
                     <div className="col-md-6 mt-3">
-                        <p className="text-lightBlue mb-1">First Name</p>
+                        <p className="text-lightBlue mb-1">First Name <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Enter First Name"
@@ -340,7 +337,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                         )}
                     </div>
                     <div className="col-md-6 mt-3">
-                        <p className="text-lightBlue mb-1">Last Name</p>
+                        <p className="text-lightBlue mb-1">Last Name <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Enter Last Name"
@@ -370,7 +367,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                         </FormControl>
                     </div>
                     <div className="col-md-12 mt-3">
-                        <p className="text-lightBlue mb-1">Mobile Number</p>
+                        <p className="text-lightBlue mb-1">Mobile Number <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Enter Mobile Number"
@@ -403,7 +400,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                         )}
                     </div>
                     <div className="col-md-6 mt-3">
-                        <p className="text-lightBlue mb-1">Address Line 1</p>
+                        <p className="text-lightBlue mb-1">Address Line 1 <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Enter Address Line 1"
@@ -433,7 +430,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                         </FormControl>
                     </div>
                     <div className="col-md-6 mt-3">
-                        <p className="text-lightBlue mb-1">Town/City</p>
+                        <p className="text-lightBlue mb-1">Town/City <span style={{color: "red"}}>*</span></p>
                         <AppCitySelect 
                             value={customerAddressFormik.values.city}
                             getCityName={getCityName}
@@ -448,7 +445,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                         )}
                     </div>
                     <div className="col-md-6 mt-3">
-                        <p className="text-lightBlue mb-1">Zipcode/Postalcode</p>
+                        <p className="text-lightBlue mb-1">Zipcode/Postalcode <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Enter Zipcode/Postalcode"
@@ -467,8 +464,8 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                     </div>
                     <div className="col-md-12 mt-3  add-user-country">
                         <div className="d-flex align-items-center justify-content-between">
-                            <p className="text-lightBlue mb-1">State or Region</p>
-                            <small className="text-grey-6 mb-1">(Optional)</small>
+                            <p className="text-lightBlue mb-1">State or Region <span style={{color: "red"}}>*</span></p>
+                            {/* <small className="text-grey-6 mb-1">(Optional)</small> */}
                         </div>
                         <AppStateSelect 
                             value={customerAddressFormik.values.state}
@@ -484,7 +481,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                         )}
                     </div>
                     <div className="col-md-12 mt-3 add-user-country">
-                        <p className="text-lightBlue mb-1">Country</p>
+                        <p className="text-lightBlue mb-1">Country <span style={{color: "red"}}>*</span></p>
                         <AppCountrySelect 
                             value={customerAddressFormik.values.country}
                             GetCountryName={GetCountryName}

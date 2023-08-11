@@ -9,9 +9,11 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   FormControl,
   FormHelperText,
+  IconButton,
   MenuItem,
   Select,
   InputAdornment,
@@ -108,12 +110,14 @@ const customerTabReducer = (state, action) => {
   return initialCustomerState;
 };
 
+const emailRegex =/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
 const customerValidationSchema = Yup.object({
   firstName: Yup.string().trim().min(3).required("Required"),
   lastName: Yup.string().trim().min(3).required("Required"),
   dob: Yup.date().required("Required"),
   gender: Yup.string().required("Required"),
-  email: Yup.string().email().required("Required"),
+  email: Yup.string().email().matches(emailRegex).required("Required"),
   countryCode: Yup.string().required("Required"),
   phone: Yup.number().required("Required"),
   userGroup: Yup.array().of(Yup.string()),
@@ -131,6 +135,8 @@ const AddUser = () => {
   let { id } = useParams();
   let navigate = useNavigate();
   const dispatch = useDispatch();
+  const [addresses, setAddresses] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
@@ -206,10 +212,6 @@ const AddUser = () => {
     customerFormik.setFieldValue("userGroup", value.map(option => option._id))
   }
 
-  const customerAddressDetails = (event, value) => {
-    customerFormik.setFieldValue("address", [event])
-  }
-
   const backHandler = () => {
     navigate("/users/allUsers");
   };
@@ -240,6 +242,7 @@ const AddUser = () => {
           delete values[key] 
         }
       }
+
       if(!id) {
         createCustomer(values)
           .unwrap()
@@ -259,6 +262,11 @@ const AddUser = () => {
       }
     },
   });
+
+  const updateAddresses = (newAddresses) => {
+    setAddresses((prevAddresses) => [...prevAddresses, ...newAddresses]);
+    customerFormik.setFieldValue("address", addresses);
+  };
 
   useEffect(() => {
     if (id) {
@@ -287,6 +295,8 @@ const AddUser = () => {
     const groupIds = group?.map((group) => group?._id)
     customerFormik.setFieldValue("userGroup", groupIds)
   }
+
+  const toggleShowPasswordHandler = () => setShowPassword((prevState) => !prevState);
 
   const currentDate = new Date();
   const maxDate = new Date(currentDate.getFullYear() - 18, currentDate.getMonth(), currentDate.getDate());
@@ -322,7 +332,7 @@ const AddUser = () => {
               <div className="col-12 px-0">
                 <div className="row align-items-start">
                   <div className="col-md-6 mt-3">
-                    <p className="text-lightBlue mb-1">First Name</p>
+                    <p className="text-lightBlue mb-1">First Name <span style={{color: "red"}}>*</span></p>
                     <FormControl className="w-100 px-0">
                       <OutlinedInput
                         placeholder="Enter First Name"
@@ -340,7 +350,7 @@ const AddUser = () => {
                     )}
                   </div>
                   <div className="col-md-6 mt-3">
-                    <p className="text-lightBlue mb-1">Last Name</p>
+                    <p className="text-lightBlue mb-1">Last Name <span style={{color: "red"}}>*</span></p>
                     <FormControl className="w-100 px-0">
                       <OutlinedInput 
                         placeholder="Enter Last Name" 
@@ -357,7 +367,7 @@ const AddUser = () => {
                     )}
                   </div>
                   <div className="col-md-6 mt-3">
-                    <p className="text-lightBlue mb-1">Date of Birth</p>
+                    <p className="text-lightBlue mb-1">Date of Birth <span style={{color: "red"}}>*</span></p>
                     <FormControl className="w-100 px-0">
                       <LocalizationProvider dateAdapter={AdapterMoment}>
                         <DatePicker
@@ -376,7 +386,7 @@ const AddUser = () => {
                     )}
                   </div>
                   <div className="col-md-6 mt-3">
-                    <p className="text-lightBlue mb-1">Gender</p>
+                    <p className="text-lightBlue mb-1">Gender <span style={{color: "red"}}>*</span></p>
                     <FormControl
                       sx={{ m: 0, minWidth: 120, width: "100%" }}
                       size="small"
@@ -411,7 +421,7 @@ const AddUser = () => {
                     )}
                   </div>
                   <div className="col-md-12 mt-3">
-                    <p className="text-lightBlue mb-1">Mobile Number</p>
+                    <p className="text-lightBlue mb-1">Mobile Number <span style={{color: "red"}}>*</span></p>
                     <FormControl className="w-100 px-0">
                       <OutlinedInput
                         placeholder="Enter Mobile Number"
@@ -463,7 +473,7 @@ const AddUser = () => {
                     />
                   </div>
                   <div className="col-md-12 mt-3">
-                    <p className="text-lightBlue mb-1">Email ID</p>
+                    <p className="text-lightBlue mb-1">Email ID <span style={{color: "red"}}>*</span></p>
                     <FormControl className="w-100 px-0">
                       <OutlinedInput 
                         placeholder="Enter Email ID" 
@@ -503,7 +513,7 @@ const AddUser = () => {
                     />
                   </div>
                   <div className="col-md-12 mt-3">
-                    <p className="text-lightBlue mb-1">Password</p>
+                    <p className="text-lightBlue mb-1">Password <span style={{color: "red"}}>*</span></p>
                     <FormControl className="w-100 px-0">
                       <OutlinedInput 
                         placeholder="Enter Password" 
@@ -512,6 +522,19 @@ const AddUser = () => {
                         onBlur={customerFormik.handleBlur}
                         onChange={customerFormik.handleChange}
                         name="password"  
+                        type={!showPassword ? "password" : "text"}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={toggleShowPasswordHandler}
+                              type="button"
+                              edge="end"
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        }
                       />
                     </FormControl>
                      {!!customerFormik.touched.password && customerFormik.errors.password && (
@@ -520,7 +543,7 @@ const AddUser = () => {
                       </FormHelperText>
                     )}
                   </div>
-                  <div className="col-md-12">
+                  {/* <div className="col-md-12">
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -542,7 +565,7 @@ const AddUser = () => {
                         },
                       }}
                     />
-                  </div>
+                  </div> */}
                   <div className="col-md-12 mt-3">
                     <p className="text-lightBlue mb-1">User Group</p>
                     <Autocomplete
@@ -609,7 +632,7 @@ const AddUser = () => {
             <AddAddress 
               name="address"
               value={customerFormik.values.address}
-              customerAddressDetails={customerAddressDetails}
+              customerAddressDetails={updateAddresses}
               data={customerData?.data?.data[0]?.addresses[0] || []}
             />
           </div>
@@ -637,14 +660,12 @@ const AddUser = () => {
             />
           </div>
         </div>
-        <div className="row bottom-buttons pt-5 pb-3 justify-content-between">
-          <SaveFooterTertiary
-            show={id ? customerState.isEditing : true}
-            onDiscard={backHandler}
-            isLoading={createCustomerIsLoading || editCustomerIsLoading}
-          />
-        </div>
       </div>
+      <SaveFooterTertiary
+        show={id ? customerState.isEditing : true}
+        onDiscard={backHandler}
+        isLoading={createCustomerIsLoading || editCustomerIsLoading}
+      />
       <DiscardModalSecondary
         when={id && !_.isEqual(customerFormik.values, customerFormik.initialValues)}
         message="customer tab"

@@ -1162,14 +1162,12 @@ const CreateUserGroup = () => {
               />
             </div>
           </div>
-          <div className="row create-buttons pt-5 pb-3 justify-content-between">
-            <SaveFooterTertiary
-              show={id ? customerGroupState.isEditing : true}
-              onDiscard={backHandler}
-              isLoading={createCustomerGroupIsLoading || editGroupIsLoading}
-            />
-          </div>
         </div>
+        <SaveFooterTertiary
+          show={id ? customerGroupState.isEditing : true}
+          onDiscard={backHandler}
+          isLoading={createCustomerGroupIsLoading || editGroupIsLoading}
+        />
       </form>
       <DiscardModalSecondary
         when={id && !_.isEqual(customerGroupFormik.values, customerGroupFormik.initialValues)}
