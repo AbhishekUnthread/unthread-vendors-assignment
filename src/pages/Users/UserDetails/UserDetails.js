@@ -344,7 +344,10 @@ const UserDetails = () => {
             </div>
             <small className="text-grey-6 mt-3 d-block">Registered Date</small>
             <p className="text-lightBlue mt-1">
-              5 Dec, 2022&nbsp;<span className="text-grey-6">at 10:00am</span>
+              {moment(customerDetails?.createdAt).format("DD MMM, YYYY")}
+              <span className="text-grey-6">
+                {" "} at {moment(customerDetails?.createdAt).format("HH:MM A")}
+              </span>
             </p>
             <div className="d-flex justify-content-center ">
               <hr className="hr-grey-6 w-100" />
@@ -361,7 +364,7 @@ const UserDetails = () => {
             </div>
             <small className="text-grey-6 mt-3 d-block">Date of Birth</small>
             <div className="d-flex mt-1">
-              <p className="text-lightBlue me-2">{moment(customerDetails).format("DD MMM, YYYY")}</p>
+              <p className="text-lightBlue me-2">{moment(customerDetails?.dob).format("DD MMM, YYYY")}</p>
             </div>
             <small className="text-grey-6 mt-3 mb-1 d-block">User Group</small>
             {customerDetails?.groups?.map((item) => (

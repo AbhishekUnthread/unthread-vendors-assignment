@@ -1,5 +1,6 @@
 import { useState, forwardRef, useEffect, useReducer } from "react";
 import { useFormik } from "formik";
+import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import _ from "lodash";
 import {
@@ -16,6 +17,14 @@ import {
   Chip,
   Slide
 } from "@mui/material";
+
+import { 
+    useEditCustomerAddressMutation 
+} from "../../../features/customers/customerAddress/customerAddressApiSlice";
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
 
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
@@ -68,12 +77,23 @@ const customerAddressValidation = Yup.object({
 });
 
 const AddAddress = ({ customerAddressDetails, data }) => {
+  const dispatch = useDispatch();
   const [address, setAddress] = useState(false);
   const [openNewUser, setOpenNewUser] = useState(false);
   const [addressState, dispatchAddress] = useReducer(
     addressTabReducer,
     initialAddressState
   );
+
+  const [
+    editCustomerAddress,
+    {
+      data: editAddress,
+      isLoading: editAddressIsLoading,
+      isSuccess: editAddressIsSuccess,
+      error: editAddressError,
+    }
+  ] = useEditCustomerAddressMutation();
 
   const customerAddressFormik = useFormik({
     initialValues: {
@@ -94,15 +114,23 @@ const AddAddress = ({ customerAddressDetails, data }) => {
     enableReinitialize: true,
     validationSchema: customerAddressValidation,
     onSubmit: (values) => {
-                console.log(values, 'values valuesvalues');
-
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
           delete values[key] 
         }
       }
       customerAddressDetails(values);
-      setOpenNewUser(false);
+      setOpenNewUser(false)
+      if(data?._id) {
+        editCustomerAddress({
+            id: data?._id,
+            details : values
+        })
+            .unwrap()
+            .then(() => {
+                dispatch(showSuccess({ message: "Custormer edited successfully" }));
+            });
+      }
     },
   });
 
@@ -158,6 +186,11 @@ const AddAddress = ({ customerAddressDetails, data }) => {
     }
   }, [customerAddressFormik.initialValues, customerAddressFormik.values]);
 
+  const handleNewAddress = () => {
+    customerAddressFormik.resetForm();
+        setOpenNewUser(true);
+  }
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
         <div className="d-flex col-12 px-0 justify-content-between">
@@ -167,7 +200,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                 </h6>
             </div>
 
-            <p className="button-gradient py-2 px-3" onClick={handleNewUser}>
+            <p className="button-gradient py-2 px-3" onClick={handleNewAddress}>
                 <p className="">+ Add Adress</p>
             </p>
         </div>
@@ -186,6 +219,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                                 alt="editGrey"
                                 className="c-pointer ms-3"
                                 width={16}
+                                onClick={handleNewUser}
                             />
                             <img
                                 src={archivedGrey}
@@ -352,6 +386,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                                         GetCountryCode={GetCountryCode}
                                         SelectCountryCode = {SelectCountryCode}
                                         name="countryCode" 
+                                        formik={customerAddressFormik}
                                     />
                                 </InputAdornment>
                             }
@@ -364,21 +399,6 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                             <FormHelperText error>
                                 {customerAddressFormik.errors.countryCode || 
                                 customerAddressFormik.errors.phone}
-                            </FormHelperText>
-                        )}
-                    </div>
-                    <div className="col-md-12 mt-3 add-user-country">
-                        <p className="text-lightBlue mb-1">Country</p>
-                        <AppCountrySelect 
-                            value={customerAddressFormik.values.country}
-                            GetCountryName={GetCountryName}
-                            SelectCountryName={SelectCountryName}
-                            name="country" 
-                        />
-                        {!!customerAddressFormik.touched.country && 
-                        customerAddressFormik.errors.country && (
-                            <FormHelperText error>
-                                {customerAddressFormik.errors.country}
                             </FormHelperText>
                         )}
                     </div>
@@ -460,6 +480,22 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                         customerAddressFormik.errors.state && (
                             <FormHelperText error>
                                 {customerAddressFormik.errors.state}
+                            </FormHelperText>
+                        )}
+                    </div>
+                    <div className="col-md-12 mt-3 add-user-country">
+                        <p className="text-lightBlue mb-1">Country</p>
+                        <AppCountrySelect 
+                            value={customerAddressFormik.values.country}
+                            GetCountryName={GetCountryName}
+                            SelectCountryName={SelectCountryName}
+                            name="country" 
+                            formik={customerAddressFormik}
+                        />
+                        {!!customerAddressFormik.touched.country && 
+                        customerAddressFormik.errors.country && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.country}
                             </FormHelperText>
                         )}
                     </div>

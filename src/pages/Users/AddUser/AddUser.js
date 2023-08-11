@@ -610,7 +610,7 @@ const AddUser = () => {
               name="address"
               value={customerFormik.values.address}
               customerAddressDetails={customerAddressDetails}
-              data={customerData?.data?.data[0]?.addresses[0]}
+              data={customerData?.data?.data[0]?.addresses[0] || []}
             />
           </div>
           <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
