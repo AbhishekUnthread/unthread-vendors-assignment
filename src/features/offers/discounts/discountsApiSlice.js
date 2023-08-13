@@ -37,7 +37,7 @@ export const discountsApiSlice = apiSlice.injectEndpoints({
     }),
     bulkDeleteDiscount:builder.mutation({
       query: (deletes) => ({
-        url: `/discount/product`,
+        url: `/discount/product/bulkDelete`,
         method: "DELETE",
         body: deletes,
       }),

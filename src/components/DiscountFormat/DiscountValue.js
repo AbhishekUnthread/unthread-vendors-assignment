@@ -65,10 +65,10 @@ function DiscountValue({ value, field, formik, touched, error }) {
             </div>
           </div>
         </div>
-        <div className="row align-items-center">
+        <div className="row align-items-center ">
           <div className="col-md-5 discount-inputs-two d-flex align-items-center">
 
-            <div style={{display:"flex", direction:"column"}}>
+            <div className="col">
             <FormControl className="px-0">
               <OutlinedInput
                 value={value?.discountValue}

@@ -328,7 +328,14 @@ const Discounts = () => {
     }
 }, [searchParams])
 
-const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk/Tiered Discount', 'Free Shipping'];
+const discountType = [
+  { name: 'Product Discount', value: 'productDiscount' },
+  { name: 'Cart Discount', value: 'cartDiscount' },
+  { name: 'Buy X, Get Y', value: 'buyxGety' },
+  { name: 'Bulk/Tiered Discount', value: 'bulk' },
+  { name: 'Free Shipping', value: 'freeShipping' }
+];
+
 
 const editDiscountPageNavigation = (data)=>{
   Navigate({
@@ -411,10 +418,10 @@ const handleChronologicalSorting = (event) => {
             <hr className="hr-grey-6 my-0" />
             <DialogContent className="py-3 px-4">
               <div className="row">
-                {discountType.map((type, index) => (
+                {discountType.map((discount, index) => (
                   <div className="col-6 my-3">
                     <Link
-                      to="/offers/discounts/create"
+                      to={`/offers/discounts/create?discountType=${encodeURIComponent(discount.value)}`}
                       className="d-flex p-3 rounded-8 hover-back-two c-pointer text-decoration-none"
                     >
                       <img
@@ -423,7 +430,7 @@ const handleChronologicalSorting = (event) => {
                         width={100}
                       />
                       <div className="d-flex ms-3 flex-column">
-                        <p className="text-lightBlue">{type}</p>
+                        <p className="text-lightBlue">{discount.name}</p>
                         <small className="d-block mt-2 text-grey-6">
                           Lorem ipsum dolor, sit amet consectetur adipisicing
                           elit. Esse odio amet

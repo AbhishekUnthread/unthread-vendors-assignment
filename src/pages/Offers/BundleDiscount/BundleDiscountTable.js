@@ -125,12 +125,12 @@ const BundleDiscountTable = ({
       disablePadding: false,
       label: "Products",
     },
-    {
-      id: "timePeriod",
-      numeric: false,
-      disablePadding: false,
-      label: "Time Period",
-    },
+    // {
+    //   id: "timePeriod",
+    //   numeric: false,
+    //   disablePadding: false,
+    //   label: "Time Period",
+    // },
     {
       id: "totalUsage",
       numeric: false,
@@ -275,7 +275,7 @@ const BundleDiscountTable = ({
               <TableBody>
                 {stableSort(list, getComparator(order, orderBy)).map(
                   (row, index) => {
-                    const isItemSelected = isSelected(row._id);
+                    const isItemSelected = isSelected(row?._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
@@ -284,7 +284,7 @@ const BundleDiscountTable = ({
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row._id}
+                        key={row?._id}
                         selected={isItemSelected}
                         className="table-rows"
                       >
@@ -294,7 +294,7 @@ const BundleDiscountTable = ({
                             inputProps={{
                               "aria-labelledby": labelId,
                             }}
-                            onClick={(event) => handleClick(event, row._id)}
+                            onClick={(event) => handleClick(event, row?._id)}
                             size="small"
                             style={{
                               color: "#5C6D8E",
@@ -316,41 +316,64 @@ const BundleDiscountTable = ({
                           width={45}
                         /> */}
                             <p className="text-lightBlue rounded-circle fw-600">
-                              {row.name}
+                              {row?.name}
                             </p>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="d-flex flex-column">
                             <p className="text-lightBlue mt-1 d-block">
-                              {row.products}
+                              {row?.products
+                                .map((item, index) => item?.title)
+                                .join(", ")}
                             </p>
                           </div>
                         </TableCell>
-                        <TableCell style={{ width: 180 }}>
+                        {/* <TableCell style={{ width: 180 }}>
                           <div className="d-flex flex-column">
                             <div className="d-flex">
                               <p className="text-lightBlue">{row.timePeriod}</p>
                             </div>
                             <small className="text-grey-6 mt-1 d-block">
-                              {row.date}
+                              {row?.date}
                             </small>
                           </div>
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell style={{ width: 180 }}>
                           <div className="d-flex flex-column">
                             <div className="d-flex">
                               <p className="text-lightBlue me-2">
-                                {row.totalUsage}
+                                {row?.maximumDiscountUse?.isUnlimited
+                                  ? "Unlimited"
+                                  : row?.maximumDiscountUse?.total}
                               </p>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell style={{ width: 140, padding: 0 }}>
                           <div className="d-flex align-items-center">
-                            <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer">
+                            <div
+                              className="rounded-pill d-flex px-2 py-1 statusBoxWidth"
+                              style={{
+                                background:
+                                  row.status === "active"
+                                    ? "#A6FAAF"
+                                    : row.status === "in-active"
+                                    ? "#F67476"
+                                    : row.status === "archieved"
+                                    ? "#C8D8FF"
+                                    : "#FEE1A3",
+                                cursor: "context-menu",
+                              }}
+                            >
                               <small className="text-black fw-400">
-                                {row.status}
+                                {row.status === "active"
+                                  ? "Active"
+                                  : row.status === "in-active"
+                                  ? "In-Active"
+                                  : row.status === "archieved"
+                                  ? "Archived"
+                                  : "Scheduled"}
                               </small>
                             </div>
                           </div>
@@ -373,7 +396,7 @@ const BundleDiscountTable = ({
                                 />
                               </div>
                             </Tooltip>
-                            <Tooltip title="Copy" placement="top">
+                            {/* <Tooltip title="Copy" placement="top">
                               <div className="table-edit-icon rounded-4 p-2">
                                 <ContentCopyIcon
                                   sx={{
@@ -383,7 +406,7 @@ const BundleDiscountTable = ({
                                   }}
                                 />
                               </div>
-                            </Tooltip>
+                            </Tooltip> */}
                             {/* <Tooltip title="Archive" placement="top">
                           <div className="table-edit-icon rounded-4 p-2">
                             <InventoryIcon

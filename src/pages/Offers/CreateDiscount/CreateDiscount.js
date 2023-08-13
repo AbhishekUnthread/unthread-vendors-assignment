@@ -63,6 +63,7 @@ import {
   useGetAllDiscountsQuery,
 } from "../../../features/offers/discounts/discountsApiSlice";
 import LimitByLocation from "../../../components/DiscountFormat/LimitByLocation";
+import { useLocation } from 'react-router-dom';
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -170,9 +171,18 @@ const discountFormatSchema = Yup.object().shape({
 
 const filterSchema = Yup.object().shape({
   field: Yup.string().required("Field is required"),
-  operator: Yup.string().required("Operator is required"),
-  fieldValue: Yup.mixed().required("Field value is required"),
+  operator: Yup.string().when(['field'], ([field], schema) => {
+    return field === "allProducts"
+      ? schema
+      : schema.required("required");
+  }),
+  fieldValue: Yup.array().when(['field'], ([field], schema) => {
+    return field === "allProducts"
+      ? schema
+      : schema.required("required")
+  }),
 });
+
 
 const scheduleDateSchema = Yup.object().shape({
   startDateTime: Yup.date().required("Start date is required"),
@@ -258,10 +268,12 @@ const CreateDiscount = () => {
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [decodedObject, setDecodedObject] = useState(null);
   let { id } = useParams();
 
+console.log("kdjiohdwedho",location.pathname)
   const [
     createDiscount,
     {
@@ -283,7 +295,7 @@ const CreateDiscount = () => {
     createdAt: decodedObject?.createdAt,
     name: decodedObject?.name,
     status: decodedObject?.status,
-  });
+  },{skip : location.pathname === "/offers/discounts/create"});
 
   // ? USER ROLE SELECT STARTS HERE
   const [discountType, setDiscountType] = React.useState("");
@@ -387,12 +399,11 @@ const CreateDiscount = () => {
     navigate("/offers/discounts");
   };
 
-  console.log("fbewjvhewh",discountsData )
 
   const formik = useFormik({
     initialValues: {
       discountName: "" || discountsData?.data?.data[0].name,
-      discountType: "" || discountsData?.data?.data[0].mainDiscount?.type,
+      discountType: searchParams.get("discountType") || discountsData?.data?.data[0]?.mainDiscount?.type || "x",
       discountFormat: {
         discountFormat: "code"|| discountsData?.data.data[0].mainDiscount.format,
         discountCode: "" || discountsData?.data.data[0].mainDiscount.discountCode,
@@ -426,7 +437,7 @@ const CreateDiscount = () => {
         bodyText: null,
       },
       customerEligibility: {
-        customer: "all",
+        customer: "allCustomers",
         value: [],
       },
       discountValue: {
@@ -457,7 +468,7 @@ const CreateDiscount = () => {
         },
       ],
       limitByLocation: {
-        locationType: "",
+        locationType: "none",
         location: "",
       },
       scheduledDiscount: {
@@ -492,15 +503,23 @@ const CreateDiscount = () => {
           ...(values?.discountType === "cartDiscount"
             ? { cartLabel: values?.discountValue?.cartLabel }
             : {}),
-          ...(values?.discountType !== "buyxGety"
-            ? {
-                filter: values?.filters.map((filter) => ({
-                  type: filter?.field,
-                  operator: filter?.operator,
-                  value: filter?.fieldValue.map((item, index) => item?._id),
-                })),
-              }
+            
+            ...(values?.discountType !== "buyxGety"
+            ? values?.filters[0]?.field !== "allProducts"
+              ? {
+                  filter: values?.filters.map((filter) => ({
+                    type: filter?.field,
+                    operator: filter?.operator,
+                    value: filter?.fieldValue.map((item, index) => item?._id),
+                  })),
+                }
+              : {
+                  filter: values?.filters.map((filter) => ({
+                    type: filter?.field,
+                  })),
+                }
             : {}),
+            
           ...(values?.discountType === "buyxGety"
             ? {
                 discountLabelType: values?.buyXGetY?.discountMode,
@@ -673,10 +692,13 @@ const CreateDiscount = () => {
 
   useEffect(() => {
     const encodedString = searchParams.get("filter");
-
     const decodedString = decodeURIComponent(encodedString);
     const parsedObject = JSON.parse(decodedString);
     setDecodedObject(parsedObject);
+
+    // dispatchDiscounts({type : "SET_DISCOUNT_TYPE", discountType : searchParams.get("discountType") }) ;
+    // console.log("bndndwhdqwdk", discountsState?.discountType)
+
   }, [searchParams]);
 
   console.log("rrenkkjndedederw", formik?.errors);
@@ -770,17 +792,17 @@ const CreateDiscount = () => {
                         name={"discountType"}
                         size="small"
                         displayEmpty
-                        renderValue={
-                          formik.values?.discountType !== ""
-                            ? undefined
-                            : () => (
-                                <span
-                                  style={{ fontSize: "13px", color: "#5c6d8e" }}
-                                >
-                                  Select
-                                </span>
-                              )
-                        }
+                        // renderValue={
+                        //   formik.values?.discountType !== ""
+                        //     ? undefined
+                        //     : () => (
+                        //         <span
+                        //           style={{ fontSize: "13px", color: "#5c6d8e" }}
+                        //         >
+                        //           Select
+                        //         </span>
+                        //       )
+                        // }
                       >
                         <MenuItem
                           value="productDiscount"
