@@ -21,6 +21,8 @@ export default function AppCitySelect({ getCityName, SelectCityName }) {
     error: cityError,
   } = useGetAllCityQuery({createdAt: -1});
 
+  console.log(cityData?.data?.data, 'cityData');
+
   return (
     <Autocomplete
       id="country-select-demo"

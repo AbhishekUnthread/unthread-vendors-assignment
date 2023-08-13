@@ -194,6 +194,7 @@ const AllUsersTable = ({
       deleteCustomer(customerId);
       setShowDeleteModal(false)
       dispatch(showSuccess({ message: "Customer deleted successfully!" }));
+      setSelected([])
     }
   }
 
@@ -222,6 +223,7 @@ const AllUsersTable = ({
         }
       })
       setShowUnArhcivedModal(false);
+      setSelected([])
       dispatch(showSuccess({ message: "Customer archived successfully!" }));
     }
   }

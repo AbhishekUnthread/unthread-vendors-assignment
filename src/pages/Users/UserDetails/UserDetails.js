@@ -2,6 +2,7 @@ import { forwardRef, useState, useReducer, useEffect } from "react";
 import moment from "moment";
 import { Link, useParams } from "react-router-dom";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { useDispatch } from "react-redux";
 import {
   Box,
   Tab,
@@ -14,13 +15,18 @@ import {
   Chip,
 } from "@mui/material";
 
-import { useGetAllCustomersQuery } from "../../../features/customers/customer/customerApiSlice";
+import { 
+  useGetAllCustomersQuery,
+  useEditCustomerMutation
+} from "../../../features/customers/customer/customerApiSlice";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
 
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import UserOrders from "./UserOrders/UserOrders";
 import UserInformation from "./UserInformation/UserInformation";
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import TagsBox from "../../../components/TagsBox/TagsBox";
+import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
 
 import "./UserDetails.scss";
 
@@ -35,6 +41,8 @@ import block from "../../../assets/images/users/block.svg";
 import verified from "../../../assets/icons/verified.svg";
 import copy from "../../../assets/icons/copy.svg";
 import customerImage from "../../../assets/images/users/user_defauldp.svg";
+import verifiedCustomer from "../../../assets/icons/customerVerify.svg";
+import archiveCustomer from "../../../assets/icons/archive.svg";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -71,14 +79,26 @@ const queryFilterReducer = (state, action) => {
 
 const UserDetails = () => {
   let { id } = useParams();
+  const dispatch = useDispatch();
   const [value, setValue] = useState(0);
   const [paramsData, setParamsData] = useState(null);
   const [openBlock, setOpenBlock] = useState(false);
   const [anchorContactEl, setContactEl] = useState(null);
+  const [openArchivedModal, setArchivedModal] = useState(false);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
+
+  const [
+    editCustomer,
+    {
+      data: editData,
+      isLoading: editCustomerIsLoading,
+      isSuccess: editCustomerIsSuccess,
+      error: editCustomerError,
+    }
+  ] = useEditCustomerMutation();
 
   const {
     data: customerData,
@@ -130,6 +150,25 @@ const UserDetails = () => {
     setOpenBlock(false);
   };
 
+   const handleArchivedModalClose = () => {
+    editCustomer({
+      id: customerDetails?._id,
+      details : {
+        status: "archieved"
+      }
+    })
+    setArchivedModal(false);
+    dispatch(showSuccess({ message: "Customer archived successfully!" }));
+  }
+
+  const handleModalClose = () => {
+    setArchivedModal(false);
+  };
+
+  const handleArchive = () => {
+    setArchivedModal(true);
+  }
+
   return (
     <div className="page container-fluid position-relative">
       <div className="row justify-content-between">
@@ -165,7 +204,7 @@ const UserDetails = () => {
             className="button-red-outline py-1 px-3"
             onClick={handleBlock}
           >
-            <p>Block & Archive</p>
+            <p>Block</p>
           </button>
 
           <Dialog
@@ -222,7 +261,7 @@ const UserDetails = () => {
             className="button-gradient py-1 px-4 w-auto ms-3 me-3"
             onClick={handleContactClick}
           >
-            <p>Contact</p>
+            <p>Actions</p>
           </button>
 
           <Popover
@@ -256,6 +295,21 @@ const UserDetails = () => {
                 <img src={message} alt="message" width={16} />
                 <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
                   Message
+                </small>
+              </div>
+              <div className="d-flex align-items-center">
+                <img src={verifiedCustomer} alt="message" width={16} />
+                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                  Mark as Verified
+                </small>
+              </div>
+              <div 
+                className="d-flex align-items-center"
+                onClick={() => { handleArchive()}}
+              >
+                <img src={archiveCustomer} alt="message" width={16} />
+                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                  Archive Customer 
                 </small>
               </div>
             </div>
@@ -375,6 +429,17 @@ const UserDetails = () => {
           {/* <TagsBox /> */}
         </div>
       </div>
+      <ArchiveModal
+        onConfirm ={handleArchivedModalClose}
+        onCancel={handleModalClose}
+        show={openArchivedModal}
+        title={"customer"}
+        message={
+          customerDetails?.firstName + " " + customerDetails?.lastName 
+        }
+        archiveType={"customer"}
+        products={"25 products"}
+      />   
     </div>
   );
 };

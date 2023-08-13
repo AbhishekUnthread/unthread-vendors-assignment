@@ -19,10 +19,21 @@ export const customerAddressApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["CustomersAddress"],
     }),
+
+    deleteCustomerAddress: builder.mutation({
+      query: (customerAddressId) => ({
+        url: `/customerAddress/${customerAddressId}`,
+        method: "DELETE",
+        body: customerAddressId,
+      }),
+      invalidatesTags: ["CustomersAddress"],
+    }),
+
   }),
 });
 
 export const {
     useCreateCustomerAddressMutation,
-    useEditCustomerAddressMutation
+    useEditCustomerAddressMutation,
+    useDeleteCustomerAddressMutation
 } = customerAddressApiSlice;

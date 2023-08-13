@@ -27,7 +27,7 @@ import {
 import { 
   useCreateCustomerMutation, 
   useGetAllCustomersQuery,
-  useEditCustomerMutation
+  useEditCustomerMutation,
 } from "../../../features/customers/customer/customerApiSlice"
 import { useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import { useGetAllCustomerGroupQuery } from "../../../features/customers/customerGroup/customerGroupApiSlice";
@@ -35,6 +35,10 @@ import {
   showSuccess,
   showError,
 } from "../../../features/snackbar/snackbarAction";
+import { 
+  useDeleteCustomerAddressMutation 
+} from "../../../features/customers/customerAddress/customerAddressApiSlice";
+import { useGetAllCountryQuery } from "../../../features/master/country/countryApiSlice";
 
 import AppMobileCodeSelect from "../../../components/AppMobileCodeSelect/AppMobileCodeSelect";
 import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
@@ -152,6 +156,22 @@ const AddUser = () => {
     error: customerIsError,
     isSuccess: customerIsSuccess,
   } = useGetAllCustomersQuery({id: id},{ skip: id ? false : true});
+
+  const {
+    data: countryData,
+    isLoading: countryIsLoading,
+    isSuccess: countryIsSuccess,
+    error: countryError,
+  } = useGetAllCountryQuery({ createdAt: -1 });
+
+  const [
+    deleteCustomerAddress,
+    {
+      isLoading: deleteDeleteIsLoading,
+      isSuccess: deleteDeleteIsSuccess,
+      error: deleteDeleteError,
+    },
+  ] = useDeleteCustomerAddressMutation();
 
   const [
     editCustomer,
@@ -291,9 +311,15 @@ const AddUser = () => {
     customerFormik.values.userGroup.includes(group._id)
   );
 
+  console.log(selectedGroups, 'selectedGroups');
+
   const handleGroupChange = (_, group) => {
     const groupIds = group?.map((group) => group?._id)
     customerFormik.setFieldValue("userGroup", groupIds)
+  }
+
+  const deleteAddress = (_, value) => {
+    deleteCustomerAddress()
   }
 
   const toggleShowPasswordHandler = () => setShowPassword((prevState) => !prevState);
@@ -634,6 +660,7 @@ const AddUser = () => {
               value={customerFormik.values.address}
               customerAddressDetails={updateAddresses}
               data={customerData?.data?.data[0]?.addresses[0] || []}
+              deleteAddress={deleteAddress}
             />
           </div>
           <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">

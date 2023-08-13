@@ -25,6 +25,7 @@ import {
   showSuccess,
   showError,
 } from "../../../features/snackbar/snackbarAction";
+import { useGetAllCountryQuery } from "../../../features/master/country/countryApiSlice";
 
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
@@ -76,7 +77,7 @@ const customerAddressValidation = Yup.object({
   state: Yup.string().required("Required"),
 });
 
-const AddAddress = ({ customerAddressDetails, data }) => {
+const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
   const dispatch = useDispatch();
   const [address, setAddress] = useState([]);
   const [openNewUser, setOpenNewUser] = useState(false);
@@ -95,6 +96,13 @@ const AddAddress = ({ customerAddressDetails, data }) => {
     }
   ] = useEditCustomerAddressMutation();
 
+   const {
+    data: countryData,
+    isLoading: countryIsLoading,
+    isSuccess: countryIsSuccess,
+    error: countryError,
+  } = useGetAllCountryQuery({ createdAt: -1 });
+
   const customerAddressFormik = useFormik({
     initialValues: {
       name: data?.name || "",
@@ -112,7 +120,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
       isDefaultAddress: data?.isDefaultAddress || false,
     },
     enableReinitialize: true,
-    validationSchema: customerAddressValidation,
+    // validationSchema: customerAddressValidation,
     onSubmit: (values) => {
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
@@ -188,6 +196,10 @@ const AddAddress = ({ customerAddressDetails, data }) => {
     setOpenNewUser(true);
   }
 
+  const selectCountryCode = (event, value) => {
+    customerAddressFormik.setFieldValue("countryCode", value?.countryCode);
+  };
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
         <div className="d-flex col-12 px-0 justify-content-between">
@@ -208,7 +220,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                     style={{ background: "rgba(39, 40, 63, 0.5)" }}
                 >
                     <div className="col-12 d-flex justify-content-between align-items-center mb-2 px-3">
-                        <p className="text-lightBlue">Home</p>
+                        <p className="text-lightBlue">{address?.name}</p>
                         <div className="d-flex align-items-center">
                             <Chip label="Default" size="small" className="px-2" />
                             <img
@@ -223,6 +235,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                                 alt="archiverdGrey"
                                 className="c-pointer ms-3"
                                 width={16}
+                                onClick={() => deleteAddress(address)}
                             />
                         </div>
                     </div>
@@ -256,7 +269,7 @@ const AddAddress = ({ customerAddressDetails, data }) => {
             <DialogTitle>
                 <div className="d-flex justify-content-between align-items-center">
                     <div className="d-flex flex-column ">
-                        <h5 className="text-lightBlue fw-500">Create New User</h5>
+                        <h5 className="text-lightBlue fw-500">Create New Address</h5>
 
                         <small className="text-grey-6 mt-1 d-block">
                         ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing
@@ -380,10 +393,10 @@ const AddAddress = ({ customerAddressDetails, data }) => {
                                 <InputAdornment position="start">
                                     <AppMobileCodeSelect 
                                         value={customerAddressFormik.values.countryCode}
-                                        GetCountryCode={GetCountryCode}
-                                        SelectCountryCode = {SelectCountryCode}
+                                        SelectCountryCode = {selectCountryCode}
                                         name="countryCode" 
                                         formik={customerAddressFormik}
+                                        codeList={countryData?.data?.data || []}
                                     />
                                 </InputAdornment>
                             }

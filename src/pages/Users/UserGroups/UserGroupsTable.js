@@ -145,9 +145,9 @@ const UserGroupsTable = ({
       bulkEditCustomerGroup(requestData).unwrap().then(()=> {
         const successMessage =
             selectedStatus === "Set as Un-Archived"
-              ? "Collection un-archived  successfully"
+              ? "Customer un-archived  successfully"
               : selectedStatus === "Set as Archived"
-                ? "Collection archived  successfully" : "Status updated successfully";
+                ? "Customer archived  successfully" : "Status updated successfully";
 
         dispatch(showSuccess({ message: successMessage }));
         setSelectedStatus(null);
@@ -218,7 +218,7 @@ const UserGroupsTable = ({
       })
       setShowUnArhcivedModal(false)
       setSelected([])
-      dispatch(showSuccess({ message: "Collection un-archived successfully" }));
+      dispatch(showSuccess({ message: "Customer un-archived successfully" }));
     }
   }
 
