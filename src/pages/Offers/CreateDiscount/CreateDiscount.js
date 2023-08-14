@@ -65,6 +65,7 @@ import {
 } from "../../../features/offers/discounts/discountsApiSlice";
 import LimitByLocation from "../../../components/DiscountFormat/LimitByLocation";
 import { useLocation } from "react-router-dom";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -316,6 +317,7 @@ const CreateDiscount = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [decodedObject, setDecodedObject] = useState(null);
+  const [copied, setCopied] = useState(false);
   let { id } = useParams();
 
   console.log("kdjiohdwedho", location.pathname);
@@ -455,6 +457,13 @@ const CreateDiscount = () => {
 
   const backHandler = () => {
     navigate("/offers/discounts");
+  };
+
+    const handleCopy = () => {
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
   };
 
   const formik = useFormik({
@@ -1064,16 +1073,17 @@ const CreateDiscount = () => {
                 <h6 className="fw-500 ms-2 me-2 text-lightBlue">
                   {formik.values?.discountFormat?.discountCode}
                 </h6>
-
-                <Tooltip title="Copy" placement="top">
-                  <ContentCopyIcon
-                    sx={{
-                      color: "#5c6d8e",
-                      fontSize: 12,
-                      cursor: "pointer",
-                    }}
-                  />
-                </Tooltip>
+                <CopyToClipboard text={formik.values?.discountFormat?.discountCode} onCopy={handleCopy}>
+                  <Tooltip title={copied?"Copied to clipboard" : "Copy"} placement="top">
+                    <ContentCopyIcon
+                      sx={{
+                        color: "#5c6d8e",
+                        fontSize: 12,
+                        cursor: "pointer",
+                      }}
+                    />
+                  </Tooltip>
+                </CopyToClipboard>
               </div>
 
               <hr className="hr-grey-6 my-3" />
@@ -1136,7 +1146,10 @@ const CreateDiscount = () => {
                     : `Not Allowed`}
                 </small>
                 <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
-                  • Activated {moment(formik?.values?.scheduledDiscount?.startDateTime).format('Do MMMM, YYYY')}
+                  • Activated{" "}
+                  {moment(
+                    formik?.values?.scheduledDiscount?.startDateTime
+                  ).format("Do MMMM, YYYY")}
                 </small>
               </div>
             </div>
