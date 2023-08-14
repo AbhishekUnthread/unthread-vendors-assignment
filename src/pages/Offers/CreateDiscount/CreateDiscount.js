@@ -60,10 +60,11 @@ import {
 import DiscountRange from "../../../components/DiscountFormat/DiscountRange";
 import {
   useCreateDiscountMutation,
+  useEditDiscountMutation,
   useGetAllDiscountsQuery,
 } from "../../../features/offers/discounts/discountsApiSlice";
 import LimitByLocation from "../../../components/DiscountFormat/LimitByLocation";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -171,18 +172,41 @@ const discountFormatSchema = Yup.object().shape({
 
 const filterSchema = Yup.object().shape({
   field: Yup.string().required("Field is required"),
-  operator: Yup.string().when(['field'], ([field], schema) => {
-    return field === "allProducts"
-      ? schema
-      : schema.required("required");
+  operator: Yup.string().when(["field"], ([field], schema) => {
+    return field === "allProducts" ? schema : schema.required("required");
   }),
-  fieldValue: Yup.array().when(['field'], ([field], schema) => {
-    return field === "allProducts"
-      ? schema
-      : schema.required("required")
+  fieldValue: Yup.array().when(["field"], ([field], schema) => {
+    return field === "allProducts" ? schema : schema.required("required");
   }),
 });
 
+const buyxGetySchema = Yup.object().shape({
+  buy: Yup.string().required("Buy value is required"),
+  selectBuyItem: Yup.string().required("Select buy item is required"),
+  buyProduct: Yup.array().required("Buy product is required"),
+  get: Yup.number().required("Get value is required"),
+  selectGetItem: Yup.string().required("Select get item is required"),
+  getProduct: Yup.array().required("Get product is required"),
+  discountMode: Yup.string()
+    .oneOf(["giveDiscount", "free"])
+    .required("Discount mode is required"),
+
+  discountValue: Yup.number().when(
+    ["discountMode"],
+    ([discountMode], schema) => {
+      return discountMode === "giveDiscount"
+        ? schema.required("required")
+        : schema;
+    }
+  ),
+
+  type: Yup.string(),
+  value: Yup.string().when(["discountMode"], ([discountMode], schema) => {
+    return discountMode === "giveDiscount"
+      ? schema.required("required")
+      : schema;
+  }),
+});
 
 const scheduleDateSchema = Yup.object().shape({
   startDateTime: Yup.date().required("Start date is required"),
@@ -227,13 +251,34 @@ const discountValidationSchema = Yup.object().shape({
     .required("Discount Type is required"),
   discountFormat: discountFormatSchema,
   minimumRequirement: minimumRequirementValidationSchema,
-  filters: Yup.array().of(filterSchema),
+  filters: Yup.mixed().when(["discountType"], ([discountType], schema) => {
+    if (discountType !== "buyxGety") {
+      return Yup.array().of(filterSchema);
+    }
+    return schema;
+  }),
+  // filters: Yup.array().of(filterSchema),
   returnExchange: Yup.string()
     .oneOf(["allowed", "notAllowed"], "Invalid")
     .required("required"),
   maximumDiscount: maximumDiscountValidationSchema,
   scheduledDiscount: scheduleDateSchema,
-  discountValue: discountValueSchema,
+  discountValue: Yup.mixed().when(
+    ["discountType"],
+    ([discountType], schema) => {
+      if (discountType !== "buyxGety" && discountType !== "freeShipping") {
+        return discountValueSchema;
+      }
+      return schema;
+    }
+  ),
+  buyXGetY: Yup.mixed().when(["discountType"], ([discountType], schema) => {
+    if (discountType === "buyxGety") {
+      return buyxGetySchema.required("Buy X Get Y details are required");
+    }
+    return schema;
+  }),
+
   // couponCode: couponCodeSchema,
 });
 const initialDiscountsState = {
@@ -273,7 +318,7 @@ const CreateDiscount = () => {
   const [decodedObject, setDecodedObject] = useState(null);
   let { id } = useParams();
 
-console.log("kdjiohdwedho",location.pathname)
+  console.log("kdjiohdwedho", location.pathname);
   const [
     createDiscount,
     {
@@ -286,16 +331,29 @@ console.log("kdjiohdwedho",location.pathname)
   const {
     data: discountsData,
     isLoading: discountsIsLoading,
-    isSuccess: discountsIsSuccess,  
+    isSuccess: discountsIsSuccess,
     error: discountsError,
     isError: discountsIsError,
-  } = useGetAllDiscountsQuery({
-    id: id,
-    alphabetical: decodedObject?.alphabetical,
-    createdAt: decodedObject?.createdAt,
-    name: decodedObject?.name,
-    status: decodedObject?.status,
-  },{skip : location.pathname === "/offers/discounts/create"});
+  } = useGetAllDiscountsQuery(
+    {
+      id: id,
+      alphabetical: decodedObject?.alphabetical,
+      createdAt: decodedObject?.createdAt,
+      name: decodedObject?.name,
+      status: decodedObject?.status,
+    },
+    { skip: location.pathname === "/offers/discounts/create" }
+  );
+
+  const [
+    editDiscount,
+    {
+      isLoading: editDicountIsLoading,
+      isSuccess: editDicountIsSuccess,
+      error: editDicountError,
+      isError: editDicountIsError,
+    },
+  ] = useEditDiscountMutation();
 
   // ? USER ROLE SELECT STARTS HERE
   const [discountType, setDiscountType] = React.useState("");
@@ -399,18 +457,29 @@ console.log("kdjiohdwedho",location.pathname)
     navigate("/offers/discounts");
   };
 
-
   const formik = useFormik({
     initialValues: {
       discountName: "" || discountsData?.data?.data[0].name,
-      discountType: searchParams.get("discountType") || discountsData?.data?.data[0]?.mainDiscount?.type || "x",
+      discountType:
+        searchParams.get("discountType") ||
+        discountsData?.data?.data[0]?.mainDiscount?.type ||
+        "x",
       discountFormat: {
-        discountFormat: "code"|| discountsData?.data.data[0].mainDiscount.format,
-        discountCode: "" || discountsData?.data.data[0].mainDiscount.discountCode,
+        discountFormat:
+          discountsData?.data.data[0].mainDiscount.format || "code",
+        discountCode:
+          discountsData?.data.data[0].mainDiscount.discountCode ||
+          discountsData?.data.data[0].mainDiscount.discountName ||
+          "",
       },
       minimumRequirement: {
-        requirement: "none" || discountsData?.data.data[0].minimumRequirement.requirementType,
-        value: "" ,
+        requirement:
+          discountsData?.data.data[0].minimumRequirement.requirementType ||
+          "none",
+        value:
+          discountsData?.data.data[0].minimumRequirement?.amount ||
+          discountsData?.data.data[0].minimumRequirement?.quantity ||
+          "",
       },
       returnExchange: "allowed",
       maximumDiscount: {
@@ -437,26 +506,31 @@ console.log("kdjiohdwedho",location.pathname)
         bodyText: null,
       },
       customerEligibility: {
-        customer: "allCustomers",
-        value: [],
+        customer:
+          discountsData?.data?.data[0]?.eligibility?.eligibilityType ||
+          "allCustomers",
+        value:
+          discountsData?.data?.data[0]?.eligibility?.customerGroups ||
+          discountsData?.data?.data[0]?.eligibility?.specificCustomers ||
+          [],
       },
       discountValue: {
-        discountValue: "" || discountsData?.data.data[0].mainDiscount.value ,
-        type: "percentage" || discountsData?.data.data[0].mainDiscount.type ,
+        discountValue: "" || discountsData?.data.data[0].mainDiscount.value,
+        type: "percentage" || discountsData?.data.data[0].mainDiscount.type,
         value: "" || discountsData?.data.data[0].mainDiscount.discountOn,
         cartLabel: "" || discountsData,
       },
       buyXGetY: {
-        buy: null,
+        buy: "",
         selectBuyItem: "",
         buyProduct: [],
-        get: null,
+        get: "",
         selectGetItem: "",
         getProduct: [],
         discountMode: "giveDiscount",
-        discountValue: null,
+        discountValue: "",
         type: "percentage",
-        value: null,
+        value: "",
       },
       discountRange: [
         {
@@ -503,8 +577,8 @@ console.log("kdjiohdwedho",location.pathname)
           ...(values?.discountType === "cartDiscount"
             ? { cartLabel: values?.discountValue?.cartLabel }
             : {}),
-            
-            ...(values?.discountType !== "buyxGety"
+
+          ...(values?.discountType !== "buyxGety"
             ? values?.filters[0]?.field !== "allProducts"
               ? {
                   filter: values?.filters.map((filter) => ({
@@ -519,7 +593,7 @@ console.log("kdjiohdwedho",location.pathname)
                   })),
                 }
             : {}),
-            
+
           ...(values?.discountType === "buyxGety"
             ? {
                 discountLabelType: values?.buyXGetY?.discountMode,
@@ -627,7 +701,18 @@ console.log("kdjiohdwedho",location.pathname)
           ),
         },
       };
-      createDiscount(test);
+      if (id) {
+        editDiscount({
+          id: discountsData?.data?.data[0]._id,
+          details: test,
+        })
+          .unwrap()
+          .then(() => {
+            dispatch(showSuccess({ message: "Discounts edited successfully" }));
+          });
+      } else {
+        createDiscount(test).then(() => formik.resetForm());
+      }
     },
   });
 
@@ -698,11 +783,11 @@ console.log("kdjiohdwedho",location.pathname)
 
     // dispatchDiscounts({type : "SET_DISCOUNT_TYPE", discountType : searchParams.get("discountType") }) ;
     // console.log("bndndwhdqwdk", discountsState?.discountType)
-
   }, [searchParams]);
 
-  console.log("rrenkkjndedederw", formik?.errors);
+  console.log("AllformikErrors", formik?.errors);
   console.log("gngslgnsflgnsfngls", formik?.values?.maximumDiscount);
+  console.log("ejdiuh89ehd", discountsData);
 
   return (
     <div className="page container-fluid position-relative">
@@ -1003,33 +1088,55 @@ console.log("kdjiohdwedho",location.pathname)
               <p className="text-lightBlue">Discount</p>
               <div className="d-flex align-items-center mt-1">
                 <small className="text-blue-1 fw-500">
-                  • 50% off on Making charges
+                  • {formik?.values.discountValue?.discountValue}{" "}
+                  {formik?.values.discountValue?.type === "percentage"
+                    ? `%`
+                    : `Rs`}{" "}
+                  off on {formik?.values.discountValue?.value}
                 </small>
               </div>
               <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Condition</p>
               <div className="d-flex mt-1 flex-column">
-                <small className="text-blue-1 fw-500 d-block">
-                  Apply Discount only if
-                </small>
-                <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
-                  • Order Amount is equal to ₹ 25,000
-                </small>
-                <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
-                  • Quantity is equal to 2
-                </small>
+                {formik?.values?.minimumRequirement?.requirement ===
+                "amount" ? (
+                  <>
+                    <small className="text-blue-1 fw-500 d-block">
+                      Apply Discount only if
+                    </small>
+                    <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
+                      • Order Amount is equal to ₹{" "}
+                      {formik?.values?.minimumRequirement?.value}
+                    </small>
+                  </>
+                ) : formik?.values?.minimumRequirement?.requirement ===
+                  "quantity" ? (
+                  <>
+                    <small className="text-blue-1 fw-500 d-block">
+                      Apply Discount only if
+                    </small>
+                    <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
+                      • Quantity is equal to{" "}
+                      {formik?.values?.minimumRequirement?.value}
+                    </small>
+                  </>
+                ) : (
+                  <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
+                    • Unlimited uses
+                  </small>
+                )}
               </div>
               <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Details</p>
               <div className="d-flex mt-1 flex-column">
                 <small className="text-blue-1 fw-500 d-block">
-                  Returns & Exchange not allowed
+                  Returns & Exchange{" "}
+                  {formik?.values?.returnExchange === "allowed"
+                    ? `Allowed`
+                    : `Not Allowed`}
                 </small>
                 <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
-                  • Unlimited uses
-                </small>
-                <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
-                  • Activated tomorrow
+                  • Activated {moment(formik?.values?.scheduledDiscount?.startDateTime).format('Do MMMM, YYYY')}
                 </small>
               </div>
             </div>

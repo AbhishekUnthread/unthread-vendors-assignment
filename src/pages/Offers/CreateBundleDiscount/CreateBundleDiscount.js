@@ -15,6 +15,8 @@ import paginationRight from "../../../assets/icons/paginationRight.svg";
 import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import info from "../../../assets/icons/info.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
+import moment from "moment";
+
 // ! MATERIAL IMPORTS
 import {
   FormControl,
@@ -25,8 +27,55 @@ import {
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { useFormik } from "formik";
+import { useCreateBundleDiscountMutation } from "../../../features/offers/discounts/bundleDiscountsApiSlice";
+import * as Yup from "yup";
+
+const maximumDiscountValidationSchema = Yup.object().shape({
+  limitDiscountNumber: Yup.boolean().optional(),
+  limitUsagePerCustomer: Yup.boolean().optional(),
+  total: Yup.number().when(
+    ["limitDiscountNumber"],
+    ([limitDiscountNumber], schema) => {
+      return limitDiscountNumber ? schema.required("required") : schema;
+    }
+  ),
+  perCustomer: Yup.number().when(
+    ["limitUsagePerCustomer"],
+    ([limitUsagePerCustomer], schema) => {
+      return limitUsagePerCustomer ? schema.required("required") : schema;
+    }
+  ),
+});
+
+const scheduleDateSchema = Yup.object().shape({
+  startDateTime: Yup.date().required("Start date is required"),
+
+});
+
+const discountValidationSchema = Yup.object().shape({
+  discountName: Yup.string()
+    .trim()
+    .max(50, "Name cannot exceed 50 characters"),
+  returnExchange: Yup.string()
+    .oneOf(["allowed", "notAllowed"], "Invalid")
+    .required("required"),
+  maximumDiscount: maximumDiscountValidationSchema,
+  scheduledDiscount: scheduleDateSchema,
+  // couponCode: couponCodeSchema,
+});
 
 const CreateBundleDiscount = () => {
+
+  const [
+    createBundleDiscount,
+    {
+      isLoading: createBundleDiscountIsLoading,
+      isSuccess: createBundleDiscountIsSuccess,
+      error: createBundleDiscountError,
+    },
+  ] = useCreateBundleDiscountMutation();
+
   // * DISCOUNT PERCENT POPOVERS STARTS
   const [anchorDiscountPercentEl, setAnchorDiscountPercentEl] =
     React.useState(null);
@@ -39,6 +88,187 @@ const CreateBundleDiscount = () => {
   const openDiscountPercent = Boolean(anchorDiscountPercentEl);
   const idDiscountPercent = openDiscountPercent ? "simple-popover" : undefined;
   // * DICOUNT PERCENT POPOVERS ENDS
+
+  const formik = useFormik({
+    initialValues: {
+      discountName: "" ,
+      returnExchange: "allowed",
+      maximumDiscount: {
+        limitDiscountNumber: false,
+        limitUsagePerCustomer: false,
+        total: "",
+        perCustomer: "",
+      },
+      discountCombination: {
+        allowCombineWithOthers: false,
+        allowCombineWith: [],
+      },
+
+      customerEligibility: {
+        customer: "allCustomers",
+        value: [],
+      },
+
+      scheduledDiscount: {
+        startDateTime: "",
+        endDateTime: "",
+      },
+    },
+    enableReinitialize: true,
+    validationSchema: discountValidationSchema,
+    onSubmit: (values) => {
+      const test = {
+        name: values?.discountName,
+        status: "active",
+        mainDiscount: {
+          type: values?.discountType,
+          format: values?.discountFormat?.discountFormat,
+          ...(values?.discountType === "cartDiscount" ||
+          values?.discountType === "productDiscount" ||
+          values?.discountType === "buyxGety"
+            ? {
+                value:
+                  values?.discountValue?.discountValue ||
+                  values?.buyXGetY?.discountValue,
+                discountOn:
+                  values?.discountValue?.value || values?.buyXGetY?.value,
+                unit: values?.discountValue?.type || values?.buyXGetY?.type,
+              }
+            : {}),
+          ...(values?.discountFormat?.discountFormat === "code"
+            ? { discountCode: values?.discountFormat?.discountCode }
+            : { discountName: values?.discountFormat?.discountCode }),
+          ...(values?.discountType === "cartDiscount"
+            ? { cartLabel: values?.discountValue?.cartLabel }
+            : {}),
+
+          ...(values?.discountType !== "buyxGety"
+            ? values?.filters[0]?.field !== "allProducts"
+              ? {
+                  filter: values?.filters.map((filter) => ({
+                    type: filter?.field,
+                    operator: filter?.operator,
+                    value: filter?.fieldValue.map((item, index) => item?._id),
+                  })),
+                }
+              : {
+                  filter: values?.filters.map((filter) => ({
+                    type: filter?.field,
+                  })),
+                }
+            : {}),
+
+          ...(values?.discountType === "buyxGety"
+            ? {
+                discountLabelType: values?.buyXGetY?.discountMode,
+                buyField: {
+                  quantity: values?.buyXGetY?.buy,
+                  selectItem: values?.buyXGetY?.selectBuyItem,
+                  selectItemValue: values?.buyXGetY?.buyProduct.map(
+                    (item, index) => item?._id
+                  ),
+                },
+                getField: {
+                  quantity: values?.buyXGetY?.get,
+                  selectItem: values?.buyXGetY?.selectGetItem,
+                  selectItemValue: values?.buyXGetY?.getProduct.map(
+                    (item, index) => item?._id
+                  ),
+                },
+              }
+            : {}),
+          ...(values?.discountType === "bulk"
+            ? {
+                rangeDiscount: values?.discountRange.map((discount) => ({
+                  value: discount?.discountValue,
+                  unit: discount?.type,
+                  minQty: discount?.minQty,
+                  maxQty: discount?.maxQty,
+                  discountOn: discount?.value,
+                })),
+              }
+            : {}),
+        },
+        minimumRequirement: {
+          requirementType: values?.minimumRequirement?.requirement,
+          ...(values?.minimumRequirement?.requirement === "amount"
+            ? { amount: values?.minimumRequirement?.value }
+            : values?.minimumRequirement?.requirement === "quantity"
+            ? { quantity: values?.minimumRequirement?.value }
+            : {}),
+        },
+        eligibility: {
+          eligibilityType: values?.customerEligibility?.customer,
+          ...(values?.customerEligibility?.customer === "allCustomers"
+            ? { allCustomers: true }
+            : values?.customerEligibility?.customer === "specificCustomers"
+            ? {
+                specificCustomers: values?.customerEligibility?.value.map(
+                  (item, index) => item?._id
+                ),
+              }
+            : values?.customerEligibility?.customer === "customerGroups"
+            ? {
+                customerGroups: values?.customerEligibility?.value.map(
+                  (item, index) => item?._id
+                ),
+              }
+            : {}),
+        },
+        maximumDiscountUse: {
+          ...(values?.maximumDiscount?.limitDiscountNumber === true &&
+          values?.maximumDiscount?.limitUsagePerCustomer === true
+            ? {
+                total: values?.maximumDiscount?.total,
+                perCustomer: values?.maximumDiscount?.perCustomer,
+              }
+            : values?.maximumDiscount?.limitDiscountNumber === true
+            ? { total: values?.maximumDiscount?.total }
+            : values?.maximumDiscount?.limitUsagePerCustomer === true
+            ? { perCustomer: values?.maximumDiscount?.perCustomer }
+            : { isUnlimited: true }),
+        },
+        returnExchangeCondition: values?.returnExchange,
+        allowCombineWithOthers:
+          values?.discountCombination?.allowCombineWithOthers,
+        ...(values?.discountCombination?.allowCombineWithOthers === true
+          ? { allowCombineWith: values?.discountCombination?.allowCombineWith }
+          : {}),
+        limitByLocation: {
+          locationType: values?.limitByLocation?.locationType,
+          ...(values?.limitByLocation?.locationType === "country"
+            ? {
+                country: values?.limitByLocation?.location.map(
+                  (item, index) => item?._id
+                ),
+              }
+            : values?.limitByLocation?.locationType === "state"
+            ? {
+                state: values?.limitByLocation?.location.map(
+                  (item, index) => item?._id
+                ),
+              }
+            : values?.limitByLocation?.locationType === "zip"
+            ? {
+                customerGroups: values?.limitByLocation?.location.map(
+                  (item, index) => item?._id
+                ),
+              }
+            : {}),
+        },
+        scheduledDiscount: {
+          startDateTime: moment(
+            values?.scheduledDiscount?.startDateTime
+          ).format("YYYY-MM-DDTHH:mm:ss[Z]"),
+          endDateTime: moment(values?.scheduledDiscount?.endDateTime).format(
+            "YYYY-MM-DDTHH:mm:ss[Z]"
+          ),
+        },
+      };
+      createBundleDiscount(test);
+    },
+  });
+
 
   return (
     <div className="page container-fluid position-relative">
@@ -110,7 +340,7 @@ const CreateBundleDiscount = () => {
                     Internal use only, custoemr can't see this
                   </small>
                 </div>
-                <div className="col-md-4 mt-3">
+                {/* <div className="col-md-4 mt-3">
                   <div className="d-flex mb-1">
                     <p className="text-lightBlue">Status</p>
                     <Tooltip title="Lorem ipsum" placement="top">
@@ -122,8 +352,8 @@ const CreateBundleDiscount = () => {
                       />
                     </Tooltip>
                   </div>
-                  {/* <ProductStatusToggle /> */}
-                </div>
+                  <ProductStatusToggle />
+                </div> */}
               </div>
             </div>
           </div>
@@ -278,14 +508,47 @@ const CreateBundleDiscount = () => {
               </small>
             </div>
           </div>
+          <CustomerEligibility
+              value={formik.values?.customerEligibility}
+              field="customerEligibility"
+              formik={formik}
+              touched={formik?.touched?.customerEligibility}
+              error={formik?.errors?.customerEligibility}
+            />
+            <ReturnAndExchangeCondition
+              sectionHeading={"Return & Exchange Condition"}
+              value={formik.values?.returnExchange}
+              field="returnExchange"
+              formik={formik}
+            />
+            <MaximumDiscountUsers
+              value={formik.values?.maximumDiscount}
+              field="maximumDiscount"
+              formik={formik}
+              touched={formik?.touched?.maximumDiscount}
+              error={formik?.errors?.maximumDiscount}
+            />
+            <DiscountCombination
+              value={formik.values?.discountCombination}
+              field="discountCombination"
+              formik={formik}
+            />
 
+            <ScheduleDiscountCode
+              value={formik.values?.scheduledDiscount}
+              field="scheduledDiscount"
+              formik={formik}
+              touched={formik?.touched?.scheduledDiscount}
+              error={formik?.errors?.scheduledDiscount}
+            />
+{/* 
           <ReturnAndExchangeCondition
             sectionHeading={"Return & Exchange Condition"}
           />
           <CustomerEligibility />
           <MaximumDiscountUsers />
           <DiscountCombination showBuy={false} showBulk={false} />
-          <ScheduleDiscountCode />
+          <ScheduleDiscountCode /> */}
         </div>
         {/* <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3">
