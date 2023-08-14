@@ -456,18 +456,24 @@ const router = () => {
                   element: <Discounts />,
                 },
                 {
+                  path: "discounts/edit/:id",
+                  element: <CreateDiscount />,
+                },
+                {
                   path: "discounts/create",
                   element: <CreateDiscount />,
                 },
                 {
                   path: "bundleDiscount",
                   element: <BundleDiscount />,
-                  children: [
-                    {
-                      path: "create",
-                      element: <CreateBundleDiscount />,
-                    },
-                  ],
+                },
+                {
+                  path: "bundleDiscount/create",
+                  element: <CreateBundleDiscount />,
+                },
+                {
+                  path: "bundleDiscount/edit/:id",
+                  element: <CreateBundleDiscount />,
                 },
               ],
             },

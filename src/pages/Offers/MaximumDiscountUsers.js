@@ -16,10 +16,14 @@ const MaximumDiscountUsers = ({value,field,formik,touched,error}) => {
   // ? CHECKBOX STARTS HERE
   const handleNumberofTimesChange = (event) => {
     formik.setFieldValue(`${field}.limitDiscountNumber`, event.target.checked);
+    formik.setFieldValue(`${field}.total`, "");
+    
   };
 
   const handleNumberofTimesUsageChange = (event) => {
     formik.setFieldValue(`${field}.limitUsagePerCustomer`, event.target.checked);
+    formik.setFieldValue(`${field}.perCustomer`, "");
+
   };
   // ? CHECKBOX ENDS HERE
 

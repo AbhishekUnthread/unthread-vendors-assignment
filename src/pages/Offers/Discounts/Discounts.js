@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from "react";
 import { useDispatch } from "react-redux";
-import { Link,useSearchParams } from "react-router-dom";
+import { Link,Navigate,createSearchParams,useNavigate,useSearchParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import DiscountsTable from "./DiscountsTable";
 import ViewLogsDrawer from "../../../components/ViewLogsDrawer/ViewLogsDrawer";
@@ -33,7 +33,7 @@ import {
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORT
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { useGetAllDiscountsQuery } from "../../../features/offers/discounts/discountsApiSlice";
+import { useBulkDeleteDiscountMutation, useDeleteDiscountMutation, useGetAllDiscountsQuery } from "../../../features/offers/discounts/discountsApiSlice";
 import { showError } from "../../../features/snackbar/snackbarAction";
 
 // ? DIALOG TRANSITION STARTS HERE
@@ -46,7 +46,10 @@ const initialQueryFilterState = {
   pageSize: 10,
   pageNo: 1,
   name:"",
-  searchValue:""
+  searchValue:"",
+  // status: ["active", "in-active"],
+  createdAt: "-1",
+  alphabetical: null,
 };
 const initialDiscountsState = {
   data: [],
@@ -64,7 +67,7 @@ const queryFilterReducer = (state, action) => {
   if (action.type === "CHANGE_PAGE") {
     return {
       ...state,
-      pageNo: action.pageNo ,
+      pageNo: action.pageNo + 1,
     };
   }
   if (action.type === "SEARCH") {
@@ -79,8 +82,23 @@ const queryFilterReducer = (state, action) => {
       ...state,
       pageNo: initialQueryFilterState.pageNo,
       searchValue: action.searchValue,
+    };  
+  }
+  if (action.type === "SET_ALPHABETICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      alphabetical: action.alphabetical,
+      createdAt: null,
     };
-    
+  }
+  if (action.type === "SET_CRONOLOGICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      createdAt: action.createdAt,
+      alphabetical: null,
+    };
   }
   return initialQueryFilterState;
 };
@@ -103,6 +121,7 @@ const  discountsReducer = (state, action) => {
 
 const Discounts = () => {
   const[searchParams, setSearchParams] = useSearchParams();
+  const Navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -121,9 +140,25 @@ const Discounts = () => {
     isSuccess: discountsIsSuccess, 
     error: discountsError,
     isError:discountsIsError
-    
-
   }=useGetAllDiscountsQuery(queryFilterState);
+
+  const [
+    deleteDiscount,
+    {
+      isLoading: deleteDiscountIsLoading,
+      isSuccess: deleteDiscountIsSuccess,
+      error: deleteDiscountError,
+    },
+  ] = useDeleteDiscountMutation();
+
+  const [
+    bulkDeleteDiscount,
+    {
+      isLoading: bulkDeleteDiscountIsLoading,
+      isSuccess: bulkDeleteDiscountIsSuccess,
+      error: bulkDeleteDiscountError
+    }
+  ] = useBulkDeleteDiscountMutation();
 
   const handleDiscountTypeChangeHandler = (event, newValue) => {
     dispatchDiscounts({
@@ -149,7 +184,6 @@ const Discounts = () => {
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
   }
 
-console.log("first",discountsData?.data?.data)
   // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
 
@@ -229,7 +263,31 @@ console.log("first",discountsData?.data?.data)
       }
     }
 
-  }, [discountsIsSuccess,discountsIsError,discountsError,dispatch,discountsData,discountsState.discountType])
+  }, [discountsIsSuccess,discountsIsError,discountsError,dispatch,discountsData,discountsState.discountType,deleteDiscountIsSuccess,bulkDeleteDiscountIsSuccess])
+
+  useEffect(() => {
+    if (deleteDiscountError) {
+      if (deleteDiscountError?.data?.message) {
+        dispatch(showError({ message: deleteDiscountError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [deleteDiscountError, dispatch]);
+
+  useEffect(() => {
+    if (bulkDeleteDiscountError) {
+      if (bulkDeleteDiscountError?.data?.message) {
+        dispatch(showError({ message: bulkDeleteDiscountError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [bulkDeleteDiscountError, dispatch]);
 
   useEffect(() => {
     if(+searchParams.get("type")===0)
@@ -270,7 +328,39 @@ console.log("first",discountsData?.data?.data)
     }
 }, [searchParams])
 
-const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk/Tiered Discount', 'Free Shipping'];
+const discountType = [
+  { name: 'Product Discount', value: 'productDiscount' },
+  { name: 'Cart Discount', value: 'cartDiscount' },
+  { name: 'Buy X, Get Y', value: 'buyxGety' },
+  { name: 'Bulk/Tiered Discount', value: 'bulk' },
+  { name: 'Free Shipping', value: 'freeShipping' }
+];
+
+
+const editDiscountPageNavigation = (data)=>{
+  Navigate({
+    pathname: `./edit/${data ? data._id : ""}`,
+    search: `?${createSearchParams({
+      filter: JSON.stringify({ ...queryFilterState, discountType: discountsState.discountType }),
+    })}`,
+  });
+};
+
+const handleAlphabeticalSorting = (event) => {
+  dispatchQueryFilter({
+    type: "SET_ALPHABETICAL_SORTING",
+    alphabetical: event.target.value,
+  });
+  setAnchorSortEl(null);
+};
+
+const handleChronologicalSorting = (event) => {
+  dispatchQueryFilter({
+    type: "SET_CRONOLOGICAL_SORTING",
+    createdAt: event.target.value,
+  });
+  setAnchorSortEl(null);
+};
 
 
   return (
@@ -328,10 +418,10 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
             <hr className="hr-grey-6 my-0" />
             <DialogContent className="py-3 px-4">
               <div className="row">
-                {discountType.map((type, index) => (
+                {discountType.map((discount, index) => (
                   <div className="col-6 my-3">
                     <Link
-                      to="/offers/discounts/create"
+                      to={`/offers/discounts/create?discountType=${encodeURIComponent(discount.value)}`}
                       className="d-flex p-3 rounded-8 hover-back-two c-pointer text-decoration-none"
                     >
                       <img
@@ -340,7 +430,7 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
                         width={100}
                       />
                       <div className="d-flex ms-3 flex-column">
-                        <p className="text-lightBlue">{type}</p>
+                        <p className="text-lightBlue">{discount.name}</p>
                         <small className="d-block mt-2 text-grey-6">
                           Lorem ipsum dolor, sit amet consectetur adipisicing
                           elit. Esse odio amet
@@ -388,16 +478,16 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
               aria-label="scrollable force tabs example"
               className="tabs"
             >
-              <Tab label="All" className="tabs-head" />
-              <Tab label="Product Discount" className="tabs-head" />
-              <Tab label="Cart Discount" className="tabs-head" />
-              <Tab label="Free Shipping" className="tabs-head" />
-              <Tab label="Buy X, Get Y" className="tabs-head" />
-              <Tab label="Bulk/Tired Discount Pricing" className="tabs-head" />
+              <Tab label="Discount Code" className="tabs-head" />
+              <Tab label="Automatic Discount" className="tabs-head" />
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-          <TableSearchSecondary onSearchValueChange={handleSearchChange} value={queryFilterState.searchValue} onChange={handleSearchValue} />
+          <TableSearchSecondary
+              onSearchValueChange={handleSearchValue}
+              value={queryFilterState.searchValue}
+              onChange={handleSearchChange}
+            />
             <button
               className="button-grey py-2 px-3 ms-2"
               aria-describedby={idSort}
@@ -456,24 +546,48 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
                     label="Upload Time"
                   />
                   <FormControlLabel
-                    value="alphabeticalAtoZ"
-                    control={<Radio size="small" />}
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "1"}
+                      />
+                    }
                     label="Alphabetical (A-Z)"
+                    onChange={handleAlphabeticalSorting}
                   />
                   <FormControlLabel
-                    value="alphabeticalZtoA"
-                    control={<Radio size="small" />}
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "-1"}
+                      />
+                    }
                     label="Alphabetical (Z-A)"
+                    onChange={handleAlphabeticalSorting}
                   />
                   <FormControlLabel
-                    value="oldestToNewest"
-                    control={<Radio size="small" />}
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "1"}
+                      />
+                    }
                     label="Oldest to Newest"
+                    onChange={handleChronologicalSorting}
                   />
                   <FormControlLabel
-                    value="newestToOldest"
-                    control={<Radio size="small" />}
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "-1"}
+                      />
+                    }
                     label="Newest to Oldest"
+                    onChange={handleChronologicalSorting}
                   />
                 </RadioGroup>
               </FormControl>
@@ -488,6 +602,10 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
+              discountType ={discountsState.discountType}
+              edit={editDiscountPageNavigation}
+              deleteData={deleteDiscount}
+              bulkDelete={bulkDeleteDiscount}
              />
           </TabPanel>
           <TabPanel value={discountsState.discountType} index={1}>
@@ -499,51 +617,12 @@ const discountType = ['Product Discount', 'Cart Discount', 'Buy X, Get Y', 'Bulk
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
+              discountType ={discountsState.discountType}
+              edit={editDiscountPageNavigation}
+              deleteData={deleteDiscount}
+              bulkDelete={bulkDeleteDiscount}
+
              />
-          </TabPanel>
-          <TabPanel value={discountsState.discountType} index={2}>
-            <DiscountsTable
-              isLoading={discountsIsLoading}
-              list={discountsState.data}
-              totalCount={discountsState.totalCount}
-              changeRowsPerPage={handleChangeRowsPerPage}
-              rowsPerPage={queryFilterState.pageSize}
-              changePage={handleChangePage}
-              page={queryFilterState.pageNo}
-             />
-          </TabPanel>
-          <TabPanel value={discountsState.discountType} index={3}>
-            <DiscountsTable
-              isLoading={discountsIsLoading}
-              list={discountsState.data}
-              totalCount={discountsState.totalCount}
-              changeRowsPerPage={handleChangeRowsPerPage}
-              rowsPerPage={queryFilterState.pageSize}
-              changePage={handleChangePage}
-              page={queryFilterState.pageNo}
-             />
-          </TabPanel>
-          <TabPanel value={discountsState.discountType} index={4}>
-            <DiscountsTable
-              isLoading={discountsIsLoading}
-              list={discountsState.data}
-              totalCount={discountsState.totalCount}
-              changeRowsPerPage={handleChangeRowsPerPage}
-              rowsPerPage={queryFilterState.pageSize}
-              changePage={handleChangePage}
-              page={queryFilterState.pageNo}
-             />
-          </TabPanel>
-          <TabPanel value={discountsState.discountType} index={5}>
-            <DiscountsTable
-              isLoading={discountsIsLoading}
-              list={discountsState.data}
-              totalCount={discountsState.totalCount}
-              changeRowsPerPage={handleChangeRowsPerPage}
-              rowsPerPage={queryFilterState.pageSize}
-              changePage={handleChangePage}
-              page={queryFilterState.pageNo}
-            />
           </TabPanel>
         </Paper>
       </div>
