@@ -31,14 +31,7 @@ const rejectStyle = {
   borderColor: "#FF1744",
 };
 // ? FILE UPLOAD ENDS HERE
-const UploadMediaBox = ({
-  imageName,
-  headingName,
-  UploadChange = () => {},
-  imageValue,
-  previousImage,
-  isUploaded = () => {},
-}) => {
+const UploadMediaBox = ({ noteText, imageName, headingName, UploadChange = () => {}, imageValue, previousImage, isUploaded = () => {} }) => {
   const [inputUrl, setInputUrl] = useState("");
   const [uploadFile, uploadState] = UseFileUpload();
 
@@ -61,6 +54,7 @@ const UploadMediaBox = ({
       isUploaded(false);
     }
   }, [uploadState, inputUrl]);
+
   useEffect(() => {
     if (imageValue) {
       setInputUrl(imageValue);
@@ -156,20 +150,13 @@ const UploadMediaBox = ({
           // }}
         />
         <img
-          src={
-            uploadState?.data?.url
-              ? uploadState?.data?.url
-              : inputUrl !== ""
-              ? inputUrl
-              : previousImage
-              ? previousImage
-              : imageName
-          }
-          className="w-100"
-          style={{ height: "150px" }}
+          src={uploadState?.data?.url ? uploadState?.data?.url : inputUrl !== "" ? inputUrl : previousImage ? previousImage : imageName}
+          // className="w-100"
+          style={{ height: "100%", width: "100%", objectFit: "cover", overflow: "hidden" }}
           alt=""
         />
       </div>
+      {noteText && <div className="text-grey-6 font1 mt-3">{noteText}</div>}
     </div>
   );
 };

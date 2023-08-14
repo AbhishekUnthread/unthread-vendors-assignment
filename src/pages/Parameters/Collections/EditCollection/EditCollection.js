@@ -33,12 +33,10 @@ import {
   stableSort,
   getComparator,
 } from "../../../../components/TableDependencies/TableDependencies";
-import {
-  showSuccess,
-} from "../../../../features/snackbar/snackbarAction";
+import { showSuccess } from "../../../../features/snackbar/snackbarAction";
 import {
   useGetAllCollectionsQuery,
-  useEditCollectionMutation
+  useEditCollectionMutation,
 } from "../../../../features/parameters/collections/collectionsApiSlice";
 import { updateCollectionId } from "../../../../features/parameters/collections/collectionSlice";
 
@@ -48,7 +46,7 @@ import NotesBox from "../../../../components/NotesBox/NotesBox";
 import UploadMediaBox from "../../../../components/UploadMediaBox/UploadMediaBox";
 import UploadBanner from "../../../../components/UploadBanner/UploadBanner";
 import StatusBox from "../../../../components/StatusBox/StatusBox";
-import VisibilityBox from '../../../../components/VisibilityBox/VisibilityBox';
+import VisibilityBox from "../../../../components/VisibilityBox/VisibilityBox";
 import DuplicateCollection from "../DuplicateCollection/DuplicateCollectionModal";
 import { DiscardModalSecondary } from "../../../../components/Discard/DiscardModal";
 import { SaveFooterTertiary } from "../../../../components/SaveFooter/SaveFooter";
@@ -105,36 +103,11 @@ function createData(pId, productName, category, price) {
 }
 
 const rows = [
-  createData(
-    1,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    2,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    3,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    4,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
-  createData(
-    5,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 20,600 - ₹ 50,000"
-  ),
+  createData(1, "The Fringe Diamond Ring", "Gold Products", "₹ 20,600 - ₹ 50,000"),
+  createData(2, "The Fringe Diamond Ring", "Gold Products", "₹ 20,600 - ₹ 50,000"),
+  createData(3, "The Fringe Diamond Ring", "Gold Products", "₹ 20,600 - ₹ 50,000"),
+  createData(4, "The Fringe Diamond Ring", "Gold Products", "₹ 20,600 - ₹ 50,000"),
+  createData(5, "The Fringe Diamond Ring", "Gold Products", "₹ 20,600 - ₹ 50,000"),
 ];
 
 const drawerHeadCells = [
@@ -190,19 +163,9 @@ const likeHeadCells = [
 ];
 
 const likeProductRows = [
-  createLikeProductData(
-    1,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 25,000"
-  ),
+  createLikeProductData(1, "The Fringe Diamond Ring", "Gold Products", "₹ 25,000"),
   createLikeProductData(2, "Fringe Diamond Ring", "Gold Products", "₹ 25,000"),
-  createLikeProductData(
-    3,
-    "The Fringe Diamond Ring",
-    "Gold Products",
-    "₹ 25,000"
-  ),
+  createLikeProductData(3, "The Fringe Diamond Ring", "Gold Products", "₹ 25,000"),
 ];
 
 const initialQueryFilterState = {
@@ -234,7 +197,7 @@ const queryFilterReducer = (state, action) => {
   return initialQueryFilterState;
 };
 
-const collectionTabReducer = (state, action) => {  
+const collectionTabReducer = (state, action) => {
   if (action.type === "ENABLE_EDIT") {
     return {
       ...initialCollectionInfoState,
@@ -286,14 +249,8 @@ const EditCollection = () => {
   const [duplicateData, setDuplicateData] = useState("");
   const [newDuplicateCollection, setDuplicateCollection] = useState();
   const [serialId, setSerialNo] = useState(null);
-  const [queryFilterState, dispatchQueryFilter] = useReducer(
-    queryFilterReducer,
-    initialQueryFilterState
-  );
-  const [collectionInfoState, dispatchCollectionInfo] = useReducer(
-    collectionTabReducer,
-    initialCollectionInfoState
-  );
+  const [queryFilterState, dispatchQueryFilter] = useReducer(queryFilterReducer, initialQueryFilterState);
+  const [collectionInfoState, dispatchCollectionInfo] = useReducer(collectionTabReducer, initialCollectionInfoState);
   const [addProductDrawer, setAddProductDrawer] = useState({
     top: false,
     left: false,
@@ -304,7 +261,7 @@ const EditCollection = () => {
   const clearDate = () => {
     formik.setFieldValue("startDate", null);
     formik.setFieldValue("endDate", null);
-  }; 
+  };
 
   const backHandler = () => {
     navigate({
@@ -314,13 +271,13 @@ const EditCollection = () => {
   };
 
   const handleDuplicateCollectionClose = () => {
-    setDuplicateModal(false)
-  }
+    setDuplicateModal(false);
+  };
 
   const handleDuplicateCollection = (row) => {
-    setDuplicateModal(true)
-    setDuplicateData(row)
-  }
+    setDuplicateModal(true);
+    setDuplicateData(row);
+  };
 
   useEffect(() => {
     const encodedString = searchParams.get("filter");
@@ -331,10 +288,10 @@ const EditCollection = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if(newDuplicateCollection?.data?.srNo) {
-      setSerialNo(newDuplicateCollection?.data?.srNo)
+    if (newDuplicateCollection?.data?.srNo) {
+      setSerialNo(newDuplicateCollection?.data?.srNo);
     }
-  },[newDuplicateCollection])
+  }, [newDuplicateCollection]);
 
   const srNo = serialId ? serialId : id;
 
@@ -342,8 +299,8 @@ const EditCollection = () => {
     data: collectionData,
     isLoading: collectionIsLoading,
     isSuccess: collectionIsSuccess,
-    error: collectionError
-  } = useGetAllCollectionsQuery({ srNo, ...decodedObject, pageNo:0 });
+    error: collectionError,
+  } = useGetAllCollectionsQuery({ srNo, ...decodedObject, pageNo: 0 });
 
   const nextPageHandler = () => {
     const { pageNo } = queryFilterState;
@@ -355,14 +312,14 @@ const EditCollection = () => {
       pathname: `/parameters/collections/edit/${pageNo}`,
       search: `?${createSearchParams({
         filter: JSON.stringify(decodedObject),
-      })}`
+      })}`,
     });
   };
 
   const prevPageHandler = () => {
     const { pageNo } = queryFilterState;
-    if( collectionData?.data?.prevCount === 0){
-      return
+    if (collectionData?.data?.prevCount === 0) {
+      return;
     }
     decodedObject.order = -1;
     navigate({
@@ -371,7 +328,7 @@ const EditCollection = () => {
         filter: JSON.stringify(decodedObject),
       })}`,
     });
-  };  
+  };
 
   useEffect(() => {
     if (collectionData?.data?.data?.[0]?.srNo) {
@@ -386,7 +343,7 @@ const EditCollection = () => {
       isLoading: editCollectionIsLoading,
       isSuccess: editCollectionIsSuccess,
       error: editCollectionError,
-    }
+    },
   ] = useEditCollectionMutation();
 
   const handleLikeProductRadio = (event) => {
@@ -398,11 +355,7 @@ const EditCollection = () => {
   };
 
   const toggleAddProductDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
+    if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
     setAddProductDrawer({ ...addProductDrawer, [anchor]: open });
@@ -454,10 +407,7 @@ const EditCollection = () => {
     } else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
     setSelected(newSelected);
   };
@@ -506,10 +456,7 @@ const EditCollection = () => {
 
   useEffect(() => {
     if (collectionDescription === "<p></p>") {
-      formik.setFieldValue(
-        "description",
-        formik.values.description
-      );
+      formik.setFieldValue("description", formik.values.description);
     }
     formik.setFieldValue("description", collectionDescription);
   }, [collectionDescription]);
@@ -538,8 +485,8 @@ const EditCollection = () => {
       };
       if (!isEmpty(values.seo)) {
         for (const key in values.seo) {
-          if(values.seo[key] === "" || values.seo[key] === null || values.seo[key] === []){
-            delete values.seo[key] 
+          if (values.seo[key] === "" || values.seo[key] === null || values.seo[key] === []) {
+            delete values.seo[key];
           }
         }
         editItems.seo = values.seo;
@@ -556,11 +503,11 @@ const EditCollection = () => {
 
       if (id) {
         for (const key in editItems) {
-          if(editItems[key] === "" || editItems[key] === null){
-            delete editItems[key] 
+          if (editItems[key] === "" || editItems[key] === null) {
+            delete editItems[key];
           }
         }
-        let obj={
+        let obj = {
           ...editItems,
         };
 
@@ -603,11 +550,11 @@ const EditCollection = () => {
         onBack={backHandler}
         onDuplicate={() => {
           dispatch(updateCollectionId(collectionData?.data?.data[0]?._id));
-          handleDuplicateCollection(collectionData?.data?.data[0])
+          handleDuplicateCollection(collectionData?.data?.data[0]);
         }}
         onPrev={prevPageHandler}
         hasNext={collectionData?.data?.nextCount}
-        hasPrev={ collectionData?.data?.prevCount}
+        hasPrev={collectionData?.data?.prevCount}
         onNext={nextPageHandler}
         isEdit={!!id}
       />
@@ -618,7 +565,9 @@ const EditCollection = () => {
               <div className="col-md-12 px-0 mt-1">
                 <div className="d-flex mb-1">
                   <p className="text-lightBlue me-2">Collection Title</p>
-                  <Tooltip title="Lorem ipsum" placement="top">
+                  <Tooltip
+                    title="Lorem ipsum"
+                    placement="top">
                     <img
                       src={info}
                       alt="info"
@@ -667,7 +616,9 @@ const EditCollection = () => {
               <div className="col-12 mt-3 px-0">
                 <div className="d-flex  mb-1">
                   <p className="text-lightBlue me-2">Description</p>
-                  <Tooltip title="Lorem ipsum" placement="top">
+                  <Tooltip
+                    title="Lorem ipsum"
+                    placement="top">
                     <img
                       src={info}
                       alt="info"
@@ -691,9 +642,7 @@ const EditCollection = () => {
 
             <div className="bg-black-9 border-grey-5 rounded-8 p-3 row features mt-4">
               <div className="d-flex justify-content-between mb-2 px-0">
-                <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">
-                  Add Product
-                </h6>
+                <h6 className="text-lightBlue me-auto text-lightBlue col-auto ps-0 fw-500">Add Product</h6>
               </div>
               <div className="d-flex align-items-center col-12 px-0 mb-2">
                 <RadioGroup
@@ -702,8 +651,7 @@ const EditCollection = () => {
                   name="row-radio-buttons-group"
                   value={likeProductRadio}
                   onChange={handleLikeProductRadio}
-                  className="features-radio px-0"
-                >
+                  className="features-radio px-0">
                   <FormControlLabel
                     value="automated"
                     control={<Radio size="small" />}
@@ -743,8 +691,7 @@ const EditCollection = () => {
                             name="row-radio-buttons-group"
                             value={likeMatchRadio}
                             onChange={handleLikeMatchRadio}
-                            className="features-radio"
-                          >
+                            className="features-radio">
                             <FormControlLabel
                               value="allCondition"
                               control={<Radio size="small" />}
@@ -771,8 +718,7 @@ const EditCollection = () => {
                         </div>
                         <button
                           className="button-gradient py-1 px-4"
-                          onClick={handleLikeAddCondition}
-                        >
+                          onClick={handleLikeAddCondition}>
                           <p>Add Condition</p>
                         </button>
                       </div>
@@ -828,8 +774,7 @@ const EditCollection = () => {
                               className="px-0 me-0"
                             />
                             <small className="ms-0 text-lightBlue">
-                              <span className="text-blue-2">Price</span>&nbsp;is
-                              equal to&nbsp;
+                              <span className="text-blue-2">Price</span>&nbsp;is equal to&nbsp;
                               <span className="text-blue-2">₹&nbsp;25,000</span>
                             </small>
                           </div>
@@ -853,42 +798,38 @@ const EditCollection = () => {
                           <div className="col-sm-6 col-md-3 mt-3 mb-1 ps-4">
                             <p className="text-lightBlue mb-1">Field</p>
 
-                            <FormControl className="w-100 px-0" size="small">
+                            <FormControl
+                              className="w-100 px-0"
+                              size="small">
                               <Select
                                 labelId="demo-select-small"
                                 id="demo-select-small"
                                 value={field}
                                 onChange={handleFieldChange}
-                                size="small"
-                              >
+                                size="small">
                                 <MenuItem
                                   value="price"
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Price
                                 </MenuItem>
                                 <MenuItem
                                   value={"collection"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Collection
                                 </MenuItem>
                                 <MenuItem
                                   value={"tags"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Tags
                                 </MenuItem>
                                 <MenuItem
                                   value={"category"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Catagory
                                 </MenuItem>
                                 <MenuItem
                                   value={"subCategory"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Sub Category
                                 </MenuItem>
                               </Select>
@@ -897,36 +838,33 @@ const EditCollection = () => {
                           <div className="col-sm-6 col-md-3 mt-3 mb-1">
                             <p className="text-lightBlue mb-1">Operator</p>
 
-                            <FormControl className="w-100 px-0" size="small">
+                            <FormControl
+                              className="w-100 px-0"
+                              size="small">
                               <Select
                                 labelId="demo-select-small"
                                 id="demo-select-small"
                                 value={operator}
                                 onChange={handleOperatorChange}
-                                size="small"
-                              >
+                                size="small">
                                 <MenuItem
                                   value="equals"
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Equals
                                 </MenuItem>
                                 <MenuItem
                                   value={"notEquals"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Not Equals
                                 </MenuItem>
                                 <MenuItem
                                   value={"greaterThan"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Greater Than
                                 </MenuItem>
                                 <MenuItem
                                   value={"less"}
-                                  sx={{ fontSize: 13, color: "#5c6d8e" }}
-                                >
+                                  sx={{ fontSize: 13, color: "#5c6d8e" }}>
                                   Less
                                 </MenuItem>
                               </Select>
@@ -951,14 +889,12 @@ const EditCollection = () => {
                           <div className="col-sm-6 col-md-3 mt-3 mb-1">
                             <button
                               className="button-gradient py-1 px-3 w-100 mb-2"
-                              onClick={handleLikeApplyCondition}
-                            >
+                              onClick={handleLikeApplyCondition}>
                               <p>Apply</p>
                             </button>
                             <button
                               className="button-lightBlue-outline py-1 px-3 w-100"
-                              onClick={handleLikeApplyCondition}
-                            >
+                              onClick={handleLikeApplyCondition}>
                               <p>Cancel</p>
                             </button>
                           </div>
@@ -986,8 +922,7 @@ const EditCollection = () => {
                       <div className="col-md-3 pe-md-0 py-2">
                         <button
                           className="button-gradient w-100 py-1 px-3"
-                          onClick={toggleAddProductDrawer("right", true)}
-                        >
+                          onClick={toggleAddProductDrawer("right", true)}>
                           <p>Add Products</p>
                         </button>
                       </div>
@@ -998,8 +933,7 @@ const EditCollection = () => {
                       <Table
                         sx={{ minWidth: 750 }}
                         aria-labelledby="tableTitle"
-                        size="medium"
-                      >
+                        size="medium">
                         <EnhancedTableHead
                           numSelected={selected.length}
                           order={order}
@@ -1010,14 +944,8 @@ const EditCollection = () => {
                           headCells={drawerHeadCells}
                         />
                         <TableBody>
-                          {stableSort(
-                            likeProductRows,
-                            getComparator(order, orderBy)
-                          )
-                            .slice(
-                              page * rowsPerPage,
-                              page * rowsPerPage + rowsPerPage
-                            )
+                          {stableSort(likeProductRows, getComparator(order, orderBy))
+                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row, index) => {
                               const isItemSelected = isSelected(row.pId);
                               const labelId = `enhanced-table-checkbox-${index}`;
@@ -1029,8 +957,7 @@ const EditCollection = () => {
                                   aria-checked={isItemSelected}
                                   tabIndex={-1}
                                   key={row.pId}
-                                  selected={isItemSelected}
-                                >
+                                  selected={isItemSelected}>
                                   <TableCell padding="checkbox">
                                     <Checkbox
                                       color="primary"
@@ -1039,9 +966,7 @@ const EditCollection = () => {
                                         "aria-labelledby": labelId,
                                       }}
                                       size="small"
-                                      onClick={(event) =>
-                                        handleClick(event, row.pId)
-                                      }
+                                      onClick={(event) => handleClick(event, row.pId)}
                                       style={{
                                         color: "#5C6D8E",
                                         marginRight: 0,
@@ -1052,8 +977,7 @@ const EditCollection = () => {
                                     component="th"
                                     id={labelId}
                                     scope="row"
-                                    padding="none"
-                                  >
+                                    padding="none">
                                     <div className="d-flex align-items-center my-2">
                                       <img
                                         src={ringSmall}
@@ -1063,25 +987,17 @@ const EditCollection = () => {
                                         width={45}
                                       />
                                       <div>
-                                        <p className="text-lightBlue fw-600">
-                                          {row.productName}
-                                        </p>
-                                        <small className="mt-2 text-grey-6">
-                                          SKU: TFDR012345
-                                        </small>
+                                        <p className="text-lightBlue fw-600">{row.productName}</p>
+                                        <small className="mt-2 text-grey-6">SKU: TFDR012345</small>
                                       </div>
                                     </div>
                                   </TableCell>
                                   <TableCell>
-                                    <p className="text-lightBlue">
-                                      {row.category}
-                                    </p>
+                                    <p className="text-lightBlue">{row.category}</p>
                                   </TableCell>
                                   <TableCell>
                                     <div className="d-flex align-items-center c-pointer ">
-                                      <p className="text-lightBlue">
-                                        {row.price}
-                                      </p>
+                                      <p className="text-lightBlue">{row.price}</p>
                                     </div>
                                   </TableCell>
                                   <TableCell>
@@ -1101,8 +1017,7 @@ const EditCollection = () => {
                             <TableRow
                               style={{
                                 height: 53 * emptyRows,
-                              }}
-                            >
+                              }}>
                               <TableCell colSpan={6} />
                             </TableRow>
                           )}
@@ -1134,12 +1049,12 @@ const EditCollection = () => {
               )}
             </div>
             <div className="mt-4">
-              <SEO 
-                seoName={formik.values.title || ""} 
-                seoValue={formik.values.seo} 
+              <SEO
+                seoName={formik.values.title || ""}
+                seoValue={formik.values.seo}
                 handleSeoChange={(val) => {
-                  formik.setFieldValue("seo", val)
-                }} 
+                  formik.setFieldValue("seo", val);
+                }}
                 refrenceId={id ? collectionData?.data?.data[0]?._id : ""}
               />
             </div>
@@ -1148,8 +1063,7 @@ const EditCollection = () => {
               anchor="right"
               open={addProductDrawer["right"]}
               onClose={toggleAddProductDrawer("right", false)}
-              onOpen={toggleAddProductDrawer("right", true)}
-            >
+              onOpen={toggleAddProductDrawer("right", true)}>
               <div className="d-flex justify-content-between py-3 ps-3 pe-2 me-1 align-items-center">
                 <h6 className="text-lightBlue">Select Products</h6>
                 <img
@@ -1176,8 +1090,7 @@ const EditCollection = () => {
                 <Table
                   sx={{ minWidth: 750 }}
                   aria-labelledby="tableTitle"
-                  size="medium"
-                >
+                  size="medium">
                   <EnhancedTableHead
                     numSelected={selected.length}
                     order={order}
@@ -1189,10 +1102,7 @@ const EditCollection = () => {
                   />
                   <TableBody>
                     {stableSort(rows, getComparator(order, orderBy))
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((row, index) => {
                         const isItemSelected = isSelected(row.pId);
                         const labelId = `enhanced-table-checkbox-${index}`;
@@ -1204,8 +1114,7 @@ const EditCollection = () => {
                             aria-checked={isItemSelected}
                             tabIndex={-1}
                             key={row.pId}
-                            selected={isItemSelected}
-                          >
+                            selected={isItemSelected}>
                             <TableCell padding="checkbox">
                               <Checkbox
                                 color="primary"
@@ -1225,8 +1134,7 @@ const EditCollection = () => {
                               component="th"
                               id={labelId}
                               scope="row"
-                              padding="none"
-                            >
+                              padding="none">
                               <div className="d-flex align-items-center my-2">
                                 <img
                                   src={ringSmall}
@@ -1236,12 +1144,8 @@ const EditCollection = () => {
                                   width={45}
                                 />
                                 <div>
-                                  <p className="text-lightBlue fw-600">
-                                    {row.productName}
-                                  </p>
-                                  <small className="mt-2 text-grey-6">
-                                    SKU: TFDR012345
-                                  </small>
+                                  <p className="text-lightBlue fw-600">{row.productName}</p>
+                                  <small className="mt-2 text-grey-6">SKU: TFDR012345</small>
                                 </div>
                               </div>
                             </TableCell>
@@ -1253,8 +1157,7 @@ const EditCollection = () => {
                                 className="d-flex align-items-center c-pointer "
                                 aria-describedby={idPrice}
                                 variant="contained"
-                                onClick={handlePriceClick}
-                              >
+                                onClick={handlePriceClick}>
                                 <p className="text-lightBlue">{row.price}</p>
                                 <img
                                   className="ms-3"
@@ -1274,17 +1177,12 @@ const EditCollection = () => {
                                 id={idPrice}
                                 open={openPrice}
                                 anchorEl={anchorPriceEl}
-                                onClose={handlePriceClose}
-                              >
+                                onClose={handlePriceClose}>
                                 <div className="px-3">
-                                  <small className="text-lightBlue">
-                                    Default : 12KT • Yellow • Gold • IJ-SI
-                                  </small>
+                                  <small className="text-lightBlue">Default : 12KT • Yellow • Gold • IJ-SI</small>
                                   <div className="d-flex align-items-center justify-content-between mb-2 mt-3 text-grey-6">
                                     <small>Metal Price</small>
-                                    <small className="ms-2">
-                                      ₹&nbsp;15,000
-                                    </small>
+                                    <small className="ms-2">₹&nbsp;15,000</small>
                                   </div>
                                   <div className="d-flex align-items-center justify-content-between mb-2 mt-2 text-grey-6">
                                     <small>Diamond Price</small>
@@ -1296,15 +1194,11 @@ const EditCollection = () => {
                                   </div>
                                   <div className="d-flex align-items-center justify-content-between mb-3 mt-2 text-grey-6">
                                     <small>GST</small>
-                                    <small className="ms-2">
-                                      ₹&nbsp;&nbsp;600
-                                    </small>
+                                    <small className="ms-2">₹&nbsp;&nbsp;600</small>
                                   </div>
                                   <div className="d-flex align-items-center justify-content-between mb-2 mt-2">
                                     <p className="text-lightBlue">Total</p>
-                                    <p className="ms-2 text-lightBlue fw-600">
-                                      ₹&nbsp;20,600
-                                    </p>
+                                    <p className="ms-2 text-lightBlue fw-600">₹&nbsp;20,600</p>
                                   </div>
                                 </div>
                               </Popover>
@@ -1316,8 +1210,7 @@ const EditCollection = () => {
                       <TableRow
                         style={{
                           height: 53 * emptyRows,
-                        }}
-                      >
+                        }}>
                         <TableCell colSpan={6} />
                       </TableRow>
                     )}
@@ -1351,19 +1244,13 @@ const EditCollection = () => {
             <StatusBox
               headingName={"Collection Status"}
               value={formik.values.status}
-              handleProductStatus={(_, val) =>
-                formik.setFieldValue("status", val)
-              }
+              handleProductStatus={(_, val) => formik.setFieldValue("status", val)}
               toggleData={["active", "in-active"]}
               showSchedule={true}
               startDate={formik.values.startDate}
               endDate={formik.values.endDate}
-              handleStartDate={(val) =>
-                formik.setFieldValue("startDate", val)
-              }
-              handleEndDate={(val) =>
-                formik.setFieldValue("endDate", val)
-              }
+              handleStartDate={(val) => formik.setFieldValue("startDate", val)}
+              handleEndDate={(val) => formik.setFieldValue("endDate", val)}
               clearDate={clearDate}
             />
             {/* <VisibilityBox 
@@ -1374,9 +1261,7 @@ const EditCollection = () => {
               <UploadMediaBox
                 imageName={addMedia}
                 headingName={"Media"}
-                UploadChange={(url) =>
-                  formik.setFieldValue("mediaUrl", url)
-                }
+                UploadChange={(url) => formik.setFieldValue("mediaUrl", url)}
                 previousImage={formik.values.mediaUrl}
                 isUploaded={() => {}}
               />
@@ -1395,13 +1280,17 @@ const EditCollection = () => {
           </div>
         </div>
         <SaveFooterTertiary
+          // show={true}
           show={id ? collectionInfoState.isEditing : true}
-          onDiscard={backHandler} 
+          onDiscard={backHandler}
           isLoading={editCollectionIsLoading}
-        />  
-        <DiscardModalSecondary when={collectionInfoState.discard} message="collection tab" />
+        />
+        <DiscardModalSecondary
+          when={collectionInfoState.discard}
+          message="collection tab"
+        />
       </form>
-      <DuplicateCollection 
+      <DuplicateCollection
         newDuplicateCollection={setDuplicateCollection}
         duplicateData={duplicateData}
         openDuplicateCollection={duplicateModal}

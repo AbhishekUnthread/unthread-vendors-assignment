@@ -16,7 +16,7 @@ import CreateFieldSets from "./pages/Parameters/CreateFieldSets/CreateFieldSets"
 import Categories from "./pages/Parameters/Categories/Categories";
 import Collections from "./pages/Parameters/Collections/Collections";
 import CreateCollection from "./pages/Parameters/CreateCollection/CreateCollection";
-import VariantSets from "./pages/Parameters/VariantSets/VariantSets";
+// import VariantSets from "./pages/Parameters/VariantSets/VariantSets";
 import Vendors from "./pages/Parameters/Vendors/Vendors";
 import EditVendor from "./pages/Parameters/EditVendor/EditVendor";
 import CreateVariantSets from "./pages/Parameters/CreateVariantSets/CreateVariantSets";
@@ -75,6 +75,7 @@ import Options from "./pages/Parameters/Options/Options";
 import OptionsInfo from "./pages/Parameters/Options/OptionsInfo";
 import Settings from "./pages/Settings/Settings";
 import TaxManager from "./pages/Settings/TaxManager/TaxManager";
+import EditStore from "./pages/Products/EditStore/EditStore";
 import OptionSetsInfo from "./pages/Parameters/Options/OptionSetsInfo";
 
 const router = () => {
@@ -89,14 +90,24 @@ const router = () => {
           children: [
             {
               index: true,
-              element: <Navigate to="auth" replace={true} />,
+              element: (
+                <Navigate
+                  to="auth"
+                  replace={true}
+                />
+              ),
             },
             {
               path: "auth",
               children: [
                 {
                   index: true,
-                  element: <Navigate to="login" replace={true} />,
+                  element: (
+                    <Navigate
+                      to="login"
+                      replace={true}
+                    />
+                  ),
                 },
                 {
                   path: "login",
@@ -122,7 +133,12 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to=" " replace={true} />,
+                  element: (
+                    <Navigate
+                      to=" "
+                      replace={true}
+                    />
+                  ),
                 },
                 {
                   path: "allProducts",
@@ -148,15 +164,24 @@ const router = () => {
                 },
                 {
                   path: "inventory",
-                  element: <ProductInventory />,
-                },
-                {
-                  path: "inventory/create",
-                  element: <CreateStore />,
-                },
-                {
-                  path: "inventory/details",
-                  element: <ProductInventoryDetails />,
+                  children: [
+                    {
+                      index: true,
+                      element: <ProductInventory />,
+                    },
+                    {
+                      path: "create",
+                      element: <CreateStore />,
+                    },
+                    {
+                      path: "details/:storeId",
+                      element: <ProductInventoryDetails />,
+                    },
+                    {
+                      path: "edit/:storeId",
+                      element: <EditStore />,
+                    },
+                  ],
                 },
               ],
             },
@@ -166,7 +191,12 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to="filemanager" replace={true} />,
+                  element: (
+                    <Navigate
+                      to="filemanager"
+                      replace={true}
+                    />
+                  ),
                 },
                 {
                   path: "filemanager",
@@ -183,7 +213,12 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to="allUsers" replace={true} />,
+                  element: (
+                    <Navigate
+                      to="allUsers"
+                      replace={true}
+                    />
+                  ),
                 },
                 {
                   path: "allUsers",
@@ -220,7 +255,12 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to="categories" replace={true} />,
+                  element: (
+                    <Navigate
+                      to="categories"
+                      replace={true}
+                    />
+                  ),
                 },
                 {
                   path: "collections",
@@ -370,7 +410,12 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to="roles" replace={true} />,
+                  element: (
+                    <Navigate
+                      to="roles"
+                      replace={true}
+                    />
+                  ),
                 },
                 {
                   path: "roles",
@@ -399,7 +444,12 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to="discounts" replace={true} />,
+                  element: (
+                    <Navigate
+                      to="discounts"
+                      replace={true}
+                    />
+                  ),
                 },
                 {
                   path: "discounts",
@@ -426,7 +476,12 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to="allOrders" replace={true} />,
+                  element: (
+                    <Navigate
+                      to="allOrders"
+                      replace={true}
+                    />
+                  ),
                 },
                 {
                   path: "allOrders",
@@ -493,7 +548,12 @@ const router = () => {
               children: [
                 {
                   index: true,
-                  element: <Navigate to="allFunctionality" replace={true} />,
+                  element: (
+                    <Navigate
+                      to="allFunctionality"
+                      replace={true}
+                    />
+                  ),
                 },
                 {
                   path: "allFunctionality",
@@ -536,7 +596,10 @@ const router = () => {
         {
           path: "*",
           element: (
-            <Navigate to={loginStatus ? "/dashboard" : "/"} replace={true} />
+            <Navigate
+              to={loginStatus ? "/dashboard" : "/"}
+              replace={true}
+            />
           ),
         },
       ],
