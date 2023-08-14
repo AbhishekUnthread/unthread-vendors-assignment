@@ -6,7 +6,7 @@ import folderLargePurple from "../../../../assets/icons/folderLargePurple.svg";
 import archive from "../../../../assets/icons/folderdropdown/archive.svg";
 import edit from "../../../../assets/icons/folderdropdown/edit.svg";
 
-export default function OnlyFoldersIconView({
+export default function FolderIconView({
   folder = {},
   isSelected = false,
   onDoubleClick = () => {},
@@ -49,18 +49,18 @@ export default function OnlyFoldersIconView({
       onDoubleClick={handleDoubleClick}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-      className={`folder-icon-view position-relative d-flex flex-column align-items-center p-2 rounded-8${
-        showMore || isSelected ? " folder-icon-view-hovering" : ""
-      }`}>
-      <div className="folder-icon rounded-8 p-4 m-2">
+      className={`folder-icon-view position-relative d-flex align-items-center rounded-8${showMore || isSelected ? " folder-icon-view-hovering" : ""}`}>
+      <div className="folder-icon rounded-8 p-3 m-2">
         <img
           src={folderLargePurple}
-          alt="folder"
-          width={60}
+          alt="icon"
+          width={30}
         />
       </div>
-      <span className="text-lightBlue text-3">{name}</span>
-      <small className="text-lightBlue text-1">{result.length} items</small>
+      <div className="d-flex flex-column justify-content-center">
+        <span>{name}</span>
+        <small>{result.length} items</small>
+      </div>
       {(showMore || isSelected) && (
         <div className="position-absolute top-0 start-0">
           <Checkbox
@@ -73,7 +73,7 @@ export default function OnlyFoldersIconView({
         </div>
       )}
       {showMore && (
-        <div className="position-absolute top-0 end-0">
+        <div className="position-absolute top-50 end-0 translate-middle-y">
           <Fab
             size="small"
             onClick={handleOptionsClick}>

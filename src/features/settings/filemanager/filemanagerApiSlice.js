@@ -19,6 +19,15 @@ export const filemanagerApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["FileManager"],
     }),
 
+    bulkEditFile: builder.mutation({
+      query: (updates) => ({
+        url: "/gallery/file/bulkUpdate",
+        method: "PUT",
+        body: updates,
+      }),
+      invalidatesTags: ["FileManager"],
+    }),
+
     deleteFile: builder.mutation({
       query: (id) => ({
         url: `/gallery/file/${id}`,
@@ -84,6 +93,7 @@ export const filemanagerApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetFilesQuery,
   useEditFileMutation,
+  useBulkEditFileMutation,
   useDeleteFileMutation,
   useBulkDeleteFilesMutation,
   useGetFoldersQuery,

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 // ! COMPONENT IMPORTS
@@ -31,6 +31,7 @@ import FolderNameDialog from "./FolderNameDialog";
 import { useCreateFolderMutation } from "../../../features/settings/filemanager/filemanagerApiSlice";
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import UseFileUpload from "../../../features/fileUpload/fileUploadHook";
+import FoldersInside from "./FoldersInside/FoldersInside";
 
 const FileManager = () => {
   const dispatch = useDispatch();
@@ -50,16 +51,22 @@ const FileManager = () => {
   };
 
   const inputFileRef = useRef(null);
-  const [uploadFile] = UseFileUpload();
+  const [uploadFile, uploadState] = UseFileUpload();
+
+  useEffect(() => {
+    if (!uploadState.isLoading) {
+      if (uploadState.isSuccess) dispatch(showSuccess({ message: "File Uploaded Successfully" }));
+      if (uploadState.isError) dispatch(showError({ message: "Something went wrong" }));
+    }
+  }, [uploadState, dispatch]);
 
   const handleUploadNewFile = () => inputFileRef.current?.click();
   const handleUploadFilesChanged = (file) => {
     console.log(file);
-    const format = file.type === "video/mp4" ? "video" : "image";
-    uploadFile({ file, format });
+    const check = file.type === "video/mp4";
+    uploadFile({ file, format: check ? "video" : "image", module: "others" });
+    setTabIndex(check ? 3 : 2);
   };
-
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const [openAddFolder, setOpenAddFolder] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
@@ -72,20 +79,18 @@ const FileManager = () => {
   const handleSortClose = () => setSortAnchorEl(null);
   const handleAddNewClick = (e) => setAddAnchorEl(e.currentTarget);
   const handleAddNewClose = () => setAddAnchorEl(null);
-  const handleTabChange = (_, tab) => setSearchParams({ tab });
+  const handleTabChange = (_, tab) => setTabIndex(tab);
   const handleAddNewFolderClick = () => setOpenAddFolder(true);
   const handleAddFolderClose = () => setOpenAddFolder(false);
 
   const openSortMenu = Boolean(sortAnchorEl);
 
-  useLayoutEffect(() => {
-    if (searchParams.has("tab")) {
-      const ix = parseInt(searchParams.get("tab"));
-      setTabIndex(isNaN(ix) ? 0 : ix);
-    } else {
-      setSearchParams({ tab: 0 });
-    }
-  }, [searchParams, setSearchParams]);
+  const [viewingFolderId, setViewingFolderId] = useState(null);
+
+  const handleViewingFolder = (fid) => {
+    setViewingFolderId(fid);
+    setTabIndex(4);
+  };
 
   return (
     <div className="col-lg-10 border-grey-5 rounded-8 mt-5 p-4">
@@ -140,9 +145,9 @@ const FileManager = () => {
             </Menu>
           </div>
           <FolderNameDialog
+            buttonText="Create"
             isOpen={openAddFolder}
             headingText="Create New Folder"
-            buttonText="Create"
             onClose={handleAddFolderClose}
             onAction={handleCreateNewFolder}
           />
@@ -331,11 +336,27 @@ const FileManager = () => {
       />
 
       {/* Tab contents for each index */}
-      {tabIndex === 0 && <AllFiles changeTab={handleTabChange} />}
-      {tabIndex === 1 && <FoldersOnly />}
-      {tabIndex === 2 && <ImagesOnly fileType="image" />}
-      {tabIndex === 3 && <ImagesOnly fileType="video" />}
-      {/* {tabIndex === 3 && <VideosOnly />} */}
+      {tabIndex === 0 && (
+        <AllFiles
+          changeTab={handleTabChange}
+          onExplore={handleViewingFolder}
+          refetchFiles={!uploadState.isLoading && uploadState.isSuccess}
+        />
+      )}
+      {tabIndex === 1 && <FoldersOnly onExplore={handleViewingFolder} />}
+      {tabIndex === 2 && (
+        <ImagesOnly
+          fileType="image"
+          refetchFiles={!uploadState.isLoading && uploadState.isSuccess}
+        />
+      )}
+      {tabIndex === 3 && (
+        <ImagesOnly
+          fileType="video"
+          refetchFiles={!uploadState.isLoading && uploadState.isSuccess}
+        />
+      )}
+      {tabIndex === 4 && <FoldersInside fid={viewingFolderId} />}
     </div>
   );
 };

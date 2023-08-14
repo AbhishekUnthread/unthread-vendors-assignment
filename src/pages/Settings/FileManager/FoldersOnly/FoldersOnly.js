@@ -14,7 +14,7 @@ import DeleteAlertDialog from "../DeleteAlertDialog";
 import OnlyFoldersIconView from "./OnlyFoldersIconView";
 import TableMassActionButton from "../../../../components/TableMassActionButton/TableMassActionButton";
 
-export default function FoldersOnly() {
+export default function FoldersOnly({ onExplore = () => {} }) {
   const dispatch = useDispatch();
 
   const [selected, setSelected] = useState([]);
@@ -77,15 +77,6 @@ export default function FoldersOnly() {
   const [bulkDeleteFolders] = useBulkDeleteFoldersMutation();
 
   const handleBulkActionSelect = (action) => {
-    // console.log("action", action);
-    // switch (action) {
-    //   case "Delete":
-    //     bulkDeleteFolders()
-    //     break;
-
-    //   default:
-    //     break;
-    // }
     if (action === "Delete") {
       handleDeleteFolderSelect({});
     }
@@ -126,18 +117,6 @@ export default function FoldersOnly() {
             />
           </div>
         )}
-        {/* Multi Select stuff will be here */}
-        {/* <div className="col-auto">
-          <Button
-            variant="text"
-            className="me-2">
-            <span
-              className="text-blue-2"
-              onClick={addFolderClick}>
-              + Create a new folder
-            </span>
-          </Button>
-        </div> */}
       </div>
       <div className="row align-items-center">
         {allFolders.map((folder) => (
@@ -147,6 +126,7 @@ export default function FoldersOnly() {
             <OnlyFoldersIconView
               folder={folder}
               isSelected={selected.includes(folder)}
+              onDoubleClick={onExplore}
               onSelect={handleFolderSelection}
               onRename={handleRenameFolderSelect}
               onDelete={handleDeleteFolderSelect}

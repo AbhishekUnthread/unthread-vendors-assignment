@@ -53,3 +53,16 @@
 
 - Upload File Params
 - GET Files Alt feild
+
+## More API Stuff
+
+- File Bulk Edit
+- Folder Bulk Delete
+- GET Folder populate files
+- Videos Thumbnail
+- GET Files Pagination
+- GET Files Sorting
+- GET Files Searching
+- GET Folders Pagination
+- GET Folders Sorting
+- GET Folders Searching

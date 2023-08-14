@@ -6,7 +6,6 @@ export const fileUploadApiSlice = apiSlice.injectEndpoints({
       query: ({ fileName, fileSize, fileType, module }) => ({
         url: `/uploads?filename=${fileName}&filesize=${fileSize}&filetype=${fileType}&module=${module}`,
       }),
-      invalidatesTags: ["FileManager"],
     }),
   }),
 });

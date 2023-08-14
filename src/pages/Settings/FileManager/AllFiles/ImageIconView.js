@@ -15,7 +15,16 @@ import { Checkbox, Fab, Menu } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 // export default function ImageIconView({ name, size, type, isGreen }) {
-export default function ImageIconView({ file = {}, isSelected = false, onSelect = () => {}, onRename = () => {}, onDelete = () => {} }) {
+export default function ImageIconView({
+  file = {},
+  isSelected = false,
+  onSelect = () => {},
+  onCopyLink = () => {},
+  onMoveToFolder = () => {},
+  onRename = () => {},
+  onDownload = () => {},
+  onDelete = () => {},
+}) {
   const { name, module, description, file: url, size } = file;
 
   const [showMore, setShowMore] = useState(false);
@@ -30,8 +39,23 @@ export default function ImageIconView({ file = {}, isSelected = false, onSelect 
     setShowMore(false);
   };
 
+  const handleCopyLinkClick = () => {
+    onCopyLink(file);
+    handleClose();
+  };
+
+  const handleMoveToFolderClick = () => {
+    onMoveToFolder(file);
+    handleClose();
+  };
+
   const handleRenameClick = () => {
     onRename(file);
+    handleClose();
+  };
+
+  const handleDownloadClick = () => {
+    onDownload(file);
     handleClose();
   };
 
@@ -94,11 +118,13 @@ export default function ImageIconView({ file = {}, isSelected = false, onSelect 
             <IconMenuItem
               icon={linkAngled}
               text="Copy Link"
+              action={handleCopyLinkClick}
               close={handleClose}
             />
             <IconMenuItem
               icon={folderUp}
               text="Move to Folder"
+              action={handleMoveToFolderClick}
               close={handleClose}
             />
             <IconMenuItem
@@ -110,6 +136,7 @@ export default function ImageIconView({ file = {}, isSelected = false, onSelect 
             <IconMenuItem
               icon={download}
               text="Download"
+              action={handleDownloadClick}
               close={handleClose}
             />
             <IconMenuItem

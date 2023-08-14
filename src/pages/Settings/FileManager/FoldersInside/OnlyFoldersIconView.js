@@ -6,15 +6,8 @@ import folderLargePurple from "../../../../assets/icons/folderLargePurple.svg";
 import archive from "../../../../assets/icons/folderdropdown/archive.svg";
 import edit from "../../../../assets/icons/folderdropdown/edit.svg";
 
-export default function OnlyFoldersIconView({
-  folder = {},
-  isSelected = false,
-  onDoubleClick = () => {},
-  onSelect = () => {},
-  onRename = () => {},
-  onDelete = () => {},
-}) {
-  const { name, result } = folder;
+export default function OnlyFoldersIconView({ folder = {}, isSelected = false, onSelect = () => {}, onRename = () => {}, onDelete = () => {} }) {
+  const { name, count } = folder;
 
   const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -22,34 +15,29 @@ export default function OnlyFoldersIconView({
   const handlePointerEnter = () => setShowMore(true);
   const handlePointerLeave = () => setShowMore(Boolean(anchorEl));
 
-  const handleOptionsClick = (e) => setAnchorEl(e.currentTarget);
-  const handleOptionsClose = () => {
+  const handleClick = (e) => setAnchorEl(e.currentTarget);
+  const handleClose = () => {
     setAnchorEl(null);
     setShowMore(false);
   };
 
-  const handleDoubleClick = () => {
-    onDoubleClick(folder._id ?? "");
-  };
-
   const handleRenameClick = () => {
     onRename(folder);
-    handleOptionsClose();
+    handleClose();
   };
 
   const handleDeleteClick = () => {
     onDelete(folder);
-    handleOptionsClose();
+    handleClose();
   };
 
   const handleSelectionClick = (check) => onSelect(check, folder);
 
   return (
     <div
-      onDoubleClick={handleDoubleClick}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-      className={`folder-icon-view position-relative d-flex flex-column align-items-center p-2 rounded-8${
+      className={`folder-icon-view position-relative d-flex flex-column align-items-center rounded-8${
         showMore || isSelected ? " folder-icon-view-hovering" : ""
       }`}>
       <div className="folder-icon rounded-8 p-4 m-2">
@@ -60,7 +48,7 @@ export default function OnlyFoldersIconView({
         />
       </div>
       <span className="text-lightBlue text-3">{name}</span>
-      <small className="text-lightBlue text-1">{result.length} items</small>
+      <small className="text-lightBlue text-1">{count} items</small>
       {(showMore || isSelected) && (
         <div className="position-absolute top-0 start-0">
           <Checkbox
@@ -76,7 +64,7 @@ export default function OnlyFoldersIconView({
         <div className="position-absolute top-0 end-0">
           <Fab
             size="small"
-            onClick={handleOptionsClick}>
+            onClick={handleClick}>
             <MoreHorizIcon
               fontSize="small"
               color="primary"
@@ -85,19 +73,19 @@ export default function OnlyFoldersIconView({
           <Menu
             open={Boolean(anchorEl)}
             anchorEl={anchorEl}
-            onClose={handleOptionsClose}>
+            onClose={handleClose}>
             <IconMenuItem
               icon={edit}
               text="Rename"
               action={handleRenameClick}
-              close={handleOptionsClose}
+              close={handleClose}
             />
             <IconMenuItem
               icon={archive}
               text="Delete"
               isRed
               action={handleDeleteClick}
-              close={handleOptionsClose}
+              close={handleClose}
             />
           </Menu>
         </div>
