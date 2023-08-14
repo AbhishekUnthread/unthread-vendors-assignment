@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Checkbox,
   Popover,
@@ -31,6 +33,7 @@ import NoData from "../../../components/NoDataFound/NoDataFound";
 import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
 import { UnArchivedModal } from "../../../components/UnArchiveModal/UnArchiveModal";
+import AddCustomerGroup from "../AddCustomerGroup";
 
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
@@ -66,6 +69,7 @@ const AllUsersTable = ({
   const [forMassAction, setForMassAction] = useState(false);
   const [statusValue, setStatusValue] = useState("in-active");
   const [showUnArchivedModal, setShowUnArhcivedModal] = useState(false);
+  const [showGroup, setShowGroup] = useState(false);
 
   const [
     editCustomer,
@@ -111,13 +115,21 @@ const AllUsersTable = ({
     setArchivedModal(true);
   }
 
-  const handleUnArchive = () => {
+  const handleUnArchive = (row) => {
+    setCustomerInfo(row)
+    setCustomerId(row._id);
+    setFirstName(row?.firstName);
+    setLastName(row?.lastName)
     setForMassAction(false)
     handleActionClose();
     setShowUnArhcivedModal(true)
   }
 
-  const handleDelete = () => {
+  const handleDelete = (row) => {
+    setCustomerInfo(row)
+    setCustomerId(row._id);
+    setFirstName(row?.firstName);
+    setLastName(row?.lastName)
     setForMassAction(false)
     handleActionClose();
     setShowDeleteModal(true)
@@ -349,6 +361,18 @@ const AllUsersTable = ({
     label: "",
   });
 
+  const handleGroup = () => {
+    setShowGroup(false)
+  }
+
+  const openGroupModal = (id) => {
+    setShowGroup(true)
+  }
+
+  const handleCustomerGroup = () => {
+    setShowGroup(true)
+  }
+
   return (
     <>
       {selected.length > 0 && (
@@ -398,7 +422,7 @@ const AllUsersTable = ({
                       Edit Customer
                     </small>
                     <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                      Edit Customer Group
+                      Add to Customer Groups
                     </small>
                     <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                       Add or Remove Tags
@@ -500,7 +524,10 @@ const AllUsersTable = ({
                           <div>
                             <div
                               className=" text-decoration-none c-pointer"
-                              onClick={() => onEdit(row?._id)}
+                              onClick={() => {
+                              if(customerType !== 4) {
+                                onEdit(row?._id)
+                              }}}
                             >
                               <p className="text-lightBlue rounded-circle fw-600">
                                 {row?.firstName} {row?.lastName}
@@ -571,6 +598,7 @@ const AllUsersTable = ({
                           </div>
                         </TableCell> 
                       }
+                      {customerType != 4 ?
                       <TableCell>
                         <div className="d-flex align-items-center">
                           <img
@@ -598,8 +626,6 @@ const AllUsersTable = ({
                             <div className="py-2 px-2">
                               <small className="text-grey-7 px-2">ACTIONS</small>
                               <hr className="hr-grey-6 my-2" />
-                              {customerType !== 4 ?
-                              <>
                                 <small 
                                   className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
                                   onClick={(e) => {
@@ -610,8 +636,10 @@ const AllUsersTable = ({
                                 >
                                   Edit Customer
                                 </small>
-                                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                                  Edit Customer Group
+                                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                                  onClick={handleCustomerGroup}
+                                >
+                                  Add to Customer Groups
                                 </small>
                                 <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                                   Add or Remove Tags
@@ -625,28 +653,43 @@ const AllUsersTable = ({
                                   </small>
                                   <img src={deleteRed} alt="delete" className="" />
                                 </div>
-                              </> :
-                              <>
-                                <small 
-                                  className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
-                                  onClick={() => { handleUnArchive()}}
-                                >
-                                  Un-Archive Customer
-                                </small>
-                                <div 
-                                  className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
-                                  onClick={() => { handleDelete()}}
-                                >
-                                  <small className="font2 d-block" style={{color: "#F67E80"}}>
-                                    Delete Customer
-                                  </small>
-                                  <img src={deleteRed} alt="delete" className="" />
-                                </div>
-                              </> }
                             </div>
                           </Popover>
                         </div>
                       </TableCell>
+                      :
+                      <TableCell style={{ width: 140, padding: 0 }}>
+                         <div className="d-flex align-items-center">
+                          <Tooltip title="Un-Archive" placement="top">
+                            <div 
+                              className="table-edit-icon rounded-4 p-2"
+                              onClick={() => { handleUnArchive(row)}}
+                            >
+                              <InventoryIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                          <Tooltip title="Delete" placement="top">
+                            <div 
+                              className="table-edit-icon rounded-4 p-2"
+                              onClick={() => { handleDelete(row)}}
+                            >
+                              <DeleteIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                        </div>
+                      </TableCell>}
                     </TableRow>
                   );
                 })}
@@ -715,6 +758,12 @@ const AllUsersTable = ({
         onConfirm ={handleDeleteModal}
         onCancel={toggleDeleteModalHandler}
         show={showDeleteModal}
+      />
+      <AddCustomerGroup 
+        onConfirm={handleGroup}
+        customerId={customerId}
+        show={showGroup}
+        openGroupModal={openGroupModal}
       />
     </>
   );

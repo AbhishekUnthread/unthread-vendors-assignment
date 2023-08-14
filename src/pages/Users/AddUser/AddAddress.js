@@ -77,14 +77,17 @@ const customerAddressValidation = Yup.object({
   state: Yup.string().required("Required"),
 });
 
-const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
+const AddAddress = ({ customerAddressDetails, data, deleteAddress, addressData, value2 }) => {
   const dispatch = useDispatch();
   const [address, setAddress] = useState([]);
   const [openNewUser, setOpenNewUser] = useState(false);
+  const [editAdd, setEditAddress] = useState("");
   const [addressState, dispatchAddress] = useReducer(
     addressTabReducer,
     initialAddressState
   );
+
+  console.log(value2, 'value2 value');
 
   const [
     editCustomerAddress,
@@ -103,8 +106,6 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
     error: countryError,
   } = useGetAllCountryQuery({ createdAt: -1 });
 
-  console.log( data, ' data?.country');
-
   const customerAddressFormik = useFormik({
     initialValues: {
       name: data?.name || "",
@@ -122,7 +123,7 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
       isDefaultAddress: data?.isDefaultAddress || false,
     },
     enableReinitialize: true,
-    // validationSchema: customerAddressValidation,
+    validationSchema: customerAddressValidation,
     onSubmit: (values) => {
         console.log(values, 'values valuesvaluesvalues');
       for (const key in values) {
@@ -140,7 +141,7 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
         })
             .unwrap()
             .then(() => {
-                dispatch(showSuccess({ message: "Custormer edited successfully" }));
+                dispatch(showSuccess({ message: "Customer edited successfully" }));
             });
       }
     },
@@ -159,21 +160,16 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
   }
 
   const getStateName = (event, value) => {
-        console.log(value, 'value state');
-            console.log(event, 'event state');
-
     customerAddressFormik.setFieldValue("state", value?._id)
   }
 
   const SelectCityName = (event, value) => {
-        console.log(value, 'value city');
-        console.log(event, 'event city');
-
     customerAddressFormik.setFieldValue("city", value?._id)
   }
 
-  const handleNewUser = () => {
+  const handleNewUser = (address) => {
     setOpenNewUser(true);
+    setEditAddress(true)
   };
 
   const handleNewUserClose = () => {
@@ -191,6 +187,7 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
   const handleNewAddress = () => {
     customerAddressFormik.resetForm();
     setOpenNewUser(true);
+    setEditAddress(false)
   }
 
   return (
@@ -198,15 +195,15 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
         <div className="d-flex col-12 px-0 justify-content-between">
             <div className="d-flex align-items-center">
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                    Adresses
+                    Addresses
                 </h6>
             </div>
 
             <p className="button-gradient py-2 px-3" onClick={handleNewAddress}>
-                <p className="">+ Add Adress</p>
+                <p className="">+ Add Address</p>
             </p>
         </div>
-        {address.map((address, index) => (
+        {value2?.address?.map((address, index) => (
             <div className="col-12 mt-3" key={index}>
                 <div
                     className="row py-3 mb-3 rounded-8"
@@ -215,13 +212,13 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
                     <div className="col-12 d-flex justify-content-between align-items-center mb-2 px-3">
                         <p className="text-lightBlue">{address?.name}</p>
                         <div className="d-flex align-items-center">
-                            <Chip label="Default" size="small" className="px-2" />
+                            {address?.isDefaultAddress == true &&<Chip label="Default" size="small" className="px-2" />}
                             <img
                                 src={editGrey}
                                 alt="editGrey"
                                 className="c-pointer ms-3"
                                 width={16}
-                                onClick={handleNewUser}
+                                onClick={() => handleNewUser(address)}
                             />
                             <img
                                 src={archivedGrey}
@@ -240,10 +237,10 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
                             {address?.line1}
                         </small>
                         <small className="text-lightBlue d-block">
-                            {address?.city}-{address?.pinCode}, {address?.state}, {address?.city}
+                            {address?.city?.name}-{address?.pinCode}, {address?.state?.name}, {address?.country?.name}
                         </small>
                         <small className="text-lightBlue d-block">
-                            {selectedCode?.countryCode} {address?.phone}
+                            {address?.country?.countryCode} {address?.phone}
                         </small>
                     </div>
                 </div>
@@ -262,7 +259,7 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
             <DialogTitle>
                 <div className="d-flex justify-content-between align-items-center">
                     <div className="d-flex flex-column ">
-                        <h5 className="text-lightBlue fw-500">Create New Address</h5>
+                        <h5 className="text-lightBlue fw-500">{ editAdd == true ? "Edit" : "Create" } New Address</h5>
 
                         <small className="text-grey-6 mt-1 d-block">
                         ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing
@@ -436,7 +433,7 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
                         <p className="text-lightBlue mb-1">Town/City <span style={{color: "red"}}>*</span></p>
                         <AppCitySelect 
                             formik={customerAddressFormik}
-                            SelectCityName={SelectCityName}
+                            selectCityName={SelectCityName}
                         />
                         {!!customerAddressFormik.touched.city && 
                         customerAddressFormik.errors.city && (
@@ -506,7 +503,7 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
                     className="button-gradient py-2 px-5"
                     onClick={() => customerAddressFormik.handleSubmit()}
                 >
-                    <p>Create</p>
+                    <p>{ editAdd == true ? "Save" : "Create" }</p>
                 </button>
             </DialogActions>
         </Dialog>

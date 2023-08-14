@@ -89,7 +89,6 @@ const TagsBox = ({ tagsList = [], selectedTagList, formik }) => {
     }
   };
 
-
   const handleTagsOpen = () => {
     setOpenTags(true);
   };
@@ -113,8 +112,14 @@ const TagsBox = ({ tagsList = [], selectedTagList, formik }) => {
     selectedTagList(updatedTags);
   };
 
+  const selectedGroups = tagsList?.filter(group =>
+    formik.values.tags.includes(group._id)
+  );
+
   const openTag = Boolean(anchorTagEl);
   const idTag = openTag ? "simple-popover" : undefined;
+
+  console.log(selectedGroups , 'selectedGroups.values.tags ');
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4">
@@ -328,10 +333,11 @@ const TagsBox = ({ tagsList = [], selectedTagList, formik }) => {
         disableCloseOnSelect
         getOptionLabel={(option) => option.name}
         onChange={handleTagList}
-        value={formik.values.tags || []}
+        value={selectedGroups || []}
         size="small"
-        renderOption={(props, option, { selected }) => (
-          <li {...props}>
+        renderOption={(props, option, { selected }) => {
+          console.log(selected,'selected');
+          return <li {...props}>
             <Checkbox
               icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
               checkedIcon={<CheckBoxIcon fontSize="small" />}
@@ -344,7 +350,7 @@ const TagsBox = ({ tagsList = [], selectedTagList, formik }) => {
             />
             <small className="text-lightBlue">{option.name}</small>
           </li>
-        )}
+        }}
         renderTags={(value) =>
           value.map((option) => (
             <div

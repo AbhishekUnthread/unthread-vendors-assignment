@@ -886,6 +886,7 @@ const AllUsers = () => {
                         }
                       />
                     </FormGroup>
+                    <FormGroup className="tags-checkbox">
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -898,6 +899,7 @@ const AllUsers = () => {
                         }
                         label="Blocked"
                       />
+                    </FormGroup>
                     <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
                         value="archieved"

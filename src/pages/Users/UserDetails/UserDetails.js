@@ -154,7 +154,7 @@ const UserDetails = () => {
     editCustomer({
       id: customerDetails?._id,
       details : {
-        status: "archieved"
+        status: "blocked"
       }
     })
     setArchivedModal(false);

@@ -139,7 +139,6 @@ const AddUser = () => {
   let { id } = useParams();
   let navigate = useNavigate();
   const dispatch = useDispatch();
-  const [addresses, setAddresses] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
@@ -246,7 +245,7 @@ const AddUser = () => {
       phone: customerData?.data?.data[0]?.phone || "",
       email: customerData?.data?.data[0]?.email || "",
       password: customerData?.data?.data[0]?.password || "",
-      address: customerData?.data?.data[0]?.address || "",
+      address: customerData?.data?.data[0]?.addresses || [],
       isSendEmail: customerData?.data?.data[0]?.isSendEmail || false,
       isTemporaryPassword: customerData?.data?.data[0]?.isTemporaryPassword || false,
       notes: customerData?.data?.data[0]?.notes || "",
@@ -257,7 +256,6 @@ const AddUser = () => {
     enableReinitialize: true,
     validationSchema: customerValidationSchema,
     onSubmit: (values) => {
-      console.log(values, 'values');
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
           delete values[key] 
@@ -285,8 +283,9 @@ const AddUser = () => {
   });
 
   const updateAddresses = (newAddresses) => {
-    setAddresses((prevAddresses) => [...prevAddresses, ...newAddresses]);
-    customerFormik.setFieldValue("address", addresses);
+    const updateAddress = [...customerFormik.values.address, ...newAddresses];
+    
+    customerFormik.setFieldValue("address", updateAddress);
   };
 
   useEffect(() => {
@@ -312,6 +311,8 @@ const AddUser = () => {
     customerFormik.values.userGroup.includes(group._id)
   );
 
+  console.log(selectedGroups,'selectedGroups');
+
   const handleGroupChange = (_, group) => {
     const groupIds = group?.map((group) => group?._id)
     customerFormik.setFieldValue("userGroup", groupIds)
@@ -321,14 +322,19 @@ const AddUser = () => {
     customerFormik.setFieldValue("countryCode", value?._id)
   };
 
-  const deleteAddress = (_, value) => {
-    deleteCustomerAddress()
+  const deleteAddress = (value) => {
+    console.log(value, 'value_');
+    deleteCustomerAddress(value._id)
   }
 
   const toggleShowPasswordHandler = () => setShowPassword((prevState) => !prevState);
 
   const currentDate = new Date();
   const maxDate = new Date(currentDate.getFullYear() - 18, currentDate.getMonth(), currentDate.getDate());
+
+  console.log(customerFormik.values, 'customerFormik.values');
+
+  console.log(customerData?.data?.data[0], 'customerData?.data?.data[0]');
 
   return (
     <form noValidate onSubmit={customerFormik.handleSubmit}>
@@ -659,7 +665,9 @@ const AddUser = () => {
               value={customerFormik.values.address}
               customerAddressDetails={updateAddresses}
               data={customerData?.data?.data[0]?.addresses[0] || []}
+              addressData={customerData?.data?.data[0]?.addresses || []}
               deleteAddress={deleteAddress}
+              value2={customerFormik.values}
             />
           </div>
           <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
