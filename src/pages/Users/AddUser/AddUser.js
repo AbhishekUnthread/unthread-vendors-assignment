@@ -242,7 +242,7 @@ const AddUser = () => {
       lastName: customerData?.data?.data[0]?.lastName || "",
       dob: customerData?.data?.data[0]?.dob || "",
       gender: customerData?.data?.data[0]?.gender || "",
-      countryCode: customerData?.data?.data[0]?.countryCode || "",
+      countryCode: customerData?.data?.data[0]?.countryCode?._id || "",
       phone: customerData?.data?.data[0]?.phone || "",
       email: customerData?.data?.data[0]?.email || "",
       password: customerData?.data?.data[0]?.password || "",
@@ -257,6 +257,7 @@ const AddUser = () => {
     enableReinitialize: true,
     validationSchema: customerValidationSchema,
     onSubmit: (values) => {
+      console.log(values, 'values');
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
           delete values[key] 
@@ -311,12 +312,14 @@ const AddUser = () => {
     customerFormik.values.userGroup.includes(group._id)
   );
 
-  console.log(selectedGroups, 'selectedGroups');
-
   const handleGroupChange = (_, group) => {
     const groupIds = group?.map((group) => group?._id)
     customerFormik.setFieldValue("userGroup", groupIds)
   }
+
+  const handleCode = (event, value) => {
+    customerFormik.setFieldValue("countryCode", value?._id)
+  };
 
   const deleteAddress = (_, value) => {
     deleteCustomerAddress()
@@ -456,12 +459,8 @@ const AddUser = () => {
                         startAdornment={
                           <InputAdornment position="start">
                             <AppMobileCodeSelect 
-                              value={customerFormik.values.countryCode}
-                              onBlur={customerFormik.handleBlur}
-                              GetCountryCode={GetCountryCode}
-                              SelectCountryCode = {GetCountryCode}
-                              name="countryCode" 
                               formik={customerFormik}
+                              handleCode={handleCode}
                             />
                           </InputAdornment>
                         }

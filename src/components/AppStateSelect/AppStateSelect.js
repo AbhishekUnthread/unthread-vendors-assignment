@@ -5,14 +5,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 import { useGetAllStateQuery } from "../../features/master/state/stateApiSlice";
 
-export default function AppStateSelect({ getStateName, SelectStateName }) {
-  const handleStateName = (event) => {
-    getStateName(event.target.value)
-  }
-
-  const selectStateName = (event, value) => {
-    SelectStateName(value._id)
-  }
+export default function AppStateSelect({ getStateName, formik }) {
 
    const {
     data: stateData,
@@ -21,15 +14,18 @@ export default function AppStateSelect({ getStateName, SelectStateName }) {
     error: stateError,
   } = useGetAllStateQuery({createdAt: -1});
 
+  const selectedCode = stateData?.data?.data.find( state => state._id === formik.values.state );
+
   return (
     <Autocomplete
       id="country-select-demo"
       sx={{ width: 300 }}
-      options={stateData?.data?.data}
+      options={stateData?.data?.data || []}
       autoHighlight
       size="small"
       getOptionLabel={(option) => option?.name}
-      onChange={selectStateName}
+      onChange={getStateName}
+      value={selectedCode || null}
       renderOption={(props, option) => (
         <Box
           component="li"
@@ -41,16 +37,14 @@ export default function AppStateSelect({ getStateName, SelectStateName }) {
           </small>
         </Box>
       )}
+      renderTags={(value) => (
+        <small className="fw-400 text-lightBlue">{value.name}</small>
+      )}
       renderInput={(params) => (
         <TextField
           {...params}
           //   label="Choose a country"
           placeholder="Select State"
-          inputProps={{
-            ...params.inputProps,
-            autoComplete: "new-password", // disable autocomplete and autofill
-          }}
-          onChange={handleStateName}
         />
       )}
     />

@@ -108,6 +108,8 @@ const UserGroupsTable = ({
     setForMassAction(false)
   }
 
+  console.log(selectedStatus, 'selectedStatus');
+
   useEffect(() => {
     if (selectedStatus !== null && selectedStatus !== "Delete") {
       const newState = selected.map((id) => {
@@ -161,7 +163,6 @@ const UserGroupsTable = ({
     if(forMassAction === true) {
       setSelectedStatus(massActionStatus);
       setArchivedModal(false);
-      setSelected([])
     } else {
       handleClick(null, groupId);
       setArchivedModal(false);
@@ -186,7 +187,6 @@ const UserGroupsTable = ({
       bulkDelete(selected)
       setShowDeleteModal(false);
       dispatch(showSuccess({ message: "Customer group deleted successfully!" }));
-      setSelected([])
     } else {
       handleClick(null, groupId);
       deleteCustomerGroup(groupId);
@@ -207,7 +207,6 @@ const UserGroupsTable = ({
    const handleUnArchived = () => {
     if(forMassAction === true) {
       setSelectedStatus(massActionStatus);
-      setSelected([])
     } else {
       handleClick(null, groupId);
       editCustomerGroup({

@@ -5,15 +5,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 import { useGetAllCityQuery } from "../../features/master/city/cityApiSlice";
 
-export default function AppCitySelect({ getCityName, SelectCityName }) {
-  const handleCityName = (event) => {
-    getCityName(event.target.value)
-  }
-
-  const selectCityName = (event, value) => {
-    SelectCityName(value._id)
-  }
-
+export default function AppCitySelect({ formik, selectCityName }) {
   const {
     data: cityData,
     isLoading: cityIsLoading,
@@ -21,16 +13,17 @@ export default function AppCitySelect({ getCityName, SelectCityName }) {
     error: cityError,
   } = useGetAllCityQuery({createdAt: -1});
 
-  console.log(cityData?.data?.data, 'cityData');
+  const selectedCode = cityData?.data?.data.find(city => city._id === formik.values.city);
 
   return (
     <Autocomplete
       id="country-select-demo"
       sx={{ width: 300 }}
-      options={cityData?.data?.data}
+      options={cityData?.data?.data || []}
       autoHighlight
       size="small"
       getOptionLabel={(option) => option?.name}
+      value={selectedCode || null}
       onChange={selectCityName}
       renderOption={(props, option) => (
         <Box
@@ -43,16 +36,14 @@ export default function AppCitySelect({ getCityName, SelectCityName }) {
           </small>
         </Box>
       )}
+      renderTags={(value) => (
+        <small className="fw-400 text-lightBlue">{value.name}</small>
+      )}
       renderInput={(params) => (
         <TextField
           {...params}
           //   label="Choose a country"
           placeholder="Select State"
-          inputProps={{
-            ...params.inputProps,
-            autoComplete: "new-password", // disable autocomplete and autofill
-          }}
-          onChange={handleCityName}
         />
       )}
     />

@@ -185,7 +185,7 @@ const UserDetails = () => {
             <h5 className="page-heading ms-2 ps-1">
               {customerDetails?.firstName} {customerDetails?.lastName}
             </h5>
-            <div className="d-flex ms-2 ps-1 mt-1">
+            {customerDetails?.addresses[0] &&<div className="d-flex ms-2 ps-1 mt-1">
               <small className="text-lightBlue me-2">
                 {customerDetails?.addresses[0]?.city?.name}, 
                 {customerDetails?.addresses[0]?.state?.name}, 
@@ -196,7 +196,7 @@ const UserDetails = () => {
                 className=" rounded-3" 
                 width={20} 
               />
-            </div>
+            </div>}
           </div>
         </div>
         <div className="d-flex align-items-center w-auto pe-0">
@@ -245,7 +245,7 @@ const UserDetails = () => {
             </DialogActions>
           </Dialog>
 
-          <button className="button-lightBlue-outline py-1 ps-2 pe-3 ms-3">
+          {/* <button className="button-lightBlue-outline py-1 ps-2 pe-3 ms-3">
             <EditOutlinedIcon
               sx={{
                 color: "#5c6d8e",
@@ -255,7 +255,7 @@ const UserDetails = () => {
               }}
             />
             <p>Edit</p>
-          </button>
+          </button> */}
 
           <button
             className="button-gradient py-1 px-4 w-auto ms-3 me-3"
@@ -314,7 +314,7 @@ const UserDetails = () => {
               </div>
             </div>
           </Popover>
-          <img
+          {/* <img
             src={paginationLeft}
             alt="paginationLeft"
             className="c-pointer"
@@ -325,7 +325,7 @@ const UserDetails = () => {
             alt="paginationRight"
             className="c-pointer"
             width={30}
-          />
+          /> */}
         </div>
       </div>
       <div className="row">

@@ -96,12 +96,14 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
     }
   ] = useEditCustomerAddressMutation();
 
-   const {
+  const {
     data: countryData,
     isLoading: countryIsLoading,
     isSuccess: countryIsSuccess,
     error: countryError,
   } = useGetAllCountryQuery({ createdAt: -1 });
+
+  console.log( data, ' data?.country');
 
   const customerAddressFormik = useFormik({
     initialValues: {
@@ -110,18 +112,19 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
       lastName: data?.lastName || "",
       companyName: data?.companyName || "",
       countryCode: data?.countryCode || "",
-      country: data?.country?.name || "",
+      country: data?.country?._id || "",
       phone: data?.phone || "",
       line1: data?.line1 || "",
       line2: data?.line2 || "",
-      city: data?.city?.name || "",
+      city: data?.city?._id || "",
       pinCode: data?.pinCode || "",
-      state: data?.state?.name || "",
+      state: data?.state?._id || "",
       isDefaultAddress: data?.isDefaultAddress || false,
     },
     enableReinitialize: true,
     // validationSchema: customerAddressValidation,
     onSubmit: (values) => {
+        console.log(values, 'values valuesvaluesvalues');
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
           delete values[key] 
@@ -143,36 +146,30 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
     },
   });
 
-  const GetCountryCode = (value) => {
-    customerAddressFormik.setFieldValue("countryCode", value)
+  const handleCode = (event, value) => {
+    customerAddressFormik.setFieldValue("countryCode", value?._id)
+  };
+
+  const selectedCode = countryData?.data?.data.find(country => 
+    country._id === customerAddressFormik.values.countryCode 
+  );
+
+  const selectCountryName = (event, value) => {
+    customerAddressFormik.setFieldValue("country", value?._id)
   }
 
-  const SelectCountryCode = (event, value) => {
-    customerAddressFormik.setFieldValue("countryCode", event)
-  }
+  const getStateName = (event, value) => {
+        console.log(value, 'value state');
+            console.log(event, 'event state');
 
-  const GetCountryName = (value) => {
-    customerAddressFormik.setFieldValue("country", value)
-  }
-
-  const SelectCountryName = (event, value) => {
-    customerAddressFormik.setFieldValue("country", event)
-  }
-
-  const getStateName = (value) => {
-    customerAddressFormik.setFieldValue("state", value)
-  }
-
-  const SelectStateName = (event, value) => {
-    customerAddressFormik.setFieldValue("state", event)
-  }
-
-   const getCityName = (value) => {
-    customerAddressFormik.setFieldValue("city", value)
+    customerAddressFormik.setFieldValue("state", value?._id)
   }
 
   const SelectCityName = (event, value) => {
-    customerAddressFormik.setFieldValue("city", event)
+        console.log(value, 'value city');
+        console.log(event, 'event city');
+
+    customerAddressFormik.setFieldValue("city", value?._id)
   }
 
   const handleNewUser = () => {
@@ -195,10 +192,6 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
     customerAddressFormik.resetForm();
     setOpenNewUser(true);
   }
-
-  const selectCountryCode = (event, value) => {
-    customerAddressFormik.setFieldValue("countryCode", value?.countryCode);
-  };
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -250,7 +243,7 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
                             {address?.city}-{address?.pinCode}, {address?.state}, {address?.city}
                         </small>
                         <small className="text-lightBlue d-block">
-                            {address?.countryCode} {address?.phone}
+                            {selectedCode?.countryCode} {address?.phone}
                         </small>
                     </div>
                 </div>
@@ -392,11 +385,8 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
                                 startAdornment={
                                 <InputAdornment position="start">
                                     <AppMobileCodeSelect 
-                                        value={customerAddressFormik.values.countryCode}
-                                        SelectCountryCode = {selectCountryCode}
-                                        name="countryCode" 
                                         formik={customerAddressFormik}
-                                        codeList={countryData?.data?.data || []}
+                                        handleCode={handleCode}
                                     />
                                 </InputAdornment>
                             }
@@ -445,10 +435,8 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
                     <div className="col-md-6 mt-3">
                         <p className="text-lightBlue mb-1">Town/City <span style={{color: "red"}}>*</span></p>
                         <AppCitySelect 
-                            value={customerAddressFormik.values.city}
-                            getCityName={getCityName}
+                            formik={customerAddressFormik}
                             SelectCityName={SelectCityName}
-                            name="city" 
                         />
                         {!!customerAddressFormik.touched.city && 
                         customerAddressFormik.errors.city && (
@@ -481,10 +469,8 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
                             {/* <small className="text-grey-6 mb-1">(Optional)</small> */}
                         </div>
                         <AppStateSelect 
-                            value={customerAddressFormik.values.state}
+                            formik={customerAddressFormik}
                             getStateName={getStateName}
-                            SelectStateName={SelectStateName}
-                            name="state" 
                         />
                         {!!customerAddressFormik.touched.state && 
                         customerAddressFormik.errors.state && (
@@ -496,10 +482,7 @@ const AddAddress = ({ customerAddressDetails, data, deleteAddress }) => {
                     <div className="col-md-12 mt-3 add-user-country">
                         <p className="text-lightBlue mb-1">Country <span style={{color: "red"}}>*</span></p>
                         <AppCountrySelect 
-                            value={customerAddressFormik.values.country}
-                            GetCountryName={GetCountryName}
-                            SelectCountryName={SelectCountryName}
-                            name="country" 
+                            selectCountryName={selectCountryName}
                             formik={customerAddressFormik}
                         />
                         {!!customerAddressFormik.touched.country && 

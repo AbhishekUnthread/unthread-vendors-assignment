@@ -7,30 +7,30 @@ import { useGetAllCountryQuery } from "../../features/master/country/countryApiS
 const emptyFn = () => {};
 
 export default function AppMobileCodeSelect({ 
-  selectCountryCode,
   formik ,
-  codeList=[]
+  handleCode
 }) {
-  const handleTagList = (event, value) => {
-    const newTag = value[value.length - 1].name;
-    if (!formik.values.countryCode.includes(newTag)) {
-      const updatedTags = [...formik.values.countryCode, newTag];
-      selectCountryCode(updatedTags);
-    }
-  };
+  const {
+    data: countryData,
+    isLoading: countryIsLoading,
+    isSuccess: countryIsSuccess,
+    error: countryError,
+  } = useGetAllCountryQuery({ createdAt: -1 });
+  
+  const selectedCode = countryData?.data?.data.find(country => country._id === formik.values.countryCode );
 
   return (
     <Autocomplete
       id="country-select-demo"
       sx={{ width: 75 }}
-      options={codeList}
+      options={countryData?.data?.data || []}
       autoHighlight
       size="small"
       disableClearable
       freeSolo
       getOptionLabel={(option) => option?.countryCode}
-      value={formik?.values?.countryCode || []}
-      onChange={handleTagList}
+      value={selectedCode || null}
+      onChange={handleCode}
       componentsProps={{
         paper: {
           sx: {
@@ -49,17 +49,16 @@ export default function AppMobileCodeSelect({
           <img
             loading="lazy"
             width="20"
-            src={option.imageUrl}
-            alt={option.name}
+            src={option?.imageUrl}
           />
           <small className="text-lightBlue my-1">
-            {option.name} {option.countryCode}
+            {option?.name} {option?.countryCode}
           </small>
         </Box>
       )}
-      renderTags={(value) => {
-        <small className="fw-400 text-lightBlue">{value?.name}</small>
-      }}
+      renderTags={(value) => (
+        <small className="fw-400 text-lightBlue">{value.countryCode}</small>
+      )}
       renderInput={(params) => (
         <TextField
           {...params}
