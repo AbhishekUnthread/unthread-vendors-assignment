@@ -14,7 +14,6 @@ import share from "../../../../assets/icons/folderdropdown/share.svg";
 import { Checkbox, Fab, Menu } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
-// export default function ImageIconView({ name, size, type, isGreen }) {
 export default function ImageIconView({
   file = {},
   isSelected = false,
@@ -25,7 +24,7 @@ export default function ImageIconView({
   onDownload = () => {},
   onDelete = () => {},
 }) {
-  const { name, module, description, file: url, size } = file;
+  const { name, module, description, file: url, filesize } = file;
 
   const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -88,7 +87,8 @@ export default function ImageIconView({
       </div>
       <small className="text-lightBlue">{name}</small>
       <small className="text-grey-6">
-        {Boolean(module) && <small className="text-green-2">●</small>} {String(url?.slice(url?.lastIndexOf(".") + 1) ?? "").toUpperCase()} • {formatBytes(size)}
+        {Boolean(module) && <small className="text-green-2">●</small>} {String(url?.slice(url?.lastIndexOf(".") + 1) ?? "").toUpperCase()} •{" "}
+        {formatBytes(filesize)}
       </small>
       {(showMore || isSelected) && (
         <div className="position-absolute top-0 start-0">

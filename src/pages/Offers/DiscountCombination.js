@@ -69,8 +69,8 @@ const DiscountCombination = ({ value, field, formik }) => {
           <FormControlLabel
             control={
               <Checkbox
-                name='product-discount'
-                checked={value?.allowCombineWith?.includes('product-discount')}
+                name='productDiscount'
+                checked={value?.allowCombineWith?.includes('productDiscount')}
                 onChange={handleCheckboxChange}
                 inputProps={{ "aria-label": "controlled" }}
                 size="small"
@@ -94,8 +94,8 @@ const DiscountCombination = ({ value, field, formik }) => {
           <FormControlLabel
             control={
               <Checkbox
-                name='cart-discount'
-                checked={value?.allowCombineWith?.includes('cart-discount')}
+                name='cartDiscount'
+                checked={value?.allowCombineWith?.includes('cartDiscount')}
                 onChange={handleCheckboxChange}
                 inputProps={{ "aria-label": "controlled" }}
                 size="small"
@@ -119,8 +119,8 @@ const DiscountCombination = ({ value, field, formik }) => {
           <FormControlLabel
             control={
               <Checkbox
-                name ='free-shipping'
-                checked={value?.allowCombineWith?.includes('free-shipping')}
+                name ='freeShipping'
+                checked={value?.allowCombineWith?.includes('freeShipping')}
                 onChange={handleCheckboxChange}
                 inputProps={{ "aria-label": "controlled" }}
                 size="small"
@@ -144,8 +144,8 @@ const DiscountCombination = ({ value, field, formik }) => {
           <FormControlLabel
             control={
               <Checkbox
-                name ='buyXgetY'
-                checked={value?.allowCombineWith?.includes('buyXgetY')}
+                name ='buyxGety'
+                checked={value?.allowCombineWith?.includes('buyxGety')}
                 onChange={handleCheckboxChange}
                 inputProps={{ "aria-label": "controlled" }}
                 size="small"

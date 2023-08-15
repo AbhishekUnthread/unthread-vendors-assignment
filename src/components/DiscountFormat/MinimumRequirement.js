@@ -64,7 +64,7 @@ function MinimumRequirement({value,field,formik,touched,error}) {
             }}
           />
           <FormControlLabel
-            value="minAmount"
+            value="amount"
             control={<Radio size="small" />}
             label="Minimum Amount Purchased"
             sx={{
@@ -76,7 +76,7 @@ function MinimumRequirement({value,field,formik,touched,error}) {
             }}
           />
 
-          {value?.requirement === "minAmount" && (
+          {value?.requirement === "amount" && (
             <div className="discount-inputs ps-4 ms-1 mb-3">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Value</p>
@@ -111,7 +111,7 @@ function MinimumRequirement({value,field,formik,touched,error}) {
             </div>
           )}
           <FormControlLabel
-            value="minQuantity"
+            value="quantity"
             control={<Radio size="small" />}
             label="Minimum Quantity of Items"
             sx={{
@@ -123,7 +123,7 @@ function MinimumRequirement({value,field,formik,touched,error}) {
             }}
           />
 
-          {value?.requirement === "minQuantity" && (
+          {value?.requirement === "quantity" && (
             <div className="discount-inputs ps-4 ms-1">
               <div className="d-flex mb-1">
                 <p className="text-lightBlue">Value</p>

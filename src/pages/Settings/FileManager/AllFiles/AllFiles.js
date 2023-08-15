@@ -359,7 +359,7 @@ export default function AllFiles({ refetchFiles = false, onExplore = () => {}, c
           if (fileSelected.length > 0)
             bulkEditFiles({ updates: fileSelected.map((sl) => ({ id: sl._id, folderId })) })
               .unwrap()
-              .then(() => dispatch(showSuccess({ message: `${fileSelected.length} Files Deleted successfully!` })))
+              .then(() => dispatch(showSuccess({ message: `${fileSelected.length} Files Moved successfully!` })))
               .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
               .finally(() => {
                 clearfileSelected();
@@ -396,7 +396,7 @@ export default function AllFiles({ refetchFiles = false, onExplore = () => {}, c
           } else {
             deleteFile(deletingFile._id)
               .unwrap()
-              .then(() => dispatch(showSuccess({ message: "File deleted successfully" })))
+              .then(() => dispatch(showSuccess({ message: "File Deleted successfully" })))
               .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong" })))
               .finally(() => {
                 clearfileSelected();

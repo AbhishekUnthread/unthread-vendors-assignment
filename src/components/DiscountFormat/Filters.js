@@ -58,9 +58,18 @@ const HEAD_CELLS = [
   },
 ];
 
-function Filters({ value, field, formik, touched, error, onAdd, data,onDeleteField }) {
+function Filters({
+  value,
+  field,
+  formik,
+  touched,
+  error,
+  onAdd,
+  data,
+  onDeleteField,
+}) {
+  const filterValues = data.map((filter, index) => filter);
 
-  console.log("lengthfefwe",data.length)
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
       <div className="d-flex col-12 px-0 justify-content-between">
@@ -82,25 +91,36 @@ function Filters({ value, field, formik, touched, error, onAdd, data,onDeleteFie
       <div className="col-12 px-0">
         <TableContainer>
           <Table sx={{ minWidth: 750 }} size="medium">
-          {/* <TableHeader headCells={HEAD_CELLS} /> */}
+            {/* <TableHeader headCells={HEAD_CELLS} /> */}
             <TableBody>
-              {data.map((data, index) => {
+              {data?.map((data, index) => {
                 return (
                   <TableRow className="table-rows">
                     <TableCell colSpan={3}>
-                      <AddFilters formik={formik} value={value} field={field} />
+                      <AddFilters
+                        formik={formik}
+                        value={formik?.values?.filters[index]}
+                        field={`filters[${index}]`}
+                        touched={
+                          formik?.touched?.filters?.length &&
+                          formik?.touched?.filters[index]
+                        }
+                        error={
+                          formik?.errors?.filters?.length &&
+                          formik?.errors?.filters[index]
+                        }
+                      />
                     </TableCell>
-                    <TableCell style={{width:16, padding: 0}}>
-                        <div className="d-flex mt-4">
-                          <DeleteIconButton
-                            onClick={onDeleteField.bind(null, {
-                              deleteIndex: index,
-                            }
-                            )}
-                            title="Delete"
-                          />
-                        </div>
-                      </TableCell>
+                    <TableCell style={{ width: 16, padding: 0 }}>
+                      <div className="d-flex mt-4 ">
+                        <DeleteIconButton
+                          onClick={onDeleteField.bind(null, {
+                            deleteIndex: index,
+                          })}
+                          title="Delete"
+                        />
+                      </div>
+                    </TableCell>
                   </TableRow>
                 );
               })}
@@ -110,7 +130,11 @@ function Filters({ value, field, formik, touched, error, onAdd, data,onDeleteFie
 
         <div className="row">
           <div className="col-12">
-            <small className="text-blue-2 c-pointer fw-500" onClick={onAdd} type="button">
+            <small
+              className="text-blue-2 c-pointer fw-500"
+              onClick={onAdd}
+              type="button"
+            >
               + Add More Filter
             </small>
           </div>

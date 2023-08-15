@@ -25,7 +25,7 @@ export default function VideoIconView({
   onDownload = () => {},
   onDelete = () => {},
 }) {
-  const { name, module, file: url, size } = file;
+  const { name, module, file: url, filesize } = file;
 
   const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -94,7 +94,8 @@ export default function VideoIconView({
       </div>
       <small className="text-lightBlue">{name}</small>
       <small className="text-grey-6">
-        {Boolean(module) && <small className="text-green-2">●</small>} {String(url?.slice(url?.lastIndexOf(".") + 1) ?? "").toUpperCase()} • {formatBytes(size)}
+        {Boolean(module) && <small className="text-green-2">●</small>} {String(url?.slice(url?.lastIndexOf(".") + 1) ?? "").toUpperCase()} •{" "}
+        {formatBytes(filesize)}
       </small>
 
       {(showMore || isSelected) && (

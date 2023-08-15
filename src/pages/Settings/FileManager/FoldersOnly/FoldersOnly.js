@@ -61,7 +61,7 @@ export default function FoldersOnly({ onExplore = () => {} }) {
       deleteFolder(deletingFolder._id)
         .unwrap()
         .then(() => {
-          dispatch(showSuccess({ message: "Folder deleted successfully" }));
+          dispatch(showSuccess({ message: "Folder Deleted successfully" }));
         })
         .catch((e) => {
           console.log(e);

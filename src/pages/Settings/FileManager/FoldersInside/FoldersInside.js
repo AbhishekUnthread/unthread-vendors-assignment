@@ -213,7 +213,7 @@ export default function FoldersInside({ fid = "" }) {
           onAction={(name = "") => {
             editFile({ id: renamingFile._id, fileData: { name } })
               .unwrap()
-              .then(() => dispatch(showSuccess({ message: "File renamed successfully" })))
+              .then(() => dispatch(showSuccess({ message: "File Renamed successfully" })))
               .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong" })))
               .finally(() => setRenamingFile(null));
           }}
@@ -229,7 +229,7 @@ export default function FoldersInside({ fid = "" }) {
             if (selected.length > 0) {
               bulkEditFiles({ updates: selected.map((sl) => ({ id: sl._id, folderId })) })
                 .unwrap()
-                .then(() => dispatch(showSuccess({ message: `${selected.length} Files Deleted successfully!` })))
+                .then(() => dispatch(showSuccess({ message: `${selected.length} Files Moved successfully!` })))
                 .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
                 .finally(() => {
                   clearSelected();
@@ -240,7 +240,7 @@ export default function FoldersInside({ fid = "" }) {
             } else {
               editFile({ id: movingFile._id, fileData: { folderId } })
                 .unwrap()
-                .then(() => dispatch(showSuccess({ message: "File moved successfully" })))
+                .then(() => dispatch(showSuccess({ message: "File Moved successfully" })))
                 .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong" })))
                 .finally(() => {
                   clearSelected();
@@ -269,7 +269,7 @@ export default function FoldersInside({ fid = "" }) {
             } else {
               deleteFile(deletingFile._id)
                 .unwrap()
-                .then(() => dispatch(showSuccess({ message: "File deleted successfully" })))
+                .then(() => dispatch(showSuccess({ message: "File Deleted successfully" })))
                 .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong" })))
                 .finally(() => {
                   clearSelected();

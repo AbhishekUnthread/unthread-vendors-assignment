@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   FormControl,
   MenuItem,
@@ -7,13 +7,12 @@ import {
   OutlinedInput,
   Tooltip,
   Popover,
-  FormHelperText,
 } from "@mui/material";
+
 import info from "../../assets/icons/info.svg";
 import arrowDown from "../../assets/icons/arrowDown.svg";
-import { Column } from "ag-grid-community";
 
-function DiscountValue({ value, field, formik, touched, error }) {
+function AddDiscountRange({ value, field, formik, touched, error }) {
   // * DISCOUNT PERCENT POPOVERS STARTS
   const [anchorDiscountPercentEl, setAnchorDiscountPercentEl] =
     React.useState(null);
@@ -32,12 +31,56 @@ function DiscountValue({ value, field, formik, touched, error }) {
     setAnchorDiscountPercentEl(null);
   };
   return (
-    <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
-      <div className="d-flex col-12 px-0 justify-content-between">
-        <div className="d-flex align-items-center">
-          <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-            Discount Value
-          </h6>
+    <div className="row ">
+      <div className="col-md-2 col-6 mt-1 ps-0 ml-0">
+        {/* <div className="d-flex mb-1">
+      <p className="text-lightBlue">Min Qty.</p>
+      <Tooltip title="Lorem ipsum" placement="top">
+        <img
+          src={info}
+          alt="info"
+          className="ms-2 c-pointer"
+          width={13.5}
+        />
+      </Tooltip>
+    </div> */}
+        <FormControl className="px-0">
+          <OutlinedInput
+            placeholder="Enter Min Qty"
+            size="small"
+            name={`${field}.minQty`}
+            value={value?.minQty}
+            onChange={formik?.handleChange}
+          />
+        </FormControl>
+      </div>
+      <div className="col-md-2 col-6 mt-1 ps-0">
+        {/* <div className="d-flex mb-1">
+      <p className="text-lightBlue">Max Qty.</p>
+      <Tooltip title="Lorem ipsum" placement="top">
+        <img
+          src={info}
+          alt="info"
+          className="ms-2 c-pointer"
+          width={13.5}
+        />
+      </Tooltip>
+    </div> */}
+        <FormControl className="px-0">
+          <OutlinedInput
+            placeholder="Enter Max Qty"
+            size="small"
+            name={`${field}.maxQty`}
+            value={value?.maxQty}
+            onChange={formik?.handleChange}
+          />
+        </FormControl>
+      </div>
+      <div className="col-md-8 pe-0 ps-0 ps-md-3">
+        {/* <div className="row mt-1">
+      <div className="col-12">
+        <div className="d-flex mb-1">
+          <p className="text-lightBlue">Discount</p>
           <Tooltip title="Lorem ipsum" placement="top">
             <img
               src={info}
@@ -48,27 +91,9 @@ function DiscountValue({ value, field, formik, touched, error }) {
           </Tooltip>
         </div>
       </div>
-      <hr className="hr-grey-6 mt-3 mb-0" />
-      <div className="col-12 px-0">
-        <div className="row mt-3">
-          <div className="col-12">
-            <div className="d-flex mb-1">
-              <p className="text-lightBlue">Discount</p>
-              <Tooltip title="Lorem ipsum" placement="top">
-                <img
-                  src={info}
-                  alt="info"
-                  className="ms-2 c-pointer"
-                  width={13.5}
-                />
-              </Tooltip>
-            </div>
-          </div>
-        </div>
-        <div className="row align-items-center ">
-          <div className="col-md-5 discount-inputs-two d-flex align-items-center">
-
-            <div className="col">
+    </div> */}
+        <div className="row align-items-center mt-1">
+          <div className="col-md-7 discount-inputs-two d-flex align-items-center">
             <FormControl className="px-0">
               <OutlinedInput
                 value={value?.discountValue}
@@ -86,10 +111,9 @@ function DiscountValue({ value, field, formik, touched, error }) {
                   >
                     <span className="d-flex align-items-center">
                       <p className="text-lightBlue">
-                        {" "}
                         {value?.type === "percentage"
                           ? `Percentage`
-                          : `Fixed Amount`}{" "}
+                          : `Fixed Amount`}
                       </p>
                       <img src={arrowDown} alt="arrow" className="ms-2" />
                     </span>
@@ -97,13 +121,6 @@ function DiscountValue({ value, field, formik, touched, error }) {
                 }
               />
             </FormControl>
-            <small>
-            {!!touched?.discountValue && error?.discountValue && (
-              <FormHelperText error>{error?.discountValue}</FormHelperText>
-            )}
-            </small>
-            </div>
-
             <Popover
               anchorOrigin={{
                 vertical: "bottom",
@@ -118,7 +135,7 @@ function DiscountValue({ value, field, formik, touched, error }) {
               anchorEl={anchorDiscountPercentEl}
               onClose={handleDiscountPercentClose}
             >
-              <div className="py-2 px-1 c-pointer">
+              <div className="py-2 px-1">
                 <small
                   className="text-lightBlue rounded-3 p-2 hover-back d-block"
                   onClick={() => handleChange("percentage")}
@@ -138,7 +155,7 @@ function DiscountValue({ value, field, formik, touched, error }) {
               <p className="text-lightBlue">on</p>
             </div>
           </div>
-          <div className="col-md-7">
+          <div className="col-md-5">
             <FormControl
               sx={{ m: 0, minWidth: 120, width: "100%" }}
               size="small"
@@ -150,59 +167,48 @@ function DiscountValue({ value, field, formik, touched, error }) {
                 value={value?.value}
                 onChange={formik?.handleChange}
                 size="small"
-                placeholder="Enter Value"
+                displayEmpty
+                renderValue={
+                  formik.values?.discountType !== ""
+                    ? undefined
+                    : () => (
+                        <span style={{ fontSize: "13px", color: "#5c6d8e" }}>
+                          Select
+                        </span>
+                      )
+                }
               >
-                <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
-                  None
-                </MenuItem>
-                <MenuItem value="goldPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                <MenuItem
+                  value="goldPrice"
+                  sx={{ fontSize: 13, color: "#5c6d8e" }}
+                >
                   Gold Price
                 </MenuItem>
-                <MenuItem value="diamondPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                <MenuItem
+                  value="diamondPrice"
+                  sx={{ fontSize: 13, color: "#5c6d8e" }}
+                >
                   Diamond Price
                 </MenuItem>
-                <MenuItem value="makingCharge" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                <MenuItem
+                  value="makingCharge"
+                  sx={{ fontSize: 13, color: "#5c6d8e" }}
+                >
                   Making Charges
                 </MenuItem>
-                <MenuItem value="totalPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                <MenuItem
+                  value="totalPrice"
+                  sx={{ fontSize: 13, color: "#5c6d8e" }}
+                >
                   Total Price
                 </MenuItem>
               </Select>
             </FormControl>
-            {!!touched?.value && error?.value && (
-              <FormHelperText error>{error?.value}</FormHelperText>
-            )}
           </div>
-
-          {formik?.values?.discountType === "cartDiscount" && (
-            <div className="col-md-12 mt-3">
-              <div className="d-flex mb-1">
-                <p className="text-lightBlue">Cart Label</p>
-                {/* <Tooltip title="Lorem ipsum" placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className="ms-2 c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip> */}
-              </div>
-              <FormControl className="px-0 w-100">
-                <OutlinedInput
-                  value={value?.cartLabel}
-                  onChange={formik?.handleChange}
-                  onBlur={formik?.handleBlur}
-                  name={`${field}.cartLabel`}
-                  placeholder="Enter Label"
-                  size="small"
-                />
-              </FormControl>
-            </div>
-          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default DiscountValue;
+export default AddDiscountRange;

@@ -1,5 +1,5 @@
-import React, { useEffect, useReducer } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useReducer } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import UploadMediaBox from "../../../components/UploadMediaBox/UploadMediaBox";
 import NotesBox from "../../../components/NotesBox/NotesBox";
@@ -13,30 +13,40 @@ import { Checkbox, FormControl, FormControlLabel, FormHelperText, InputAdornment
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import _ from "lodash";
-import { useCreateStoreMutation } from "../../../features/products/inventory/inventoryApiSlice";
 import AppGenericSelect from "../../../components/AppGenericSelect/AppGenericSelect";
 import { useGetAllCityQuery } from "../../../features/master/city/cityApiSlice";
 import { useGetAllStateQuery } from "../../../features/master/state/stateApiSlice";
 import { useGetAllCountryQuery } from "../../../features/master/country/countryApiSlice";
-import { useDispatch } from "react-redux";
-import { LoadingButton } from "@mui/lab";
+import { useEditStoreMutation, useGetAllStoresQuery } from "../../../features/products/inventory/inventoryApiSlice";
 import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
+import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
+import { useDispatch } from "react-redux";
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
-import StoreHoursWeekDay from "./StoreHoursWeekDay";
+import StoreHoursWeekDay from "../CreateStore/StoreHoursWeekDay";
 
-const initCreateState = { addAnother: false, discard: false };
+const initEditState = { isEditing: false, discard: false };
 
-const createStateReducer = (state, action) => {
+const editStateReducer = (state, action) => {
   switch (action.type) {
-    case "SET_DISCARD":
+    case "ENABLE_EDIT":
       return {
         ...state,
-        discard: action.discard,
+        isEditing: true,
       };
-    case "SET_ADD_ANOTHER":
+    case "DISABLE_EDIT":
       return {
         ...state,
-        addAnother: action.addAnother,
+        isEditing: false,
+      };
+    case "ENABLE_DISCARD":
+      return {
+        ...state,
+        discard: true,
+      };
+    case "DISABLE_DISCARD":
+      return {
+        ...state,
+        discard: false,
       };
 
     default:
@@ -44,74 +54,55 @@ const createStateReducer = (state, action) => {
   }
 };
 
-const storeInitialValue = {
-  name: "",
-  phone: "",
-  email: "",
-  countryCode: "",
-  isDefault: false,
-  status: "active",
-  managerDetails: {
-    fullName: "",
-    countryCode: "",
-    phone: "",
-    email: "",
-  },
-  address: {
-    country: "",
-    line1: "",
-    line2: "",
-    city: "",
-    pincode: "",
-    state: "",
-    mapLink: "",
-    lattitude: "0",
-    longitude: "0",
-  },
-  storeHours: {
-    monday: {
-      status: "open",
-      to: "",
-      from: "",
+function extractStoreData(storeData = {}) {
+  const {
+    name = "",
+    phone = "",
+    email = "",
+    countryCode = "",
+    isDefault = false,
+    status = "active",
+    managerDetails = {},
+    address = {},
+    storeHours = {},
+    mediaUrl = [],
+    notes = "",
+    settings = {},
+  } = storeData;
+
+  let { country = "", line1 = "", line2 = "", city = "", pincode = "", state = "", mapLink = "", lattitude = "0", longitude = "0" } = address;
+
+  if (!!country && typeof country !== "string") country = country?._id ?? "";
+  if (!!city && typeof city !== "string") city = city?._id ?? "";
+  if (!!state && typeof state !== "string") state = state?._id ?? "";
+
+  // Image URL needs to be delt with if needed
+
+  return {
+    name,
+    phone,
+    email,
+    countryCode,
+    isDefault,
+    status,
+    managerDetails,
+    address: {
+      country,
+      line1,
+      line2,
+      city,
+      pincode,
+      state,
+      mapLink,
+      lattitude,
+      longitude,
     },
-    tuesday: {
-      status: "open",
-      to: "",
-      from: "",
-    },
-    wednesday: {
-      status: "open",
-      to: "",
-      from: "",
-    },
-    thursday: {
-      status: "open",
-      to: "",
-      from: "",
-    },
-    friday: {
-      status: "open",
-      to: "",
-      from: "",
-    },
-    saturday: {
-      status: "open",
-      to: "",
-      from: "",
-    },
-    sunday: {
-      status: "closed",
-      to: "",
-      from: "",
-    },
-  },
-  mediaUrl: [],
-  notes: "",
-  settings: {
-    fullfillOnlineOrder: true,
-    enableStorePickup: true,
-  },
-};
+    storeHours,
+    mediaUrl,
+    notes,
+    settings,
+  };
+}
 
 const dayObj = {
   status: Yup.string().oneOf(["closed", "open"]),
@@ -195,40 +186,47 @@ const storeValidationSchema = Yup.object({
   }),
 });
 
-const CreateStore = () => {
+const EditStore = () => {
+  const { storeId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [createState, createDispatch] = useReducer(createStateReducer, initCreateState);
+  const [editState, editDispatch] = useReducer(editStateReducer, initEditState);
 
-  const [createStore, { isLoading: createStoreIsLoading }] = useCreateStoreMutation();
+  const onDiscardEdit = () => navigate(-1);
+  // const onDiscardEdit = () => navigate(`/products/inventory/details/${storeId}`);
 
-  const onDiscardCreate = () => navigate(-1);
+  const {
+    data,
+    isLoading: storeIsLoading,
+    // isSuccess: storeIsSuccess,
+    // error: storeError,
+  } = useGetAllStoresQuery({ id: storeId });
 
-  const setAddAnother = (addAnother) => {
-    createDispatch({ type: "SET_ADD_ANOTHER", addAnother });
-    createDispatch({ type: "SET_DISCARD", discard: false });
-  };
+  // console.log("data", data);
+
+  const storeData = extractStoreData(data?.data?.data?.[0]);
+
+  // console.log("storeData", storeData);
+
+  const [editStore, { isLoading: editStoreIsLoading }] = useEditStoreMutation();
 
   const formik = useFormik({
-    // enableReinitialize: true,
-    initialValues: storeInitialValue,
+    enableReinitialize: true,
+    initialValues: storeData,
     validationSchema: storeValidationSchema,
-    onSubmit: (values, { resetForm }) => {
+    onSubmit: (values) => {
       for (const key of Object.keys(values.managerDetails)) if (values.managerDetails[key] === "") delete values.managerDetails[key];
       if (values.address.mapLink === "") delete values.address.mapLink;
       if (values.mediaUrl.length === 0) delete values.mediaUrl;
       if (values.notes === "") delete values.notes;
-      createStore(values)
+      editStore({ id: storeId, details: values })
         .unwrap()
+        // .then(() => navigate(`/products/inventory/details/${storeId}`))
         .then(() => {
-          if (createState.addAnother) {
-            setAddAnother(false);
-            resetForm();
-          } else {
-            onDiscardCreate();
-          }
-          dispatch(showSuccess({ message: `${values.name} created successfully` }));
+          editDispatch({ type: "DISABLE_EDIT" });
+          editDispatch({ type: "DISABLE_DISCARD" });
+          dispatch(showSuccess({ message: `${values.name} saved successfully` }));
         })
         .catch((e) => {
           console.log(e);
@@ -237,9 +235,13 @@ const CreateStore = () => {
     },
   });
 
+  // console.log("formik.values", formik.values);
+  // console.log(formik.values, formik.initialValues, Object.is(formik.values, formik.initialValues));
+
   useEffect(() => {
     const check = _.isEqual(formik.values, formik.initialValues);
-    createDispatch({ type: "SET_DISCARD", discard: !check });
+    editDispatch({ type: check ? "DISABLE_EDIT" : "ENABLE_EDIT" });
+    editDispatch({ type: check ? "DISABLE_DISCARD" : "ENABLE_DISCARD" });
   }, [formik.initialValues, formik.values]);
 
   const changeStoreStatus = (_, status) => formik.setFieldValue("status", status);
@@ -272,11 +274,12 @@ const CreateStore = () => {
             />
           </Link>
 
-          <h5 className="page-heading ms-2 ps-1">Create Store</h5>
+          <h5 className="page-heading ms-2 ps-1">{formik.values.name || "Edit Store"}</h5>
         </div>
       </div>
       <form
         noValidate
+        className="page container-fluid position-relative"
         onSubmit={formik.handleSubmit}>
         <div className="row mt-3">
           <div className="col-lg-9 mt-3">
@@ -291,14 +294,14 @@ const CreateStore = () => {
                 <div className="row align-items-start">
                   <div className="col-md-12 mt-3">
                     <div className="d-flex">
-                      <p className="text-lightBlue mb-1">
+                      <div className="text-lightBlue mb-1">
                         Store Name{" "}
                         <FormHelperText
                           className="d-inline"
                           error>
                           *
                         </FormHelperText>
-                      </p>
+                      </div>
                       <Tooltip
                         title="Lorem ipsum"
                         placement="top">
@@ -323,14 +326,14 @@ const CreateStore = () => {
                     </FormControl>
                   </div>
                   <div className="col-md-12 mt-3">
-                    <p className="text-lightBlue mb-1">
+                    <div className="text-lightBlue mb-1">
                       Mobile Number{" "}
                       <FormHelperText
                         className="d-inline"
                         error>
                         *
                       </FormHelperText>
-                    </p>
+                    </div>
                     <FormControl className="w-100 px-0">
                       <OutlinedInput
                         placeholder="Enter Mobile Number"
@@ -365,14 +368,14 @@ const CreateStore = () => {
                   </div>
                   <div className="col-md-12 mt-3">
                     <div className="d-flex">
-                      <p className="text-lightBlue mb-1">
+                      <div className="text-lightBlue mb-1">
                         Email ID{" "}
                         <FormHelperText
                           className="d-inline"
                           error>
                           *
                         </FormHelperText>
-                      </p>
+                      </div>
 
                       <Tooltip
                         title="Lorem ipsum"
@@ -406,14 +409,14 @@ const CreateStore = () => {
               </div>
 
               <div className="col-md-6 ps-0 mt-3">
-                <p className="text-lightBlue mb-1">
+                <div className="text-lightBlue mb-1">
                   Address Line 1{" "}
                   <FormHelperText
                     className="d-inline"
                     error>
                     *
                   </FormHelperText>
-                </p>
+                </div>
                 <FormControl className="w-100 px-0">
                   <OutlinedInput
                     placeholder="Enter Address Line 1"
@@ -427,18 +430,14 @@ const CreateStore = () => {
                 </FormControl>
               </div>
               <div className="col-md-6 pe-0 mt-3">
-                <p className="text-lightBlue mb-1">
+                <div className="text-lightBlue mb-1">
                   Address Line 2{" "}
                   <FormHelperText
                     className="d-inline"
                     error>
                     *
                   </FormHelperText>
-                </p>
-                {/* <div className="d-flex align-items-center justify-content-between">
-                <p className="text-lightBlue mb-1">Address Line 2</p>
-                <small className="text-grey-6 mb-1">(Optional)</small>
-              </div> */}
+                </div>
                 <FormControl className="w-100 px-0">
                   <OutlinedInput
                     placeholder="Enter Address Line 2"
@@ -453,14 +452,14 @@ const CreateStore = () => {
               </div>
 
               <div className="col-md-6 ps-0 mt-3">
-                <p className="text-lightBlue mb-1">
+                <div className="text-lightBlue mb-1">
                   Town / City{" "}
                   <FormHelperText
                     className="d-inline"
                     error>
                     *
                   </FormHelperText>
-                </p>
+                </div>
 
                 <AppGenericSelect
                   name="address.city"
@@ -476,14 +475,14 @@ const CreateStore = () => {
               </div>
 
               <div className="col-md-6 pe-0 mt-3">
-                <p className="text-lightBlue mb-1">
+                <div className="text-lightBlue mb-1">
                   Zipcode / Postalcode{" "}
                   <FormHelperText
                     className="d-inline"
                     error>
                     *
                   </FormHelperText>
-                </p>
+                </div>
                 <FormControl className="w-100 px-0">
                   <OutlinedInput
                     placeholder="Enter Zipcode / Postalcode"
@@ -498,14 +497,14 @@ const CreateStore = () => {
               </div>
 
               <div className="col-md-12 px-0 mt-3 add-user-country">
-                <p className="text-lightBlue mb-1">
+                <div className="text-lightBlue mb-1">
                   State or Region{" "}
                   <FormHelperText
                     className="d-inline"
                     error>
                     *
                   </FormHelperText>
-                </p>
+                </div>
                 <AppGenericSelect
                   name="address.state"
                   dataId="_id"
@@ -522,14 +521,14 @@ const CreateStore = () => {
               </div>
 
               <div className="col-md-12 px-0 mt-3 add-user-country">
-                <p className="text-lightBlue mb-1">
+                <div className="text-lightBlue mb-1">
                   Country{" "}
                   <FormHelperText
                     className="d-inline"
                     error>
                     *
                   </FormHelperText>
-                </p>
+                </div>
                 <AppGenericSelect
                   name="address.country"
                   dataId="_id"
@@ -556,7 +555,7 @@ const CreateStore = () => {
               </div> */}
 
               <div className="col-md-12 px-0 mt-3 add-user-country">
-                <p className="text-lightBlue mb-1">Maps Link</p>
+                <div className="text-lightBlue mb-1">Maps Link</div>
                 <FormControl className="w-100 px-0">
                   <OutlinedInput
                     placeholder="Enter Maps Link"
@@ -753,15 +752,9 @@ const CreateStore = () => {
                               // error={formik.touched.managerDetails?.countryCode ? formik.errors.managerDetails?.countryCode : ""}
                               onChange={changeManagerCountryCodeHandler}
                               formik={formik}
-                              // onChange={formik.handleChange}
-                              // onBlur={formik.handleBlur}
                               useGetQuery={useGetAllCountryQuery}
                               getQueryFilters={{ createdAt: -1 }}
                             />
-                            {/* <AppMobileCodeSelect
-                            GetCountryCode={updateManagerDetailsCountryCodeValue}
-                            SelectCountryCode={updateManagerDetailsCountryCodeValue}
-                          /> */}
                           </InputAdornment>
                         }
                       />
@@ -879,9 +872,7 @@ const CreateStore = () => {
             />
             <div className="mt-4">
               <UploadMediaBox
-                name="mediaUrl"
-                value={formik?.values?.mediaUrl}
-                imageName={addMedia}
+                imageName={formik.values?.mediaUrl?.[0]?.image ?? addMedia}
                 headingName={"Store Media"}
                 UploadChange={changeMediaUrl}
                 noteText="Recommended Size: 1000px x 1000px"
@@ -895,36 +886,13 @@ const CreateStore = () => {
             />
           </div>
         </div>
-        <div
-          className="row create-buttons pt-5 pb-3 justify-content-between"
-          style={{ width: "102%" }}>
-          <div className="d-flex w-auto px-0">
-            <button
-              onClick={onDiscardCreate}
-              className="button-red-outline py-2 px-4"
-              type="button">
-              <p>Discard</p>
-            </button>
-          </div>
-          <div className="d-flex w-auto px-0">
-            <button
-              className="button-lightBlue-outline me-3 py-2 px-4 w-auto"
-              type="submit"
-              onClick={() => setAddAnother(true)}>
-              <p>Save & Add Another</p>
-            </button>
-            <LoadingButton
-              className="button-gradient ms-3 py-2 px-4 w-auto"
-              type="submit"
-              onClick={() => setAddAnother(false)}
-              loading={createStoreIsLoading}
-              disabled={createStoreIsLoading}>
-              <p>Save</p>
-            </LoadingButton>
-          </div>
-        </div>
+        <SaveFooterTertiary
+          show={editState.isEditing}
+          onDiscard={onDiscardEdit}
+          isLoading={storeIsLoading || editStoreIsLoading}
+        />
         <DiscardModalSecondary
-          when={createState.discard}
+          when={editState.discard}
           message="store tab"
         />
       </form>
@@ -932,4 +900,4 @@ const CreateStore = () => {
   );
 };
 
-export default CreateStore;
+export default EditStore;

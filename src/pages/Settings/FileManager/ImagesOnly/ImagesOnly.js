@@ -176,7 +176,7 @@ const ImagesOnly = ({ refetchFiles = false, fileType = "" }) => {
           if (selected.length > 0) {
             bulkEditFiles({ updates: selected.map((sl) => ({ id: sl._id, folderId })) })
               .unwrap()
-              .then(() => dispatch(showSuccess({ message: `${selected.length} Files Deleted successfully!` })))
+              .then(() => dispatch(showSuccess({ message: `${selected.length} Files Moved successfully!` })))
               .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong!" })))
               .finally(() => {
                 clearSelected();
@@ -185,7 +185,7 @@ const ImagesOnly = ({ refetchFiles = false, fileType = "" }) => {
           } else {
             editFile({ id: movingFile._id, fileData: { folderId } })
               .unwrap()
-              .then(() => dispatch(showSuccess({ message: "File moved successfully" })))
+              .then(() => dispatch(showSuccess({ message: "File Moved successfully" })))
               .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong" })))
               .finally(() => {
                 clearSelected();
@@ -214,7 +214,7 @@ const ImagesOnly = ({ refetchFiles = false, fileType = "" }) => {
           } else {
             deleteFile(deletingFile._id)
               .unwrap()
-              .then(() => dispatch(showSuccess({ message: "File deleted successfully" })))
+              .then(() => dispatch(showSuccess({ message: "File Deleted successfully" })))
               .catch((e) => dispatch(showError({ message: e.message ?? "Something went wrong" })))
               .finally(() => {
                 clearSelected();

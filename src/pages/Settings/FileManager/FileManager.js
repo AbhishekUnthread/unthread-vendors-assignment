@@ -33,7 +33,7 @@ import { showError, showSuccess } from "../../../features/snackbar/snackbarActio
 import UseFileUpload from "../../../features/fileUpload/fileUploadHook";
 import FoldersInside from "./FoldersInside/FoldersInside";
 
-const FileManager = () => {
+export default function FileManager() {
   const dispatch = useDispatch();
   const [createNewFolder] = useCreateFolderMutation();
 
@@ -258,7 +258,7 @@ const FileManager = () => {
           </div>
 
           <div className="col-auto d-flex align-items-center">
-            <Button
+            {/* <Button
               variant="text"
               startIcon={
                 <img
@@ -268,7 +268,7 @@ const FileManager = () => {
                 />
               }>
               <span className="text-grey-6">Search</span>
-            </Button>
+            </Button> */}
 
             <Button
               variant="text"
@@ -300,7 +300,7 @@ const FileManager = () => {
               <MenuItem onClick={handleSortClose}>File Name (Z-A)</MenuItem>
             </Menu>
 
-            <ToggleButtonGroup
+            {/* <ToggleButtonGroup
               exclusive
               value={views}
               onChange={handleViews}
@@ -320,7 +320,7 @@ const FileManager = () => {
                   width={15}
                 />
               </ToggleButton>
-            </ToggleButtonGroup>
+            </ToggleButtonGroup> */}
           </div>
         </div>
 
@@ -359,6 +359,4 @@ const FileManager = () => {
       {tabIndex === 4 && <FoldersInside fid={viewingFolderId} />}
     </div>
   );
-};
-
-export default FileManager;
+}

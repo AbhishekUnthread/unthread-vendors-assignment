@@ -23,12 +23,12 @@ import { useGetAllCustomerGroupQuery } from "../../features/customers/customerGr
 const CustomerEligibility = ({ value, field, formik, touched, error }) => {
   const { data: customersData, isSuccess: customersIsSuccess } =
     useGetAllCustomersQuery(undefined, {
-      skip: value?.customer !== "specificCustomer",
+      skip: value?.customer !== "specificCustomers",
     });
 
   const { data: customersGroupData, isSuccess: customersGroupIsSuccess } =
     useGetAllCustomerGroupQuery(undefined, {
-      skip: value?.customer !== "specificCustomerGroups",
+      skip: value?.customer !== "customerGroups",
     });
 
   // ? RADIO STARTS HERE
@@ -42,7 +42,6 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
     console.info("You clicked the delete icon.");
   };
 
-  console.log("valueeeeee",value?.value)
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -74,7 +73,7 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
             }}
           >
             <FormControlLabel
-              value="all"
+              value="allCustomers"
               control={<Radio size="small" />}
               label="All Customers"
               sx={{
@@ -86,7 +85,7 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
               }}
             />
             <FormControlLabel
-              value="specificCustomerGroups"
+              value="customerGroups"
               control={<Radio size="small" />}
               label="Specific Customer Groups"
               sx={{
@@ -98,7 +97,7 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
               }}
             />
             <FormControlLabel
-              value="specificCustomer"
+              value="specificCustomers"
               control={<Radio size="small" />}
               label="Specific Customer"
               sx={{
@@ -133,7 +132,7 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
             size="small"
           />
         </div> */}
-        {value?.customer !== "all" &&
+        {value?.customer !== "allCustomers" &&
           (customersIsSuccess || customersGroupIsSuccess) && (
             <Autocomplete
               multiple

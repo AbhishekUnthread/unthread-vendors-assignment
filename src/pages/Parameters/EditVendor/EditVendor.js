@@ -145,7 +145,6 @@ const EditVendor = () => {
   );
   const [searchParams, setSearchParams] = useSearchParams();
   const [decodedObject, setDecodedObject] = useState(null);
-  console.log("ehfdje", decodedObject);
 
   useEffect(() => {
     dispatchQueryFilter({ type: "SET_SERIAL_NUMBER", srNo: id });

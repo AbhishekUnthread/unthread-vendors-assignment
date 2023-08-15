@@ -13,29 +13,15 @@ import sort from "../../../assets/icons/sort.svg";
 import products from "../../../assets/icons/sidenav/products.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
-import {
-  Box,
-  Paper,
-  Tab,
-  Tabs,
-  Popover,
-  FormGroup,
-  FormControl,
-  FormControlLabel,
-  Checkbox,
-  RadioGroup,
-  Radio,
-} from "@mui/material";
+import { Box, Paper, Tab, Tabs, Popover, FormGroup, FormControl, FormControlLabel, Checkbox, RadioGroup, Radio } from "@mui/material";
 import AllInventory from "./AllInventory";
-import ArchivedInventory from "./ArchivedInventory";
-import { useGetAllStoresQuery } from "../../../features/products/inventory/inventoryApiSlice";
+import { useGetAllStoresQuery, useGetStoreCountQuery } from "../../../features/products/inventory/inventoryApiSlice";
 
 const initialQueryFilterState = {
   name: "",
   country: "",
-  status: ["active", "in-active"],
-  createdAt: "1",
-  // updatedAt: "1",
+  status: [],
+  createdAt: "-1",
   alphabetical: "",
   pageNo: 1,
   tabIndex: 0,
@@ -72,13 +58,12 @@ const queryFilterReducer = (state, action) => {
         searchValue: action.searchValue,
       };
 
-    case "SET_COUNTRY_VALUE": {
+    case "SET_COUNTRY_VALUE":
       return {
         ...state,
         pageNo: initialQueryFilterState.pageNo,
         country: action.country,
       };
-    }
 
     case "SET_STATUS":
       const { value, checked } = action;
@@ -94,7 +79,6 @@ const queryFilterReducer = (state, action) => {
         pageNo: initialQueryFilterState.pageNo,
         alphabetical: action.alphabetical,
         createdAt: "",
-        // updatedAt: "",
       };
 
     case "SET_CRONOLOGICAL_SORTING":
@@ -102,7 +86,6 @@ const queryFilterReducer = (state, action) => {
         ...state,
         pageNo: initialQueryFilterState.pageNo,
         createdAt: action.createdAt,
-        // updatedAt: action.updatedAt,
         alphabetical: "",
       };
 
@@ -112,11 +95,14 @@ const queryFilterReducer = (state, action) => {
         ...action.filters,
       };
 
-    case "SET_TAB_INDEX":
+    case "SET_TAB_INDEX": {
+      const { tab, status } = action;
       return {
         ...state,
-        tabIndex: action.tab,
+        status,
+        tabIndex: tab,
       };
+    }
 
     default:
       return initialQueryFilterState;
@@ -126,7 +112,6 @@ const queryFilterReducer = (state, action) => {
 const ProductInventory = () => {
   const [firstRender, setFirstRender] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
-  const handleTabIndexChange = (event, tab) => dispatchQueryFilter({ type: "SET_TAB_INDEX", tab });
 
   const [queryFilterState, dispatchQueryFilter] = useReducer(queryFilterReducer, initialQueryFilterState);
 
@@ -137,11 +122,37 @@ const ProductInventory = () => {
     error: storeError,
   } = useGetAllStoresQuery({ ...queryFilterState });
 
+  const { data: storeCountData } = useGetStoreCountQuery();
+
+  const storeCounts = storeCountData?.data?.[0] ?? { active: 0, inActive: 0, archived: 0, scheduled: 0 };
+
+  const handleTabIndexChange = (event, tab) => {
+    switch (tab) {
+      case 0:
+        dispatchQueryFilter({ type: "SET_TAB_INDEX", tab, status: ["active", "in-active"] });
+        break;
+      case 1:
+        dispatchQueryFilter({ type: "SET_TAB_INDEX", tab, status: ["active"] });
+        break;
+      case 2:
+        dispatchQueryFilter({ type: "SET_TAB_INDEX", tab, status: ["in-active"] });
+        break;
+      case 3:
+        dispatchQueryFilter({ type: "SET_TAB_INDEX", tab, status: ["archieved"] });
+        break;
+      default:
+        break;
+    }
+  };
+
   const handleSearchValueChange = (searchValue) => dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue });
 
   const handleSearchChange = (name) => dispatchQueryFilter({ type: "SEARCH", name });
 
   const handleCountryValueChange = (id) => dispatchQueryFilter({ type: "SET_COUNTRY_VALUE", country: id });
+
+  const handleChangeRowsPerPage = (rsz) => dispatchQueryFilter({ type: "SET_PAGE_SIZE", value: rsz });
+  const handlechangePage = (pno) => dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo: pno });
 
   const handleStatusCheckboxChange = (event) => {
     const { value, checked } = event.target;
@@ -152,7 +163,6 @@ const ProductInventory = () => {
     dispatchQueryFilter({
       type: "SET_CRONOLOGICAL_SORTING",
       createdAt: event.target.value,
-      // updatedAt: event.target.value,
     });
     setAnchorSortEl(null);
   };
@@ -206,7 +216,7 @@ const ProductInventory = () => {
           <Link
             to="/products/inventory/create"
             className="button-gradient py-2 px-4 ms-3">
-            <p>Add Store</p>
+            <p>+ Add Store</p>
           </Link>
         </div>
       </div>
@@ -224,11 +234,19 @@ const ProductInventory = () => {
               aria-label="scrollable force tabs example"
               className="tabs">
               <Tab
-                label="All"
+                label={`All (${Object.values(storeCounts).reduce((a, v) => a + v)})`}
                 className="tabs-head"
               />
               <Tab
-                label="Archived"
+                label={`Active (${storeCounts.active})`}
+                className="tabs-head"
+              />
+              <Tab
+                label={`In Active (${storeCounts.inActive})`}
+                className="tabs-head"
+              />
+              <Tab
+                label={`Archived (${storeCounts.archived})`}
                 className="tabs-head"
               />
             </Tabs>
@@ -244,65 +262,69 @@ const ProductInventory = () => {
               <AppCountrySelect SelectCountryName={handleCountryValueChange} />
             </div>
 
-            <button
-              className="button-grey py-2 px-3 ms-2"
-              aria-describedby={idStatus}
-              variant="contained"
-              onClick={handleStatusClick}>
-              <small className="text-lightBlue me-2">Status</small>
-              <img
-                src={arrowDown}
-                alt="status"
-                className=""
-              />
-            </button>
-            <Popover
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-              id={idStatus}
-              open={openStatus}
-              anchorEl={anchorStatusEl}
-              onClose={handleStatusClose}
-              className="columns">
-              <FormGroup
-                className="px-2 py-1"
-                onChange={handleStatusCheckboxChange}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      style={{
-                        color: "#5C6D8E",
-                      }}
+            {queryFilterState.tabIndex === 0 && (
+              <>
+                <button
+                  className="button-grey py-2 px-3 ms-2"
+                  aria-describedby={idStatus}
+                  variant="contained"
+                  onClick={handleStatusClick}>
+                  <small className="text-lightBlue me-2">Status</small>
+                  <img
+                    src={arrowDown}
+                    alt="status"
+                    className=""
+                  />
+                </button>
+                <Popover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  id={idStatus}
+                  open={openStatus}
+                  anchorEl={anchorStatusEl}
+                  onClose={handleStatusClose}
+                  className="columns">
+                  <FormGroup
+                    className="px-2 py-1"
+                    onChange={handleStatusCheckboxChange}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                          }}
+                        />
+                      }
+                      label="Active"
+                      value="active"
+                      className="me-0"
+                      checked={queryFilterState.status.includes("active")}
                     />
-                  }
-                  label="Active"
-                  value="active"
-                  className="me-0"
-                  checked={queryFilterState.status.includes("active")}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      style={{
-                        color: "#5C6D8E",
-                      }}
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                          }}
+                        />
+                      }
+                      label="In-Active"
+                      className="me-0"
+                      value="in-active"
+                      checked={queryFilterState.status.includes("in-active")}
                     />
-                  }
-                  label="In-Active"
-                  className="me-0"
-                  value="in-active"
-                  checked={queryFilterState.status.includes("in-active")}
-                />
-              </FormGroup>
-            </Popover>
+                  </FormGroup>
+                </Popover>
+              </>
+            )}
 
             <button
               className="button-grey py-2 px-3 ms-2"
@@ -340,7 +362,6 @@ const ProductInventory = () => {
                       <Radio
                         size="small"
                         checked={queryFilterState.createdAt === "-1"}
-                        // checked={queryFilterState.updatedAt === "-1"}
                       />
                     }
                     label="Newest to Oldest"
@@ -352,7 +373,6 @@ const ProductInventory = () => {
                       <Radio
                         size="small"
                         checked={queryFilterState.createdAt === "1"}
-                        // checked={queryFilterState.updatedAt === "1"}
                       />
                     }
                     label="Oldest to Newest"
@@ -388,26 +408,61 @@ const ProductInventory = () => {
             value={queryFilterState.tabIndex}
             index={0}>
             <AllInventory
-              // edit={}
-              // deleteData={}
-              // vendorType={}
-              // bulkDelete={}
-              // editVendor={}
-              // bulkEdit={}
               list={storeData?.data?.data ?? []}
               error={storeError}
               isLoading={storeIsLoading}
+              tabIndex={queryFilterState.tabIndex}
               totalCount={storeData?.data?.totalCount ?? 0}
               page={queryFilterState.pageNo}
               rowsPerPage={queryFilterState.pageSize}
-              changeRowsPerPage={(rsz) => dispatchQueryFilter({ type: "SET_PAGE_SIZE", value: rsz })}
-              changePage={(pno) => dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo: pno })}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handlechangePage}
             />
           </TabPanel>
           <TabPanel
             value={queryFilterState.tabIndex}
             index={1}>
-            <ArchivedInventory />
+            <AllInventory
+              list={storeData?.data?.data ?? []}
+              error={storeError}
+              isLoading={storeIsLoading}
+              tabIndex={queryFilterState.tabIndex}
+              totalCount={storeData?.data?.totalCount ?? 0}
+              page={queryFilterState.pageNo}
+              rowsPerPage={queryFilterState.pageSize}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handlechangePage}
+            />
+          </TabPanel>
+          <TabPanel
+            value={queryFilterState.tabIndex}
+            index={2}>
+            <AllInventory
+              list={storeData?.data?.data ?? []}
+              error={storeError}
+              isLoading={storeIsLoading}
+              tabIndex={queryFilterState.tabIndex}
+              totalCount={storeData?.data?.totalCount ?? 0}
+              page={queryFilterState.pageNo}
+              rowsPerPage={queryFilterState.pageSize}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handlechangePage}
+            />
+          </TabPanel>
+          <TabPanel
+            value={queryFilterState.tabIndex}
+            index={3}>
+            <AllInventory
+              list={storeData?.data?.data ?? []}
+              error={storeError}
+              isLoading={storeIsLoading}
+              tabIndex={queryFilterState.tabIndex}
+              totalCount={storeData?.data?.totalCount ?? 0}
+              page={queryFilterState.pageNo}
+              rowsPerPage={queryFilterState.pageSize}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              changePage={handlechangePage}
+            />
           </TabPanel>
         </Paper>
       </div>
