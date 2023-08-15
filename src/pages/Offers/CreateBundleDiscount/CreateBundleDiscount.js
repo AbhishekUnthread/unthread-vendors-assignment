@@ -34,7 +34,10 @@ import * as Yup from "yup";
 import OfferDiscount from "../../../components/DiscountFormat/OfferDiscount";
 import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
 import CustomizeBundle from "../../../components/DiscountFormat/CustomizeBundle";
-import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
+import {
+  showError,
+  showSuccess,
+} from "../../../features/snackbar/snackbarAction";
 import { useDispatch } from "react-redux";
 
 const createBundleValidationSchema = Yup.object().shape({
@@ -68,13 +71,15 @@ const discountValueSchema = Yup.object().shape({
 });
 
 const customerEligibilitySchema = Yup.object().shape({
-  customer : Yup.string().required("required").oneOf(["specificCustomers", "customerGroups", "allCustomers"]),
-  value: Yup.array().when(
-    ["customer"],
-    ([customer],schema) => {
-      return customer !=="allProducts" ? schema.required("required").min(1, "At least one value is required") : schema
-    })
-})
+  customer: Yup.string()
+    .required("required")
+    .oneOf(["specificCustomers", "customerGroups", "allCustomers"]),
+  value: Yup.array().when(["customer"], ([customer], schema) => {
+    return customer !== "allProducts"
+      ? schema.required("required").min(1, "At least one value is required")
+      : schema;
+  }),
+});
 
 const maximumDiscountValidationSchema = Yup.object().shape({
   limitDiscountNumber: Yup.boolean().optional(),
@@ -94,8 +99,15 @@ const maximumDiscountValidationSchema = Yup.object().shape({
 });
 
 const scheduleDateSchema = Yup.object().shape({
-  startDateTime: Yup.date().required("Start date is required"),
-});
+    startDateTime: Yup.date()
+      .required("Start date and time is required"),
+    endDateTime: Yup.date().when(["neverExpire"], 
+    ([neverExpire],schema) => {
+      return neverExpire ? schema : schema.required("required")
+    }
+    ),
+    neverExpire: Yup.boolean(),
+  })
 
 const discountValidationSchema = Yup.object().shape({
   bundleName: Yup.string()
@@ -105,8 +117,8 @@ const discountValidationSchema = Yup.object().shape({
   createBundle: createBundleValidationSchema,
   displayBundle: displayBundleValidationSchema,
   customizeBundle: customizeBundleSchema,
-  discountValue : discountValueSchema ,
-  customerEligibility : customerEligibilitySchema,
+  discountValue: discountValueSchema,
+  customerEligibility: customerEligibilitySchema,
   returnExchange: Yup.string()
     .oneOf(["allowed", "notAllowed"], "Invalid")
     .required("required"),
@@ -154,6 +166,7 @@ const CreateBundleDiscount = () => {
       scheduledDiscount: {
         startDateTime: "",
         endDateTime: "",
+        neverExpire: false,
       },
       customizeBundle: {
         bundleTitle: "",
@@ -180,18 +193,22 @@ const CreateBundleDiscount = () => {
       const test = {
         name: values?.bundleName,
         status: "active",
-        makeBundleFromItems :[
-         { itemFrom : values?.createBundle?.field,
-          products : values?.createBundle?.value?.map((item, index) => item?._id),}
+        makeBundleFromItems: [
+          {
+            itemFrom: values?.createBundle?.field,
+            products: values?.createBundle?.value?.map(
+              (item, index) => item?._id
+            ),
+          },
         ],
         customizeBundle: {
           title: values?.customizeBundle?.bundleTitle,
           subtitle: values?.customizeBundle?.subtitle,
-      },
-      mainDiscount: {
-        value: values?.discountValue?.discountValue,
-        unit: values?.discountValue?.type,
-    },
+        },
+        mainDiscount: {
+          value: values?.discountValue?.discountValue,
+          unit: values?.discountValue?.type,
+        },
 
         minimumRequirement: {
           requirementType: values?.minimumRequirement?.requirement,
@@ -233,7 +250,7 @@ const CreateBundleDiscount = () => {
             ? { perCustomer: values?.maximumDiscount?.perCustomer }
             : { isUnlimited: true }),
         },
-  
+
         allowCombineWithOthers:
           values?.discountCombination?.allowCombineWithOthers,
         ...(values?.discountCombination?.allowCombineWithOthers === true
@@ -244,12 +261,16 @@ const CreateBundleDiscount = () => {
           startDateTime: moment(
             values?.scheduledDiscount?.startDateTime
           ).format("YYYY-MM-DDTHH:mm:ss[Z]"),
-          endDateTime: moment(values?.scheduledDiscount?.endDateTime).format(
-            "YYYY-MM-DDTHH:mm:ss[Z]"
-          ),
+          ...(values?.scheduledDiscount?.neverExpire
+            ? { neverExpire: values?.scheduledDiscount?.neverExpire }
+            : {
+                endDateTime: moment(
+                  values?.scheduledDiscount?.endDateTime
+                ).format("YYYY-MM-DDTHH:mm:ss[Z]"),
+              }),
         },
       };
-      createBundleDiscount(test);
+      createBundleDiscount(test).then(() => navigate("/offers/bundleDiscount"));
     },
   });
 
@@ -259,7 +280,9 @@ const CreateBundleDiscount = () => {
     }
     if (createBundleDiscountError) {
       if (createBundleDiscountError?.data?.message) {
-        dispatch(showError({ message: createBundleDiscountError?.data?.message }));
+        dispatch(
+          showError({ message: createBundleDiscountError?.data?.message })
+        );
       } else {
         dispatch(
           showError({ message: "Something went wrong, please try again" })
