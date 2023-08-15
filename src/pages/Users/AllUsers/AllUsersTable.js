@@ -34,6 +34,7 @@ import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
 import { UnArchivedModal } from "../../../components/UnArchiveModal/UnArchiveModal";
 import AddCustomerGroup from "../AddCustomerGroup";
+import AddTags from "../AddUser/AddTags";
 
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
@@ -70,6 +71,8 @@ const AllUsersTable = ({
   const [statusValue, setStatusValue] = useState("in-active");
   const [showUnArchivedModal, setShowUnArhcivedModal] = useState(false);
   const [showGroup, setShowGroup] = useState(false);
+  const [singleCustomer, setSingleCustomer] = useState(false);
+  const [showTag, setShowTag] = useState(false)
 
   const [
     editCustomer,
@@ -81,7 +84,7 @@ const AllUsersTable = ({
     }
   ] = useEditCustomerMutation();
 
-   const[
+  const[
     bulkEditCustomer,
     {
       data: bulkEditCustomers,
@@ -165,7 +168,7 @@ const AllUsersTable = ({
     setStatusValue(value);
   };
 
-   const handleArchivedModalClose = () => {
+  const handleArchivedModalClose = () => {
     if(forMassAction == true) {
       const newState = selected.map((id) => ({
         id: id,
@@ -365,12 +368,31 @@ const AllUsersTable = ({
     setShowGroup(false)
   }
 
+  const handleTag = () => {
+    setShowTag(false)
+  }
+
   const openGroupModal = (id) => {
     setShowGroup(true)
   }
 
+  const openTagModal = () => {
+    setShowTag(true)
+  }
+
   const handleCustomerGroup = () => {
+    setSingleCustomer(true)
     setShowGroup(true)
+  }
+
+  const handleMultipleGroup = () => {
+    setShowGroup(true)
+    setSingleCustomer(false)
+  }
+
+  const handleMultipleTag = () => {
+    setSingleCustomer(false)
+    setShowTag(true)
   }
 
   return (
@@ -421,10 +443,14 @@ const AllUsersTable = ({
                     <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
                       Edit Customer
                     </small>
-                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                      onClick={() => { handleMultipleGroup()}}
+                    >
                       Add to Customer Groups
                     </small>
-                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                      onClick={() => { handleMultipleTag()}}
+                    >
                       Add or Remove Tags
                     </small>
                     <div 
@@ -762,8 +788,18 @@ const AllUsersTable = ({
       <AddCustomerGroup 
         onConfirm={handleGroup}
         customerId={customerId}
+        selected={selected}
+        singleCustomer={singleCustomer}
         show={showGroup}
         openGroupModal={openGroupModal}
+      />
+      <AddTags 
+        onConfirm={handleTag}
+        customerId={customerId}
+        selected={selected}
+        singleCustomer={singleCustomer}
+        show={showTag}
+        openGroupModal={openTagModal}
       />
     </>
   );

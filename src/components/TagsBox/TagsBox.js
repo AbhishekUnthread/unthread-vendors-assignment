@@ -75,8 +75,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     borderRadius: "5px",
   },
 }));
-// ? SEARCH INPUT ENDS HERE
-
 
 const TagsBox = ({ tagsList = [], selectedTagList, formik }) => {
   const [openTags, setOpenTags] = React.useState(false);

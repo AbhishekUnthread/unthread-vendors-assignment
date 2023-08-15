@@ -2,35 +2,35 @@ import { useState, forwardRef } from "react";
 import _ from "lodash";
 import { useDispatch } from "react-redux";
 import {
-  Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Slide,
-  Tab,
-  Tabs
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Slide,
+    Tab,
+    Tabs
 } from "@mui/material";
 
 import { 
     useGetAllCustomersQuery, 
     useBulkEditCustomerMutation 
-} from "../../features/customers/customer/customerApiSlice";
-import { useGetAllCustomerGroupQuery } from "../../features/customers/customerGroup/customerGroupApiSlice";
+} from "../../../features/customers/customer/customerApiSlice";
+import { useGetAllTagsQuery } from "../../../features/parameters/tagsManager/tagsManagerApiSlice";
 import {
-  showSuccess,
-} from "../../features/snackbar/snackbarAction";
+    showSuccess
+} from "../../../features/snackbar/snackbarAction";
 
-import TabPanel from "../../components/TabPanel/TabPanel";
-import TableSearch from "../../components/TableSearch/TableSearch";
+import TabPanel from "../../../components/TabPanel/TabPanel";
+import TableSearch from "../../../components/TableSearch/TableSearch";
 
-import cancel from "../../assets/icons/cancel.svg";
+import cancel from "../../../assets/icons/cancel.svg";
 
 const Transition = forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+    return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const AddCustomerGroup = ({ onConfirm, customerId, show, selected, singleCustomer }) => {
+const AddTags = ({ onConfirm, customerId, show, selected, singleCustomer }) => {
     const dispatch = useDispatch();
     const [showTab, setShowTab] = useState(0);
     const [selectedGroupIds, setSelectedGroupIds] = useState([]);
@@ -53,11 +53,11 @@ const AddCustomerGroup = ({ onConfirm, customerId, show, selected, singleCustome
     ] = useBulkEditCustomerMutation();
 
     const {
-        data: customerGroupData,
-        isLoading: customerGroupIsLoading,
-        isSuccess: customerGroupIsSuccess,
-        error: customerGroupError,
-    } = useGetAllCustomerGroupQuery();
+        data: tagsData,
+        isLoading: tagsIsLoading,
+        isSuccess: tagsIsSuccess,
+        error: tagsError,
+    } = useGetAllTagsQuery({createdAt: -1});
 
     const handleTab = (_, index) => {
         setShowTab(index)
@@ -65,12 +65,12 @@ const AddCustomerGroup = ({ onConfirm, customerId, show, selected, singleCustome
 
     const customerGroups = selected?.map((customerId) => ({
         id: customerId,
-        userGroup: selectedGroupIds
+        tags: selectedGroupIds
     }));
 
     const requestData = {
         id: customerId,
-        userGroup: selectedGroupIds
+        tags: selectedGroupIds
     };
 
     const saveGroups = () => {
@@ -94,10 +94,10 @@ const AddCustomerGroup = ({ onConfirm, customerId, show, selected, singleCustome
             <DialogTitle>
                 <div className="d-flex justify-content-between align-items-center">
                     <div className="d-flex flex-column ">
-                        <h5 className="text-lightBlue fw-500">Manage Customer Group</h5>
+                        <h5 className="text-lightBlue fw-500">Manage Tag </h5>
 
                         <small className="text-grey-6 mt-1 d-block">
-                            ⓘ Add or remove group from the customer.Manage tags in 
+                            ⓘ Add or remove tag from the customer.Manage tags in 
                         </small>
                     </div>
                     <img
@@ -123,7 +123,7 @@ const AddCustomerGroup = ({ onConfirm, customerId, show, selected, singleCustome
                     <div className="mt-4 mb-3">
                         <TableSearch />
                     </div>
-                        {customerGroupData?.data?.data?.map((group) => (
+                        {tagsData?.data?.data?.map((group) => (
                             <div className="mt-1" key={group._id}>
                                 <Checkbox 
                                     size="small"
@@ -131,12 +131,12 @@ const AddCustomerGroup = ({ onConfirm, customerId, show, selected, singleCustome
                                         color: "#5C6D8E",
                                         marginRight: 0,
                                     }}
-                                    checked={selectedGroupIds.includes(group._id)}
+                                    checked={selectedGroupIds.includes(group.name)}
                                     onChange={() => {
-                                        if (selectedGroupIds.includes(group._id)) {
-                                            setSelectedGroupIds(prevIds => prevIds.filter(id => id !== group._id));
+                                        if (selectedGroupIds.includes(group.name)) {
+                                            setSelectedGroupIds(prevIds => prevIds.filter(id => id !== group.name));
                                         } else {
-                                            setSelectedGroupIds(prevIds => [...prevIds, group._id]);
+                                            setSelectedGroupIds(prevIds => [...prevIds, group.name]);
                                         }
                                     }}
                                 />
@@ -148,26 +148,18 @@ const AddCustomerGroup = ({ onConfirm, customerId, show, selected, singleCustome
                     <div className="mt-4 mb-3">
                         <TableSearch />
                     </div>
-                        {/* {customerGroupData?.data?.data?.map((group) => (
-                            <div className="mt-1" key={group._id}>
+                        {tagsData?.data?.data?.map((group) => (
+                            <div className="mt-1">
                                 <Checkbox 
                                     size="small"
                                     style={{
                                         color: "#5C6D8E",
                                         marginRight: 0,
                                     }}
-                                    checked={selectedGroupIds.includes(group._id)}
-                                    onChange={() => {
-                                        if (selectedGroupIds.includes(group._id)) {
-                                            setSelectedGroupIds(prevIds => prevIds.filter(id => id !== group._id));
-                                        } else {
-                                            setSelectedGroupIds(prevIds => [...prevIds, group._id]);
-                                        }
-                                    }}
                                 />
                                 {group?.name}
                             </div>
-                        ))} */}
+                        ))}
                 </TabPanel>
             </DialogContent>
             <hr className="hr-grey-6 my-0" />
@@ -188,4 +180,4 @@ const AddCustomerGroup = ({ onConfirm, customerId, show, selected, singleCustome
     );
 };
 
-export default AddCustomerGroup;
+export default AddTags;
