@@ -14,7 +14,7 @@ import DeleteAlertDialog from "../DeleteAlertDialog";
 import OnlyFoldersIconView from "./OnlyFoldersIconView";
 import TableMassActionButton from "../../../../components/TableMassActionButton/TableMassActionButton";
 
-export default function FoldersOnly({ onExplore = () => {} }) {
+export default function FoldersOnly({ queryFilters = {}, onExplore = () => {} }) {
   const dispatch = useDispatch();
 
   const [selected, setSelected] = useState([]);
@@ -23,7 +23,7 @@ export default function FoldersOnly({ onExplore = () => {} }) {
 
   const handleFolderSelection = (check, folder) => setSelected(check ? selected.concat(folder) : selected.filter((sl) => !Object.is(sl, folder)));
 
-  const { data: allFoldersData } = useGetFoldersQuery(/* { search: "", sort: "" } */);
+  const { data: allFoldersData } = useGetFoldersQuery(queryFilters);
   const allFolders = allFoldersData?.data?.data ?? [];
 
   const [renameEditFolder] = useEditFolderMutation();

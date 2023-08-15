@@ -1,11 +1,8 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-// ! COMPONENT IMPORTS
 import AllFiles from "./AllFiles/AllFiles";
 import FoldersOnly from "./FoldersOnly/FoldersOnly";
 import StorageIndicator from "./StorageIndicator";
-// ! IMAGES IMPORTS
 import info from "../../../assets/icons/info.svg";
 import company from "../../../assets/icons/company.svg";
 import googledrive from "../../../assets/icons/googledrive.svg";
@@ -20,20 +17,65 @@ import sortVertical from "../../../assets/icons/sortVertical.svg";
 import searchVertical from "../../../assets/icons/searchVertical.svg";
 import uploadCloud from "../../../assets/icons/uploadCloud.svg";
 import folderPlus from "../../../assets/icons/folderPlus.svg";
-// ! MATERIAL IMPORTS
-import { Button, Menu, MenuItem, Tab, Tabs, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
-// import FolderIcon from "@mui/icons-material/Folder";
+import { Button, FormControl, FormControlLabel, Menu, Popover, Radio, RadioGroup, Tab, Tabs, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import IconMenuItem from "./IconMenuItem";
 import ImagesOnly from "./ImagesOnly/ImagesOnly";
-import VideosOnly from "./VideosOnly/VideosOnly";
 import FolderNameDialog from "./FolderNameDialog";
+import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import { useCreateFolderMutation } from "../../../features/settings/filemanager/filemanagerApiSlice";
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import UseFileUpload from "../../../features/fileUpload/fileUploadHook";
 import FoldersInside from "./FoldersInside/FoldersInside";
+import FilePreviewDialog from "./FilePreviewDialog";
+
+const initialQueries = {
+  name: "",
+  sizeSort: "",
+  createdAt: "-1",
+  alphabetical: "",
+};
+
+const queryFilterReducer = (state, action) => {
+  switch (action.type) {
+    case "SET_NAME":
+      return {
+        ...state,
+        name: action.name,
+      };
+    case "SET_SIZE_SORT":
+      return {
+        ...state,
+        sizeSort: action.sizeSort,
+        createdAt: "",
+        alphabetical: "",
+      };
+    case "SET_CREATED_AT":
+      return {
+        ...state,
+        sizeSort: "",
+        createdAt: action.createdAt,
+        alphabetical: "",
+      };
+    case "SET_ALPHABETICAL":
+      return {
+        ...state,
+        sizeSort: "",
+        createdAt: "",
+        alphabetical: action.alphabetical,
+      };
+    case "SET_DEFAULT":
+      return initialQueries;
+
+    default:
+      return state;
+  }
+};
 
 export default function FileManager() {
+  const [searchValue, setSearchValue] = useState("");
+  const [queryFilters, dispatchQueryFilters] = useReducer(queryFilterReducer, initialQueries);
+
   const dispatch = useDispatch();
   const [createNewFolder] = useCreateFolderMutation();
 
@@ -62,14 +104,18 @@ export default function FileManager() {
 
   const handleUploadNewFile = () => inputFileRef.current?.click();
   const handleUploadFilesChanged = (file) => {
-    console.log(file);
     const check = file.type === "video/mp4";
-    uploadFile({ file, format: check ? "video" : "image", module: "others" });
-    setTabIndex(check ? 3 : 2);
+    const format = check ? "video" : "image";
+    const limit = check ? 10 : 5;
+    if (file.size > limit * 1024 * 1024) dispatch(showError({ message: `File too large, ${format}s upto ${limit}MB supported.` }));
+    else {
+      uploadFile({ file, format, module: "others" });
+      handleTabChange(null, check ? 3 : 2);
+    }
   };
 
-  const [openAddFolder, setOpenAddFolder] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
+  const [openAddFolder, setOpenAddFolder] = useState(false);
   const [sortAnchorEl, setSortAnchorEl] = useState(null);
   const [addAnchorEl, setAddAnchorEl] = useState(null);
   const [views, setViews] = useState("icon");
@@ -79,17 +125,31 @@ export default function FileManager() {
   const handleSortClose = () => setSortAnchorEl(null);
   const handleAddNewClick = (e) => setAddAnchorEl(e.currentTarget);
   const handleAddNewClose = () => setAddAnchorEl(null);
-  const handleTabChange = (_, tab) => setTabIndex(tab);
   const handleAddNewFolderClick = () => setOpenAddFolder(true);
   const handleAddFolderClose = () => setOpenAddFolder(false);
-
+  const handleTabChange = (_, tab) => {
+    dispatchQueryFilters({ type: "SET_DEFAULT" });
+    setSearchValue("");
+    setTabIndex(tab);
+  };
   const openSortMenu = Boolean(sortAnchorEl);
+
+  const [viewingFileId, setViewingFileId] = useState("");
+
+  console.log(viewingFileId);
+
+  const handleViewingFile = (fid) => setViewingFileId(fid);
 
   const [viewingFolderId, setViewingFolderId] = useState(null);
 
   const handleViewingFolder = (fid) => {
     setViewingFolderId(fid);
-    setTabIndex(4);
+    handleTabChange(null, 4);
+  };
+
+  const handleClearViewingFolder = () => {
+    setViewingFolderId("");
+    handleTabChange(null, 1);
   };
 
   return (
@@ -258,47 +318,113 @@ export default function FileManager() {
           </div>
 
           <div className="col-auto d-flex align-items-center">
-            {/* <Button
-              variant="text"
-              startIcon={
-                <img
-                  src={searchVertical}
-                  alt="icon"
-                  width={15}
-                />
-              }>
-              <span className="text-grey-6">Search</span>
-            </Button> */}
+            <TableSearchSecondary
+              value={searchValue}
+              onSearchValueChange={(v) => setSearchValue(v)}
+              onChange={(v) => dispatchQueryFilters({ type: "SET_NAME", name: v })}
+            />
 
             <Button
               variant="text"
+              onClick={handleSortClick}
               endIcon={
                 <img
                   src={sortVertical}
                   alt="icon"
                   width={15}
                 />
-              }
-              onClick={handleSortClick}>
+              }>
               <span className="text-grey-6">Sort</span>
             </Button>
 
-            <Menu
-              anchorEl={sortAnchorEl}
+            <Popover
+              className="columns"
               open={openSortMenu}
-              onClose={handleSortClose}>
-              <MenuItem onClick={handleSortClose}>File Size (High to Low)</MenuItem>
+              anchorEl={sortAnchorEl}
+              onClose={handleSortClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}>
+              <FormControl className="px-2 py-1">
+                <RadioGroup
+                  name="controlled-radio-buttons-group"
+                  onClick={handleSortClose}>
+                  <FormControlLabel
+                    value="-1"
+                    label="File Size (High to Low)"
+                    onChange={(e) => dispatchQueryFilters({ type: "SET_SIZE_SORT", sizeSort: e.target.value })}
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilters.sizeSort === "-1"}
+                      />
+                    }
+                  />
+                  <FormControlLabel
+                    value="1"
+                    label="File Size (Low to High)"
+                    onChange={(e) => dispatchQueryFilters({ type: "SET_SIZE_SORT", sizeSort: e.target.value })}
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilters.sizeSort === "1"}
+                      />
+                    }
+                  />
 
-              <MenuItem onClick={handleSortClose}>File Size (Low to High)</MenuItem>
+                  <FormControlLabel
+                    value="-1"
+                    label="Modified (Newest)"
+                    onChange={(e) => dispatchQueryFilters({ type: "SET_CREATED_AT", createdAt: e.target.value })}
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilters.createdAt === "-1"}
+                      />
+                    }
+                  />
+                  <FormControlLabel
+                    value="1"
+                    label="Modified (Oldest)"
+                    onChange={(e) => dispatchQueryFilters({ type: "SET_CREATED_AT", createdAt: e.target.value })}
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilters.createdAt === "1"}
+                      />
+                    }
+                  />
 
-              <MenuItem onClick={handleSortClose}>Modified (Newest)</MenuItem>
-
-              <MenuItem onClick={handleSortClose}>Modified (Oldest)</MenuItem>
-
-              <MenuItem onClick={handleSortClose}>File Name (A-Z)</MenuItem>
-
-              <MenuItem onClick={handleSortClose}>File Name (Z-A)</MenuItem>
-            </Menu>
+                  <FormControlLabel
+                    value="-1"
+                    label="File Name (A-Z)"
+                    onChange={(e) => dispatchQueryFilters({ type: "SET_ALPHABETICAL", alphabetical: e.target.value })}
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilters.alphabetical === "-1"}
+                      />
+                    }
+                  />
+                  <FormControlLabel
+                    value="1"
+                    label="File Name (Z-A)"
+                    onChange={(e) => dispatchQueryFilters({ type: "SET_ALPHABETICAL", alphabetical: e.target.value })}
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilters.alphabetical === "1"}
+                      />
+                    }
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Popover>
 
             {/* <ToggleButtonGroup
               exclusive
@@ -338,25 +464,52 @@ export default function FileManager() {
       {/* Tab contents for each index */}
       {tabIndex === 0 && (
         <AllFiles
+          queryFilters={queryFilters}
           changeTab={handleTabChange}
+          onPopup={handleViewingFile}
           onExplore={handleViewingFolder}
           refetchFiles={!uploadState.isLoading && uploadState.isSuccess}
         />
       )}
-      {tabIndex === 1 && <FoldersOnly onExplore={handleViewingFolder} />}
+      {tabIndex === 1 && (
+        <FoldersOnly
+          queryFilters={queryFilters}
+          onExplore={handleViewingFolder}
+        />
+      )}
       {tabIndex === 2 && (
         <ImagesOnly
           fileType="image"
+          onPopup={handleViewingFile}
+          queryFilters={queryFilters}
           refetchFiles={!uploadState.isLoading && uploadState.isSuccess}
         />
       )}
       {tabIndex === 3 && (
         <ImagesOnly
           fileType="video"
+          onPopup={handleViewingFile}
+          queryFilters={queryFilters}
           refetchFiles={!uploadState.isLoading && uploadState.isSuccess}
         />
       )}
-      {tabIndex === 4 && <FoldersInside fid={viewingFolderId} />}
+      {tabIndex === 4 && (
+        <FoldersInside
+          fid={viewingFolderId}
+          onPopup={handleViewingFile}
+          queryFilters={queryFilters}
+          goBack={handleClearViewingFolder}
+        />
+      )}
+
+      <FilePreviewDialog
+        fileId={viewingFileId}
+        headingText="Preview and edit"
+        subText="Lorem ipsum dolor sit amet consectetur."
+        buttonText="Save"
+        onClose={() => setViewingFileId("")}
+        // onAction={handleCreateNewFolder}
+      />
     </div>
   );
 }

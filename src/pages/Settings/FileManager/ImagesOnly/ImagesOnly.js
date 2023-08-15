@@ -17,14 +17,14 @@ import FolderNameDialog from "../FolderNameDialog";
 import VideoIconView from "../AllFiles/VideoIconView";
 import FolderMoveInDialog from "../FolderMoveInDialog";
 
-const ImagesOnly = ({ refetchFiles = false, fileType = "" }) => {
+const ImagesOnly = ({ fileType = "", onPopup = () => {}, queryFilters = {}, refetchFiles = false }) => {
   const dispatch = useDispatch();
 
   const [selected, setSelected] = useState([]);
 
   const clearSelected = () => setSelected([]);
 
-  const { data: allFilesData, refetch: refetchAllFilesData } = useGetFilesQuery({ fileType });
+  const { data: allFilesData, refetch: refetchAllFilesData } = useGetFilesQuery({ ...queryFilters, fileType });
   const allFiles = allFilesData?.data?.data ?? [];
 
   useEffect(() => {
@@ -128,6 +128,7 @@ const ImagesOnly = ({ refetchFiles = false, fileType = "" }) => {
                 file={file}
                 isSelected={selected.includes(file)}
                 onSelect={(check, file) => setSelected(check ? selected.concat(file) : selected.filter((sl) => !Object.is(sl, file)))}
+                onDoubleClick={onPopup}
                 onCopyLink={handleCopyLink}
                 onMoveToFolder={(file) => setMovingFile(file)}
                 onRename={(file) => setRenamingFile(file)}
@@ -140,6 +141,7 @@ const ImagesOnly = ({ refetchFiles = false, fileType = "" }) => {
                 file={file}
                 isSelected={selected.includes(file)}
                 onSelect={(check, file) => setSelected(check ? selected.concat(file) : selected.filter((sl) => !Object.is(sl, file)))}
+                onDoubleClick={onPopup}
                 onCopyLink={handleCopyLink}
                 onMoveToFolder={(file) => setMovingFile(file)}
                 onRename={(file) => setRenamingFile(file)}

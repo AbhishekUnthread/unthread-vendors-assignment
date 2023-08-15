@@ -23,7 +23,7 @@ import { showError, showSuccess } from "../../../../features/snackbar/snackbarAc
 import DeleteAlertDialog from "../DeleteAlertDialog";
 import FolderMoveInDialog from "../FolderMoveInDialog";
 
-export default function AllFiles({ refetchFiles = false, onExplore = () => {}, changeTab = () => {} }) {
+export default function AllFiles({ queryFilters = {}, onPopup = () => {}, refetchFiles = false, onExplore = () => {}, changeTab = () => {} }) {
   const seeAllFolders = () => changeTab(null, 1);
   const seeAllImages = () => changeTab(null, 2);
   const seeAllVideos = () => changeTab(null, 3);
@@ -33,7 +33,7 @@ export default function AllFiles({ refetchFiles = false, onExplore = () => {}, c
   const [folderSelected, setFolderSelected] = useState([]);
   const clearfolderSelected = () => setFolderSelected([]);
 
-  const { data: allFoldersData } = useGetFoldersQuery({ rowsPerPage: 8, page: 0 });
+  const { data: allFoldersData } = useGetFoldersQuery({ ...queryFilters, rowsPerPage: 8, page: 0 });
   const allFolders = allFoldersData?.data?.data ?? [];
 
   const [editFolder] = useEditFolderMutation();
@@ -48,10 +48,10 @@ export default function AllFiles({ refetchFiles = false, onExplore = () => {}, c
   const [fileSelected, setFileSelected] = useState([]);
   const clearfileSelected = () => setFileSelected([]);
 
-  const { data: allImagesData, refetch: refetchAllImagesData } = useGetFilesQuery({ fileType: "image", rowsPerPage: 8, page: 0 });
+  const { data: allImagesData, refetch: refetchAllImagesData } = useGetFilesQuery({ ...queryFilters, fileType: "image", rowsPerPage: 8, page: 0 });
   const allImages = allImagesData?.data?.data ?? [];
 
-  const { data: allVideosData, refetch: refetchAllVideosData } = useGetFilesQuery({ fileType: "video", rowsPerPage: 8, page: 0 });
+  const { data: allVideosData, refetch: refetchAllVideosData } = useGetFilesQuery({ ...queryFilters, fileType: "video", rowsPerPage: 8, page: 0 });
   const allVideos = allVideosData?.data?.data ?? [];
 
   const [editFile] = useEditFileMutation();
@@ -228,6 +228,7 @@ export default function AllFiles({ refetchFiles = false, onExplore = () => {}, c
                 file={image}
                 isSelected={fileSelected.includes(image)}
                 onSelect={(check, file) => setFileSelected(check ? fileSelected.concat(file) : fileSelected.filter((sl) => !Object.is(sl, file)))}
+                onDoubleClick={onPopup}
                 onCopyLink={handleCopyLink}
                 onMoveToFolder={(file) => setMovingFile(file)}
                 onRename={(file) => setRenamingFile(file)}
@@ -274,6 +275,7 @@ export default function AllFiles({ refetchFiles = false, onExplore = () => {}, c
                 file={video}
                 isSelected={fileSelected.includes(video)}
                 onSelect={(check, file) => setFileSelected(check ? fileSelected.concat(file) : fileSelected.filter((sl) => !Object.is(sl, file)))}
+                onDoubleClick={onPopup}
                 onCopyLink={handleCopyLink}
                 onMoveToFolder={(file) => setMovingFile(file)}
                 onRename={(file) => setRenamingFile(file)}

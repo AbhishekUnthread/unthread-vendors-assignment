@@ -1,7 +1,5 @@
 import { useState } from "react";
-// ! COMPONENT IMPORTS
 import IconMenuItem from "../IconMenuItem";
-// ! IMAGES IMPORTS
 import video from "../../../../assets/images/dashboard/video.png";
 import akarLinkChain from "../../../../assets/icons/akarLinkChain.svg";
 import videoPlay from "../../../../assets/icons/videoPlay.svg";
@@ -11,21 +9,22 @@ import edit from "../../../../assets/icons/folderdropdown/edit.svg";
 import folderUp from "../../../../assets/icons/folderdropdown/folderUp.svg";
 import linkAngled from "../../../../assets/icons/folderdropdown/linkAngled.svg";
 import share from "../../../../assets/icons/folderdropdown/share.svg";
-// ! MATERIAL IMPORTS
 import { Checkbox, Fab, Menu } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { formatBytes } from "../../../../utils/helper";
 
 export default function VideoIconView({
   file = {},
   isSelected = false,
   onSelect = () => {},
+  onDoubleClick = () => {},
   onCopyLink = () => {},
   onMoveToFolder = () => {},
   onRename = () => {},
   onDownload = () => {},
   onDelete = () => {},
 }) {
-  const { name, module, file: url, filesize } = file;
+  const { _id = "", name = "", module = "", description = "", file: url = "", filesize = 0 } = file;
 
   const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -33,41 +32,46 @@ export default function VideoIconView({
   const handlePointerEnter = () => setShowMore(true);
   const handlePointerLeave = () => setShowMore(Boolean(anchorEl));
 
-  const handleClick = (e) => setAnchorEl(e.currentTarget);
-  const handleClose = () => {
+  const handleOptionsClick = (e) => setAnchorEl(e.currentTarget);
+  const handleOptionsClose = () => {
     setAnchorEl(null);
     setShowMore(false);
   };
 
+  const handleDoubleClick = () => {
+    onDoubleClick(_id);
+  };
+
   const handleCopyLinkClick = () => {
     onCopyLink(file);
-    handleClose();
+    handleOptionsClose();
   };
 
   const handleMoveToFolderClick = () => {
     onMoveToFolder(file);
-    handleClose();
+    handleOptionsClose();
   };
 
   const handleRenameClick = () => {
     onRename(file);
-    handleClose();
+    handleOptionsClose();
   };
 
   const handleDownloadClick = () => {
     onDownload(file);
-    handleClose();
+    handleOptionsClose();
   };
 
   const handleDeleteClick = () => {
     onDelete(file);
-    handleClose();
+    handleOptionsClose();
   };
 
   const handleSelectionClick = (check) => onSelect(check, file);
 
   return (
     <div
+      onDoubleClick={handleDoubleClick}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
       className={`folder-icon-view position-relative d-flex flex-column align-items-center rounded-8${
@@ -75,8 +79,8 @@ export default function VideoIconView({
       }`}>
       <div className="image-icon position-relative rounded-8">
         <img
-          src={url ?? video}
-          alt={"product"}
+          src={video}
+          alt={description}
           width={120}
         />
         <img
@@ -113,7 +117,7 @@ export default function VideoIconView({
         <div className="position-absolute top-0 end-0">
           <Fab
             size="small"
-            onClick={handleClick}>
+            onClick={handleOptionsClick}>
             <MoreHorizIcon
               fontSize="small"
               color="primary"
@@ -122,58 +126,46 @@ export default function VideoIconView({
           <Menu
             open={Boolean(anchorEl)}
             anchorEl={anchorEl}
-            onClose={handleClose}>
+            onClose={handleOptionsClose}>
             <IconMenuItem
               icon={linkAngled}
               text="Copy Link"
               action={handleCopyLinkClick}
-              close={handleClose}
+              close={handleOptionsClose}
             />
             {/* <IconMenuItem
               icon={share}
               text="Share With"
-              close={handleClose}
+              close={handleOptionsClose}
             /> */}
             <IconMenuItem
               icon={folderUp}
               text="Move to Folder"
               action={handleMoveToFolderClick}
-              close={handleClose}
+              close={handleOptionsClose}
             />
             <IconMenuItem
               icon={edit}
               text="Rename"
               action={handleRenameClick}
-              close={handleClose}
+              close={handleOptionsClose}
             />
             <IconMenuItem
               icon={download}
               text="Download"
               action={handleDownloadClick}
-              close={handleClose}
+              close={handleOptionsClose}
             />
             <IconMenuItem
               icon={archive}
               text="Delete"
               isRed
               action={handleDeleteClick}
-              close={handleClose}
+              close={handleOptionsClose}
             />
           </Menu>
         </div>
       )}
     </div>
   );
-}
-
-function formatBytes(bytes, decimals = 2) {
-  if (!+bytes) return "0B";
-
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))}${sizes[i]}`;
 }

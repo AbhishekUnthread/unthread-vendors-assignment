@@ -22,14 +22,14 @@ import ImageIconView from "../AllFiles/ImageIconView";
 import VideoIconView from "../AllFiles/VideoIconView";
 import FolderMoveInDialog from "../FolderMoveInDialog";
 
-export default function FoldersInside({ fid = "" }) {
+export default function FoldersInside({ fid = "", onPopup = () => {}, queryFilters = {}, goBack = () => {} }) {
   const dispatch = useDispatch();
 
   const [selected, setSelected] = useState([]);
 
   const clearSelected = () => setSelected([]);
 
-  const { data: allFoldersData } = useGetFoldersQuery({ id: fid });
+  const { data: allFoldersData } = useGetFoldersQuery({ ...queryFilters, id: fid });
   const theFolder = allFoldersData?.data?.data?.[0];
   const allImages = theFolder?.result?.filter((fl) => fl.fileType === "image");
   const allVideos = theFolder?.result?.filter((fl) => fl.fileType === "video");
@@ -85,18 +85,13 @@ export default function FoldersInside({ fid = "" }) {
       <div className="my-3">
         <div className="row mb-3">
           <div className="col d-flex align-items-center">
-            <h4 className="text-grey-6 fs-6 fw-500 me-2">
-              <button
-                onClick={null}
-                className="reset me-3">
-                <img
-                  src={arrowLeft}
-                  alt="arrowLeft"
-                  width={9}
-                  className="c-pointer"
-                />
-              </button>
-              All / Folders / <span className="text-lightBlue">{theFolder.name}</span>
+            <h4 className="fs-6 fw-500 me-2">
+              <span
+                onClick={goBack}
+                className="text-grey-6 c-pointer">
+                All / Folders /
+              </span>{" "}
+              <span className="text-lightBlue">{theFolder.name}</span>
             </h4>
             <Tooltip
               title="Lorem ipsum"
@@ -157,6 +152,7 @@ export default function FoldersInside({ fid = "" }) {
                 file={image}
                 isSelected={selected.includes(image)}
                 onSelect={(check, file) => setSelected(check ? selected.concat(file) : selected.filter((sl) => !Object.is(sl, file)))}
+                onDoubleClick={onPopup}
                 onCopyLink={handleCopyLink}
                 onMoveToFolder={(file) => setMovingFile(file)}
                 onRename={(file) => setRenamingFile(file)}
@@ -194,6 +190,7 @@ export default function FoldersInside({ fid = "" }) {
                 file={video}
                 isSelected={selected.includes(video)}
                 onSelect={(check, file) => setSelected(check ? selected.concat(file) : selected.filter((sl) => !Object.is(sl, file)))}
+                onDoubleClick={onPopup}
                 onCopyLink={handleCopyLink}
                 onMoveToFolder={(file) => setMovingFile(file)}
                 onRename={(file) => setRenamingFile(file)}

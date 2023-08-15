@@ -14,7 +14,7 @@ export default function OnlyFoldersIconView({
   onRename = () => {},
   onDelete = () => {},
 }) {
-  const { name, result } = folder;
+  const { _id = "", name = "", result = [] } = folder;
 
   const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -29,7 +29,7 @@ export default function OnlyFoldersIconView({
   };
 
   const handleDoubleClick = () => {
-    onDoubleClick(folder._id ?? "");
+    onDoubleClick(_id);
   };
 
   const handleRenameClick = () => {
