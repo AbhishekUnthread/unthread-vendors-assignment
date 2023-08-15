@@ -720,7 +720,7 @@ const CreateDiscount = () => {
             dispatch(showSuccess({ message: "Discounts edited successfully" }));
           });
       } else {
-        createDiscount(test).then(() => formik.resetForm());
+        createDiscount(test).then(() => navigate("/offers/discounts"));
       }
     },
   });
@@ -795,7 +795,7 @@ const CreateDiscount = () => {
   }, [searchParams]);
 
   console.log("AllformikErrors", formik?.errors);
-  console.log("gngslgnsflgnsfngls", formik?.values?.maximumDiscount);
+  // console.log("gngslgnsflgnsfngls", formik?.values);
   console.log("ejdiuh89ehd", discountsData);
 
   return (

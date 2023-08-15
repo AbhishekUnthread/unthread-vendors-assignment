@@ -1,4 +1,4 @@
-import React,{ useState } from "react";
+import React, { useState } from "react";
 // ! IMAGES IMPORTS
 import arrowDown from "../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
@@ -42,7 +42,6 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
     console.info("You clicked the delete icon.");
   };
 
-
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
       <div className="d-flex col-12 px-0 justify-content-between">
@@ -84,6 +83,7 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
                 },
               }}
             />
+
             <FormControlLabel
               value="customerGroups"
               control={<Radio size="small" />}
@@ -96,6 +96,48 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
                 },
               }}
             />
+            {value?.customer === "customerGroups" &&
+              (customersGroupIsSuccess) && (
+                <Autocomplete
+                  multiple
+                  id="checkboxes-tags-demo"
+                  className="mt-3"
+                  sx={{ width: "100%" }}
+                  options={
+                    customersData?.data?.data || customersGroupData?.data?.data
+                  }
+                  value={value?.value || []}
+                  getOptionLabel={(option) => option?.firstName || option?.name}
+                  size="small"
+                  onChange={(_, newValue) => {
+                    formik.setFieldValue(`${field}.value`, newValue);
+                  }}
+                  renderOption={(props, option, { selected }) => (
+                    <li {...props}>
+                      <Checkbox
+                        icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                        checkedIcon={<CheckBoxIcon fontSize="small" />}
+                        checked={selected}
+                        size="small"
+                        style={{
+                          color: "#5C6D8E",
+                          marginRight: 0,
+                        }}
+                      />
+                      <small className="text-lightBlue">
+                        {option.firstName || option?.name}
+                      </small>
+                    </li>
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      size="small"
+                      {...params}
+                      placeholder="Search ..."
+                    />
+                  )}
+                />
+              )}
             <FormControlLabel
               value="specificCustomers"
               control={<Radio size="small" />}
@@ -110,30 +152,8 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
             />
           </RadioGroup>
         </FormControl>
-
-        {/* <div className="d-flex mt-3">
-          <TableSearch />
-          <button className="button-grey py-2 px-3 ms-2" onClick={openCustomerModal}>
-            <small className="text-lightBlue me-2">Browse</small>
-            <img src={arrowDown} alt="arrow" className="" />
-          </button>
-        </div>
-        <div className="d-flex">
-          <Chip
-            label="VVIP Users"
-            onDelete={handleDelete}
-            size="small"
-            className="mt-3 me-2"
-          />
-          <Chip
-            label="Royal Users"
-            onDelete={handleDelete}
-            className="me-2 mt-3"
-            size="small"
-          />
-        </div> */}
-        {value?.customer !== "allCustomers" &&
-          (customersIsSuccess || customersGroupIsSuccess) && (
+        {value?.customer === "specificCustomers" &&
+          (customersIsSuccess) && (
             <Autocomplete
               multiple
               id="checkboxes-tags-demo"
@@ -142,11 +162,11 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
               options={
                 customersData?.data?.data || customersGroupData?.data?.data
               }
-              value={value?.value||[]}
+              value={value?.value || []}
               getOptionLabel={(option) => option?.firstName || option?.name}
               size="small"
               onChange={(_, newValue) => {
-                formik.setFieldValue( `${field}.value`, newValue);
+                formik.setFieldValue(`${field}.value`, newValue);
               }}
               renderOption={(props, option, { selected }) => (
                 <li {...props}>
@@ -171,10 +191,6 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
             />
           )}
       </div>
-      {/* <AddCustomerModal 
-        openAddCustomerModal={addCustomer}
-        closeAddCustomerModal={closeAddCustomerModal}
-      /> */}
     </div>
   );
 };

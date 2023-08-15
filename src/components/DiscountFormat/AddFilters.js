@@ -96,49 +96,56 @@ function AddFilters({ value, formik, field, touched, error }) {
     formik.setFieldValue(`${field}.field`, event.target.value);
     formik.setFieldValue(`${field}.fieldValue`, []);
     formik.setFieldValue(`${field}.operator`, "");
-
   };
 
   const handleOperatorChange = (event, newValue) => {
     formik.setFieldValue(`${field}.operator`, event.target.value);
   };
+  
+  const matchingItem = formik?.values?.filters.length>1 && formik?.values?.filters.find((item, index) => {
+    return item?.field === value?.field;
+  });
+  console.log("matchingItem", matchingItem)
 
-  const handleCheck = (data) => {
-    const matchingItem = formik?.values?.filters.find((item, index) => {
-      return item?.field === value?.field && item?.operator === value?.operator;
-    });
+  // const handleCheck = (data) => {
+  //   const matchingItem = formik?.values?.filters.find((item, index) => {
+  //     return item?.field === value?.field;
+  //   });
 
-    if (matchingItem) {
-      const updatedData = data?.data?.data?.filter((user) => {
-        const isUserInDropDown = matchingItem?.fieldValue?.includes(user?.name);
-        return !isUserInDropDown;
-      });
-      return updatedData;
-    } else {
-      return data;
-    }
-  };
+  //   console.log("matchingItem", matchingItem)
+  //   if (matchingItem) {
+  //     const updatedData = data?.data?.data?.filter((user) => {
+  //       const isUserInDropDown = matchingItem?.fieldValue?.includes(user?.name);
+  //       return !isUserInDropDown;
+  //     });
+  //     return updatedData;
+  //   } else {
+  //     return data;
+  //   }
+  // };
   const operatorOptions = [
     { value: "equalTo", label: "Equal to" },
     { value: "notEqualTo", label: "Not Equal to" },
   ];
-  
+
   useEffect(() => {
     const updatedOptions = formik?.values?.filters.map((item) => {
       if (item?.field === value?.field) {
-        return operatorOptions.filter((element) => element.value !== item.operator);
+        return operatorOptions.filter(
+          (element) => element.value !== item.operator
+        );
       }
       return operatorOptions;
     });
-  
+
     if (updatedOptions) {
       const newOperatorOptions = [].concat(...updatedOptions);
-      operatorOptions.length = 0; 
-      operatorOptions.push(...newOperatorOptions); 
+      operatorOptions.length = 0;
+      operatorOptions.push(...newOperatorOptions);
     }
   }, [operatorOptions]);
-  
-  console.log("deqqefeffeffff", operatorOptions)
+
+  console.log("deqqefeffeffff", operatorOptions);
 
   useEffect(() => {
     if (categoriesIsSuccess) {
@@ -266,11 +273,10 @@ function AddFilters({ value, formik, field, touched, error }) {
           </Select>
         </FormControl>
         <small className="mt-1 text-grey-6 font1">
-              {!!touched && error?.field ? (
-                <FormHelperText error>{error?.field}</FormHelperText>
-              ) : (null
-              )}
-            </small>
+          {!!touched && error?.field ? (
+            <FormHelperText error>{error?.field}</FormHelperText>
+          ) : null}
+        </small>
       </div>
       {value?.field !== "allProducts" && (
         <React.Fragment>
@@ -308,15 +314,21 @@ function AddFilters({ value, formik, field, touched, error }) {
                       )
                 }
               >
-                {operatorOptions.map((option) => (
-                  <MenuItem
-                    key={option.value}
-                    value={option.value}
-                    sx={{ fontSize: 13, color: "#5c6d8e" }}
-                  >
-                    {option.label}
-                  </MenuItem>
-                ))}
+                {operatorOptions.map((option) => {
+                  if(option.value ===  matchingItem?.operator)
+                  {
+                    return null;
+                  }
+                  return (
+                    <MenuItem
+                      key={option.value}
+                      value={option.value}
+                      sx={{ fontSize: 13, color: "#5c6d8e" }}
+                    >
+                      {option.label}
+                    </MenuItem>
+                  );
+                })}
                 {/* <MenuItem
                   value="equalTo"
                   sx={{ fontSize: 13, color: "#5c6d8e" }}
@@ -334,8 +346,7 @@ function AddFilters({ value, formik, field, touched, error }) {
             <small className="mt-1 text-grey-6 font1">
               {!!touched && error?.operator ? (
                 <FormHelperText error>{error?.operator}</FormHelperText>
-              ) : (null
-              )}
+              ) : null}
             </small>
           </div>
           <div className="col-md-6 mt-1">
@@ -385,11 +396,10 @@ function AddFilters({ value, formik, field, touched, error }) {
                 <TextField size="small" {...params} placeholder="Search" />
               )}
             />
-                    <small className="mt-1 text-grey-6 font1">
+            <small className="mt-1 text-grey-6 font1">
               {!!touched && error?.fieldValue ? (
                 <FormHelperText error>{error?.fieldValue}</FormHelperText>
-              ) : (null
-              )}
+              ) : null}
             </small>
           </div>
         </React.Fragment>
