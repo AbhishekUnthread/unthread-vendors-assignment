@@ -46,7 +46,6 @@ const buyXgetYReducer = (state, action) => {
       getProduct: action.getProduct,
     };
   }
-
 };
 
 function BuyXGetY({ value, field, formik, touched, error }) {
@@ -62,7 +61,9 @@ function BuyXGetY({ value, field, formik, touched, error }) {
     isSuccess: collectionIsSuccess,
     error: collectionError,
   } = useGetAllCollectionsQuery(undefined, {
-    skip: value?.selectGetItem !== "collection" && value?.selectBuyItem !== "collection",
+    skip:
+      value?.selectGetItem !== "collection" &&
+      value?.selectBuyItem !== "collection",
   });
   const {
     data: categoriesData,
@@ -70,7 +71,9 @@ function BuyXGetY({ value, field, formik, touched, error }) {
     isSuccess: categoriesIsSuccess,
     error: categoriesError,
   } = useGetAllCategoriesQuery(undefined, {
-    skip: value?.selectGetItem !== "category" && value?.selectBuyItem !== "category",
+    skip:
+      value?.selectGetItem !== "category" &&
+      value?.selectBuyItem !== "category",
   });
   const {
     data: subCategoriesData,
@@ -78,7 +81,9 @@ function BuyXGetY({ value, field, formik, touched, error }) {
     isSuccess: subCategoriesIsSuccess,
     error: subCategoriesError,
   } = useGetAllSubCategoriesQuery(undefined, {
-    skip: value?.selectGetItem !== "subCategory" && value?.selectBuyItem !== "subCategory",
+    skip:
+      value?.selectGetItem !== "subCategory" &&
+      value?.selectBuyItem !== "subCategory",
   });
 
   const handleDiscountModeChange = (_, newValue) => {
@@ -117,14 +122,14 @@ function BuyXGetY({ value, field, formik, touched, error }) {
   const formattedNumber = (number) => {
     const numericValue = parseFloat(number);
     if (!isNaN(numericValue)) {
-      const formattedValue = numericValue.toLocaleString('en-IN');
+      const formattedValue = numericValue.toLocaleString("en-IN");
       return formattedValue;
     }
-    return '';
-  }
+    return "";
+  };
   const removeCommas = (formattedValue) => {
-    return formattedValue.replace(/,/g, '');
-  }
+    return formattedValue.replace(/,/g, "");
+  };
   const handleInputChange = (event) => {
     const inputNumber = removeCommas(event.target.value);
     formik.setFieldValue(`${field}.discountValue`, inputNumber);
@@ -226,7 +231,6 @@ function BuyXGetY({ value, field, formik, touched, error }) {
     }
   }, [value?.selectGetItem, collectionData, categoriesData, subCategoriesData]);
 
-
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
       <div className="bg-black-21 border-grey-5 rounded-8 p-3 col-12">
@@ -274,7 +278,13 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                     size="small"
                   />
                 </FormControl>
+                {!!touched?.buy && error?.buy ? (
+                  <Typography variant="caption" color="#F67476">
+                    {error?.buy}
+                  </Typography>
+                ) : null}
               </div>
+
               <div className="col-md-3 mt-3 ">
                 <div className="d-flex mb-1">
                   <p className="text-lightBlue">Select Item from</p>
@@ -330,6 +340,11 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                     </MenuItem>
                   </Select>
                 </FormControl>
+                {!!touched?.selectBuyItem && error?.selectBuyItem ? (
+                  <Typography variant="caption" color="#F67476">
+                    {error?.selectBuyItem}
+                  </Typography>
+                ) : null}
               </div>
               <div className="col-md-6 mt-3">
                 <div className="d-flex mb-1">
@@ -348,9 +363,7 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                   multiple
                   id="checkboxes-tags-demo"
                   sx={{ width: "100%" }}
-                  options={
-                    buyXgetYState?.buyProduct?.data?.data ?? [] 
-                  }
+                  options={buyXgetYState?.buyProduct?.data?.data ?? []}
                   value={value?.buyProduct || []}
                   getOptionLabel={(option) =>
                     option?.firstName || option?.title || option?.name || []
@@ -384,6 +397,11 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                     />
                   )}
                 />
+                {!!touched?.buyProduct && error?.buyProduct ? (
+                  <Typography variant="caption" color="#F67476">
+                    {error?.buyProduct}
+                  </Typography>
+                ) : null}
               </div>
             </div>
           </div>
@@ -425,14 +443,20 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                 </div>
 
                 <FormControl className="w-100 px-0">
-                  <OutlinedInput 
+                  <OutlinedInput
                     value={value?.get}
                     onChange={formik?.handleChange}
                     onBlur={formik?.handleBlur}
                     name={`${field}.get`}
-                  placeholder="Enter Quantity" 
-                  size="small" />
+                    placeholder="Enter Quantity"
+                    size="small"
+                  />
                 </FormControl>
+                {!!touched?.get && error?.get ? (
+                  <Typography variant="caption" color="#F67476">
+                    {error?.get}
+                  </Typography>
+                ) : null}
               </div>
               <div className="col-md-3 mt-3 ">
                 <div className="d-flex mb-1">
@@ -489,6 +513,11 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                     </MenuItem>
                   </Select>
                 </FormControl>
+                {!!touched?.selectGetItem && error?.selectGetItem ? (
+                  <Typography variant="caption" color="#F67476">
+                    {error?.selectGetItem}
+                  </Typography>
+                ) : null}
               </div>
               <div className="col-md-6 mt-3">
                 <div className="d-flex mb-1">
@@ -543,6 +572,11 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                     />
                   )}
                 />
+                {!!touched?.getProduct && error?.getProduct ? (
+                  <Typography variant="caption" color="#F67476">
+                    {error?.getProduct}
+                  </Typography>
+                ) : null}
               </div>
             </div>
           </div>
@@ -608,7 +642,7 @@ function BuyXGetY({ value, field, formik, touched, error }) {
               <FormControl className="px-0">
                 <OutlinedInput
                   value={formattedNumber(value?.discountValue)}
-                  onChange={handleInputChange }
+                  onChange={handleInputChange}
                   onBlur={formik?.handleBlur}
                   name={`${field}.discountValue`}
                   placeholder="Enter Discount"
@@ -632,6 +666,11 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                     </InputAdornment>
                   }
                 />
+                {!!touched?.discountValue && error?.discountValue ? (
+                  <Typography variant="caption" color="#F67476">
+                    {error?.discountValue}
+                  </Typography>
+                ) : null}
               </FormControl>
               <Popover
                 anchorOrigin={{
@@ -684,19 +723,36 @@ function BuyXGetY({ value, field, formik, touched, error }) {
                   <MenuItem value="" sx={{ fontSize: 13, color: "#5c6d8e" }}>
                     Select
                   </MenuItem>
-                  <MenuItem value="goldPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  <MenuItem
+                    value="goldPrice"
+                    sx={{ fontSize: 13, color: "#5c6d8e" }}
+                  >
                     Gold Price
                   </MenuItem>
-                  <MenuItem value="diamondPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  <MenuItem
+                    value="diamondPrice"
+                    sx={{ fontSize: 13, color: "#5c6d8e" }}
+                  >
                     Diamond Price
                   </MenuItem>
-                  <MenuItem value="makingCharge" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  <MenuItem
+                    value="makingCharge"
+                    sx={{ fontSize: 13, color: "#5c6d8e" }}
+                  >
                     Making Charges
                   </MenuItem>
-                  <MenuItem value="totalPrice" sx={{ fontSize: 13, color: "#5c6d8e" }}>
+                  <MenuItem
+                    value="totalPrice"
+                    sx={{ fontSize: 13, color: "#5c6d8e" }}
+                  >
                     Total Price
                   </MenuItem>
                 </Select>
+                {!!touched?.value && error?.value ? (
+                  <Typography variant="caption" color="#F67476">
+                    {error?.value}
+                  </Typography>
+                ) : null}
               </FormControl>
             </div>
             {/* {discountType === 20 && (

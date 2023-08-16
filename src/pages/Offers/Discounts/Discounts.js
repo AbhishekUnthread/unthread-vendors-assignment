@@ -520,7 +520,7 @@ const handleChronologicalSorting = (event) => {
                   // value={value}
                   // onChange={handleRadioChange}
                 >
-                  <FormControlLabel
+                  {/* <FormControlLabel
                     value="userName"
                     control={<Radio size="small" />}
                     label="User Name"
@@ -544,7 +544,7 @@ const handleChronologicalSorting = (event) => {
                     value="uploadTime"
                     control={<Radio size="small" />}
                     label="Upload Time"
-                  />
+                  /> */}
                   <FormControlLabel
                     value="1"
                     control={

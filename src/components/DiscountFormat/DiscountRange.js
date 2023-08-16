@@ -95,6 +95,14 @@ function DiscountRange({
                       formik={formik}
                       value={formik?.values?.discountRange[index]}
                       field={`discountRange[${index}]`}
+                      touched={
+                          formik?.touched?.discountRange?.length &&
+                          formik?.touched?.discountRange[index]
+                        }
+                        error={
+                          formik?.errors?.discountRange?.length &&
+                          formik?.errors?.discountRange[index]
+                        }
                     />
                   </TableCell>
                   {data.length > 1 &&(<TableCell style={{ width: 16,  paddingTop:0, paddingRight:0}}>

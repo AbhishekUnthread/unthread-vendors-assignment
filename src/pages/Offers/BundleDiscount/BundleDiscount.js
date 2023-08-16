@@ -266,25 +266,28 @@ const BundleDiscount = () => {
   }, [bulkDeleteBundleDiscountError, dispatch]);
 
   useEffect(() => {
-    if(+searchParams.get("type")===0)
+    const type = JSON.parse( searchParams.get("filter"));
+    console.log("efoihi3if", type?.discountType)
+    if(+searchParams.get("type")===0 || type?.discountType===0)
     {
       dispatchBundleDiscounts({
         type:"SET_DISCOUNT_TYPE", discountType:0
       })
     }
-    else if(+searchParams.get("type")===1)
+    else if(+searchParams.get("type")===1 || type?.discountType===1)
     {
       dispatchBundleDiscounts({
         type:"SET_DISCOUNT_TYPE", discountType:1
       })
     }
-    else if(+searchParams.get("type")===2)
+    else if(+searchParams.get("type")===2 || type?.discountType===2)
     {
+      console.log("inside nfekjfk")
       dispatchBundleDiscounts({
         type:"SET_DISCOUNT_TYPE", discountType:2
       })
     }
-    else if(+searchParams.get("type")===3)
+    else if((+searchParams.get("type")===3) || type?.discountType===3)
     {
       dispatchBundleDiscounts({
         type:"SET_DISCOUNT_TYPE", discountType:3
@@ -306,6 +309,7 @@ const BundleDiscount = () => {
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
+
 
   return (
     <div className="container-fluid page">
@@ -398,7 +402,7 @@ const BundleDiscount = () => {
                   // value={value}
                   // onChange={handleRadioChange}
                 >
-                  <FormControlLabel
+                  {/* <FormControlLabel
                     value="userName"
                     control={<Radio size="small" />}
                     label="User Name"
@@ -422,7 +426,7 @@ const BundleDiscount = () => {
                     value="uploadTime"
                     control={<Radio size="small" />}
                     label="Upload Time"
-                  />
+                  /> */}
                   <FormControlLabel
                     value="1"
                     control={

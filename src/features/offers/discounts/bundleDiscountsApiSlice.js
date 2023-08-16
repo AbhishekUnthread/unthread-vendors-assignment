@@ -27,6 +27,15 @@ export const bundleDiscountsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["BundleDiscounts"],
     }),
 
+    editBundleDiscount: builder.mutation({
+      query: ({ id, details }) => ({
+        url: `/discount/bundle/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      invalidatesTags: ["BundleDiscounts"],
+    }),
+
     deleteBundleDiscount: builder.mutation({
       query: (bundleDiscountId) => ({
         url: `/discount/bundle/${bundleDiscountId}`,
@@ -49,6 +58,7 @@ export const bundleDiscountsApiSlice = apiSlice.injectEndpoints({
 export const {
     useGetAllBundleDiscountsQuery,
     useCreateBundleDiscountMutation,
+    useEditBundleDiscountMutation,
     useDeleteBundleDiscountMutation,
     useBulkDeleteBundleDiscountMutation,
 } = bundleDiscountsApiSlice;

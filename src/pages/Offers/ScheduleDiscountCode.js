@@ -2,7 +2,7 @@ import React from "react";
 // ! IMAGES IMPORTS
 import info from "../../assets/icons/info.svg";
 // ! MATERIAL IMPORTS
-import { FormHelperText, TextField, Tooltip } from "@mui/material";
+import { Checkbox, FormControlLabel, FormHelperText, TextField, Tooltip } from "@mui/material";
 import { DesktopDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -76,6 +76,33 @@ const ScheduleDiscountCode = ({formik,field,value,touched, error}) => {
                 disabled={value?.startDateTime === "" ? true : false}
               />
             </LocalizationProvider>
+            {!!touched?.endDateTime && error?.endDateTime && (
+              <FormHelperText error>{error?.endDateTime}</FormHelperText>
+            )}
+            {!value?.endDateTime &&(<FormControlLabel
+          control={
+            <Checkbox
+              checked={value?.neverExpire}
+              onChange={formik?.handleChange}
+              name = {`${field}.neverExpire`}
+              inputProps={{ "aria-label": "controlled" }}
+              size="small"
+              style={{
+                color: "#5C6D8E",
+                marginRight: 0,
+                width: "auto",
+              }}
+            />
+          }
+          label="Never Expire"
+          sx={{
+            "& .MuiTypography-root": {
+              fontSize: 13,
+              color: "#c8d8ff",
+            },
+          }}
+          className="px-0"
+            />)}
           </div>
         </div>
       </div>
