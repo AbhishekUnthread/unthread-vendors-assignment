@@ -402,7 +402,7 @@ const BundleDiscount = () => {
                   // value={value}
                   // onChange={handleRadioChange}
                 >
-                  <FormControlLabel
+                  {/* <FormControlLabel
                     value="userName"
                     control={<Radio size="small" />}
                     label="User Name"
@@ -426,7 +426,7 @@ const BundleDiscount = () => {
                     value="uploadTime"
                     control={<Radio size="small" />}
                     label="Upload Time"
-                  />
+                  /> */}
                   <FormControlLabel
                     value="1"
                     control={
