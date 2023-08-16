@@ -191,9 +191,9 @@ const BundleDiscountTable = ({
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const handleMassAction = (status) => {
-    if (status === "Delete") {
+    // if (status === "Delete") {
       setShowMultipleDeleteModal(true);
-    }
+    // }
   };
 
   //Delete Starts Here
@@ -247,12 +247,19 @@ const BundleDiscountTable = ({
               </span>
             </small>
           </button>
-          <TableEditStatusButton />
+          {/* <TableEditStatusButton />
           <TableMassActionButton
             headingName="Mass Action"
             onSelect={handleMassAction}
             defaultValue={["Delete"]}
-          />
+          /> */}
+          <button
+            className="button-grey py-2 px-3 ms-2 c-pointers"
+            variant="contained"
+            onClick={handleMassAction}
+          >
+            <small className="text-lightBlue">Mass Delete</small>
+          </button>
         </div>
       )}
       {list.length ? (
