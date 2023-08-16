@@ -29,7 +29,7 @@ export default function FolderIconView({
   };
 
   const handleDoubleClick = () => {
-    onDoubleClick(folder._id ?? "");
+    onDoubleClick(folder);
   };
 
   const handleRenameClick = () => {

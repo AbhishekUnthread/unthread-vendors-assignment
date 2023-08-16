@@ -136,19 +136,17 @@ export default function FileManager() {
 
   const [viewingFileId, setViewingFileId] = useState("");
 
-  console.log(viewingFileId);
-
   const handleViewingFile = (fid) => setViewingFileId(fid);
 
-  const [viewingFolderId, setViewingFolderId] = useState(null);
+  const [viewingFolder, setViewingFolder] = useState(null);
 
-  const handleViewingFolder = (fid) => {
-    setViewingFolderId(fid);
+  const handleViewingFolder = (folder) => {
+    setViewingFolder(folder);
     handleTabChange(null, 4);
   };
 
   const handleClearViewingFolder = () => {
-    setViewingFolderId("");
+    setViewingFolder(null);
     handleTabChange(null, 1);
   };
 
@@ -354,28 +352,32 @@ export default function FileManager() {
                 <RadioGroup
                   name="controlled-radio-buttons-group"
                   onClick={handleSortClose}>
-                  <FormControlLabel
-                    value="-1"
-                    label="File Size (High to Low)"
-                    onChange={(e) => dispatchQueryFilters({ type: "SET_SIZE_SORT", sizeSort: e.target.value })}
-                    control={
-                      <Radio
-                        size="small"
-                        checked={queryFilters.sizeSort === "-1"}
+                  {tabIndex !== 1 && (
+                    <>
+                      <FormControlLabel
+                        value="-1"
+                        label="File Size (High to Low)"
+                        onChange={(e) => dispatchQueryFilters({ type: "SET_SIZE_SORT", sizeSort: e.target.value })}
+                        control={
+                          <Radio
+                            size="small"
+                            checked={queryFilters.sizeSort === "-1"}
+                          />
+                        }
                       />
-                    }
-                  />
-                  <FormControlLabel
-                    value="1"
-                    label="File Size (Low to High)"
-                    onChange={(e) => dispatchQueryFilters({ type: "SET_SIZE_SORT", sizeSort: e.target.value })}
-                    control={
-                      <Radio
-                        size="small"
-                        checked={queryFilters.sizeSort === "1"}
+                      <FormControlLabel
+                        value="1"
+                        label="File Size (Low to High)"
+                        onChange={(e) => dispatchQueryFilters({ type: "SET_SIZE_SORT", sizeSort: e.target.value })}
+                        control={
+                          <Radio
+                            size="small"
+                            checked={queryFilters.sizeSort === "1"}
+                          />
+                        }
                       />
-                    }
-                  />
+                    </>
+                  )}
 
                   <FormControlLabel
                     value="-1"
@@ -401,19 +403,8 @@ export default function FileManager() {
                   />
 
                   <FormControlLabel
-                    value="-1"
-                    label="File Name (A-Z)"
-                    onChange={(e) => dispatchQueryFilters({ type: "SET_ALPHABETICAL", alphabetical: e.target.value })}
-                    control={
-                      <Radio
-                        size="small"
-                        checked={queryFilters.alphabetical === "-1"}
-                      />
-                    }
-                  />
-                  <FormControlLabel
                     value="1"
-                    label="File Name (Z-A)"
+                    label="File Name (A-Z)"
                     onChange={(e) => dispatchQueryFilters({ type: "SET_ALPHABETICAL", alphabetical: e.target.value })}
                     control={
                       <Radio
@@ -422,11 +413,22 @@ export default function FileManager() {
                       />
                     }
                   />
+                  <FormControlLabel
+                    value="-1"
+                    label="File Name (Z-A)"
+                    onChange={(e) => dispatchQueryFilters({ type: "SET_ALPHABETICAL", alphabetical: e.target.value })}
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilters.alphabetical === "-1"}
+                      />
+                    }
+                  />
                 </RadioGroup>
               </FormControl>
             </Popover>
 
-            {/* <ToggleButtonGroup
+            <ToggleButtonGroup
               exclusive
               value={views}
               onChange={handleViews}
@@ -446,7 +448,7 @@ export default function FileManager() {
                   width={15}
                 />
               </ToggleButton>
-            </ToggleButtonGroup> */}
+            </ToggleButtonGroup>
           </div>
         </div>
 
@@ -464,6 +466,7 @@ export default function FileManager() {
       {/* Tab contents for each index */}
       {tabIndex === 0 && (
         <AllFiles
+          views={views}
           queryFilters={queryFilters}
           changeTab={handleTabChange}
           onPopup={handleViewingFile}
@@ -473,12 +476,14 @@ export default function FileManager() {
       )}
       {tabIndex === 1 && (
         <FoldersOnly
+          views={views}
           queryFilters={queryFilters}
           onExplore={handleViewingFolder}
         />
       )}
       {tabIndex === 2 && (
         <ImagesOnly
+          views={views}
           fileType="image"
           onPopup={handleViewingFile}
           queryFilters={queryFilters}
@@ -487,6 +492,7 @@ export default function FileManager() {
       )}
       {tabIndex === 3 && (
         <ImagesOnly
+          views={views}
           fileType="video"
           onPopup={handleViewingFile}
           queryFilters={queryFilters}
@@ -495,7 +501,8 @@ export default function FileManager() {
       )}
       {tabIndex === 4 && (
         <FoldersInside
-          fid={viewingFolderId}
+          views={views}
+          folder={viewingFolder}
           onPopup={handleViewingFile}
           queryFilters={queryFilters}
           goBack={handleClearViewingFolder}
@@ -508,7 +515,7 @@ export default function FileManager() {
         subText="Lorem ipsum dolor sit amet consectetur."
         buttonText="Save"
         onClose={() => setViewingFileId("")}
-        // onAction={handleCreateNewFolder}
+        // onAction={}
       />
     </div>
   );
