@@ -31,14 +31,7 @@ const rejectStyle = {
   borderColor: "#FF1744",
 };
 // ? FILE UPLOAD ENDS HERE
-const UploadMediaBox = ({
-  imageName,
-  headingName,
-  UploadChange = () => {},
-  imageValue,
-  previousImage,
-  isUploaded = () => {},
-}) => {
+const UploadMediaBox = ({ noteText, imageName, headingName, UploadChange = () => {}, imageValue, previousImage, isUploaded = () => {} }) => {
   const [inputUrl, setInputUrl] = useState("");
   const [uploadFile, uploadState] = UseFileUpload();
 
@@ -61,6 +54,7 @@ const UploadMediaBox = ({
       isUploaded(false);
     }
   }, [uploadState, inputUrl]);
+
   useEffect(() => {
     if (imageValue) {
       setInputUrl(imageValue);
@@ -170,6 +164,7 @@ const UploadMediaBox = ({
           alt=""
         />
       </div>
+      {noteText && <div className="text-grey-6 font1 mt-3">{noteText}</div>}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -12,13 +12,14 @@ export default function AppStateSelect({ getStateName, formik }) {
     isLoading: stateIsLoading,
     isSuccess: stateIsSuccess,
     error: stateError,
-  } = useGetAllStateQuery({createdAt: -1});
+  } = useGetAllStateQuery({ createdAt: -1 });
+
+  const selectedValue = stateData?.data?.data?.find((state) => state._id === value) ?? {};
 
   const selectedCode = stateData?.data?.data.find( state => state._id === formik.values.state );
 
   return (
     <Autocomplete
-      id="country-select-demo"
       sx={{ width: 300 }}
       options={stateData?.data?.data || []}
       autoHighlight
@@ -30,11 +31,8 @@ export default function AppStateSelect({ getStateName, formik }) {
         <Box
           component="li"
           sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-          {...props}
-        >
-          <small className="text-lightBlue my-1">
-            {option.name}
-          </small>
+          {...props}>
+          <small className="text-lightBlue my-1">{option.name}</small>
         </Box>
       )}
       renderTags={(value) => (
@@ -43,7 +41,7 @@ export default function AppStateSelect({ getStateName, formik }) {
       renderInput={(params) => (
         <TextField
           {...params}
-          //   label="Choose a country"
+          label=""
           placeholder="Select State"
         />
       )}

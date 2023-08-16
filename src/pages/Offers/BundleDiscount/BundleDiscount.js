@@ -1,8 +1,8 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useReducer, useState } from "react";
+import { Link, createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
 import BundleDiscountTable from "./BundleDiscountTable";
-import TableSearch from "../../../components/TableSearch/TableSearch";
+import TableSearch, { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import ViewTutorial from "../../../components/ViewTutorial/ViewTutorial";
 import TabPanel from "../../../components/TabPanel/TabPanel";
 // ! IMAGES IMPORTS
@@ -22,12 +22,278 @@ import {
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORT
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { useBulkDeleteBundleDiscountMutation, useDeleteBundleDiscountMutation, useGetAllBundleDiscountsQuery } from "../../../features/offers/discounts/bundleDiscountsApiSlice";
+import { useDispatch } from "react-redux";
+import { showError } from "../../../features/snackbar/snackbarAction";
+
+const initialQueryFilterState = {
+  pageSize: 10,
+  pageNo: 1,
+  name:"",
+  searchValue:"",
+  // status: ["active", "in-active"],
+  createdAt: "-1",
+  alphabetical: null,
+};
+const initialBundleDiscountsState = {
+  data: [],
+  totalCount: 0,
+  discountType:0,
+};
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_SIZE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      pageSize: +action.value,
+    };
+  }
+  if (action.type === "CHANGE_PAGE") {
+    return {
+      ...state,
+      pageNo: action.pageNo + 1,
+    };
+  }
+  if (action.type === "SEARCH") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      name: action.name,
+    };
+  }
+  if (action.type === "SET_SEARCH_VALUE") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      searchValue: action.searchValue,
+    };  
+  }
+  if (action.type === "SET_ALPHABETICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      alphabetical: action.alphabetical,
+      createdAt: null,
+    };
+  }
+  if (action.type === "SET_CRONOLOGICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      createdAt: action.createdAt,
+      alphabetical: null,
+    };
+  }
+  return initialQueryFilterState;
+};
+const  bundleDiscountsReducer = (state, action) => {
+  if (action.type === "SET_DATA") {
+    return {
+      ...state,
+      data: action.data,
+      totalCount: action.totalCount,
+    };
+  }
+  if (action.type === "SET_DISCOUNT_TYPE") {
+    return {
+      ...state,
+      discountType: action.discountType,
+    };
+  }
+  return initialBundleDiscountsState;
+};
 
 const BundleDiscount = () => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const[searchParams, setSearchParams] = useSearchParams();
+  const Navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+  const [bundleDiscountsState, dispatchBundleDiscounts] = useReducer(
+    bundleDiscountsReducer,
+    initialBundleDiscountsState
+  );
+
+  const{
+    data: bundleDiscountsData, 
+    isLoading: bundleDiscountsIsLoading, 
+    isSuccess: bundleDiscountsIsSuccess, 
+    error: bundleDiscountsError,
+    isError:bundleDiscountsIsError
+  }=useGetAllBundleDiscountsQuery(queryFilterState);
+
+  const [
+    deleteBundleDiscount,
+    {
+      isLoading: deleteBundleDiscountIsLoading,
+      isSuccess: deleteBundleDiscountIsSuccess,
+      error: deleteBundleDiscountError,
+    },
+  ] = useDeleteBundleDiscountMutation();
+
+  const [
+    bulkDeleteBundleDiscount,
+    {
+      isLoading: bulkDeleteBundleDiscountIsLoading,
+      isSuccess: bulkDeleteBundleDiscountIsSuccess,
+      error: bulkDeleteBundleDiscountError
+    }
+  ] = useBulkDeleteBundleDiscountMutation();
+
+  const handleDiscountTypeChangeHandler = (event, newValue) => {
+    dispatchBundleDiscounts({
+      type:"SET_DISCOUNT_TYPE", discountType:newValue
+    })
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
+    dispatchQueryFilter({ type: "SEARCH", name: "" });
+    setSearchParams({type:newValue})
+  };
+  const handleChangeRowsPerPage = (event) => {
+    dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
+  };
+
+  const handleChangePage = (_, pageNo) => {
+    dispatchQueryFilter({ type: "CHANGE_PAGE", pageNo });
+  };
+
+  const handleSearchChange = (value) => {
+    dispatchQueryFilter({ type: "SEARCH", name: value });
+  };
+
+  const handleSearchValue =(value)=>{
+    dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: value });
+  }
+
+  const handleAlphabeticalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_ALPHABETICAL_SORTING",
+      alphabetical: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
+  
+  const handleChronologicalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_CRONOLOGICAL_SORTING",
+      createdAt: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
+  const editDiscountPageNavigation = (data)=>{
+    Navigate({
+      pathname: `./edit/${data ? data._id : ""}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, discountType: bundleDiscountsState.discountType}),
+      })}`,
+    });
+  };
+
+    useEffect(() => {
+    if (bundleDiscountsIsSuccess) {
+
+      if (bundleDiscountsState.discountType === 0) {
+        dispatchBundleDiscounts({
+          type: "SET_DATA",
+          data: bundleDiscountsData?.data?.data,
+          totalCount: bundleDiscountsData?.data?.totalCount,
+        })
+      }
+      if (bundleDiscountsState.discountType === 1) {
+        dispatchBundleDiscounts({
+          type: "SET_DATA",
+          data: bundleDiscountsData?.data?.data,
+          totalCount: bundleDiscountsData?.data?.totalCount,
+        })
+      }
+      if(bundleDiscountsState.discountType === 2)
+      {
+        dispatchBundleDiscounts({
+          type: "SET_DATA",
+          data: bundleDiscountsData?.data?.data,
+          totalCount: bundleDiscountsData?.data?.totalCount,
+        })
+      }
+      if(bundleDiscountsState.discountType === 3)
+      {
+        dispatchBundleDiscounts({
+          type: "SET_DATA",
+          data: bundleDiscountsData?.data?.data,
+          totalCount: bundleDiscountsData?.data?.totalCount,
+        })
+      }
+    }
+    if (bundleDiscountsIsError) {
+      if (bundleDiscountsError?.data?.message) {
+        dispatch(showError({ message: bundleDiscountsError.data.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong!, please try again" })
+        );
+      }
+    }
+
+  }, [bundleDiscountsIsSuccess,bundleDiscountsIsError,bundleDiscountsError,dispatch,bundleDiscountsState.discountType,deleteBundleDiscountIsSuccess,bulkDeleteBundleDiscountIsSuccess,bundleDiscountsData])
+
+  useEffect(() => {
+    if (deleteBundleDiscountError) {
+      if (deleteBundleDiscountError?.data?.message) {
+        dispatch(showError({ message: deleteBundleDiscountError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [deleteBundleDiscountError, dispatch]);
+
+  useEffect(() => {
+    if (bulkDeleteBundleDiscountError) {
+      if (bulkDeleteBundleDiscountError?.data?.message) {
+        dispatch(showError({ message: bulkDeleteBundleDiscountError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [bulkDeleteBundleDiscountError, dispatch]);
+
+  useEffect(() => {
+    const type = JSON.parse( searchParams.get("filter"));
+    console.log("efoihi3if", type?.discountType)
+    if(+searchParams.get("type")===0 || type?.discountType===0)
+    {
+      dispatchBundleDiscounts({
+        type:"SET_DISCOUNT_TYPE", discountType:0
+      })
+    }
+    else if(+searchParams.get("type")===1 || type?.discountType===1)
+    {
+      dispatchBundleDiscounts({
+        type:"SET_DISCOUNT_TYPE", discountType:1
+      })
+    }
+    else if(+searchParams.get("type")===2 || type?.discountType===2)
+    {
+      console.log("inside nfekjfk")
+      dispatchBundleDiscounts({
+        type:"SET_DISCOUNT_TYPE", discountType:2
+      })
+    }
+    else if((+searchParams.get("type")===3) || type?.discountType===3)
+    {
+      dispatchBundleDiscounts({
+        type:"SET_DISCOUNT_TYPE", discountType:3
+      })
+    }
+}, [searchParams])
 
   // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
@@ -43,6 +309,7 @@ const BundleDiscount = () => {
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
+
 
   return (
     <div className="container-fluid page">
@@ -86,8 +353,8 @@ const BundleDiscount = () => {
               scrollButtons
               allowScrollButtonsMobile */}
             <Tabs
-              value={value}
-              onChange={handleChange}
+              value={bundleDiscountsState.discountType}
+              onChange={handleDiscountTypeChangeHandler}
               aria-label="scrollable force tabs example"
               className="tabs"
             >
@@ -98,7 +365,11 @@ const BundleDiscount = () => {
             </Tabs>
           </Box>
           <div className="d-flex align-items-center mt-3 mb-3 px-2 justify-content-between">
-            <TableSearch />
+          <TableSearchSecondary
+              onSearchValueChange={handleSearchValue}
+              value={queryFilterState.searchValue}
+              onChange={handleSearchChange}
+            />
             <button
               className="button-grey py-2 px-3 ms-2"
               aria-describedby={idSort}
@@ -131,7 +402,7 @@ const BundleDiscount = () => {
                   // value={value}
                   // onChange={handleRadioChange}
                 >
-                  <FormControlLabel
+                  {/* <FormControlLabel
                     value="userName"
                     control={<Radio size="small" />}
                     label="User Name"
@@ -155,33 +426,69 @@ const BundleDiscount = () => {
                     value="uploadTime"
                     control={<Radio size="small" />}
                     label="Upload Time"
-                  />
+                  /> */}
                   <FormControlLabel
-                    value="alphabeticalAtoZ"
-                    control={<Radio size="small" />}
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "1"}
+                      />
+                    }
                     label="Alphabetical (A-Z)"
+                    onChange={handleAlphabeticalSorting}
                   />
                   <FormControlLabel
-                    value="alphabeticalZtoA"
-                    control={<Radio size="small" />}
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.alphabetical === "-1"}
+                      />
+                    }
                     label="Alphabetical (Z-A)"
+                    onChange={handleAlphabeticalSorting}
                   />
                   <FormControlLabel
-                    value="oldestToNewest"
-                    control={<Radio size="small" />}
+                    value="1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "1"}
+                      />
+                    }
                     label="Oldest to Newest"
+                    onChange={handleChronologicalSorting}
                   />
                   <FormControlLabel
-                    value="newestToOldest"
-                    control={<Radio size="small" />}
+                    value="-1"
+                    control={
+                      <Radio
+                        size="small"
+                        checked={queryFilterState.createdAt === "-1"}
+                      />
+                    }
                     label="Newest to Oldest"
+                    onChange={handleChronologicalSorting}
                   />
                 </RadioGroup>
               </FormControl>
             </Popover>
           </div>
           <TabPanel value={value} index={0}>
-            <BundleDiscountTable />
+            <BundleDiscountTable 
+              isLoading={bundleDiscountsIsLoading}
+              list={bundleDiscountsState.data}
+              totalCount={bundleDiscountsState.totalCount}
+              changeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPage={queryFilterState.pageSize}
+              changePage={handleChangePage}
+              page={queryFilterState.pageNo}
+              discountType ={bundleDiscountsState.discountType}
+              edit={editDiscountPageNavigation}
+              deleteData={deleteBundleDiscount}
+              bulkDelete={bulkDeleteBundleDiscount}
+            />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <BundleDiscountTable />

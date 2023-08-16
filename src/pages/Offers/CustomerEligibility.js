@@ -1,4 +1,4 @@
-import React,{ useState } from "react";
+import React, { useState } from "react";
 // ! IMAGES IMPORTS
 import arrowDown from "../../assets/icons/arrowDown.svg";
 // ! MATERIAL IMPORTS
@@ -11,6 +11,7 @@ import {
   Autocomplete,
   Checkbox,
   TextField,
+  FormHelperText,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import TableSearch from "../../components/TableSearch/TableSearch";
@@ -23,12 +24,12 @@ import { useGetAllCustomerGroupQuery } from "../../features/customers/customerGr
 const CustomerEligibility = ({ value, field, formik, touched, error }) => {
   const { data: customersData, isSuccess: customersIsSuccess } =
     useGetAllCustomersQuery(undefined, {
-      skip: value?.customer !== "specificCustomer",
+      skip: value?.customer !== "specificCustomers",
     });
 
   const { data: customersGroupData, isSuccess: customersGroupIsSuccess } =
     useGetAllCustomerGroupQuery(undefined, {
-      skip: value?.customer !== "specificCustomerGroups",
+      skip: value?.customer !== "customerGroups",
     });
 
   // ? RADIO STARTS HERE
@@ -41,8 +42,6 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
   const handleDelete = () => {
     console.info("You clicked the delete icon.");
   };
-
-  console.log("valueeeeee",value?.value)
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -70,11 +69,12 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
             value={value?.customer}
             onChange={(_, newValue) => {
               formik.setFieldValue(`${field}.customer`, newValue);
-              formik.setFieldValue(`${field}.value`, []);
+              formik.setFieldValue(`${field}.specificCustomers`, []);
+              formik.setFieldValue(`${field}.customerGroups`, []);
             }}
           >
             <FormControlLabel
-              value="all"
+              value="allCustomers"
               control={<Radio size="small" />}
               label="All Customers"
               sx={{
@@ -85,8 +85,9 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
                 },
               }}
             />
+
             <FormControlLabel
-              value="specificCustomerGroups"
+              value="customerGroups"
               control={<Radio size="small" />}
               label="Specific Customer Groups"
               sx={{
@@ -97,8 +98,58 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
                 },
               }}
             />
+            {value?.customer === "customerGroups" &&
+              customersGroupIsSuccess && (
+                <React.Fragment>
+                  <Autocomplete
+                    multiple
+                    id="checkboxes-tags-demo"
+                    className="mt-3"
+                    sx={{ width: "100%" }}
+                    options={
+                      customersData?.data?.data ||
+                      customersGroupData?.data?.data
+                    }
+                    value={value?.customerGroups || []}
+                    getOptionLabel={(option) =>
+                      option?.firstName || option?.name
+                    }
+                    size="small"
+                    onChange={(_, newValue) => {
+                      formik.setFieldValue(`${field}.customerGroups`, newValue);
+                    }}
+                    renderOption={(props, option, { selected }) => (
+                      <li {...props}>
+                        <Checkbox
+                          icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                          checkedIcon={<CheckBoxIcon fontSize="small" />}
+                          checked={selected}
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                            marginRight: 0,
+                          }}
+                        />
+                        <small className="text-lightBlue">
+                          {option.firstName || option?.name}
+                        </small>
+                      </li>
+                    )}
+                    renderInput={(params) => (
+                      <TextField
+                        size="small"
+                        {...params}
+                        placeholder="Search ..."
+                      />
+                    )}
+                  />
+                  {!!touched?.customerGroups && error?.customerGroups && (
+                    <FormHelperText error>{error?.customerGroups}</FormHelperText>
+                  )}
+                </React.Fragment>
+              )}
             <FormControlLabel
-              value="specificCustomer"
+              value="specificCustomers"
               control={<Radio size="small" />}
               label="Specific Customer"
               sx={{
@@ -111,30 +162,8 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
             />
           </RadioGroup>
         </FormControl>
-
-        {/* <div className="d-flex mt-3">
-          <TableSearch />
-          <button className="button-grey py-2 px-3 ms-2" onClick={openCustomerModal}>
-            <small className="text-lightBlue me-2">Browse</small>
-            <img src={arrowDown} alt="arrow" className="" />
-          </button>
-        </div>
-        <div className="d-flex">
-          <Chip
-            label="VVIP Users"
-            onDelete={handleDelete}
-            size="small"
-            className="mt-3 me-2"
-          />
-          <Chip
-            label="Royal Users"
-            onDelete={handleDelete}
-            className="me-2 mt-3"
-            size="small"
-          />
-        </div> */}
-        {value?.customer !== "all" &&
-          (customersIsSuccess || customersGroupIsSuccess) && (
+        {value?.customer === "specificCustomers" && customersIsSuccess && (
+          <React.Fragment>
             <Autocomplete
               multiple
               id="checkboxes-tags-demo"
@@ -143,11 +172,11 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
               options={
                 customersData?.data?.data || customersGroupData?.data?.data
               }
-              value={value?.value||[]}
+              value={value?.specificCustomers || []}
               getOptionLabel={(option) => option?.firstName || option?.name}
               size="small"
               onChange={(_, newValue) => {
-                formik.setFieldValue( `${field}.value`, newValue);
+                formik.setFieldValue(`${field}.specificCustomers`, newValue);
               }}
               renderOption={(props, option, { selected }) => (
                 <li {...props}>
@@ -170,12 +199,12 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
                 <TextField size="small" {...params} placeholder="Search ..." />
               )}
             />
-          )}
+            {!!touched?.specificCustomers && error?.specificCustomers && (
+              <FormHelperText error>{error?.specificCustomers}</FormHelperText>
+            )}
+          </React.Fragment>
+        )}
       </div>
-      {/* <AddCustomerModal 
-        openAddCustomerModal={addCustomer}
-        closeAddCustomerModal={closeAddCustomerModal}
-      /> */}
     </div>
   );
 };

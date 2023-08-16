@@ -26,10 +26,39 @@ export const discountsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Discounts"],
     }),
+
+    editDiscount: builder.mutation({
+      query: ({ id, details }) => ({
+        url: `/discount/product/${id}`,
+        method: "PUT",
+        body: details,
+      }),
+      invalidatesTags: ["Discounts"],
+    }),
+
+    deleteDiscount: builder.mutation({
+      query: (discountId) => ({
+        url: `/discount/product/${discountId}`,
+        method: "DELETE",
+        body: discountId,
+      }),
+      invalidatesTags: ["Discounts"],
+    }),
+    bulkDeleteDiscount:builder.mutation({
+      query: (deletes) => ({
+        url: `/discount/product/bulkDelete`,
+        method: "DELETE",
+        body: deletes,
+      }),
+      invalidatesTags: ["Discounts"],
+    }),
   }),
 });
 
 export const {
 useGetAllDiscountsQuery,
 useCreateDiscountMutation,
+useEditDiscountMutation,
+useDeleteDiscountMutation,
+useBulkDeleteDiscountMutation,
 } = discountsApiSlice;
