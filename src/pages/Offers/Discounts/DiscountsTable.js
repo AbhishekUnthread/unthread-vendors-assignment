@@ -383,7 +383,18 @@ const DiscountsTable = ({
                           <div className="d-flex flex-column">
                             <div className="d-flex">
                               <p className="text-lightBlue me-2">
-                                {row?.mainDiscount?.type}
+                                { row?.mainDiscount?.type==="productDiscount"
+                                ? "Product Discount"
+                                : row?.mainDiscount?.type==="cartDiscount"
+                                ? "Cart Discount"
+                                : row?.mainDiscount?.type==="freeShipping"
+                                ? "Free Shipping"
+                                : row?.mainDiscount?.type==="buyxGety"
+                                ? "Buy X Get Y"
+                                : row?.mainDiscount?.type==="bulk"
+                                ? "Bulk Discount"
+                                : ""
+                                }
                               </p>
                             </div>
                           </div>
