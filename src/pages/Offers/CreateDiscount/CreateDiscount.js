@@ -20,6 +20,8 @@ import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import info from "../../../assets/icons/info.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import moment from "moment";
+import _ from "lodash";
+
 // ! MATERIAL IMPORTS
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -66,6 +68,7 @@ import {
 import LimitByLocation from "../../../components/DiscountFormat/LimitByLocation";
 import { useLocation } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
 
 const taggedWithData = [
   { title: "Tag 1", value: "tag1" },
@@ -253,14 +256,19 @@ const discountRangeValidationSchema = Yup.object().shape({
     .min(0, "Minimum quantity must be at least 0"),
   maxQty: Yup.number()
     .required("Maximum quantity is required")
-    .min(Yup.ref("minQty"), "Maximum quantity must be greater than or equal to the minimum quantity"),
-  discountValue: Yup.number()
-    .required("Discount value is required"),
+    .min(
+      Yup.ref("minQty"),
+      "Maximum quantity must be greater than or equal to the minimum quantity"
+    ),
+  discountValue: Yup.number().required("Discount value is required"),
   type: Yup.string()
     .required("Type is required")
-    .oneOf(["fixed", "percentage"], "Type must be either 'fixed' or 'percentage'"),
+    .oneOf(
+      ["fixed", "percentage"],
+      "Type must be either 'fixed' or 'percentage'"
+    ),
   value: Yup.string().required("Value is required"),
-})
+});
 
 const discountValidationSchema = Yup.object().shape({
   discountName: Yup.string()
@@ -288,7 +296,6 @@ const discountValidationSchema = Yup.object().shape({
     }
     return schema;
   }),
-  // filters: Yup.array().of(filterSchema),
   returnExchange: Yup.string()
     .oneOf(["allowed", "notAllowed"], "Invalid")
     .required("required"),
@@ -297,7 +304,11 @@ const discountValidationSchema = Yup.object().shape({
   discountValue: Yup.mixed().when(
     ["discountType"],
     ([discountType], schema) => {
-      if (discountType !== "buyxGety" && discountType !== "freeShipping" && discountType !== "bulk") {
+      if (
+        discountType !== "buyxGety" &&
+        discountType !== "freeShipping" &&
+        discountType !== "bulk"
+      ) {
         return discountValueSchema;
       }
       return schema;
@@ -309,8 +320,14 @@ const discountValidationSchema = Yup.object().shape({
     }
     return schema;
   }),
-  customerEligibility : customerEligibilitySchema,
-  discountRange : Yup.array().of(discountRangeValidationSchema)
+  customerEligibility: customerEligibilitySchema,
+  discountRange : Yup.mixed().when(["discountType"], ([discountType], schema) => {
+    if (discountType === "bulk") {
+      return Yup.array().of(discountRangeValidationSchema);
+    }
+    return schema;
+  }),
+
 
   // couponCode: couponCodeSchema,
 });
@@ -318,6 +335,8 @@ const initialDiscountsState = {
   data: [],
   totalCount: 0,
   discountType: 0,
+  isEditing: false,
+
 };
 const discountsReducer = (state, action) => {
   if (action.type === "SET_DATA") {
@@ -331,6 +350,18 @@ const discountsReducer = (state, action) => {
     return {
       ...state,
       discountType: action.discountType,
+    };
+  }
+  if (action.type === "ENABLE_EDIT") {
+    return {
+      ...initialDiscountsState,
+      isEditing: true,
+    };
+  }
+  if (action.type === "DISABLE_EDIT") {
+    return {
+      ...initialDiscountsState,
+      isEditing: false,
     };
   }
   return initialDiscountsState;
@@ -352,7 +383,6 @@ const CreateDiscount = () => {
   const [copied, setCopied] = useState(false);
   let { id } = useParams();
 
-  console.log("kdjiohdwedho", location.pathname);
   const [
     createDiscount,
     {
@@ -491,7 +521,7 @@ const CreateDiscount = () => {
     navigate("/offers/discounts");
   };
 
-    const handleCopy = () => {
+  const handleCopy = () => {
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
@@ -500,7 +530,7 @@ const CreateDiscount = () => {
 
   const formik = useFormik({
     initialValues: {
-      discountName:  discountsData?.data?.data[0].name || "",
+      discountName: discountsData?.data?.data[0].name || "",
       discountType:
         searchParams.get("discountType") ||
         discountsData?.data?.data[0]?.mainDiscount?.type ||
@@ -524,13 +554,19 @@ const CreateDiscount = () => {
       },
       returnExchange: "allowed",
       maximumDiscount: {
-        limitDiscountNumber: discountsData?.data.data[0].maximumDiscountUse?.limitDiscountNumber ||false,
-        limitUsagePerCustomer: discountsData?.data.data[0].maximumDiscountUse?.limitUsagePerCustomer ||false,
+        limitDiscountNumber:
+          discountsData?.data.data[0].maximumDiscountUse?.limitDiscountNumber ||
+          false,
+        limitUsagePerCustomer:
+          discountsData?.data.data[0].maximumDiscountUse
+            ?.limitUsagePerCustomer || false,
         total: discountsData?.data.data[0].maximumDiscountUse?.total || "",
-        perCustomer: discountsData?.data.data[0].maximumDiscountUse?.perCustomer || "",
+        perCustomer:
+          discountsData?.data.data[0].maximumDiscountUse?.perCustomer || "",
       },
       discountCombination: {
-        allowCombineWithOthers: discountsData?.data.data[0].allowCombineWithOthers || false,
+        allowCombineWithOthers:
+          discountsData?.data.data[0].allowCombineWithOthers || false,
         allowCombineWith: discountsData?.data.data[0].allowCombineWith || [],
       },
       filters: [
@@ -550,14 +586,14 @@ const CreateDiscount = () => {
         customer:
           discountsData?.data?.data[0]?.eligibility?.eligibilityType ||
           "allCustomers",
-          customerGroups : [],
-          specificCustomers : [],
+        customerGroups: [],
+        specificCustomers: [],
       },
       discountValue: {
-        discountValue:  discountsData?.data?.data[0]?.mainDiscount?.value || "",
-        type:  discountsData?.data?.data[0]?.mainDiscount?.type || "percentage" ,
-        value:  discountsData?.data?.data[0]?.mainDiscount?.discountOn || "",
-        cartLabel:  discountsData?.data?.data[0]?.mainDiscount?.cartLabel || "",
+        discountValue: discountsData?.data?.data[0]?.mainDiscount?.value || "",
+        type: discountsData?.data?.data[0]?.mainDiscount?.type || "percentage",
+        value: discountsData?.data?.data[0]?.mainDiscount?.discountOn || "",
+        cartLabel: discountsData?.data?.data[0]?.mainDiscount?.cartLabel || "",
       },
       buyXGetY: {
         buy: "",
@@ -585,9 +621,9 @@ const CreateDiscount = () => {
         location: "",
       },
       scheduledDiscount: {
-        startDateTime: "",
-        endDateTime: "",
-        neverExpire : false,
+        startDateTime: discountsData?.data?.data[0]?.scheduledDiscount?.startDateTime || "",
+        endDateTime: discountsData?.data?.data[0]?.scheduledDiscount?.endDateTime || "",
+        neverExpire:discountsData?.data?.data[0]?.scheduledDiscount?.neverExpire || false,
       },
     },
     enableReinitialize: true,
@@ -679,9 +715,10 @@ const CreateDiscount = () => {
             ? { allCustomers: true }
             : values?.customerEligibility?.customer === "specificCustomers"
             ? {
-                specificCustomers: values?.customerEligibility?.specificCustomers.map(
-                  (item, index) => item?._id
-                ),
+                specificCustomers:
+                  values?.customerEligibility?.specificCustomers.map(
+                    (item, index) => item?._id
+                  ),
               }
             : values?.customerEligibility?.customer === "customerGroups"
             ? {
@@ -752,11 +789,12 @@ const CreateDiscount = () => {
         })
           .unwrap()
           .then(() => {
+            dispatchDiscounts({ type: "DISABLE_EDIT" });
             dispatch(showSuccess({ message: "Discounts edited successfully" }));
           });
       } else {
         createDiscount(test)
-        // .then(() => navigate("/offers/discounts"));
+        .then(() => navigate("/offers/discounts"));
       }
     },
   });
@@ -796,7 +834,11 @@ const CreateDiscount = () => {
   };
   const addDiscountRangeHandler = () => {
     const newRange = formik?.values?.discountRange.concat({
-      minQty: formik.values.discountRange.length>0 ? +(formik.values.discountRange[formik.values.discountRange.length - 1].maxQty)+ 1 : null,
+      minQty:
+        formik.values.discountRange.length > 0
+          ? +formik.values.discountRange[formik.values.discountRange.length - 1]
+              .maxQty + 1
+          : null,
       maxQty: null,
       discountValue: null,
       type: "percentage",
@@ -830,7 +872,15 @@ const CreateDiscount = () => {
     // console.log("bndndwhdqwdk", discountsState?.discountType)
   }, [searchParams]);
 
-  console.log("errorrrrrrrrrrrr", formik?.errors)
+  useEffect(() => {
+    if (id && !_.isEqual(formik.values, formik.initialValues)) {
+      dispatchDiscounts({ type: "ENABLE_EDIT" });
+    } else if (id && _.isEqual(formik.values, formik.initialValues)) {
+      dispatchDiscounts({ type: "DISABLE_EDIT" });
+    }
+  }, [formik.initialValues, formik.values, id]);
+
+  console.log("errorrrrrrrrrrrr", formik?.errors);
 
   return (
     <div className="page container-fluid position-relative">
@@ -1107,8 +1157,14 @@ const CreateDiscount = () => {
                 <h6 className="fw-500 ms-2 me-2 text-lightBlue">
                   {formik.values?.discountFormat?.discountCode}
                 </h6>
-                <CopyToClipboard text={formik.values?.discountFormat?.discountCode} onCopy={handleCopy}>
-                  <Tooltip title={copied?"Copied to clipboard" : "Copy"} placement="top">
+                <CopyToClipboard
+                  text={formik.values?.discountFormat?.discountCode}
+                  onCopy={handleCopy}
+                >
+                  <Tooltip
+                    title={copied ? "Copied to clipboard" : "Copy"}
+                    placement="top"
+                  >
                     <ContentCopyIcon
                       sx={{
                         color: "#5c6d8e",
@@ -1189,7 +1245,17 @@ const CreateDiscount = () => {
             </div>
           </div>
         </div>
-        <SaveFooterTertiary show={true} onDiscard={backHandler} />
+        <SaveFooterTertiary
+          show={id ? discountsState.isEditing : true}
+          onDiscard={backHandler}
+          isLoading={
+            createDiscountIsLoading || editDicountIsLoading
+          }
+        />
+        <DiscardModalSecondary
+          when={!_.isEqual(formik.values, formik.initialValues)}
+          message="discount"
+        />
       </form>
     </div>
   );
