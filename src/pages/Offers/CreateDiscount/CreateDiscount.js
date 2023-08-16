@@ -210,12 +210,11 @@ const buyxGetySchema = Yup.object().shape({
 });
 
 const scheduleDateSchema = Yup.object().shape({
-  startDateTime: Yup.date().required("Start date is required"),
-  // endDateTime: Yup.date()
-  //   .nullable()
-  //   .when('startDateTime', (start, schema) => {
-  //     return schema.min(start, 'End date must be after start date');
-  //   }),
+  startDateTime: Yup.date().required("Start date and time is required"),
+  endDateTime: Yup.date().when(["neverExpire"], ([neverExpire], schema) => {
+    return neverExpire ? schema : schema.required("required");
+  }),
+  neverExpire: Yup.boolean(),
 });
 
 const discountValueSchema = Yup.object().shape({
@@ -231,6 +230,37 @@ const discountValueSchema = Yup.object().shape({
   //   return schema;b
   // }),
 });
+
+const customerEligibilitySchema = Yup.object().shape({
+  customer: Yup.string()
+    .required("required")
+    .oneOf(["specificCustomers", "customerGroups", "allCustomers"]),
+  specificCustomers: Yup.array().when(["customer"], ([customer], schema) => {
+    return customer === "specificCustomers"
+      ? schema.required("required").min(1, "At least one value is required")
+      : schema;
+  }),
+  customerGroups: Yup.array().when(["customer"], ([customer], schema) => {
+    return customer === "customerGroups"
+      ? schema.required("required").min(1, "At least one value is required")
+      : schema;
+  }),
+});
+
+const discountRangeValidationSchema = Yup.object().shape({
+  minQty: Yup.number()
+    .required("Minimum quantity is required")
+    .min(0, "Minimum quantity must be at least 0"),
+  maxQty: Yup.number()
+    .required("Maximum quantity is required")
+    .min(Yup.ref("minQty"), "Maximum quantity must be greater than or equal to the minimum quantity"),
+  discountValue: Yup.number()
+    .required("Discount value is required"),
+  type: Yup.string()
+    .required("Type is required")
+    .oneOf(["fixed", "percentage"], "Type must be either 'fixed' or 'percentage'"),
+  value: Yup.string().required("Value is required"),
+})
 
 const discountValidationSchema = Yup.object().shape({
   discountName: Yup.string()
@@ -279,6 +309,8 @@ const discountValidationSchema = Yup.object().shape({
     }
     return schema;
   }),
+  customerEligibility : customerEligibilitySchema,
+  discountRange : Yup.array().of(discountRangeValidationSchema)
 
   // couponCode: couponCodeSchema,
 });
@@ -468,11 +500,11 @@ const CreateDiscount = () => {
 
   const formik = useFormik({
     initialValues: {
-      discountName: "" || discountsData?.data?.data[0].name,
+      discountName:  discountsData?.data?.data[0].name || "",
       discountType:
         searchParams.get("discountType") ||
         discountsData?.data?.data[0]?.mainDiscount?.type ||
-        "x",
+        "",
       discountFormat: {
         discountFormat:
           discountsData?.data.data[0].mainDiscount.format || "code",
@@ -492,14 +524,14 @@ const CreateDiscount = () => {
       },
       returnExchange: "allowed",
       maximumDiscount: {
-        limitDiscountNumber: false,
-        limitUsagePerCustomer: false,
-        total: "",
-        perCustomer: "",
+        limitDiscountNumber: discountsData?.data.data[0].maximumDiscountUse?.limitDiscountNumber ||false,
+        limitUsagePerCustomer: discountsData?.data.data[0].maximumDiscountUse?.limitUsagePerCustomer ||false,
+        total: discountsData?.data.data[0].maximumDiscountUse?.total || "",
+        perCustomer: discountsData?.data.data[0].maximumDiscountUse?.perCustomer || "",
       },
       discountCombination: {
-        allowCombineWithOthers: false,
-        allowCombineWith: [],
+        allowCombineWithOthers: discountsData?.data.data[0].allowCombineWithOthers || false,
+        allowCombineWith: discountsData?.data.data[0].allowCombineWith || [],
       },
       filters: [
         {
@@ -518,16 +550,14 @@ const CreateDiscount = () => {
         customer:
           discountsData?.data?.data[0]?.eligibility?.eligibilityType ||
           "allCustomers",
-        value:
-          discountsData?.data?.data[0]?.eligibility?.customerGroups ||
-          discountsData?.data?.data[0]?.eligibility?.specificCustomers ||
-          [],
+          customerGroups : [],
+          specificCustomers : [],
       },
       discountValue: {
-        discountValue: "" || discountsData?.data.data[0].mainDiscount.value,
-        type: "percentage" || discountsData?.data.data[0].mainDiscount.type,
-        value: "" || discountsData?.data.data[0].mainDiscount.discountOn,
-        cartLabel: "" || discountsData,
+        discountValue:  discountsData?.data?.data[0]?.mainDiscount?.value || "",
+        type:  discountsData?.data?.data[0]?.mainDiscount?.type || "percentage" ,
+        value:  discountsData?.data?.data[0]?.mainDiscount?.discountOn || "",
+        cartLabel:  discountsData?.data?.data[0]?.mainDiscount?.cartLabel || "",
       },
       buyXGetY: {
         buy: "",
@@ -557,6 +587,7 @@ const CreateDiscount = () => {
       scheduledDiscount: {
         startDateTime: "",
         endDateTime: "",
+        neverExpire : false,
       },
     },
     enableReinitialize: true,
@@ -648,13 +679,13 @@ const CreateDiscount = () => {
             ? { allCustomers: true }
             : values?.customerEligibility?.customer === "specificCustomers"
             ? {
-                specificCustomers: values?.customerEligibility?.value.map(
+                specificCustomers: values?.customerEligibility?.specificCustomers.map(
                   (item, index) => item?._id
                 ),
               }
             : values?.customerEligibility?.customer === "customerGroups"
             ? {
-                customerGroups: values?.customerEligibility?.value.map(
+                customerGroups: values?.customerEligibility?.customerGroups.map(
                   (item, index) => item?._id
                 ),
               }
@@ -705,9 +736,13 @@ const CreateDiscount = () => {
           startDateTime: moment(
             values?.scheduledDiscount?.startDateTime
           ).format("YYYY-MM-DDTHH:mm:ss[Z]"),
-          endDateTime: moment(values?.scheduledDiscount?.endDateTime).format(
-            "YYYY-MM-DDTHH:mm:ss[Z]"
-          ),
+          ...(values?.scheduledDiscount?.neverExpire
+            ? { neverExpire: values?.scheduledDiscount?.neverExpire }
+            : {
+                endDateTime: moment(
+                  values?.scheduledDiscount?.endDateTime
+                ).format("YYYY-MM-DDTHH:mm:ss[Z]"),
+              }),
         },
       };
       if (id) {
@@ -720,7 +755,8 @@ const CreateDiscount = () => {
             dispatch(showSuccess({ message: "Discounts edited successfully" }));
           });
       } else {
-        createDiscount(test).then(() => navigate("/offers/discounts"));
+        createDiscount(test)
+        // .then(() => navigate("/offers/discounts"));
       }
     },
   });
@@ -793,6 +829,8 @@ const CreateDiscount = () => {
     // dispatchDiscounts({type : "SET_DISCOUNT_TYPE", discountType : searchParams.get("discountType") }) ;
     // console.log("bndndwhdqwdk", discountsState?.discountType)
   }, [searchParams]);
+
+  console.log("errorrrrrrrrrrrr", formik?.errors)
 
   return (
     <div className="page container-fluid position-relative">

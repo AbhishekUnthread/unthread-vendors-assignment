@@ -7,6 +7,7 @@ import {
   OutlinedInput,
   Tooltip,
   Popover,
+  FormHelperText,
 } from "@mui/material";
 
 import info from "../../assets/icons/info.svg";
@@ -53,6 +54,9 @@ function AddDiscountRange({ value, field, formik, touched, error }) {
             onChange={formik?.handleChange}
           />
         </FormControl>
+        {!!touched?.minQty && error?.minQty && (
+              <FormHelperText error>{error?.minQty}</FormHelperText>
+            )}
       </div>
       <div className="col-md-2 col-6 mt-1 ps-0">
         {/* <div className="d-flex mb-1">
@@ -75,6 +79,9 @@ function AddDiscountRange({ value, field, formik, touched, error }) {
             onChange={formik?.handleChange}
           />
         </FormControl>
+        {!!touched?.maxQty && error?.maxQty && (
+              <FormHelperText error>{error?.maxQty}</FormHelperText>
+            )}
       </div>
       <div className="col-md-8 pe-0 ps-0 ps-md-3">
         {/* <div className="row mt-1">
@@ -94,6 +101,7 @@ function AddDiscountRange({ value, field, formik, touched, error }) {
     </div> */}
         <div className="row align-items-center mt-1">
           <div className="col-md-7 discount-inputs-two d-flex align-items-center">
+          <div className="col">
             <FormControl className="px-0">
               <OutlinedInput
                 value={value?.discountValue}
@@ -121,6 +129,12 @@ function AddDiscountRange({ value, field, formik, touched, error }) {
                 }
               />
             </FormControl>
+            <small>
+            {!!touched?.discountValue && error?.discountValue && (
+              <FormHelperText error>{error?.discountValue}</FormHelperText>
+            )}
+            </small>
+            </div>
             <Popover
               anchorOrigin={{
                 vertical: "bottom",
@@ -204,6 +218,9 @@ function AddDiscountRange({ value, field, formik, touched, error }) {
                 </MenuItem>
               </Select>
             </FormControl>
+            {!!touched?.value && error?.value && (
+              <FormHelperText error>{error?.value}</FormHelperText>
+            )}
           </div>
         </div>
       </div>
