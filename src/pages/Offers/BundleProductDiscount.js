@@ -213,7 +213,7 @@ const BundleProductDiscount = ({
             option?.firstName || option?.title || option?.name || []
           }
           size="small"
-          value={selectedOptions}
+          value={selectedOptions || value?.value}
           onChange={(_, newValue) => {
             handleOptionChange(newValue);
           }}

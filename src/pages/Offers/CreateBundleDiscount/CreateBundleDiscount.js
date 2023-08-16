@@ -1,6 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import "./CreateBundleDiscount.scss";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 // ! COMPONENT IMPORTS
 import ProductStatusToggle from "../ProductStatusToggle";
 import MaximumDiscountUsers from "../MaximumDiscountUsers";
@@ -16,6 +23,8 @@ import paginationLeft from "../../../assets/icons/paginationLeft.svg";
 import info from "../../../assets/icons/info.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import moment from "moment";
+import _ from "lodash";
+
 
 // ! MATERIAL IMPORTS
 import {
@@ -29,7 +38,7 @@ import {
 // ! MATERIAL ICONS IMPORTS
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useFormik } from "formik";
-import { useCreateBundleDiscountMutation } from "../../../features/offers/discounts/bundleDiscountsApiSlice";
+import { useCreateBundleDiscountMutation, useEditBundleDiscountMutation, useGetAllBundleDiscountsQuery } from "../../../features/offers/discounts/bundleDiscountsApiSlice";
 import * as Yup from "yup";
 import OfferDiscount from "../../../components/DiscountFormat/OfferDiscount";
 import { SaveFooterTertiary } from "../../../components/SaveFooter/SaveFooter";
@@ -39,6 +48,8 @@ import {
   showSuccess,
 } from "../../../features/snackbar/snackbarAction";
 import { useDispatch } from "react-redux";
+import { DiscardModalSecondary } from "../../../components/Discard/DiscardModal";
+import InfoHeader from "../../../components/Header/InfoHeader";
 
 const createBundleValidationSchema = Yup.object().shape({
   field: Yup.string()
@@ -74,8 +85,13 @@ const customerEligibilitySchema = Yup.object().shape({
   customer: Yup.string()
     .required("required")
     .oneOf(["specificCustomers", "customerGroups", "allCustomers"]),
-  value: Yup.array().when(["customer"], ([customer], schema) => {
-    return customer !== "allProducts"
+  specificCustomers: Yup.array().when(["customer"], ([customer], schema) => {
+    return customer === "specificCustomers"
+      ? schema.required("required").min(1, "At least one value is required")
+      : schema;
+  }),
+  customerGroups: Yup.array().when(["customer"], ([customer], schema) => {
+    return customer === "customerGroups"
       ? schema.required("required").min(1, "At least one value is required")
       : schema;
   }),
@@ -99,15 +115,32 @@ const maximumDiscountValidationSchema = Yup.object().shape({
 });
 
 const scheduleDateSchema = Yup.object().shape({
-    startDateTime: Yup.date()
-      .required("Start date and time is required"),
-    endDateTime: Yup.date().when(["neverExpire"], 
-    ([neverExpire],schema) => {
-      return neverExpire ? schema : schema.required("required")
-    }
-    ),
-    neverExpire: Yup.boolean(),
-  })
+  startDateTime: Yup.date().required("Start date and time is required"),
+  endDateTime: Yup.date().when(["neverExpire"], ([neverExpire], schema) => {
+    return neverExpire ? schema : schema.required("required");
+  }),
+  neverExpire: Yup.boolean(),
+});
+const initialQueryFilterState = {
+  pageSize: 1,
+  pageNo: null,
+  totalCount: 0,
+};
+const queryFilterReducer = (state, action) => {
+  if (action.type === "SET_PAGE_NO") {
+    return {
+      ...state,
+      pageNo: +action.pageNo,
+    };
+  }
+  if (action.type === "SET_TOTAL_COUNT") {
+    return {
+      ...state,
+      totalCount: action.totalCount,
+    };
+  }
+  return initialQueryFilterState;
+};
 
 const discountValidationSchema = Yup.object().shape({
   bundleName: Yup.string()
@@ -126,9 +159,56 @@ const discountValidationSchema = Yup.object().shape({
   scheduledDiscount: scheduleDateSchema,
 });
 
+const initialDiscountsState = {
+  data: [],
+  totalCount: 0,
+  discountType: 0,
+  isEditing: false,
+};
+const discountsReducer = (state, action) => {
+  if (action.type === "SET_DATA") {
+    return {
+      ...state,
+      data: action.data,
+      totalCount: action.totalCount,
+    };
+  }
+  if (action.type === "SET_DISCOUNT_TYPE") {
+    return {
+      ...state,
+      discountType: action.discountType,
+    };
+  }
+  if (action.type === "ENABLE_EDIT") {
+    return {
+      ...initialDiscountsState,
+      isEditing: true,
+    };
+  }
+  if (action.type === "DISABLE_EDIT") {
+    return {
+      ...initialDiscountsState,
+      isEditing: false,
+    };
+  }
+  return initialDiscountsState;
+};
+
 const CreateBundleDiscount = () => {
+  const [queryFilterState, dispatchQueryFilter] = useReducer(
+    queryFilterReducer,
+    initialQueryFilterState
+  );
+  const [discountsState, dispatchDiscounts] = useReducer(
+    discountsReducer,
+    initialDiscountsState
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [decodedObject, setDecodedObject] = useState(null);
+  let { id } = useParams();
 
   const [
     createBundleDiscount,
@@ -139,52 +219,83 @@ const CreateBundleDiscount = () => {
     },
   ] = useCreateBundleDiscountMutation();
 
+  const [
+    editBundleDiscount,
+    {
+      isLoading: editBundleDicountIsLoading,
+      isSuccess: editBundleDicountIsSuccess,
+      error: editBundleDicountError,
+      isError: editBundleDicountIsError,
+    },
+  ] = useEditBundleDiscountMutation();
+
+  const{
+    data: bundleDiscountsData, 
+    isLoading: bundleDiscountsIsLoading, 
+    isSuccess: bundleDiscountsIsSuccess, 
+    error: bundleDiscountsError,
+    isError:bundleDiscountsIsError
+  }=useGetAllBundleDiscountsQuery({
+    id: id,
+    alphabetical: decodedObject?.alphabetical,
+    createdAt: decodedObject?.createdAt,
+    name: decodedObject?.name,
+    status: decodedObject?.status,
+  },{skip: location.pathname === "/offers/bundleDiscount/create"});
+
   const backHandler = () => {
-    navigate("/offers/bundleDiscount");
+    navigate({
+      pathname: "/offers/bundleDiscount",
+      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
+    });
   };
+
+  const prevPageHandler = ()=>{};
+  const nextPageHandler = ()=>{};
 
   const formik = useFormik({
     initialValues: {
-      bundleName: "",
-      returnExchange: "allowed",
+      bundleName: bundleDiscountsData?.data?.data[0]?.name ||"",
+      returnExchange: bundleDiscountsData?.data?.data[0]?.returnExchangeCondition ||"allowed",
       maximumDiscount: {
         limitDiscountNumber: false,
         limitUsagePerCustomer: false,
-        total: "",
-        perCustomer: "",
+        total: bundleDiscountsData?.data?.data[0]?.maximumDiscountUse?.total || "",
+        perCustomer: bundleDiscountsData?.data?.data[0]?.maximumDiscountUse?.perCustomer || "",
       },
       discountCombination: {
-        allowCombineWithOthers: false,
-        allowCombineWith: [],
+        allowCombineWithOthers: bundleDiscountsData?.data?.data[0]?.allowCombineWithOthers ||false,
+        allowCombineWith: bundleDiscountsData?.data?.data[0]?.allowCombineWith || [],
       },
 
       customerEligibility: {
-        customer: "allCustomers",
-        value: [],
+        customer: bundleDiscountsData?.data?.data[0]?.eligibility?.eligibilityType || "allCustomers",
+        customerGroups: bundleDiscountsData?.data?.data[0]?.eligibility?.customerGroups ||[],
+        specificCustomers : bundleDiscountsData?.data?.data[0]?.eligibility?.specificCustomers || []
       },
 
       scheduledDiscount: {
-        startDateTime: "",
-        endDateTime: "",
-        neverExpire: false,
+        startDateTime: bundleDiscountsData?.data?.data[0]?.scheduledDiscount?.startDateTime || "",
+        endDateTime: bundleDiscountsData?.data?.data[0]?.scheduledDiscount?.endDateTime || "",
+        neverExpire: bundleDiscountsData?.data?.data[0]?.scheduledDiscount?.neverExpire || false,
       },
       customizeBundle: {
-        bundleTitle: "",
-        subtitle: "",
+        bundleTitle: bundleDiscountsData?.data?.data[0]?.customizeBundle?.title || "",
+        subtitle: bundleDiscountsData?.data?.data[0]?.customizeBundle?.subtitle || "",
       },
       createBundle: {
-        field: "",
-        value: [],
+        field: bundleDiscountsData?.data?.data[0]?.makeBundleFromItems?.itemFrom || "",
+        value: bundleDiscountsData?.data?.data[0]?.makeBundleFromItems?.products || [],
         dropDownData: [],
       },
       displayBundle: {
-        field: "",
-        value: [],
+        field: bundleDiscountsData?.data?.data[0]?.displayBundle?.itemFrom || "",
+        value: bundleDiscountsData?.data?.data[0]?.displayBundle?.products || [],
         dropDownData: [],
       },
       discountValue: {
-        discountValue: "",
-        type: "percentage",
+        discountValue: bundleDiscountsData?.data?.data[0]?.mainDiscount?.value || "",
+        type: bundleDiscountsData?.data?.data[0]?.mainDiscount?.unit || "percentage",
       },
     },
     enableReinitialize: true,
@@ -193,14 +304,18 @@ const CreateBundleDiscount = () => {
       const test = {
         name: values?.bundleName,
         status: "active",
-        makeBundleFromItems: [
-          {
-            itemFrom: values?.createBundle?.field,
-            products: values?.createBundle?.value?.map(
-              (item, index) => item?._id
-            ),
-          },
-        ],
+        makeBundleFromItems: {
+          itemFrom: values?.createBundle?.field,
+          products: values?.createBundle?.value?.map(
+            (item, index) => item?._id
+          ),
+        },
+        displayBundle: {
+          itemFrom: values?.displayBundle?.field,
+          products: values?.displayBundle?.value?.map(
+            (item, index) => item?._id
+          ),
+        },
         customizeBundle: {
           title: values?.customizeBundle?.bundleTitle,
           subtitle: values?.customizeBundle?.subtitle,
@@ -224,13 +339,13 @@ const CreateBundleDiscount = () => {
             ? { allCustomers: true }
             : values?.customerEligibility?.customer === "specificCustomers"
             ? {
-                specificCustomers: values?.customerEligibility?.value.map(
+                specificCustomers: values?.customerEligibility?.specificCustomers.map(
                   (item, index) => item?._id
                 ),
               }
             : values?.customerEligibility?.customer === "customerGroups"
             ? {
-                customerGroups: values?.customerEligibility?.value.map(
+                customerGroups: values?.customerEligibility?.customerGroups.map(
                   (item, index) => item?._id
                 ),
               }
@@ -270,7 +385,21 @@ const CreateBundleDiscount = () => {
               }),
         },
       };
-      createBundleDiscount(test).then(() => navigate("/offers/bundleDiscount"));
+      if (id) {
+        editBundleDiscount({
+          id: bundleDiscountsData?.data?.data[0]._id,
+          details: test,
+        })
+          .unwrap()
+          .then(() => {
+            dispatchDiscounts({ type: "DISABLE_EDIT" });
+            dispatch(showSuccess({ message: "Bundle Discount edited successfully" }));
+            formik.resetForm();
+          });
+      } else {
+        createBundleDiscount(test).then(() => navigate("/offers/bundleDiscount"));
+      }
+      
     },
   });
 
@@ -291,12 +420,28 @@ const CreateBundleDiscount = () => {
     }
   }, [createBundleDiscountIsSuccess, createBundleDiscountError, dispatch]);
 
-  console.log("gngslgnsflgnsfngls", formik?.values);
-  console.log("mlfwefwellaaaaaaaaaaaaaaaaaaa", formik?.errors);
+  useEffect(() => {
+    const encodedString = searchParams.get("filter");
+    const decodedString = decodeURIComponent(encodedString);
+    const parsedObject = JSON.parse(decodedString);
+    setDecodedObject(parsedObject);
+
+    // dispatchDiscounts({type : "SET_DISCOUNT_TYPE", discountType : searchParams.get("discountType") }) ;
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (id && !_.isEqual(formik.values, formik.initialValues)) {
+      dispatchDiscounts({ type: "ENABLE_EDIT" });
+    } else if (id && _.isEqual(formik.values, formik.initialValues)) {
+      dispatchDiscounts({ type: "DISABLE_EDIT" });
+    }
+  }, [formik.initialValues, formik.values, id]);
+
+  console.log("jhbbbiu2u1", discountsState?.discountType)
 
   return (
     <div className="page container-fluid position-relative">
-      <div className="row justify-content-between">
+      {/* <div className="row justify-content-between">
         <div className="d-flex align-items-center w-auto ps-0">
           <Link to="/offers/bundleDiscount" className="d-flex">
             <img
@@ -327,7 +472,15 @@ const CreateBundleDiscount = () => {
             width={30}
           />
         </div>
-      </div>
+      </div> */}
+      <InfoHeader
+        title={formik.values?.bundleName || "Create Bundle Discount"}
+        onBack={backHandler}
+        // onPreview={() => {}}
+        onPrev={prevPageHandler}
+        onNext={nextPageHandler}
+        isEdit={!!id}
+      />
       <form className="offers-form" noValidate onSubmit={formik.handleSubmit}>
         <div className="row">
           <div className="col-lg-9 mt-4">
@@ -457,14 +610,6 @@ const CreateBundleDiscount = () => {
               touched={formik?.touched?.scheduledDiscount}
               error={formik?.errors?.scheduledDiscount}
             />
-            {/* 
-          <ReturnAndExchangeCondition
-            sectionHeading={"Return & Exchange Condition"}
-          />
-          <CustomerEligibility />
-          <MaximumDiscountUsers />
-          <DiscountCombination showBuy={false} showBulk={false} />
-          <ScheduleDiscountCode /> */}
           </div>
           {/* <div className="col-lg-3 mt-4 pe-0 ps-0 ps-lg-3">
           <div className="bg-black-15 border-grey-5 rounded-8 p-3">
@@ -514,13 +659,15 @@ const CreateBundleDiscount = () => {
             <div className="bg-black-15 border-grey-5 rounded-8 p-3">
               <small className="text-grey-6">Summary</small>
               <div className="d-flex align-items-center mt-1">
-                <h6 className="text-lightBlue fw-500">"Discount Name"</h6>
-                <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer ms-3">
+                <h6 className="text-lightBlue fw-500">
+                  {formik?.values?.bundleName}
+                </h6>
+                {/* <div className="rounded-pill d-flex table-status px-2 py-1 c-pointer ms-3">
                   <small className="text-black fw-400">Active</small>
-                </div>
+                </div> */}
               </div>
 
-              <hr className="hr-grey-6 my-3" />
+              {/* <hr className="hr-grey-6 my-3" />
               <small className="text-grey-6">Product Discount</small>
               <div className="d-flex align-items-center mt-1">
                 <small className="text-blue-1 fw-500">
@@ -537,24 +684,27 @@ const CreateBundleDiscount = () => {
                     }}
                   />
                 </Tooltip>
-              </div>
+              </div> */}
 
-              <hr className="hr-grey-6 my-3" />
+              {/* <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Filters</p>
               <div className="d-flex align-items-center mt-1">
                 <small className="text-blue-1 fw-500">
                   • Discount applies to Categroy equals to Ring, Earring,
                   Necklace
                 </small>
-              </div>
+              </div> */}
               <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Discount</p>
               <div className="d-flex align-items-center mt-1">
                 <small className="text-blue-1 fw-500">
-                  • 50% off on Making charges
+                  • {formik?.values.discountValue?.discountValue}{" "}
+                  {formik?.values.discountValue?.type === "percentage"
+                    ? `%`
+                    : `Rs`}{" "}
                 </small>
               </div>
-              <hr className="hr-grey-6 my-3" />
+              {/* <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Condition</p>
               <div className="d-flex mt-1 flex-column">
                 <small className="text-blue-1 fw-500 d-block">
@@ -566,24 +716,36 @@ const CreateBundleDiscount = () => {
                 <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
                   • Quantity is equal to 2
                 </small>
-              </div>
+              </div> */}
               <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Details</p>
               <div className="d-flex mt-1 flex-column">
-                <small className="text-blue-1 fw-500 d-block">
-                  Returns & Exchange not allowed
+                <small className="text-blue-1 fw-500 ps-2 d-block">
+                  • Returns & Exchange{" "}
+                  {formik?.values?.returnExchange === "allowed"
+                    ? `Allowed`
+                    : `Not Allowed`}
                 </small>
                 <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
-                  • Unlimited uses
-                </small>
-                <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
-                  • Activated tomorrow
+                  • Activated{" "}
+                  {moment(
+                    formik?.values?.scheduledDiscount?.startDateTime
+                  ).format("Do MMMM, YYYY")}
                 </small>
               </div>
             </div>
           </div>
         </div>
-        <SaveFooterTertiary show={true} onDiscard={backHandler} />
+        <SaveFooterTertiary 
+        show={id ? discountsState.isEditing : true}
+        onDiscard={backHandler} 
+        isLoading={createBundleDiscountIsLoading || editBundleDicountIsLoading}
+        />
+
+        <DiscardModalSecondary
+        when={!_.isEqual(formik.values, formik.initialValues)}
+        message="bundle discount"
+      />
       </form>
     </div>
   );

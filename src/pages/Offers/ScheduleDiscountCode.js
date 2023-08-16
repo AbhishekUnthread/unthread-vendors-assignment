@@ -79,7 +79,7 @@ const ScheduleDiscountCode = ({formik,field,value,touched, error}) => {
             {!!touched?.endDateTime && error?.endDateTime && (
               <FormHelperText error>{error?.endDateTime}</FormHelperText>
             )}
-            <FormControlLabel
+            {!value?.endDateTime &&(<FormControlLabel
           control={
             <Checkbox
               checked={value?.neverExpire}
@@ -102,7 +102,7 @@ const ScheduleDiscountCode = ({formik,field,value,touched, error}) => {
             },
           }}
           className="px-0"
-        />
+            />)}
           </div>
         </div>
       </div>

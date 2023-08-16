@@ -794,10 +794,6 @@ const CreateDiscount = () => {
     // console.log("bndndwhdqwdk", discountsState?.discountType)
   }, [searchParams]);
 
-  console.log("AllformikErrors", formik?.errors);
-  // console.log("gngslgnsflgnsfngls", formik?.values);
-  console.log("ejdiuh89ehd", discountsData);
-
   return (
     <div className="page container-fluid position-relative">
       <InfoHeader

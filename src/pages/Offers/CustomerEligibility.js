@@ -11,6 +11,7 @@ import {
   Autocomplete,
   Checkbox,
   TextField,
+  FormHelperText,
 } from "@mui/material";
 // ! MATERIAL ICONS IMPORTS
 import TableSearch from "../../components/TableSearch/TableSearch";
@@ -68,7 +69,8 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
             value={value?.customer}
             onChange={(_, newValue) => {
               formik.setFieldValue(`${field}.customer`, newValue);
-              formik.setFieldValue(`${field}.value`, []);
+              formik.setFieldValue(`${field}.specificCustomers`, []);
+              formik.setFieldValue(`${field}.customerGroups`, []);
             }}
           >
             <FormControlLabel
@@ -97,46 +99,54 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
               }}
             />
             {value?.customer === "customerGroups" &&
-              (customersGroupIsSuccess) && (
-                <Autocomplete
-                  multiple
-                  id="checkboxes-tags-demo"
-                  className="mt-3"
-                  sx={{ width: "100%" }}
-                  options={
-                    customersData?.data?.data || customersGroupData?.data?.data
-                  }
-                  value={value?.value || []}
-                  getOptionLabel={(option) => option?.firstName || option?.name}
-                  size="small"
-                  onChange={(_, newValue) => {
-                    formik.setFieldValue(`${field}.value`, newValue);
-                  }}
-                  renderOption={(props, option, { selected }) => (
-                    <li {...props}>
-                      <Checkbox
-                        icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                        checkedIcon={<CheckBoxIcon fontSize="small" />}
-                        checked={selected}
+              customersGroupIsSuccess && (
+                <React.Fragment>
+                  <Autocomplete
+                    multiple
+                    id="checkboxes-tags-demo"
+                    className="mt-3"
+                    sx={{ width: "100%" }}
+                    options={
+                      customersData?.data?.data ||
+                      customersGroupData?.data?.data
+                    }
+                    value={value?.customerGroups || []}
+                    getOptionLabel={(option) =>
+                      option?.firstName || option?.name
+                    }
+                    size="small"
+                    onChange={(_, newValue) => {
+                      formik.setFieldValue(`${field}.customerGroups`, newValue);
+                    }}
+                    renderOption={(props, option, { selected }) => (
+                      <li {...props}>
+                        <Checkbox
+                          icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                          checkedIcon={<CheckBoxIcon fontSize="small" />}
+                          checked={selected}
+                          size="small"
+                          style={{
+                            color: "#5C6D8E",
+                            marginRight: 0,
+                          }}
+                        />
+                        <small className="text-lightBlue">
+                          {option.firstName || option?.name}
+                        </small>
+                      </li>
+                    )}
+                    renderInput={(params) => (
+                      <TextField
                         size="small"
-                        style={{
-                          color: "#5C6D8E",
-                          marginRight: 0,
-                        }}
+                        {...params}
+                        placeholder="Search ..."
                       />
-                      <small className="text-lightBlue">
-                        {option.firstName || option?.name}
-                      </small>
-                    </li>
+                    )}
+                  />
+                  {!!touched?.customerGroups && error?.customerGroups && (
+                    <FormHelperText error>{error?.customerGroups}</FormHelperText>
                   )}
-                  renderInput={(params) => (
-                    <TextField
-                      size="small"
-                      {...params}
-                      placeholder="Search ..."
-                    />
-                  )}
-                />
+                </React.Fragment>
               )}
             <FormControlLabel
               value="specificCustomers"
@@ -152,8 +162,8 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
             />
           </RadioGroup>
         </FormControl>
-        {value?.customer === "specificCustomers" &&
-          (customersIsSuccess) && (
+        {value?.customer === "specificCustomers" && customersIsSuccess && (
+          <React.Fragment>
             <Autocomplete
               multiple
               id="checkboxes-tags-demo"
@@ -162,11 +172,11 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
               options={
                 customersData?.data?.data || customersGroupData?.data?.data
               }
-              value={value?.value || []}
+              value={value?.specificCustomers || []}
               getOptionLabel={(option) => option?.firstName || option?.name}
               size="small"
               onChange={(_, newValue) => {
-                formik.setFieldValue(`${field}.value`, newValue);
+                formik.setFieldValue(`${field}.specificCustomers`, newValue);
               }}
               renderOption={(props, option, { selected }) => (
                 <li {...props}>
@@ -189,7 +199,11 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
                 <TextField size="small" {...params} placeholder="Search ..." />
               )}
             />
-          )}
+            {!!touched?.specificCustomers && error?.specificCustomers && (
+              <FormHelperText error>{error?.specificCustomers}</FormHelperText>
+            )}
+          </React.Fragment>
+        )}
       </div>
     </div>
   );
