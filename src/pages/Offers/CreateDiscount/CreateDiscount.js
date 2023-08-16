@@ -170,7 +170,7 @@ const discountFormatSchema = Yup.object().shape({
   discountCode: Yup.string()
     .trim()
     .matches(/^[a-zA-Z0-9]+$/, "Discount Code must be alphanumeric")
-    .max(6, "Discount Code cannot exceed 6 characters")
+    // .max(6, "Discount Code cannot exceed 6 characters")
     .required("Discount Code is required"),
 });
 
@@ -1151,7 +1151,7 @@ const CreateDiscount = () => {
                 {formik.values?.discountType}
               </small>
               <div className="d-flex align-items-center mt-1">
-                <small className="text-blue-1 fw-500">
+                <small className="text-blue-2 fw-500">
                   • Code&nbsp;&nbsp;|
                 </small>
                 <h6 className="fw-500 ms-2 me-2 text-lightBlue">
@@ -1179,7 +1179,7 @@ const CreateDiscount = () => {
               <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Filters</p>
               <div className="d-flex align-items-center mt-1">
-                <small className="text-blue-1 fw-500">
+                <small className="text-blue-2 fw-500">
                   • Discount applies to Categroy equals to Ring, Earring,
                   Necklace
                 </small>
@@ -1187,7 +1187,7 @@ const CreateDiscount = () => {
               <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Discount</p>
               <div className="d-flex align-items-center mt-1">
-                <small className="text-blue-1 fw-500">
+                <small className="text-blue-2 fw-500">
                   • {formik?.values.discountValue?.discountValue}{" "}
                   {formik?.values.discountValue?.type === "percentage"
                     ? `%`
@@ -1201,10 +1201,10 @@ const CreateDiscount = () => {
                 {formik?.values?.minimumRequirement?.requirement ===
                 "amount" ? (
                   <>
-                    <small className="text-blue-1 fw-500 d-block">
+                    <small className="text-blue-2 fw-500 d-block">
                       Apply Discount only if
                     </small>
-                    <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
+                    <small className="text-blue-2 fw-500 ps-2 d-block mt-1">
                       • Order Amount is equal to ₹{" "}
                       {formik?.values?.minimumRequirement?.value}
                     </small>
@@ -1212,16 +1212,16 @@ const CreateDiscount = () => {
                 ) : formik?.values?.minimumRequirement?.requirement ===
                   "quantity" ? (
                   <>
-                    <small className="text-blue-1 fw-500 d-block">
+                    <small className="text-blue-2 fw-500 d-block">
                       Apply Discount only if
                     </small>
-                    <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
+                    <small className="text-blue-2 fw-500 ps-2 d-block mt-1">
                       • Quantity is equal to{" "}
                       {formik?.values?.minimumRequirement?.value}
                     </small>
                   </>
                 ) : (
-                  <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
+                  <small className="text-blue-2 fw-500 ps-2 d-block mt-1">
                     • Unlimited uses
                   </small>
                 )}
@@ -1229,13 +1229,13 @@ const CreateDiscount = () => {
               <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Details</p>
               <div className="d-flex mt-1 flex-column">
-                <small className="text-blue-1 fw-500 d-block">
-                  Returns & Exchange{" "}
+                <small className="text-blue-2 fw-500 d-block ps-2">
+                • Returns & Exchange{" "}
                   {formik?.values?.returnExchange === "allowed"
                     ? `Allowed`
                     : `Not Allowed`}
                 </small>
-                <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
+                <small className="text-blue-2 fw-500 ps-2 d-block mt-1">
                   • Activated{" "}
                   {moment(
                     formik?.values?.scheduledDiscount?.startDateTime
