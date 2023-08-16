@@ -297,7 +297,7 @@ const discountValidationSchema = Yup.object().shape({
   discountValue: Yup.mixed().when(
     ["discountType"],
     ([discountType], schema) => {
-      if (discountType !== "buyxGety" && discountType !== "freeShipping") {
+      if (discountType !== "buyxGety" && discountType !== "freeShipping" && discountType !== "bulk") {
         return discountValueSchema;
       }
       return schema;
@@ -796,7 +796,7 @@ const CreateDiscount = () => {
   };
   const addDiscountRangeHandler = () => {
     const newRange = formik?.values?.discountRange.concat({
-      minQty: null,
+      minQty: formik.values.discountRange.length>0 ? +(formik.values.discountRange[formik.values.discountRange.length - 1].maxQty)+ 1 : null,
       maxQty: null,
       discountValue: null,
       type: "percentage",
