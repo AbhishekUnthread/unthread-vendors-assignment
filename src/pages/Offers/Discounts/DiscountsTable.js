@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // ! MATERIAL IMPORTS
 import {
   Checkbox,
@@ -28,6 +28,7 @@ import { useDispatch } from "react-redux";
 import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
 import NoDataFound from "../../../components/NoDataFound/NoDataFound";
 import TableLoader from "../../../components/Loader/TableLoader";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 // ? TABLE STARTS HERE
 function createData(
@@ -117,6 +118,8 @@ const DiscountsTable = ({
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
   const [showMultipleDeleteModal, setShowMultipleDeleteModal] =
     React.useState(false);
+  const [copied, setCopied] = useState(false);
+
 
   const headCells = [
     {
@@ -198,6 +201,13 @@ const DiscountsTable = ({
     }
 
     setSelected(newSelected);
+  };
+
+  const handleCopy = () => {
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
@@ -364,15 +374,27 @@ const DiscountsTable = ({
                             </p>
                             {discountType === 0 ? (
                               row?.mainDiscount?.discountCode ? (
-                                <Tooltip title="Copy" placement="top">
-                                  <ContentCopyIcon
-                                    sx={{
-                                      color: "#5c6d8e",
-                                      fontSize: 12,
-                                      cursor: "pointer",
-                                    }}
-                                  />
-                                </Tooltip>
+                                <CopyToClipboard
+                                  text={
+                                    row?.mainDiscount?.discountCode
+                                  }
+                                  onCopy={handleCopy}
+                                >
+                                  <Tooltip
+                                    title={
+                                      copied ? "Copied to clipboard" : "Copy"
+                                    }
+                                    placement="top"
+                                  >
+                                    <ContentCopyIcon
+                                      sx={{
+                                        color: "#5c6d8e",
+                                        fontSize: 12,
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </Tooltip>
+                                </CopyToClipboard>
                               ) : null
                             ) : (
                               row?.mainDiscount?.discountName
@@ -383,18 +405,17 @@ const DiscountsTable = ({
                           <div className="d-flex flex-column">
                             <div className="d-flex">
                               <p className="text-lightBlue me-2">
-                                { row?.mainDiscount?.type==="productDiscount"
-                                ? "Product Discount"
-                                : row?.mainDiscount?.type==="cartDiscount"
-                                ? "Cart Discount"
-                                : row?.mainDiscount?.type==="freeShipping"
-                                ? "Free Shipping"
-                                : row?.mainDiscount?.type==="buyxGety"
-                                ? "Buy X Get Y"
-                                : row?.mainDiscount?.type==="bulk"
-                                ? "Bulk Discount"
-                                : ""
-                                }
+                                {row?.mainDiscount?.type === "productDiscount"
+                                  ? "Product Discount"
+                                  : row?.mainDiscount?.type === "cartDiscount"
+                                  ? "Cart Discount"
+                                  : row?.mainDiscount?.type === "freeShipping"
+                                  ? "Free Shipping"
+                                  : row?.mainDiscount?.type === "buyxGety"
+                                  ? "Buy X Get Y"
+                                  : row?.mainDiscount?.type === "bulk"
+                                  ? "Bulk Discount"
+                                  : ""}
                               </p>
                             </div>
                           </div>
