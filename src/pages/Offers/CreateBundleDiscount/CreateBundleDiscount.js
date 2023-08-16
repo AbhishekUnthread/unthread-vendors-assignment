@@ -103,13 +103,16 @@ const maximumDiscountValidationSchema = Yup.object().shape({
   total: Yup.number().when(
     ["limitDiscountNumber"],
     ([limitDiscountNumber], schema) => {
-      return limitDiscountNumber ? schema.required("required") : schema;
+      return limitDiscountNumber ? schema.required("required").min(1,"Minimum quantity must be at least 1") : schema;
     }
   ),
   perCustomer: Yup.number().when(
-    ["limitUsagePerCustomer"],
-    ([limitUsagePerCustomer], schema) => {
-      return limitUsagePerCustomer ? schema.required("required") : schema;
+    ["limitUsagePerCustomer","total","limitDiscountNumber"],
+    ([limitUsagePerCustomer,total,limitDiscountNumber], schema) => {
+      return limitUsagePerCustomer ? schema.required("required").max(
+      Yup.ref("total"),
+      "Maximum quantity must be greater than or equal to the total quantity"
+    ) : schema;
     }
   ),
 });
