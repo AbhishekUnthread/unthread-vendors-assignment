@@ -129,9 +129,14 @@ function DiscountFormat({ value, field, formik, touched, error }) {
                 name={`${field}.discountCode`}
                 endAdornment={
                   value?.discountFormat === "automatic" ? null : (
+                    <React.Fragment>
+                    <InputAdornment position="end" variant="standard">
+                      <small>OR</small>
+                    </InputAdornment>
                     <InputAdornment position="end" onClick={handleGenerateCode}>
                       Generate Code
                     </InputAdornment>
+                    </React.Fragment>
                   )
                 }
               />

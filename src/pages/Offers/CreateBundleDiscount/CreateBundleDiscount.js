@@ -103,13 +103,16 @@ const maximumDiscountValidationSchema = Yup.object().shape({
   total: Yup.number().when(
     ["limitDiscountNumber"],
     ([limitDiscountNumber], schema) => {
-      return limitDiscountNumber ? schema.required("required") : schema;
+      return limitDiscountNumber ? schema.required("required").min(1,"Minimum quantity must be at least 1") : schema;
     }
   ),
   perCustomer: Yup.number().when(
-    ["limitUsagePerCustomer"],
-    ([limitUsagePerCustomer], schema) => {
-      return limitUsagePerCustomer ? schema.required("required") : schema;
+    ["limitUsagePerCustomer","total","limitDiscountNumber"],
+    ([limitUsagePerCustomer,total,limitDiscountNumber], schema) => {
+      return limitUsagePerCustomer ? schema.required("required").max(
+      Yup.ref("total"),
+      "Maximum quantity must be greater than or equal to the total quantity"
+    ) : schema;
     }
   ),
 });
@@ -670,7 +673,7 @@ const CreateBundleDiscount = () => {
               {/* <hr className="hr-grey-6 my-3" />
               <small className="text-grey-6">Product Discount</small>
               <div className="d-flex align-items-center mt-1">
-                <small className="text-blue-1 fw-500">
+                <small className="text-blue-2 fw-500">
                   • Code&nbsp;&nbsp;|
                 </small>
                 <h6 className="fw-500 ms-2 me-2 text-lightBlue">JWL20OFF</h6>
@@ -689,7 +692,7 @@ const CreateBundleDiscount = () => {
               {/* <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Filters</p>
               <div className="d-flex align-items-center mt-1">
-                <small className="text-blue-1 fw-500">
+                <small className="text-blue-2 fw-500">
                   • Discount applies to Categroy equals to Ring, Earring,
                   Necklace
                 </small>
@@ -697,7 +700,7 @@ const CreateBundleDiscount = () => {
               <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Discount</p>
               <div className="d-flex align-items-center mt-1">
-                <small className="text-blue-1 fw-500">
+                <small className="text-blue-2 fw-500">
                   • {formik?.values.discountValue?.discountValue}{" "}
                   {formik?.values.discountValue?.type === "percentage"
                     ? `%`
@@ -707,26 +710,26 @@ const CreateBundleDiscount = () => {
               {/* <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Condition</p>
               <div className="d-flex mt-1 flex-column">
-                <small className="text-blue-1 fw-500 d-block">
+                <small className="text-blue-2 fw-500 d-block">
                   Apply Discount only if
                 </small>
-                <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
+                <small className="text-blue-2 fw-500 ps-2 d-block mt-1">
                   • Order Amount is equal to ₹ 25,000
                 </small>
-                <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
+                <small className="text-blue-2 fw-500 ps-2 d-block mt-1">
                   • Quantity is equal to 2
                 </small>
               </div> */}
               <hr className="hr-grey-6 my-3" />
               <p className="text-lightBlue">Details</p>
               <div className="d-flex mt-1 flex-column">
-                <small className="text-blue-1 fw-500 ps-2 d-block">
+                <small className="text-blue-2 fw-500 ps-2 d-block">
                   • Returns & Exchange{" "}
                   {formik?.values?.returnExchange === "allowed"
                     ? `Allowed`
                     : `Not Allowed`}
                 </small>
-                <small className="text-blue-1 fw-500 ps-2 d-block mt-1">
+                <small className="text-blue-2 fw-500 ps-2 d-block mt-1">
                   • Activated{" "}
                   {moment(
                     formik?.values?.scheduledDiscount?.startDateTime
