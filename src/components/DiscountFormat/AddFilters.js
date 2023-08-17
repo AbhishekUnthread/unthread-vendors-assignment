@@ -102,10 +102,13 @@ function AddFilters({ value, formik, field, touched, error }) {
     formik.setFieldValue(`${field}.operator`, event.target.value);
   };
   
-  const matchingItem = formik?.values?.filters.length>1 && formik?.values?.filters.find((item, index) => {
+  const matchingItem =  formik?.values?.filters.length>1
+   ?
+  formik?.values?.filters.find((item, index) => {
     return item?.field === value?.field;
-  });
+  }): null
   console.log("matchingItem", matchingItem)
+  console.log("field: ", value.operator)
 
   // const handleCheck = (data) => {
   //   const matchingItem = formik?.values?.filters.find((item, index) => {
@@ -128,22 +131,22 @@ function AddFilters({ value, formik, field, touched, error }) {
     { value: "notEqualTo", label: "Not Equal to" },
   ];
 
-  useEffect(() => {
-    const updatedOptions = formik?.values?.filters.map((item) => {
-      if (item?.field === value?.field) {
-        return operatorOptions.filter(
-          (element) => element.value !== item.operator
-        );
-      }
-      return operatorOptions;
-    });
+  // useEffect(() => {
+  //   const updatedOptions = formik?.values?.filters.map((item) => {
+  //     if (item?.field === value?.field) {
+  //       return operatorOptions.filter(
+  //         (element) => element.value !== item.operator
+  //       );
+  //     }
+  //     return operatorOptions;
+  //   });
 
-    if (updatedOptions) {
-      const newOperatorOptions = [].concat(...updatedOptions);
-      operatorOptions.length = 0;
-      operatorOptions.push(...newOperatorOptions);
-    }
-  }, [operatorOptions]);
+  //   if (updatedOptions) {
+  //     const newOperatorOptions = [].concat(...updatedOptions);
+  //     operatorOptions.length = 0;
+  //     operatorOptions.push(...newOperatorOptions);
+  //   }
+  // }, [operatorOptions]);
 
   console.log("deqqefeffeffff", operatorOptions);
 

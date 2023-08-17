@@ -73,13 +73,13 @@ const ScheduleDiscountCode = ({formik,field,value,touched, error}) => {
                 renderInput={(params) => <TextField {...params} size="small" />}
                 className="w-100"
                 minDateTime={value?.startDateTime ? moment(value.startDateTime) : null}
-                disabled={value?.startDateTime === "" ? true : false}
+                disabled={(value?.startDateTime === "" || value?.neverExpire ) ? true : false}
               />
             </LocalizationProvider>
             {!!touched?.endDateTime && error?.endDateTime && (
               <FormHelperText error>{error?.endDateTime}</FormHelperText>
             )}
-            {!value?.endDateTime &&(<FormControlLabel
+              <FormControlLabel
           control={
             <Checkbox
               checked={value?.neverExpire}
@@ -102,7 +102,7 @@ const ScheduleDiscountCode = ({formik,field,value,touched, error}) => {
             },
           }}
           className="px-0"
-            />)}
+            />
           </div>
         </div>
       </div>
