@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { createSearchParams, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import "./CreateDiscount.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
@@ -391,6 +391,7 @@ const CreateDiscount = () => {
     discountsReducer,
     initialDiscountsState
   );
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -534,7 +535,10 @@ const CreateDiscount = () => {
   };
 
   const backHandler = () => {
-    navigate("/offers/discounts");
+    navigate({
+      pathname: "/offers/discounts",
+      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
+    });
   };
 
   const handleCopy = () => {

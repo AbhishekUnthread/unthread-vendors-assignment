@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link,Navigate,createSearchParams,useNavigate,useSearchParams } from "react-router-dom";
 // ! COMPONENT IMPORTS
@@ -54,7 +54,7 @@ const initialQueryFilterState = {
 const initialDiscountsState = {
   data: [],
   totalCount: 0,
-  discountType:0,
+  discountType:null,
 };
 const queryFilterReducer = (state, action) => {
   if (action.type === "SET_PAGE_SIZE") {
@@ -100,6 +100,12 @@ const queryFilterReducer = (state, action) => {
       alphabetical: null,
     };
   }
+  if (action.type === "SET_ALL_FILTERS") {
+    return {
+      ...initialQueryFilterState,
+      ...action.filters,
+    };
+  }
   return initialQueryFilterState;
 };
 const  discountsReducer = (state, action) => {
@@ -122,7 +128,7 @@ const  discountsReducer = (state, action) => {
 const Discounts = () => {
   const[searchParams, setSearchParams] = useSearchParams();
   const Navigate = useNavigate();
-
+  const [firstRender, setFirstRender] = useState(true);
   const dispatch = useDispatch();
 
   const [queryFilterState, dispatchQueryFilter] = useReducer(
@@ -140,7 +146,7 @@ const Discounts = () => {
     isSuccess: discountsIsSuccess, 
     error: discountsError,
     isError:discountsIsError
-  }=useGetAllDiscountsQuery(queryFilterState);
+  }=useGetAllDiscountsQuery({...queryFilterState});
 
   const [
     deleteDiscount,
@@ -166,7 +172,7 @@ const Discounts = () => {
     })
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
     dispatchQueryFilter({ type: "SEARCH", name: "" });
-    setSearchParams({type:newValue})
+    // setSearchParams({type:newValue})
   };
   const handleChangeRowsPerPage = (event) => {
     dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
@@ -289,44 +295,44 @@ const Discounts = () => {
     }
   }, [bulkDeleteDiscountError, dispatch]);
 
-  useEffect(() => {
-    if(+searchParams.get("type")===0)
-    {
-      dispatchDiscounts({
-        type:"SET_DISCOUNT_TYPE", discountType:0
-      })
-    }
-    else if(+searchParams.get("type")===1)
-    {
-      dispatchDiscounts({
-        type:"SET_DISCOUNT_TYPE", discountType:1
-      })
-    }
-    else if(+searchParams.get("type")===2)
-    {
-      dispatchDiscounts({
-        type:"SET_DISCOUNT_TYPE", discountType:2
-      })
-    }
-    else if(+searchParams.get("type")===3)
-    {
-     dispatchDiscounts({
-        type:"SET_DISCOUNT_TYPE", discountType:3
-      })
-    }
-    else if(+searchParams.get("type")===4)
-    {
-     dispatchDiscounts({
-        type:"SET_DISCOUNT_TYPE", discountType:4
-      })
-    }
-    else if(+searchParams.get("type")===5)
-    {
-     dispatchDiscounts({
-        type:"SET_DISCOUNT_TYPE", discountType:5
-      })
-    }
-}, [searchParams])
+//   useEffect(() => {
+//     if(+searchParams.get("type")===0)
+//     {
+//       dispatchDiscounts({
+//         type:"SET_DISCOUNT_TYPE", discountType:0
+//       })
+//     }
+//     else if(+searchParams.get("type")===1)
+//     {
+//       dispatchDiscounts({
+//         type:"SET_DISCOUNT_TYPE", discountType:1
+//       })
+//     }
+//     else if(+searchParams.get("type")===2)
+//     {
+//       dispatchDiscounts({
+//         type:"SET_DISCOUNT_TYPE", discountType:2
+//       })
+//     }
+//     else if(+searchParams.get("type")===3)
+//     {
+//      dispatchDiscounts({
+//         type:"SET_DISCOUNT_TYPE", discountType:3
+//       })
+//     }
+//     else if(+searchParams.get("type")===4)
+//     {
+//      dispatchDiscounts({
+//         type:"SET_DISCOUNT_TYPE", discountType:4
+//       })
+//     }
+//     else if(+searchParams.get("type")===5)
+//     {
+//      dispatchDiscounts({
+//         type:"SET_DISCOUNT_TYPE", discountType:5
+//       })
+//     }
+// }, [searchParams])
 
 const discountType = [
   { name: 'Product Discount', value: 'productDiscount' },
@@ -335,7 +341,6 @@ const discountType = [
   { name: 'Bulk/Tiered Discount', value: 'bulk' },
   { name: 'Free Shipping', value: 'freeShipping' }
 ];
-
 
 const editDiscountPageNavigation = (data)=>{
   Navigate({
@@ -362,6 +367,42 @@ const handleChronologicalSorting = (event) => {
   setAnchorSortEl(null);
 };
 
+useEffect(() => {
+  const filterParams = JSON.parse(searchParams.get("filter")) || {
+    discountType : discountsState.discountType,
+  };
+  if (firstRender && Object.keys(filterParams).length) {
+    let filters = {};
+    for (let key in filterParams) {
+      if (key !== "discountType") {
+        if (filterParams[key] !== (null || "")) {
+          filters = {
+            ...filters,
+            [key]: filterParams[key],
+          };
+        }
+      } else {
+        dispatchDiscounts({type:"SET_DISCOUNT_TYPE", discountType:+filterParams[key]})
+      }
+    }
+    if (filterParams.discountType === (null || "")) {
+      dispatchDiscounts({type:"SET_DISCOUNT_TYPE", discountType:0})
+    }
+    dispatchQueryFilter({
+      type: "SET_ALL_FILTERS",
+      filters,
+    });
+    setFirstRender(false);
+  }
+}, [searchParams]);
+
+useEffect(() => {
+  if (!firstRender) {
+    setSearchParams({
+      filter: JSON.stringify({ ...queryFilterState, discountType : discountsState.discountType}),
+    });
+  }
+}, [queryFilterState, setSearchParams,discountsState.discountType,firstRender]);
 
   return (
     <div className="container-fluid page">
