@@ -185,13 +185,13 @@ const discountsReducer = (state, action) => {
   }
   if (action.type === "ENABLE_EDIT") {
     return {
-      ...initialDiscountsState,
+      ...state,
       isEditing: true,
     };
   }
   if (action.type === "DISABLE_EDIT") {
     return {
-      ...initialDiscountsState,
+      ...state,
       isEditing: false,
     };
   }
@@ -470,12 +470,24 @@ const CreateBundleDiscount = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (id && !_.isEqual(formik.values, formik.initialValues)) {
-      dispatchDiscounts({ type: "EDITED_ENABLE" });
-      dispatchDiscounts({ type: "ENABLE_EDIT" });
-    } else if (id && _.isEqual(formik.values, formik.initialValues)) {
-      dispatchDiscounts({ type: "EDITED_DISABLE" });
-      dispatchDiscounts({ type: "DISABLE_EDIT" });
+    if (location.pathname !== "/offers/bundleDiscount/create") {
+      if (id && !_.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_ENABLE" });
+        dispatchDiscounts({ type: "ENABLE_EDIT" });
+      } else if (id && _.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_DISABLE" });
+        dispatchDiscounts({ type: "DISABLE_EDIT" });
+      }
+    }
+    else{
+      console.log("checking......")
+      if (!_.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_ENABLE" });
+        dispatchDiscounts({ type: "ENABLE_EDIT" });
+      } else if (_.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_DISABLE" });
+        dispatchDiscounts({ type: "DISABLE_EDIT" });
+      }
     }
   }, [formik.initialValues, formik.values, id]);
 

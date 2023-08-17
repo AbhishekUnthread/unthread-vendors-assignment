@@ -1,6 +1,11 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
-import { createSearchParams, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import "./CreateDiscount.scss";
 import { Link } from "react-router-dom";
 // ! COMPONENT IMPORTS
@@ -121,16 +126,24 @@ const maximumDiscountValidationSchema = Yup.object().shape({
   total: Yup.number().when(
     ["limitDiscountNumber"],
     ([limitDiscountNumber], schema) => {
-      return limitDiscountNumber ? schema.required("required").min(1,"Minimum quantity must be at least 1") : schema;
+      return limitDiscountNumber
+        ? schema
+            .required("required")
+            .min(1, "Minimum quantity must be at least 1")
+        : schema;
     }
   ),
   perCustomer: Yup.number().when(
-    ["limitUsagePerCustomer","total","limitDiscountNumber"],
-    ([limitUsagePerCustomer,total,limitDiscountNumber], schema) => {
-      return limitUsagePerCustomer ? schema.required("required").max(
-      Yup.ref("total"),
-      "Maximum quantity must be greater than or equal to the total quantity"
-    ) : schema;
+    ["limitUsagePerCustomer", "total", "limitDiscountNumber"],
+    ([limitUsagePerCustomer, total, limitDiscountNumber], schema) => {
+      return limitUsagePerCustomer
+        ? schema
+            .required("required")
+            .max(
+              Yup.ref("total"),
+              "Maximum quantity must be greater than or equal to the total quantity"
+            )
+        : schema;
     }
   ),
 });
@@ -324,13 +337,15 @@ const discountValidationSchema = Yup.object().shape({
     return schema;
   }),
   customerEligibility: customerEligibilitySchema,
-  discountRange : Yup.mixed().when(["discountType"], ([discountType], schema) => {
-    if (discountType === "bulk") {
-      return Yup.array().of(discountRangeValidationSchema);
+  discountRange: Yup.mixed().when(
+    ["discountType"],
+    ([discountType], schema) => {
+      if (discountType === "bulk") {
+        return Yup.array().of(discountRangeValidationSchema);
+      }
+      return schema;
     }
-    return schema;
-  }),
-
+  ),
 
   // couponCode: couponCodeSchema,
 });
@@ -340,7 +355,6 @@ const initialDiscountsState = {
   discountType: 0,
   isEditing: false,
   edited: false,
-
 };
 const discountsReducer = (state, action) => {
   if (action.type === "SET_DATA") {
@@ -391,7 +405,7 @@ const CreateDiscount = () => {
     discountsReducer,
     initialDiscountsState
   );
-  
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -641,9 +655,12 @@ const CreateDiscount = () => {
         location: "",
       },
       scheduledDiscount: {
-        startDateTime: discountsData?.data?.data[0]?.scheduledDiscount?.startDateTime || "",
-        endDateTime: discountsData?.data?.data[0]?.scheduledDiscount?.endDateTime || "",
-        neverExpire:discountsData?.data?.data[0]?.scheduledDiscount?.neverExpire || false,
+        startDateTime:
+          discountsData?.data?.data[0]?.scheduledDiscount?.startDateTime || "",
+        endDateTime:
+          discountsData?.data?.data[0]?.scheduledDiscount?.endDateTime || "",
+        neverExpire:
+          discountsData?.data?.data[0]?.scheduledDiscount?.neverExpire || false,
       },
     },
     enableReinitialize: true,
@@ -814,8 +831,7 @@ const CreateDiscount = () => {
             dispatch(showSuccess({ message: "Discounts edited successfully" }));
           });
       } else {
-        createDiscount(test)
-        .then(() => {
+        createDiscount(test).then(() => {
           formik.resetForm();
           navigate("/offers/discounts");
           dispatch(showSuccess({ message: "Discount created successfully" }));
@@ -871,7 +887,7 @@ const CreateDiscount = () => {
     });
     formik.setFieldValue("discountRange", newRange);
   };
-  
+
   useEffect(() => {
     if (discountsIsSuccess) {
       dispatchDiscounts({ type: "EDITED_DISABLE" });
@@ -908,7 +924,7 @@ const CreateDiscount = () => {
         );
       }
     }
-  }, [ createDiscountError, dispatch]);
+  }, [createDiscountError, dispatch]);
 
   useEffect(() => {
     const encodedString = searchParams.get("filter");
@@ -921,8 +937,7 @@ const CreateDiscount = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if(location.pathname !== "/offers/discounts/create")
-    {
+    if (location.pathname !== "/offers/discounts/create") {
       if (id && !_.isEqual(formik.values, formik.initialValues)) {
         dispatchDiscounts({ type: "EDITED_ENABLE" });
         dispatchDiscounts({ type: "ENABLE_EDIT" });
@@ -931,15 +946,21 @@ const CreateDiscount = () => {
         dispatchDiscounts({ type: "DISABLE_EDIT" });
       }
     }
+    else{
+      if (!_.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_ENABLE" });
+        dispatchDiscounts({ type: "ENABLE_EDIT" });
+      } else if (_.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_DISABLE" });
+        dispatchDiscounts({ type: "DISABLE_EDIT" });
+      }
+    }
   }, [formik.initialValues, formik.values, id]);
 
   console.log("errorrrrrrrrrrrr", formik?.errors);
-  console.log({ValueValueInitial : formik?.initialValues});
-  console.log({ValueValue : formik?.values})
-  console.log("istrueeeeeeee",
-  !_.isEqual(formik.values, formik.initialValues))
-
-
+  console.log({ ValueValueInitial: formik?.initialValues });
+  console.log({ ValueValue: formik?.values });
+  console.log("istrueeeeeeee", !_.isEqual(formik.values, formik.initialValues));
 
   return (
     <div className="page container-fluid position-relative">
@@ -1100,6 +1121,19 @@ const CreateDiscount = () => {
                 error={formik?.errors?.discountValue}
               />
             )}
+            {formik?.values?.discountType === "bulk" && (
+              <DiscountRange
+                value={formik.values?.discountRange}
+                field="discountRange"
+                formik={formik}
+                touched={formik?.touched?.discountRange}
+                error={formik?.errors?.discountRange}
+                data={formik.values?.discountRange}
+                onSort={() => {}}
+                onDeleteField={deleteDiscountRangeHandler}
+                onAdd={addDiscountRangeHandler}
+              />
+            )}
             {formik?.values?.discountType !== "buyxGety" && (
               <Filters
                 value={formik.values?.filters}
@@ -1123,19 +1157,6 @@ const CreateDiscount = () => {
               />
             )}
 
-            {formik?.values?.discountType === "bulk" && (
-              <DiscountRange
-                value={formik.values?.discountRange}
-                field="discountRange"
-                formik={formik}
-                touched={formik?.touched?.discountRange}
-                error={formik?.errors?.discountRange}
-                data={formik.values?.discountRange}
-                onSort={() => {}}
-                onDeleteField={deleteDiscountRangeHandler}
-                onAdd={addDiscountRangeHandler}
-              />
-            )}
             <MinimumRequirement
               value={formik.values?.minimumRequirement}
               field="minimumRequirement"
@@ -1213,26 +1234,30 @@ const CreateDiscount = () => {
                 <small className="text-blue-2 fw-500">
                   • Code&nbsp;&nbsp;|
                 </small>
-                <h6 className="fw-500 ms-2 me-2 text-lightBlue">
-                  {formik.values?.discountFormat?.discountCode}
-                </h6>
-                <CopyToClipboard
-                  text={formik.values?.discountFormat?.discountCode}
-                  onCopy={handleCopy}
-                >
-                  <Tooltip
-                    title={copied ? "Copied to clipboard" : "Copy"}
-                    placement="top"
-                  >
-                    <ContentCopyIcon
-                      sx={{
-                        color: "#5c6d8e",
-                        fontSize: 12,
-                        cursor: "pointer",
-                      }}
-                    />
-                  </Tooltip>
-                </CopyToClipboard>
+                { formik.values?.discountFormat?.discountCode ?
+                  (<>
+                    <h6 className="fw-500 ms-2 me-2 text-lightBlue">
+                      {formik.values?.discountFormat?.discountCode}
+                    </h6>
+                    <CopyToClipboard
+                      text={formik.values?.discountFormat?.discountCode}
+                      onCopy={handleCopy}
+                    >
+                      <Tooltip
+                        title={copied ? "Copied to clipboard" : "Copy"}
+                        placement="top"
+                      >
+                        <ContentCopyIcon
+                          sx={{
+                            color: "#5c6d8e",
+                            fontSize: 12,
+                            cursor: "pointer",
+                          }}
+                        />
+                      </Tooltip>
+                    </CopyToClipboard>
+                  </>) : null
+                }
               </div>
 
               <hr className="hr-grey-6 my-3" />
@@ -1247,7 +1272,7 @@ const CreateDiscount = () => {
               <p className="text-lightBlue">Discount</p>
               <div className="d-flex align-items-center mt-1">
                 <small className="text-blue-2 fw-500">
-                  • {formik?.values.discountValue?.discountValue}{" "}
+                  • {formik?.values.discountValue?.discountValue || formik?.values?.discountRange?.discountValue}{" "}
                   {formik?.values.discountValue?.type === "percentage"
                     ? `%`
                     : `Rs`}{" "}
@@ -1289,7 +1314,7 @@ const CreateDiscount = () => {
               <p className="text-lightBlue">Details</p>
               <div className="d-flex mt-1 flex-column">
                 <small className="text-blue-2 fw-500 d-block ps-2">
-                • Returns & Exchange{" "}
+                  • Returns & Exchange{" "}
                   {formik?.values?.returnExchange === "allowed"
                     ? `Allowed`
                     : `Not Allowed`}
@@ -1307,9 +1332,7 @@ const CreateDiscount = () => {
         <SaveFooterTertiary
           show={id ? discountsState.isEditing : true}
           onDiscard={backHandler}
-          isLoading={
-            createDiscountIsLoading || editDicountIsLoading
-          }
+          isLoading={createDiscountIsLoading || editDicountIsLoading}
         />
         <DiscardModalSecondary
           when={discountsState.edited}

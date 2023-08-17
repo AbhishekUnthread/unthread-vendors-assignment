@@ -81,7 +81,7 @@ function AddFilters({ value, formik, field, touched, error, index }) {
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
   } = useGetAllVendorsQuery(undefined, {
-    skip: value?.field !== 60,
+    skip: value?.field !== "vendors",
   });
   const {
     data: tagsData,
@@ -196,7 +196,7 @@ function AddFilters({ value, formik, field, touched, error, index }) {
       formik.setFieldValue(`${field}.dropDownData`, subCategoriesData);
     } else if (value?.field === "collection") {
       formik.setFieldValue(`${field}.dropDownData`, collectionData);
-    } else if (value?.field === 60) {
+    } else if (value?.field === "vendors") {
       formik.setFieldValue(`${field}.dropDownData`, vendorsData);
     } else if (value?.field === "Tags") {
       formik.setFieldValue(`${field}.dropDownData`, tagsData);
@@ -270,10 +270,10 @@ function AddFilters({ value, formik, field, touched, error, index }) {
             >
               Collection
             </MenuItem>
-            <MenuItem value={60} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="vendors" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               Vendor Name
             </MenuItem>
-            <MenuItem value={70} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="attributes" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               Attributes
             </MenuItem>
             <MenuItem value="Tags" sx={{ fontSize: 13, color: "#5c6d8e" }}>
