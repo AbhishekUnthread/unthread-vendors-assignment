@@ -2,7 +2,7 @@ import "./AllFiles.scss";
 import info from "../../../../assets/icons/info.svg";
 import video from "../../../../assets/images/dashboard/video.png";
 import folderLargePurple from "../../../../assets/icons/folderLargePurple.svg";
-import { Button, Table, TableBody, TableContainer, Tooltip } from "@mui/material";
+import { Table, TableBody, TableContainer, Tooltip } from "@mui/material";
 import ImageIconView from "../FileManagerViews/ImageIconView";
 import VideoIconView from "../FileManagerViews/VideoIconView";
 import FolderIconView from "../FileManagerViews/FolderIconView";
@@ -57,9 +57,9 @@ const headCells = [
 ];
 
 export default function AllFiles({ views = "icon", queryFilters = {}, onPopup = () => {}, refetchFiles = false, onExplore = () => {}, changeTab = () => {} }) {
-  const seeAllFolders = () => changeTab(null, 1);
-  const seeAllImages = () => changeTab(null, 2);
-  const seeAllVideos = () => changeTab(null, 3);
+  // const seeAllFolders = () => changeTab(null, 1);
+  // const seeAllImages = () => changeTab(null, 2);
+  // const seeAllVideos = () => changeTab(null, 3);
 
   const dispatch = useDispatch();
 
@@ -81,11 +81,14 @@ export default function AllFiles({ views = "icon", queryFilters = {}, onPopup = 
   const [fileSelected, setFileSelected] = useState([]);
   const clearfileSelected = () => setFileSelected([]);
 
-  const { data: allImagesData, refetch: refetchAllImagesData } = useGetFilesQuery({ ...queryFilters, fileType: "image", rowsPerPage: 8, page: 0 });
-  const allImages = allImagesData?.data?.data ?? [];
+  const { data: allFilesData, refetch: refetchAllFilesData } = useGetFilesQuery({ ...queryFilters, rowsPerPage: 8, page: 0 });
+  const allFiles = allFilesData?.data?.data ?? [];
 
-  const { data: allVideosData, refetch: refetchAllVideosData } = useGetFilesQuery({ ...queryFilters, fileType: "video", rowsPerPage: 8, page: 0 });
-  const allVideos = allVideosData?.data?.data ?? [];
+  // const { data: allImagesData, refetch: refetchAllImagesData } = useGetFilesQuery({ ...queryFilters, fileType: "image", rowsPerPage: 8, page: 0 });
+  // const allImages = allImagesData?.data?.data ?? [];
+
+  // const { data: allVideosData, refetch: refetchAllVideosData } = useGetFilesQuery({ ...queryFilters, fileType: "video", rowsPerPage: 8, page: 0 });
+  // const allVideos = allVideosData?.data?.data ?? [];
 
   const [editFile] = useEditFileMutation();
   const [deleteFile] = useDeleteFileMutation();
@@ -119,11 +122,8 @@ export default function AllFiles({ views = "icon", queryFilters = {}, onPopup = 
   };
 
   useEffect(() => {
-    if (refetchFiles) {
-      refetchAllImagesData();
-      refetchAllVideosData();
-    }
-  }, [refetchFiles, refetchAllImagesData, refetchAllVideosData]);
+    if (refetchFiles) refetchAllFilesData();
+  }, [refetchFiles, refetchAllFilesData]);
 
   return (
     <>
@@ -142,14 +142,14 @@ export default function AllFiles({ views = "icon", queryFilters = {}, onPopup = 
               />
             </Tooltip>
           </div>
-          <div className="col-auto">
+          {/* <div className="col-auto">
             <Button
               variant="text"
               className="me-2"
               onClick={seeAllFolders}>
               <span className="text-lightBlue">See All</span>
             </Button>
-          </div>
+          </div> */}
         </div>
         {folderSelected.length > 0 && (
           <div className="d-flex align-items-center px-2 mb-3">
@@ -223,74 +223,74 @@ export default function AllFiles({ views = "icon", queryFilters = {}, onPopup = 
 
       <hr className="hr-grey-6 my-3" />
 
-      {fileSelected.length > 0 && (
-        <div className="my-3">
-          <div className="d-flex align-items-center px-2 mb-3">
-            <button className="button-grey py-2 px-3">
-              <small className="text-lightBlue">
-                {fileSelected.length} folders are selected{" "}
-                <span
-                  className="text-blue-2 c-pointer"
-                  onClick={clearfileSelected}>
-                  (Clear Selection)
-                </span>
-              </small>
-            </button>
-            <TableMassActionButton
-              headingName="Mass Action"
-              defaultValue={["Move To Folder", "Delete"]}
-              onSelect={(action) => {
-                switch (action) {
-                  case "Delete":
-                    setDeletingFile({});
-                    break;
-                  case "Move To Folder":
-                    setMovingFile({});
-                    break;
-
-                  default:
-                    break;
-                }
-              }}
-            />
+      <div className="my-3">
+        <div className="row mb-3">
+          <div className="col d-flex align-items-center">
+            <h4 className="text-lightBlue fs-6 fw-500 me-2">Files</h4>
+            <Tooltip
+              title="Lorem ipsum"
+              placement="top">
+              <img
+                src={info}
+                alt="info"
+                className="c-pointer"
+                width={13.5}
+              />
+            </Tooltip>
           </div>
+          {/* <div className="col-auto">
+            <Button
+              variant="text"
+              className="me-2"
+              onClick={seeAllFolders}>
+              <span className="text-lightBlue">See All</span>
+            </Button>
+          </div> */}
         </div>
-      )}
-
-      {views === "icon" && (
-        <>
+        {fileSelected.length > 0 && (
           <div className="my-3">
-            <div className="row mb-3">
-              <div className="col d-flex align-items-center">
-                <h4 className="text-lightBlue fs-6 fw-500 me-2">Images</h4>
-                <Tooltip
-                  title="Lorem ipsum"
-                  placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className="c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip>
-              </div>
-              <div className="col-auto">
-                <Button
-                  variant="text"
-                  className="me-2"
-                  onClick={seeAllImages}>
-                  <span className="text-lightBlue">See All</span>
-                </Button>
-              </div>
+            <div className="d-flex align-items-center px-2 mb-3">
+              <button className="button-grey py-2 px-3">
+                <small className="text-lightBlue">
+                  {fileSelected.length} files are selected{" "}
+                  <span
+                    className="text-blue-2 c-pointer"
+                    onClick={clearfileSelected}>
+                    (Clear Selection)
+                  </span>
+                </small>
+              </button>
+              <TableMassActionButton
+                headingName="Mass Action"
+                defaultValue={["Move To Folder", "Delete"]}
+                onSelect={(action) => {
+                  switch (action) {
+                    case "Delete":
+                      setDeletingFile({});
+                      break;
+                    case "Move To Folder":
+                      setMovingFile({});
+                      break;
+
+                    default:
+                      break;
+                  }
+                }}
+              />
             </div>
-            <div className="row align-items-center">
-              {allImages.map((image) => (
-                <div
-                  key={image._id}
-                  className="col-2">
+          </div>
+        )}
+
+        {views === "icon" && (
+          <div className="row align-items-center">
+            {allFiles.map((file) => (
+              <div
+                key={file._id}
+                className="col-2">
+                {file.fileType === "image" && (
                   <ImageIconView
-                    file={image}
-                    isSelected={fileSelected.includes(image)}
+                    file={file}
+                    isSelected={fileSelected.includes(file)}
                     onSelect={(check, file) => setFileSelected(check ? fileSelected.concat(file) : fileSelected.filter((sl) => !Object.is(sl, file)))}
                     onDoubleClick={onPopup}
                     onCopyLink={handleCopyLink}
@@ -299,45 +299,11 @@ export default function AllFiles({ views = "icon", queryFilters = {}, onPopup = 
                     onDownload={handleDownloadFile}
                     onDelete={(file) => setDeletingFile(file)}
                   />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <hr className="hr-grey-6 my-3" />
-
-          <div className="my-3">
-            <div className="row mb-3">
-              <div className="col d-flex align-items-center">
-                <h4 className="text-lightBlue fs-6 fw-500 me-2">Videos</h4>
-                <Tooltip
-                  title="Lorem ipsum"
-                  placement="top">
-                  <img
-                    src={info}
-                    alt="info"
-                    className="c-pointer"
-                    width={13.5}
-                  />
-                </Tooltip>
-              </div>
-              <div className="col-auto">
-                <Button
-                  variant="text"
-                  className="me-2"
-                  onClick={seeAllVideos}>
-                  <span className="text-lightBlue">See All</span>
-                </Button>
-              </div>
-            </div>
-            <div className="row align-items-center">
-              {allVideos.map((video) => (
-                <div
-                  key={video._id}
-                  className="col-2">
+                )}
+                {file.fileType === "video" && (
                   <VideoIconView
-                    file={video}
-                    isSelected={fileSelected.includes(video)}
+                    file={file}
+                    isSelected={fileSelected.includes(file)}
                     onSelect={(check, file) => setFileSelected(check ? fileSelected.concat(file) : fileSelected.filter((sl) => !Object.is(sl, file)))}
                     onDoubleClick={onPopup}
                     onCopyLink={handleCopyLink}
@@ -346,70 +312,57 @@ export default function AllFiles({ views = "icon", queryFilters = {}, onPopup = 
                     onDownload={handleDownloadFile}
                     onDelete={(file) => setDeletingFile(file)}
                   />
-                </div>
-              ))}
-            </div>
+                )}
+              </div>
+            ))}
           </div>
-        </>
-      )}
+        )}
 
-      {views === "list" && (
-        <div className="my-3">
-          <div className="row mb-3">
-            <div className="col d-flex align-items-center">
-              <h4 className="text-lightBlue fs-6 fw-500 me-2">Files</h4>
-              <Tooltip
-                title="Lorem ipsum"
-                placement="top">
-                <img
-                  src={info}
-                  alt="info"
-                  className="c-pointer"
-                  width={13.5}
-                />
-              </Tooltip>
-            </div>
-          </div>
+        {views === "list" && (
           <TableContainer>
             <Table size="medium">
               <EnhancedTableHead
                 numSelected={fileSelected.length}
-                onSelectAllClick={(e) => setFileSelected(e.target.checked ? [...allImages, ...allVideos] : [])}
-                rowCount={allImages.length + allVideos.length}
+                onSelectAllClick={(e) => setFileSelected(e.target.checked ? [...allFiles] : [])}
+                rowCount={allFiles.length}
                 headCells={headCells}
               />
               <TableBody>
-                {allImages.map((image) => (
-                  <ImageListView
-                    file={image}
-                    isSelected={fileSelected.includes(image)}
-                    onSelect={(check, file) => setFileSelected(check ? fileSelected.concat(file) : fileSelected.filter((sl) => !Object.is(sl, file)))}
-                    onDoubleClick={onPopup}
-                    onCopyLink={handleCopyLink}
-                    onMoveToFolder={(file) => setMovingFile(file)}
-                    onRename={(file) => setRenamingFile(file)}
-                    onDownload={handleDownloadFile}
-                    onDelete={(file) => setDeletingFile(file)}
-                  />
-                ))}
-                {allVideos.map((video) => (
-                  <VideoListView
-                    file={video}
-                    isSelected={fileSelected.includes(video)}
-                    onSelect={(check, file) => setFileSelected(check ? fileSelected.concat(file) : fileSelected.filter((sl) => !Object.is(sl, file)))}
-                    onDoubleClick={onPopup}
-                    onCopyLink={handleCopyLink}
-                    onMoveToFolder={(file) => setMovingFile(file)}
-                    onRename={(file) => setRenamingFile(file)}
-                    onDownload={handleDownloadFile}
-                    onDelete={(file) => setDeletingFile(file)}
-                  />
+                {allFiles.map((file) => (
+                  <>
+                    {file.fileType === "image" && (
+                      <ImageListView
+                        file={file}
+                        isSelected={fileSelected.includes(file)}
+                        onSelect={(check, file) => setFileSelected(check ? fileSelected.concat(file) : fileSelected.filter((sl) => !Object.is(sl, file)))}
+                        onDoubleClick={onPopup}
+                        onCopyLink={handleCopyLink}
+                        onMoveToFolder={(file) => setMovingFile(file)}
+                        onRename={(file) => setRenamingFile(file)}
+                        onDownload={handleDownloadFile}
+                        onDelete={(file) => setDeletingFile(file)}
+                      />
+                    )}
+                    {file.fileType === "video" && (
+                      <VideoListView
+                        file={file}
+                        isSelected={fileSelected.includes(file)}
+                        onSelect={(check, file) => setFileSelected(check ? fileSelected.concat(file) : fileSelected.filter((sl) => !Object.is(sl, file)))}
+                        onDoubleClick={onPopup}
+                        onCopyLink={handleCopyLink}
+                        onMoveToFolder={(file) => setMovingFile(file)}
+                        onRename={(file) => setRenamingFile(file)}
+                        onDownload={handleDownloadFile}
+                        onDelete={(file) => setDeletingFile(file)}
+                      />
+                    )}
+                  </>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-        </div>
-      )}
+        )}
+      </div>
 
       <NameRenameDialog
         isOpen={!!renamingFolder}

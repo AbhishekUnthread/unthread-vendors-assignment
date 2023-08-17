@@ -14,12 +14,25 @@ import folderOpen from "../../../assets/icons/folderOpen.svg";
 import imagesOn from "../../../assets/icons/imagesOn.svg";
 import videosOn from "../../../assets/icons/videosOn.svg";
 import sortVertical from "../../../assets/icons/sortVertical.svg";
-import searchVertical from "../../../assets/icons/searchVertical.svg";
 import uploadCloud from "../../../assets/icons/uploadCloud.svg";
 import folderPlus from "../../../assets/icons/folderPlus.svg";
 import folderLargePurple from "../../../assets/icons/folderLargePurple.svg";
-import { Button, FormControl, FormControlLabel, Menu, Popover, Radio, RadioGroup, Tab, Tabs, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Menu,
+  Popover,
+  Radio,
+  RadioGroup,
+  Tab,
+  Tabs,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+} from "@mui/material";
 import IconMenuItem from "./IconMenuItem";
 import ImagesOnly from "./ImagesOnly/ImagesOnly";
 import NameRenameDialog from "./Dialogs/NameRenameDialog";
@@ -32,6 +45,7 @@ import FilePreviewDialog from "./Dialogs/FilePreviewDialog";
 
 const initialQueries = {
   name: "",
+  fileType: [],
   sizeSort: "",
   createdAt: "-1",
   alphabetical: "",
@@ -43,6 +57,12 @@ const queryFilterReducer = (state, action) => {
       return {
         ...state,
         name: action.name,
+      };
+    case "SET_FILTER":
+      const { value, checked } = action;
+      return {
+        ...state,
+        fileType: checked ? state.fileType.concat(value) : state.fileType.filter((s) => s !== value),
       };
     case "SET_SIZE_SORT":
       return {
@@ -117,12 +137,15 @@ export default function FileManager() {
 
   const [tabIndex, setTabIndex] = useState(0);
   const [openAddFolder, setOpenAddFolder] = useState(false);
+  const [filterAnchorEl, setFilterAnchorEl] = useState(null);
   const [sortAnchorEl, setSortAnchorEl] = useState(null);
   const [addAnchorEl, setAddAnchorEl] = useState(null);
   const [views, setViews] = useState("icon");
 
   const handleViews = (_, v) => setViews(v);
+  const handleFilterClick = (e) => setFilterAnchorEl(e.currentTarget);
   const handleSortClick = (e) => setSortAnchorEl(e.currentTarget);
+  const handleFilterClose = () => setFilterAnchorEl(null);
   const handleSortClose = () => setSortAnchorEl(null);
   const handleAddNewClick = (e) => setAddAnchorEl(e.currentTarget);
   const handleAddNewClose = () => setAddAnchorEl(null);
@@ -133,6 +156,8 @@ export default function FileManager() {
     setSearchValue("");
     setTabIndex(tab);
   };
+
+  const openFilterMenu = Boolean(filterAnchorEl);
   const openSortMenu = Boolean(sortAnchorEl);
 
   const [viewingFileId, setViewingFileId] = useState("");
@@ -152,7 +177,7 @@ export default function FileManager() {
   };
 
   return (
-    <div className="col-lg-10 border-grey-5 rounded-8 mt-5 p-4">
+    <div className="col-lg-10 bg-black-15 border-grey-5 rounded-8 mt-5 p-4">
       <div className="my-3">
         <div className="row mb-2">
           <div className="col d-flex align-items-center">
@@ -171,19 +196,19 @@ export default function FileManager() {
           </div>
 
           <div className="col-auto">
-            <Button
-              variant="text"
-              className="me-2">
-              <span className="text-lightBlue">Connect Storage</span>
-            </Button>
+            <div className="d-flex">
+              <Button
+                variant="text"
+                className="me-2">
+                <span className="text-lightBlue">Connect Storage</span>
+              </Button>
 
-            <Button
-              variant="contained"
-              className="button-gradient text-white ms-2"
-              startIcon={<AddIcon />}
-              onClick={handleAddNewClick}>
-              Add New
-            </Button>
+              <button
+                className="button-gradient py-2 px-4 ms-3"
+                onClick={handleAddNewClick}>
+                <p>+ Add New</p>
+              </button>
+            </div>
             <Menu
               anchorEl={addAnchorEl}
               open={Boolean(addAnchorEl)}
@@ -324,6 +349,7 @@ export default function FileManager() {
               onSearchValueChange={(v) => setSearchValue(v)}
               onChange={(v) => dispatchQueryFilters({ type: "SET_NAME", name: v })}
             />
+            <p className="text-grey-6 mx-2">|</p>
 
             <Button
               variant="text"
@@ -337,7 +363,6 @@ export default function FileManager() {
               }>
               <span className="text-grey-6">Sort</span>
             </Button>
-
             <Popover
               className="columns"
               open={openSortMenu}
@@ -431,11 +456,67 @@ export default function FileManager() {
               </FormControl>
             </Popover>
 
+            {(tabIndex === 0 || tabIndex === 4) && (
+              <>
+                <p className="text-grey-6 mx-2">|</p>
+
+                <Button
+                  variant="text"
+                  onClick={handleFilterClick}>
+                  <span className="text-grey-6">Filter</span>
+                </Button>
+                <Popover
+                  className="columns"
+                  open={openFilterMenu}
+                  anchorEl={filterAnchorEl}
+                  onClose={handleFilterClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}>
+                  <FormGroup
+                    className="px-2 py-1"
+                    onClick={handleFilterClose}
+                    onChange={(e) => dispatchQueryFilters({ type: "SET_FILTER", checked: e.target.checked, value: e.target.value })}>
+                    <FormControlLabel
+                      label="Images"
+                      value="image"
+                      // className="me-0"
+                      checked={queryFilters.fileType.includes("image")}
+                      control={
+                        <Checkbox
+                          size="small"
+                          style={{ color: "#5C6D8E" }}
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="Videos"
+                      // className="me-0"
+                      value="video"
+                      checked={queryFilters.fileType.includes("video")}
+                      control={
+                        <Checkbox
+                          size="small"
+                          style={{ color: "#5C6D8E" }}
+                        />
+                      }
+                    />
+                  </FormGroup>
+                </Popover>
+              </>
+            )}
+
+            <p className="text-grey-6 mx-2">|</p>
+
             <ToggleButtonGroup
               exclusive
               value={views}
-              onChange={handleViews}
-              className="ms-2">
+              onChange={handleViews}>
               <ToggleButton value="icon">
                 <img
                   src={allfiles}

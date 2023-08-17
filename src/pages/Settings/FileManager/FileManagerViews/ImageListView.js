@@ -1,14 +1,11 @@
 import { useState } from "react";
 import IconMenuItem from "../IconMenuItem";
-import shoe from "../../../../assets/images/dashboard/shoe.png";
 import image3 from "../../../../assets/icons/image-03.svg";
-import akarLinkChain from "../../../../assets/icons/akarLinkChain.svg";
 import archive from "../../../../assets/icons/folderdropdown/archive.svg";
 import download from "../../../../assets/icons/folderdropdown/download.svg";
 import edit from "../../../../assets/icons/folderdropdown/edit.svg";
 import folderUp from "../../../../assets/icons/folderdropdown/folderUp.svg";
 import linkAngled from "../../../../assets/icons/folderdropdown/linkAngled.svg";
-import share from "../../../../assets/icons/folderdropdown/share.svg";
 import { Checkbox, Fab, Menu, TableCell, TableRow } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { formatBytes } from "../../../../utils/helper";
@@ -24,19 +21,12 @@ export default function ImageListView({
   onDownload = () => {},
   onDelete = () => {},
 }) {
-  const { _id = "", name = "", module = "", description = "", file: url = "", filesize = 0, folder = {} } = file;
+  const { _id = "", name = "", file: url = "", filesize = 0, folder = {} } = file;
 
-  const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handlePointerEnter = () => setShowMore(true);
-  const handlePointerLeave = () => setShowMore(Boolean(anchorEl));
-
   const handleOptionsClick = (e) => setAnchorEl(e.currentTarget);
-  const handleOptionsClose = () => {
-    setAnchorEl(null);
-    setShowMore(false);
-  };
+  const handleOptionsClose = () => setAnchorEl(null);
 
   const handleDoubleClick = () => {
     onDoubleClick(_id);
