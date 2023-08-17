@@ -44,7 +44,7 @@ const filterReducer = (state, action) => {
   return initialFilterState;
 };
 
-function AddFilters({ value, formik, field, touched, error }) {
+function AddFilters({ value, formik, field, touched, error, index }) {
   const [filterState, dispatchFilter] = useReducer(
     filterReducer,
     initialFilterState
@@ -104,10 +104,19 @@ function AddFilters({ value, formik, field, touched, error }) {
   
   const matchingItem =  formik?.values?.filters.length>1
    ?
-  formik?.values?.filters.find((item, index) => {
+  formik?.values?.filters.filter((item, index) => {
     return item?.field === value?.field;
-  }): null
+  }).map((operator)=>(operator?.operator)): []
+
+  const matchingIndex =  formik?.values?.filters.length>1
+  ?
+ formik?.values?.filters.map((item, i) => {
+   return (item?.field === value?.field && item?.operator ) ? i : null;
+ }).filter((item)=>(item!==null)): []
+
   console.log("matchingItem", matchingItem)
+  console.log("matchingIndex", matchingIndex)
+
   console.log("field: ", value.operator)
 
   // const handleCheck = (data) => {
@@ -128,7 +137,7 @@ function AddFilters({ value, formik, field, touched, error }) {
   // };
   const operatorOptions = [
     { value: "equalTo", label: "Equal to" },
-    { value: "notEqualTo", label: "Not Equal to" },
+    { value: "notEqualTo", label: "Not Equal to" }
   ];
 
   // useEffect(() => {
@@ -318,7 +327,7 @@ function AddFilters({ value, formik, field, touched, error }) {
                 }
               >
                 {operatorOptions.map((option) => {
-                  if(option.value ===  matchingItem?.operator)
+                  if( matchingItem?.includes(option?.value) && !matchingIndex?.includes(index) )
                   {
                     return null;
                   }

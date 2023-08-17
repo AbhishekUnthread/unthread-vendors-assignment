@@ -611,7 +611,7 @@ const CreateDiscount = () => {
       },
       discountValue: {
         discountValue: discountsData?.data?.data[0]?.mainDiscount?.value || "",
-        type: discountsData?.data?.data[0]?.mainDiscount?.type || "percentage",
+        type: discountsData?.data?.data[0]?.mainDiscount?.unit || "percentage",
         value: discountsData?.data?.data[0]?.mainDiscount?.discountOn || "",
         cartLabel: discountsData?.data?.data[0]?.mainDiscount?.cartLabel || "",
       },
