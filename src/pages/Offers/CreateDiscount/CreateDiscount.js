@@ -339,6 +339,7 @@ const initialDiscountsState = {
   totalCount: 0,
   discountType: 0,
   isEditing: false,
+  edited: false,
 
 };
 const discountsReducer = (state, action) => {
@@ -357,14 +358,26 @@ const discountsReducer = (state, action) => {
   }
   if (action.type === "ENABLE_EDIT") {
     return {
-      ...initialDiscountsState,
+      ...state,
       isEditing: true,
     };
   }
   if (action.type === "DISABLE_EDIT") {
     return {
-      ...initialDiscountsState,
+      ...state,
       isEditing: false,
+    };
+  }
+  if (action.type === "EDITED_ENABLE") {
+    return {
+      ...state,
+      edited: true,
+    };
+  }
+  if (action.type === "EDITED_DISABLE") {
+    return {
+      ...state,
+      edited: false,
     };
   }
   return initialDiscountsState;
@@ -632,6 +645,7 @@ const CreateDiscount = () => {
     enableReinitialize: true,
     validationSchema: discountValidationSchema,
     onSubmit: (values) => {
+      dispatchDiscounts({ type: "EDITED_DISABLE" });
       const test = {
         name: values?.discountName,
         status: "active",
@@ -797,7 +811,11 @@ const CreateDiscount = () => {
           });
       } else {
         createDiscount(test)
-        .then(() => navigate("/offers/discounts"));
+        .then(() => {
+          formik.resetForm();
+          navigate("/offers/discounts");
+          dispatch(showSuccess({ message: "Discount created successfully" }));
+        });
       }
     },
   });
@@ -849,11 +867,34 @@ const CreateDiscount = () => {
     });
     formik.setFieldValue("discountRange", newRange);
   };
+  
+  useEffect(() => {
+    if (discountsIsSuccess) {
+      dispatchDiscounts({ type: "EDITED_DISABLE" });
+    }
+    if (discountsIsError) {
+      if (discountsError?.data?.message) {
+        dispatch(showError({ message: discountsError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [
+    discountsIsSuccess,
+    discountsIsError,
+    discountsError,
+    editDicountIsSuccess,
+    id,
+    discountValueSchema,
+    dispatch,
+  ]);
 
   useEffect(() => {
-    if (createDiscountIsSuccess) {
-      dispatch(showSuccess({ message: "Discount created successfully" }));
-    }
+    // if (createDiscountIsSuccess) {
+    //   dispatch(showSuccess({ message: "Discount created successfully" }));
+    // }
     if (createDiscountError) {
       if (createDiscountError?.data?.message) {
         dispatch(showError({ message: createDiscountError?.data?.message }));
@@ -863,7 +904,7 @@ const CreateDiscount = () => {
         );
       }
     }
-  }, [createDiscountIsSuccess, createDiscountError, dispatch]);
+  }, [ createDiscountError, dispatch]);
 
   useEffect(() => {
     const encodedString = searchParams.get("filter");
@@ -876,14 +917,25 @@ const CreateDiscount = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (id && !_.isEqual(formik.values, formik.initialValues)) {
-      dispatchDiscounts({ type: "ENABLE_EDIT" });
-    } else if (id && _.isEqual(formik.values, formik.initialValues)) {
-      dispatchDiscounts({ type: "DISABLE_EDIT" });
+    if(location.pathname !== "/offers/discounts/create")
+    {
+      if (id && !_.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_ENABLE" });
+        dispatchDiscounts({ type: "ENABLE_EDIT" });
+      } else if (id && _.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_DISABLE" });
+        dispatchDiscounts({ type: "DISABLE_EDIT" });
+      }
     }
   }, [formik.initialValues, formik.values, id]);
 
   console.log("errorrrrrrrrrrrr", formik?.errors);
+  console.log({ValueValueInitial : formik?.initialValues});
+  console.log({ValueValue : formik?.values})
+  console.log("istrueeeeeeee",
+  !_.isEqual(formik.values, formik.initialValues))
+
+
 
   return (
     <div className="page container-fluid position-relative">
@@ -1256,7 +1308,7 @@ const CreateDiscount = () => {
           }
         />
         <DiscardModalSecondary
-          when={!_.isEqual(formik.values, formik.initialValues)}
+          when={discountsState.edited}
           message="discount"
         />
       </form>
