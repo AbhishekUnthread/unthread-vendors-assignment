@@ -104,8 +104,8 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
                   <Autocomplete
                     multiple
                     id="checkboxes-tags-demo"
-                    className="mt-3"
-                    sx={{ width: "100%" }}
+                    className="mt-1 ps-4 ms-1 mb-3"
+                    sx={{ width: "90%" }}
                     options={
                       customersData?.data?.data ||
                       customersGroupData?.data?.data
@@ -167,8 +167,8 @@ const CustomerEligibility = ({ value, field, formik, touched, error }) => {
             <Autocomplete
               multiple
               id="checkboxes-tags-demo"
-              className="mt-3"
-              sx={{ width: "100%" }}
+              className="mt-1 ps-4 ms-1 mb-3"
+              sx={{ width: "90%" }}
               options={
                 customersData?.data?.data || customersGroupData?.data?.data
               }
