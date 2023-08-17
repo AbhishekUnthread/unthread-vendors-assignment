@@ -331,6 +331,22 @@ function AddFilters({ value, formik, field, touched, error, index }) {
                   {
                     return null;
                   }
+                  else if(matchingIndex?.includes(index))
+                  {
+                    if(option?.value === value?.operator)
+                    {
+                      return (
+                    <MenuItem
+                      key={option.value}
+                      value={option.value}
+                      sx={{ fontSize: 13, color: "#5c6d8e" }}
+                    >
+                      {option.label}
+                    </MenuItem>
+                  );
+                    }
+                    else{ return null};
+                  }
                   return (
                     <MenuItem
                       key={option.value}
