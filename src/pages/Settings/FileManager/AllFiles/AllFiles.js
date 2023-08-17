@@ -197,15 +197,10 @@ export default function AllFiles({ views = "icon", queryFilters = {}, onPopup = 
 
         {views === "list" && (
           <TableContainer>
-            <Table
-              // sx={{ minWidth: 750 }}
-              size="medium">
+            <Table size="medium">
               <EnhancedTableHead
                 numSelected={folderSelected.length}
-                // order={order}
-                // orderBy={orderBy}
                 onSelectAllClick={(e) => setFolderSelected(e.target.checked ? [...allFolders] : [])}
-                // onRequestSort={handleRequestSort}
                 rowCount={allFolders.length}
                 headCells={headCells}
               />

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Tooltip } from "@mui/material";
+import { Table, TableBody, TableContainer, Tooltip } from "@mui/material";
 import { showError, showSuccess } from "../../../../features/snackbar/snackbarAction";
 import {
   useBulkDeleteFoldersMutation,
@@ -13,8 +13,37 @@ import FolderNameDialog from "../FolderNameDialog";
 import DeleteAlertDialog from "../DeleteAlertDialog";
 import OnlyFoldersIconView from "./OnlyFoldersIconView";
 import TableMassActionButton from "../../../../components/TableMassActionButton/TableMassActionButton";
+import { EnhancedTableHead } from "../../../../components/TableDependencies/TableDependencies";
+import FolderListView from "../AllFiles/FolderListView";
 
-export default function FoldersOnly({ queryFilters = {}, onExplore = () => {} }) {
+const headCells = [
+  {
+    id: "name",
+    numeric: false,
+    disablePadding: false,
+    label: "Name",
+  },
+  {
+    id: "type",
+    numeric: false,
+    disablePadding: false,
+    label: "Type",
+  },
+  {
+    id: "size",
+    numeric: false,
+    disablePadding: false,
+    label: "Size",
+  },
+  {
+    id: "actions",
+    numeric: false,
+    disablePadding: false,
+    label: "Actions",
+  },
+];
+
+export default function FoldersOnly({ views = "icon", queryFilters = {}, onExplore = () => {} }) {
   const dispatch = useDispatch();
 
   const [selected, setSelected] = useState([]);
@@ -118,22 +147,50 @@ export default function FoldersOnly({ queryFilters = {}, onExplore = () => {} })
           </div>
         )}
       </div>
-      <div className="row align-items-center">
-        {allFolders.map((folder) => (
-          <div
-            key={folder._id}
-            className="col-2 my-2">
-            <OnlyFoldersIconView
-              folder={folder}
-              isSelected={selected.includes(folder)}
-              onDoubleClick={onExplore}
-              onSelect={handleFolderSelection}
-              onRename={handleRenameFolderSelect}
-              onDelete={handleDeleteFolderSelect}
+      {views === "icon" && (
+        <div className="row align-items-center">
+          {allFolders.map((folder) => (
+            <div
+              key={folder._id}
+              className="col-2 my-2">
+              <OnlyFoldersIconView
+                folder={folder}
+                isSelected={selected.includes(folder)}
+                onDoubleClick={onExplore}
+                onSelect={handleFolderSelection}
+                onRename={handleRenameFolderSelect}
+                onDelete={handleDeleteFolderSelect}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {views === "list" && (
+        <TableContainer>
+          <Table size="medium">
+            <EnhancedTableHead
+              numSelected={selected.length}
+              onSelectAllClick={(e) => setSelected(e.target.checked ? [...allFolders] : [])}
+              rowCount={allFolders.length}
+              headCells={headCells}
             />
-          </div>
-        ))}
-      </div>
+            <TableBody>
+              {allFolders.map((folder) => (
+                <FolderListView
+                  key={folder._id}
+                  folder={folder}
+                  isSelected={selected.includes(folder)}
+                  onDoubleClick={onExplore}
+                  onSelect={(check, folder) => setSelected(check ? selected.concat(folder) : selected.filter((sl) => !Object.is(sl, folder)))}
+                  onRename={(folder) => setRenamingFolder(folder)}
+                  onDelete={(folder) => setDeletingFolder(folder)}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       <FolderNameDialog
         isOpen={!!renamingFolder}

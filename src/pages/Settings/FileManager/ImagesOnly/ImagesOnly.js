@@ -1,5 +1,5 @@
 import info from "../../../../assets/icons/info.svg";
-import { Button, Tooltip } from "@mui/material";
+import { Button, Table, TableBody, TableContainer, Tooltip } from "@mui/material";
 import ImageIconView from "../AllFiles/ImageIconView";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
@@ -16,8 +16,38 @@ import { showError, showSuccess } from "../../../../features/snackbar/snackbarAc
 import FolderNameDialog from "../FolderNameDialog";
 import VideoIconView from "../AllFiles/VideoIconView";
 import FolderMoveInDialog from "../FolderMoveInDialog";
+import { EnhancedTableHead } from "../../../../components/TableDependencies/TableDependencies";
+import ImageListView from "../AllFiles/ImageListView";
+import VideoListView from "../AllFiles/VideoListView";
 
-const ImagesOnly = ({ fileType = "", onPopup = () => {}, queryFilters = {}, refetchFiles = false }) => {
+const headCells = [
+  {
+    id: "name",
+    numeric: false,
+    disablePadding: false,
+    label: "Name",
+  },
+  {
+    id: "type",
+    numeric: false,
+    disablePadding: false,
+    label: "Type",
+  },
+  {
+    id: "size",
+    numeric: false,
+    disablePadding: false,
+    label: "Size",
+  },
+  {
+    id: "actions",
+    numeric: false,
+    disablePadding: false,
+    label: "Actions",
+  },
+];
+
+export default function ImagesOnly({ views = "icon", fileType = "", onPopup = () => {}, queryFilters = {}, refetchFiles = false }) {
   const dispatch = useDispatch();
 
   const [selected, setSelected] = useState([]);
@@ -118,40 +148,93 @@ const ImagesOnly = ({ fileType = "", onPopup = () => {}, queryFilters = {}, refe
           </Button>
         </div> */}
       </div>
-      <div className="row align-items-center">
-        {allFiles.map((file) => (
-          <div
-            key={file._id}
-            className="col-2 my-2">
-            {fileType === "image" && (
-              <ImageIconView
-                file={file}
-                isSelected={selected.includes(file)}
-                onSelect={(check, file) => setSelected(check ? selected.concat(file) : selected.filter((sl) => !Object.is(sl, file)))}
-                onDoubleClick={onPopup}
-                onCopyLink={handleCopyLink}
-                onMoveToFolder={(file) => setMovingFile(file)}
-                onRename={(file) => setRenamingFile(file)}
-                onDownload={handleDownloadFile}
-                onDelete={(file) => setDeletingFile(file)}
-              />
-            )}
-            {fileType === "video" && (
-              <VideoIconView
-                file={file}
-                isSelected={selected.includes(file)}
-                onSelect={(check, file) => setSelected(check ? selected.concat(file) : selected.filter((sl) => !Object.is(sl, file)))}
-                onDoubleClick={onPopup}
-                onCopyLink={handleCopyLink}
-                onMoveToFolder={(file) => setMovingFile(file)}
-                onRename={(file) => setRenamingFile(file)}
-                onDownload={handleDownloadFile}
-                onDelete={(file) => setDeletingFile(file)}
-              />
-            )}
-          </div>
-        ))}
-      </div>
+
+      {views === "icon" && (
+        <div className="row align-items-center">
+          {allFiles.map((file) => (
+            <div
+              key={file._id}
+              className="col-2 my-2">
+              {fileType === "image" && (
+                <ImageIconView
+                  file={file}
+                  isSelected={selected.includes(file)}
+                  onSelect={(check, file) => setSelected(check ? selected.concat(file) : selected.filter((sl) => !Object.is(sl, file)))}
+                  onDoubleClick={onPopup}
+                  onCopyLink={handleCopyLink}
+                  onMoveToFolder={(file) => setMovingFile(file)}
+                  onRename={(file) => setRenamingFile(file)}
+                  onDownload={handleDownloadFile}
+                  onDelete={(file) => setDeletingFile(file)}
+                />
+              )}
+              {fileType === "video" && (
+                <VideoIconView
+                  file={file}
+                  isSelected={selected.includes(file)}
+                  onSelect={(check, file) => setSelected(check ? selected.concat(file) : selected.filter((sl) => !Object.is(sl, file)))}
+                  onDoubleClick={onPopup}
+                  onCopyLink={handleCopyLink}
+                  onMoveToFolder={(file) => setMovingFile(file)}
+                  onRename={(file) => setRenamingFile(file)}
+                  onDownload={handleDownloadFile}
+                  onDelete={(file) => setDeletingFile(file)}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {views === "list" && (
+        <TableContainer>
+          <Table size="medium">
+            <EnhancedTableHead
+              numSelected={selected.length}
+              onSelectAllClick={(e) => setSelected(e.target.checked ? [...allFiles] : [])}
+              rowCount={allFiles.length}
+              headCells={headCells}
+            />
+            <TableBody>
+              {allFiles.map((file) => {
+                switch (fileType) {
+                  case "image":
+                    return (
+                      <ImageListView
+                        file={file}
+                        isSelected={selected.includes(file)}
+                        onSelect={(check, file) => setSelected(check ? selected.concat(file) : selected.filter((sl) => !Object.is(sl, file)))}
+                        onDoubleClick={onPopup}
+                        onCopyLink={handleCopyLink}
+                        onMoveToFolder={(file) => setMovingFile(file)}
+                        onRename={(file) => setRenamingFile(file)}
+                        onDownload={handleDownloadFile}
+                        onDelete={(file) => setDeletingFile(file)}
+                      />
+                    );
+                  case "video":
+                    return (
+                      <VideoListView
+                        file={file}
+                        isSelected={selected.includes(file)}
+                        onSelect={(check, file) => setSelected(check ? selected.concat(file) : selected.filter((sl) => !Object.is(sl, file)))}
+                        onDoubleClick={onPopup}
+                        onCopyLink={handleCopyLink}
+                        onMoveToFolder={(file) => setMovingFile(file)}
+                        onRename={(file) => setRenamingFile(file)}
+                        onDownload={handleDownloadFile}
+                        onDelete={(file) => setDeletingFile(file)}
+                      />
+                    );
+
+                  default:
+                    return null;
+                }
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       <FolderNameDialog
         isOpen={!!renamingFile}
@@ -227,6 +310,4 @@ const ImagesOnly = ({ fileType = "", onPopup = () => {}, queryFilters = {}, refe
       />
     </div>
   );
-};
-
-export default ImagesOnly;
+}
