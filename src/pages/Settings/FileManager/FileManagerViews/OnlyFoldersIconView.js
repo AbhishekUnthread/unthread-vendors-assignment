@@ -14,7 +14,7 @@ export default function OnlyFoldersIconView({
   onRename = () => {},
   onDelete = () => {},
 }) {
-  const { _id = "", name = "", result = [] } = folder;
+  const { name = "", result = [] } = folder;
 
   const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -49,7 +49,7 @@ export default function OnlyFoldersIconView({
       onDoubleClick={handleDoubleClick}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-      className={`folder-icon-view position-relative d-flex flex-column align-items-center p-2 rounded-8${
+      className={`folder-icon-view position-relative d-flex flex-column align-items-center p-2 c-pointer rounded-8${
         showMore || isSelected ? " folder-icon-view-hovering" : ""
       }`}>
       <div className="folder-icon rounded-8 p-4 m-2">

@@ -17,17 +17,18 @@ import sortVertical from "../../../assets/icons/sortVertical.svg";
 import searchVertical from "../../../assets/icons/searchVertical.svg";
 import uploadCloud from "../../../assets/icons/uploadCloud.svg";
 import folderPlus from "../../../assets/icons/folderPlus.svg";
+import folderLargePurple from "../../../assets/icons/folderLargePurple.svg";
 import { Button, FormControl, FormControlLabel, Menu, Popover, Radio, RadioGroup, Tab, Tabs, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import IconMenuItem from "./IconMenuItem";
 import ImagesOnly from "./ImagesOnly/ImagesOnly";
-import FolderNameDialog from "./FolderNameDialog";
+import NameRenameDialog from "./Dialogs/NameRenameDialog";
 import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import { useCreateFolderMutation } from "../../../features/settings/filemanager/filemanagerApiSlice";
 import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
 import UseFileUpload from "../../../features/fileUpload/fileUploadHook";
 import FoldersInside from "./FoldersInside/FoldersInside";
-import FilePreviewDialog from "./FilePreviewDialog";
+import FilePreviewDialog from "./Dialogs/FilePreviewDialog";
 
 const initialQueries = {
   name: "",
@@ -202,10 +203,12 @@ export default function FileManager() {
               />
             </Menu>
           </div>
-          <FolderNameDialog
-            buttonText="Create"
+          <NameRenameDialog
             isOpen={openAddFolder}
             headingText="Create New Folder"
+            labelText="Folder Name"
+            buttonText="Create"
+            imageSrc={folderLargePurple}
             onClose={handleAddFolderClose}
             onAction={handleCreateNewFolder}
           />

@@ -1,5 +1,5 @@
-import AlertDialog from "../../../components/AlertDialog/AlertDialog";
-import deleteIcon from "../../../assets/icons/newDelete.svg";
+import AlertDialog from "../../../../components/AlertDialog/AlertDialog";
+import deleteIcon from "../../../../assets/icons/newDelete.svg";
 
 export default function DeleteAlertDialog({
   show = false,

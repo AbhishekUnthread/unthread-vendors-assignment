@@ -4,7 +4,7 @@
 
 - Folder Tab Indicator Workarround for Inside Folder View
 
-## API Issues 
+## API Issues
 
 - [x] Sorting Dont Work
 - [x] Inside Folder Search n Sort Dont Work
@@ -15,10 +15,4 @@
 
 - [x] Folder Sort on Size discission ? Remove Size Sort For Folders
 - Folder Multi Delete discission ? Descission Pending Holding for now
-
-- Files Multi Move Select Add Empty Option
-- Files Multi Move Retains the Folder in the select Value
-- Folder Rename Popup has Typo For Files
-- Folder Rename Popup has Image of Folder for Files
-- The Cancel Hover text Color
-- c-pointer
+- All Files List View File Distinction as Images & Videos ? Decision Pending Holding for now

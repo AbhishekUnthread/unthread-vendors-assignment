@@ -9,12 +9,13 @@ import {
   useGetFoldersQuery,
 } from "../../../../features/settings/filemanager/filemanagerApiSlice";
 import info from "../../../../assets/icons/info.svg";
-import FolderNameDialog from "../FolderNameDialog";
-import DeleteAlertDialog from "../DeleteAlertDialog";
-import OnlyFoldersIconView from "./OnlyFoldersIconView";
+import folderLargePurple from "../../../../assets/icons/folderLargePurple.svg";
+import NameRenameDialog from "../Dialogs/NameRenameDialog";
+import DeleteAlertDialog from "../Dialogs/DeleteAlertDialog";
+import OnlyFoldersIconView from "../FileManagerViews/OnlyFoldersIconView";
 import TableMassActionButton from "../../../../components/TableMassActionButton/TableMassActionButton";
 import { EnhancedTableHead } from "../../../../components/TableDependencies/TableDependencies";
-import FolderListView from "../AllFiles/FolderListView";
+import FolderListView from "../FileManagerViews/FolderListView";
 
 const headCells = [
   {
@@ -192,11 +193,13 @@ export default function FoldersOnly({ views = "icon", queryFilters = {}, onExplo
         </TableContainer>
       )}
 
-      <FolderNameDialog
+      <NameRenameDialog
         isOpen={!!renamingFolder}
-        buttonText="Rename"
         headingText="Rename Folder"
+        labelText="Folder Name"
         folderName={renamingFolder?.name ?? ""}
+        buttonText="Rename"
+        imageSrc={folderLargePurple}
         onClose={handleRenameFolderClose}
         onAction={handleRenameFolder}
       />

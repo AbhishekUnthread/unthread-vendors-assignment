@@ -1,15 +1,12 @@
 import { useState } from "react";
 import IconMenuItem from "../IconMenuItem";
 import video from "../../../../assets/images/dashboard/video.png";
-import akarLinkChain from "../../../../assets/icons/akarLinkChain.svg";
 import videosOn from "../../../../assets/icons/videosOn.svg";
-import videoPlay from "../../../../assets/icons/videoPlay.svg";
 import archive from "../../../../assets/icons/folderdropdown/archive.svg";
 import download from "../../../../assets/icons/folderdropdown/download.svg";
 import edit from "../../../../assets/icons/folderdropdown/edit.svg";
 import folderUp from "../../../../assets/icons/folderdropdown/folderUp.svg";
 import linkAngled from "../../../../assets/icons/folderdropdown/linkAngled.svg";
-import share from "../../../../assets/icons/folderdropdown/share.svg";
 import { Checkbox, Fab, Menu, TableCell, TableRow } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { formatBytes } from "../../../../utils/helper";
@@ -25,7 +22,7 @@ export default function VideoListView({
   onDownload = () => {},
   onDelete = () => {},
 }) {
-  const { _id = "", name = "", description = "", file: url = "", filesize = 0, folder = {} } = file;
+  const { _id = "", name = "", description = "", filesize = 0, folder = {} } = file;
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -81,6 +78,7 @@ export default function VideoListView({
       <TableCell
         scope="row"
         component="th"
+        className="c-pointer"
         onDoubleClick={handleDoubleClick}>
         <div className="d-flex align-items-center">
           <img

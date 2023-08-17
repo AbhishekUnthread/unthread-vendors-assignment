@@ -1,7 +1,6 @@
 import { useState } from "react";
 import IconMenuItem from "../IconMenuItem";
 import shoe from "../../../../assets/images/dashboard/shoe.png";
-import image3 from "../../../../assets/icons/image-03.svg";
 import akarLinkChain from "../../../../assets/icons/akarLinkChain.svg";
 import archive from "../../../../assets/icons/folderdropdown/archive.svg";
 import download from "../../../../assets/icons/folderdropdown/download.svg";
@@ -9,11 +8,11 @@ import edit from "../../../../assets/icons/folderdropdown/edit.svg";
 import folderUp from "../../../../assets/icons/folderdropdown/folderUp.svg";
 import linkAngled from "../../../../assets/icons/folderdropdown/linkAngled.svg";
 import share from "../../../../assets/icons/folderdropdown/share.svg";
-import { Checkbox, Fab, Menu, TableCell, TableRow } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { Checkbox, Fab, Menu } from "@mui/material";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { formatBytes } from "../../../../utils/helper";
 
-export default function ImageListView({
+export default function ImageIconView({
   file = {},
   isSelected = false,
   onSelect = () => {},
@@ -24,7 +23,7 @@ export default function ImageListView({
   onDownload = () => {},
   onDelete = () => {},
 }) {
-  const { _id = "", name = "", module = "", description = "", file: url = "", filesize = 0, folder = {} } = file;
+  const { _id = "", name = "", module = "", description = "", file: url = "", filesize = 0 } = file;
 
   const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -70,64 +69,48 @@ export default function ImageListView({
   const handleSelectionClick = (check) => onSelect(check, file);
 
   return (
-    <TableRow
-      hover
-      role="checkbox"
-      className="table-rows"
-      selected={isSelected}
-      aria-checked={isSelected}>
-      {/* CheckBox Cell */}
-      <TableCell padding="checkbox">
-        <Checkbox
-          size="small"
-          checked={isSelected}
-          style={{ color: "#5C6D8E" }}
-          onChange={(e) => handleSelectionClick(e.target.checked)}
+    <div
+      onDoubleClick={handleDoubleClick}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+      className={`folder-icon-view position-relative d-flex flex-column align-items-center c-pointer rounded-8${
+        showMore || isSelected ? " folder-icon-view-hovering" : ""
+      }`}>
+      <div className="image-icon position-relative rounded-8">
+        <img
+          src={url}
+          alt={description}
+          width={120}
         />
-      </TableCell>
-      {/* Image n Name */}
-      <TableCell
-        scope="row"
-        component="th"
-        onDoubleClick={handleDoubleClick}>
-        <div className="d-flex align-items-center">
-          <img
-            src={url}
-            alt="file"
-            style={{ objectFit: "contain", overflow: "hidden" }}
-            className="me-2 rounded-4"
-            height={30}
-            width={30}
+        <img
+          className="position-absolute bottom-0 end-0 pb-1 pe-1"
+          src={akarLinkChain}
+          alt="link"
+          width={28}
+        />
+      </div>
+      <small className="text-lightBlue">{name}</small>
+      <small className="text-grey-6">
+        {Boolean(module) && <small className="text-green-2">●</small>} {String(url?.slice(url?.lastIndexOf(".") + 1) ?? "").toUpperCase()} •{" "}
+        {formatBytes(filesize)}
+      </small>
+      {(showMore || isSelected) && (
+        <div className="position-absolute top-0 start-0">
+          <Checkbox
+            size="small"
+            color="primary"
+            className="rounded-4"
+            checked={isSelected}
+            onChange={(e) => handleSelectionClick(e.target.checked)}
           />
-          <div className="d-flex flex-column ms-3">
-            <span className="text-lightBlue fw-500">{name}</span>
-            <small className="text-grey-6 mt-1">{folder.name ?? ""}</small>
-          </div>
         </div>
-      </TableCell>
-      {/* Type */}
-      <TableCell style={{ width: 180 }}>
-        <div className="d-flex align-items-center py-3">
-          <img
-            src={image3}
-            alt="i"
-            height={15}
-            width={15}
-          />
-          <p className="text-lightBlue ps-2 fw-200">Image</p>
-        </div>
-      </TableCell>
-      {/* Size */}
-      <TableCell style={{ width: 180 }}>
-        <p className="text-lightBlue">{formatBytes(filesize)}</p>
-      </TableCell>
-      {/* Actions Cell */}
-      <TableCell style={{ width: 140, padding: 0 }}>
-        <div className="d-flex justify-content-center align-items-center">
+      )}
+      {showMore && (
+        <div className="position-absolute top-0 end-0">
           <Fab
             size="small"
             onClick={handleOptionsClick}>
-            <MoreVertIcon
+            <MoreHorizIcon
               fontSize="small"
               color="primary"
             />
@@ -169,7 +152,7 @@ export default function ImageListView({
             />
           </Menu>
         </div>
-      </TableCell>
-    </TableRow>
+      )}
+    </div>
   );
 }

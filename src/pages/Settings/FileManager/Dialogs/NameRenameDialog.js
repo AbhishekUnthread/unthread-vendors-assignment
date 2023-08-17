@@ -1,22 +1,20 @@
-import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, MenuItem, Select, TextField } from "@mui/material";
-import folderLargePurple from "../../../assets/icons/folderLargePurple.svg";
-import cancel from "../../../assets/icons/cancel.svg";
 import { useEffect, useState } from "react";
-import { useGetFoldersQuery } from "../../../features/settings/filemanager/filemanagerApiSlice";
+import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import cancel from "../../../../assets/icons/cancel.svg";
 
-export default function FolderMoveInDialog({
+export default function NameRenameDialog({
   isOpen = false,
   headingText = "",
   subText = "",
+  labelText = "",
+  folderName = "",
   buttonText = "",
-  fileImage = "",
+  imageSrc = "",
   onClose = () => {},
   onAction = () => {},
 }) {
-  const { data: allFoldersData } = useGetFoldersQuery();
-  const allFolders = allFoldersData?.data?.data ?? [];
-
-  const [fid, setFid] = useState("");
+  const [fname, setFname] = useState(folderName);
+  useEffect(() => setFname(folderName), [folderName]);
 
   return (
     <Dialog
@@ -46,48 +44,43 @@ export default function FolderMoveInDialog({
           <div className="col-auto">
             <div className="folder-icon rounded-8 p-4 m-3">
               <img
-                src={folderLargePurple}
-                alt="file"
+                // src={folderLargePurple}
+                src={imageSrc}
+                alt="icon"
+                style={{ objectFit: "contain", overflow: "hidden" }}
+                className="me-2 rounded-4"
+                height={66}
                 width={66}
               />
             </div>
           </div>
-          {allFolders.length > 0 ? (
-            <div className="col">
-              <label className="text-lightBlue mb-2">Select A Folder</label>
-              <Select
-                size="small"
-                value={fid}
-                onChange={(e) => setFid(e.target.value)}
-                className="d-block w-75"
-                placeholder="Select A Folder">
-                {allFolders.map((f) => (
-                  <MenuItem
-                    key={f._id}
-                    value={f._id}>
-                    {f.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </div>
-          ) : (
-            <div className="col">
-              <label className="text-lightBlue mb-2">No Folders Yet</label>
-            </div>
-          )}
+          <div className="col">
+            {/* <label className="text-lightBlue mb-2">Folder Name</label> */}
+            <label className="text-lightBlue mb-2">{labelText}</label>
+            <TextField
+              fullWidth
+              size="small"
+              value={fname}
+              onChange={(e) => setFname(e.target.value)}
+            />
+          </div>
         </div>
       </DialogContent>
       <hr className="hr-grey-6 my-0" />
       <DialogActions className="d-flex justify-content-between px-4 py-3">
         <button
+          onClick={onClose}
+          className="button-grey-outline py-2 px-4">
+          <p className="text-lightBlue">Cancel</p>
+        </button>
+        {/* <button
           className="button-lightBlue-outline py-2 px-4"
           onClick={onClose}>
           <p className="text-lightBlue">Cancel</p>
-        </button>
+        </button> */}
         <button
           className="button-gradient py-2 px-4"
-          onClick={() => onAction(fid)}
-          disabled={!fid}>
+          onClick={() => onAction(fname)}>
           <p>{buttonText}</p>
         </button>
       </DialogActions>

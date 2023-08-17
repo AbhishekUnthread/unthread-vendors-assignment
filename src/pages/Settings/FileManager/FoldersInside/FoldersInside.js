@@ -4,26 +4,22 @@ import { Table, TableBody, TableContainer, Tooltip } from "@mui/material";
 import { showError, showSuccess } from "../../../../features/snackbar/snackbarAction";
 import {
   useBulkDeleteFilesMutation,
-  useBulkDeleteFoldersMutation,
   useBulkEditFileMutation,
   useDeleteFileMutation,
-  useDeleteFolderMutation,
   useEditFileMutation,
-  useEditFolderMutation,
   useGetFilesQuery,
-  useGetFoldersQuery,
 } from "../../../../features/settings/filemanager/filemanagerApiSlice";
-import arrowLeft from "../../../../assets/icons/arrowLeft.svg";
 import info from "../../../../assets/icons/info.svg";
-import FolderNameDialog from "../FolderNameDialog";
-import DeleteAlertDialog from "../DeleteAlertDialog";
+import video from "../../../../assets/images/dashboard/video.png";
+import NameRenameDialog from "../Dialogs/NameRenameDialog";
+import DeleteAlertDialog from "../Dialogs/DeleteAlertDialog";
 import TableMassActionButton from "../../../../components/TableMassActionButton/TableMassActionButton";
-import ImageIconView from "../AllFiles/ImageIconView";
-import VideoIconView from "../AllFiles/VideoIconView";
-import FolderMoveInDialog from "../FolderMoveInDialog";
+import ImageIconView from "../FileManagerViews/ImageIconView";
+import VideoIconView from "../FileManagerViews/VideoIconView";
+import MoveInFolderDialog from "../Dialogs/MoveInFolderDialog";
 import { EnhancedTableHead } from "../../../../components/TableDependencies/TableDependencies";
-import ImageListView from "../AllFiles/ImageListView";
-import VideoListView from "../AllFiles/VideoListView";
+import ImageListView from "../FileManagerViews/ImageListView";
+import VideoListView from "../FileManagerViews/VideoListView";
 
 const headCells = [
   {
@@ -300,11 +296,13 @@ export default function FoldersInside({ views = "icon", folder = {}, onPopup = (
         </TableContainer>
       )}
 
-      <FolderNameDialog
+      <NameRenameDialog
         isOpen={!!renamingFile}
-        buttonText="Rename"
         headingText="Rename File"
+        labelText="File Name"
         folderName={renamingFile?.name ?? ""}
+        buttonText="Rename"
+        imageSrc={renamingFile?.fileType === "video" ? video : renamingFile?.file ?? ""}
         onClose={() => setRenamingFile(null)}
         onAction={(name = "") => {
           editFile({ id: renamingFile._id, fileData: { name } })
@@ -315,7 +313,7 @@ export default function FoldersInside({ views = "icon", folder = {}, onPopup = (
         }}
       />
 
-      <FolderMoveInDialog
+      <MoveInFolderDialog
         isOpen={!!movingFile}
         buttonText="Move"
         headingText={`Move ${selected.length > 0 ? `${selected.length} Files` : ""} To a Folder`}

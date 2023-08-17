@@ -56,6 +56,7 @@ export default function FolderListView({
       <TableCell
         scope="row"
         component="th"
+        className="c-pointer"
         onDoubleClick={handleDoubleClick}>
         <div className="d-flex align-items-center">
           <img

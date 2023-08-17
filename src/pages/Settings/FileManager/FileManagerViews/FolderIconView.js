@@ -49,7 +49,7 @@ export default function FolderIconView({
       onDoubleClick={handleDoubleClick}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-      className={`folder-icon-view position-relative d-flex align-items-center rounded-8${showMore || isSelected ? " folder-icon-view-hovering" : ""}`}>
+      className={`folder-icon-view position-relative d-flex align-items-center c-pointer rounded-8${showMore || isSelected ? " folder-icon-view-hovering" : ""}`}>
       <div className="folder-icon rounded-8 p-3 m-2">
         <img
           src={folderLargePurple}

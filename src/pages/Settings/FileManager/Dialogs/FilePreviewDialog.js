@@ -1,14 +1,12 @@
-import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, OutlinedInput, TextField, Tooltip } from "@mui/material";
-import cancel from "../../../assets/icons/cancel.svg";
-import info from "../../../assets/icons/info.svg";
-// import swirlIcon from "../../../assets/icons/filepopup/swirl.svg";
-import downloadIcon from "../../../assets/icons/filepopup/download.svg";
-import deleteIcon from "../../../assets/icons/filepopup/delete.svg";
-import { useEffect, useState } from "react";
-import { useDeleteFileMutation, useGetFilesQuery } from "../../../features/settings/filemanager/filemanagerApiSlice";
-import { formatBytes } from "../../../utils/helper";
 import { useDispatch } from "react-redux";
-import { showError, showSuccess } from "../../../features/snackbar/snackbarAction";
+import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, OutlinedInput, Tooltip } from "@mui/material";
+import { useDeleteFileMutation, useGetFilesQuery } from "../../../../features/settings/filemanager/filemanagerApiSlice";
+import { showError, showSuccess } from "../../../../features/snackbar/snackbarAction";
+import { formatBytes } from "../../../../utils/helper";
+import cancel from "../../../../assets/icons/cancel.svg";
+import info from "../../../../assets/icons/info.svg";
+import downloadIcon from "../../../../assets/icons/filepopup/download.svg";
+import deleteIcon from "../../../../assets/icons/filepopup/delete.svg";
 
 export default function FilePreviewDialog({ fileId = "", headingText = "", subText = "", buttonText = "", onClose = () => {}, onAction = () => {} }) {
   const { data: allFilesData } = useGetFilesQuery({ id: fileId });
@@ -188,10 +186,15 @@ export default function FilePreviewDialog({ fileId = "", headingText = "", subTe
         <hr className="hr-grey-6 mt-0" />
         <DialogActions className="d-flex justify-content-between px-4 py-3">
           <button
+            onClick={onClose}
+            className="button-grey-outline py-2 px-4">
+            <p className="text-lightBlue">Cancel</p>
+          </button>
+          {/* <button
             className="button-lightBlue-outline py-2 px-4"
             onClick={onClose}>
             <p className="text-lightBlue">Cancel</p>
-          </button>
+          </button> */}
           <button
             className="button-gradient py-2 px-4"
             onClick={() => onAction(fileId)}>
