@@ -98,6 +98,7 @@ function Filters({
                   <TableRow className="table-rows">
                     <TableCell colSpan={3}>
                       <AddFilters
+                        index ={index}
                         formik={formik}
                         value={formik?.values?.filters[index]}
                         field={`filters[${index}]`}

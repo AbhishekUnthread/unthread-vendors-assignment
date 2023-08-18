@@ -38,7 +38,7 @@ const initialQueryFilterState = {
 const initialBundleDiscountsState = {
   data: [],
   totalCount: 0,
-  discountType:0,
+  discountType:null,
 };
 const queryFilterReducer = (state, action) => {
   if (action.type === "SET_PAGE_SIZE") {
@@ -84,6 +84,12 @@ const queryFilterReducer = (state, action) => {
       alphabetical: null,
     };
   }
+  if (action.type === "SET_ALL_FILTERS") {
+    return {
+      ...initialQueryFilterState,
+      ...action.filters,
+    };
+  }
   return initialQueryFilterState;
 };
 const  bundleDiscountsReducer = (state, action) => {
@@ -111,6 +117,8 @@ const BundleDiscount = () => {
   const[searchParams, setSearchParams] = useSearchParams();
   const Navigate = useNavigate();
   const dispatch = useDispatch();
+  const [firstRender, setFirstRender] = useState(true);
+
 
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
@@ -127,7 +135,7 @@ const BundleDiscount = () => {
     isSuccess: bundleDiscountsIsSuccess, 
     error: bundleDiscountsError,
     isError:bundleDiscountsIsError
-  }=useGetAllBundleDiscountsQuery(queryFilterState);
+  }=useGetAllBundleDiscountsQuery({...queryFilterState});
 
   const [
     deleteBundleDiscount,
@@ -153,7 +161,7 @@ const BundleDiscount = () => {
     })
     dispatchQueryFilter({ type: "SET_SEARCH_VALUE", searchValue: "" });
     dispatchQueryFilter({ type: "SEARCH", name: "" });
-    setSearchParams({type:newValue})
+    // setSearchParams({type:newValue})
   };
   const handleChangeRowsPerPage = (event) => {
     dispatchQueryFilter({ type: "SET_PAGE_SIZE", value :event.target.value });
@@ -265,35 +273,35 @@ const BundleDiscount = () => {
     }
   }, [bulkDeleteBundleDiscountError, dispatch]);
 
-  useEffect(() => {
-    const type = JSON.parse( searchParams.get("filter"));
-    console.log("efoihi3if", type?.discountType)
-    if(+searchParams.get("type")===0 || type?.discountType===0)
-    {
-      dispatchBundleDiscounts({
-        type:"SET_DISCOUNT_TYPE", discountType:0
-      })
-    }
-    else if(+searchParams.get("type")===1 || type?.discountType===1)
-    {
-      dispatchBundleDiscounts({
-        type:"SET_DISCOUNT_TYPE", discountType:1
-      })
-    }
-    else if(+searchParams.get("type")===2 || type?.discountType===2)
-    {
-      console.log("inside nfekjfk")
-      dispatchBundleDiscounts({
-        type:"SET_DISCOUNT_TYPE", discountType:2
-      })
-    }
-    else if((+searchParams.get("type")===3) || type?.discountType===3)
-    {
-      dispatchBundleDiscounts({
-        type:"SET_DISCOUNT_TYPE", discountType:3
-      })
-    }
-}, [searchParams])
+//   useEffect(() => {
+//     const type = JSON.parse( searchParams.get("filter"));
+//     console.log("efoihi3if", type?.discountType)
+//     if(+searchParams.get("type")===0 || type?.discountType===0)
+//     {
+//       dispatchBundleDiscounts({
+//         type:"SET_DISCOUNT_TYPE", discountType:0
+//       })
+//     }
+//     else if(+searchParams.get("type")===1 || type?.discountType===1)
+//     {
+//       dispatchBundleDiscounts({
+//         type:"SET_DISCOUNT_TYPE", discountType:1
+//       })
+//     }
+//     else if(+searchParams.get("type")===2 || type?.discountType===2)
+//     {
+//       console.log("inside nfekjfk")
+//       dispatchBundleDiscounts({
+//         type:"SET_DISCOUNT_TYPE", discountType:2
+//       })
+//     }
+//     else if((+searchParams.get("type")===3) || type?.discountType===3)
+//     {
+//       dispatchBundleDiscounts({
+//         type:"SET_DISCOUNT_TYPE", discountType:3
+//       })
+//     }
+// }, [searchParams])
 
   // * SORT POPOVERS STARTS
   const [anchorSortEl, setAnchorSortEl] = React.useState(null);
@@ -309,7 +317,45 @@ const BundleDiscount = () => {
   const openSort = Boolean(anchorSortEl);
   const idSort = openSort ? "simple-popover" : undefined;
   // * SORT POPOVERS ENDS
+  
+  useEffect(() => {
+    const filterParams = JSON.parse(searchParams.get("filter")) || {
+      discountType : bundleDiscountsState.discountType,
+    };
+    if (firstRender && Object.keys(filterParams).length) {
+      let filters = {};
+      for (let key in filterParams) {
+        if (key !== "discountType") {
+          if (filterParams[key] !== (null || "")) {
+            filters = {
+              ...filters,
+              [key]: filterParams[key],
+            };
+          }
+        } else {
+          dispatchBundleDiscounts({type:"SET_DISCOUNT_TYPE", discountType:+filterParams[key]})
+        }
+      }
+      if (filterParams.discountType === (null || "")) {
+        dispatchBundleDiscounts({type:"SET_DISCOUNT_TYPE", discountType:0})
+      }
+      dispatchQueryFilter({
+        type: "SET_ALL_FILTERS",
+        filters,
+      });
+      setFirstRender(false);
+    }
+  }, [searchParams]);
 
+  useEffect(() => {
+    if (!firstRender) {
+      setSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, discountType : bundleDiscountsState.discountType}),
+      });
+    }
+  }, [queryFilterState, setSearchParams,bundleDiscountsState.discountType,firstRender]);
+
+  console.log("oiuehgd2e637de32", JSON.parse(searchParams.get("filter")) )
 
   return (
     <div className="container-fluid page">

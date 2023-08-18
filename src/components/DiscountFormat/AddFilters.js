@@ -44,7 +44,7 @@ const filterReducer = (state, action) => {
   return initialFilterState;
 };
 
-function AddFilters({ value, formik, field, touched, error }) {
+function AddFilters({ value, formik, field, touched, error, index }) {
   const [filterState, dispatchFilter] = useReducer(
     filterReducer,
     initialFilterState
@@ -81,7 +81,7 @@ function AddFilters({ value, formik, field, touched, error }) {
     isSuccess: vendorsIsSuccess,
     error: vendorsError,
   } = useGetAllVendorsQuery(undefined, {
-    skip: value?.field !== 60,
+    skip: value?.field !== "vendors",
   });
   const {
     data: tagsData,
@@ -104,10 +104,19 @@ function AddFilters({ value, formik, field, touched, error }) {
   
   const matchingItem =  formik?.values?.filters.length>1
    ?
-  formik?.values?.filters.find((item, index) => {
+  formik?.values?.filters.filter((item, index) => {
     return item?.field === value?.field;
-  }): null
+  }).map((operator)=>(operator?.operator)): []
+
+  const matchingIndex =  formik?.values?.filters.length>1
+  ?
+ formik?.values?.filters.map((item, i) => {
+   return (item?.field === value?.field && item?.operator ) ? i : null;
+ }).filter((item)=>(item!==null)): []
+
   console.log("matchingItem", matchingItem)
+  console.log("matchingIndex", matchingIndex)
+
   console.log("field: ", value.operator)
 
   // const handleCheck = (data) => {
@@ -128,7 +137,7 @@ function AddFilters({ value, formik, field, touched, error }) {
   // };
   const operatorOptions = [
     { value: "equalTo", label: "Equal to" },
-    { value: "notEqualTo", label: "Not Equal to" },
+    { value: "notEqualTo", label: "Not Equal to" }
   ];
 
   // useEffect(() => {
@@ -187,7 +196,7 @@ function AddFilters({ value, formik, field, touched, error }) {
       formik.setFieldValue(`${field}.dropDownData`, subCategoriesData);
     } else if (value?.field === "collection") {
       formik.setFieldValue(`${field}.dropDownData`, collectionData);
-    } else if (value?.field === 60) {
+    } else if (value?.field === "vendors") {
       formik.setFieldValue(`${field}.dropDownData`, vendorsData);
     } else if (value?.field === "Tags") {
       formik.setFieldValue(`${field}.dropDownData`, tagsData);
@@ -261,10 +270,10 @@ function AddFilters({ value, formik, field, touched, error }) {
             >
               Collection
             </MenuItem>
-            <MenuItem value={60} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="vendors" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               Vendor Name
             </MenuItem>
-            <MenuItem value={70} sx={{ fontSize: 13, color: "#5c6d8e" }}>
+            <MenuItem value="attributes" sx={{ fontSize: 13, color: "#5c6d8e" }}>
               Attributes
             </MenuItem>
             <MenuItem value="Tags" sx={{ fontSize: 13, color: "#5c6d8e" }}>
@@ -318,9 +327,25 @@ function AddFilters({ value, formik, field, touched, error }) {
                 }
               >
                 {operatorOptions.map((option) => {
-                  if(option.value ===  matchingItem?.operator)
+                  if( matchingItem?.includes(option?.value) && !matchingIndex?.includes(index) )
                   {
                     return null;
+                  }
+                  else if(matchingIndex?.includes(index))
+                  {
+                    if(option?.value === value?.operator)
+                    {
+                      return (
+                    <MenuItem
+                      key={option.value}
+                      value={option.value}
+                      sx={{ fontSize: 13, color: "#5c6d8e" }}
+                    >
+                      {option.label}
+                    </MenuItem>
+                  );
+                    }
+                    else{ return null};
                   }
                   return (
                     <MenuItem

@@ -376,10 +376,10 @@ const DiscountsTable = ({
                               <p className="text-lightBlue">{row.timePeriod}</p>
                             </div>
                             <p className="text-lightBlue me-2">
-                              {row?.mainDiscount?.discountCode}
-                            </p>
                             {discountType === 0 ? (
                               row?.mainDiscount?.discountCode ? (
+                                <>
+                                {row?.mainDiscount?.discountCode}{` `}
                                 <CopyToClipboard
                                   text={row?.mainDiscount?.discountCode}
                                   onCopy={handleCopy}
@@ -393,16 +393,19 @@ const DiscountsTable = ({
                                     <ContentCopyIcon
                                       sx={{
                                         color: "#5c6d8e",
-                                        fontSize: 12,
+                                        fontSize: 14,
                                         cursor: "pointer",
                                       }}
                                     />
                                   </Tooltip>
                                 </CopyToClipboard>
+                                </>
                               ) : null
                             ) : (
                               row?.mainDiscount?.discountName
                             )}
+                            </p>
+ 
                           </div>
                         </TableCell>
                         <TableCell style={{ width: 180 }}>

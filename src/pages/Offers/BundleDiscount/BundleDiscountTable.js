@@ -262,7 +262,7 @@ const BundleDiscountTable = ({
           </button>
         </div>
       )}
-      {list.length ? (
+      {list?.length ? (
         <>
           <TableContainer>
             <Table
@@ -330,8 +330,8 @@ const BundleDiscountTable = ({
                         <TableCell>
                           <div className="d-flex flex-column">
                             <p className="text-lightBlue mt-1 d-block">
-                              {row?.products
-                                .map((item, index) => item?.title)
+                              {row?.displayBundle?.products
+                                ?.map((item, index) => item?.title)
                                 .join(", ")}
                             </p>
                           </div>

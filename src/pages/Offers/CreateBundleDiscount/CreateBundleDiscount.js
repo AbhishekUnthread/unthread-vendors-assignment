@@ -167,6 +167,7 @@ const initialDiscountsState = {
   totalCount: 0,
   discountType: 0,
   isEditing: false,
+  edited: false,
 };
 const discountsReducer = (state, action) => {
   if (action.type === "SET_DATA") {
@@ -184,14 +185,26 @@ const discountsReducer = (state, action) => {
   }
   if (action.type === "ENABLE_EDIT") {
     return {
-      ...initialDiscountsState,
+      ...state,
       isEditing: true,
     };
   }
   if (action.type === "DISABLE_EDIT") {
     return {
-      ...initialDiscountsState,
+      ...state,
       isEditing: false,
+    };
+  }
+  if (action.type === "EDITED_ENABLE") {
+    return {
+      ...state,
+      edited: true,
+    };
+  }
+  if (action.type === "EDITED_DISABLE") {
+    return {
+      ...state,
+      edited: false,
     };
   }
   return initialDiscountsState;
@@ -273,7 +286,7 @@ const CreateBundleDiscount = () => {
 
       customerEligibility: {
         customer: bundleDiscountsData?.data?.data[0]?.eligibility?.eligibilityType || "allCustomers",
-        customerGroups: bundleDiscountsData?.data?.data[0]?.eligibility?.customerGroups ||[],
+        customerGroups: bundleDiscountsData?.data?.data[0]?.eligibility?.customerGroups||[],
         specificCustomers : bundleDiscountsData?.data?.data[0]?.eligibility?.specificCustomers || []
       },
 
@@ -289,12 +302,12 @@ const CreateBundleDiscount = () => {
       createBundle: {
         field: bundleDiscountsData?.data?.data[0]?.makeBundleFromItems?.itemFrom || "",
         value: bundleDiscountsData?.data?.data[0]?.makeBundleFromItems?.products || [],
-        dropDownData: [],
+        // dropDownData: [],
       },
       displayBundle: {
         field: bundleDiscountsData?.data?.data[0]?.displayBundle?.itemFrom || "",
         value: bundleDiscountsData?.data?.data[0]?.displayBundle?.products || [],
-        dropDownData: [],
+        // dropDownData: [],
       },
       discountValue: {
         discountValue: bundleDiscountsData?.data?.data[0]?.mainDiscount?.value || "",
@@ -304,6 +317,7 @@ const CreateBundleDiscount = () => {
     enableReinitialize: true,
     validationSchema: discountValidationSchema,
     onSubmit: (values) => {
+      dispatchDiscounts({ type: "EDITED_DISABLE" });
       const test = {
         name: values?.bundleName,
         status: "active",
@@ -407,6 +421,29 @@ const CreateBundleDiscount = () => {
   });
 
   useEffect(() => {
+    if (bundleDiscountsIsSuccess) {
+      dispatchDiscounts({ type: "EDITED_DISABLE" });
+    }
+    if (bundleDiscountsIsError) {
+      if (bundleDiscountsError?.data?.message) {
+        dispatch(showError({ message: bundleDiscountsError?.data?.message }));
+      } else {
+        dispatch(
+          showError({ message: "Something went wrong, please try again" })
+        );
+      }
+    }
+  }, [
+    bundleDiscountsIsSuccess,
+    bundleDiscountsIsSuccess,
+    bundleDiscountsError,
+    editBundleDicountIsSuccess,
+    id,
+    discountValueSchema,
+    dispatch,
+  ]);
+
+  useEffect(() => {
     if (createBundleDiscountIsSuccess) {
       dispatch(showSuccess({ message: "Discount created successfully" }));
     }
@@ -433,10 +470,24 @@ const CreateBundleDiscount = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (id && !_.isEqual(formik.values, formik.initialValues)) {
-      dispatchDiscounts({ type: "ENABLE_EDIT" });
-    } else if (id && _.isEqual(formik.values, formik.initialValues)) {
-      dispatchDiscounts({ type: "DISABLE_EDIT" });
+    if (location.pathname !== "/offers/bundleDiscount/create") {
+      if (id && !_.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_ENABLE" });
+        dispatchDiscounts({ type: "ENABLE_EDIT" });
+      } else if (id && _.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_DISABLE" });
+        dispatchDiscounts({ type: "DISABLE_EDIT" });
+      }
+    }
+    else{
+      console.log("checking......")
+      if (!_.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_ENABLE" });
+        dispatchDiscounts({ type: "ENABLE_EDIT" });
+      } else if (_.isEqual(formik.values, formik.initialValues)) {
+        dispatchDiscounts({ type: "EDITED_DISABLE" });
+        dispatchDiscounts({ type: "DISABLE_EDIT" });
+      }
     }
   }, [formik.initialValues, formik.values, id]);
 
@@ -746,7 +797,7 @@ const CreateBundleDiscount = () => {
         />
 
         <DiscardModalSecondary
-        when={!_.isEqual(formik.values, formik.initialValues)}
+        when={discountsState.edited}
         message="bundle discount"
       />
       </form>
