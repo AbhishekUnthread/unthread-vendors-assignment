@@ -70,14 +70,17 @@ const BundleProductDiscount = ({
   };
 
   const handleOptionChange = (newValue) => {
-    setSelectedOptions(newValue);
+    // setSelectedOptions(newValue);
     formik.setFieldValue(`${field}.value`, newValue);
   };
   const handleClear = (item) => {
-    const updatedSelectedOptions = selectedOptions.filter(
-      (option) => option !== item
-    );
-    handleOptionChange(updatedSelectedOptions);
+    // const updatedSelectedOptions = selectedOptions.filter(
+    //   (option) => option !== item
+    // );
+    const updatedSelectedOptions = value?.value.filter((option)=> option !== item)
+    // handleOptionChange(updatedSelectedOptions);
+    formik.setFieldValue(`${field}.value`, updatedSelectedOptions);
+
   };
   // ? FIELD SELECT ENDS HERE
 
@@ -220,7 +223,7 @@ const BundleProductDiscount = ({
             option?.firstName || option?.title || option?.name || []
           }
           size="small"
-          value={selectedOptions || value?.value}
+          value={value?.value}
           onChange={(_, newValue) => {
             handleOptionChange(newValue);
           }}
@@ -254,7 +257,7 @@ const BundleProductDiscount = ({
         </small>
       </div>
 
-      {selectedOptions.map((item, index) => (
+      {value?.value?.map((item, index) => (
         <div className="col-12 mt-2 px-0">
           <div className="bg-black-21 rounded-8 align-items-center p-2 d-flex justify-content-between">
             <div className="d-flex align-items-center">
