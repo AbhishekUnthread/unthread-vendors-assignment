@@ -286,7 +286,7 @@ const CreateBundleDiscount = () => {
 
       customerEligibility: {
         customer: bundleDiscountsData?.data?.data[0]?.eligibility?.eligibilityType || "allCustomers",
-        customerGroups: bundleDiscountsData?.data?.data[0]?.eligibility?.customerGroups ||[],
+        customerGroups: bundleDiscountsData?.data?.data[0]?.eligibility?.customerGroups.map((item,index)=>(item?.name)) ||[],
         specificCustomers : bundleDiscountsData?.data?.data[0]?.eligibility?.specificCustomers || []
       },
 
@@ -302,12 +302,12 @@ const CreateBundleDiscount = () => {
       createBundle: {
         field: bundleDiscountsData?.data?.data[0]?.makeBundleFromItems?.itemFrom || "",
         value: bundleDiscountsData?.data?.data[0]?.makeBundleFromItems?.products || [],
-        dropDownData: [],
+        // dropDownData: [],
       },
       displayBundle: {
         field: bundleDiscountsData?.data?.data[0]?.displayBundle?.itemFrom || "",
-        value: bundleDiscountsData?.data?.data[0]?.displayBundle?.products || [],
-        dropDownData: [],
+        value: bundleDiscountsData?.data?.data[0]?.displayBundle?.products.map((item, index) => item?.name  ) || [],
+        // dropDownData: [],
       },
       discountValue: {
         discountValue: bundleDiscountsData?.data?.data[0]?.mainDiscount?.value || "",

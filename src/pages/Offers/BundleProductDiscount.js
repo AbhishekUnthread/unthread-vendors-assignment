@@ -34,6 +34,7 @@ const BundleProductDiscount = ({
   error,
 }) => {
   const [selectedOptions, setSelectedOptions] = useState(value?.value || []);
+  const [dropDownData, setDropDownData] = useState([]);
 
   const {
     data: categoriesData,
@@ -82,33 +83,39 @@ const BundleProductDiscount = ({
 
   useEffect(() => {
     if (categoriesIsSuccess) {
-      formik.setFieldValue(`${field}.dropDownData`, categoriesData);
+      // formik.setFieldValue(`${field}.dropDownData`, categoriesData);
+      setDropDownData(categoriesData);
     }
   }, [categoriesIsSuccess, categoriesData]);
 
   useEffect(() => {
     if (collectionIsSuccess) {
-      formik.setFieldValue(`${field}.dropDownData`, collectionData);
+      // formik.setFieldValue(`${field}.dropDownData`, collectionData);
+      setDropDownData(collectionData);
     }
   }, [collectionIsSuccess, collectionData]);
 
   useEffect(() => {
     if (tagsIsSuccess) {
-      formik.setFieldValue(`${field}.dropDownData`, tagsData);
+      // formik.setFieldValue(`${field}.dropDownData`, tagsData);
+      setDropDownData(tagsData);
     }
   }, [tagsIsSuccess, tagsData]);
 
   useEffect(() => {
     if (value?.field === "category") {
-      formik.setFieldValue(`${field}.dropDownData`, categoriesData);
+      // formik.setFieldValue(`${field}.dropDownData`, categoriesData);
+      setDropDownData(categoriesData);
     } else if (value?.field === "collection") {
-      formik.setFieldValue(`${field}.dropDownData`, collectionData);
+      // formik.setFieldValue(`${field}.dropDownData`, collectionData);
+      setDropDownData(collectionData);
     } else if (value?.field === "Tags") {
-      formik.setFieldValue(`${field}.dropDownData`, tagsData);
+      // formik.setFieldValue(`${field}.dropDownData`, tagsData);
+      setDropDownData(tagsData);
     }
   }, [categoriesData, collectionData, tagsData, value?.field]);
 
-  console.log("dropDOwnData", value?.value);
+  console.log("dropDownData", dropDownData);
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 row attributes mt-4">
@@ -207,7 +214,7 @@ const BundleProductDiscount = ({
           multiple
           id="checkboxes-tags-demo"
           sx={{ width: "100%" }}
-          options={value?.dropDownData?.data?.data ?? []}
+          options={dropDownData?.data?.data ?? []}
           disableCloseOnSelect
           getOptionLabel={(option) =>
             option?.firstName || option?.title || option?.name || []
