@@ -3,18 +3,12 @@ import apiSlice from "../../app/api/apiSlice";
 export const fileUploadApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getS3UploadUrl: builder.query({
-      query: ({ fileName }) => ({
-        url: `/uploads?filename=${fileName}`,
+      query: ({ fileName, fileSize, fileType, module }) => ({
+        url: `/uploads?filename=${fileName}&filesize=${fileSize}&filetype=${fileType}&module=${module}`,
       }),
-    }),
-    uploadUrl: builder.mutation({
-      query: ({ fileName }) => ({
-        url: `/uploads?filename=${fileName}`,
-      }),
-      transformResponse: (res) => res.data,
+      invalidatesTags: ["FileManager"],
     }),
   }),
 });
 
-export const { useGetS3UploadUrlQuery, useUploadUrlMutation } =
-  fileUploadApiSlice;
+export const { useGetS3UploadUrlQuery } = fileUploadApiSlice;

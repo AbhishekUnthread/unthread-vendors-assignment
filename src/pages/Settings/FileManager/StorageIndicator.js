@@ -5,7 +5,11 @@ export default function StorageIndicator({ icon, name, used, total, color }) {
     <div className="border-grey-5 rounded-8 bg-black-13 p-2">
       <div className="row p-1">
         <div className="col-auto">
-          <img src={icon} alt="icon" width={40} />
+          <img
+            src={icon}
+            alt="icon"
+            width={40}
+          />
         </div>
         <div className="col d-flex flex-column">
           <small className="text-grey-6">Storage</small>
@@ -18,7 +22,12 @@ export default function StorageIndicator({ icon, name, used, total, color }) {
           <span className="text-grey-6">&nbsp;/&nbsp;{total}GB</span>
         </div>
         <div className="col-auto">
-          <img src={info} alt="icon" width={30} style={{ color }} />
+          <img
+            src={info}
+            alt="icon"
+            width={30}
+            style={{ color }}
+          />
         </div>
       </div>
     </div>

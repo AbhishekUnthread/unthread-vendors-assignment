@@ -11,13 +11,13 @@ const Settings = () => {
               <div className="d-flex flex-column mb-3">
                 <h3 className="text-lightBlue fw-600 mb-2">Settings</h3>
 
-                <span className="c-pointer text-grey-6">
-                  Dashboard / Settings
-                </span>
+                <span className="c-pointer text-grey-6">Dashboard / Settings</span>
               </div>
 
               <div className="d-flex flex-column">
-                <NavLink to="filemanager" className="d-flex align-items-center">
+                <NavLink
+                  to="filemanager"
+                  className="d-flex align-items-center">
                   <img
                     className="ms-2"
                     src={folderSmallGrey}
@@ -26,7 +26,9 @@ const Settings = () => {
                   />
                   <span className="ms-2">File Manager</span>
                 </NavLink>
-                <NavLink to="taxmanager" className="d-flex align-items-center">
+                <NavLink
+                  to="taxmanager"
+                  className="d-flex align-items-center">
                   <img
                     className="ms-2"
                     src={folderSmallGrey}

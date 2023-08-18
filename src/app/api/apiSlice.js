@@ -44,6 +44,7 @@ const apiSlice = createApi({
     "State",
     "City",
     "Seos",
+    "FileManager",
   ],
   endpoints: (builder) => ({}),
 });

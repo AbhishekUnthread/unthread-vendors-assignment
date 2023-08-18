@@ -9,6 +9,9 @@ const initialUploadState = {
   isError: false,
   error: null,
   fileName: null,
+  fileSize: 0,
+  fileType: "",
+  module: "",
   file: null,
   skip: true,
 };
@@ -19,6 +22,9 @@ const uploadReducer = (state, action) => {
       ...initialUploadState,
       isLoading: true,
       fileName: action.fileName,
+      fileSize: action.fileSize,
+      fileType: action.fileType,
+      module: action.module ?? "",
       file: action.file,
       skip: false,
     };
@@ -48,21 +54,18 @@ const uploadReducer = (state, action) => {
 };
 
 const UseFileUpload = () => {
-  const [uploadState, dispatchUpload] = useReducer(
-    uploadReducer,
-    initialUploadState
-  );
+  const [uploadState, dispatchUpload] = useReducer(uploadReducer, initialUploadState);
   const {
     data: uploadUrlData,
     isSuccess: uploadUrlIsSuccess,
     error: uploadUrlError,
   } = useGetS3UploadUrlQuery(
-    { fileName: uploadState.fileName },
+    { fileName: uploadState.fileName, fileSize: uploadState.fileSize, fileType: uploadState.fileType, module: uploadState.module },
     { skip: uploadState.skip }
   );
 
-  const uploadFile = useCallback(({ file, format }) => {
-    dispatchUpload({ type: "GET_URL", fileName: file.name, file });
+  const uploadFile = useCallback(({ file, format, module }) => {
+    dispatchUpload({ type: "GET_URL", fileName: file.name, fileSize: file.size, fileType: format, module, file });
   }, []);
 
   useEffect(() => {
