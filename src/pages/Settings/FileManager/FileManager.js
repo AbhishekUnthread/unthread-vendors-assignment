@@ -34,7 +34,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import IconMenuItem from "./IconMenuItem";
-import ImagesOnly from "./ImagesOnly/ImagesOnly";
+import FilesOnly from "./FilesOnly/FilesOnly";
 import NameRenameDialog from "./Dialogs/NameRenameDialog";
 import { TableSearchSecondary } from "../../../components/TableSearch/TableSearch";
 import { useCreateFolderMutation } from "../../../features/settings/filemanager/filemanagerApiSlice";
@@ -566,7 +566,7 @@ export default function FileManager() {
         />
       )}
       {tabIndex === 2 && (
-        <ImagesOnly
+        <FilesOnly
           views={views}
           fileType="image"
           onPopup={handleViewingFile}
@@ -575,7 +575,7 @@ export default function FileManager() {
         />
       )}
       {tabIndex === 3 && (
-        <ImagesOnly
+        <FilesOnly
           views={views}
           fileType="video"
           onPopup={handleViewingFile}

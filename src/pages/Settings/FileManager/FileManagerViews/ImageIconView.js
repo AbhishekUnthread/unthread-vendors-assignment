@@ -1,6 +1,5 @@
 import { useState } from "react";
 import IconMenuItem from "../IconMenuItem";
-import akarLinkChain from "../../../../assets/icons/akarLinkChain.svg";
 import archive from "../../../../assets/icons/folderdropdown/archive.svg";
 import download from "../../../../assets/icons/folderdropdown/download.svg";
 import edit from "../../../../assets/icons/folderdropdown/edit.svg";
@@ -71,27 +70,8 @@ export default function ImageIconView({
       onDoubleClick={handleDoubleClick}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-      className={`folder-icon-view position-relative d-flex flex-column align-items-center c-pointer rounded-8${
-        showMore || isSelected ? " folder-icon-view-hovering" : ""
-      }`}>
-      <div className="image-icon position-relative rounded-8">
-        <img
-          src={url}
-          alt={description}
-          width={120}
-        />
-        <img
-          className="position-absolute bottom-0 end-0 pb-1 pe-1"
-          src={akarLinkChain}
-          alt="link"
-          width={28}
-        />
-      </div>
-      <small className="text-lightBlue">{name}</small>
-      <small className="text-grey-6">
-        {Boolean(module) && <small className="text-green-2">●</small>} {String(url?.slice(url?.lastIndexOf(".") + 1) ?? "").toUpperCase()} •{" "}
-        {formatBytes(filesize)}
-      </small>
+      className="position-relative d-flex flex-column c-pointer">
+      {/* className={`position-relative d-flex flex-column c-pointer${showMore || isSelected ? " folder-icon-view-hovering" : ""}`}> */}
       {(showMore || isSelected) && (
         <div className="position-absolute top-0 start-0">
           <Checkbox
@@ -151,6 +131,20 @@ export default function ImageIconView({
           </Menu>
         </div>
       )}
+      <div
+        style={{ height: "128px" }}
+        className="d-flex align-items-center justify-content-center rounded-8 img-container p-2">
+        <img
+          src={url}
+          alt={description}
+          style={{ objectFit: "contain", height: "90%", width: "90%" }}
+        />
+      </div>
+      <small className="text-lightBlue mt-3">{name}</small>
+      <small className="text-grey-6 my-2">
+        {Boolean(module) && <small className="text-green-2">●</small>} {String(url?.slice(url?.lastIndexOf(".") + 1) ?? "").toUpperCase()} •{" "}
+        {formatBytes(filesize)}
+      </small>
     </div>
   );
 }

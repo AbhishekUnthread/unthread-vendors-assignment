@@ -48,7 +48,7 @@ const headCells = [
   },
 ];
 
-export default function ImagesOnly({ views = "icon", fileType = "", onPopup = () => {}, queryFilters = {}, refetchFiles = false }) {
+export default function FilesOnly({ views = "icon", fileType = "", onPopup = () => {}, queryFilters = {}, refetchFiles = false }) {
   const dispatch = useDispatch();
 
   const [selected, setSelected] = useState([]);
