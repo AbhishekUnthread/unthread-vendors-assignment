@@ -52,10 +52,9 @@ import {
   useUpdateSubAttributeMutation,
   useDeleteSubAttributeMutation,
 } from "../../../features/parameters/options/optionsApiSlice";
+import SnackbarUtils from "../../../features/snackbar/useSnackbar";
 
 import { colorReg, urlReg } from "../../../utils/regex";
-
-import SnackbarUtils from "../../../features/snackbar/useSnackbar";
 
 const FRONTEND_APPEARANCE = [
   {

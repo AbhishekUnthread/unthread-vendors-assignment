@@ -44,8 +44,8 @@ import CreateDiscount from "./pages/Offers/CreateDiscount/CreateDiscount";
 import Discounts from "./pages/Offers/Discounts/Discounts";
 import BundleDiscount from "./pages/Offers/BundleDiscount/BundleDiscount";
 import CreateBundleDiscount from "./pages/Offers/CreateBundleDiscount/CreateBundleDiscount";
-import PriceMasterLanding from "./pages/Parameters/PriceMasterLanding/PriceMasterLanding";
-import PriceMaster from "./pages/Parameters/PriceMaster/PriceMaster";
+import PriceMasterLanding from "./pages/PriceMaster/PriceMasterLanding/PriceMasterLanding";
+import PriceMaster from "./pages/PriceMaster/PriceMaster/PriceMaster";
 import CreatePriceMaster from "./pages/CreatePriceMaster/CreatePriceMaster";
 import MetalPriceManager from "./pages/Parameters/MetalPriceManager/MetalPriceManager";
 import DiamondPriceManager from "./pages/Parameters/DiamondPriceManager/DiamondPriceManager";
@@ -354,30 +354,6 @@ const router = () => {
                   path: "tagsManager/edit/:id/:filter",
                   element: <EditTags />,
                 },
-                {
-                  path: "priceMaster",
-                  element: <PriceMasterLanding />,
-                },
-                {
-                  path: "priceMaster/inventory",
-                  element: <PriceMaster />,
-                },
-                {
-                  path: "priceMaster/create",
-                  element: <CreatePriceMaster />,
-                },
-                {
-                  path: "priceMaster/metalMaster",
-                  element: <MetalPriceManager />,
-                },
-                {
-                  path: "priceMaster/diamondMaster",
-                  element: <DiamondPriceManager />,
-                },
-                {
-                  path: "priceMaster/makingMaster",
-                  element: <MakingChargesManager />,
-                },
               ],
             },
             {
@@ -393,6 +369,10 @@ const router = () => {
                 },
                 {
                   path: "create",
+                  element: <CreatePriceMaster />,
+                },
+                {
+                  path: "edit/:id",
                   element: <CreatePriceMaster />,
                 },
                 {
