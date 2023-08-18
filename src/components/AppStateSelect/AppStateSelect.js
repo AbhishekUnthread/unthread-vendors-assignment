@@ -14,8 +14,6 @@ export default function AppStateSelect({ getStateName, formik }) {
     error: stateError,
   } = useGetAllStateQuery({ createdAt: -1 });
 
-  const selectedValue = stateData?.data?.data?.find((state) => state._id === value) ?? {};
-
   const selectedCode = stateData?.data?.data.find( state => state._id === formik.values.state );
 
   return (
