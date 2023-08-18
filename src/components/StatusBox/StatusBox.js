@@ -4,6 +4,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormHelperText,
   Slide,
   TextField,
   ToggleButton,
@@ -59,6 +60,7 @@ const StatusBox = ({
   };
 
   const minDateTime = startDate ? moment(startDate).add(10, "minutes") : null;
+                const currentTime = new Date();
 
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3">
@@ -164,12 +166,16 @@ const StatusBox = ({
             <DesktopDateTimePicker
               value={startDate ? startDate : null}
               onChange={(newValue) => {
-                setStartDate(newValue);
-                handleStartDate(newValue);
+                const currentTime = new Date();
+                // if (newValue > currentTime) {
+                  setStartDate(newValue);
+                  handleStartDate(newValue);
+                // }
               }}
               renderInput={(params) => <TextField {...params} size="small" />}
               minDate={new Date()}
             />
+            
           </LocalizationProvider>
           <div className="d-flex mb-1 mt-3">
             <p className="text-lightBlue">End Date</p>

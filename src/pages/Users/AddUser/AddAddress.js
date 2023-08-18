@@ -1,8 +1,13 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, forwardRef, useEffect, useReducer } from "react";
 import { useFormik } from "formik";
+import { useDispatch } from "react-redux";
 import * as Yup from "yup";
+import _ from "lodash";
 import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   FormHelperText,
   InputAdornment,
@@ -10,7 +15,17 @@ import {
   Checkbox,
   FormControlLabel,
   Chip,
+  Slide
 } from "@mui/material";
+
+import { 
+    useEditCustomerAddressMutation 
+} from "../../../features/customers/customerAddress/customerAddressApiSlice";
+import {
+  showSuccess,
+  showError,
+} from "../../../features/snackbar/snackbarAction";
+import { useGetAllCountryQuery } from "../../../features/master/country/countryApiSlice";
 
 import AppCountrySelect from "../../../components/AppCountrySelect/AppCountrySelect";
 import AppStateSelect from "../../../components/AppStateSelect/AppStateSelect";
@@ -19,8 +34,35 @@ import AppCitySelect from "../../../components/AddCitySelect/AddCitySelect";
 
 import archivedGrey from "../../../assets/icons/archivedGrey.svg";
 import editGrey from "../../../assets/icons/editGrey.svg";
+import cancel from "../../../assets/icons/cancel.svg";
 
 import "./AddUser.scss";
+
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const initialAddressState = {
+  confirmationMessage: "",
+  isEditing: false,
+};
+
+const addressTabReducer = (state, action) => {
+  if (action.type === "ENABLE_EDIT") {
+    return {
+      ...initialAddressState,
+      isEditing: true,
+    };
+  }
+  if (action.type === "DISABLE_EDIT") {
+    return {
+      ...initialAddressState,
+      isEditing: false,
+    };
+  }
+
+  return initialAddressState;
+};
 
 const customerAddressValidation = Yup.object({
   name: Yup.string().trim().min(3).required("Required"),
@@ -35,73 +77,117 @@ const customerAddressValidation = Yup.object({
   state: Yup.string().required("Required"),
 });
 
-const AddAddress = ({ customerAddressDetails }) => {
-  const [address, setAddress] = useState(false);
-  const [savedAddress, setSavedAddress] = useState(false);
+const AddAddress = ({ customerAddressDetails, data, deleteAddress, addressData, value2 }) => {
+  const dispatch = useDispatch();
+  const [address, setAddress] = useState([]);
+  const [openNewUser, setOpenNewUser] = useState(false);
+  const [editAdd, setEditAddress] = useState("");
+  const [addressState, dispatchAddress] = useReducer(
+    addressTabReducer,
+    initialAddressState
+  );
+
+  console.log(value2, 'value2 value');
+
+  const [
+    editCustomerAddress,
+    {
+      data: editAddress,
+      isLoading: editAddressIsLoading,
+      isSuccess: editAddressIsSuccess,
+      error: editAddressError,
+    }
+  ] = useEditCustomerAddressMutation();
+
+  const {
+    data: countryData,
+    isLoading: countryIsLoading,
+    isSuccess: countryIsSuccess,
+    error: countryError,
+  } = useGetAllCountryQuery({ createdAt: -1 });
 
   const customerAddressFormik = useFormik({
     initialValues: {
-      name: "",
-      firstName: "",
-      lastName: "",
-      companyName: "",
-      countryCode: "",
-      country: "",
-      phone: "",
-      line1: "",
-      city: "",
-      pinCode: "",
-      state: "",
-      isDefaultAddress: false,
+      name: data?.name || "",
+      firstName: data?.firstName || "",
+      lastName: data?.lastName || "",
+      companyName: data?.companyName || "",
+      countryCode: data?.countryCode || "",
+      country: data?.country?._id || "",
+      phone: data?.phone || "",
+      line1: data?.line1 || "",
+      line2: data?.line2 || "",
+      city: data?.city?._id || "",
+      pinCode: data?.pinCode || "",
+      state: data?.state?._id || "",
+      isDefaultAddress: data?.isDefaultAddress || false,
     },
     enableReinitialize: true,
     validationSchema: customerAddressValidation,
     onSubmit: (values) => {
-                console.log(values, 'values valuesvalues');
-
+        console.log(values, 'values valuesvaluesvalues');
       for (const key in values) {
         if(values[key] === "" || values[key] === null){
           delete values[key] 
         }
       }
-      customerAddressDetails(values)
+      customerAddressDetails([values]);
+      setAddress((prevAddresses) => [...prevAddresses, values]);
+      setOpenNewUser(false)
+      if(data?._id) {
+        editCustomerAddress({
+            id: data?._id,
+            details : values
+        })
+            .unwrap()
+            .then(() => {
+                dispatch(showSuccess({ message: "Customer edited successfully" }));
+            });
+      }
     },
   });
 
-  const handleAddressChange = () => {
-    setAddress(prevState => !prevState)
+  const handleCode = (event, value) => {
+    customerAddressFormik.setFieldValue("countryCode", value?._id)
   };
 
-  const GetCountryCode = (value) => {
-    customerAddressFormik.setFieldValue("countryCode", value)
+  const selectedCode = countryData?.data?.data.find(country => 
+    country._id === customerAddressFormik.values.countryCode 
+  );
+
+  const selectCountryName = (event, value) => {
+    customerAddressFormik.setFieldValue("country", value?._id)
   }
 
-  const SelectCountryCode = (event, value) => {
-    customerAddressFormik.setFieldValue("countryCode", event)
-  }
-
-  const GetCountryName = (value) => {
-    customerAddressFormik.setFieldValue("country", value)
-  }
-
-  const SelectCountryName = (event, value) => {
-    customerAddressFormik.setFieldValue("country", event)
-  }
-
-  const getStateName = (value) => {
-    customerAddressFormik.setFieldValue("state", value)
-  }
-
-  const SelectStateName = (event, value) => {
-    customerAddressFormik.setFieldValue("state", event)
-  }
-
-   const getCityName = (value) => {
-    customerAddressFormik.setFieldValue("city", value)
+  const getStateName = (event, value) => {
+    customerAddressFormik.setFieldValue("state", value?._id)
   }
 
   const SelectCityName = (event, value) => {
-    customerAddressFormik.setFieldValue("city", event)
+    customerAddressFormik.setFieldValue("city", value?._id)
+  }
+
+  const handleNewUser = (address) => {
+    setOpenNewUser(true);
+    setEditAddress(true)
+  };
+
+  const handleNewUserClose = () => {
+    setOpenNewUser(false);
+  };
+
+  useEffect(() => {
+    if (!_.isEqual(customerAddressFormik.values, customerAddressFormik.initialValues)) {
+      dispatchAddress({ type: "ENABLE_EDIT" });
+    } else if (_.isEqual(customerAddressFormik.values, customerAddressFormik.initialValues)) {
+      dispatchAddress({ type: "DISABLE_EDIT" });
+    }
+  }, [customerAddressFormik.initialValues, customerAddressFormik.values]);
+
+  const handleNewAddress = () => {
+    customerAddressFormik.resetForm();
+    setOpenNewUser(true);
+    setEditAddress(false)
   }
 
   return (
@@ -109,60 +195,90 @@ const AddAddress = ({ customerAddressDetails }) => {
         <div className="d-flex col-12 px-0 justify-content-between">
             <div className="d-flex align-items-center">
                 <h6 className="text-lightBlue me-auto text-lightBlue fw-500">
-                    Adresses
+                    Addresses
                 </h6>
             </div>
 
-            <p className="button-gradient py-2 px-3" onClick={handleAddressChange}>
-                <p className="">+ Add Adress</p>
+            <p className="button-gradient py-2 px-3" onClick={handleNewAddress}>
+                <p className="">+ Add Address</p>
             </p>
         </div>
-        {savedAddress && (
-            <div className="col-12 mt-3">
+        {value2?.address?.map((address, index) => (
+            <div className="col-12 mt-3" key={index}>
                 <div
                     className="row py-3 mb-3 rounded-8"
                     style={{ background: "rgba(39, 40, 63, 0.5)" }}
                 >
                     <div className="col-12 d-flex justify-content-between align-items-center mb-2 px-3">
-                        <p className="text-lightBlue">Home</p>
+                        <p className="text-lightBlue">{address?.name}</p>
                         <div className="d-flex align-items-center">
-                            <Chip label="Default" size="small" className="px-2" />
+                            {address?.isDefaultAddress == true &&<Chip label="Default" size="small" className="px-2" />}
                             <img
                                 src={editGrey}
                                 alt="editGrey"
                                 className="c-pointer ms-3"
                                 width={16}
+                                onClick={() => handleNewUser(address)}
                             />
                             <img
                                 src={archivedGrey}
                                 alt="archiverdGrey"
                                 className="c-pointer ms-3"
                                 width={16}
+                                onClick={() => deleteAddress(address)}
                             />
                         </div>
                     </div>
                     <div className="col-12 px-3">
                         <small className="text-lightBlue d-block">
-                            Sanjay Chauhan
+                            {address?.firstName} {address?.lastName}
                         </small>
                         <small className="text-lightBlue d-block">
-                            66-68, Jambi Moballa, Bapu Khote Street, Mandvi
+                            {address?.line1}
                         </small>
                         <small className="text-lightBlue d-block">
-                            Mumbai-400003, Maharashtra, Mumbai
+                            {address?.city?.name}-{address?.pinCode}, {address?.state?.name}, {address?.country?.name}
                         </small>
                         <small className="text-lightBlue d-block">
-                            +91 9876543210
+                            {address?.country?.countryCode} {address?.phone}
                         </small>
                     </div>
                 </div>
             </div>
-        )}
-        {address && (
-            <div className="col-12 mt-3">
+        ))}
+
+        <Dialog
+            open={openNewUser}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleNewUserClose}
+            aria-describedby="alert-dialog-slide-description"
+            maxWidth="md"
+            fullWidth={true}
+        >
+            <DialogTitle>
+                <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex flex-column ">
+                        <h5 className="text-lightBlue fw-500">{ editAdd == true ? "Edit" : "Create" } New Address</h5>
+
+                        <small className="text-grey-6 mt-1 d-block">
+                        ⓘ Lorem ipsum dolor sit amet, consectetur adipiscing
+                        elit.
+                        </small>
+                    </div>
+                    <img
+                        src={cancel}
+                        alt="cancel"
+                        width={30}
+                        onClick={handleNewUserClose}
+                        className="c-pointer"
+                    />
+                </div>
+            </DialogTitle>
+            <DialogContent className="pb-4 px-4">
                 <div className="row py-3 rounded-8 border-grey-5 bg-black-13">
                     <div className="col-md-12">
-                        <p className="text-lightBlue mb-1">Name</p>
+                        <p className="text-lightBlue mb-1">Name <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Office Address, Home Address"
@@ -206,7 +322,7 @@ const AddAddress = ({ customerAddressDetails }) => {
                         />
                     </div>
                     <div className="col-md-6 mt-3">
-                        <p className="text-lightBlue mb-1">First Name</p>
+                        <p className="text-lightBlue mb-1">First Name <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Enter First Name"
@@ -224,7 +340,7 @@ const AddAddress = ({ customerAddressDetails }) => {
                         )}
                     </div>
                     <div className="col-md-6 mt-3">
-                        <p className="text-lightBlue mb-1">Last Name</p>
+                        <p className="text-lightBlue mb-1">Last Name <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Enter Last Name"
@@ -254,7 +370,7 @@ const AddAddress = ({ customerAddressDetails }) => {
                         </FormControl>
                     </div>
                     <div className="col-md-12 mt-3">
-                        <p className="text-lightBlue mb-1">Mobile Number</p>
+                        <p className="text-lightBlue mb-1">Mobile Number <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Enter Mobile Number"
@@ -266,45 +382,25 @@ const AddAddress = ({ customerAddressDetails }) => {
                                 startAdornment={
                                 <InputAdornment position="start">
                                     <AppMobileCodeSelect 
-                                        value={customerAddressFormik.values.countryCode}
-                                        GetCountryCode={GetCountryCode}
-                                        SelectCountryCode = {SelectCountryCode}
-                                        name="countryCode" 
+                                        formik={customerAddressFormik}
+                                        handleCode={handleCode}
                                     />
                                 </InputAdornment>
                             }
                             />
                         </FormControl>
-                        {!!customerAddressFormik.touched.countryCode && 
-                        customerAddressFormik.errors.countryCode && (
+                        { (!!customerAddressFormik.touched.countryCode || 
+                            !!customerAddressFormik.touched.phone) 
+                            && (customerAddressFormik.errors.countryCode || 
+                            customerAddressFormik.errors.phone) && (
                             <FormHelperText error>
-                                {customerAddressFormik.errors.countryCode}
-                            </FormHelperText>
-                        )}
-                        {!!customerAddressFormik.touched.phone && 
-                        customerAddressFormik.errors.phone && (
-                            <FormHelperText error>
-                                {customerAddressFormik.errors.phone}
-                            </FormHelperText>
-                        )}
-                    </div>
-                    <div className="col-md-12 mt-3 add-user-country">
-                        <p className="text-lightBlue mb-1">Country</p>
-                        <AppCountrySelect 
-                            value={customerAddressFormik.values.country}
-                            GetCountryName={GetCountryName}
-                            SelectCountryName={SelectCountryName}
-                            name="country" 
-                        />
-                        {!!customerAddressFormik.touched.country && 
-                        customerAddressFormik.errors.country && (
-                            <FormHelperText error>
-                                {customerAddressFormik.errors.country}
+                                {customerAddressFormik.errors.countryCode || 
+                                customerAddressFormik.errors.phone}
                             </FormHelperText>
                         )}
                     </div>
                     <div className="col-md-6 mt-3">
-                        <p className="text-lightBlue mb-1">Address Line 1</p>
+                        <p className="text-lightBlue mb-1">Address Line 1 <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Enter Address Line 1"
@@ -334,12 +430,10 @@ const AddAddress = ({ customerAddressDetails }) => {
                         </FormControl>
                     </div>
                     <div className="col-md-6 mt-3">
-                        <p className="text-lightBlue mb-1">Town/City</p>
+                        <p className="text-lightBlue mb-1">Town/City <span style={{color: "red"}}>*</span></p>
                         <AppCitySelect 
-                            value={customerAddressFormik.values.city}
-                            getCityName={getCityName}
-                            SelectCityName={SelectCityName}
-                            name="city" 
+                            formik={customerAddressFormik}
+                            selectCityName={SelectCityName}
                         />
                         {!!customerAddressFormik.touched.city && 
                         customerAddressFormik.errors.city && (
@@ -349,7 +443,7 @@ const AddAddress = ({ customerAddressDetails }) => {
                         )}
                     </div>
                     <div className="col-md-6 mt-3">
-                        <p className="text-lightBlue mb-1">Zipcode/Postalcode</p>
+                        <p className="text-lightBlue mb-1">Zipcode/Postalcode <span style={{color: "red"}}>*</span></p>
                         <FormControl className="w-100 px-0">
                             <OutlinedInput
                                 placeholder="Enter Zipcode/Postalcode"
@@ -368,14 +462,12 @@ const AddAddress = ({ customerAddressDetails }) => {
                     </div>
                     <div className="col-md-12 mt-3  add-user-country">
                         <div className="d-flex align-items-center justify-content-between">
-                            <p className="text-lightBlue mb-1">State or Region</p>
-                            <small className="text-grey-6 mb-1">(Optional)</small>
+                            <p className="text-lightBlue mb-1">State or Region <span style={{color: "red"}}>*</span></p>
+                            {/* <small className="text-grey-6 mb-1">(Optional)</small> */}
                         </div>
                         <AppStateSelect 
-                            value={customerAddressFormik.values.state}
+                            formik={customerAddressFormik}
                             getStateName={getStateName}
-                            SelectStateName={SelectStateName}
-                            name="state" 
                         />
                         {!!customerAddressFormik.touched.state && 
                         customerAddressFormik.errors.state && (
@@ -384,25 +476,37 @@ const AddAddress = ({ customerAddressDetails }) => {
                             </FormHelperText>
                         )}
                     </div>
-                    <div className="col-12 mt-4 d-flex justify-content-between">
-                    <Link
-                        onClick={handleAddressChange}
-                        className="button-red-outline py-2 px-4"
-                    >
-                        <p>Discard</p>
-                    </Link>
-
-                    <button
-                        type="button"
-                        onClick={() => customerAddressFormik.handleSubmit()}
-                        className="button-gradient py-2 px-4 w-auto"
-                    >
-                        <p>Save</p>
-                    </button>
+                    <div className="col-md-12 mt-3 add-user-country">
+                        <p className="text-lightBlue mb-1">Country <span style={{color: "red"}}>*</span></p>
+                        <AppCountrySelect 
+                            selectCountryName={selectCountryName}
+                            formik={customerAddressFormik}
+                        />
+                        {!!customerAddressFormik.touched.country && 
+                        customerAddressFormik.errors.country && (
+                            <FormHelperText error>
+                                {customerAddressFormik.errors.country}
+                            </FormHelperText>
+                        )}
                     </div>
                 </div>
-            </div>
-        )}
+            </DialogContent>
+            <hr className="hr-grey-6 my-0" />
+            <DialogActions className="d-flex justify-content-between px-4 py-3">
+                <button
+                    className="button-grey py-2 px-5"
+                    onClick={handleNewUserClose}
+                >
+                    <p className="text-lightBlue">Cancel</p>
+                </button>
+                <button
+                    className="button-gradient py-2 px-5"
+                    onClick={() => customerAddressFormik.handleSubmit()}
+                >
+                    <p>{ editAdd == true ? "Save" : "Create" }</p>
+                </button>
+            </DialogActions>
+        </Dialog>
     </div>
   );
 };

@@ -349,7 +349,6 @@ const groupTabReducer = (state, action) => {
       isEditing: false,
     };
   }
-
   return initialCustomerGroupState;
 };
 
@@ -448,7 +447,7 @@ const CreateUserGroup = () => {
         .unwrap()
         .then((res) => {
           navigate("/users/userGroups");
-          dispatch(showSuccess({ message: "Custormer group created successfully" }));
+          dispatch(showSuccess({ message: "Customer group created successfully" }));
         })
       } else {
         editCustomerGroup({
@@ -457,7 +456,7 @@ const CreateUserGroup = () => {
       })
         .unwrap()
           .then(() => {
-            dispatch(showSuccess({ message: "Custormer group edited successfully" }));
+            dispatch(showSuccess({ message: "Customer group edited successfully" }));
           });
       }
     },
@@ -606,7 +605,7 @@ const CreateUserGroup = () => {
                 />
               </Link>
 
-              <h5 className="page-heading ms-2 ps-1">Create User Group</h5>
+              <h5 className="page-heading ms-2 ps-1">{customerGroupFormik?.values?.name}</h5>
             </div>
           </div>
           <div className="row mt-3">
@@ -728,12 +727,12 @@ const CreateUserGroup = () => {
                               />
                             </RadioGroup>
                           </div>
-                          <button
+                          <div
                             className="button-gradient py-1 px-4"
                             onClick={handleLikeAddCondition}
                           >
                             <p>Add Condition</p>
-                          </button>
+                          </div>
                         </div>
                         <div className="bg-black-9 align-items-center rounded-8 py-2 px-3 d-flex justify-content-between mt-3 shadow-lg">
                           <FormControlLabel
@@ -913,18 +912,18 @@ const CreateUserGroup = () => {
                               </FormControl>
                             </div>
                             <div className="col-sm-6 col-md-3 mt-3 mb-1">
-                              <button
+                              <div
                                 className="button-gradient py-1 px-3 w-100 mb-2"
                                 // onClick={handleLikeApplyCondition}
                               >
                                 <p>Apply</p>
-                              </button>
-                              <button
+                              </div>
+                              <div
                                 className="button-lightBlue-outline py-1 px-3 w-100"
                                 // onClick={handleLikeApplyCondition}
                               >
                                 <p>Cancel</p>
-                              </button>
+                              </div>
                             </div>
                           </div>
                         )}
@@ -1163,18 +1162,16 @@ const CreateUserGroup = () => {
               />
             </div>
           </div>
-          <div className="row create-buttons pt-5 pb-3 justify-content-between">
-            <SaveFooterTertiary
-              show={id ? customerGroupState.isEditing : true}
-              onDiscard={backHandler}
-              isLoading={createCustomerGroupIsLoading || editGroupIsLoading}
-            />
-          </div>
         </div>
+        <SaveFooterTertiary
+          show={id ? customerGroupState.isEditing : true}
+          onDiscard={backHandler}
+          isLoading={createCustomerGroupIsLoading || editGroupIsLoading}
+        />
       </form>
       <DiscardModalSecondary
-        when={!_.isEqual(customerGroupFormik.values, customerGroupFormik.initialValues)}
-        message="product tab"
+        when={id && !_.isEqual(customerGroupFormik.values, customerGroupFormik.initialValues)}
+        message="customer group"
       />
     </>
   );

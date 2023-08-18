@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams, createSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   Autocomplete,
@@ -24,6 +24,7 @@ import {
   useGetAllCustomersQuery,
   useGetCustomersCountQuery 
 } from "../../../features/customers/customer/customerApiSlice";
+import { useGetAllCityQuery } from "../../../features/master/city/cityApiSlice";
 
 import AllUsersTable from "./AllUsersTable";
 import TabPanel from "../../../components/TabPanel/TabPanel";
@@ -62,12 +63,14 @@ const locationData = [
 ];
 
 const initialQueryFilterState = {
-  createdAt: 1,
   pageSize: 10,
   pageNo: 0,
   name:"",
   searchValue: "",
   status: ["active", "in-active"],
+  createdAt: "-1",
+  alphabetical: null,
+  location: ""
 };
 
 const initialUsersState = {
@@ -107,6 +110,29 @@ const queryFilterReducer = (state, action) => {
       ...state,
       pageNo: initialQueryFilterState.pageNo,
       searchValue: action.searchValue,
+    };
+  }
+  if (action.type === "SET_ALPHABETICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      alphabetical: action.alphabetical,
+      createdAt: null,
+    };
+  }
+  if (action.type === "SET_CRONOLOGICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      createdAt: action.createdAt,
+      alphabetical: null,
+    };
+  }
+  if (action.type === "SET_LOCATION") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      location: action.location,
     };
   }
   if (action.type === "SET_STATUS") {
@@ -191,11 +217,26 @@ const AllUsers = () => {
 
   const customerCount = customersCountData?.data[0];
 
-  const editHandler = (id) => {
+  const {
+    data: cityData,
+    isLoading: cityIsLoading,
+    isSuccess: cityIsSuccess,
+    error: cityError,
+  } = useGetAllCityQuery({createdAt: -1});
+
+  const detailHandler = (id) => {
     let combinedObject = {id, queryFilterState}
     const paramsQuery = encodeURIComponent(JSON.stringify(combinedObject));    
-
     navigate(`./details/${paramsQuery}`);
+  };
+
+  const editHandler = (data) => {
+    navigate({
+      pathname: `./edit/${data ? data._id : ""}`,
+      search: `?${createSearchParams({
+        filter: JSON.stringify({ ...queryFilterState, pageSize: 1, usersState: usersState.customerType }),
+      })}`,
+    });
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -417,6 +458,29 @@ const AllUsers = () => {
 
   const openDays = Boolean(anchorDaysEl);
   const idDays = openDays ? "simple-popover" : undefined;
+  
+  const handleAlphabeticalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_ALPHABETICAL_SORTING",
+      alphabetical: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
+
+  const handleChronologicalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_CRONOLOGICAL_SORTING",
+      createdAt: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
+
+  const handleCityFilter = (_, value) => {
+    dispatchQueryFilter({
+      type: "SET_LOCATION",
+      location: value?._id,
+    });
+  }
 
   useEffect(() => {
     if (customersIsSuccess) {
@@ -697,12 +761,13 @@ const AllUsers = () => {
                       id="free-solo-demo"
                       freeSolo
                       size="small"
-                      options={locationData}
-                      getOptionLabel={(option) => option.title}
+                      options={cityData?.data?.data || []}
+                      getOptionLabel={(option) => option.name}
+                      onChange={handleCityFilter}
                       renderOption={(props, option) => (
                         <li {...props}>
                           <small className="text-lightBlue my-1">
-                            {option.title}
+                            {option.name}
                           </small>
                         </li>
                       )}
@@ -821,6 +886,7 @@ const AllUsers = () => {
                         }
                       />
                     </FormGroup>
+                    <FormGroup className="tags-checkbox">
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -833,6 +899,7 @@ const AllUsers = () => {
                         }
                         label="Blocked"
                       />
+                    </FormGroup>
                     <FormGroup className="tags-checkbox" onChange={handleStatusChange}>
                       <FormControlLabel
                         value="archieved"
@@ -885,53 +952,42 @@ const AllUsers = () => {
                   <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
-                    // value={value}
-                    // onChange={handleRadioChange}
                   >
                     <FormControlLabel
-                      value="userName"
-                      control={<Radio size="small" />}
-                      label="User Name"
-                    />
-                    <FormControlLabel
-                      value="location"
-                      control={<Radio size="small" />}
-                      label="Location"
-                    />
-                    <FormControlLabel
-                      value="totalSpent"
-                      control={<Radio size="small" />}
-                      label="Total Spent"
-                    />
-                    <FormControlLabel
-                      value="noOfOrders"
-                      control={<Radio size="small" />}
-                      label="No of Orders"
-                    />
-                    <FormControlLabel
-                      value="uploadTime"
-                      control={<Radio size="small" />}
-                      label="Upload Time"
-                    />
-                    <FormControlLabel
-                      value="alphabeticalAtoZ"
-                      control={<Radio size="small" />}
-                      label="Alphabetical (A-Z)"
-                    />
-                    <FormControlLabel
-                      value="alphabeticalZtoA"
-                      control={<Radio size="small" />}
-                      label="Alphabetical (Z-A)"
-                    />
-                    <FormControlLabel
-                      value="oldestToNewest"
-                      control={<Radio size="small" />}
-                      label="Oldest to Newest"
-                    />
-                    <FormControlLabel
-                      value="newestToOldest"
-                      control={<Radio size="small" />}
+                      value="-1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.createdAt === "-1"}
+                      />}
                       label="Newest to Oldest"
+                      onChange={handleChronologicalSorting}
+                    />
+                    <FormControlLabel
+                      value="1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.createdAt === "1"}
+                      />}
+                      label="Oldest to Newest"
+                      onChange={handleChronologicalSorting}
+                    />
+                    <FormControlLabel
+                      value="1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.alphabetical === "1"}
+                      />}
+                      label="Alphabetical (A-Z)"
+                      onChange={handleAlphabeticalSorting}
+                    />
+                    <FormControlLabel
+                      value="-1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.alphabetical === "-1"}
+                      />}
+                      label="Alphabetical (Z-A)"
+                      onChange={handleAlphabeticalSorting}
                     />
                   </RadioGroup>
                 </FormControl>
@@ -948,8 +1004,9 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-              onEdit={editHandler}
+              onEdit={detailHandler}
               customerType={usersState.customerType}
+              edit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={1}>
@@ -962,8 +1019,9 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-              onEdit={editHandler}
+              onEdit={detailHandler}
               customerType={usersState.customerType}
+              edit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={2}>
@@ -976,8 +1034,9 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-              onEdit={editHandler}
+              onEdit={detailHandler}
               customerType={usersState.customerType}
+              edit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={3}>
@@ -990,8 +1049,9 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-              onEdit={editHandler}
+              onEdit={detailHandler}
               customerType={usersState.customerType}
+              edit={editHandler}
             />
           </TabPanel>
           <TabPanel value={usersState.customerType} index={4}>
@@ -1004,7 +1064,7 @@ const AllUsers = () => {
               rowsPerPage={queryFilterState.pageSize}
               changePage={handleChangePage}
               page={queryFilterState.pageNo}
-              onEdit={editHandler}
+              onEdit={detailHandler}
               customerType={usersState.customerType}
             />
           </TabPanel>

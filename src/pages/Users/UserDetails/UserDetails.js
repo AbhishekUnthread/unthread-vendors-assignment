@@ -2,6 +2,7 @@ import { forwardRef, useState, useReducer, useEffect } from "react";
 import moment from "moment";
 import { Link, useParams } from "react-router-dom";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { useDispatch } from "react-redux";
 import {
   Box,
   Tab,
@@ -14,13 +15,18 @@ import {
   Chip,
 } from "@mui/material";
 
-import { useGetAllCustomersQuery } from "../../../features/customers/customer/customerApiSlice";
+import { 
+  useGetAllCustomersQuery,
+  useEditCustomerMutation
+} from "../../../features/customers/customer/customerApiSlice";
+import { showSuccess } from "../../../features/snackbar/snackbarAction";
 
 import TabPanel from "../../../components/TabPanel/TabPanel";
 import UserOrders from "./UserOrders/UserOrders";
 import UserInformation from "./UserInformation/UserInformation";
 import NotesBox from "../../../components/NotesBox/NotesBox";
 import TagsBox from "../../../components/TagsBox/TagsBox";
+import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
 
 import "./UserDetails.scss";
 
@@ -35,6 +41,8 @@ import block from "../../../assets/images/users/block.svg";
 import verified from "../../../assets/icons/verified.svg";
 import copy from "../../../assets/icons/copy.svg";
 import customerImage from "../../../assets/images/users/user_defauldp.svg";
+import verifiedCustomer from "../../../assets/icons/customerVerify.svg";
+import archiveCustomer from "../../../assets/icons/archive.svg";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -71,14 +79,26 @@ const queryFilterReducer = (state, action) => {
 
 const UserDetails = () => {
   let { id } = useParams();
+  const dispatch = useDispatch();
   const [value, setValue] = useState(0);
   const [paramsData, setParamsData] = useState(null);
   const [openBlock, setOpenBlock] = useState(false);
   const [anchorContactEl, setContactEl] = useState(null);
+  const [openArchivedModal, setArchivedModal] = useState(false);
   const [queryFilterState, dispatchQueryFilter] = useReducer(
     queryFilterReducer,
     initialQueryFilterState
   );
+
+  const [
+    editCustomer,
+    {
+      data: editData,
+      isLoading: editCustomerIsLoading,
+      isSuccess: editCustomerIsSuccess,
+      error: editCustomerError,
+    }
+  ] = useEditCustomerMutation();
 
   const {
     data: customerData,
@@ -98,8 +118,6 @@ const UserDetails = () => {
 
     setParamsData(parsedObject);
   }, []);
-
-  console.log(paramsData, 'paramsData');
 
   const customerId = paramsData?.id;
 
@@ -132,6 +150,25 @@ const UserDetails = () => {
     setOpenBlock(false);
   };
 
+   const handleArchivedModalClose = () => {
+    editCustomer({
+      id: customerDetails?._id,
+      details : {
+        status: "blocked"
+      }
+    })
+    setArchivedModal(false);
+    dispatch(showSuccess({ message: "Customer archived successfully!" }));
+  }
+
+  const handleModalClose = () => {
+    setArchivedModal(false);
+  };
+
+  const handleArchive = () => {
+    setArchivedModal(true);
+  }
+
   return (
     <div className="page container-fluid position-relative">
       <div className="row justify-content-between">
@@ -148,7 +185,7 @@ const UserDetails = () => {
             <h5 className="page-heading ms-2 ps-1">
               {customerDetails?.firstName} {customerDetails?.lastName}
             </h5>
-            <div className="d-flex ms-2 ps-1 mt-1">
+            {customerDetails?.addresses[0] &&<div className="d-flex ms-2 ps-1 mt-1">
               <small className="text-lightBlue me-2">
                 {customerDetails?.addresses[0]?.city?.name}, 
                 {customerDetails?.addresses[0]?.state?.name}, 
@@ -159,7 +196,7 @@ const UserDetails = () => {
                 className=" rounded-3" 
                 width={20} 
               />
-            </div>
+            </div>}
           </div>
         </div>
         <div className="d-flex align-items-center w-auto pe-0">
@@ -167,7 +204,7 @@ const UserDetails = () => {
             className="button-red-outline py-1 px-3"
             onClick={handleBlock}
           >
-            <p>Block & Archive</p>
+            <p>Block</p>
           </button>
 
           <Dialog
@@ -208,7 +245,7 @@ const UserDetails = () => {
             </DialogActions>
           </Dialog>
 
-          <button className="button-lightBlue-outline py-1 ps-2 pe-3 ms-3">
+          {/* <button className="button-lightBlue-outline py-1 ps-2 pe-3 ms-3">
             <EditOutlinedIcon
               sx={{
                 color: "#5c6d8e",
@@ -218,13 +255,13 @@ const UserDetails = () => {
               }}
             />
             <p>Edit</p>
-          </button>
+          </button> */}
 
           <button
             className="button-gradient py-1 px-4 w-auto ms-3 me-3"
             onClick={handleContactClick}
           >
-            <p>Contact</p>
+            <p>Actions</p>
           </button>
 
           <Popover
@@ -260,9 +297,24 @@ const UserDetails = () => {
                   Message
                 </small>
               </div>
+              <div className="d-flex align-items-center">
+                <img src={verifiedCustomer} alt="message" width={16} />
+                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                  Mark as Verified
+                </small>
+              </div>
+              <div 
+                className="d-flex align-items-center"
+                onClick={() => { handleArchive()}}
+              >
+                <img src={archiveCustomer} alt="message" width={16} />
+                <small className="text-lightBlue rounded-3 p-2 hover-back d-block">
+                  Archive Customer 
+                </small>
+              </div>
             </div>
           </Popover>
-          <img
+          {/* <img
             src={paginationLeft}
             alt="paginationLeft"
             className="c-pointer"
@@ -273,7 +325,7 @@ const UserDetails = () => {
             alt="paginationRight"
             className="c-pointer"
             width={30}
-          />
+          /> */}
         </div>
       </div>
       <div className="row">
@@ -346,7 +398,10 @@ const UserDetails = () => {
             </div>
             <small className="text-grey-6 mt-3 d-block">Registered Date</small>
             <p className="text-lightBlue mt-1">
-              5 Dec, 2022&nbsp;<span className="text-grey-6">at 10:00am</span>
+              {moment(customerDetails?.createdAt).format("DD MMM, YYYY")}
+              <span className="text-grey-6">
+                {" "} at {moment(customerDetails?.createdAt).format("HH:MM A")}
+              </span>
             </p>
             <div className="d-flex justify-content-center ">
               <hr className="hr-grey-6 w-100" />
@@ -358,12 +413,12 @@ const UserDetails = () => {
             </div>
             <small className="text-grey-6 mt-3 d-block">Mobile Number</small>
             <div className="d-flex mt-1">
-              <p className="text-lightBlue me-2">{customerDetails?.countryCode} {customerDetails?.phone}</p>
+              <p className="text-lightBlue me-2">{customerDetails?.countryCode?.countryCode} {customerDetails?.phone}</p>
               <img src={copy} alt="copy" />
             </div>
             <small className="text-grey-6 mt-3 d-block">Date of Birth</small>
             <div className="d-flex mt-1">
-              <p className="text-lightBlue me-2">{moment(customerDetails).format("DD MMM, YYYY")}</p>
+              <p className="text-lightBlue me-2">{moment(customerDetails?.dob).format("DD MMM, YYYY")}</p>
             </div>
             <small className="text-grey-6 mt-3 mb-1 d-block">User Group</small>
             {customerDetails?.groups?.map((item) => (
@@ -374,6 +429,17 @@ const UserDetails = () => {
           {/* <TagsBox /> */}
         </div>
       </div>
+      <ArchiveModal
+        onConfirm ={handleArchivedModalClose}
+        onCancel={handleModalClose}
+        show={openArchivedModal}
+        title={"customer"}
+        message={
+          customerDetails?.firstName + " " + customerDetails?.lastName 
+        }
+        archiveType={"customer"}
+        products={"25 products"}
+      />   
     </div>
   );
 };

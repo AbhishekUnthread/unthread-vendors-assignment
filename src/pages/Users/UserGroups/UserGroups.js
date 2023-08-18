@@ -44,12 +44,13 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 const initialQueryFilterState = {
-  createdAt: -1,
   pageSize: 10,
   pageNo: 0,
   name:"",
   searchValue: "",
   status: ["active", "in-active"],
+  createdAt: "-1",
+  alphabetical: null
 };
 
 const initialCustomerState = {
@@ -82,6 +83,22 @@ const queryFilterReducer = (state, action) => {
       ...state,
       pageNo: initialQueryFilterState.pageNo,
       searchValue: action.searchValue,
+    };
+  }
+  if (action.type === "SET_ALPHABETICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      alphabetical: action.alphabetical,
+      createdAt: null,
+    };
+  }
+  if (action.type === "SET_CRONOLOGICAL_SORTING") {
+    return {
+      ...state,
+      pageNo: initialQueryFilterState.pageNo,
+      createdAt: action.createdAt,
+      alphabetical: null,
     };
   }
   if (action.type === "SET_STATUS") {
@@ -329,6 +346,22 @@ const UserGroups = () => {
       })}`,
     });
   };
+  
+  const handleAlphabeticalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_ALPHABETICAL_SORTING",
+      alphabetical: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
+
+  const handleChronologicalSorting = (event) => {
+    dispatchQueryFilter({
+      type: "SET_CRONOLOGICAL_SORTING",
+      createdAt: event.target.value,
+    });
+    setAnchorSortEl(null);
+  };
 
   return (
     <div className="container-fluid page">
@@ -337,20 +370,20 @@ const UserGroups = () => {
         <div className="d-flex align-items-center w-auto pe-0">
           <ViewTutorial />
           <ViewLogsDrawer headingName={"User Groups"} icon={customers} />
-          <button
+          {/* <button
             className="button-lightBlue-outline py-2 px-3 ms-3"
             onClick={handleOpenManageGroups}
           >
             <p>Manage Default Group</p>
-          </button>
+          </button> */}
           <Link
             to="/users/userGroups/create"
             className="button-gradient py-2 px-4 ms-3"
           >
-            <p>Create Group</p>
+            <p>Create Group +</p>
           </Link>
 
-          <Dialog
+          {/* <Dialog
             open={openManageGroups}
             TransitionComponent={Transition}
             keepMounted
@@ -447,7 +480,7 @@ const UserGroups = () => {
                 <p>Apply</p>
               </button>
             </DialogActions>
-          </Dialog>
+          </Dialog> */}
         </div>
       </div>
 
@@ -512,49 +545,40 @@ const UserGroups = () => {
                     name="controlled-radio-buttons-group"
                   >
                     <FormControlLabel
-                      value="userName"
-                      control={<Radio size="small" />}
-                      label="User Name"
-                    />
-                    <FormControlLabel
-                      value="location"
-                      control={<Radio size="small" />}
-                      label="Location"
-                    />
-                    <FormControlLabel
-                      value="totalSpent"
-                      control={<Radio size="small" />}
-                      label="Total Spent"
-                    />
-                    <FormControlLabel
-                      value="noOfOrders"
-                      control={<Radio size="small" />}
-                      label="No of Orders"
-                    />
-                    <FormControlLabel
-                      value="uploadTime"
-                      control={<Radio size="small" />}
-                      label="Upload Time"
-                    />
-                    <FormControlLabel
-                      value="alphabeticalAtoZ"
-                      control={<Radio size="small" />}
-                      label="Alphabetical (A-Z)"
-                    />
-                    <FormControlLabel
-                      value="alphabeticalZtoA"
-                      control={<Radio size="small" />}
-                      label="Alphabetical (Z-A)"
-                    />
-                    <FormControlLabel
-                      value="oldestToNewest"
-                      control={<Radio size="small" />}
-                      label="Oldest to Newest"
-                    />
-                    <FormControlLabel
-                      value="newestToOldest"
-                      control={<Radio size="small" />}
+                      value="-1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.createdAt === "-1"}
+                      />}
                       label="Newest to Oldest"
+                      onChange={handleChronologicalSorting}
+                    />
+                    <FormControlLabel
+                      value="1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.createdAt === "1"}
+                      />}
+                      label="Oldest to Newest"
+                      onChange={handleChronologicalSorting}
+                    />
+                    <FormControlLabel
+                      value="1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.alphabetical === "1"}
+                      />}
+                      label="Alphabetical (A-Z)"
+                      onChange={handleAlphabeticalSorting}
+                    />
+                    <FormControlLabel
+                      value="-1"
+                      control={<Radio 
+                        size="small" 
+                        checked={queryFilterState.alphabetical === "-1"}
+                      />}
+                      label="Alphabetical (Z-A)"
+                      onChange={handleAlphabeticalSorting}
                     />
                   </RadioGroup>
                 </FormControl>

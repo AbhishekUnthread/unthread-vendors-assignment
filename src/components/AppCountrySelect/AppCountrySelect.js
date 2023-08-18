@@ -4,17 +4,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 import { useGetAllCountryQuery } from "../../features/master/country/countryApiSlice";
 
-export default function AppCountrySelect({ GetCountryName = () => {}, SelectCountryName = () => {} }) {
-  const handleCountryName = (event) => {
-    if (event) {
-      GetCountryName(event.target.value);
-    }
-  };
-
-  const selectCountryName = (event, value) => {
-    SelectCountryName(value?._id ?? "");
-  };
-
+export default function AppCountrySelect({ selectCountryName, formik }) {
   const {
     data: countryData,
     // isLoading: countryIsLoading,
@@ -22,11 +12,14 @@ export default function AppCountrySelect({ GetCountryName = () => {}, SelectCoun
     // error: countryError,
   } = useGetAllCountryQuery({ createdAt: -1 });
 
+  const selectedCode = countryData?.data?.data.find( country => country._id === formik.values.country );
+
   return (
     <Autocomplete
       id="country-select-demo"
       sx={{ width: 320 }}
-      options={countryData?.data?.data}
+      options={countryData?.data?.data || []}
+      value={selectedCode || null}
       autoHighlight
       size="small"
       componentsProps={{
@@ -56,16 +49,14 @@ export default function AppCountrySelect({ GetCountryName = () => {}, SelectCoun
           <small className="text-lightBlue my-1">{option?.name}</small>
         </Box>
       )}
+      renderTags={(value) => (
+        <small className="fw-400 text-lightBlue">{value.name}</small>
+      )}
       renderInput={(params) => (
         <TextField
           {...params}
           //   label="Choose a country"
           placeholder="Select the Country"
-          inputProps={{
-            ...params.inputProps,
-            autoComplete: "new-password", // disable autocomplete and autofill
-          }}
-          onChange={handleCountryName}
         />
       )}
     />

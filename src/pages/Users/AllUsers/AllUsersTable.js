@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Checkbox,
   Popover,
@@ -11,10 +14,12 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 import { 
-  useEditCustomerMutation
+  useEditCustomerMutation,
+  useBulkEditCustomerMutation,
+  useBulkDeleteCustomerMutation,
+  useDeleteCustomerMutation
 } from "../../../features/customers/customer/customerApiSlice";
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
 
@@ -23,15 +28,19 @@ import {
   stableSort,
   getComparator,
 } from "../../../components/TableDependencies/TableDependencies";
-import TableEditStatusButton from "../../../components/TableEditStatusButton/TableEditStatusButton";
 import Loader from "../../../components/Loader/TableLoader";
 import NoData from "../../../components/NoDataFound/NoDataFound";
 import ArchiveModal from "../../../components/ArchiveModal/ArchiveModal";
+import { DeleteModalSecondary } from "../../../components/DeleteModal/DeleteModal";
+import { UnArchivedModal } from "../../../components/UnArchiveModal/UnArchiveModal";
+import AddCustomerGroup from "../AddCustomerGroup";
+import AddTags from "../AddUser/AddTags";
 
 import verticalDots from "../../../assets/icons/verticalDots.svg";
 import arrowDown from "../../../assets/icons/arrowDown.svg";
 import deleteRed from "../../../assets/icons/delete.svg";
-import defaultUser from "../../../assets/images/users/user_defauldp.svg"
+import defaultUser from "../../../assets/images/users/user_defauldp.svg";
+import unArchived from "../../../assets/images/Components/Archived.png";
 
 const AllUsersTable = ({
   isLoading,
@@ -43,7 +52,8 @@ const AllUsersTable = ({
   changePage,
   page,
   onEdit,
-  customerType
+  customerType,
+  edit
 }) => {
   const dispatch = useDispatch();
   const [order, setOrder] = useState("asc");
@@ -55,6 +65,14 @@ const AllUsersTable = ({
   const [customerId, setCustomerId] = useState();
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
+  const [customerInfo, setCustomerInfo] = useState();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [forMassAction, setForMassAction] = useState(false);
+  const [statusValue, setStatusValue] = useState("in-active");
+  const [showUnArchivedModal, setShowUnArhcivedModal] = useState(false);
+  const [showGroup, setShowGroup] = useState(false);
+  const [singleCustomer, setSingleCustomer] = useState(false);
+  const [showTag, setShowTag] = useState(false)
 
   const [
     editCustomer,
@@ -66,22 +84,163 @@ const AllUsersTable = ({
     }
   ] = useEditCustomerMutation();
 
-  const handleArchive = (id, first, last) => {
+  const[
+    bulkEditCustomer,
+    {
+      data: bulkEditCustomers,
+      isLoading: bulkCustomerEditLoading,
+      isSuccess: bulkCustomerEditIsSuccess,
+      error: bulkCustomerEditError,
+    }
+  ] = useBulkEditCustomerMutation();
+
+  const [
+    deleteCustomer,
+    {
+      isLoading: deleteCustomerIsLoading,
+      isSuccess: deleteCustomerIsSuccess,
+      error: deleteCustomerError,
+    },
+  ] = useDeleteCustomerMutation();
+
+  const [
+    bulkDeleteCustomer,
+    {
+      isLoading: bulkDeleteCustomerIsLoading,
+      isSuccess: bulkDeleteCustomerIsSuccess,
+      error: bulkDeleteCustomerError,
+    },
+  ] = useBulkDeleteCustomerMutation();
+
+  const handleArchive = () => {
+    setForMassAction(false);
+    handleActionClose();
     setArchivedModal(true);
-    setCustomerId(id);
-    setFirstName(first);
-    setLastName(last)
   }
 
+  const handleUnArchive = (row) => {
+    setCustomerInfo(row)
+    setCustomerId(row._id);
+    setFirstName(row?.firstName);
+    setLastName(row?.lastName)
+    setForMassAction(false)
+    handleActionClose();
+    setShowUnArhcivedModal(true)
+  }
+
+  const handleDelete = (row) => {
+    setCustomerInfo(row)
+    setCustomerId(row._id);
+    setFirstName(row?.firstName);
+    setLastName(row?.lastName)
+    setForMassAction(false)
+    handleActionClose();
+    setShowDeleteModal(true)
+  }
+
+  const handleMultipleArchive = () => {
+    setForMassAction(true)
+    handleMassActionClose();
+    setArchivedModal(true)
+  }
+
+  const handleMultipleUnarchive = () => {
+    setForMassAction(true)
+    handleMassActionClose();
+    setShowUnArhcivedModal(true);
+  }
+
+  const handleMultipleDelete = () => {
+    setForMassAction(true);
+    setAnchorMassActionEl(false);
+    setShowDeleteModal(true);
+  }
+
+  const toggleDeleteModalHandler = (row) => {
+    setShowDeleteModal((prevState) => !prevState);
+  };
+
+  const closeUnArchivedModal = () => {
+    setShowUnArhcivedModal(false)
+  }
+
+  const handleStatusValue = (value) => {
+    setStatusValue(value);
+  };
+
   const handleArchivedModalClose = () => {
-    editCustomer({
-      id: customerId,
-      details : {
+    if(forMassAction == true) {
+      const newState = selected.map((id) => ({
+        id: id,
         status: "archieved"
-      }
-    })
-    setArchivedModal(false);
-    dispatch(showSuccess({ message: "Customer archived successfully!" }));
+      }))
+
+      const requestData = {
+        updates: newState
+      };
+
+      bulkEditCustomer(requestData).unwrap().then(()=> {
+        dispatch(showSuccess({ message: "Customers archived successfully!" }));
+        setArchivedModal(false);
+        setSelected([])
+      })
+    } else {
+      editCustomer({
+        id: customerId,
+        details : {
+          status: "archieved"
+        }
+      })
+      setArchivedModal(false);
+      dispatch(showSuccess({ message: "Customer archived successfully!" }));
+    }
+  } 
+
+  const handleDeleteModal =()=>{
+    if(forMassAction === true) {
+      bulkDeleteCustomer({deletes: selected}).unwrap().then(()=> {
+        dispatch(showSuccess({ message: "Customers delete successfully!" }));
+        setShowDeleteModal(false);
+        setSelected([])
+      })
+    } 
+    else {
+      handleClick(null, customerId);
+      deleteCustomer(customerId);
+      setShowDeleteModal(false)
+      dispatch(showSuccess({ message: "Customer deleted successfully!" }));
+      setSelected([])
+    }
+  }
+
+  const handleUnArchived = () => {
+    if(forMassAction === true) {
+      const newState = selected.map((id) => ({
+        id: id,
+        status: statusValue
+      }))
+
+      const requestData = {
+        updates: newState
+      };
+
+      bulkEditCustomer(requestData).unwrap().then(()=> {
+        dispatch(showSuccess({ message: "Customers archived successfully!" }));
+        setShowUnArhcivedModal(false);
+        setSelected([])
+      })
+    } else {
+      handleClick(null, customerId);
+      editCustomer({
+        id: customerId,
+        details : {
+          status: statusValue
+        }
+      })
+      setShowUnArhcivedModal(false);
+      setSelected([])
+      dispatch(showSuccess({ message: "Customer archived successfully!" }));
+    }
   }
 
   const handleModalClose = () => {
@@ -107,9 +266,11 @@ const AllUsersTable = ({
     }
   }; 
 
-  const handleClick = (event, name) => {
+  const handleClick = (event, name, data) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
+    setFirstName(data?.firstName);
+    setLastName(data?.lastName);
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
@@ -131,13 +292,19 @@ const AllUsersTable = ({
   const handleMassActionClick = (event) => {
     setAnchorMassActionEl(event.currentTarget);
   };
+
   const handleMassActionClose = () => {
     setAnchorMassActionEl(null);
   };
+  
   const openMassAction = Boolean(anchorMassActionEl);
   const idMassAction = openMassAction ? "simple-popover" : undefined;
 
-  const handleActionClick = (event) => {
+  const handleActionClick = (event, row) => {
+    setCustomerInfo(row)
+    setCustomerId(row._id);
+    setFirstName(row?.firstName);
+    setLastName(row?.lastName)
     setAnchorActionEl(event.currentTarget);
   };
 
@@ -197,6 +364,37 @@ const AllUsersTable = ({
     label: "",
   });
 
+  const handleGroup = () => {
+    setShowGroup(false)
+  }
+
+  const handleTag = () => {
+    setShowTag(false)
+  }
+
+  const openGroupModal = (id) => {
+    setShowGroup(true)
+  }
+
+  const openTagModal = () => {
+    setShowTag(true)
+  }
+
+  const handleCustomerGroup = () => {
+    setSingleCustomer(true)
+    setShowGroup(true)
+  }
+
+  const handleMultipleGroup = () => {
+    setShowGroup(true)
+    setSingleCustomer(false)
+  }
+
+  const handleMultipleTag = () => {
+    setSingleCustomer(false)
+    setShowTag(true)
+  }
+
   return (
     <>
       {selected.length > 0 && (
@@ -213,11 +411,6 @@ const AllUsersTable = ({
                 </span>
               </small>
             </button>
-
-            <button className="button-grey py-2 px-3 ms-2">
-              <small className="text-lightBlue">Edit Users</small>
-            </button>
-            <TableEditStatusButton />
 
             <button
               className="button-grey py-2 px-3 ms-2"
@@ -245,21 +438,50 @@ const AllUsersTable = ({
               <div className="py-2 px-2">
                 <small className="text-grey-7 px-2">ACTIONS</small>
                 <hr className="hr-grey-6 my-2" />
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit User
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Edit User Group
-                </small>
-                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                  Add or Remove Tags
-                </small>
-                <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer">
-                  <small className="text-lightBlue font2 d-block">
-                    Archive User
-                  </small>
-                  <img src={deleteRed} alt="delete" className="" />
-                </div>
+                {customerType !== 4 ?
+                  <>
+                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                      Edit Customer
+                    </small>
+                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                      onClick={() => { handleMultipleGroup()}}
+                    >
+                      Add to Customer Groups
+                    </small>
+                    <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                      onClick={() => { handleMultipleTag()}}
+                    >
+                      Add or Remove Tags
+                    </small>
+                    <div 
+                      className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
+                      onClick={handleMultipleArchive}
+                    >
+                      <small className="text-lightBlue font2 d-block">
+                        Archive Customer
+                      </small>
+                      <img src={deleteRed} alt="delete" className="" />
+                    </div> 
+                  </>
+                : 
+                  <>
+                    <small 
+                      className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                      onClick={handleMultipleUnarchive}
+                    >
+                      Un-Archive Customer
+                    </small>
+                    <div 
+                      className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
+                      onClick={handleMultipleDelete}
+                    >
+                      <small className="text-lightBlue font2 d-block">
+                        Delete Customer
+                      </small>
+                      <img src={deleteRed} alt="delete" className="" />
+                    </div>
+                  </>
+                }
               </div>
             </Popover>
           </div>
@@ -303,7 +525,7 @@ const AllUsersTable = ({
                           inputProps={{
                             "aria-labelledby": labelId,
                           }}
-                          onClick={(event) => handleClick(event, row?._id)}
+                          onClick={(event) => handleClick(event, row?._id, row)}
                           size="small"
                           style={{
                             color: "#5C6D8E",
@@ -328,7 +550,10 @@ const AllUsersTable = ({
                           <div>
                             <div
                               className=" text-decoration-none c-pointer"
-                              onClick={() => onEdit(row?._id)}
+                              onClick={() => {
+                              if(customerType !== 4) {
+                                onEdit(row?._id)
+                              }}}
                             >
                               <p className="text-lightBlue rounded-circle fw-600">
                                 {row?.firstName} {row?.lastName}
@@ -357,26 +582,20 @@ const AllUsersTable = ({
                       </TableCell>
                       <TableCell>
                         <div className="d-flex flex-column align-items-start">
-                          {row?.addresses?.map((address, index) => {
-                            if (address.isDefaultAddress === true) {
-                              return (
-                                <div key={index}>
-                                <div className="d-flex align-items-center">
-                                  <img src={row?.addresses[0]?.country?.imageUrl} alt="indiaFlag" height={16} />
-                                  <p className="text-lightBlue ms-2">
-                                    {row?.addresses[0]?.state?.name}, {" "}
-                                    {row?.addresses[0]?.country?.name}
-                                  </p>
-                                  </div>
-                                  <br />
-                                </div>
-                              );
-                            } else {
-                              return null;
+                          <div key={index}>
+                            {row?.addresses[0] &&
+                              <div className="d-flex align-items-center">
+                                <img src={row?.addresses[0]?.country?.imageUrl} height={16} />
+                                <p className="text-lightBlue ms-2">
+                                  {row?.addresses[0]?.state?.name || " "}, {" "}
+                                  {row?.addresses[0]?.country?.name}
+                                </p>
+                              </div>
                             }
-                          })}
+                            <br />
+                          </div>
                         </div>
-                    </TableCell>
+                      </TableCell>
 
                       <TableCell>
                         <p className="text-lightBlue">24</p>
@@ -392,7 +611,7 @@ const AllUsersTable = ({
                             <div className="rounded-pill d-flex px-2 py-1" 
                               style={{
                                 background: row.status == "active" ? "#A6FAAF" : 
-                                row.status == "in-active" ? "#F67476" : "#F67476" 
+                                row.status == "in-active" ? "#F67476" : "#C8D8FF" 
                               }}
                             >
                               <small className="text-black fw-500">
@@ -405,6 +624,7 @@ const AllUsersTable = ({
                           </div>
                         </TableCell> 
                       }
+                      {customerType != 4 ?
                       <TableCell>
                         <div className="d-flex align-items-center">
                           <img
@@ -413,7 +633,7 @@ const AllUsersTable = ({
                             className="c-pointer"
                             aria-describedby={idActions}
                             variant="contained"
-                            onClick={handleActionClick}
+                            onClick={(event) => handleActionClick(event, row)}
                           />
                           <Popover
                             anchorOrigin={{
@@ -432,28 +652,70 @@ const AllUsersTable = ({
                             <div className="py-2 px-2">
                               <small className="text-grey-7 px-2">ACTIONS</small>
                               <hr className="hr-grey-6 my-2" />
-                              <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                                Edit Customer
-                              </small>
-                              <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                                Edit Customer Group
-                              </small>
-                              <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
-                                Add or Remove Tags
-                              </small>
-                              <div 
-                                className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
-                                onClick={() => { handleArchive(row?._id, row?.firstName, row?.lastName)}}
-                              >
-                                <small className="font2 d-block" style={{color: "#F67E80"}}>
-                                  Archive Customer
+                                <small 
+                                  className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                                  onClick={(e) => {
+                                    if(customerType != 3) {
+                                      edit(customerInfo, index+1, customerType);
+                                    }
+                                  }}
+                                >
+                                  Edit Customer
                                 </small>
-                                <img src={deleteRed} alt="delete" className="" />
-                              </div>
+                                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
+                                  onClick={handleCustomerGroup}
+                                >
+                                  Add to Customer Groups
+                                </small>
+                                <small className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back">
+                                  Add or Remove Tags
+                                </small>
+                                <div 
+                                  className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer"
+                                  onClick={() => { handleArchive()}}
+                                >
+                                  <small className="font2 d-block" style={{color: "#F67E80"}}>
+                                    Archive Customer
+                                  </small>
+                                  <img src={deleteRed} alt="delete" className="" />
+                                </div>
                             </div>
                           </Popover>
                         </div>
                       </TableCell>
+                      :
+                      <TableCell style={{ width: 140, padding: 0 }}>
+                         <div className="d-flex align-items-center">
+                          <Tooltip title="Un-Archive" placement="top">
+                            <div 
+                              className="table-edit-icon rounded-4 p-2"
+                              onClick={() => { handleUnArchive(row)}}
+                            >
+                              <InventoryIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                          <Tooltip title="Delete" placement="top">
+                            <div 
+                              className="table-edit-icon rounded-4 p-2"
+                              onClick={() => { handleDelete(row)}}
+                            >
+                              <DeleteIcon
+                                sx={{
+                                  color: "#5c6d8e",
+                                  fontSize: 18,
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          </Tooltip>
+                        </div>
+                      </TableCell>}
                     </TableRow>
                   );
                 })}
@@ -485,10 +747,59 @@ const AllUsersTable = ({
         onConfirm ={handleArchivedModalClose}
         onCancel={handleModalClose}
         show={openArchivedModal}
-        title={"Customer"}
-        message={firstName + lastName}
-        archiveType={"Customer"}
+        title={"customer"}
+        message={
+          forMassAction == true ? selected.length == 1 ? 
+          firstName + " " + lastName : selected.length : firstName + " " + lastName 
+        }
+        archiveType={ 
+          forMassAction == true ? selected.length == 1 ?
+          " customer" : " customers": " customer" 
+        }
         products={"25 products"}
+      />   
+      <UnArchivedModal 
+        onConfirm={handleUnArchived}
+        onCancel={closeUnArchivedModal}
+        show={showUnArchivedModal}
+        title={"Un-Archive Customer ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${firstName + " " + lastName}</span> Customer,
+        `}
+        secondaryMessage={"Please set its status"}
+        confirmText={"Un-Archive"}
+        handleStatusValue={handleStatusValue}
+        icon={unArchived}
+        name={
+          forMassAction == false ? firstName + " " + lastName : 
+          selected.length == 1 ? firstName + " " + lastName : selected.length
+        } 
+        nameType={ forMassAction == true ? selected.length == 1 ? " customer" : " customers": " customer" }
+      />
+      <DeleteModalSecondary 
+        message={
+          forMassAction == false ? firstName + " " + lastName :
+          selected.length == 1 ? firstName + " " + lastName : selected.length
+        } 
+        title={ forMassAction == true ? selected.length == 1 ? " customer" : " customers": " customer" }
+        onConfirm ={handleDeleteModal}
+        onCancel={toggleDeleteModalHandler}
+        show={showDeleteModal}
+      />
+      <AddCustomerGroup 
+        onConfirm={handleGroup}
+        customerId={customerId}
+        selected={selected}
+        singleCustomer={singleCustomer}
+        show={showGroup}
+        openGroupModal={openGroupModal}
+      />
+      <AddTags 
+        onConfirm={handleTag}
+        customerId={customerId}
+        selected={selected}
+        singleCustomer={singleCustomer}
+        show={showTag}
+        openGroupModal={openTagModal}
       />
     </>
   );

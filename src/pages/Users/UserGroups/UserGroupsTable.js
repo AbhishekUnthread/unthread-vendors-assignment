@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Checkbox,
   Popover,
@@ -10,6 +14,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
+  Tooltip
 } from "@mui/material";
 
 import { showSuccess } from "../../../features/snackbar/snackbarAction";
@@ -64,6 +69,8 @@ const UserGroupsTable = ({
   const [statusValue, setStatusValue] = useState("in-active");
   const [groupInfo, setGroupInfo] = useState();
 
+  console.log(groupId, 'groupId');
+
   const [
     editCustomerGroup,
     {
@@ -93,10 +100,15 @@ const UserGroupsTable = ({
     }
   ] = useBulkEditCustomerGroupMutation();
 
-  const handleArchive = () => {
+  const handleArchive = (row) => {
+    setGroupInfo(row)
+    setGroupId(row._id);
+    setGroupName(row?.name);
     setArchivedModal(true);
     setForMassAction(false)
   }
+
+  console.log(selectedStatus, 'selectedStatus');
 
   useEffect(() => {
     if (selectedStatus !== null && selectedStatus !== "Delete") {
@@ -135,9 +147,9 @@ const UserGroupsTable = ({
       bulkEditCustomerGroup(requestData).unwrap().then(()=> {
         const successMessage =
             selectedStatus === "Set as Un-Archived"
-              ? "Collection un-archived  successfully"
+              ? "Customer un-archived  successfully"
               : selectedStatus === "Set as Archived"
-                ? "Collection archived  successfully" : "Status updated successfully";
+                ? "Customer archived  successfully" : "Status updated successfully";
 
         dispatch(showSuccess({ message: successMessage }));
         setSelectedStatus(null);
@@ -160,6 +172,7 @@ const UserGroupsTable = ({
           status: "archived"
         }
       })
+      setSelected([])
       dispatch(showSuccess({ message: "Customer Group archived successfully!" }));
     }
   }
@@ -174,17 +187,21 @@ const UserGroupsTable = ({
       bulkDelete(selected)
       setShowDeleteModal(false);
       dispatch(showSuccess({ message: "Customer group deleted successfully!" }));
-      setSelected([])
     } else {
       handleClick(null, groupId);
       deleteCustomerGroup(groupId);
       setShowDeleteModal(false)
       dispatch(showSuccess({ message: "Customer group deleted successfully!" }));
+      setSelected([])
     }
   }
 
   const toggleDeleteModalHandler = (row) => {
+    setGroupInfo(row)
+    setGroupId(row._id);
+    setGroupName(row?.name);
     setShowDeleteModal((prevState) => !prevState);
+    setSelected([])
   };
 
    const handleUnArchived = () => {
@@ -199,7 +216,8 @@ const UserGroupsTable = ({
           }
       })
       setShowUnArhcivedModal(false)
-      dispatch(showSuccess({ message: "Collection un-archived successfully" }));
+      setSelected([])
+      dispatch(showSuccess({ message: "Customer un-archived successfully" }));
     }
   }
 
@@ -211,9 +229,13 @@ const UserGroupsTable = ({
     setStatusValue(value);
   };
   
-  const handleUnArchive = () => {
+  const handleUnArchive = (row) => {
+    setGroupInfo(row)
+    setGroupId(row._id);
+    setGroupName(row?.name);
     setForMassAction(false)
     setShowUnArhcivedModal(true)
+    setSelected([])
   }
 
   const handleChangePage = (event, newPage) => {
@@ -266,11 +288,10 @@ const UserGroupsTable = ({
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const handleActionClick = (event, row) => {
+  const editHandler = (row) => {
     setGroupInfo(row)
     setGroupId(row._id);
     setGroupName(row?.name);
-    setAnchorActionEl(event.currentTarget);
   };
 
   const handleActionClose = () => {
@@ -308,6 +329,12 @@ const UserGroupsTable = ({
       numeric: false,
       disablePadding: false,
       label: "Users in Group",
+    },
+    {
+      id: "segment",
+      numeric: false,
+      disablePadding: false,
+      label: "Segment Size%",
     }
   ];
 
@@ -426,6 +453,9 @@ const UserGroupsTable = ({
                         <TableCell style={{ width: 180 }}>
                           <p className="text-lightBlue">{row.usersInGroup}</p>
                         </TableCell>
+                        <TableCell style={{ width: 180 }}>
+                          <p className="text-lightBlue">{(row?.segmentRatio).toFixed(2)}%</p>
+                        </TableCell>
                         { (value == 0 || value == 3) &&
                           <TableCell style={{ width: 180 }}>
                             <div className="d-flex align-items-center">
@@ -446,82 +476,78 @@ const UserGroupsTable = ({
                             </div>
                           </TableCell>
                         }
-                        <TableCell style={{ width: 60 }}>
-                          <img
-                            src={verticalDots}
-                            alt="verticalDots"
-                            className="c-pointer"
-                            aria-describedby={idActions}
-                            variant="contained"
-                            onClick={(event) => handleActionClick(event, row)}
-                          />
-
-                          <Popover
-                            anchorOrigin={{
-                              vertical: "bottom",
-                              horizontal: "center",
-                            }}
-                            transformOrigin={{
-                              vertical: "top",
-                              horizontal: "center",
-                            }}
-                            id={idActions}
-                            open={openActions}
-                            anchorEl={anchorActionEl}
-                            onClose={handleActionClose}
-                          >
-                            <div className="py-2 px-2">
-                              <small className="text-grey-7 px-2">ACTIONS</small>
-                              <hr className="hr-grey-6 my-2" />
-                              { value != 3 ? 
-                                <>
-                                  <small 
-                                    className="p-2 rounded-3 text-lightBlue c-pointer font2 d-block hover-back"
-                                    onClick={(e) => {
-                                      if(value != 3) {
-                                        onEdit(groupInfo, index+1, value);
-                                      }
-                                    }}
-                                  >
-                                    Edit User Groups
-                                  </small>
-                                  <div className="d-flex justify-content-between  hover-back rounded-3 p-2 c-pointer mt-2"
-                                    onClick={() => { handleArchive()}}
-                                  >
-                                    <small className="font2 d-block" style={{color: "#F67E80"}}>
-                                      Archived Groups
-                                    </small>
-                                  </div>
-                                </> : 
-                                <>
-                                <small className="font2 d-block mt-4 c-pointer hover-back p-2 rounded-3" 
-                                  style={{color: "#F67E80"}}
+                        {row.status == "archived" ?
+                          <TableCell style={{ width: 140, padding: 0 }}>
+                            <div className="d-flex align-items-center">
+                              <Tooltip title="Un-Archive" placement="top">
+                                <div className="table-edit-icon rounded-4 p-2"
                                   onClick={() => {
-                                    handleUnArchive()
-                                  }
-                              }
-                                >
-                                  Un-Archived Groups
-                                </small>
-                                <div className="d-flex justify-content-between hover-back rounded-3 p-2 c-pointer mt-3"
-                                  onClick={() => {
-                                    toggleDeleteModalHandler()
+                                    handleUnArchive(row)
                                   }}
                                 >
-                                  <small className="font2 d-block" style={{color: "#F67E80"}}>
-                                    Delete Groups
-                                  </small>
-                                  <img
-                                    src={deleteRed}
-                                    alt="delete"
-                                    className="ms-2"
+                                  <InventoryIcon
+                                    sx={{
+                                      color: "#5c6d8e",
+                                      fontSize: 18,
+                                      cursor: "pointer",
+                                    }}
                                   />
                                 </div>
-                                </>
-                              }
+                              </Tooltip>
+                              <Tooltip title="Delete" placement="top">
+                                <div className="table-edit-icon rounded-4 p-2" 
+                                  onClick={() => {
+                                    toggleDeleteModalHandler(row)
+                                  }}
+                                >
+                                  <DeleteIcon
+                                    sx={{
+                                      color: "#5c6d8e",
+                                      fontSize: 18,
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                </div>
+                              </Tooltip>
                             </div>
-                          </Popover>
-                        </TableCell>
+                          </TableCell>
+                          :
+                          <TableCell style={{ width: 140, padding: 0 }}>
+                            <div className="d-flex align-items-center">
+                              <Tooltip title="Edit" placement="top">
+                                <Link className="table-edit-icon rounded-4 p-2" 
+                                  onClick={(e) => {
+                                    onEdit(row, index+1, value);
+                                  }}
+                                >
+                                  <EditOutlinedIcon
+                                    sx={{
+                                      color: "#5c6d8e",
+                                      fontSize: 18,
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                </Link>
+                              </Tooltip>
+                              <Tooltip title="Archive" placement="top">
+                                <div className="table-edit-icon rounded-4 p-2"
+                                  onClick={() => {
+                                    handleArchive(row)
+                                    }
+                                  }
+                                >
+                                  <InventoryIcon
+                                    sx={{
+                                      color: "#5c6d8e",
+                                      fontSize: 18,
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                </div>
+                              </Tooltip>
+                            </div>
+                          </TableCell>                   
+                        }
                       </TableRow>
                     );
                   })}
@@ -566,8 +592,8 @@ const UserGroupsTable = ({
         onConfirm={handleUnArchived}
         onCancel={closeUnArchivedModal}
         show={showUnArchivedModal}
-        title={"Un-Archive Collection ?"}
-        primaryMessage={`Before un-archiving <span class='text-blue-1'>${groupName}</span> vendor,
+        title={"Un-Archive Customer Group ?"}
+        primaryMessage={`Before un-archiving <span class='text-blue-1'>${groupName}</span> customer group,
         `}
         secondaryMessage={"Please set its status"}
         confirmText={"Un-Archive"}

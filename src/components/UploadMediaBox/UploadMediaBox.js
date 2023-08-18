@@ -150,9 +150,17 @@ const UploadMediaBox = ({ noteText, imageName, headingName, UploadChange = () =>
           // }}
         />
         <img
-          src={uploadState?.data?.url ? uploadState?.data?.url : inputUrl !== "" ? inputUrl : previousImage ? previousImage : imageName}
-          // className="w-100"
-          style={{ height: "100%", width: "100%", objectFit: "cover", overflow: "hidden" }}
+          src={
+            uploadState?.data?.url
+              ? uploadState?.data?.url
+              : inputUrl !== ""
+              ? inputUrl
+              : previousImage
+              ? previousImage
+              : imageName
+          }
+          className="w-100"
+          style={{ height: "150px", borderRadius: "10px" }}
           alt=""
         />
       </div>

@@ -27,6 +27,8 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import SearchIcon from "@mui/icons-material/Search";
 
+import CustomerChip from "../../pages/Users/AddUser/CustomerChip";
+
 // ? DIALOG TRANSITION STARTS HERE
 const Transition = React.forwardRef(function Transition(props, ref) {
   return (
@@ -73,29 +75,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     borderRadius: "5px",
   },
 }));
-// ? SEARCH INPUT ENDS HERE
 
-const taggedWithData = [
-  { title: "Tag 1", value: "tag1" },
-  { title: "Tag 2", value: "tag2" },
-  { title: "Tag 3", value: "tag3" },
-  { title: "Tag 4", value: "tag4" },
-  { title: "Tag 5", value: "tag5" },
-  { title: "Tag 6", value: "tag6" },
-  { title: "Tag 7", value: "tag7" },
-  { title: "Tag 8", value: "tag8" },
-  { title: "Tag 9", value: "tag9" },
-  { title: "Tag 10", value: "tag10" },
-  { title: "Tag 11", value: "tag11" },
-  { title: "Tag 12", value: "tag12" },
-];
-
-const TagsBox = ({ tagsList = [], selectedTagList }) => {
-  const handleTagList = (event, value) => {
-    selectedTagList(value.map((option) => option.name));
-  };
-  // ? TAGS DIALOG STARTS HERE
+const TagsBox = ({ tagsList = [], selectedTagList, formik }) => {
   const [openTags, setOpenTags] = React.useState(false);
+
+  const handleTagList = (event, value) => {
+    const newTag = value[value.length - 1].name;
+    if (!formik.values.tags.includes(newTag)) {
+      const updatedTags = [...formik.values.tags, newTag];
+      selectedTagList(updatedTags);
+    }
+  };
 
   const handleTagsOpen = () => {
     setOpenTags(true);
@@ -104,9 +94,7 @@ const TagsBox = ({ tagsList = [], selectedTagList }) => {
   const handleTagsClose = () => {
     setOpenTags(false);
   };
-  // ? TAGS DIALOG ENDS HERE
 
-  // * SORT POPOVERS STARTS
   const [anchorTagEl, setAnchorTagEl] = React.useState(null);
 
   const handleTagClick = (event) => {
@@ -117,9 +105,14 @@ const TagsBox = ({ tagsList = [], selectedTagList }) => {
     setAnchorTagEl(null);
   };
 
+  const removeTag = (tag) => {
+    const updatedTags = formik.values.tags.filter(existingTag => existingTag !== tag);
+    selectedTagList(updatedTags);
+  };
+
   const openTag = Boolean(anchorTagEl);
   const idTag = openTag ? "simple-popover" : undefined;
-  // * SORT POPOVERS ENDS
+
   return (
     <div className="bg-black-15 border-grey-5 rounded-8 p-3 mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -332,13 +325,14 @@ const TagsBox = ({ tagsList = [], selectedTagList }) => {
         disableCloseOnSelect
         getOptionLabel={(option) => option.name}
         onChange={handleTagList}
+        value={formik.values.tags || []}
         size="small"
         renderOption={(props, option, { selected }) => (
           <li {...props}>
             <Checkbox
               icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
               checkedIcon={<CheckBoxIcon fontSize="small" />}
-              checked={selected}
+                checked={formik.values.tags.includes(option.name)}
               size="small"
               style={{
                 color: "#5C6D8E",
@@ -348,6 +342,28 @@ const TagsBox = ({ tagsList = [], selectedTagList }) => {
             <small className="text-lightBlue">{option.name}</small>
           </li>
         )}
+        renderTags={(value) =>
+          value.map((option) => (
+            <div
+              className={`rounded-pill d-flex align-items-center px-2 py-1 c-pointer`}
+              style={{
+                background:
+                  "linear-gradient(303.01deg, #2f2e69 -4.4%, #514969 111.29%)",
+              }}
+            >
+              <small className="fw-400 text-lightBlue">{option}</small>
+              <button type="button" className="reset">
+                <img 
+                  src={cancel} 
+                  alt="cancel" 
+                  width={20} 
+                  className="c-pointer" 
+                  onClick={() => removeTag(option)}
+                />
+              </button>
+            </div>
+          ))
+        }
         renderInput={(params) => (
           <TextField
             size="small"
