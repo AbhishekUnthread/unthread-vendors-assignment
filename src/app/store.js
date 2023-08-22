@@ -4,24 +4,13 @@ import apiSlice from "./api/apiSlice";
 import authReducer from "../features/auth/authSlice";
 import userReducer from "../features/user/userSlice";
 import vendorReducer from "../features/parameters/vendors/vendorSlice";
-import tagsReducer from "../features/parameters/tagsManager/tagsManagerSlice";
-import categoryReducer from "../features/parameters/categories/categorySlice";
-import collectionReducer from "../features/parameters/collections/collectionSlice"
-
 
 const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
     auth: authReducer,
     user: userReducer,
-    vendor:vendorReducer,
-    tags : tagsReducer,
-    category:categoryReducer,
-    collection:collectionReducer,
     vendor: vendorReducer,
-    tags: tagsReducer,
-    category: categoryReducer,
-    collection: collectionReducer,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(apiSlice.middleware);

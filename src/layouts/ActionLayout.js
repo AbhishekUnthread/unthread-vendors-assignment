@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, CircularProgress } from "@mui/material";
-import  ScrollToTop  from "../ScrollToTop"
+import ScrollToTop from "../ScrollToTop";
 
 import { checkUserStatus } from "../features/user/userAction";
 import { checkLoginStatus } from "../features/auth/authAction";
@@ -23,10 +23,10 @@ const ActionLayout = () => {
   useEffect(() => {
     if (loginStatus && isAuthScreen) {
       dispatch(checkUserStatus());
-      navigate("/dashboard", { replace: true });
+      navigate("/parameters/vendors", { replace: true });
     }
     if (loginStatus === false && isAuthScreen === false) {
-      navigate("/auth/login", { replace: true });
+      navigate("/parameters/vendors", { replace: true });
     }
   }, [loginStatus, dispatch, navigate, isAuthScreen]);
 
@@ -38,19 +38,20 @@ const ActionLayout = () => {
     );
   }, [location]);
 
-  return (<>
-   <ScrollToTop />
-    <Box className="main-box-secondary">
-      {(loginStatus === false && isAuthScreen) ||
-      (loginStatus && isAuthScreen === false) ? (
-        <Outlet />
-      ) : (
-        <div className="container-fluid loader">
-          <CircularProgress color="secondary" size={60} />
-        </div>
-      )}
-    </Box>
-  </>
+  return (
+    <>
+      <ScrollToTop />
+      <Box className="main-box-secondary">
+        {(loginStatus === false && isAuthScreen) ||
+        (loginStatus && isAuthScreen === false) ? (
+          <Outlet />
+        ) : (
+          <div className="container-fluid loader">
+            <CircularProgress color="secondary" size={60} />
+          </div>
+        )}
+      </Box>
+    </>
   );
 };
 

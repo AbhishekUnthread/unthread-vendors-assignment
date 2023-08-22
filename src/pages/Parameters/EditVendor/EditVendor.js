@@ -40,291 +40,12 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import _ from "lodash";
 
-const initialQueryFilterState = {
-  pageSize: 1,
-  pageNo: null,
-  totalCount: 0,
-  order: null,
-  srNo: null,
-};
-const initialVendorState = {
-  isEditing: false,
-  edited: false,
-  discarded: false,
-};
-
-const queryFilterReducer = (state, action) => {
-  if (action.type === "SET_PAGE_NO") {
-    return {
-      ...state,
-      pageNo: +action.pageNo,
-    };
-  }
-  if (action.type === "SET_TOTAL_COUNT") {
-    return {
-      ...state,
-      totalCount: action.totalCount,
-    };
-  }
-  if (action.type === "SET_ORDER") {
-    return {
-      ...state,
-      order: action.order,
-    };
-  }
-  if (action.type === "SET_SERIAL_NUMBER") {
-    return {
-      ...state,
-      srNo: action.srNo,
-    };
-  }
-  return initialQueryFilterState;
-};
-
-const vendorsReducer = (state, action) => {
-  if (action.type === "ENABLE_EDIT") {
-    return {
-      ...state,
-      isEditing: true,
-    };
-  }
-  if (action.type === "DISABLE_EDIT") {
-    return {
-      ...state,
-      isEditing: false,
-    };
-  }
-  if (action.type === "EDITED_ENABLE") {
-    return {
-      ...state,
-      edited: true,
-    };
-  }
-  if (action.type === "EDITED_DISABLE") {
-    return {
-      ...state,
-      edited: false,
-    };
-  }
-  if (action.type === "ENABLE_DISCARD") {
-    return {
-      ...state,
-      discarded: true,
-    };
-  }
-  if (action.type === "DISABLE_DISCARD") {
-    return {
-      ...state,
-      discarded: false,
-    };
-  }
-  return initialVendorState;
-};
-
-const vendorValidationSchema = Yup.object().shape({
-  name: Yup.string()
-    .trim()
-    .max(50, "Name cannot exceed 50 characters")
-    .required("Name is required"),
-  status: Yup.string()
-    .oneOf(["active", "in-active"], "Invalid status")
-    .required("Status is required"),
-});
-
 const EditVendor = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   let { id, filter } = useParams();
-  const [queryFilterState, dispatchQueryFilter] = useReducer(
-    queryFilterReducer,
-    initialQueryFilterState
-  );
-  const [vendorState, dispatchVendor] = useReducer(
-    vendorsReducer,
-    initialVendorState
-  );
   const [searchParams, setSearchParams] = useSearchParams();
   const [decodedObject, setDecodedObject] = useState(null);
-
-  useEffect(() => {
-    dispatchQueryFilter({ type: "SET_SERIAL_NUMBER", srNo: id });
-  }, [id]);
-
-  const {
-    data: vendorsData,
-    isLoading: vendorsIsLoading,
-    isSuccess: vendorsIsSuccess,
-    error: vendorsError,
-    isError: vendorsIsError,
-  } = useGetAllVendorsQuery({
-    srNo: queryFilterState?.srNo,
-    ...decodedObject,
-    order: queryFilterState?.order,
-    pageSize: 1,
-    pageNo: "0",
-    alphabetical: decodedObject?.alphabetical,
-    createdAt: decodedObject?.createdAt,
-    name: decodedObject?.name,
-    status: decodedObject?.status,
-  });
-
-  const [
-    editVendor,
-    {
-      isLoading: editVendorIsLoading,
-      isSuccess: editVendorIsSuccess,
-      error: editVendorError,
-      isError: editVendorIsError,
-    },
-  ] = useEditVendorMutation();
-
-  const nextPageHandler = () => {
-    // const { pageNo, totalCount } = queryFilterState;
-
-    // if (pageNo + 1 > totalCount) {
-    //   return;
-    // }
-    // navigate(`/parameters/vendors/edit/${pageNo + 1}/${filter}`);
-    const { pageNo } = queryFilterState;
-    if (vendorsData?.data?.nextCount === 0) {
-      return;
-    }
-    dispatchQueryFilter({ type: "SET_ORDER", order: 1 });
-    dispatchQueryFilter({
-      type: "SET_PAGE_NO",
-      pageNo: vendorsData?.data?.data?.[0]?.srNo,
-    });
-    navigate({
-      pathname: `/parameters/vendors/edit/${pageNo}`,
-      search: `?${createSearchParams({
-        filter: JSON.stringify({...decodedObject,order:1}),
-      })}`,
-    });
-  };
-
-  const prevPageHandler = () => {
-    // const { pageNo } = queryFilterState;
-    // if (pageNo - 1 === 0) {
-    //   return;
-    // }
-    // navigate(`/parameters/vendors/edit/${pageNo - 1}/${filter}`);
-    const { pageNo } = queryFilterState;
-    if( vendorsData?.data?.prevCount === 0){
-      return
-    }
-    dispatchQueryFilter({ type: "SET_ORDER", order: -1 });
-    navigate({
-      pathname: `/parameters/categories/edit/${pageNo}`,
-      search: `?${createSearchParams({
-        filter: JSON.stringify(decodedObject),
-      })}`,
-    });
-  };
-
-  const backHandler = () => {
-    navigate({
-      pathname: "/parameters/vendors",
-      search: `?${createSearchParams({ filter: searchParams.get("filter") })}`,
-    });
-  };
-
-  useEffect(() => {
-    if (editVendorIsError) {
-      if (editVendorError?.data?.message) {
-        dispatch(showError({ message: editVendorError?.data?.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong, please try again" })
-        );
-      }
-    }
-  }, [editVendorError, editVendorIsError, dispatch]);
-
-  useEffect(() => {
-    if (vendorsIsSuccess) {
-      dispatchVendor({ type: "EDITED_DISABLE" });
-      dispatchQueryFilter({
-        type: "SET_TOTAL_COUNT",
-        totalCount: vendorsData?.data?.totalCount,
-      });
-    }
-    if (vendorsIsError) {
-      if (vendorsError?.data?.message) {
-        dispatch(showError({ message: vendorsError?.data?.message }));
-      } else {
-        dispatch(
-          showError({ message: "Something went wrong, please try again" })
-        );
-      }
-    }
-  }, [
-    vendorsIsSuccess,
-    vendorsIsError,
-    vendorsError,
-    editVendorIsSuccess,
-    id,
-    filter,
-    vendorsData,
-    dispatch,
-  ]);
-
-  const formik = useFormik({
-    initialValues: {
-      name: vendorsData?.data?.data[0]?.name || "",
-      notes: vendorsData?.data?.data[0]?.notes,
-      status: vendorsData?.data?.data[0]?.status,
-      filter: vendorsData?.data?.data[0]?.showFilter || false,
-    },
-    enableReinitialize: true,
-    validationSchema: vendorValidationSchema,
-    onSubmit: (values) => {
-      dispatchVendor({ type: "EDITED_DISABLE" });
-      if (id) {
-        editVendor({
-          id: vendorsData?.data?.data[0]._id,
-          details: {
-            showFilter: values?.filter,
-            name: values?.name,
-            notes: values?.notes,
-            status: values?.status,
-          },
-        })
-          .unwrap()
-          .then(() => {
-            dispatchVendor({ type: "DISABLE_EDIT" });
-            dispatch(showSuccess({ message: "Vendor edited successfully" }));
-          });
-      }
-    },
-  });
-
-  useEffect(() => {
-    if (id && !_.isEqual(formik.values, formik.initialValues)) {
-      dispatchVendor({ type: "ENABLE_EDIT" });
-      dispatchVendor({ type: "EDITED_ENABLE" });
-    } else if (id && _.isEqual(formik.values, formik.initialValues)) {
-      dispatchVendor({ type: "EDITED_DISABLE" });
-      dispatchVendor({ type: "DISABLE_EDIT" });
-    }
-  }, [formik.initialValues, formik.values, id]);
-
-  useEffect(() => {
-    const encodedString = searchParams.get("filter");
-
-    const decodedString = decodeURIComponent(encodedString);
-    const parsedObject = JSON.parse(decodedString);
-    setDecodedObject(parsedObject);
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (vendorsData?.data?.data?.[0]?.srNo) {
-      dispatchQueryFilter({
-        type: "SET_PAGE_NO",
-        pageNo: vendorsData?.data?.data?.[0]?.srNo,
-      });
-    }
-  }, [vendorsData]);
-
 
   return (
     <div
@@ -332,16 +53,14 @@ const EditVendor = () => {
       style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
     >
       <InfoHeader
-        title={formik.values.name || "Edit Vendor"}
-        onBack={backHandler}
-        onPrev={prevPageHandler}
-        onNext={nextPageHandler}
+        title={"Edit Vendor"}
+        onBack={() => {}}
+        onPrev={() => {}}
+        onNext={() => {}}
         isEdit={!!id}
       />
       <form
         className="vendor-form"
-        noValidate
-        onSubmit={formik.handleSubmit}
         style={{ display: "grid", gridTemplateRows: "1fr auto" }}
       >
         <div className="row mt-3" style={{ marginBottom: "80px" }}>
@@ -364,26 +83,15 @@ const EditVendor = () => {
                     size="small"
                     placeholder="Enter Vendor Name"
                     name="name"
-                    value={formik.values?.name}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
                     autoFocus={true}
                   />
                 </FormControl>
-                {formik.touched.name && formik.errors.name ? (
-                  <Typography variant="caption" color="#F67476">
-                    {formik.errors.name}
-                  </Typography>
-                ) : null}
 
                 <div className="small">
                   <FormControlLabel
                     control={
                       <Checkbox
                         name="filter"
-                        value={formik.values?.filter}
-                        checked={formik.values?.filter}
-                        onChange={formik.handleChange}
                         // onBlur={formik.handleBlur}
                         inputProps={{ "aria-label": "controlled" }}
                         size="small"
@@ -420,25 +128,17 @@ const EditVendor = () => {
           <div className="col-lg-3 mt-3 pe-0 ps-0 ps-lg-3">
             <StatusBox
               headingName={"Status"}
-              value={formik.values?.status}
               toggleData={["active", "in-active"]}
-              handleProductStatus={(_, val) =>
-                formik.setFieldValue("status", val)
-              }
             />
-            <NotesBox
-              name="notes"
-              value={formik.values?.notes}
-              onChange={formik.handleChange}
-            />
+            <NotesBox name="notes" />
           </div>
         </div>
         <SaveFooterTertiary
-          show={id ? vendorState.isEditing : true}
-          onDiscard={backHandler}
-          isLoading={editVendorIsLoading}
+          show={true}
+          onDiscard={() => {}}
+          isLoading={false}
         />
-        <DiscardModalSecondary when={vendorState.edited} message="vendor tab" />
+        <DiscardModalSecondary when={false} message="vendor tab" />
       </form>
     </div>
   );

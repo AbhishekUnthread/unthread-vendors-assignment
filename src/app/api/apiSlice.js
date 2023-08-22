@@ -23,30 +23,7 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
 
 const apiSlice = createApi({
   baseQuery: baseQueryWithReAuth,
-  tagTypes: [
-    "Categories",
-    "SubCategories",
-    "Products",
-    "Vendors",
-    "Collections",
-    "TagsManager",
-    "ProductTabs",
-    "Options",
-    "OptionSets",
-    "Attributes",
-    "Inventory",
-    "SubOptions",
-    "SubAttributes",
-    "Customers",
-    "CustomerGroup",
-    "CustomersAddress",
-    "Country",
-    "State",
-    "City",
-    "Seos",
-    "FileManager",
-    "PriceMaster",
-  ],
+  tagTypes: ["Vendors"],
   endpoints: (builder) => ({}),
 });
 

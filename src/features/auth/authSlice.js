@@ -1,11 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialAuthState = {
-  accessToken: null,
+  accessToken:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDU4YTQ2NGJlYjhmOTRkYWEyN2Q4MDYiLCJlbWFpbCI6ImthdmluQGdtYWlsLmNvbSIsInVzZXJOYW1lIjoiS2F2aW4iLCJpYXQiOjE2ODM2MTEwNzYsImV4cCI6MTcxNTE0NzA3Nn0.nSYgXqm30Vp_Iv_QUxMcTwp10-seM_B0PPGUd_0QYMI",
   refreshToken: null,
-  accessTokenExpirationTime: null,
-  refreshTokenExpirationTime: null,
-  isLoggedIn: null,
+  accessTokenExpirationTime:
+    Date.now() + +process.env.REACT_APP_ACCESS_TOKEN_EXPIRATION_TIME,
+  refreshTokenExpirationTime:
+    Date.now() + +process.env.REACT_APP_REFRESH_TOKEN_EXPIRATION_TIME,
+  isLoggedIn: true,
 };
 
 const authSlice = createSlice({

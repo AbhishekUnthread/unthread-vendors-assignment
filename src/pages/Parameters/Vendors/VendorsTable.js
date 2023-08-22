@@ -127,11 +127,6 @@ const VendorsTable = ({
           };
         }
       });
-      bulkEdit({ updates: newState })
-        .unwrap()
-        .then(() =>
-          dispatch(showSuccess({ message: " Status updated successfully" }))
-        );
       setSelectedStatus(null);
       setSelected([]);
     }
@@ -199,17 +194,6 @@ const VendorsTable = ({
     setShowMultipleArchivedModal(false);
   };
   const handleArchivedModalOnSave = () => {
-    editVendor({
-      id: vendor?._id,
-      details: {
-        status: "archieved",
-        showFilter: false,
-      },
-    })
-      .unwrap()
-      .then(() =>
-        dispatch(showSuccess({ message: " Vendor Archived Successfully" }))
-      );
     setShowArchivedModal(false);
     setVendorName("");
   };
@@ -221,17 +205,7 @@ const VendorsTable = ({
         status: "archieved",
       };
     });
-    bulkEdit({ updates: newState })
-      .unwrap()
-      .then(() =>
-        dispatch(
-          showSuccess({
-            message: `${
-              selected.length === 1 ? "Vendor" : "Vendors"
-            } Archived Successfully`,
-          })
-        )
-      );
+
     setSelected([]);
     setShowMultipleArchivedModal(false);
   };
@@ -251,17 +225,6 @@ const VendorsTable = ({
     setVendorStatus(value);
   };
   const handleUnArchived = () => {
-    editVendor({
-      id: vendor?._id,
-      details: {
-        status: vendorStatus,
-        showFilter: true,
-      },
-    })
-      .unwrap()
-      .then(() =>
-        dispatch(showSuccess({ message: "Vendor Un-Archived successfully" }))
-      );
     setShowUnArhcivedModal(false);
   };
   const handleMultipleUnArchived = () => {
@@ -271,17 +234,7 @@ const VendorsTable = ({
         status: vendorStatus,
       };
     });
-    bulkEdit({ updates: newState })
-      .unwrap()
-      .then(() =>
-        dispatch(
-          showSuccess({
-            message: `${
-              selected.length === 1 ? "Vendor" : "Vendors"
-            } Un-Archived Successfully`,
-          })
-        )
-      );
+
     setShowMultipleUnArhcivedModal(false);
     setSelected([]);
   };
@@ -298,25 +251,9 @@ const VendorsTable = ({
     setShowMultipleDeleteModal(false);
   };
   const handleDelete = () => {
-    deleteData(vendor?._id)
-      .unwrap()
-      .then(() =>
-        dispatch(showSuccess({ message: "Vendor Deleted successfully" }))
-      );
     setShowDeleteModal(false);
   };
   const handleMultipleDelete = () => {
-    bulkDelete({ deletes: selected })
-      .unwrap()
-      .then(() =>
-        dispatch(
-          showSuccess({
-            message: `${
-              selected.length === 1 ? "Vendor" : "Vendors"
-            } Deleted Successfully`,
-          })
-        )
-      );
     setShowMultipleDeleteModal(false);
     setSelected([]);
   };

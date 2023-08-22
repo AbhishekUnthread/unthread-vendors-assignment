@@ -91,46 +91,6 @@ const Sidenav = () => {
             )
           )}
         </div>
-        <NavLink to="/analytics">
-          <ListItem button key="Analytics" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={analytics} alt="analytics" />
-            </ListItemIcon>
-            <ListItemText primary="Analytics" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/globalStore">
-          <ListItem button key="Global Store" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={globalStore} alt="globalStore" />
-            </ListItemIcon>
-            <ListItemText primary="Global Store" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/newFeatures">
-          <ListItem button key="New Features" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={newFeatures} alt="newFeatures" />
-            </ListItemIcon>
-            <ListItemText primary="New Features" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/helpCenter">
-          <ListItem button key="Help Center" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={helpCenter} alt="helpCenter" />
-            </ListItemIcon>
-            <ListItemText primary="Help Center" className="list-text" />
-          </ListItem>
-        </NavLink>
-        <NavLink to="/settings">
-          <ListItem button key="Settings" className="list-item">
-            <ListItemIcon className="me-2 list-icon">
-              <img src={settings} alt="settings" />
-            </ListItemIcon>
-            <ListItemText primary="Settings" className="list-text" />
-          </ListItem>
-        </NavLink>
       </List>
     </div>
   );
