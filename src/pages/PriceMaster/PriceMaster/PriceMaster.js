@@ -255,6 +255,18 @@ const PriceMaster = () => {
     });
   };
 
+  const openHandler = (srNo) => {
+    navigate({
+      pathname: `/priceMaster/details/${srNo}`,
+      search: `?${createSearchParams({
+        search: JSON.stringify({
+          ...queryFilterState,
+          activeTab: priceMasterState.activeTab,
+        }),
+      })}`,
+    });
+  };
+
   const createMasterHandler = () => {
     navigate({
       pathname: "/priceMaster/create",
@@ -489,6 +501,7 @@ const PriceMaster = () => {
                 page={queryFilterState.pageNo}
                 onEdit={editHandler}
                 onArchived={archivedHandler}
+                onOpen={openHandler}
               />
             </TabPanel>
             <TabPanel value={priceMasterState.activeTab - 1} index={1}>
@@ -504,6 +517,7 @@ const PriceMaster = () => {
                 onEdit={editHandler}
                 onDelete={deleteHandler}
                 onUnArchived={unArchivedHandler}
+                onOpen={openHandler}
               />
             </TabPanel>
           </Paper>

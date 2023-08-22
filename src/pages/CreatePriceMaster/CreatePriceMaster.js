@@ -59,16 +59,19 @@ import "./CreatePriceMaster.scss";
 const FIELDS_DATA = [
   { title: "Option", value: "option" },
   { title: "Category", value: "category" },
-  { title: "Sub Category", value: "subCategory" },
-  { title: "Collection", value: "collection" },
 ];
 
 const priceMasterValidationSchema = Yup.object({
   name: Yup.string().trim().min(3, "Too short").required("Required"),
-  entityId: Yup.string().matches(objectIdReg, "Not valid").required("Required"),
-  type: Yup.string()
-    .oneOf(["option", "category", "subCategory", "collection"])
-    .required("Required"),
+  entityId: Yup.string()
+    .matches(objectIdReg, "Not valid")
+    .when(["type"], ([type], schema) => {
+      if (type === "option") {
+        return schema.required("Required");
+      }
+      return schema;
+    }),
+  type: Yup.string().oneOf(["option", "category"]).required("Required"),
   priceType: Yup.string()
     .oneOf(["default", "weightRange"])
     .required("Required"),
@@ -338,58 +341,10 @@ const CreatePriceMaster = () => {
       skip: priceMasterFormik.values.type !== "option",
     }
   );
-  const {
-    data: categoriesData,
-    isLoading: categoriesIsLoading,
-    error: categoriesError,
-    isError: categoriesIsError,
-    isSuccess: categoriesIsSuccess,
-    isFetching: categoriesDataIsFetching,
-  } = useGetAllCategoriesQuery(
-    {
-      pageSize: 10,
-      pageNo: 1,
-    },
-    {
-      skip: priceMasterFormik.values.type !== "category",
-    }
-  );
-  const {
-    data: subCategoriesData,
-    isLoading: subCategoriesIsLoading,
-    error: subCategoriesError,
-    isError: subCategoriesIsError,
-    isSuccess: subCategoriesIsSuccess,
-    isFetching: subCategoriesDataIsFetching,
-  } = useGetAllSubCategoriesQuery(
-    {
-      pageSize: 10,
-      pageNo: 1,
-    },
-    {
-      skip: priceMasterFormik.values.type !== "subCategory",
-    }
-  );
-  const {
-    data: collectionData,
-    isLoading: collectionIsLoading,
-    error: collectionError,
-    isError: collectionIsError,
-    isSuccess: collectionIsSuccess,
-    isFetching: collectionDataIsFetching,
-  } = useGetAllCollectionsQuery(
-    {
-      pageSize: 10,
-      pageNo: 1,
-    },
-    {
-      skip: priceMasterFormik.values.type !== "collection",
-    }
-  );
 
   const backHandler = () => {
     navigate({
-      pathname: "/priceMaster/inventory",
+      pathname: "/priceMaster",
       search: `?${createSearchParams({
         search: searchParams.get("search"),
       })}`,
@@ -473,7 +428,7 @@ const CreatePriceMaster = () => {
 
   useEffect(() => {
     if (priceMasterState.createdSuccess) {
-      navigate("/priceMaster/inventory");
+      navigate("/priceMaster");
     }
   }, [priceMasterState.createdSuccess, navigate]);
 
@@ -486,53 +441,10 @@ const CreatePriceMaster = () => {
         };
       });
       dispatchPriceMaster({ type: "SET_FIELD_VALUES", data });
-    } else if (
-      priceMasterFormik.values.type === "category" &&
-      categoriesIsSuccess
-    ) {
-      const data = categoriesData.data.data.map((category) => {
-        return {
-          value: category._id,
-          title: category.name,
-        };
-      });
-      dispatchPriceMaster({ type: "SET_FIELD_VALUES", data });
-    } else if (
-      priceMasterFormik.values.type === "subCategory" &&
-      subCategoriesIsSuccess
-    ) {
-      const data = subCategoriesData.data.data.map((category) => {
-        return {
-          value: category._id,
-          title: category.name,
-        };
-      });
-      dispatchPriceMaster({ type: "SET_FIELD_VALUES", data });
-    } else if (
-      priceMasterFormik.values.type === "collection" &&
-      collectionIsSuccess
-    ) {
-      const data = collectionData.data.data.map((collection) => {
-        return {
-          value: collection._id,
-          title: collection.title,
-        };
-      });
-      dispatchPriceMaster({ type: "SET_FIELD_VALUES", data });
     } else {
       dispatchPriceMaster({ type: "RESET_FIELD_VALUES" });
     }
-  }, [
-    optionsIsSuccess,
-    optionsData,
-    categoriesData,
-    categoriesIsSuccess,
-    subCategoriesData,
-    subCategoriesIsSuccess,
-    collectionData,
-    collectionIsSuccess,
-    priceMasterFormik.values.type,
-  ]);
+  }, [optionsIsSuccess, optionsData, priceMasterFormik.values.type]);
 
   return (
     <>
@@ -650,7 +562,7 @@ const CreatePriceMaster = () => {
                           </FormHelperText>
                         )}
                     </FormControl>
-                    {priceMasterFormik.values.type && (
+                    {priceMasterFormik.values.type === "option" && (
                       <FormControl size="small">
                         <Autocomplete
                           id="entityId"

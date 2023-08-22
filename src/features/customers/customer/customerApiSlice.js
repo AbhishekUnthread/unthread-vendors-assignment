@@ -2,7 +2,6 @@ import apiSlice from "../../../app/api/apiSlice";
 
 export const customerApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-
     createCustomer: builder.mutation({
       query: (customerDetails) => ({
         url: "/customer",
@@ -77,7 +76,7 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       query: (updates) => ({
         url: `/customer/bulkUpdate`,
         method: "PUT",
-        body: updates ,
+        body: updates,
       }),
       invalidatesTags: ["Customers"],
     }),
@@ -99,7 +98,6 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Customers"],
     }),
-    
   }),
 });
 
@@ -111,5 +109,5 @@ export const {
   useEditCustomerMutation,
   useBulkEditCustomerMutation,
   useDeleteCustomerMutation,
-  useBulkDeleteCustomerMutation
+  useBulkDeleteCustomerMutation,
 } = customerApiSlice;
